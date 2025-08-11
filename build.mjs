@@ -38,7 +38,15 @@ async function buildAll() {
         external: ['jquery'],
         output: {
           globals: { jquery: 'jQuery' },
-          banner
+          banner,
+          intro: `
+// Include renderer classes
+${fs.readFileSync('./src/renderers/BootstrapRenderer.js', 'utf-8')}
+${fs.readFileSync('./src/renderers/Bootstrap3Renderer.js', 'utf-8')}
+${fs.readFileSync('./src/renderers/Bootstrap4Renderer.js', 'utf-8')}
+${fs.readFileSync('./src/renderers/Bootstrap5Renderer.js', 'utf-8')}
+${fs.readFileSync('./src/renderers/RendererFactory.js', 'utf-8')}
+`
         }
       },
       outDir: 'dist',
