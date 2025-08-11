@@ -8,12 +8,21 @@ Bootstrap TouchSpin is a jQuery plugin that provides a mobile and touch-friendly
 
 ## Build System & Development Commands
 
-The project uses **Grunt** as its build system:
+The project uses **Vite** as its modern build system (with Grunt legacy support):
 
-- `npm run build` or `grunt default` - Full build pipeline: JSHint → concat → Babel → uglify → cssmin → update license
-- `npm run check-build-integrity` or `grunt check-build-integrity` - Verifies dist folder is properly rebuilt (required before commits)
-- `npm test` - Run Jest tests with Puppeteer (runs in band for stability)
+### Primary Build Commands (Vite-based)
+- `npm run build` - Modern Vite build: Vite → Babel transpilation → Terser minification → CSS processing
+- `npm run check-build-integrity` - Verifies dist folder is properly rebuilt (required before commits)
+- `npm run dev` - Development server with hot reload
+- `npm run preview` - Preview built files locally
+
+### Legacy Build Commands (Grunt-based)
+- `npm run build:legacy` or `grunt default` - Original Grunt build pipeline
+- `npm run check-build-integrity:legacy` or `grunt check-build-integrity` - Legacy integrity check
 - `grunt clean` - Clean the dist folder
+
+### Testing
+- `npm test` - Run Jest tests with Puppeteer (runs in band for stability)
 
 ## Architecture
 
@@ -23,8 +32,10 @@ The project uses **Grunt** as its build system:
   - `jquery.bootstrap-touchspin.css` - Component styles
 
 ### Build Output
-- **`dist/`** - Generated files (concatenated, transpiled, minified versions)
-  - Built files include version banner and are transpiled via Babel
+- **`dist/`** - Generated files (transpiled, minified versions with source maps)
+  - Built files include version banner and are transpiled via Babel for ES5 compatibility
+  - Both normal and minified versions (.min.js/.min.css) are generated
+  - Source maps (.map files) included for debugging
 
 ### Testing
 - **`__tests__/`** - Jest + Puppeteer integration tests
@@ -44,7 +55,9 @@ The project uses **Grunt** as its build system:
 ### Build Requirements
 - **Critical**: Always run `npm run check-build-integrity` before committing - this ensures dist files are properly synchronized with source changes
 - Source changes must be made in `src/`, never in `dist/`
-- The build process includes JSHint linting, so code must pass linting before successful build
+- The Vite build process includes ES5 transpilation via Babel for broad browser compatibility
+- Build outputs are deterministic and checked for integrity via MD5 checksums
+- Legacy Grunt build available as fallback (`build:legacy` commands)
 
 ### Testing Environment  
 - Uses Jest with Puppeteer for browser-based testing
@@ -54,5 +67,14 @@ The project uses **Grunt** as its build system:
 
 ### Code Standards
 - Follows jQuery Core Style Guide
-- JSHint configuration in `.jshintrc`
-- ES6+ code is transpiled via Babel for compatibility
+- JSHint configuration in `.jshintrc` (used by legacy Grunt build)
+- ES6+ code is transpiled via Babel for ES5 compatibility
+- Modern development workflow with Vite provides fast builds and hot reload
+
+### Modern Build System Details
+- **Vite** for fast development and optimized production builds
+- **Rollup** (via Vite) for efficient library bundling with tree-shaking
+- **Babel** for ES5 transpilation targeting `> 1%, last 2 versions, ie >= 9`
+- **Terser** for JavaScript minification with banner preservation
+- **CleanCSS** for CSS minification
+- **Source maps** generated for both JS and CSS files

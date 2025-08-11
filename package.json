@@ -28,10 +28,16 @@
   "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/master.zip",
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@babel/plugin-transform-arrow-functions": "^7.27.1",
+    "@babel/plugin-transform-block-scoping": "^7.28.0",
     "@babel/preset-env": "^7.26.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/jest-environment-puppeteer": "^5.0.6",
+    "@vitejs/plugin-legacy": "^5.4.3",
+    "autoprefixer": "^10.4.21",
+    "clean-css": "^5.3.3",
     "express": "^4.21.2",
     "grunt": "^1.6.1",
     "grunt-babel": "^8.0.0",
@@ -43,13 +49,20 @@
     "grunt-contrib-uglify": "^5.2.2",
     "jest": "^29.7.0",
     "jest-puppeteer": "^11.0.0",
+    "postcss": "^8.5.6",
     "puppeteer": "^23.11.1",
+    "terser": "^5.43.1",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^5.4.19"
   },
   "scripts": {
     "test": "jest --runInBand",
-    "build": "grunt default",
-    "check-build-integrity": "grunt check-build-integrity"
+    "build": "node build.mjs",
+    "build:legacy": "grunt default",
+    "check-build-integrity": "node build.mjs && node check-build-integrity.mjs",
+    "check-build-integrity:legacy": "grunt check-build-integrity",
+    "dev": "vite",
+    "preview": "vite preview"
   }
 }
