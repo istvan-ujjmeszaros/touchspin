@@ -75,8 +75,31 @@ demo/
 └── ...
 ```
 
+## 📦 Version-Specific Builds
+
+Starting with version 4.7.3, Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
+
+### Available Builds
+- **Bootstrap 3**: `jquery.bootstrap-touchspin-bs3.js` (~42KB)
+- **Bootstrap 4**: `jquery.bootstrap-touchspin-bs4.js` (~43KB)  
+- **Bootstrap 5**: `jquery.bootstrap-touchspin-bs5.js` (~41KB)
+- **Universal**: `jquery.bootstrap-touchspin.js` (~62KB) - includes all renderers
+
+### Demo File Mapping
+- `bootstrap3.html` → Uses BS3 specific build
+- `bootstrap4.html` → Uses BS4 specific build  
+- `bootstrap5.html` → Uses BS5 specific build
+- `index-new.html` → Uses universal build (auto-detection)
+
+### Benefits
+1. **Smaller file size** - Only includes renderer for target Bootstrap version
+2. **Better performance** - No runtime version detection overhead
+3. **Optimized structure** - Tailored HTML for each Bootstrap version
+
 ## 🆕 Recent Updates
 
+- ✅ Added version-specific builds for BS3/4/5 (v4.7.3)
+- ✅ Updated all demo files to use optimized builds
 - ✅ Created comprehensive version-specific demos
 - ✅ Added main demo hub with navigation
 - ✅ Implemented Bootstrap version auto-detection showcase

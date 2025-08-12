@@ -1,27 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <title>Bootswatch: Cerulean</title>
+  <title>Bootstrap TouchSpin - Bootstrap 3 RTL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" media="screen">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.css" media="screen">
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+  <link href="../../dist/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <script src="../../dist/jquery.bootstrap-touchspin-bs3.js"></script>
 </head>
 <body class="rtl">
 <div class="container">
 
   <div class="wrapper">
-    <label for="input_group">#input_group:</label>
-    <input id="input_group" type="text" class="form-control" value="50">
+    <label for="testinput_default">#testinput_default:</label>
+    <input id="testinput_default" type="text" class="form-control" value="50">
 
     <script>
-      $("#input_group").TouchSpin({
-        prefix: "$",
-        postfix: "/qty"
+      $("#testinput_default").TouchSpin();
+    </script>
+  </div>
+
+  <div class="wrapper">
+    <label for="input_vertical">#input_vertical:</label>
+    <input id="input_vertical" type="text" class="form-control" value="50">
+
+    <script>
+      $("#input_vertical").TouchSpin({
+        verticalbuttons: true
       });
     </script>
   </div>

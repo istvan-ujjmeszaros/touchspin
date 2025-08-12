@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Working TouchSpin Test</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  <link href="src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  
+  <!-- Include renderers BEFORE main plugin -->
+  <script src="src/renderers/BootstrapRenderer.js"></script>
+  <script src="src/renderers/Bootstrap3Renderer.js"></script>
+  <script>
+    // Create factory for Bootstrap 3
+    class RendererFactory {
+      static createRenderer($, settings, originalinput) {
+        console.log('Creating Bootstrap 3 renderer');
+        return new Bootstrap3Renderer($, settings, originalinput);
+      }
+      static detectBootstrapVersion() {
+        return 3;
+      }
+    }
+    
+    // Expose to global scope
+    window.BootstrapRenderer = BootstrapRenderer;
+    window.Bootstrap3Renderer = Bootstrap3Renderer;
+    window.RendererFactory = RendererFactory;
+    
+    console.log('Renderer classes available:', {
+      BootstrapRenderer: typeof BootstrapRenderer,
+      Bootstrap3Renderer: typeof Bootstrap3Renderer, 
+      RendererFactory: typeof RendererFactory
+    });
+  </script>
+  
+  <!-- Now include main plugin -->
+  <script src="src/jquery.bootstrap-touchspin.js"></script>
+</head>
+
+<body>
+<div class="container">
+  <h1>TouchSpin Test - Bootstrap 3</h1>
+  
+  <div class="form-group">
+    <label for="test1">Basic Test:</label>
+    <input id="test1" type="text" value="50" class="form-control">
+  </div>
+  
+  <div class="form-group">
+    <label for="test2">With Prefix/Postfix:</label>
+    <input id="test2" type="text" value="25" class="form-control">
+  </div>
+  
+  <div class="form-group">
+    <label for="test3">Vertical Buttons:</label>
+    <input id="test3" type="text" value="75" class="form-control">
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      console.log('Initializing TouchSpin...');
+      
+      $("#test1").TouchSpin();
+      console.log('Test1 HTML after init:', $('#test1').parent().html());
+      
+      $("#test2").TouchSpin({
+        prefix: "$",
+        postfix: ".00"
+      });
+      console.log('Test2 HTML after init:', $('#test2').parent().html());
+      
+      $("#test3").TouchSpin({
+        verticalbuttons: true,
+        verticalup: '+',
+        verticaldown: '-'
+      });
+      console.log('Test3 HTML after init:', $('#test3').parent().html());
+    });
+  </script>
+</div>
+
+</body>
+</html>

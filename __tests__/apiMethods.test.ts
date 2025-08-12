@@ -257,7 +257,8 @@ describe('API Methods', () => {
       
       // Change disabled attribute programmatically
       await page.evaluate((sel) => {
-        document.querySelector(sel).setAttribute('disabled', '');
+        const element = document.querySelector(sel);
+        if (element) element.setAttribute('disabled', '');
       }, selector);
       
       // Wait for mutation observer to kick in
@@ -272,7 +273,8 @@ describe('API Methods', () => {
       
       // Change readonly attribute programmatically
       await page.evaluate((sel) => {
-        document.querySelector(sel).setAttribute('readonly', '');
+        const element = document.querySelector(sel);
+        if (element) element.setAttribute('readonly', '');
       }, selector);
       
       // Wait for mutation observer
@@ -290,7 +292,8 @@ describe('API Methods', () => {
       
       // Remove disabled attribute
       await page.evaluate((sel) => {
-        document.querySelector(sel).removeAttribute('disabled');
+        const element = document.querySelector(sel);
+        if (element) element.removeAttribute('disabled');
       }, selector);
       
       // Wait for mutation observer
@@ -314,16 +317,17 @@ describe('API Methods', () => {
     it('should work with multiple elements', async () => {
       // Initialize TouchSpin on multiple elements
       await page.evaluate(() => {
-        (window as any).$('input[type="text"]').each(function() {
-          if (!(window as any).$(this).parent().hasClass('bootstrap-touchspin')) {
-            (window as any).$(this).TouchSpin();
+        const $ = (window as any).$;
+        $('input[type="text"]').each(function(this: HTMLElement) {
+          if (!$(this).parent().hasClass('bootstrap-touchspin')) {
+            $(this).TouchSpin();
           }
         });
       });
       
       // All should have TouchSpin functionality
       const touchspinCount = await page.evaluate(() => {
-        return $('.bootstrap-touchspin').length;
+        return (window as any).$('.bootstrap-touchspin').length;
       });
       
       expect(touchspinCount).toBeGreaterThan(1);

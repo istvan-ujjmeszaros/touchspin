@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Debug TouchSpin</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  <link href="src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <script src="src/renderers/BootstrapRenderer.js"></script>
+  <script src="src/renderers/Bootstrap3Renderer.js"></script>
+  <script>
+    // Simple factory for testing
+    class RendererFactory {
+      static createRenderer($, settings, originalinput) {
+        return new Bootstrap3Renderer($, settings, originalinput);
+      }
+      static detectBootstrapVersion() {
+        return 3;
+      }
+    }
+    window.BootstrapRenderer = BootstrapRenderer;
+    window.Bootstrap3Renderer = Bootstrap3Renderer;
+    window.RendererFactory = RendererFactory;
+  </script>
+  <script src="src/jquery.bootstrap-touchspin.js"></script>
+</head>
+
+<body>
+<div class="container">
+  <h1>Debug Test</h1>
+  
+  <div class="form-group">
+    <label for="test1">Basic Test:</label>
+    <input id="test1" type="text" value="50">
+  </div>
+  
+  <div class="form-group">
+    <label for="test2">With Prefix/Postfix:</label>
+    <input id="test2" type="text" value="25">
+  </div>
+
+  <script>
+    console.log('jQuery version:', $.fn.jquery);
+    console.log('TouchSpin available:', typeof $.fn.TouchSpin);
+    console.log('RendererFactory available:', typeof RendererFactory);
+    console.log('Bootstrap3Renderer available:', typeof Bootstrap3Renderer);
+
+    $("#test1").TouchSpin();
+    
+    $("#test2").TouchSpin({
+      prefix: "$",
+      postfix: ".00"
+    });
+    
+    console.log('TouchSpin initialized');
+    console.log('Test1 HTML:', $('#test1').parent().html());
+    console.log('Test2 HTML:', $('#test2').parent().html());
+  </script>
+</div>
+
+</body>
+</html>

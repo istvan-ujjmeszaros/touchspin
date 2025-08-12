@@ -29,6 +29,7 @@
 - Plugin maintains internal spinner ID counter for multiple instances
 - **Puppeteer Issues**: Tests create fresh page instances per test to avoid "Connection closed" errors
 - Each renderer (Bootstrap3/4/5) is independent and self-contained
+- **File Lock Issues**: If build fails with EPERM/permission errors, STOP and ask user to manually remove locked files - don't keep trying
 
 ## Common Test Issues
 - "Protocol error: Connection closed" → Page lifecycle conflict (fixed in setup)

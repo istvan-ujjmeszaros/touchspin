@@ -212,6 +212,9 @@
           } else if (typeof RendererFactory !== 'undefined' && RendererFactory.createRenderer) {
             // Use renderer factory if available
             renderer = RendererFactory.createRenderer($, settings, originalinput, settings.bootstrap_version);
+          } else if (typeof window !== 'undefined' && window.RendererFactory && window.RendererFactory.createRenderer) {
+            // Try window.RendererFactory as fallback
+            renderer = window.RendererFactory.createRenderer($, settings, originalinput, settings.bootstrap_version);
           } else {
             // Fallback: use legacy rendering (current mixed approach)
             renderer = null;
@@ -938,4 +941,8 @@
   };
 
 }));
+
+// Renderer classes are included before this file during the build process
+// They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
+// and RendererFactory should be available
 

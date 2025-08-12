@@ -72,9 +72,23 @@ class BootstrapRenderer {
    */
   initElements(container) {
     this.container = container;
+    
+    // Look for elements within container first
+    let downButtons = this.$('.bootstrap-touchspin-down', container);
+    let upButtons = this.$('.bootstrap-touchspin-up', container);
+    
+    // If not found in container, look for vertical buttons as siblings of the input
+    if (downButtons.length === 0 || upButtons.length === 0) {
+      const verticalContainer = this.$('.bootstrap-touchspin-vertical-button-wrapper', container.parent());
+      if (verticalContainer.length > 0) {
+        downButtons = this.$('.bootstrap-touchspin-down', verticalContainer);
+        upButtons = this.$('.bootstrap-touchspin-up', verticalContainer);
+      }
+    }
+    
     this.elements = {
-      down: this.$('.bootstrap-touchspin-down', container),
-      up: this.$('.bootstrap-touchspin-up', container),
+      down: downButtons,
+      up: upButtons,
       input: this.$('input', container),
       prefix: this.$('.bootstrap-touchspin-prefix', container).addClass(this.settings.prefix_extraclass),
       postfix: this.$('.bootstrap-touchspin-postfix', container).addClass(this.settings.postfix_extraclass)

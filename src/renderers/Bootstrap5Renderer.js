@@ -120,6 +120,17 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
     return this.container;
   }
 
+  buildVerticalButtons() {
+    return `
+      <span class="bootstrap-touchspin-vertical-button-wrapper">
+        <span class="input-group-btn-vertical">
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+        </span>
+      </span>
+    `;
+  }
+
   updatePrefixPostfix(newsettings, detached) {
     if (newsettings.postfix) {
       const $postfix = this.originalinput.parent().find('.bootstrap-touchspin-postfix');

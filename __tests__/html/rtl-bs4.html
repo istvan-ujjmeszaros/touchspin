@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8">
-  <title>Bootswatch: Cerulean</title>
+  <title>Bootstrap TouchSpin - Bootstrap 4 RTL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-v4-rtl/4.6.2-1/css/bootstrap-rtl.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+  <link href="../../dist/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <script src="../../dist/jquery.bootstrap-touchspin-bs4.js"></script>
 </head>
 <body class="rtl">
 <div class="container">
 
   <div class="wrapper">
-    <label for="input_group">#input_group:</label>
-    <input id="input_group" type="text" class="form-control" value="50">
+    <label for="testinput_default">#testinput_default:</label>
+    <input id="testinput_default" type="text" class="form-control" value="50">
 
     <script>
-      $("#input_group").TouchSpin({
-        prefix: "$",
-        postfix: "/qty"
+      $("#testinput_default").TouchSpin();
+    </script>
+  </div>
+
+  <div class="wrapper">
+    <label for="testinput_decimals">#testinput_decimals:</label>
+    <input id="testinput_decimals" type="text" class="form-control" value="50">
+
+    <script>
+      $("#testinput_decimals").TouchSpin({
+        decimals: 2,
+        step: 0.01
       });
     </script>
   </div>
