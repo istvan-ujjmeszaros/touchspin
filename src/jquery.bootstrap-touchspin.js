@@ -230,7 +230,7 @@
 
         stopSpin();
 
-        originalinput.off('.touchspin');
+        originalinput.off('touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
 
         if ($parent.hasClass('bootstrap-touchspin-injected')) {
           originalinput.siblings().remove();

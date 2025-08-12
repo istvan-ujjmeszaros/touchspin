@@ -512,7 +512,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off(".touchspin");
+          originalinput.off("touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
           if ($parent.hasClass("bootstrap-touchspin-injected")) {
             originalinput.siblings().remove();
             originalinput.unwrap();

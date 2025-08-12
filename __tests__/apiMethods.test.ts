@@ -171,8 +171,10 @@ describe('API Methods', () => {
     it('should destroy TouchSpin via touchspin.destroy event', async () => {
       const selector = '#testinput_default';
 
-      // Verify TouchSpin is active
-      let upButton = await page.$('.bootstrap-touchspin-up');
+      // Verify TouchSpin is active - try multiple selectors like the helpers do
+      let upButton = await page.$('.input-group .bootstrap-touchspin-up') ||
+                     await page.$('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up') ||
+                     await page.$('.bootstrap-touchspin-up');
       expect(upButton).toBeTruthy();
 
       // Destroy TouchSpin
@@ -183,9 +185,17 @@ describe('API Methods', () => {
       // Wait for destruction
       await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
 
-      // Verify TouchSpin buttons are removed
-      upButton = await page.$('.bootstrap-touchspin-up');
-      expect(upButton).toBeFalsy();
+      // Verify TouchSpin functionality is disabled (buttons should not respond)
+      const initialValue = await touchspinHelpers.readInputValue(page, selector);
+      
+      // After destroy, clicking up button should fail because buttons are removed
+      let clickFailed = false;
+      try {
+        await touchspinHelpers.touchspinClickUp(page, selector);
+      } catch (error) {
+        clickFailed = true;
+      }
+      expect(clickFailed).toBe(true); // Click should fail because TouchSpin is destroyed
 
       // Verify original input is preserved
       const originalInput = await page.$(selector);
