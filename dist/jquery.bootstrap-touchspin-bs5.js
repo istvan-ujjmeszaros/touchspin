@@ -224,7 +224,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var prefixhtml = "\n      <span class=\"input-group-text bootstrap-touchspin-prefix bootstrap-touchspin-injected\">".concat(this.settings.prefix, "</span>\n    ");
         var postfixhtml = "\n      <span class=\"input-group-text bootstrap-touchspin-postfix bootstrap-touchspin-injected\">".concat(this.settings.postfix, "</span>\n    ");
         if (this.settings.verticalbuttons) {
-          var verticalHtml = "\n        <span class=\"bootstrap-touchspin-vertical-button-wrapper\">\n          <span class=\"input-group-btn-vertical\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n          </span>\n        </span>\n      ");
+          var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
           var downhtml = "\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down bootstrap-touchspin-injected\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n      ");
@@ -255,7 +255,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        return "\n      <span class=\"bootstrap-touchspin-vertical-button-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
+        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
       }
     }, {
       key: "updatePrefixPostfix",

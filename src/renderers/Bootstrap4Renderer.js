@@ -33,7 +33,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
 
   buildVerticalButtons() {
     return `
-      <span class="input-group-addon bootstrap-touchspin-vertical-button-wrapper">
+      <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper">
         <span class="input-group-btn-vertical">
           <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
           <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>

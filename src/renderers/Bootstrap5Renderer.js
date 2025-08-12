@@ -48,15 +48,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     `;
 
     if (this.settings.verticalbuttons) {
-      // For vertical buttons, we still need a wrapper
-      const verticalHtml = `
-        <span class="bootstrap-touchspin-vertical-button-wrapper">
-          <span class="input-group-btn-vertical">
-            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
-          </span>
-        </span>
-      `;
+      // Use the buildVerticalButtons method for consistency
+      const verticalHtml = this.buildVerticalButtons();
       this.$(verticalHtml).insertAfter(this.originalinput);
     } else {
       // BS5 simplified structure - buttons are direct children of input-group
@@ -122,7 +115,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildVerticalButtons() {
     return `
-      <span class="bootstrap-touchspin-vertical-button-wrapper">
+      <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper">
         <span class="input-group-btn-vertical">
           <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
           <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
