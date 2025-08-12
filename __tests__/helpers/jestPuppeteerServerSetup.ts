@@ -5,7 +5,7 @@ import puppeteer, {Browser, Page} from "puppeteer";
 const puppeteerDebug = process.env.PUPPETEER_DEBUG === '1';
 
 const app = express();
-const port = 8080;
+let port: number;
 
 app.use(express.static(path.join(__dirname, '../..')));
 
@@ -14,7 +14,8 @@ let browser: Browser;
 let page: Page;
 
 beforeAll(async () => {
-  server = app.listen(port, () => {
+  server = app.listen(0, () => {
+    port = server.address().port;
     console.log(`Express server listening on port ${port}...`);
   });
 
