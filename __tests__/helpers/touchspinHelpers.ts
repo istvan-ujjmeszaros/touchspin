@@ -1,11 +1,14 @@
 import {Page} from 'puppeteer';
 
+// Standard timeout constants
+const TOUCHSPIN_EVENT_WAIT = 700;
+
 async function waitForTimeout(ms: number): Promise<void> {
   return new Promise(r => {
     const timeoutId = setTimeout(() => {
       r();
     }, ms);
-    
+
     // Store timeout ID for potential cleanup
     if (typeof globalThis !== 'undefined') {
       const global = globalThis as any;
@@ -62,7 +65,7 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
     const button = await page.$(sel);
     if (button) {
       const isDisabled = await button.evaluate((el) => {
-        return (el as HTMLButtonElement).hasAttribute('disabled') || 
+        return (el as HTMLButtonElement).hasAttribute('disabled') ||
                (el as HTMLButtonElement).disabled;
       });
       if (isDisabled !== undefined) {
@@ -78,29 +81,29 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
   // Get the initial value for comparison
   const initialValue = await readInputValue(page, input_selector);
 
-  
+
   // Find and click the specific button for this input
   const clickResult = await page.evaluate((inputSel) => {
     const input = document.querySelector(inputSel);
     if (!input) return { success: false, error: 'Input not found' };
-    
+
     // Find the closest input-group or wrapper that contains both input and buttons
-    const parent = input.closest('.input-group') || 
-                  input.closest('.bootstrap-touchspin') || 
+    const parent = input.closest('.input-group') ||
+                  input.closest('.bootstrap-touchspin') ||
                   input.parentElement;
-    
+
     if (!parent) return { success: false, error: 'Parent container not found' };
-    
+
     const button = parent.querySelector('.bootstrap-touchspin-up') as HTMLButtonElement;
     if (!button) return { success: false, error: 'Up button not found in parent' };
-    
+
     // Check if button is clickable
-    const isClickable = !button.disabled && 
+    const isClickable = !button.disabled &&
                        !button.hasAttribute('disabled') &&
                        button.offsetParent !== null;
-    
+
     if (!isClickable) return { success: false, error: 'Button not clickable' };
-    
+
     // Trigger mousedown and mouseup events (what TouchSpin expects)
     const $ = (window as any).$;
     if ($) {
@@ -114,9 +117,9 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
       // Fallback to click if jQuery not available
       button.click();
     }
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       buttonInfo: {
         className: button.className,
         id: button.id,
@@ -124,9 +127,9 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
       }
     };
   }, input_selector);
-  
 
-  
+
+
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
     if (clickResult.error === 'Button not clickable') {
@@ -191,12 +194,12 @@ async function waitForTouchSpinReady(page: Page, input_selector: string): Promis
     (selector) => {
       const input = document.querySelector(selector) as HTMLInputElement;
       if (!input) return false;
-      
+
       // Check if TouchSpin has been initialized by looking for generated structure
-      const hasButtons = 
+      const hasButtons =
         document.querySelector('.bootstrap-touchspin-up') !== null &&
         document.querySelector('.bootstrap-touchspin-down') !== null;
-      
+
       return hasButtons;
     },
     { timeout: 5000 },
@@ -208,29 +211,29 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
   // Get the initial value for comparison
   const initialValue = await readInputValue(page, input_selector);
 
-  
+
   // Find and click the specific button for this input
   const clickResult = await page.evaluate((inputSel) => {
     const input = document.querySelector(inputSel);
     if (!input) return { success: false, error: 'Input not found' };
-    
+
     // Find the closest input-group or wrapper that contains both input and buttons
-    const parent = input.closest('.input-group') || 
-                  input.closest('.bootstrap-touchspin') || 
+    const parent = input.closest('.input-group') ||
+                  input.closest('.bootstrap-touchspin') ||
                   input.parentElement;
-    
+
     if (!parent) return { success: false, error: 'Parent container not found' };
-    
+
     const button = parent.querySelector('.bootstrap-touchspin-down') as HTMLButtonElement;
     if (!button) return { success: false, error: 'Down button not found in parent' };
-    
+
     // Check if button is clickable
-    const isClickable = !button.disabled && 
+    const isClickable = !button.disabled &&
                        !button.hasAttribute('disabled') &&
                        button.offsetParent !== null;
-    
+
     if (!isClickable) return { success: false, error: 'Button not clickable' };
-    
+
     // Trigger mousedown and mouseup events (what TouchSpin expects)
     const $ = (window as any).$;
     if ($) {
@@ -244,9 +247,9 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
       // Fallback to click if jQuery not available
       button.click();
     }
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       buttonInfo: {
         className: button.className,
         id: button.id,
@@ -254,9 +257,9 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
       }
     };
   }, input_selector);
-  
 
-  
+
+
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
     if (clickResult.error === 'Button not clickable') {
@@ -283,4 +286,18 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
   }
 }
 
-export default { waitForTimeout, cleanupTimeouts, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue, waitForTouchSpinReady };
+export default {
+  waitForTimeout,
+  cleanupTimeouts,
+  readInputValue,
+  setInputAttr,
+  checkTouchspinUpIsDisabled,
+  touchspinClickUp,
+  touchspinClickDown,
+  changeEventCounter,
+  countEvent,
+  countChangeWithValue,
+  fillWithValue,
+  waitForTouchSpinReady,
+  TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
+};
