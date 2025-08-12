@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap TouchSpin - Bootstrap 5 RTL</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" crossorigin="anonymous">
+
+  <!-- BOOTSTRAP 5 RTL -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+</head>
+
+<body class="rtl">
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="wrapper">
+        <label for="testinput_default" class="form-label">#testinput_default:</label>
+        <input id="testinput_default" type="text" value="50" name="testinput_default" class="form-control">
+
+        <script>
+          $("#testinput_default").TouchSpin();
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="testinput_decimals" class="form-label">#testinput_decimals:</label>
+        <input id="testinput_decimals" type="number" value="50" name="testinput_decimals" class="form-control">
+
+        <script>
+          $("#testinput_decimals").TouchSpin({
+            decimals: 2,
+            step: 0.01
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_sm" class="form-label">#input_group_sm:</label>
+        <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50">
+
+        <script>
+          $("#input_group_sm").TouchSpin({
+            prefix: "$",
+            postfix: "/qty"
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_vertical" class="form-label">#input_vertical:</label>
+        <input id="input_vertical" type="text" class="form-control" value="50">
+
+        <script>
+          $("#input_vertical").TouchSpin({
+            verticalbuttons: true
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_vertical" class="form-label">#input_group_vertical:</label>
+        <input id="input_group_vertical" type="text" class="form-control" value="50">
+
+        <script>
+          $("#input_group_vertical").TouchSpin({
+            prefix: "$",
+            postfix: "/qty",
+            verticalbuttons: true
+          });
+        </script>
+      </div>
+
+      <!-- Bootstrap 5 RTL no longer has input-group-prepend/append -->
+      <div class="wrapper">
+        <label for="input_group_from_dom_prefix_postfix" class="form-label">#input_group_from_dom_prefix_postfix:</label>
+        <div class="input-group">
+          <span class="input-group-text">pre</span>
+          <input id="input_group_from_dom_prefix_postfix" type="text" class="form-control" value="50">
+          <span class="input-group-text">post</span>
+        </div>
+
+        <script>
+          $("#input_group_from_dom_prefix_postfix").TouchSpin();
+        </script>
+      </div>
+
+    </div>
+
+    <div class="col-md-8" style="height:100vh;">
+      <h6>Events</h6>
+      <pre id="events_log"
+           style="height:200px;overflow:auto;outline:1px dotted gray;height:calc(100% - 50px);margin-top:15px;"></pre>
+    </div>
+
+    <script>
+      var events_log = $("#events_log"),
+        text = "";
+
+      function writeLine(input, line) {
+        text += '#' + input.attr('id') + ': ' + line + "\n";
+        events_log.text(text);
+        events_log.scrollTop(
+          events_log[0].scrollHeight - events_log.height()
+        );
+      }
+
+      [
+        "change",
+        "touchspin.on.startspin",
+        "touchspin.on.startupspin",
+        "touchspin.on.startdownspin",
+        "touchspin.on.stopspin",
+        "touchspin.on.stopupspin",
+        "touchspin.on.stopdownspin",
+        "touchspin.on.min",
+        "touchspin.on.max"
+      ].forEach(function (eventName) {
+        $("input").on(eventName, function (e) {
+          var line = eventName;
+          if (eventName === "change") {
+            line += "[" + $(this).val() + "]";
+          }
+          writeLine($(this), line);
+        });
+      });
+    </script>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -28,22 +28,70 @@ beforeAll(async () => {
   } else {
     browser = await puppeteer.launch({
       headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Better stability
     });
   }
-});
+}, 30000); // Increase timeout for browser launch
 
 afterAll(async () => {
-  await browser.close();
-  await new Promise((resolve) => server.close(resolve));
-});
+  // Close page first if it exists
+  if (page && !page.isClosed()) {
+    await page.close().catch(() => {}); // Ignore errors if already closed
+  }
+  
+  // Close browser
+  if (browser) {
+    await browser.close().catch(() => {}); // Ignore errors if already closed
+  }
+  
+  // Close server
+  if (server) {
+    await new Promise((resolve) => {
+      server.close(() => resolve(undefined));
+    });
+  }
+}, 30000);
 
 beforeEach(async () => {
-  if (!page) {
-    // Create a new page if it doesn't exist
-    page = await browser.newPage();
+  // Close existing page if it exists and create a new one
+  if (page && !page.isClosed()) {
+    await page.close().catch(() => {}); // Ignore errors if already closed
   }
+  
+  // Create a fresh page for each test
+  page = await browser.newPage();
+  
+  // Set reasonable timeouts and viewport
+  await page.setDefaultTimeout(10000);
+  await page.setViewport({ width: 1280, height: 720 });
+  
+  // Navigate to default test page
+  await page.goto(`http://localhost:${port}/__tests__/html/index-bs4.html`, {
+    waitUntil: 'networkidle0',
+    timeout: 10000
+  });
+}, 15000);
 
-  await page.goto(`http://localhost:${port}/__tests__/html/index-bs4.html`);
-});
+afterEach(async () => {
+  // Clean up page resources after each test
+  if (page && !page.isClosed()) {
+    // Clear any remaining event listeners and timeouts
+    await page.evaluate(() => {
+      // Clear all timeouts
+      let id = window.setTimeout(() => {}, 0);
+      while (id--) {
+        window.clearTimeout(id);
+      }
+      
+      // Clear all intervals  
+      id = window.setInterval(() => {}, 0);
+      while (id--) {
+        window.clearInterval(id);
+      }
+    }).catch(() => {}); // Ignore errors
+    
+    // Don't close page here - let beforeEach handle it
+  }
+}, 10000);
 
 export { page, port };

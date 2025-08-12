@@ -21,13 +21,13 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
       inputGroupSmall: 'input-group-sm',
       inputGroupLarge: 'input-group-lg',
       
-      // Button wrapper classes - same as BS4
-      inputGroupBtn: 'input-group-btn', // Removed in BS5, but kept for backward compatibility
-      inputGroupPrepend: 'input-group-prepend', // Removed in BS5
-      inputGroupAppend: 'input-group-append', // Removed in BS5
+      // Button wrapper classes - BS5 doesn't use these
+      inputGroupBtn: '', // Removed in BS5
+      inputGroupPrepend: '', // Removed in BS5
+      inputGroupAppend: '', // Removed in BS5
       
       // BS5 simplified structure - no prepend/append wrappers needed
-      inputGroupAddon: 'input-group-addon', // Not used in BS5
+      inputGroupAddon: '', // Not used in BS5
       inputGroupText: 'input-group-text' // Still used in BS5
     };
   }
@@ -59,7 +59,7 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
       `;
       this.$(verticalHtml).insertAfter(this.originalinput);
     } else {
-      // BS5 simplified structure - buttons can be direct children of input-group
+      // BS5 simplified structure - buttons are direct children of input-group
       const downhtml = `
         <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down bootstrap-touchspin-injected" type="button">${this.settings.buttondown_txt}</button>
       `;
@@ -68,7 +68,7 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
         <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up bootstrap-touchspin-injected" type="button">${this.settings.buttonup_txt}</button>
       `;
 
-      // Insert buttons directly
+      // Insert buttons directly as siblings of the input
       this.$(downhtml).insertBefore(this.originalinput);
       this.$(uphtml).insertAfter(this.originalinput);
     }

@@ -92,11 +92,102 @@ describe('Bootstrap Renderer System', () => {
     });
   });
 
-  describe('Bootstrap 5 Renderer (needs BS5 test file)', () => {
-    it('should be tested with Bootstrap 5 specific features', async () => {
-      // Note: This test currently skipped because no BS5 test file exists
-      // Should test direct input-group-text usage without prepend/append wrappers
-      expect(true).toBe(true); // Placeholder until BS5 test file is created
+  describe('Bootstrap 5 Renderer', () => {
+    beforeEach(async () => {
+      await page.goto(`http://localhost:${port}/__tests__/html/index-bs5.html`);
+    });
+
+    it('should use direct input-group-text without prepend/append wrappers', async () => {
+      const selector = '#input_group_sm';
+      
+      // Check for direct input-group-text elements (no prepend/append wrappers)
+      const prefixText = await page.$('.bootstrap-touchspin-prefix.input-group-text');
+      const postfixText = await page.$('.bootstrap-touchspin-postfix.input-group-text');
+      
+      expect(prefixText).toBeTruthy();
+      expect(postfixText).toBeTruthy();
+
+      // Verify no prepend/append wrapper classes exist
+      const prepend = await page.$('.input-group-prepend');
+      const append = await page.$('.input-group-append');
+      
+      expect(prepend).toBeFalsy();
+      expect(append).toBeFalsy();
+    });
+
+    it('should use direct button placement in input groups', async () => {
+      const selector = '#testinput_default';
+      
+      // Check that buttons are direct children of input-group
+      const upButton = await page.$('.input-group > .bootstrap-touchspin-up');
+      const downButton = await page.$('.input-group > .bootstrap-touchspin-down');
+      
+      expect(upButton).toBeTruthy();
+      expect(downButton).toBeTruthy();
+    });
+
+    it('should function correctly with Bootstrap 5 structure', async () => {
+      const selector = '#testinput_default';
+      
+      // Test basic functionality
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+      
+      await touchspinHelpers.touchspinClickDown(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
+    });
+
+    it('should handle existing input-group-text elements correctly', async () => {
+      const selector = '#input_group_from_dom_prefix_postfix';
+      
+      // Check that existing input-group-text elements are preserved
+      const existingElements = await page.$$('.input-group .input-group-text:not(.bootstrap-touchspin-prefix):not(.bootstrap-touchspin-postfix)');
+      expect(existingElements.length).toBeGreaterThan(0);
+      
+      // Test that TouchSpin still works
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    });
+
+    it('should properly handle size classes for input groups', async () => {
+      const selector = '#input_group_sm';
+      const inputGroupClasses = await page.$eval(selector, (input: Element) => {
+        const inputElement = input as HTMLInputElement;
+        return inputElement.parentElement?.className;
+      });
+      
+      expect(inputGroupClasses).toContain('input-group-sm');
+    });
+
+    it('should render vertical buttons correctly in Bootstrap 5', async () => {
+      const selector = '#input_vertical';
+      const verticalWrapper = await page.$('.bootstrap-touchspin-vertical-button-wrapper');
+      expect(verticalWrapper).toBeTruthy();
+
+      // Test vertical button functionality
+      await page.click('.bootstrap-touchspin-up');
+      await touchspinHelpers.waitForTimeout(200);
+      
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    });
+
+    it('should handle form-control size classes correctly', async () => {
+      // Test that form-control-sm and form-control-lg are properly detected
+      const smallInput = await page.$('#input_group_sm.form-control-sm');
+      const largeInput = await page.$('#input_group_lg.form-control-lg');
+      
+      expect(smallInput).toBeTruthy();
+      expect(largeInput).toBeTruthy();
+    });
+
+    it('should work with Bootstrap 5 form labels', async () => {
+      // BS5 uses .form-label class instead of just label
+      const formLabels = await page.$$('.form-label');
+      expect(formLabels.length).toBeGreaterThan(0);
+      
+      // Verify accessibility - labels should be associated with inputs
+      const labelFor = await page.$eval('label[for="testinput_default"]', el => el.getAttribute('for'));
+      expect(labelFor).toBe('testinput_default');
     });
   });
 

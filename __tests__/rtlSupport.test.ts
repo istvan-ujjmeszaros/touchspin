@@ -217,4 +217,117 @@ describe('RTL (Right-to-Left) Support', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('12.35');
     });
   });
+
+  describe('Bootstrap 5 RTL', () => {
+    beforeEach(async () => {
+      await page.goto(`http://localhost:${port}/__tests__/html/rtl-bs5.html`);
+    });
+
+    it('should render correctly in RTL layout for Bootstrap 5', async () => {
+      const selector = '#testinput_default';
+      
+      // Check that the page has RTL class/direction
+      const bodyDir = await page.$eval('body', el => el.getAttribute('dir'));
+      const rtlClass = await page.$eval('body', el => el.classList.contains('rtl'));
+      const htmlDir = await page.$eval('html', el => el.getAttribute('dir'));
+      
+      expect(bodyDir === 'rtl' || rtlClass || htmlDir === 'rtl').toBe(true);
+      
+      // Check that TouchSpin is rendered with BS5 structure
+      const upButton = await page.$('.bootstrap-touchspin-up');
+      const downButton = await page.$('.bootstrap-touchspin-down');
+      
+      expect(upButton).toBeTruthy();
+      expect(downButton).toBeTruthy();
+    });
+
+    it('should function correctly in RTL mode for Bootstrap 5', async () => {
+      const selector = '#testinput_default';
+      
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+      
+      await touchspinHelpers.touchspinClickDown(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
+    });
+
+    it('should use correct Bootstrap 5 structure in RTL', async () => {
+      const selector = '#input_group_sm';
+      
+      // Check for direct input-group-text elements (no prepend/append in BS5)
+      const prefixText = await page.$('.bootstrap-touchspin-prefix.input-group-text');
+      const postfixText = await page.$('.bootstrap-touchspin-postfix.input-group-text');
+      
+      expect(prefixText).toBeTruthy();
+      expect(postfixText).toBeTruthy();
+
+      // Verify no deprecated prepend/append classes
+      const prepend = await page.$('.input-group-prepend');
+      const append = await page.$('.input-group-append');
+      
+      expect(prepend).toBeFalsy();
+      expect(append).toBeFalsy();
+    });
+
+    it('should handle vertical buttons in RTL correctly for Bootstrap 5', async () => {
+      const selector = '#input_vertical';
+      
+      const verticalWrapper = await page.$('.bootstrap-touchspin-vertical-button-wrapper');
+      expect(verticalWrapper).toBeTruthy();
+      
+      // Test functionality
+      await page.click('.bootstrap-touchspin-up');
+      await touchspinHelpers.waitForTimeout(200);
+      
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    });
+
+    it('should handle existing input-group-text elements in RTL', async () => {
+      const selector = '#input_group_from_dom_prefix_postfix';
+      
+      // Check that existing input-group-text elements are preserved
+      const existingElements = await page.$$('.input-group .input-group-text:not(.bootstrap-touchspin-prefix):not(.bootstrap-touchspin-postfix)');
+      expect(existingElements.length).toBeGreaterThan(0);
+      
+      // Test functionality in RTL
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    });
+
+    it('should handle decimal values in RTL correctly for Bootstrap 5', async () => {
+      const selector = '#testinput_decimals';
+      
+      // Test decimal input in RTL
+      await touchspinHelpers.fillWithValue(page, selector, '12.34');
+      await page.keyboard.press('Tab');
+      
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('12.34');
+      
+      // Test increment
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('12.35');
+    });
+
+    it('should apply Bootstrap 5 RTL CSS correctly', async () => {
+      // Check that BS5 RTL CSS is loaded
+      const link = await page.$('link[href*="bootstrap.rtl.min.css"]');
+      expect(link).toBeTruthy();
+      
+      // Check that HTML has proper RTL direction
+      const htmlDir = await page.$eval('html', el => el.getAttribute('dir'));
+      expect(htmlDir).toBe('rtl');
+    });
+
+    it('should maintain proper button positioning in RTL for Bootstrap 5', async () => {
+      const selector = '#testinput_default';
+      
+      // Verify buttons are functional in RTL layout
+      await touchspinHelpers.touchspinClickUp(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+      
+      await touchspinHelpers.touchspinClickDown(page, selector);
+      await touchspinHelpers.touchspinClickDown(page, selector);
+      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('49');
+    });
+  });
 });

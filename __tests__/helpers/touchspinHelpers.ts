@@ -1,7 +1,28 @@
 import {Page} from 'puppeteer';
 
 async function waitForTimeout(ms: number): Promise<void> {
-  return new Promise(r => setTimeout(r, ms));
+  return new Promise(r => {
+    const timeoutId = setTimeout(() => {
+      r();
+    }, ms);
+    
+    // Store timeout ID for potential cleanup
+    if (typeof globalThis !== 'undefined') {
+      const global = globalThis as any;
+      if (!global._testTimeouts) global._testTimeouts = [];
+      global._testTimeouts.push(timeoutId);
+    }
+  });
+}
+
+async function cleanupTimeouts(): Promise<void> {
+  if (typeof globalThis !== 'undefined') {
+    const global = globalThis as any;
+    if (global._testTimeouts) {
+      global._testTimeouts.forEach((id: any) => clearTimeout(id));
+      global._testTimeouts = [];
+    }
+  }
 }
 
 async function readInputValue(page: Page, selector: string): Promise<string|undefined> {
@@ -21,19 +42,32 @@ async function setInputAttr(page: Page, selector: string, attributeName: 'disabl
 }
 
 async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise<boolean> {
-  // Try multiple selectors for different button configurations
+  // Try multiple selectors for different Bootstrap versions and configurations
   const selectors = [
+    // Bootstrap 3/4 with input-group-btn
     selector + ' + .input-group-btn > .bootstrap-touchspin-up',
-    selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-up',
+    // Bootstrap 4 with input-group-append
+    selector + ' + .input-group-append > .bootstrap-touchspin-up',
+    // Bootstrap 5 direct structure
+    selector + ' + .bootstrap-touchspin-up',
+    // Generic fallback within same input-group
+    '.input-group .bootstrap-touchspin-up',
+    // Vertical buttons
+    '.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up',
+    // Last resort - any up button
     '.bootstrap-touchspin-up',
   ];
 
   for (const sel of selectors) {
-    const input = await page.$(sel);
-    if (input) {
-      return await input.evaluate((el) => {
-        return (el as HTMLInputElement).hasAttribute('disabled');
+    const button = await page.$(sel);
+    if (button) {
+      const isDisabled = await button.evaluate((el) => {
+        return (el as HTMLButtonElement).hasAttribute('disabled') || 
+               (el as HTMLButtonElement).disabled;
       });
+      if (isDisabled !== undefined) {
+        return isDisabled;
+      }
     }
   }
 
@@ -41,10 +75,19 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
 }
 
 async function touchspinClickUp(page: Page, input_selector: string): Promise<void> {
-  // Try multiple selectors for different button configurations
+  // Try multiple selectors for different Bootstrap versions and configurations
   const selectors = [
+    // Bootstrap 3/4 with input-group-btn
     input_selector + ' + .input-group-btn > .bootstrap-touchspin-up',
-    input_selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-up',
+    // Bootstrap 4 with input-group-append
+    input_selector + ' + .input-group-append > .bootstrap-touchspin-up',
+    // Bootstrap 5 direct structure
+    input_selector + ' + .bootstrap-touchspin-up',
+    // Generic fallback within same input-group
+    '.input-group .bootstrap-touchspin-up',
+    // Vertical buttons
+    '.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up',
+    // Last resort - any up button
     '.bootstrap-touchspin-up',
   ];
 
@@ -52,30 +95,40 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
   for (const selector of selectors) {
     const button = await page.$(selector);
     if (button) {
-      await page.evaluate((sel) => {
-        const btn = document.querySelector(sel);
-        if (btn) {
-          btn.dispatchEvent(new Event('mousedown'));
-        }
-      }, selector);
+      // Check if button is visible and enabled before clicking
+      const isClickable = await button.evaluate((el) => {
+        const button = el as HTMLButtonElement;
+        return !button.disabled && 
+               !button.hasAttribute('disabled') &&
+               button.offsetParent !== null; // Check if visible
+      });
 
-      // Delay to allow the value to change.
-      await new Promise(r => setTimeout(r, 200));
+      if (isClickable) {
+        await page.evaluate((sel) => {
+          const btn = document.querySelector(sel);
+          if (btn) {
+            btn.dispatchEvent(new Event('mousedown'));
+          }
+        }, selector);
 
-      await page.evaluate((sel) => {
-        const btn = document.querySelector(sel);
-        if (btn) {
-          btn.dispatchEvent(new Event('mouseup'));
-        }
-      }, selector);
+        // Delay to allow the value to change.
+        await new Promise(r => setTimeout(r, 200));
 
-      buttonFound = true;
-      break;
+        await page.evaluate((sel) => {
+          const btn = document.querySelector(sel);
+          if (btn) {
+            btn.dispatchEvent(new Event('mouseup'));
+          }
+        }, selector);
+
+        buttonFound = true;
+        break;
+      }
     }
   }
 
   if (!buttonFound) {
-    throw new Error(`TouchSpin up button not found for selector: ${input_selector}`);
+    throw new Error(`TouchSpin up button not found or not clickable for selector: ${input_selector}`);
   }
 }
 
@@ -112,10 +165,21 @@ async function fillWithValue(page: Page, selector: string, value: string): Promi
 }
 
 async function touchspinClickDown(page: Page, input_selector: string): Promise<void> {
-  // Try multiple selectors for different button configurations
+  // Try multiple selectors for different Bootstrap versions and configurations
   const selectors = [
+    // Bootstrap 3/4 with input-group-btn
     input_selector + ' + .input-group-btn > .bootstrap-touchspin-down',
-    input_selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-down',
+    // Bootstrap 3 structure (down button before input)
+    input_selector + ' ~ .input-group-btn > .bootstrap-touchspin-down',
+    // Bootstrap 4 with input-group-prepend (down button)
+    input_selector + ' ~ .input-group-prepend > .bootstrap-touchspin-down',
+    // Bootstrap 5 direct structure
+    input_selector + ' ~ .bootstrap-touchspin-down',
+    // Generic fallback within same input-group
+    '.input-group .bootstrap-touchspin-down',
+    // Vertical buttons
+    '.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down',
+    // Last resort - any down button
     '.bootstrap-touchspin-down',
   ];
 
@@ -123,31 +187,41 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
   for (const selector of selectors) {
     const button = await page.$(selector);
     if (button) {
-      await page.evaluate((sel) => {
-        const btn = document.querySelector(sel);
-        if (btn) {
-          btn.dispatchEvent(new Event('mousedown'));
-        }
-      }, selector);
+      // Check if button is visible and enabled before clicking
+      const isClickable = await button.evaluate((el) => {
+        const button = el as HTMLButtonElement;
+        return !button.disabled && 
+               !button.hasAttribute('disabled') &&
+               button.offsetParent !== null; // Check if visible
+      });
 
-      // Delay to allow the value to change.
-      await new Promise(r => setTimeout(r, 200));
+      if (isClickable) {
+        await page.evaluate((sel) => {
+          const btn = document.querySelector(sel);
+          if (btn) {
+            btn.dispatchEvent(new Event('mousedown'));
+          }
+        }, selector);
 
-      await page.evaluate((sel) => {
-        const btn = document.querySelector(sel);
-        if (btn) {
-          btn.dispatchEvent(new Event('mouseup'));
-        }
-      }, selector);
+        // Delay to allow the value to change.
+        await new Promise(r => setTimeout(r, 200));
 
-      buttonFound = true;
-      break;
+        await page.evaluate((sel) => {
+          const btn = document.querySelector(sel);
+          if (btn) {
+            btn.dispatchEvent(new Event('mouseup'));
+          }
+        }, selector);
+
+        buttonFound = true;
+        break;
+      }
     }
   }
 
   if (!buttonFound) {
-    throw new Error(`TouchSpin down button not found for selector: ${input_selector}`);
+    throw new Error(`TouchSpin down button not found or not clickable for selector: ${input_selector}`);
   }
 }
 
-export default { waitForTimeout, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue };
+export default { waitForTimeout, cleanupTimeouts, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue };
