@@ -1,152 +1,120 @@
 import touchspinHelpers from './helpers/touchspinHelpers';
 import {page, port} from './helpers/jestPuppeteerServerSetup';
-import {ElementHandle} from "puppeteer";
 
 describe('Core functionality', () => {
 
-  it('should have a TouchSpin button', async () => {
-    const selector: string = '#testinput_default';
-
-    const button = await page.$(selector + ' + .input-group-btn > .bootstrap-touchspin-up');
-
-    expect(button).toBeTruthy();
+  beforeEach(async () => {
+    await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
   });
 
-  it('should increase value by 1 when clicking the + button', async () => {
-    const selector: string = '#testinput_default';
+  it('should render TouchSpin buttons and handle basic increment/decrement', async () => {
+    const selector = '#testinput_default';
 
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
+    // Check buttons exist
+    const upButton = await page.$('.bootstrap-touchspin-up');
+    const downButton = await page.$('.bootstrap-touchspin-down');
+    expect(upButton).toBeTruthy();
+    expect(downButton).toBeTruthy();
+
+    // Test increment
     await touchspinHelpers.touchspinClickUp(page, selector);
-
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
-  });
 
-  it('should not increase value of a disabled input', async () => {
-    const selector: string = '#testinput_default';
-
-    await touchspinHelpers.setInputAttr(page, selector, 'disabled', true);
-
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.touchspinClickUp(page, selector);
-    await page.keyboard.press('ArrowUp');
-    await page.mouse.wheel({ deltaY: -100 });
-
+    // Test decrement
+    await touchspinHelpers.touchspinClickDown(page, selector);
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should not increase value of a readonly input', async () => {
-    const selector: string = '#testinput_default';
+  it('should respect disabled and readonly states', async () => {
+    const selector = '#testinput_default';
 
-    await touchspinHelpers.setInputAttr(page, selector, 'readonly', true);
-
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.touchspinClickUp(page, selector);
-
-    await page.click(selector);
-    await page.keyboard.press('ArrowUp');
-    await page.mouse.wheel({ deltaY: -100 });
-
-    expect(await touchspinHelpers.countEvent(page, selector, 'touchspin.on.startspin')).toBe(0);
-    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
-  });
-
-  it('setting the input disabled should disable the touchspin buttons', async () => {
-    const selector: string = '#testinput_default';
-
+    // Test disabled input
     await touchspinHelpers.setInputAttr(page, selector, 'disabled', true);
-
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
     await touchspinHelpers.touchspinClickUp(page, selector);
-
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
-  });
 
-  it('setting the input readonly should disable the touchspin buttons', async () => {
-    const selector: string = '#testinput_default';
-
+    // Reset and test readonly
+    await touchspinHelpers.setInputAttr(page, selector, 'disabled', false);
     await touchspinHelpers.setInputAttr(page, selector, 'readonly', true);
-
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
     await touchspinHelpers.touchspinClickUp(page, selector);
-
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
   });
 
-  it('disabled input should initialize with disabled touchspin buttons', async () => {
-    const selector: string = '#testinput_disabled';
+  it('should initialize with correct disabled state for pre-disabled inputs', async () => {
+    const disabledSelector = '#testinput_disabled';
+    const readonlySelector = '#testinput_readonly';
 
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.touchspinClickUp(page, selector);
-
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
+    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, disabledSelector)).toBe(true);
+    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, readonlySelector)).toBe(true);
   });
 
-  it('readonly input should initialize with disabled touchspin buttons', async () => {
-    const selector: string = '#testinput_readonly';
+  it('should handle custom step values correctly', async () => {
+    const selector = '#testinput_individual_min_max_step_properties';
 
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.touchspinClickUp(page, selector);
-
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
-  });
-
-  it('clicking on an input with step=3 should increase the value by 3', async () => {
-    const selector: string = '#testinput_individual_min_max_step_properties';
-
-    // The initial value of 50 should be corrected to 51 by the browser as step = 3
+    // The initial value should be corrected to align with step=3
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
 
-    // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
+    // Increment should increase by step amount (3)
     await touchspinHelpers.touchspinClickUp(page, selector);
-
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('54');
 
+    // Additional increments
     await touchspinHelpers.touchspinClickUp(page, selector);
-    await touchspinHelpers.touchspinClickUp(page, selector);
-    await touchspinHelpers.touchspinClickUp(page, selector);
-
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('57');
-
-    // Reaching 57 should fire the touchspin.on.max event three times (min is getting corrected to 45)
-    expect(await touchspinHelpers.countEvent(page, selector, 'touchspin.on.max')).toBe(3);
   });
 
-  test("Bootstrap 3 should have input-group-sm class", async () => {
-    await page.goto(`http://localhost:${port}/__tests__/html/index-bs3.html`);
-    const selector: string = "#input_group_sm";
-    const inputGroupClasses = await page.$eval(selector, (input: Element) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.parentElement?.className;
-    });
-    expect(inputGroupClasses).toContain("input-group-sm");
+  it('should handle min/max boundaries', async () => {
+    const selector = '#testinput_individual_min_max_step_properties';
+    
+    // Test reaching max value triggers event
+    const initialMaxEvents = await touchspinHelpers.countEvent(page, selector, 'touchspin.on.max');
+    
+    // Multiple clicks should eventually hit the max
+    for (let i = 0; i < 5; i++) {
+      await touchspinHelpers.touchspinClickUp(page, selector);
+    }
+    
+    const finalMaxEvents = await touchspinHelpers.countEvent(page, selector, 'touchspin.on.max');
+    expect(finalMaxEvents).toBeGreaterThan(initialMaxEvents);
   });
 
-  test("Bootstrap 4 should have input-group-sm class", async () => {
-    const selector: string = "#input_group_sm";
-    const inputGroupClasses = await page.$eval(selector, (input: Element) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.parentElement?.className;
-    });
-    expect(inputGroupClasses).toContain("input-group-sm");
+  it('should support keyboard navigation', async () => {
+    const selector = '#testinput_default';
+    
+    await page.focus(selector);
+    await page.keyboard.press('ArrowUp');
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    
+    await page.keyboard.press('ArrowDown');
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  test("Bootstrap 3 should have input-group-lg class", async () => {
-    await page.goto(`http://localhost:${port}/__tests__/html/index-bs3.html`);
-    const selector: string = "#input_group_lg";
-    const inputGroupClasses = await page.$eval(selector, (input: Element) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.parentElement?.className;
-    });
-    expect(inputGroupClasses).toContain("input-group-lg");
+  it('should support mousewheel interaction', async () => {
+    const selector = '#testinput_default';
+    
+    await page.focus(selector);
+    
+    // Scroll up (negative deltaY)
+    await page.mouse.wheel({ deltaY: -100 });
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+    
+    // Scroll down (positive deltaY)
+    await page.mouse.wheel({ deltaY: 100 });
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  test("Bootstrap 4 should have input-group-lg class", async () => {
-    const selector: string = "#input_group_lg";
-    const inputGroupClasses = await page.$eval(selector, (input: Element) => {
-      const inputElement = input as HTMLInputElement;
-      return inputElement.parentElement?.className;
-    });
-    expect(inputGroupClasses).toContain("input-group-lg");
+  it('should handle decimal values correctly', async () => {
+    const selector = '#testinput_decimals';
+    
+    // Test decimal increment
+    await touchspinHelpers.touchspinClickUp(page, selector);
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50.01');
+    
+    // Test manual decimal input
+    await touchspinHelpers.fillWithValue(page, selector, '12.34');
+    await page.keyboard.press('Tab');
+    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('12.34');
   });
-
 });

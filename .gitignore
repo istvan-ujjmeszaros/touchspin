@@ -7,3 +7,6 @@ index_demo_site.html
 node_modules
 bower_components
 .claude/settings.local.json
+
+# Temporary files folder for debugging and development
+tmp/

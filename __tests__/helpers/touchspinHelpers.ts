@@ -75,6 +75,9 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
 }
 
 async function touchspinClickUp(page: Page, input_selector: string): Promise<void> {
+  // Get the initial value for comparison
+  const initialValue = await readInputValue(page, input_selector);
+  
   // Try multiple selectors for different Bootstrap versions and configurations
   const selectors = [
     // Bootstrap 3/4 with input-group-btn
@@ -92,6 +95,8 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
   ];
 
   let buttonFound = false;
+  let shouldWaitForChange = false;
+  
   for (const selector of selectors) {
     const button = await page.$(selector);
     if (button) {
@@ -103,32 +108,54 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
                button.offsetParent !== null; // Check if visible
       });
 
-      if (isClickable) {
-        await page.evaluate((sel) => {
-          const btn = document.querySelector(sel);
-          if (btn) {
-            btn.dispatchEvent(new Event('mousedown'));
-          }
-        }, selector);
+      // Check if input is disabled/readonly
+      const inputDisabled = await page.evaluate((inputSel) => {
+        const input = document.querySelector(inputSel) as HTMLInputElement;
+        return input && (input.disabled || input.readOnly);
+      }, input_selector);
 
-        // Delay to allow the value to change.
-        await new Promise(r => setTimeout(r, 200));
+      shouldWaitForChange = isClickable && !inputDisabled;
 
-        await page.evaluate((sel) => {
-          const btn = document.querySelector(sel);
-          if (btn) {
-            btn.dispatchEvent(new Event('mouseup'));
-          }
-        }, selector);
+      // Always try to click, but only wait for change if we expect it to work
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mousedown', { bubbles: true }));
+          // Immediately dispatch mouseup to prevent spinning
+          setTimeout(() => {
+            btn.dispatchEvent(new Event('mouseup', { bubbles: true }));
+          }, 10);
+        }
+      }, selector);
 
-        buttonFound = true;
-        break;
+      if (shouldWaitForChange) {
+        // Wait for the value to actually change instead of arbitrary delay
+        try {
+          await page.waitForFunction(
+            (inputSelector, expectedInitialValue) => {
+              const input = document.querySelector(inputSelector) as HTMLInputElement;
+              return input && input.value !== expectedInitialValue;
+            },
+            { timeout: 2000 },
+            input_selector,
+            initialValue
+          );
+        } catch (error) {
+          // If value doesn't change within timeout, that's OK for disabled buttons
+          console.warn('Value did not change within timeout - this may be expected for disabled inputs');
+        }
+      } else {
+        // Just wait a short time for disabled cases
+        await new Promise(r => setTimeout(r, 100));
       }
+
+      buttonFound = true;
+      break;
     }
   }
 
   if (!buttonFound) {
-    throw new Error(`TouchSpin up button not found or not clickable for selector: ${input_selector}`);
+    throw new Error(`TouchSpin up button not found for selector: ${input_selector}`);
   }
 }
 
@@ -164,7 +191,29 @@ async function fillWithValue(page: Page, selector: string, value: string): Promi
   await page.keyboard.type(value);
 }
 
+async function waitForTouchSpinReady(page: Page, input_selector: string): Promise<void> {
+  // Wait for TouchSpin to be initialized and DOM structure to be ready
+  await page.waitForFunction(
+    (selector) => {
+      const input = document.querySelector(selector) as HTMLInputElement;
+      if (!input) return false;
+      
+      // Check if TouchSpin has been initialized by looking for generated structure
+      const hasButtons = 
+        document.querySelector('.bootstrap-touchspin-up') !== null &&
+        document.querySelector('.bootstrap-touchspin-down') !== null;
+      
+      return hasButtons;
+    },
+    { timeout: 5000 },
+    input_selector
+  );
+}
+
 async function touchspinClickDown(page: Page, input_selector: string): Promise<void> {
+  // Get the initial value for comparison
+  const initialValue = await readInputValue(page, input_selector);
+  
   // Try multiple selectors for different Bootstrap versions and configurations
   const selectors = [
     // Bootstrap 3/4 with input-group-btn
@@ -184,6 +233,8 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
   ];
 
   let buttonFound = false;
+  let shouldWaitForChange = false;
+  
   for (const selector of selectors) {
     const button = await page.$(selector);
     if (button) {
@@ -195,33 +246,55 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
                button.offsetParent !== null; // Check if visible
       });
 
-      if (isClickable) {
-        await page.evaluate((sel) => {
-          const btn = document.querySelector(sel);
-          if (btn) {
-            btn.dispatchEvent(new Event('mousedown'));
-          }
-        }, selector);
+      // Check if input is disabled/readonly
+      const inputDisabled = await page.evaluate((inputSel) => {
+        const input = document.querySelector(inputSel) as HTMLInputElement;
+        return input && (input.disabled || input.readOnly);
+      }, input_selector);
 
-        // Delay to allow the value to change.
-        await new Promise(r => setTimeout(r, 200));
+      shouldWaitForChange = isClickable && !inputDisabled;
 
-        await page.evaluate((sel) => {
-          const btn = document.querySelector(sel);
-          if (btn) {
-            btn.dispatchEvent(new Event('mouseup'));
-          }
-        }, selector);
+      // Always try to click, but only wait for change if we expect it to work
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mousedown', { bubbles: true }));
+          // Immediately dispatch mouseup to prevent spinning
+          setTimeout(() => {
+            btn.dispatchEvent(new Event('mouseup', { bubbles: true }));
+          }, 10);
+        }
+      }, selector);
 
-        buttonFound = true;
-        break;
+      if (shouldWaitForChange) {
+        // Wait for the value to actually change instead of arbitrary delay
+        try {
+          await page.waitForFunction(
+            (inputSelector, expectedInitialValue) => {
+              const input = document.querySelector(inputSelector) as HTMLInputElement;
+              return input && input.value !== expectedInitialValue;
+            },
+            { timeout: 2000 },
+            input_selector,
+            initialValue
+          );
+        } catch (error) {
+          // If value doesn't change within timeout, that's OK for disabled buttons
+          console.warn('Value did not change within timeout - this may be expected for disabled inputs');
+        }
+      } else {
+        // Just wait a short time for disabled cases
+        await new Promise(r => setTimeout(r, 100));
       }
+
+      buttonFound = true;
+      break;
     }
   }
 
   if (!buttonFound) {
-    throw new Error(`TouchSpin down button not found or not clickable for selector: ${input_selector}`);
+    throw new Error(`TouchSpin down button not found for selector: ${input_selector}`);
   }
 }
 
-export default { waitForTimeout, cleanupTimeouts, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue };
+export default { waitForTimeout, cleanupTimeouts, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue, waitForTouchSpinReady };

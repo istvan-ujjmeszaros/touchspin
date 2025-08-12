@@ -3,6 +3,10 @@ import {page, port} from './helpers/jestPuppeteerServerSetup';
 
 describe('API Methods', () => {
 
+  beforeEach(async () => {
+    await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+  });
+
   describe('TouchSpin Interface Events', () => {
     it('should respond to touchspin.uponce event', async () => {
       const selector = '#testinput_default';

@@ -3,6 +3,10 @@ import {page} from './helpers/jestPuppeteerServerSetup';
 
 describe('Events', () => {
 
+  beforeEach(async () => {
+    await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+  });
+
   it('should increase value by 1 when clicking the + button', async () => {
     const selector: string = '#testinput_default';
 

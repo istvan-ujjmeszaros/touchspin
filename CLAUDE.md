@@ -86,3 +86,13 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - **Terser** for JavaScript minification with banner preservation
 - **CleanCSS** for CSS minification
 - **Source maps** generated for both JS and CSS files
+
+### Temporary Files Policy
+- **Never commit temporary/debug files to the repository**
+- Create temporary files for testing/debugging in a `tmp/` folder in the project root
+- The `tmp/` folder should be gitignored to prevent accidental commits
+- Examples of temporary files that should go in `tmp/`:
+  - Test HTML files (e.g., `test-debug.html`, `test-renderer.html`, `test-working.html`)
+  - Debug scripts or quick prototype files
+  - Any files used for temporary development or debugging purposes
+- Always clean up temporary files when debugging is complete
