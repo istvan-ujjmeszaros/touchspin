@@ -30,6 +30,7 @@
 - **Puppeteer Issues**: Tests create fresh page instances per test to avoid "Connection closed" errors
 - Each renderer (Bootstrap3/4/5) is independent and self-contained
 - **File Lock Issues**: If build fails with EPERM/permission errors, STOP and ask user to manually remove locked files - don't keep trying
+- **NEVER START SERVERS**: User opens files locally from file system or through PHPStorm play button - never start development servers manually
 
 ## Common Test Issues
 - "Protocol error: Connection closed" → Page lifecycle conflict (fixed in setup)
