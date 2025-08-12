@@ -64,6 +64,8 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - Test timeout set to 50 seconds for stability
 - Multiple HTML fixtures test Bootstrap 3/4 compatibility and RTL support
 - Tests run in band (`--runInBand`) to avoid race conditions
+- **IMPORTANT**: Never start a server manually. Always use `npm test` to run tests
+- Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
 
 ### Code Standards
 - Follows jQuery Core Style Guide
