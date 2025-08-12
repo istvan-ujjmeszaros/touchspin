@@ -6,7 +6,6 @@ This directory contains comprehensive demos showcasing Bootstrap TouchSpin's com
 
 ### Main Demo Hub
 - **`index-new.html`** - Main landing page with navigation to all demos
-  - Quick demo with auto-detection
   - Feature showcase and technical details
   - Links to version-specific demos
 
@@ -15,17 +14,13 @@ This directory contains comprehensive demos showcasing Bootstrap TouchSpin's com
 - **`bootstrap4.html`** - Bootstrap 4.6.2 compatibility demo  
 - **`bootstrap5.html`** - Bootstrap 5.3.0 compatibility demo
 
-### Legacy Demos
-- **`index.html`** - Original Bootstrap 4 demo
-- **`index-bs3.html`** - Legacy Bootstrap 3 demo
-
 ## 🚀 How to View the Demos
 
 Simply open any HTML file directly in your browser:
 
 ```bash
 # Double-click any .html file, or open in browser:
-demo/index-new.html      # Main demo hub (recommended)
+demo/index-new.html      # Main demo hub (start here!)
 demo/bootstrap3.html     # Bootstrap 3 demo
 demo/bootstrap4.html     # Bootstrap 4 demo
 demo/bootstrap5.html     # Bootstrap 5 demo
@@ -43,12 +38,11 @@ Each demo showcases:
 - **Vertical buttons** - Alternative layout with custom icons
 - **Input groups** - Integration with Bootstrap components
 - **Advanced features** - Boosters, validation, decimal precision
-- **Version detection** - Live display of detected Bootstrap version
 
 ## 🔧 Technical Notes
 
-### Auto-Detection
-The plugin automatically detects the Bootstrap version and uses the appropriate renderer:
+### Version-Specific Renderers
+Each version uses Bootstrap-specific classes and structure:
 - **Bootstrap 3**: Uses `input-group-btn` and `input-group-addon`
 - **Bootstrap 4**: Uses `input-group-prepend`/`input-group-append` with `input-group-text`
 - **Bootstrap 5**: Uses simplified structure with direct `input-group-text` elements
@@ -70,31 +64,33 @@ demo/
 └── README.md               # This file
 
 ../dist/                     # TouchSpin build files (referenced by demos)
-├── jquery.bootstrap-touchspin.js
+├── jquery.bootstrap-touchspin-bs3.js
+├── jquery.bootstrap-touchspin-bs4.js  
+├── jquery.bootstrap-touchspin-bs5.js
 ├── jquery.bootstrap-touchspin.css
 └── ...
 ```
 
 ## 📦 Version-Specific Builds
 
-Starting with version 4.7.3, Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
+Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
 
 ### Available Builds
-- **Bootstrap 3**: `jquery.bootstrap-touchspin-bs3.js` (~42KB)
-- **Bootstrap 4**: `jquery.bootstrap-touchspin-bs4.js` (~43KB)  
-- **Bootstrap 5**: `jquery.bootstrap-touchspin-bs5.js` (~41KB)
-- **Universal**: `jquery.bootstrap-touchspin.js` (~62KB) - includes all renderers
+- **Bootstrap 3**: `jquery.bootstrap-touchspin-bs3.js` (~35KB)
+- **Bootstrap 4**: `jquery.bootstrap-touchspin-bs4.js` (~35KB)  
+- **Bootstrap 5**: `jquery.bootstrap-touchspin-bs5.js` (~35KB)
 
 ### Demo File Mapping
 - `bootstrap3.html` → Uses BS3 specific build
 - `bootstrap4.html` → Uses BS4 specific build  
 - `bootstrap5.html` → Uses BS5 specific build
-- `index-new.html` → Uses universal build (auto-detection)
+- `index-new.html` → Uses BS5 specific build
 
 ### Benefits
 1. **Smaller file size** - Only includes renderer for target Bootstrap version
-2. **Better performance** - No runtime version detection overhead
+2. **Better performance** - No version detection overhead
 3. **Optimized structure** - Tailored HTML for each Bootstrap version
+4. **Explicit dependencies** - Know exactly which Bootstrap version you're using
 
 ## 🆕 Recent Updates
 
@@ -102,7 +98,7 @@ Starting with version 4.7.3, Bootstrap TouchSpin provides optimized builds for e
 - ✅ Updated all demo files to use optimized builds
 - ✅ Created comprehensive version-specific demos
 - ✅ Added main demo hub with navigation
-- ✅ Implemented Bootstrap version auto-detection showcase
+- ✅ Removed universal build and auto-detection logic
 - ✅ Added responsive design and modern styling
 - ✅ Simplified file structure - just open HTML files directly!
 
@@ -113,7 +109,8 @@ Starting with version 4.7.3, Bootstrap TouchSpin provides optimized builds for e
 - Check that `dist/` folder contains the build files
 - Verify browser allows loading local files (some browsers block file:// requests)
 
-### Version detection not working
-- Make sure Bootstrap CSS is loaded before TouchSpin initialization
-- Check browser console for any JavaScript errors
-- Test with different Bootstrap versions to confirm detection
+### Wrong Bootstrap version styling
+- Make sure you're using the correct TouchSpin build for your Bootstrap version
+- Bootstrap 3: use `jquery.bootstrap-touchspin-bs3.js`
+- Bootstrap 4: use `jquery.bootstrap-touchspin-bs4.js`  
+- Bootstrap 5: use `jquery.bootstrap-touchspin-bs5.js`

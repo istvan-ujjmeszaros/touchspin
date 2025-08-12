@@ -361,11 +361,10 @@ $("input[name='demo11']").TouchSpin({
   </div>
 
   <div class="demo-section">
-    <h2>Version Detection</h2>
+    <h2>Bootstrap 4 Specific Build</h2>
     <div class="alert alert-info">
-      <h5><i class="fas fa-info-circle"></i> Auto-Detection</h5>
-      This demo automatically detects Bootstrap 4 and uses the appropriate renderer with <code>input-group-prepend</code> and <code>input-group-append</code> classes.
-      <div id="version-info" style="margin-top: 10px; font-family: monospace;"></div>
+      <h5><i class="fas fa-info-circle"></i> Version-Specific Build</h5>
+      This demo uses the Bootstrap 4 specific build (<code>jquery.bootstrap-touchspin-bs4.js</code>) with optimized <code>input-group-prepend</code> and <code>input-group-append</code> classes for best performance.
     </div>
   </div>
 
@@ -449,13 +448,6 @@ $(document).ready(function() {
     postfix: " MB"
   });
 
-  // Display version detection info
-  if (typeof RendererFactory !== 'undefined' && RendererFactory.detectBootstrapVersion) {
-    var detectedVersion = RendererFactory.detectBootstrapVersion();
-    $('#version-info').html('<strong>Detected Bootstrap Version:</strong> ' + detectedVersion);
-  } else {
-    $('#version-info').html('<strong>Status:</strong> Legacy rendering mode (no renderer system)');
-  }
 });
 </script>
 </body>

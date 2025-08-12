@@ -1,8 +1,8 @@
 /**
- * Base Bootstrap Renderer Class
+ * Abstract Renderer Base Class
  * Defines the interface and common functionality for Bootstrap version-specific renderers
  */
-class BootstrapRenderer {
+class AbstractRenderer {
   constructor($, settings, originalinput) {
     this.$ = $;
     this.settings = settings;
@@ -156,7 +156,7 @@ class BootstrapRenderer {
 
 // Export for both CommonJS and ES modules
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = BootstrapRenderer;
+  module.exports = AbstractRenderer;
 } else if (typeof window !== 'undefined') {
-  window.BootstrapRenderer = BootstrapRenderer;
+  window.AbstractRenderer = AbstractRenderer;
 }

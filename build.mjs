@@ -17,71 +17,45 @@ const banner = `/*
  */`;
 
 async function buildVersionSpecific(version) {
-  const versionSuffix = version === 'universal' ? '' : `-bs${version}`;
-  const fileName = `jquery.bootstrap-touchspin${versionSuffix}.js`;
+  const fileName = `jquery.bootstrap-touchspin-bs${version}.js`;
   
-  console.log(`🔨 Building ${version === 'universal' ? 'Universal' : `Bootstrap ${version}`} version...`);
+  console.log(`🔨 Building Bootstrap ${version} version...`);
   
-  // Create version-specific renderer code as preamble (before main plugin)
-  let rendererCode = '';
-  if (version === 'universal') {
-    // Include all renderers with detection
-    rendererCode = `
-// Include all renderer systems BEFORE main plugin
-(function() {
-  'use strict';
-  ${fs.readFileSync('./src/renderers/BootstrapRenderer.js', 'utf-8')}
-  ${fs.readFileSync('./src/renderers/Bootstrap3Renderer.js', 'utf-8')}
-  ${fs.readFileSync('./src/renderers/Bootstrap4Renderer.js', 'utf-8')}
-  ${fs.readFileSync('./src/renderers/Bootstrap5Renderer.js', 'utf-8')}
-  ${fs.readFileSync('./src/renderers/RendererFactory.js', 'utf-8')}
-})();
-
-`;
-  } else {
-    // Include only specific renderer and dependencies
-    const rendererFile = `Bootstrap${version}Renderer.js`;
-    let rendererIncludes = '';
-    
-    // Always include base renderer
-    rendererIncludes += fs.readFileSync('./src/renderers/BootstrapRenderer.js', 'utf-8') + '\n';
-    
-    // Include dependencies based on inheritance
-    if (version === 5) {
-      // Bootstrap5Renderer extends Bootstrap4Renderer
-      rendererIncludes += fs.readFileSync('./src/renderers/Bootstrap4Renderer.js', 'utf-8') + '\n';
-    }
-    
-    // Include the target renderer
-    rendererIncludes += fs.readFileSync(`./src/renderers/${rendererFile}`, 'utf-8') + '\n';
-    
-    rendererCode = `
+  // Include only specific renderer and dependencies
+  const rendererFile = `Bootstrap${version}Renderer.js`;
+  let rendererIncludes = '';
+  
+  // Always include base renderer
+  rendererIncludes += fs.readFileSync('./src/renderers/AbstractRenderer.js', 'utf-8') + '\n';
+  
+  // Include the target renderer
+  rendererIncludes += fs.readFileSync(`./src/renderers/${rendererFile}`, 'utf-8') + '\n';
+  
+  const rendererCode = `
 // Bootstrap ${version} specific build - BEFORE main plugin
 (function() {
   'use strict';
   ${rendererIncludes}
   
-  // Simple factory for single version
+  // Simple factory for single version - no auto-detection needed
   class RendererFactory {
     static createRenderer($, settings, originalinput) {
       return new Bootstrap${version}Renderer($, settings, originalinput);
     }
     
-    static detectBootstrapVersion() {
+    static getVersion() {
       return ${version};
     }
   }
   
   if (typeof window !== 'undefined') {
-    window.BootstrapRenderer = BootstrapRenderer;
-    if (typeof Bootstrap4Renderer !== 'undefined') window.Bootstrap4Renderer = Bootstrap4Renderer;
+    window.AbstractRenderer = AbstractRenderer;
     window.Bootstrap${version}Renderer = Bootstrap${version}Renderer;
     window.RendererFactory = RendererFactory;
   }
 })();
 
 `;
-  }
   
   // Build with version-specific renderer
   await build({
@@ -133,13 +107,7 @@ async function buildAll() {
     builtFiles.push(fileName);
   }
   
-  // Build universal version (temporarily with different name to avoid conflicts)
-  try {
-    const universalFile = await buildVersionSpecific('universal');
-    builtFiles.push(universalFile);
-  } catch (error) {
-    console.warn('Failed to build universal version, skipping for now:', error.message);
-  }
+  // Universal build removed - impossible to use multiple Bootstrap versions on same page
 
   console.log('🔄 Transpiling to ES5 with Babel...');
   

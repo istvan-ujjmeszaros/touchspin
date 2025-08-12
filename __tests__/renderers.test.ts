@@ -191,13 +191,4 @@ describe('Bootstrap Renderer System', () => {
     });
   });
 
-  describe('Renderer Factory Detection', () => {
-    it('should automatically detect Bootstrap version correctly', async () => {
-      await page.goto(`http://localhost:${port}/__tests__/html/index-bs4.html`);
-      
-      // Test if the correct renderer was selected by checking markup patterns
-      const hasBS4Structure = await page.$('.input-group-prepend, .input-group-append');
-      expect(hasBS4Structure).toBeTruthy();
-    });
-  });
 });

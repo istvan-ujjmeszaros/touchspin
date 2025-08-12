@@ -73,6 +73,12 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - ES6+ code is transpiled via Babel for ES5 compatibility
 - Modern development workflow with Vite provides fast builds and hot reload
 
+### Refactoring Guidelines
+- **IMPORTANT**: When refactoring involves renaming classes, methods, or files, ALWAYS ask the user to decide on the new name instead of choosing it yourself
+- Present 3-5 naming options with clear rationale for each
+- Wait for user approval before proceeding with any renames
+- This ensures naming consistency with project conventions and user preferences
+
 ### Modern Build System Details
 - **Vite** for fast development and optimized production builds
 - **Rollup** (via Vite) for efficient library bundling with tree-shaking

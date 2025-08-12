@@ -1,9 +1,9 @@
 /**
  * Bootstrap 5 Renderer
  * Handles HTML generation for Bootstrap 5 specific classes and structure
- * Bootstrap 5 is very similar to Bootstrap 4 in terms of input groups
+ * Bootstrap 5 simplified input group structure by removing prepend/append wrappers
  */
-class Bootstrap5Renderer extends Bootstrap4Renderer {
+class Bootstrap5Renderer extends AbstractRenderer {
   
   getVersion() {
     return 5;
@@ -52,8 +52,8 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
       const verticalHtml = `
         <span class="bootstrap-touchspin-vertical-button-wrapper">
           <span class="input-group-btn-vertical">
-            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
+            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
           </span>
         </span>
       `;
@@ -92,8 +92,8 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
           <span class="input-group-text bootstrap-touchspin-postfix">${this.settings.postfix}</span>
           <span class="bootstrap-touchspin-vertical-button-wrapper">
             <span class="input-group-btn-vertical">
-              <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-              <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+              <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
+              <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
             </span>
           </span>
         </div>
@@ -124,8 +124,8 @@ class Bootstrap5Renderer extends Bootstrap4Renderer {
     return `
       <span class="bootstrap-touchspin-vertical-button-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
         </span>
       </span>
     `;

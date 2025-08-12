@@ -2,7 +2,7 @@
  * Bootstrap 3 Renderer
  * Handles HTML generation for Bootstrap 3 specific classes and structure
  */
-class Bootstrap3Renderer extends BootstrapRenderer {
+class Bootstrap3Renderer extends AbstractRenderer {
   
   getVersion() {
     return 3;
@@ -35,8 +35,8 @@ class Bootstrap3Renderer extends BootstrapRenderer {
     return `
       <span class="input-group-addon bootstrap-touchspin-vertical-button-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
         </span>
       </span>
     `;

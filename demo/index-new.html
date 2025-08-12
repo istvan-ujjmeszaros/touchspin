@@ -20,7 +20,7 @@
   
   <!-- TouchSpin -->
   <link href="../dist/jquery.bootstrap-touchspin.css" rel="stylesheet">
-  <script src="../dist/jquery.bootstrap-touchspin.js"></script>
+  <script src="../dist/jquery.bootstrap-touchspin-bs5.js"></script>
   
   <!-- Demo CSS -->
   <link href="demo.css" rel="stylesheet">
@@ -125,14 +125,13 @@
   <!-- Quick Demo Section -->
   <div class="demo-preview text-center">
     <h3 class="mb-3"><i class="bi bi-play-circle"></i> Quick Demo</h3>
-    <p>Try it right here! This demo automatically detects the Bootstrap version and renders appropriately.</p>
+    <p>Try it right here! This demo uses the Bootstrap 5 specific build for optimal performance.</p>
     <div class="row justify-content-center">
       <div class="col-auto">
         <label for="quick-demo" class="form-label fw-bold">Sample TouchSpin:</label>
         <input id="quick-demo" type="text" value="50" name="quick-demo" class="form-control text-center" style="width: 200px;">
       </div>
     </div>
-    <div id="detection-info" class="mt-3"></div>
   </div>
 
   <!-- Version-Specific Demos -->
@@ -345,23 +344,6 @@ $(document).ready(function() {
     maxboostedstep: 10
   });
 
-  // Display version detection info
-  if (typeof RendererFactory !== 'undefined' && RendererFactory.detectBootstrapVersion) {
-    var detectedVersion = RendererFactory.detectBootstrapVersion();
-    $('#detection-info').html(
-      '<div class="alert alert-success d-inline-flex align-items-center">' +
-      '<i class="bi bi-check-circle-fill me-2"></i>' +
-      '<strong>Auto-detected Bootstrap ' + detectedVersion + '</strong> and applied appropriate renderer' +
-      '</div>'
-    );
-  } else {
-    $('#detection-info').html(
-      '<div class="alert alert-warning d-inline-flex align-items-center">' +
-      '<i class="bi bi-exclamation-triangle-fill me-2"></i>' +
-      '<strong>Legacy rendering mode</strong> - renderer system not available' +
-      '</div>'
-    );
-  }
 
   // Add some interactivity to the cards
   $('.version-card').on('mouseenter', function() {

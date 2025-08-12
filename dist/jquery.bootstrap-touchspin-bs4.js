@@ -24,9 +24,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 (function () {
   "use strict";
 
-  var BootstrapRenderer = /*#__PURE__*/function () {
-    function BootstrapRenderer($, settings, originalinput) {
-      _classCallCheck(this, BootstrapRenderer);
+  var AbstractRenderer = /*#__PURE__*/function () {
+    function AbstractRenderer($, settings, originalinput) {
+      _classCallCheck(this, AbstractRenderer);
       this.$ = $;
       this.settings = settings;
       this.originalinput = originalinput;
@@ -37,7 +37,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
      * Get Bootstrap version this renderer supports
      * @returns {number} Bootstrap major version (3, 4, 5, etc.)
      */
-    return _createClass(BootstrapRenderer, [{
+    return _createClass(AbstractRenderer, [{
       key: "getVersion",
       value: function getVersion() {
         throw new Error("getVersion() must be implemented by subclasses");
@@ -173,16 +173,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }]);
   }();
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = BootstrapRenderer;
+    module.exports = AbstractRenderer;
   } else if (typeof window !== "undefined") {
-    window.BootstrapRenderer = BootstrapRenderer;
+    window.AbstractRenderer = AbstractRenderer;
   }
-  var Bootstrap4Renderer = /*#__PURE__*/function (_BootstrapRenderer) {
+  var Bootstrap4Renderer = /*#__PURE__*/function (_AbstractRenderer) {
     function Bootstrap4Renderer() {
       _classCallCheck(this, Bootstrap4Renderer);
       return _callSuper(this, Bootstrap4Renderer, arguments);
     }
-    _inherits(Bootstrap4Renderer, _BootstrapRenderer);
+    _inherits(Bootstrap4Renderer, _AbstractRenderer);
     return _createClass(Bootstrap4Renderer, [{
       key: "getVersion",
       value: function getVersion() {
@@ -219,7 +219,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        return "\n      <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
+        return "\n      <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
       }
     }, {
       key: "buildAdvancedInputGroup",
@@ -287,7 +287,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
       }
     }]);
-  }(BootstrapRenderer);
+  }(AbstractRenderer);
   if (typeof module !== "undefined" && module.exports) {
     module.exports = Bootstrap4Renderer;
   } else if (typeof window !== "undefined") {
@@ -303,15 +303,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return new Bootstrap4Renderer($, settings, originalinput);
       }
     }, {
-      key: "detectBootstrapVersion",
-      value: function detectBootstrapVersion() {
+      key: "getVersion",
+      value: function getVersion() {
         return 4;
       }
     }]);
   }();
   if (typeof window !== "undefined") {
-    window.BootstrapRenderer = BootstrapRenderer;
-    if (typeof Bootstrap4Renderer !== "undefined") window.Bootstrap4Renderer = Bootstrap4Renderer;
+    window.AbstractRenderer = AbstractRenderer;
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.RendererFactory = RendererFactory2;
   }
@@ -373,9 +372,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         buttonup_class: "btn btn-primary",
         buttondown_txt: "&minus;",
         buttonup_txt: "&plus;",
-        // New renderer system options
-        bootstrap_version: "auto",
-        // 'auto', 3, 4, 5, or explicit version
+        // Renderer system options
         renderer: null,
         // Custom renderer instance
         callback_before_calculation: function callback_before_calculation(value) {
@@ -499,20 +496,17 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           return data;
         }
         function _initRenderer() {
-          try {
-            if (settings.renderer) {
-              renderer = settings.renderer;
-            } else if (typeof RendererFactory !== "undefined" && RendererFactory.createRenderer) {
-              renderer = RendererFactory.createRenderer($, settings, originalinput, settings.bootstrap_version);
-            } else if (typeof window !== "undefined" && window.RendererFactory && window.RendererFactory.createRenderer) {
-              renderer = window.RendererFactory.createRenderer($, settings, originalinput, settings.bootstrap_version);
-            } else {
-              renderer = null;
-              console.warn("Bootstrap TouchSpin: No renderer system available, falling back to legacy rendering");
-            }
-          } catch (error) {
-            console.warn("Bootstrap TouchSpin: Failed to initialize renderer, falling back to legacy rendering", error);
-            renderer = null;
+          if (settings.renderer) {
+            renderer = settings.renderer;
+            return;
+          }
+          var factory = typeof RendererFactory !== "undefined" && RendererFactory || typeof window !== "undefined" && window.RendererFactory;
+          if (!factory || !factory.createRenderer) {
+            throw new Error("Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.");
+          }
+          renderer = factory.createRenderer($, settings, originalinput);
+          if (!renderer) {
+            throw new Error("Bootstrap TouchSpin: Failed to create renderer");
           }
         }
         function _destroy() {
@@ -530,26 +524,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _updateSettings(newsettings) {
           settings = $.extend({}, settings, newsettings);
-          if (renderer && (newsettings.postfix || newsettings.prefix)) {
+          if (newsettings.postfix || newsettings.prefix) {
+            if (!renderer) {
+              throw new Error("Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.");
+            }
             renderer.updatePrefixPostfix(newsettings, {
               _detached_prefix: _detached_prefix,
               _detached_postfix: _detached_postfix
             });
-          } else if (newsettings.postfix || newsettings.prefix) {
-            if (newsettings.postfix) {
-              var $postfix = originalinput.parent().find(".bootstrap-touchspin-postfix");
-              if ($postfix.length === 0) {
-                _detached_postfix.insertAfter(originalinput);
-              }
-              originalinput.parent().find(".bootstrap-touchspin-postfix .input-group-text").text(newsettings.postfix);
-            }
-            if (newsettings.prefix) {
-              var $prefix = originalinput.parent().find(".bootstrap-touchspin-prefix");
-              if ($prefix.length === 0) {
-                _detached_prefix.insertBefore(originalinput);
-              }
-              originalinput.parent().find(".bootstrap-touchspin-prefix .input-group-text").text(newsettings.prefix);
-            }
           }
           _hideEmptyPrefixPostfix();
         }
@@ -562,108 +544,28 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           originalinput.data("initvalue", initval).val(initval);
           originalinput.addClass("form-control");
-          if (renderer) {
-            try {
-              if (parentelement.hasClass("input-group")) {
-                container = renderer.buildAdvancedInputGroup(parentelement);
-              } else {
-                container = renderer.buildInputGroup();
-              }
-            } catch (error) {
-              console.warn("Bootstrap TouchSpin: Renderer failed, falling back to legacy rendering", error);
-              renderer = null;
-              _buildHtmlLegacy();
-            }
-          } else {
-            _buildHtmlLegacy();
+          if (!renderer) {
+            throw new Error("Bootstrap TouchSpin: Renderer not initialized. This indicates an initialization error.");
           }
-        }
-        function _buildHtmlLegacy() {
-          var parentelement = originalinput.parent();
-          var verticalbuttons_html = "\n          <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"".concat(settings.buttondown_class, " bootstrap-touchspin-up ").concat(settings.verticalupclass, "\" type=\"button\">").concat(settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(settings.buttonup_class, " bootstrap-touchspin-down ").concat(settings.verticaldownclass, "\" type=\"button\">").concat(settings.verticaldown, "</button>\n            </span>\n          </span>\n       ");
           if (parentelement.hasClass("input-group")) {
-            _advanceInputGroupLegacy(parentelement, verticalbuttons_html);
+            container = renderer.buildAdvancedInputGroup(parentelement);
           } else {
-            _buildInputGroupLegacy(verticalbuttons_html);
-          }
-        }
-        function _advanceInputGroupLegacy(parentelement, verticalbuttons_html) {
-          parentelement.addClass("bootstrap-touchspin");
-          var prev = originalinput.prev(),
-            next = originalinput.next();
-          var downhtml,
-            uphtml,
-            prefixhtml = "\n            <span class=\"input-group-addon input-group-prepend bootstrap-touchspin-prefix input-group-prepend bootstrap-touchspin-injected\">\n              <span class=\"input-group-text\">".concat(settings.prefix, "</span>\n            </span>\n          "),
-            postfixhtml = "\n            <span class=\"input-group-addon input-group-append bootstrap-touchspin-postfix input-group-append bootstrap-touchspin-injected\">\n              <span class=\"input-group-text\">".concat(settings.postfix, "</span>\n            </span>\n          ");
-          if (settings.verticalbuttons) {
-            $(verticalbuttons_html).insertAfter(originalinput);
-          } else {
-            if (prev.hasClass("input-group-btn") || prev.hasClass("input-group-prepend")) {
-              downhtml = "\n              <button tabindex=\"-1\" class=\"".concat(settings.buttondown_class, " bootstrap-touchspin-down bootstrap-touchspin-injected\" type=\"button\">").concat(settings.buttondown_txt, "</button>\n            ");
-              prev.append(downhtml);
-            } else {
-              downhtml = "\n              <span class=\"input-group-btn input-group-prepend bootstrap-touchspin-injected\">\n                <button tabindex=\"-1\" class=\"".concat(settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(settings.buttondown_txt, "</button>\n              </span>\n            ");
-              $(downhtml).insertBefore(originalinput);
-            }
-            if (next.hasClass("input-group-btn") || next.hasClass("input-group-append")) {
-              uphtml = "\n            <button tabindex=\"-1\" class=\"".concat(settings.buttonup_class, " bootstrap-touchspin-up bootstrap-touchspin-injected\" type=\"button\">").concat(settings.buttonup_txt, "</button>\n          ");
-              next.prepend(uphtml);
-            } else {
-              uphtml = "\n            <span class=\"input-group-btn input-group-append bootstrap-touchspin-injected\">\n              <button tabindex=\"-1\" class=\"".concat(settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(settings.buttonup_txt, "</button>\n            </span>\n          ");
-              $(uphtml).insertAfter(originalinput);
-            }
-          }
-          $(prefixhtml).insertBefore(originalinput);
-          $(postfixhtml).insertAfter(originalinput);
-          container = parentelement;
-        }
-        function _buildInputGroupLegacy(verticalbuttons_html) {
-          var html;
-          var inputGroupSize = "";
-          if (originalinput.hasClass("input-sm") || originalinput.hasClass("form-control-sm")) {
-            inputGroupSize = "input-group-sm";
-          } else if (originalinput.hasClass("input-lg") || originalinput.hasClass("form-control-lg")) {
-            inputGroupSize = "input-group-lg";
-          }
-          if (settings.verticalbuttons) {
-            html = "\n            <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin bootstrap-touchspin-injected\">\n              <span class=\"input-group-addon input-group-prepend bootstrap-touchspin-prefix\">\n                <span class=\"input-group-text\">").concat(settings.prefix, "</span>\n              </span>\n              <span class=\"input-group-addon bootstrap-touchspin-postfix input-group-append\">\n                <span class=\"input-group-text\">").concat(settings.postfix, "</span>\n              </span>\n              ").concat(verticalbuttons_html, "\n            </div>\n          ");
-          } else {
-            html = "\n            <div class=\"input-group bootstrap-touchspin bootstrap-touchspin-injected\">\n              <span class=\"input-group-btn input-group-prepend\">\n                <button tabindex=\"-1\" class=\"".concat(settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(settings.buttondown_txt, "</button>\n              </span>\n              <span class=\"input-group-addon bootstrap-touchspin-prefix input-group-prepend\">\n                <span class=\"input-group-text\">").concat(settings.prefix, "</span>\n              </span>\n              <span class=\"input-group-addon bootstrap-touchspin-postfix input-group-append\">\n                <span class=\"input-group-text\">").concat(settings.postfix, "</span>\n              </span>\n              <span class=\"input-group-btn input-group-append\">\n                <button tabindex=\"-1\" class=\"").concat(settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(settings.buttonup_txt, "</button>\n              </span>\n            </div>");
-          }
-          container = $(html).insertBefore(originalinput);
-          $(".bootstrap-touchspin-prefix", container).after(originalinput);
-          if (originalinput.hasClass("input-sm") || originalinput.hasClass("form-control-sm")) {
-            container.addClass("input-group-sm");
-          } else if (originalinput.hasClass("input-lg") || originalinput.hasClass("form-control-lg")) {
-            container.addClass("input-group-lg");
+            container = renderer.buildInputGroup();
           }
         }
         function _initElements() {
-          if (renderer) {
-            elements = renderer.initElements(container);
-          } else {
-            elements = {
-              down: $(".bootstrap-touchspin-down", container),
-              up: $(".bootstrap-touchspin-up", container),
-              input: $("input", container),
-              prefix: $(".bootstrap-touchspin-prefix", container).addClass(settings.prefix_extraclass),
-              postfix: $(".bootstrap-touchspin-postfix", container).addClass(settings.postfix_extraclass)
-            };
+          if (!renderer) {
+            throw new Error("Bootstrap TouchSpin: Renderer not available for element initialization.");
           }
+          elements = renderer.initElements(container);
         }
         function _hideEmptyPrefixPostfix() {
-          if (renderer) {
-            var detached = renderer.hideEmptyPrefixPostfix();
-            _detached_prefix = detached._detached_prefix;
-            _detached_postfix = detached._detached_postfix;
-          } else {
-            if (settings.prefix === "") {
-              _detached_prefix = elements.prefix.detach();
-            }
-            if (settings.postfix === "") {
-              _detached_postfix = elements.postfix.detach();
-            }
+          if (!renderer) {
+            throw new Error("Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.");
           }
+          var detached = renderer.hideEmptyPrefixPostfix();
+          _detached_prefix = detached._detached_prefix;
+          _detached_postfix = detached._detached_postfix;
         }
         function _bindEvents() {
           originalinput.on("keydown.touchspin", function (ev) {
