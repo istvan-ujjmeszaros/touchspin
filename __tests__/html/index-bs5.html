@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap TouchSpin - Bootstrap 5</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+        integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+
+  <!-- BOOTSTRAP 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <!-- Include renderer files -->
+  <script src="../../src/renderers/BootstrapRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+  <script src="../../src/renderers/Bootstrap5Renderer.js"></script>
+  <script src="../../src/renderers/RendererFactory.js"></script>
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+</head>
+
+<body>
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="wrapper">
+        <label for="testinput_default">#testinput_default:</label>
+        <input id="testinput_default" type="text" value="50" name="testinput_default">
+
+        <script>
+          $("#testinput_default").TouchSpin({
+            bootstrap_version: 5
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_sm">#input_group_sm:</label>
+        <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50">
+
+        <script>
+          $("#input_group_sm").TouchSpin({
+            bootstrap_version: 5,
+            prefix: "$",
+            postfix: "/qty"
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_lg">#input_group_lg:</label>
+        <input id="input_group_lg" type="text" class="form-control form-control-lg" value="50">
+
+        <script>
+          $("#input_group_lg").TouchSpin({
+            bootstrap_version: 5,
+            prefix: "$",
+            postfix: "/qty"
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_vertical">#input_vertical:</label>
+        <input id="input_vertical" type="text" class="form-control" value="50">
+
+        <script>
+          $("#input_vertical").TouchSpin({
+            bootstrap_version: 5,
+            verticalbuttons: true
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_vertical">#input_group_vertical:</label>
+        <input id="input_group_vertical" type="text" class="form-control" value="50">
+
+        <script>
+          $("#input_group_vertical").TouchSpin({
+            bootstrap_version: 5,
+            prefix: "$",
+            postfix: "/qty",
+            verticalbuttons: true
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_decimals">#input_decimals:</label>
+        <input id="input_decimals" type="number" value="50" name="input_decimals">
+
+        <script>
+          $("#input_decimals").TouchSpin({
+            bootstrap_version: 5,
+            decimals: 2,
+            step: 0.01
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_disabled">#input_disabled:</label>
+        <input id="input_disabled" type="text" value="0" name="input_disabled" disabled>
+
+        <script>
+          $("#input_disabled").TouchSpin({
+            bootstrap_version: 5
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <label for="input_group_from_dom">#input_group_from_dom:</label>
+        <!-- Bootstrap 5 simplified input group structure -->
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input id="input_group_from_dom" type="text" class="form-control" value="50">
+          <span class="input-group-text">.00</span>
+        </div>
+
+        <script>
+          $("#input_group_from_dom").TouchSpin({
+            bootstrap_version: 5
+          });
+        </script>
+      </div>
+
+    </div>
+
+    <div class="col-md-8" style="height:100vh;">
+      <h6>Events</h6>
+      <pre id="events_log"
+           style="height:200px;overflow:auto;outline:1px dotted gray;height:calc(100% - 50px);margin-top:15px;"></pre>
+    </div>
+
+    <script>
+      var events_log = $("#events_log"),
+        text = "";
+
+      function writeLine(input, line) {
+        text += '#' + input.attr('id') + ': ' + line + "\n";
+        events_log.text(text);
+        events_log.scrollTop(
+          events_log[0].scrollHeight - events_log.height()
+        );
+      }
+
+      [
+        "change",
+        "touchspin.on.startspin",
+        "touchspin.on.startupspin",
+        "touchspin.on.startdownspin",
+        "touchspin.on.stopspin",
+        "touchspin.on.stopupspin",
+        "touchspin.on.stopdownspin",
+        "touchspin.on.min",
+        "touchspin.on.max"
+      ].forEach(function (eventName) {
+        $("input").on(eventName, function (e) {
+          var line = eventName;
+          if (eventName === "change") {
+            line += "[" + $(this).val() + "]";
+          }
+          writeLine($(this), line);
+        });
+      });
+    </script>
+
+  </div>
+
+</div>
+
+</body>
+</html>

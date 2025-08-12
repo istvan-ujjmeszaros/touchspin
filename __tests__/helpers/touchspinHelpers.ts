@@ -21,24 +21,62 @@ async function setInputAttr(page: Page, selector: string, attributeName: 'disabl
 }
 
 async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise<boolean> {
-  const input = await page.$(selector + ' + .input-group-btn > .bootstrap-touchspin-up');
+  // Try multiple selectors for different button configurations
+  const selectors = [
+    selector + ' + .input-group-btn > .bootstrap-touchspin-up',
+    selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-up',
+    '.bootstrap-touchspin-up',
+  ];
 
-  return await input!.evaluate((el) => {
-    return (el as HTMLInputElement).hasAttribute('disabled');
-  });
+  for (const sel of selectors) {
+    const input = await page.$(sel);
+    if (input) {
+      return await input.evaluate((el) => {
+        return (el as HTMLInputElement).hasAttribute('disabled');
+      });
+    }
+  }
+
+  return false; // If no button found, assume not disabled
 }
 
 async function touchspinClickUp(page: Page, input_selector: string): Promise<void> {
-  await page.evaluate((selector) => {
-    document.querySelector(selector)!.dispatchEvent(new Event('mousedown'));
-  }, input_selector + ' + .input-group-btn > .bootstrap-touchspin-up');
+  // Try multiple selectors for different button configurations
+  const selectors = [
+    input_selector + ' + .input-group-btn > .bootstrap-touchspin-up',
+    input_selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-up',
+    '.bootstrap-touchspin-up',
+  ];
 
-  // Delay to allow the value to change.
-  await new Promise(r => setTimeout(r, 200));
+  let buttonFound = false;
+  for (const selector of selectors) {
+    const button = await page.$(selector);
+    if (button) {
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mousedown'));
+        }
+      }, selector);
 
-  await page.evaluate((selector) => {
-    document.querySelector(selector)!.dispatchEvent(new Event('mouseup'));
-  }, input_selector + ' + .input-group-btn > .bootstrap-touchspin-up');
+      // Delay to allow the value to change.
+      await new Promise(r => setTimeout(r, 200));
+
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mouseup'));
+        }
+      }, selector);
+
+      buttonFound = true;
+      break;
+    }
+  }
+
+  if (!buttonFound) {
+    throw new Error(`TouchSpin up button not found for selector: ${input_selector}`);
+  }
 }
 
 async function changeEventCounter(page: Page): Promise<number> {
@@ -73,4 +111,43 @@ async function fillWithValue(page: Page, selector: string, value: string): Promi
   await page.keyboard.type(value);
 }
 
-export default { waitForTimeout, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, changeEventCounter, countEvent, countChangeWithValue, fillWithValue };
+async function touchspinClickDown(page: Page, input_selector: string): Promise<void> {
+  // Try multiple selectors for different button configurations
+  const selectors = [
+    input_selector + ' + .input-group-btn > .bootstrap-touchspin-down',
+    input_selector + ' + .bootstrap-touchspin > .bootstrap-touchspin-down',
+    '.bootstrap-touchspin-down',
+  ];
+
+  let buttonFound = false;
+  for (const selector of selectors) {
+    const button = await page.$(selector);
+    if (button) {
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mousedown'));
+        }
+      }, selector);
+
+      // Delay to allow the value to change.
+      await new Promise(r => setTimeout(r, 200));
+
+      await page.evaluate((sel) => {
+        const btn = document.querySelector(sel);
+        if (btn) {
+          btn.dispatchEvent(new Event('mouseup'));
+        }
+      }, selector);
+
+      buttonFound = true;
+      break;
+    }
+  }
+
+  if (!buttonFound) {
+    throw new Error(`TouchSpin down button not found for selector: ${input_selector}`);
+  }
+}
+
+export default { waitForTimeout, readInputValue, setInputAttr, checkTouchspinUpIsDisabled, touchspinClickUp, touchspinClickDown, changeEventCounter, countEvent, countChangeWithValue, fillWithValue };
