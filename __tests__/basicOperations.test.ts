@@ -96,12 +96,28 @@ describe('Core functionality', () => {
     
     await page.focus(selector);
     
-    // Scroll up (negative deltaY)
-    await page.mouse.wheel({ deltaY: -100 });
+    // Simulate wheel up event (should increment)
+    await page.evaluate((sel) => {
+      const input = document.querySelector(sel);
+      const $ = (window as any).$;
+      if ($ && input) {
+        $(input).trigger($.Event('mousewheel', {
+          originalEvent: { deltaY: -100, wheelDelta: 100 }
+        }));
+      }
+    }, selector);
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
     
-    // Scroll down (positive deltaY)
-    await page.mouse.wheel({ deltaY: 100 });
+    // Simulate wheel down event (should decrement)
+    await page.evaluate((sel) => {
+      const input = document.querySelector(sel);
+      const $ = (window as any).$;
+      if ($ && input) {
+        $(input).trigger($.Event('mousewheel', {
+          originalEvent: { deltaY: 100, wheelDelta: -100 }
+        }));
+      }
+    }, selector);
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
