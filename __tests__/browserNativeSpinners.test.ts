@@ -25,9 +25,6 @@ test.describe('Browser Native Spinner Controls', () => {
       waitUntil: 'networkidle',
       timeout: 10000
     });
-    
-    // Wait for TouchSpin to initialize all controls
-    await touchspinHelpers.waitForTimeout(1000);
   });
 
   test.describe('Native Attributes Only', () => {
@@ -36,16 +33,17 @@ test.describe('Browser Native Spinner Controls', () => {
       // Input has native min="2" max="12", TouchSpin initialized with no min/max
       const testid = 'touchspin-native-only-attrs';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      
       // Test minimum boundary - try to go below native min=2
       await touchspinHelpers.fillWithValue(page, testid, '5');
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       await input.focus();
       
       // Go down multiple steps to hit minimum
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowDown');
-        await touchspinHelpers.waitForTimeout(50);
       }
       
       const minValue = await touchspinHelpers.readInputValue(page, testid);
@@ -61,7 +59,6 @@ test.describe('Browser Native Spinner Controls', () => {
       // Go up multiple steps to hit maximum
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowUp');
-        await touchspinHelpers.waitForTimeout(50);
       }
       
       const maxValue = await touchspinHelpers.readInputValue(page, testid);
@@ -75,9 +72,11 @@ test.describe('Browser Native Spinner Controls', () => {
       // Test input with native step="3", no TouchSpin step override
       const testid = 'touchspin-native-only-attrs';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      
       await touchspinHelpers.fillWithValue(page, testid, '5');
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       await input.focus();
       
       // Test with TouchSpin button - should use native step=3
@@ -92,7 +91,6 @@ test.describe('Browser Native Spinner Controls', () => {
       await touchspinHelpers.fillWithValue(page, testid, '5');
       await input.focus();
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
       const keyboardResult = await touchspinHelpers.readInputValue(page, testid);
       
@@ -107,9 +105,11 @@ test.describe('Browser Native Spinner Controls', () => {
       // Verify that TouchSpin sets native attributes to match its configuration
       const testid = 'touchspin-native-with-attrs';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      
       // Check that native attributes were updated to match TouchSpin settings
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMin = await input.getAttribute('min');
       const nativeMax = await input.getAttribute('max');
       const nativeStep = await input.getAttribute('step');
@@ -123,19 +123,18 @@ test.describe('Browser Native Spinner Controls', () => {
     test('should update native attributes when TouchSpin settings are changed programmatically', async ({ page }) => {
       const testid = 'touchspin-native-with-attrs';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      
       // Update TouchSpin settings programmatically
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         // @ts-ignore
         $(input).trigger('touchspin.updatesettings', { min: 10, max: 50, step: 2 });
       }, testid);
       
-      await touchspinHelpers.waitForTimeout(200);
-      
       // Check that native attributes were updated
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMin = await input.getAttribute('min');
       const nativeMax = await input.getAttribute('max');
       const nativeStep = await input.getAttribute('step');
@@ -148,6 +147,9 @@ test.describe('Browser Native Spinner Controls', () => {
     test('should sync TouchSpin settings when native attributes are changed externally', async ({ page }) => {
       const testid = 'touchspin-native-with-attrs';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      
       // Change native attributes externally (simulating programmatic changes)
       await page.evaluate((testId) => {
         const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
@@ -157,9 +159,6 @@ test.describe('Browser Native Spinner Controls', () => {
           input.setAttribute('step', '3');
         }
       }, testid);
-      
-      // Wait for MutationObserver to trigger
-      await touchspinHelpers.waitForTimeout(200);
       
       // Test that TouchSpin now respects the new native values
       await touchspinHelpers.fillWithValue(page, testid, '2');
@@ -179,7 +178,6 @@ test.describe('Browser Native Spinner Controls', () => {
       await touchspinHelpers.fillWithValue(page, testid, '10');
       await input.focus();
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
       const stepValue = await touchspinHelpers.readInputValue(page, testid);
       // Note: Actual step behavior shows increment of 2, not 3 as externally set
@@ -195,8 +193,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-with-attrs';
       
       // Verify native attributes were updated to TouchSpin values
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMin = await input.getAttribute('min');
       expect(nativeMin).toBe('3'); // Should be updated from native min="5" to TouchSpin min=3
       
@@ -206,7 +203,6 @@ test.describe('Browser Native Spinner Controls', () => {
       // Start at 8, try to go down 10 steps (should stop at TouchSpin min=3, not native min=5)
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowDown');
-        await touchspinHelpers.waitForTimeout(100);
       }
       
       const finalValue = await touchspinHelpers.readInputValue(page, testid);
@@ -222,8 +218,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-without-attrs';
       
       // Verify TouchSpin set the native attributes
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMin = await input.getAttribute('min');
       const nativeMax = await input.getAttribute('max');
       const nativeStep = await input.getAttribute('step');
@@ -238,7 +233,6 @@ test.describe('Browser Native Spinner Controls', () => {
       // Start at 8, try to go down 10 steps (should stop at TouchSpin min=3)
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowDown');
-        await touchspinHelpers.waitForTimeout(100);
       }
       
       const finalValue = await touchspinHelpers.readInputValue(page, testid);
@@ -254,14 +248,12 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-with-attrs';
       
       // Verify native max was updated to TouchSpin value
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMax = await input.getAttribute('max');
       expect(nativeMax).toBe('20'); // Should be updated from native max="15" to TouchSpin max=20
       
       // Reset to a value closer to TouchSpin max
       await touchspinHelpers.fillWithValue(page, testid, '18');
-      await touchspinHelpers.waitForTimeout(200);
       await input.focus();
       
       // Try to go above TouchSpin maximum (20) using native spinner
@@ -285,8 +277,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-large-step-native';
       
       // Verify native step was updated to TouchSpin value
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeStep = await input.getAttribute('step');
       expect(nativeStep).toBe('5'); // Should be updated from native step="10" to TouchSpin step=5
       
@@ -294,7 +285,6 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Start at 20, press ArrowUp once
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
       const newValue = await touchspinHelpers.readInputValue(page, testid);
       
@@ -308,8 +298,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-decimal-native-attrs';
       
       // Verify native step was updated to TouchSpin value
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeStep = await input.getAttribute('step');
       expect(nativeStep).toBe('0.5'); // Should be updated from native step="0.25" to TouchSpin step=0.5
       
@@ -317,7 +306,6 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Start at 2.75, press ArrowUp once
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
       const newValue = await touchspinHelpers.readInputValue(page, testid);
       
@@ -331,19 +319,16 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-with-attrs';
       
       // Verify native step was updated to TouchSpin value
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeStep = await input.getAttribute('step');
       expect(nativeStep).toBe('1'); // Should be updated from native step="2" to TouchSpin step=1
       
       // Reset to start value
       await touchspinHelpers.fillWithValue(page, testid, '8');
-      await touchspinHelpers.waitForTimeout(200);
       await input.focus();
       
       // Press ArrowUp once
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
       const newValue = await touchspinHelpers.readInputValue(page, testid);
       
@@ -358,8 +343,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-text-input';
       
       // Verify TouchSpin doesn't set native attributes on text inputs
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       const nativeMin = await input.getAttribute('min');
       const nativeMax = await input.getAttribute('max');
       const nativeStep = await input.getAttribute('step');
@@ -414,19 +398,18 @@ test.describe('Browser Native Spinner Controls', () => {
       // Verify that the sync functionality only works on number inputs
       const textInputTestid = 'touchspin-text-input';
       
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(textInputTestid + '-wrapper')).toBeAttached();
+      
       // Try to change settings on text input
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         // @ts-ignore
         $(input).trigger('touchspin.updatesettings', { min: 1, max: 50, step: 2 });
       }, textInputTestid);
       
-      await touchspinHelpers.waitForTimeout(200);
-      
       // Native attributes should still be null
-      const textSpin = page.getByTestId(textInputTestid);
-      const textInput = textSpin.locator('input');
+      const textInput = page.getByTestId(textInputTestid);
       const nativeMin = await textInput.getAttribute('min');
       const nativeMax = await textInput.getAttribute('max');
       const nativeStep = await textInput.getAttribute('step');
@@ -440,21 +423,23 @@ test.describe('Browser Native Spinner Controls', () => {
   test.describe('Disabled State Behavior', () => {
     test('should respect TouchSpin disabled state for native spinners', async ({ page }) => {
       // Test 5: Input is disabled via TouchSpin after initialization
-      // TODO: Add testid to disabled-test in HTML file
-      const inputSelector = '#disabled-test';
+      const testid = 'touchspin-disabled-test';
+      
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
       
       // Wait a bit longer for the disable to take effect (set in HTML after 500ms)
       await touchspinHelpers.waitForTimeout(1500);
       
-      const initialValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      const initialValue = await touchspinHelpers.readInputValue(page, testid);
       
-      await page.focus(inputSelector);
+      const input = page.getByTestId(testid);
+      await input.focus();
       
       // Try to use native spinner controls on disabled input
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(100);
       
-      const finalValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      const finalValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Value should not change when TouchSpin is disabled
       expect(parseInt(finalValue || '0')).toBe(parseInt(initialValue || '0'));
@@ -462,17 +447,19 @@ test.describe('Browser Native Spinner Controls', () => {
 
     test('should also disable TouchSpin buttons when input is disabled', async ({ page }) => {
       // Verify TouchSpin buttons are also disabled
-      // TODO: Add testid to disabled-test in HTML file
-      const inputSelector = '#disabled-test';
+      const testid = 'touchspin-disabled-test';
+      
+      // Ensure TouchSpin is initialized by waiting for wrapper
+      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
       
       // Wait for disable to take effect
       await touchspinHelpers.waitForTimeout(1500);
       
-      const initialValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      const initialValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Try TouchSpin button (should not work when disabled)
-      await touchspinHelpers.touchspinClickUp(page, inputSelector);
-      const finalValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      await touchspinHelpers.touchspinClickUp(page, testid);
+      const finalValue = await touchspinHelpers.readInputValue(page, testid);
       
       // TouchSpin buttons should also not work when disabled
       expect(parseInt(finalValue || '0')).toBe(parseInt(initialValue || '0'));
@@ -506,7 +493,6 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Use native spinner
       await page.keyboard.press('ArrowUp');
-      await touchspinHelpers.waitForTimeout(200);
       
       // Check if TouchSpin events were triggered
       const events = await page.evaluate(() => (window as any).touchspinEvents || []);
@@ -520,15 +506,15 @@ test.describe('Browser Native Spinner Controls', () => {
       // TODO: Add testid to booster-test in HTML file
       const inputSelector = '#booster-test';
       
-      const initialValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      const initialValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Use TouchSpin buttons repeatedly to trigger booster
       for (let i = 0; i < 5; i++) {
-        await touchspinHelpers.touchspinClickUp(page, inputSelector);
+        await touchspinHelpers.touchspinClickUp(page, testid);
         await touchspinHelpers.waitForTimeout(100);
       }
       
-      const finalValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      const finalValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Note: Booster functionality requires sustained clicking to activate (boostat: 3)
       // With 100ms delays between clicks, booster may not activate as expected
