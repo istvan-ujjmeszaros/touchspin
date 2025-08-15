@@ -150,8 +150,7 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Change native attributes externally (simulating programmatic changes)
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input') as HTMLInputElement;
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
         if (input) {
           input.setAttribute('min', '1');
           input.setAttribute('max', '30');
@@ -164,8 +163,7 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Test that TouchSpin now respects the new native values
       await touchspinHelpers.fillWithValue(page, testid, '2');
-      const spin = page.getByTestId(testid);
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       await input.focus();
       
       // Try to go below new min=1

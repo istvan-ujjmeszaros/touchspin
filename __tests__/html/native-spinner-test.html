@@ -92,10 +92,11 @@
                 TouchSpin configured with min: 3, max: 20, step: 1 (different values).<br>
                 <strong>Expected:</strong> TouchSpin settings should take precedence and native attributes should be updated.
             </div>
-            <div class="form-group" data-testid="touchspin-native-with-attrs">
+            <div class="form-group">
                 <label for="native-with-attrs">Number Input (Native Attributes)</label>
                 <input type="number"
                        id="native-with-attrs"
+                       data-testid="touchspin-native-with-attrs"
                        class="form-control"
                        value="8"
                        min="5"
@@ -143,10 +144,11 @@
                 TouchSpin configured with min: 3, max: 20, step: 1.<br>
                 <strong>Expected:</strong> Native attributes should be set to match TouchSpin settings.
             </div>
-            <div class="form-group" data-testid="touchspin-native-without-attrs">
+            <div class="form-group">
                 <label for="native-without-attrs">Number Input (No Native Attributes)</label>
                 <input type="number"
                        id="native-without-attrs"
+                       data-testid="touchspin-native-without-attrs"
                        class="form-control"
                        value="8">
             </div>
@@ -188,10 +190,11 @@
                 No TouchSpin settings provided.<br>
                 <strong>Expected:</strong> Native attributes should take precedence over data-bts attributes.
             </div>
-            <div class="form-group" data-testid="touchspin-native-vs-databts">
+            <div class="form-group">
                 <label for="native-vs-databts">Number Input (Native vs data-bts)</label>
                 <input type="number"
                        id="native-vs-databts"
+                       data-testid="touchspin-native-vs-databts"
                        class="form-control"
                        value="8"
                        min="4"
@@ -241,10 +244,11 @@
                 Input has ALL three: TouchSpin settings, native attributes, AND data-bts attributes.<br>
                 <strong>Expected:</strong> TouchSpin settings should win, overriding both native and data-bts attributes.
             </div>
-            <div class="form-group" data-testid="touchspin-full-precedence">
+            <div class="form-group">
                 <label for="full-precedence">Number Input (All Three Sources)</label>
                 <input type="number"
                        id="full-precedence"
+                       data-testid="touchspin-full-precedence"
                        class="form-control"
                        value="8"
                        min="10"
@@ -297,10 +301,11 @@
                 Input has ONLY data-bts attributes (no native attributes, no TouchSpin settings).<br>
                 <strong>Expected:</strong> data-bts attributes should be used and native attributes should be set.
             </div>
-            <div class="form-group" data-testid="touchspin-databts-only">
+            <div class="form-group">
                 <label for="databts-only">Number Input (data-bts only)</label>
                 <input type="number"
                        id="databts-only"
+                       data-testid="touchspin-databts-only"
                        class="form-control"
                        value="8"
                        data-bts-min="2"
@@ -344,10 +349,11 @@
                 TouchSpin overrides only min, leaving max and step to be resolved from native/data-bts.<br>
                 <strong>Expected:</strong> TouchSpin min, native max/step (native beats data-bts).
             </div>
-            <div class="form-group" data-testid="touchspin-partial-override">
+            <div class="form-group">
                 <label for="partial-override">Number Input (Partial Override)</label>
                 <input type="number"
                        id="partial-override"
+                       data-testid="touchspin-partial-override"
                        class="form-control"
                        value="8"
                        max="30"
@@ -395,10 +401,11 @@
                 TouchSpin configured with min: 3, max: 20, step: 1.<br>
                 <strong>Expected:</strong> Native attributes should NOT be set on text inputs.
             </div>
-            <div class="form-group" data-testid="touchspin-text-input">
+            <div class="form-group">
                 <label for="text-input">Text Input (No Native Spinners)</label>
                 <input type="text"
                        id="text-input"
+                       data-testid="touchspin-text-input"
                        class="form-control"
                        value="8">
             </div>
@@ -440,10 +447,11 @@
                 TouchSpin configured with different decimal values and decimals: 2.<br>
                 <strong>Expected:</strong> TouchSpin settings should override native decimal values.
             </div>
-            <div class="form-group" data-testid="touchspin-decimal-native-attrs">
+            <div class="form-group">
                 <label for="decimal-native-with-attrs">Decimal Number Input</label>
                 <input type="number"
                        id="decimal-native-with-attrs"
+                       data-testid="touchspin-decimal-native-attrs"
                        class="form-control"
                        value="2.75"
                        min="0.5"
@@ -493,10 +501,11 @@
                 TouchSpin initialized with NO min/max/step settings.<br>
                 <strong>Expected:</strong> TouchSpin should respect and maintain native attribute values.
             </div>
-            <div class="form-group" data-testid="touchspin-native-only-attrs">
+            <div class="form-group">
                 <label for="native-only-attrs">Number Input (Native Only)</label>
                 <input type="number"
                        id="native-only-attrs"
+                       data-testid="touchspin-native-only-attrs"
                        class="form-control"
                        value="5"
                        min="2"
@@ -539,10 +548,11 @@
                 Input will be disabled immediately after TouchSpin initialization.<br>
                 <strong>Expected:</strong> Native spinners should respect the disabled state.
             </div>
-            <div class="form-group" data-testid="touchspin-disabled-test">
+            <div class="form-group">
                 <label for="disabled-test">Number Input (Will be disabled)</label>
                 <input type="number"
                        id="disabled-test"
+                       data-testid="touchspin-disabled-test"
                        class="form-control"
                        value="5"
                        min="1"
@@ -600,10 +610,11 @@ $disabledTest.prop('disabled', true);</code></pre>
                 TouchSpin configured with step: 5 (different value).<br>
                 <strong>Expected:</strong> TouchSpin step should override native step.
             </div>
-            <div class="form-group" data-testid="touchspin-large-step-native">
+            <div class="form-group">
                 <label for="large-step-native">Number Input (Large Native Step)</label>
                 <input type="number"
                        id="large-step-native"
+                       data-testid="touchspin-large-step-native"
                        class="form-control"
                        value="20"
                        min="0"
@@ -647,10 +658,11 @@ $disabledTest.prop('disabled', true);</code></pre>
                 TouchSpin configured with booster enabled (boostat: 3, maxboostedstep: 10).<br>
                 <strong>Expected:</strong> TouchSpin booster should work with synchronized native attributes.
             </div>
-            <div class="form-group" data-testid="touchspin-booster-test">
+            <div class="form-group">
                 <label for="booster-test">Number Input (Booster Test)</label>
                 <input type="number"
                        id="booster-test"
+                       data-testid="touchspin-booster-test"
                        class="form-control"
                        value="10"
                        min="0"
@@ -704,10 +716,11 @@ $disabledTest.prop('disabled', true);</code></pre>
                 <strong>Bug:</strong> After updating to step: 0.5, down control doesn't work, up control increments by 1 instead of 0.5.<br>
                 <strong>Test Command:</strong> <code>$("#decimal-step-update").trigger('touchspin.updatesettings', {min: 2, max: 33, step: 0.5})</code>
             </div>
-            <div class="form-group" data-testid="touchspin-decimal-step-update">
+            <div class="form-group">
                 <label for="decimal-step-update">Number Input (Decimal Step Update Test)</label>
                 <input type="number"
                        id="decimal-step-update"
+                       data-testid="touchspin-decimal-step-update"
                        class="form-control"
                        value="8">
             </div>
@@ -813,10 +826,11 @@ $disabledTest.prop('disabled', true);</code></pre>
             <div class="row">
                 <!-- forcestepdivisibility: 'none' -->
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-step-div-none">
+                    <div class="form-group">
                         <label for="step-div-none">forcestepdivisibility: 'none'</label>
                         <input type="number"
                                id="step-div-none"
+                               data-testid="touchspin-step-div-none"
                                class="form-control"
                                value="7"
                                min="2"
@@ -827,10 +841,11 @@ $disabledTest.prop('disabled', true);</code></pre>
 
                 <!-- forcestepdivisibility: 'round' -->
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-step-div-round">
+                    <div class="form-group">
                         <label for="step-div-round">forcestepdivisibility: 'round' (default)</label>
                         <input type="number"
                                id="step-div-round"
+                               data-testid="touchspin-step-div-round"
                                class="form-control"
                                value="7"
                                min="2"
@@ -841,10 +856,11 @@ $disabledTest.prop('disabled', true);</code></pre>
 
                 <!-- forcestepdivisibility: 'floor' -->
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-step-div-floor">
+                    <div class="form-group">
                         <label for="step-div-floor">forcestepdivisibility: 'floor'</label>
                         <input type="number"
                                id="step-div-floor"
+                               data-testid="touchspin-step-div-floor"
                                class="form-control"
                                value="7"
                                min="2"
@@ -855,10 +871,11 @@ $disabledTest.prop('disabled', true);</code></pre>
 
                 <!-- forcestepdivisibility: 'ceil' -->
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-step-div-ceil">
+                    <div class="form-group">
                         <label for="step-div-ceil">forcestepdivisibility: 'ceil'</label>
                         <input type="number"
                                id="step-div-ceil"
+                               data-testid="touchspin-step-div-ceil"
                                class="form-control"
                                value="7"
                                min="2"
@@ -1055,10 +1072,11 @@ $('#step-div-ceil').TouchSpin({
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-native-step-test">
+                    <div class="form-group">
                         <label for="native-step-test">Native Control Only</label>
                         <input type="number"
                                id="native-step-test"
+                               data-testid="touchspin-native-step-test"
                                class="form-control"
                                value="5"
                                min="2"
@@ -1069,10 +1087,11 @@ $('#step-div-ceil').TouchSpin({
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group" data-testid="touchspin-touchspin-step-test">
+                    <div class="form-group">
                         <label for="touchspin-step-test">TouchSpin with Sync</label>
                         <input type="number"
                                id="touchspin-step-test"
+                               data-testid="touchspin-touchspin-step-test"
                                class="form-control"
                                value="5"
                                min="2"
