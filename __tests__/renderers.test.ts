@@ -6,17 +6,18 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 3 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs3.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
-      // Test basic button structure - use .first() since multiple instances exist on page
-      const buttonContainer = page.locator('.input-group-btn').first();
+      // Test basic button structure scoped to specific testid
+      const spin = page.getByTestId('touchspin-default');
+      const buttonContainer = spin.locator('.input-group-btn');
       await expect(buttonContainer).toBeVisible();
       
       // Test buttons have correct classes
-      const upButton = page.locator('.bootstrap-touchspin-up').first();
-      const downButton = page.locator('.bootstrap-touchspin-down').first();
+      const upButton = spin.locator('.bootstrap-touchspin-up');
+      const downButton = spin.locator('.bootstrap-touchspin-down');
       await expect(upButton).toBeVisible();
       await expect(downButton).toBeVisible();
       
@@ -67,7 +68,7 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 4 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs4.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 4 markup structure', async ({ page }) => {
@@ -114,7 +115,7 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 5 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs5.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
@@ -152,14 +153,14 @@ test.describe('Bootstrap Renderer System', () => {
     });
 
     test('should function correctly with Bootstrap 5 structure', async ({ page }) => {
-      const selector = '#testinput_default';
+      const testid = 'touchspin-default';
       
       // Test functionality
-      await touchspinHelpers.touchspinClickUp(page, selector);
-      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
+      await touchspinHelpers.touchspinClickUp(page, testid);
+      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
       
-      await touchspinHelpers.touchspinClickDown(page, selector);
-      expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
+      await touchspinHelpers.touchspinClickDown(page, testid);
+      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
     });
   });
 
@@ -173,13 +174,13 @@ test.describe('Bootstrap Renderer System', () => {
 
       for (const version of versions) {
         await page.goto(`/__tests__/html/${version.html}`);
-        await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+        await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
         
         // Reset value and test increment
-        await touchspinHelpers.fillWithValue(page, '#testinput_default', '50');
-        await touchspinHelpers.touchspinClickUp(page, '#testinput_default');
+        await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
+        await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
         
-        const value = await touchspinHelpers.readInputValue(page, '#testinput_default');
+        const value = await touchspinHelpers.readInputValue(page, 'touchspin-default');
         expect(value).toBe('51');
       }
     });
@@ -189,12 +190,13 @@ test.describe('Bootstrap Renderer System', () => {
       
       for (const html of versions) {
         await page.goto(`/__tests__/html/${html}`);
-        await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
+        await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
         
         // Validate basic structure exists
-        const hasInputGroup = page.locator('.input-group').first();
-        const hasUpButton = page.locator('.bootstrap-touchspin-up').first();
-        const hasDownButton = page.locator('.bootstrap-touchspin-down').first();
+        const spin = page.getByTestId('touchspin-default');
+        const hasInputGroup = spin.locator('.input-group');
+        const hasUpButton = spin.locator('.bootstrap-touchspin-up');
+        const hasDownButton = spin.locator('.bootstrap-touchspin-down');
         
         await expect(hasInputGroup).toBeVisible();
         await expect(hasUpButton).toBeVisible();

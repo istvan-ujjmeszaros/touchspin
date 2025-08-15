@@ -12,13 +12,15 @@ async function cleanupTimeouts(): Promise<void> {
   // Can be used for custom cleanup if needed
 }
 
-async function readInputValue(page: Page, selector: string): Promise<string | null> {
-  const input = page.locator(selector);
+async function readInputValue(page: Page, testid: string): Promise<string | null> {
+  const touchspinContainer = page.getByTestId(testid);
+  const input = touchspinContainer.locator('input');
   return await input.inputValue();
 }
 
-async function setInputAttr(page: Page, selector: string, attributeName: 'disabled' | 'readonly', attributeValue: boolean): Promise<void> {
-  const input = page.locator(selector);
+async function setInputAttr(page: Page, testid: string, attributeName: 'disabled' | 'readonly', attributeValue: boolean): Promise<void> {
+  const touchspinContainer = page.getByTestId(testid);
+  const input = touchspinContainer.locator('input');
   if (attributeValue) {
     await input.evaluate((el, attr) => el.setAttribute(attr, ''), attributeName);
   } else {
@@ -26,25 +28,19 @@ async function setInputAttr(page: Page, selector: string, attributeName: 'disabl
   }
 }
 
-async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise<boolean> {
-  // Try multiple selectors for different Bootstrap versions and configurations
+async function checkTouchspinUpIsDisabled(page: Page, testid: string): Promise<boolean> {
+  const touchspinContainer = page.getByTestId(testid);
+  
+  // Try different button locations within this specific TouchSpin instance
   const selectors = [
-    // Bootstrap 3/4 with input-group-btn
-    selector + ' + .input-group-btn > .bootstrap-touchspin-up',
-    // Bootstrap 4 with input-group-append
-    selector + ' + .input-group-append > .bootstrap-touchspin-up',
-    // Bootstrap 5 direct structure
-    selector + ' + .bootstrap-touchspin-up',
-    // Generic fallback within same input-group
-    '.input-group .bootstrap-touchspin-up',
-    // Vertical buttons
-    '.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up',
-    // Last resort - any up button
     '.bootstrap-touchspin-up',
+    '.input-group-btn .bootstrap-touchspin-up',
+    '.input-group-append .bootstrap-touchspin-up',
+    '.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up',
   ];
 
   for (const sel of selectors) {
-    const button = page.locator(sel);
+    const button = touchspinContainer.locator(sel);
     const count = await button.count();
     
     if (count > 0) {
@@ -58,13 +54,14 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
   return false; // If no button found, assume not disabled
 }
 
-async function touchspinClickUp(page: Page, input_selector: string): Promise<void> {
+async function touchspinClickUp(page: Page, testid: string): Promise<void> {
   // Get the initial value for comparison
-  const initialValue = await readInputValue(page, input_selector);
+  const initialValue = await readInputValue(page, testid);
+  const touchspinContainer = page.getByTestId(testid);
 
-  // Find and click the specific button for this input
-  const clickResult = await page.evaluate((inputSel) => {
-    const input = document.querySelector(inputSel);
+  // Find and click the specific button for this TouchSpin instance
+  const clickResult = await touchspinContainer.evaluate((container) => {
+    const input = container.querySelector('input');
     if (!input) return { success: false, error: 'Input not found' };
 
     // Find the closest input-group or wrapper that contains both input and buttons
@@ -106,7 +103,7 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
         disabled: button.disabled
       }
     };
-  }, input_selector);
+  });
 
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
@@ -120,11 +117,13 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
   // Wait for the value to actually change
   try {
     await page.waitForFunction(
-      (inputSelector, expectedInitialValue) => {
-        const input = document.querySelector(inputSelector) as HTMLInputElement;
+      (testid, expectedInitialValue) => {
+        const container = document.querySelector(`[data-testid="${testid}"]`);
+        if (!container) return false;
+        const input = container.querySelector('input') as HTMLInputElement;
         return input && input.value !== expectedInitialValue;
       },
-      input_selector,
+      testid,
       initialValue,
       { timeout: 2000 }
     );
@@ -133,13 +132,14 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
   }
 }
 
-async function touchspinClickDown(page: Page, input_selector: string): Promise<void> {
+async function touchspinClickDown(page: Page, testid: string): Promise<void> {
   // Get the initial value for comparison
-  const initialValue = await readInputValue(page, input_selector);
+  const initialValue = await readInputValue(page, testid);
+  const touchspinContainer = page.getByTestId(testid);
 
-  // Find and click the specific button for this input
-  const clickResult = await page.evaluate((inputSel) => {
-    const input = document.querySelector(inputSel);
+  // Find and click the specific button for this TouchSpin instance
+  const clickResult = await touchspinContainer.evaluate((container) => {
+    const input = container.querySelector('input');
     if (!input) return { success: false, error: 'Input not found' };
 
     // Find the closest input-group or wrapper that contains both input and buttons
@@ -181,7 +181,7 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
         disabled: button.disabled
       }
     };
-  }, input_selector);
+  });
 
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
@@ -195,11 +195,13 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
   // Wait for the value to actually change
   try {
     await page.waitForFunction(
-      (inputSelector, expectedInitialValue) => {
-        const input = document.querySelector(inputSelector) as HTMLInputElement;
+      (testid, expectedInitialValue) => {
+        const container = document.querySelector(`[data-testid="${testid}"]`);
+        if (!container) return false;
+        const input = container.querySelector('input') as HTMLInputElement;
         return input && input.value !== expectedInitialValue;
       },
-      input_selector,
+      testid,
       initialValue,
       { timeout: 2000 }
     );
@@ -209,7 +211,7 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
 }
 
 async function changeEventCounter(page: Page): Promise<number> {
-  // Get the event log content
+  // Get the event log content (this is global, not scoped to a specific TouchSpin)
   const eventLogContent = await page.locator('#events_log').textContent();
   
   // Count the number of 'change' events
@@ -225,7 +227,7 @@ async function countChangeWithValue(page: Page, expectedValue: string): Promise<
 }
 
 async function countEvent(page: Page, selector: string, event: string): Promise<number> {
-  // Get the event log content
+  // Get the event log content (this is global, not scoped to a specific TouchSpin)
   const eventLogContent = await page.locator('#events_log').textContent();
 
   // Count the number of events with the expected value
@@ -233,29 +235,48 @@ async function countEvent(page: Page, selector: string, event: string): Promise<
   return (eventLogContent ? eventLogContent.split(searchString).length - 1 : 0);
 }
 
-async function fillWithValue(page: Page, selector: string, value: string): Promise<void> {
-  const input = page.locator(selector);
+async function fillWithValue(page: Page, testid: string, value: string): Promise<void> {
+  const touchspinContainer = page.getByTestId(testid);
+  const input = touchspinContainer.locator('input');
   await input.focus();
   // Has to be triple click to select all text when using decorators
   await input.click({ clickCount: 3 });
   await input.fill(value);
 }
 
-async function waitForTouchSpinReady(page: Page, input_selector: string): Promise<void> {
+async function waitForTouchSpinReady(page: Page, testid: string): Promise<void> {
   // Wait for TouchSpin to be initialized and DOM structure to be ready
   await page.waitForFunction(
-    (selector) => {
-      const input = document.querySelector(selector) as HTMLInputElement;
-      if (!input) return false;
+    (testid) => {
+      // First try to find by data-testid (wrapper approach)
+      let container = document.querySelector(`[data-testid="${testid}"]`);
+      let input: HTMLInputElement | null = null;
+      
+      if (container) {
+        // Found wrapper with data-testid, look for input within it
+        input = container.querySelector('input') as HTMLInputElement;
+      } else {
+        // Try to find by input ID (fallback approach)
+        input = document.querySelector(`#${testid}`) as HTMLInputElement;
+        if (input) {
+          // Find the closest TouchSpin container that contains both input and buttons
+          container = input.closest('.input-group') ||
+                     input.closest('.bootstrap-touchspin') ||
+                     input.closest('[data-testid]') ||
+                     input.parentElement;
+        }
+      }
+      
+      if (!container || !input) return false;
 
-      // Check if TouchSpin has been initialized by looking for generated structure
+      // Check if TouchSpin has been initialized by looking for generated structure within this container
       const hasButtons =
-        document.querySelector('.bootstrap-touchspin-up') !== null &&
-        document.querySelector('.bootstrap-touchspin-down') !== null;
+        container.querySelector('.bootstrap-touchspin-up') !== null &&
+        container.querySelector('.bootstrap-touchspin-down') !== null;
 
       return hasButtons;
     },
-    input_selector,
+    testid,
     { timeout: 5000 }
   );
 }
