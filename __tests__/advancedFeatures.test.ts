@@ -5,7 +5,6 @@ test.describe('Advanced Features', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/__tests__/html/index-bs4.html');
-    await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
   });
 
   test.describe('Data Attributes Configuration', () => {
@@ -53,7 +52,7 @@ test.describe('Advanced Features', () => {
       
       // Hold mousedown for longer than stepintervaldelay (500ms)
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
       }, testid);
@@ -62,7 +61,7 @@ test.describe('Advanced Features', () => {
       await touchspinHelpers.waitForTimeout(800);
       
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
       }, testid);
@@ -76,7 +75,7 @@ test.describe('Advanced Features', () => {
       
       // Start spinning
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
       }, testid);
@@ -85,7 +84,7 @@ test.describe('Advanced Features', () => {
       
       // Stop spinning
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
       }, testid);
@@ -106,7 +105,7 @@ test.describe('Advanced Features', () => {
       
       // Simulate touch events
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('touchstart', { bubbles: true }));
         setTimeout(() => {
@@ -126,8 +125,7 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-default';
       
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input') as HTMLInputElement;
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
         (window as any).$(input).trigger('touchspin.destroy');
         (window as any).$(input).TouchSpin({
           callback_before_calculation: function(value: number) {
@@ -138,8 +136,6 @@ test.describe('Advanced Features', () => {
           }
         });
       }, testid);
-      
-      await touchspinHelpers.waitForTouchSpinReady(page, testid);
       
       // Test that plugin still works with callbacks
       await touchspinHelpers.touchspinClickUp(page, testid);
@@ -154,7 +150,7 @@ test.describe('Advanced Features', () => {
       
       // Start spinning and check for events
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
       }, testid);
@@ -162,7 +158,7 @@ test.describe('Advanced Features', () => {
       await touchspinHelpers.waitForTimeout(600); // Wait for spin to start
       
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const button = container?.querySelector('.bootstrap-touchspin-up');
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
       }, testid);

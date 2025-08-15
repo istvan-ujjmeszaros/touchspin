@@ -25,18 +25,18 @@
 
   <div class="row">
     <div class="col-md-4">
-      <div class="wrapper" data-testid="touchspin-rtl-default">
+      <div class="wrapper">
         <label for="testinput_default" class="form-label">#testinput_default:</label>
-        <input id="testinput_default" type="text" value="50" name="testinput_default" class="form-control">
+        <input id="testinput_default" data-testid="touchspin-rtl-default" type="text" value="50" name="testinput_default" class="form-control">
 
         <script>
           $("#testinput_default").TouchSpin();
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-rtl-decimals">
+      <div class="wrapper">
         <label for="testinput_decimals" class="form-label">#testinput_decimals:</label>
-        <input id="testinput_decimals" type="number" value="50" name="testinput_decimals" class="form-control">
+        <input id="testinput_decimals" data-testid="touchspin-rtl-decimals" type="number" value="50" name="testinput_decimals" class="form-control">
 
         <script>
           $("#testinput_decimals").TouchSpin({
@@ -46,9 +46,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-rtl-group-sm">
+      <div class="wrapper">
         <label for="input_group_sm" class="form-label">#input_group_sm:</label>
-        <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50">
+        <input id="input_group_sm" data-testid="touchspin-rtl-group-sm" type="text" class="form-control form-control-sm" value="50">
 
         <script>
           $("#input_group_sm").TouchSpin({
@@ -58,9 +58,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-rtl-vertical">
+      <div class="wrapper">
         <label for="input_vertical" class="form-label">#input_vertical:</label>
-        <input id="input_vertical" type="text" class="form-control" value="50">
+        <input id="input_vertical" data-testid="touchspin-rtl-vertical" type="text" class="form-control" value="50">
 
         <script>
           $("#input_vertical").TouchSpin({
@@ -69,9 +69,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-rtl-group-vertical">
+      <div class="wrapper">
         <label for="input_group_vertical" class="form-label">#input_group_vertical:</label>
-        <input id="input_group_vertical" type="text" class="form-control" value="50">
+        <input id="input_group_vertical" data-testid="touchspin-rtl-group-vertical" type="text" class="form-control" value="50">
 
         <script>
           $("#input_group_vertical").TouchSpin({
@@ -83,11 +83,11 @@
       </div>
 
       <!-- Bootstrap 5 RTL no longer has input-group-prepend/append -->
-      <div class="wrapper" data-testid="touchspin-rtl-prefix-postfix">
+      <div class="wrapper">
         <label for="input_group_from_dom_prefix_postfix" class="form-label">#input_group_from_dom_prefix_postfix:</label>
         <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix_postfix" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix_postfix" data-testid="touchspin-rtl-prefix-postfix" type="text" class="form-control" value="50">
           <span class="input-group-text">post</span>
         </div>
 
@@ -97,11 +97,11 @@
       </div>
 
       <!-- Vertical buttons in input group (not last-child) -->
-      <div class="wrapper" data-testid="touchspin-rtl-prefix-postfix-vertical">
+      <div class="wrapper">
         <label for="input_group_from_dom_prefix_postfix_vertical" class="form-label">#input_group_from_dom_prefix_postfix_vertical:</label>
         <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix_postfix_vertical" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix_postfix_vertical" data-testid="touchspin-rtl-prefix-postfix-vertical" type="text" class="form-control" value="50">
           <span class="input-group-text">post</span>
         </div>
 

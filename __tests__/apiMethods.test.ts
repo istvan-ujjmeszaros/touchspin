@@ -5,7 +5,6 @@ test.describe('API Methods', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/__tests__/html/index-bs4.html');
-    await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
   });
 
   test.describe('TouchSpin Interface Events', () => {
@@ -13,8 +12,7 @@ test.describe('API Methods', () => {
       const testid = 'touchspin-default';
 
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.uponce');
       }, testid);
 
@@ -25,8 +23,7 @@ test.describe('API Methods', () => {
       const testid = 'touchspin-default';
 
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.downonce');
       }, testid);
 
@@ -39,8 +36,7 @@ test.describe('API Methods', () => {
 
       // Start up spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.startupspin');
       }, testid);
 
@@ -49,8 +45,7 @@ test.describe('API Methods', () => {
 
       // Stop spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
@@ -66,8 +61,7 @@ test.describe('API Methods', () => {
 
       // Start down spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.startdownspin');
       }, testid);
 
@@ -76,8 +70,7 @@ test.describe('API Methods', () => {
 
       // Stop spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
@@ -92,8 +85,7 @@ test.describe('API Methods', () => {
 
       // Start spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.startupspin');
       }, testid);
 
@@ -101,8 +93,7 @@ test.describe('API Methods', () => {
 
       // Stop spin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
@@ -145,8 +136,7 @@ test.describe('API Methods', () => {
 
       // Update min and max values
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.updatesettings', [{
           min: 10,
           max: 20
@@ -171,8 +161,7 @@ test.describe('API Methods', () => {
 
       // Update step value
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.updatesettings', [{
           step: 5
         }]);
@@ -194,14 +183,13 @@ test.describe('API Methods', () => {
       const testid = 'touchspin-default';
 
       // Verify TouchSpin is active
-      const spin = page.getByTestId(testid);
+      const spin = page.getByTestId(testid + '-wrapper');
       const upButton = spin.locator('.bootstrap-touchspin-up');
       await expect(upButton).toBeVisible();
 
       // Destroy TouchSpin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.destroy');
       }, testid);
 
@@ -221,7 +209,7 @@ test.describe('API Methods', () => {
       expect(clickFailed).toBe(true); // Click should fail because TouchSpin is destroyed
 
       // Verify original input is preserved
-      const input = spin.locator('input');
+      const input = page.getByTestId(testid);
       await expect(input).toBeVisible();
     });
 
@@ -230,8 +218,7 @@ test.describe('API Methods', () => {
 
       // Destroy TouchSpin
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.destroy');
       }, testid);
 
@@ -239,8 +226,7 @@ test.describe('API Methods', () => {
 
       // Try to trigger TouchSpin events - they should not work
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).trigger('touchspin.uponce');
       }, testid);
 
@@ -255,8 +241,7 @@ test.describe('API Methods', () => {
 
       // Change value programmatically
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).val('75');
         (window as any).$(input).trigger('change');
       }, testid);
@@ -272,8 +257,7 @@ test.describe('API Methods', () => {
 
       // Set value beyond max (100)
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).val('150');
         (window as any).$(input).trigger('blur');
       }, testid);
@@ -287,8 +271,7 @@ test.describe('API Methods', () => {
 
       // Set decimal value programmatically
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         (window as any).$(input).val('12.345');
         (window as any).$(input).trigger('blur');
       }, testid);
@@ -304,8 +287,7 @@ test.describe('API Methods', () => {
 
       // Change disabled attribute programmatically
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         if (input) input.setAttribute('disabled', '');
       }, testid);
 
@@ -321,8 +303,7 @@ test.describe('API Methods', () => {
 
       // Change readonly attribute programmatically
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         if (input) input.setAttribute('readonly', '');
       }, testid);
 
@@ -341,8 +322,7 @@ test.describe('API Methods', () => {
 
       // Remove disabled attribute
       await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}"]`);
-        const input = container?.querySelector('input');
+        const input = document.querySelector(`[data-testid="${testId}"]`);
         if (input) input.removeAttribute('disabled');
       }, testid);
 
@@ -358,8 +338,7 @@ test.describe('API Methods', () => {
     test('should allow method chaining after TouchSpin initialization', async ({ page }) => {
       // Test that TouchSpin returns jQuery object for chaining
       const result = await page.evaluate(() => {
-        const container = document.querySelector('[data-testid="touchspin-default"]');
-        const input = container?.querySelector('input');
+        const input = document.querySelector('[data-testid="touchspin-default"]');
         return (window as any).$(input).TouchSpin().hasClass('form-control');
       });
 
@@ -391,8 +370,7 @@ test.describe('API Methods', () => {
       // Try to initialize with invalid settings
       const result = await page.evaluate(() => {
         try {
-          const container = document.querySelector('[data-testid="touchspin-default"]');
-          const input = container?.querySelector('input');
+          const input = document.querySelector('[data-testid="touchspin-default"]');
           (window as any).$(input).TouchSpin({
             min: 'invalid',
             max: null,

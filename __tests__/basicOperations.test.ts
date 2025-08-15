@@ -5,14 +5,13 @@ test.describe('Core functionality', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/__tests__/html/index-bs4.html');
-    await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
   });
 
   test('should render TouchSpin buttons and handle basic increment/decrement', async ({ page }) => {
     const testid = 'touchspin-default';
 
-    // Check buttons exist - scope to specific testid
-    const spin = page.getByTestId(testid);
+    // Check buttons exist - scope to TouchSpin wrapper
+    const spin = page.getByTestId(testid + '-wrapper');
     const upButton = spin.locator('.bootstrap-touchspin-up');
     const downButton = spin.locator('.bootstrap-touchspin-down');
     await expect(upButton).toBeVisible();
@@ -85,8 +84,7 @@ test.describe('Core functionality', () => {
   test('should support keyboard navigation', async ({ page }) => {
     const testid = 'touchspin-default';
     
-    const spin = page.getByTestId(testid);
-    const input = spin.locator('input');
+    const input = page.getByTestId(testid);
     await input.focus();
     await page.keyboard.press('ArrowUp');
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
@@ -98,14 +96,12 @@ test.describe('Core functionality', () => {
   test('should support mousewheel interaction', async ({ page }) => {
     const testid = 'touchspin-default';
     
-    const spin = page.getByTestId(testid);
-    const input = spin.locator('input');
+    const input = page.getByTestId(testid);
     await input.focus();
     
     // Simulate wheel up event (should increment)
     await page.evaluate((testId) => {
-      const container = document.querySelector(`[data-testid="${testId}"]`);
-      const input = container?.querySelector('input');
+      const input = document.querySelector(`[data-testid="${testId}"]`);
       const $ = (window as any).$;
       if ($ && input) {
         $(input).trigger($.Event('mousewheel', {
@@ -117,8 +113,7 @@ test.describe('Core functionality', () => {
     
     // Simulate wheel down event (should decrement)
     await page.evaluate((testId) => {
-      const container = document.querySelector(`[data-testid="${testId}"]`);
-      const input = container?.querySelector('input');
+      const input = document.querySelector(`[data-testid="${testId}"]`);
       const $ = (window as any).$;
       if ($ && input) {
         $(input).trigger($.Event('mousewheel', {

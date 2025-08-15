@@ -5,8 +5,6 @@ test.describe('Vertical Buttons', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/__tests__/html/index-bs4.html');
-    // TODO: Add testid to input_vertical in HTML files
-    await touchspinHelpers.waitForTouchSpinReady(page, '#input_vertical');
   });
 
   test('should render vertical button structure correctly', async ({ page }) => {
@@ -28,7 +26,7 @@ test.describe('Vertical Buttons', () => {
 
   test('should function correctly with vertical buttons', async ({ page }) => {
     // TODO: Add testid to input_vertical in HTML files
-    const selector = '#input_vertical';
+    const selector = 'touchspin-vertical';
     
     // Test increment
     await touchspinHelpers.touchspinClickUp(page, selector);
@@ -70,7 +68,7 @@ test.describe('Vertical Buttons', () => {
 
   test('should handle disabled state for vertical buttons', async ({ page }) => {
     // TODO: Add testid to input_vertical in HTML files
-    const selector = '#input_vertical';
+    const selector = 'touchspin-vertical';
     
     await touchspinHelpers.setInputAttr(page, selector, 'disabled', true);
     
@@ -88,7 +86,7 @@ test.describe('Vertical Buttons', () => {
 
   test('should support long press spinning for vertical buttons', async ({ page }) => {
     // TODO: Add testid to input_vertical in HTML files
-    const selector = '#input_vertical';
+    const selector = 'touchspin-vertical';
     
     // Simulate long press by holding mousedown for longer than stepintervaldelay (500ms)
     await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {

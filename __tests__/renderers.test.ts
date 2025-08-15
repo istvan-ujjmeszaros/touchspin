@@ -6,7 +6,6 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 3 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs3.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
@@ -68,7 +67,6 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 4 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs4.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 4 markup structure', async ({ page }) => {
@@ -115,7 +113,6 @@ test.describe('Bootstrap Renderer System', () => {
   test.describe('Bootstrap 5 Renderer', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/index-bs5.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
     });
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
@@ -174,7 +171,6 @@ test.describe('Bootstrap Renderer System', () => {
 
       for (const version of versions) {
         await page.goto(`/__tests__/html/${version.html}`);
-        await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
         
         // Reset value and test increment
         await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
@@ -190,7 +186,6 @@ test.describe('Bootstrap Renderer System', () => {
       
       for (const html of versions) {
         await page.goto(`/__tests__/html/${html}`);
-        await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-default');
         
         // Validate basic structure exists
         const spin = page.getByTestId('touchspin-default');

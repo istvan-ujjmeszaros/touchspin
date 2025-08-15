@@ -6,7 +6,6 @@ test.describe('RTL (Right-to-Left) Support', () => {
   test.describe('Bootstrap 3 RTL', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/rtl-bs3.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-rtl-default');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -28,28 +27,25 @@ test.describe('RTL (Right-to-Left) Support', () => {
     });
 
     test('should handle vertical buttons and prefix/postfix in RTL', async ({ page }) => {
-      // TODO: Add testid to input_vertical in RTL HTML files
-      const verticalSelector = '#input_vertical';
-      await touchspinHelpers.touchspinClickUp(page, verticalSelector);
-      expect(await touchspinHelpers.readInputValue(page, verticalSelector)).toBe('51');
+      const verticalTestid = 'touchspin-rtl-vertical';
+      await touchspinHelpers.touchspinClickUp(page, verticalTestid);
+      expect(await touchspinHelpers.readInputValue(page, verticalTestid)).toBe('51');
 
-      // TODO: Add testid to input_group_sm in RTL HTML files
-      const prefixSelector = '#input_group_sm';
+      const prefixTestid = 'touchspin-rtl-group-sm';
       const prefix = page.locator('.bootstrap-touchspin-prefix').first();
       const postfix = page.locator('.bootstrap-touchspin-postfix').first();
 
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
 
-      await touchspinHelpers.touchspinClickUp(page, prefixSelector);
-      expect(await touchspinHelpers.readInputValue(page, prefixSelector)).toBe('51');
+      await touchspinHelpers.touchspinClickUp(page, prefixTestid);
+      expect(await touchspinHelpers.readInputValue(page, prefixTestid)).toBe('51');
     });
   });
 
   test.describe('Bootstrap 4 RTL', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/rtl-bs4.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-rtl-default');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -75,7 +71,6 @@ test.describe('RTL (Right-to-Left) Support', () => {
   test.describe('Bootstrap 5 RTL', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/rtl-bs5.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-rtl-default');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -104,20 +99,18 @@ test.describe('RTL (Right-to-Left) Support', () => {
       });
       expect(hasDeprecatedClasses).toBe(false);
 
-      // TODO: Add testid to input_group_sm in RTL HTML files
-      const prefixSelector = '#input_group_sm';
+      const prefixTestid = 'touchspin-rtl-group-sm';
       const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text').first();
       await expect(directPrefix).toBeVisible();
 
-      await touchspinHelpers.touchspinClickUp(page, prefixSelector);
-      expect(await touchspinHelpers.readInputValue(page, prefixSelector)).toBe('51');
+      await touchspinHelpers.touchspinClickUp(page, prefixTestid);
+      expect(await touchspinHelpers.readInputValue(page, prefixTestid)).toBe('51');
     });
   });
 
   test.describe('RTL Text Input Handling', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/__tests__/html/rtl-bs4.html');
-      await touchspinHelpers.waitForTouchSpinReady(page, 'touchspin-rtl-default');
     });
 
     test('should handle manual text input correctly in RTL', async ({ page }) => {

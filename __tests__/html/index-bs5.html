@@ -23,27 +23,27 @@
 
   <div class="row">
     <div class="col-md-4">
-      <div class="wrapper" data-testid="touchspin-default">
+      <div class="wrapper">
         <label for="testinput_default" class="form-label">#testinput_default:</label>
-        <input id="testinput_default" type="text" value="50" name="testinput_default" class="form-control">
+        <input id="testinput_default" data-testid="touchspin-default" type="text" value="50" name="testinput_default" class="form-control">
 
         <script>
           $("#testinput_default").TouchSpin();
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-number">
+      <div class="wrapper">
         <label for="testinput_number" class="form-label">#testinput_number:</label>
-        <input id="testinput_number" type="number" value="50" name="testinput_number" class="form-control">
+        <input id="testinput_number" data-testid="touchspin-number" type="number" value="50" name="testinput_number" class="form-control">
 
         <script>
           $("#testinput_number").TouchSpin();
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-decimals">
+      <div class="wrapper">
         <label for="testinput_decimals" class="form-label">#testinput_decimals:</label>
-        <input id="testinput_decimals" type="number" value="50" name="testinput_decimals" class="form-control">
+        <input id="testinput_decimals" data-testid="touchspin-decimals" type="number" value="50" name="testinput_decimals" class="form-control">
 
         <script>
           $("#testinput_decimals").TouchSpin({
@@ -53,9 +53,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-step10-min">
+      <div class="wrapper">
         <label for="testinput_step10_min" class="form-label">#testinput_step10_min:</label>
-        <input id="testinput_step10_min" type="text" value="0" name="testinput_step10_min" class="form-control">
+        <input id="testinput_step10_min" data-testid="touchspin-step10-min" type="text" value="0" name="testinput_step10_min" class="form-control">
 
         <script>
           $("#testinput_step10_min").TouchSpin({
@@ -64,9 +64,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-step10-max">
+      <div class="wrapper">
         <label for="testinput_step10_max" class="form-label">#testinput_step10_max:</label>
-        <input id="testinput_step10_max" type="text" value="100" name="testinput_step10_max" class="form-control">
+        <input id="testinput_step10_max" data-testid="touchspin-step10-max" type="text" value="100" name="testinput_step10_max" class="form-control">
 
         <script>
           $("#testinput_step10_max").TouchSpin({
@@ -75,31 +75,31 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-disabled">
+      <div class="wrapper">
         <label for="testinput_disabled" class="form-label">#testinput_disabled:</label>
-        <input id="testinput_disabled" type="text" value="0" name="testinput_disabled" class="form-control" disabled>
+        <input id="testinput_disabled" data-testid="touchspin-disabled" type="text" value="0" name="testinput_disabled" class="form-control" disabled>
 
         <script>
           $("#testinput_disabled").TouchSpin();
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-readonly">
+      <div class="wrapper">
         <label for="testinput_readonly" class="form-label">#testinput_readonly:</label>
-        <input id="testinput_readonly" type="text" value="0" name="testinput_readonly" class="form-control" readonly>
+        <input id="testinput_readonly" data-testid="touchspin-readonly" type="text" value="0" name="testinput_readonly" class="form-control" readonly>
 
         <script>
           $("#testinput_readonly").TouchSpin();
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-data-attributes">
+      <div class="wrapper">
         <label for="testinput_data_attributes" class="form-label">#testinput_data_attributes:</label>
         <input id="testinput_data_attributes" type="text" name="testinput_data_attributes" class="form-control"
                value="50"
                data-bts-min="40"
                data-bts-max="60"
-               data-bts-step="2"
+               data-bts-step="2" data-testid="touchspin-data-attributes"
         >
 
         <script>
@@ -107,7 +107,7 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-individual-props">
+      <div class="wrapper">
         <label for="testinput_individual_min_max_step_properties" class="form-label">#testinput_individual_min_max_step_properties:</label>
         <input id="testinput_individual_min_max_step_properties" type="text" name="testinput_individual_min_max_step_properties" class="form-control"
                value="50"
@@ -116,7 +116,7 @@
                step="3"
                data-bts-min="40"
                data-bts-max="60"
-               data-bts-step="2"
+               data-bts-step="2" data-testid="touchspin-individual-props"
         >
 
         <script>
@@ -124,9 +124,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-group-sm">
+      <div class="wrapper">
         <label for="input_group_sm" class="form-label">#input_group_sm:</label>
-        <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50">
+        <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-group-sm">
 
         <script>
           $("#input_group_sm").TouchSpin({
@@ -136,9 +136,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-group-lg">
+      <div class="wrapper">
         <label for="input_group_lg" class="form-label">#input_group_lg:</label>
-        <input id="input_group_lg" type="text" class="form-control form-control-lg" value="50">
+        <input id="input_group_lg" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-group-lg">
 
         <script>
           $("#input_group_lg").TouchSpin({
@@ -148,9 +148,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-callbacks">
+      <div class="wrapper">
         <label for="input_callbacks" class="form-label">#input_callbacks:</label>
-        <input id="input_callbacks" type="text" class="form-control form-control-lg" value="">
+        <input id="input_callbacks" type="text" class="form-control form-control-lg" value="" data-testid="touchspin-callbacks">
 
         <script>
           $("#input_callbacks").TouchSpin({
@@ -169,9 +169,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-vertical">
+      <div class="wrapper">
         <label for="input_vertical" class="form-label">#input_vertical:</label>
-        <input id="input_vertical" type="text" class="form-control" value="50">
+        <input id="input_vertical" type="text" class="form-control" value="50" data-testid="touchspin-vertical">
 
         <script>
           $("#input_vertical").TouchSpin({
@@ -180,9 +180,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-sm-vertical">
+      <div class="wrapper">
         <label for="input_sm_vertical" class="form-label">#input_sm_vertical:</label>
-        <input id="input_sm_vertical" type="text" class="form-control form-control-sm" value="50">
+        <input id="input_sm_vertical" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-sm-vertical">
 
         <script>
           $("#input_sm_vertical").TouchSpin({
@@ -191,9 +191,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-lg-vertical">
+      <div class="wrapper">
         <label for="input_lg_vertical" class="form-label">#input_lg_vertical:</label>
-        <input id="input_lg_vertical" type="text" class="form-control form-control-lg" value="50">
+        <input id="input_lg_vertical" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-lg-vertical">
 
         <script>
           $("#input_lg_vertical").TouchSpin({
@@ -202,9 +202,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-group-vertical">
+      <div class="wrapper">
         <label for="input_group_vertical" class="form-label">#input_group_vertical:</label>
-        <input id="input_group_vertical" type="text" class="form-control" value="50">
+        <input id="input_group_vertical" type="text" class="form-control" value="50" data-testid="touchspin-group-vertical">
 
         <script>
           $("#input_group_vertical").TouchSpin({
@@ -215,9 +215,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-group-sm-vertical">
+      <div class="wrapper">
         <label for="input_group_sm_vertical" class="form-label">#input_group_sm_vertical:</label>
-        <input id="input_group_sm_vertical" type="text" class="form-control form-control-sm" value="50">
+        <input id="input_group_sm_vertical" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-group-sm-vertical">
 
         <script>
           $("#input_group_sm_vertical").TouchSpin({
@@ -228,9 +228,9 @@
         </script>
       </div>
 
-      <div class="wrapper" data-testid="touchspin-group-lg-vertical">
+      <div class="wrapper">
         <label for="input_group_lg_vertical" class="form-label">#input_group_lg_vertical:</label>
-        <input id="input_group_lg_vertical" type="text" class="form-control form-control-lg" value="50">
+        <input id="input_group_lg_vertical" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-group-lg-vertical">
 
         <script>
           $("#input_group_lg_vertical").TouchSpin({
@@ -244,9 +244,9 @@
       <!-- Bootstrap 5 no longer has input-group-prepend/append, use direct children -->
       <div class="wrapper">
         <label for="input_group_from_dom_prefix_postfix_vertical" class="form-label">#input_group_from_dom_prefix_postfix_vertical:</label>
-        <div class="input-group" data-testid="touchspin-prefix-postfix-vertical">
+        <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix_postfix_vertical" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix_postfix_vertical" type="text" class="form-control" value="50" data-testid="touchspin-prefix-postfix-vertical">
           <span class="input-group-text">post</span>
         </div>
 
@@ -259,9 +259,9 @@
 
       <div class="wrapper">
         <label for="input_group_from_dom_prefix_vertical" class="form-label">#input_group_from_dom_prefix_vertical:</label>
-        <div class="input-group" data-testid="touchspin-prefix-vertical">
+        <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix_vertical" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix_vertical" type="text" class="form-control" value="50" data-testid="touchspin-prefix-vertical">
         </div>
 
         <script>
@@ -273,9 +273,9 @@
 
       <div class="wrapper">
         <label for="input_group_from_dom_prefix_postfix" class="form-label">#input_group_from_dom_prefix_postfix:</label>
-        <div class="input-group" data-testid="touchspin-prefix-postfix">
+        <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix_postfix" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix_postfix" type="text" class="form-control" value="50" data-testid="touchspin-prefix-postfix">
           <span class="input-group-text">post</span>
         </div>
 
@@ -286,9 +286,9 @@
 
       <div class="wrapper">
         <label for="input_group_from_dom_prefix" class="form-label">#input_group_from_dom_prefix:</label>
-        <div class="input-group" data-testid="touchspin-prefix">
+        <div class="input-group">
           <span class="input-group-text">pre</span>
-          <input id="input_group_from_dom_prefix" type="text" class="form-control" value="50">
+          <input id="input_group_from_dom_prefix" type="text" class="form-control" value="50" data-testid="touchspin-prefix">
         </div>
 
         <script>
