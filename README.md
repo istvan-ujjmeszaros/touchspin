@@ -421,10 +421,29 @@ Ensure your input element is properly initialized:
 ```
 Note: Both text and number input types are supported.
 
-**Browser native spinners bypass TouchSpin settings**  
-When using `type="number"`, browsers show native up/down arrows that may not respect TouchSpin's min/max/step settings:
+**Native Spinner Synchronization**  
+TouchSpin automatically synchronizes with browser native spinner controls when using `type="number"`:
+
+- **TouchSpin settings take precedence** - When both TouchSpin options and native attributes are present, TouchSpin settings override native values
+- **Native attributes are automatically updated** - TouchSpin sets native `min`, `max`, and `step` attributes to match its configuration
+- **Bidirectional sync** - Changes to native attributes are automatically reflected in TouchSpin settings
+- **Consistent behavior** - Both TouchSpin buttons and native browser spinners respect the same limits
+
+```html
+<!-- TouchSpin will override native attributes and keep them in sync -->
+<input type="number" min="1" max="50" step="2" id="spinner" value="10">
+<script>
+$('#spinner').TouchSpin({
+  min: 5,    // This overrides native min="1"
+  max: 100,  // This overrides native max="50"  
+  step: 1    // This overrides native step="2"
+});
+// Native attributes are now: min="5" max="100" step="1"
+</script>
+```
+
+To hide native browser spinners if desired:
 ```css
-/* Hide native browser spinners if needed */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;

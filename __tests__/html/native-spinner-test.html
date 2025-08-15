@@ -4,22 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap TouchSpin - Native Spinner Tests</title>
-    
+
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    
+
     <!-- TouchSpin CSS -->
     <link rel="stylesheet" href="../../dist/jquery.bootstrap-touchspin.css">
-    
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- Bootstrap 4 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- TouchSpin JS -->
     <script src="../../dist/jquery.bootstrap-touchspin-bs4.js"></script>
-    
+
     <style>
         .test-section {
             margin: 30px 0;
@@ -64,69 +64,100 @@
             border-radius: 5px;
             display: none;
         }
+        .precedence-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .precedence-info strong {
+            color: #856404;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>TouchSpin Native Number Input Tests</h1>
-        <p>This page tests how TouchSpin interacts with browser native number input controls.</p>
-        
-        <!-- Test 1: Native number input WITH native min/max/step attributes -->
+        <p>This page tests how TouchSpin interacts with browser native number input controls and validates the precedence order: <strong>TouchSpin settings → Native attributes → data-bts-* attributes</strong></p>
+
+        <!-- Test 1: TouchSpin settings override native attributes -->
         <div class="test-section">
-            <h3>Test 1: Number Input WITH Native Attributes</h3>
+            <h3>Test 1: TouchSpin Settings Override Native Attributes</h3>
+            <div class="precedence-info">
+                <strong>Precedence Test:</strong> TouchSpin settings should override native attributes
+            </div>
             <div class="test-info">
                 Input has native min="5", max="15", step="2" attributes.<br>
                 TouchSpin configured with min: 3, max: 20, step: 1 (different values).<br>
-                <strong>Question:</strong> Which settings will browser native spinners respect?
+                <strong>Expected:</strong> TouchSpin settings should take precedence and native attributes should be updated.
             </div>
             <div class="form-group">
                 <label for="native-with-attrs">Number Input (Native Attributes)</label>
-                <input type="number" 
-                       id="native-with-attrs" 
-                       class="form-control" 
+                <input type="number"
+                       id="native-with-attrs"
+                       class="form-control"
                        value="8"
-                       min="5" 
-                       max="15" 
+                       min="5"
+                       max="15"
                        step="2">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="native-with-attrs"
+       class="form-control"
+       value="8"
+       min="5"
+       max="15"
+       step="2"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#native-with-attrs').TouchSpin({
-    min: 3,        // Conflicts with native min="5"
-    max: 20,       // Conflicts with native max="15"  
-    step: 1        // Conflicts with native step="2"
+    min: 3,        // Should override native min="5"
+    max: 20,       // Should override native max="15"
+    step: 1        // Should override native step="2"
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#native-with-attrs').TouchSpin({
-                        min: 3,        // Conflicts with native min="5"
-                        max: 20,       // Conflicts with native max="15"  
-                        step: 1        // Conflicts with native step="2"
+                        min: 3,        // Should override native min="5"
+                        max: 20,       // Should override native max="15"
+                        step: 1        // Should override native step="2"
                     });
                 });
             </script>
         </div>
 
-        <!-- Test 2: Native number input WITHOUT native attributes -->
+        <!-- Test 2: TouchSpin settings without native attributes -->
         <div class="test-section">
-            <h3>Test 2: Number Input WITHOUT Native Attributes</h3>
+            <h3>Test 2: TouchSpin Settings (No Native Attributes)</h3>
+            <div class="precedence-info">
+                <strong>Baseline Test:</strong> TouchSpin should set native attributes when none exist
+            </div>
             <div class="test-info">
                 Input has NO native min/max/step attributes.<br>
                 TouchSpin configured with min: 3, max: 20, step: 1.<br>
-                <strong>Question:</strong> Will browser native spinners respect TouchSpin-only settings?
+                <strong>Expected:</strong> Native attributes should be set to match TouchSpin settings.
             </div>
             <div class="form-group">
                 <label for="native-without-attrs">Number Input (No Native Attributes)</label>
-                <input type="number" 
-                       id="native-without-attrs" 
-                       class="form-control" 
+                <input type="number"
+                       id="native-without-attrs"
+                       class="form-control"
                        value="8">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="native-without-attrs"
+       class="form-control"
+       value="8"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#native-without-attrs').TouchSpin({
     min: 3,
@@ -134,7 +165,7 @@
     step: 1
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#native-without-attrs').TouchSpin({
@@ -146,23 +177,239 @@
             </script>
         </div>
 
-        <!-- Test 3: Text input (no native spinners) -->
+        <!-- Test 3: Native attributes override data-bts attributes -->
         <div class="test-section">
-            <h3>Test 3: Text Input (Control Group)</h3>
+            <h3>Test 3: Native Attributes Override data-bts-* Attributes</h3>
+            <div class="precedence-info">
+                <strong>Precedence Test:</strong> Native attributes should override data-bts-* attributes
+            </div>
+            <div class="test-info">
+                Input has both native attributes (min="4", max="25", step="2") AND data-bts attributes.<br>
+                No TouchSpin settings provided.<br>
+                <strong>Expected:</strong> Native attributes should take precedence over data-bts attributes.
+            </div>
+            <div class="form-group">
+                <label for="native-vs-databts">Number Input (Native vs data-bts)</label>
+                <input type="number"
+                       id="native-vs-databts"
+                       class="form-control"
+                       value="8"
+                       min="4"
+                       max="25"
+                       step="2"
+                       data-bts-min="1"
+                       data-bts-max="30"
+                       data-bts-step="3">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="native-vs-databts"
+       class="form-control"
+       value="8"
+       min="4"          &lt;-- Should take precedence
+       max="25"         &lt;-- Should take precedence
+       step="2"         &lt;-- Should take precedence
+       data-bts-min="1"
+       data-bts-max="30"
+       data-bts-step="3"&gt;</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>$('#native-vs-databts').TouchSpin({
+    // No TouchSpin settings - should use native attributes
+    // min="4", max="25", step="2" (not data-bts values)
+});</code></pre>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#native-vs-databts').TouchSpin({
+                        // No TouchSpin settings - should use native attributes
+                    });
+                });
+            </script>
+        </div>
+
+        <!-- Test 4: Full precedence chain (TouchSpin > Native > data-bts) -->
+        <div class="test-section">
+            <h3>Test 4: Complete Precedence Chain</h3>
+            <div class="precedence-info">
+                <strong>Complete Precedence Test:</strong> TouchSpin → Native → data-bts-* (all three present)
+            </div>
+            <div class="test-info">
+                Input has ALL three: TouchSpin settings, native attributes, AND data-bts attributes.<br>
+                <strong>Expected:</strong> TouchSpin settings should win, overriding both native and data-bts attributes.
+            </div>
+            <div class="form-group">
+                <label for="full-precedence">Number Input (All Three Sources)</label>
+                <input type="number"
+                       id="full-precedence"
+                       class="form-control"
+                       value="8"
+                       min="10"
+                       max="50"
+                       step="5"
+                       data-bts-min="2"
+                       data-bts-max="60"
+                       data-bts-step="4">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="full-precedence"
+       class="form-control"
+       value="8"
+       min="10"           &lt;-- Native attributes
+       max="50"           &lt;-- Native attributes
+       step="5"           &lt;-- Native attributes
+       data-bts-min="2"   &lt;-- data-bts attributes (lowest precedence)
+       data-bts-max="60"  &lt;-- data-bts attributes (lowest precedence)
+       data-bts-step="4"&gt; &lt;-- data-bts attributes (lowest precedence)</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>$('#full-precedence').TouchSpin({
+    min: 1,        // Should override native min="10" and data-bts-min="2"
+    max: 40,       // Should override native max="50" and data-bts-max="60"
+    step: 3        // Should override native step="5" and data-bts-step="4"
+});</code></pre>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#full-precedence').TouchSpin({
+                        min: 1,        // Should override native min="10" and data-bts-min="2"
+                        max: 40,       // Should override native max="50" and data-bts-max="60"
+                        step: 3        // Should override native step="5" and data-bts-step="4"
+                    });
+                });
+            </script>
+        </div>
+
+        <!-- Test 5: data-bts attributes only -->
+        <div class="test-section">
+            <h3>Test 5: data-bts-* Attributes Only</h3>
+            <div class="precedence-info">
+                <strong>Baseline Test:</strong> data-bts attributes should work when no other settings present
+            </div>
+            <div class="test-info">
+                Input has ONLY data-bts attributes (no native attributes, no TouchSpin settings).<br>
+                <strong>Expected:</strong> data-bts attributes should be used and native attributes should be set.
+            </div>
+            <div class="form-group">
+                <label for="databts-only">Number Input (data-bts only)</label>
+                <input type="number"
+                       id="databts-only"
+                       class="form-control"
+                       value="8"
+                       data-bts-min="2"
+                       data-bts-max="18"
+                       data-bts-step="2">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="databts-only"
+       class="form-control"
+       value="8"
+       data-bts-min="2"
+       data-bts-max="18"
+       data-bts-step="2"&gt;</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>$('#databts-only').TouchSpin({
+    // No TouchSpin settings - should use data-bts-* attributes
+    // and set native attributes accordingly
+});</code></pre>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#databts-only').TouchSpin({
+                        // No TouchSpin settings - should use data-bts-* attributes
+                    });
+                });
+            </script>
+        </div>
+
+        <!-- Test 6: Partial TouchSpin override -->
+        <div class="test-section">
+            <h3>Test 6: Partial TouchSpin Override</h3>
+            <div class="precedence-info">
+                <strong>Mixed Precedence Test:</strong> Some TouchSpin settings, some from native/data-bts
+            </div>
+            <div class="test-info">
+                TouchSpin overrides only min, leaving max and step to be resolved from native/data-bts.<br>
+                <strong>Expected:</strong> TouchSpin min, native max/step (native beats data-bts).
+            </div>
+            <div class="form-group">
+                <label for="partial-override">Number Input (Partial Override)</label>
+                <input type="number"
+                       id="partial-override"
+                       class="form-control"
+                       value="8"
+                       max="30"
+                       step="3"
+                       data-bts-min="5"
+                       data-bts-max="40"
+                       data-bts-step="4">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="partial-override"
+       class="form-control"
+       value="8"
+       max="30"           &lt;-- Native max (should be used)
+       step="3"           &lt;-- Native step (should be used)
+       data-bts-min="5"   &lt;-- data-bts min (should be ignored - TouchSpin overrides)
+       data-bts-max="40"  &lt;-- data-bts max (should be ignored - native overrides)
+       data-bts-step="4"&gt; &lt;-- data-bts step (should be ignored - native overrides)</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>$('#partial-override').TouchSpin({
+    min: 2,        // TouchSpin setting (highest precedence)
+    // max and step not specified - should use native values
+    // Expected result: min=2, max=30, step=3
+});</code></pre>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#partial-override').TouchSpin({
+                        min: 2,        // TouchSpin setting (highest precedence)
+                        // max and step not specified - should use native values
+                    });
+                });
+            </script>
+        </div>
+
+        <!-- Test 7: Text input control -->
+        <div class="test-section">
+            <h3>Test 7: Text Input (Control Group)</h3>
             <div class="test-info">
                 Input type="text" - no browser native spinners available.<br>
                 TouchSpin configured with min: 3, max: 20, step: 1.<br>
-                <strong>Purpose:</strong> Control group to verify TouchSpin-only behavior.
+                <strong>Expected:</strong> Native attributes should NOT be set on text inputs.
             </div>
             <div class="form-group">
                 <label for="text-input">Text Input (No Native Spinners)</label>
-                <input type="text" 
-                       id="text-input" 
-                       class="form-control" 
+                <input type="text"
+                       id="text-input"
+                       class="form-control"
                        value="8">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="text"
+       id="text-input"
+       class="form-control"
+       value="8"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#text-input').TouchSpin({
     min: 3,
@@ -170,7 +417,7 @@
     step: 1
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#text-input').TouchSpin({
@@ -182,166 +429,99 @@
             </script>
         </div>
 
-        <!-- Test 4: Number input with decimal native attributes -->
+        <!-- Test 8: Decimal values with precedence -->
         <div class="test-section">
-            <h3>Test 4: Decimal Number Input WITH Native Attributes</h3>
+            <h3>Test 8: Decimal Values with Precedence</h3>
+            <div class="precedence-info">
+                <strong>Decimal Precedence Test:</strong> TouchSpin decimal settings should override native
+            </div>
             <div class="test-info">
-                Input has native min="0.5", max="10.5", step="0.25" attributes.<br>
-                TouchSpin configured with min: 0, max: 15, step: 0.5, decimals: 2 (different values).<br>
-                <strong>Question:</strong> How do decimal native attributes interact with TouchSpin?
+                Input has native decimal attributes.<br>
+                TouchSpin configured with different decimal values and decimals: 2.<br>
+                <strong>Expected:</strong> TouchSpin settings should override native decimal values.
             </div>
             <div class="form-group">
-                <label for="decimal-native-with-attrs">Decimal Number Input (Native Attributes)</label>
-                <input type="number" 
-                       id="decimal-native-with-attrs" 
-                       class="form-control" 
+                <label for="decimal-native-with-attrs">Decimal Number Input</label>
+                <input type="number"
+                       id="decimal-native-with-attrs"
+                       class="form-control"
                        value="2.75"
-                       min="0.5" 
-                       max="10.5" 
+                       min="0.5"
+                       max="10.5"
                        step="0.25">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="decimal-native-with-attrs"
+       class="form-control"
+       value="2.75"
+       min="0.5"
+       max="10.5"
+       step="0.25"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#decimal-native-with-attrs').TouchSpin({
-    min: 0,        // Conflicts with native min="0.5"
-    max: 15,       // Conflicts with native max="10.5"
-    step: 0.5,     // Conflicts with native step="0.25"
+    min: 0,        // Should override native min="0.5"
+    max: 15,       // Should override native max="10.5"
+    step: 0.5,     // Should override native step="0.25"
     decimals: 2
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#decimal-native-with-attrs').TouchSpin({
-                        min: 0,        // Conflicts with native min="0.5"
-                        max: 15,       // Conflicts with native max="10.5"
-                        step: 0.5,     // Conflicts with native step="0.25"
+                        min: 0,        // Should override native min="0.5"
+                        max: 15,       // Should override native max="10.5"
+                        step: 0.5,     // Should override native step="0.25"
                         decimals: 2
                     });
                 });
             </script>
         </div>
 
-        <!-- Test 5: Number input with disabled state -->
+        <!-- Test 9: Native attributes only (no overrides) -->
         <div class="test-section">
-            <h3>Test 5: Disabled State Test</h3>
-            <div class="test-info">
-                Input will be disabled immediately after TouchSpin initialization.<br>
-                <strong>Question:</strong> Do native spinners respect the disabled state?<br>
-                <strong>Manual Test:</strong> Try using browser native spinners (should be blocked).
+            <h3>Test 9: Native Attributes Only (No TouchSpin Overrides)</h3>
+            <div class="precedence-info">
+                <strong>Native Baseline Test:</strong> TouchSpin should respect native attributes when no overrides
             </div>
-            <div class="form-group">
-                <label for="disabled-test">Number Input (Will be disabled)</label>
-                <input type="number" 
-                       id="disabled-test" 
-                       class="form-control" 
-                       value="5"
-                       min="1" 
-                       max="10" 
-                       step="1">
-            </div>
-            
-            <div class="initialization-code">
-                <strong>TouchSpin Configuration:</strong>
-                <pre><code>const $disabledTest = $('#disabled-test').TouchSpin({
-    min: 1,
-    max: 10,
-    step: 1
-});
-
-// Disable immediately after initialization
-$disabledTest.prop('disabled', true);</code></pre>
-            </div>
-            
-            <div class="test-result" id="disabled-status">
-                <strong>Status:</strong> <span id="disabled-text">Initializing...</span>
-            </div>
-            
-            <script>
-                $(document).ready(function() {
-                    const $disabledTest = $('#disabled-test').TouchSpin({
-                        min: 1,
-                        max: 10,
-                        step: 1
-                    });
-                    
-                    // Disable immediately after initialization
-                    $disabledTest.prop('disabled', true);
-                    
-                    $('#disabled-status').show();
-                    $('#disabled-text').text('Input DISABLED - TouchSpin auto-detected and disabled its buttons too!');
-                });
-            </script>
-        </div>
-
-        <!-- Test 6: Number input with large step values -->
-        <div class="test-section">
-            <h3>Test 6: Large Step Values</h3>
-            <div class="test-info">
-                Input has native step="10" attribute.<br>
-                TouchSpin configured with step: 5 (different value).<br>
-                <strong>Question:</strong> Which step value will native spinners use?
-            </div>
-            <div class="form-group">
-                <label for="large-step-native">Number Input (Large Native Step)</label>
-                <input type="number" 
-                       id="large-step-native" 
-                       class="form-control" 
-                       value="20"
-                       min="0" 
-                       max="100" 
-                       step="10">
-            </div>
-            
-            <div class="initialization-code">
-                <strong>TouchSpin Configuration:</strong>
-                <pre><code>$('#large-step-native').TouchSpin({
-    min: 0,
-    max: 100,
-    step: 5       // Conflicts with native step="10"
-});</code></pre>
-            </div>
-            
-            <script>
-                $(document).ready(function() {
-                    $('#large-step-native').TouchSpin({
-                        min: 0,
-                        max: 100,
-                        step: 5       // Conflicts with native step="10"
-                    });
-                });
-            </script>
-        </div>
-
-        <!-- Test 7: Number input with ONLY native attributes (no TouchSpin overrides) -->
-        <div class="test-section">
-            <h3>Test 7: Native Attributes ONLY (No TouchSpin Overrides)</h3>
             <div class="test-info">
                 Input has native min="2", max="12", step="3" attributes.<br>
-                TouchSpin initialized with NO min/max/step settings (should use native values).<br>
-                <strong>Question:</strong> Does TouchSpin respect native attributes when no overrides provided?
+                TouchSpin initialized with NO min/max/step settings.<br>
+                <strong>Expected:</strong> TouchSpin should respect and maintain native attribute values.
             </div>
             <div class="form-group">
                 <label for="native-only-attrs">Number Input (Native Only)</label>
-                <input type="number" 
-                       id="native-only-attrs" 
-                       class="form-control" 
+                <input type="number"
+                       id="native-only-attrs"
+                       class="form-control"
                        value="5"
-                       min="2" 
-                       max="12" 
+                       min="2"
+                       max="12"
                        step="3">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="native-only-attrs"
+       class="form-control"
+       value="5"
+       min="2"
+       max="12"
+       step="3"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#native-only-attrs').TouchSpin({
     // NO min, max, or step specified
-    // TouchSpin should use native attributes:
+    // TouchSpin should respect native attributes:
     // min="2", max="12", step="3"
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#native-only-attrs').TouchSpin({
@@ -352,25 +532,142 @@ $disabledTest.prop('disabled', true);</code></pre>
             </script>
         </div>
 
-        <!-- Test 8: Number input with booster test -->
+        <!-- Test 10: Disabled state behavior -->
         <div class="test-section">
-            <h3>Test 8: TouchSpin Booster vs Native Spinners</h3>
+            <h3>Test 10: Disabled State Behavior</h3>
+            <div class="test-info">
+                Input will be disabled immediately after TouchSpin initialization.<br>
+                <strong>Expected:</strong> Native spinners should respect the disabled state.
+            </div>
+            <div class="form-group">
+                <label for="disabled-test">Number Input (Will be disabled)</label>
+                <input type="number"
+                       id="disabled-test"
+                       class="form-control"
+                       value="5"
+                       min="1"
+                       max="10"
+                       step="1">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="disabled-test"
+       class="form-control"
+       value="5"
+       min="1"
+       max="10"
+       step="1"&gt;</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>const $disabledTest = $('#disabled-test').TouchSpin({
+    min: 1,
+    max: 10,
+    step: 1
+});
+
+// Disable immediately after initialization
+$disabledTest.prop('disabled', true);</code></pre>
+            </div>
+
+            <div class="test-result" id="disabled-status">
+                <strong>Status:</strong> <span id="disabled-text">Initializing...</span>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    const $disabledTest = $('#disabled-test').TouchSpin({
+                        min: 1,
+                        max: 10,
+                        step: 1
+                    });
+
+                    // Disable immediately after initialization
+                    $disabledTest.prop('disabled', true);
+
+                    $('#disabled-status').show();
+                    $('#disabled-text').text('Input DISABLED - TouchSpin auto-detected and disabled its buttons too!');
+                });
+            </script>
+        </div>
+
+        <!-- Test 11: Large step values -->
+        <div class="test-section">
+            <h3>Test 11: Large Step Values</h3>
+            <div class="test-info">
+                Input has native step="10" attribute.<br>
+                TouchSpin configured with step: 5 (different value).<br>
+                <strong>Expected:</strong> TouchSpin step should override native step.
+            </div>
+            <div class="form-group">
+                <label for="large-step-native">Number Input (Large Native Step)</label>
+                <input type="number"
+                       id="large-step-native"
+                       class="form-control"
+                       value="20"
+                       min="0"
+                       max="100"
+                       step="10">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="large-step-native"
+       class="form-control"
+       value="20"
+       min="0"
+       max="100"
+       step="10"&gt;</code></pre>
+
+                <strong>TouchSpin Configuration:</strong>
+                <pre><code>$('#large-step-native').TouchSpin({
+    min: 0,
+    max: 100,
+    step: 5       // Should override native step="10"
+});</code></pre>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#large-step-native').TouchSpin({
+                        min: 0,
+                        max: 100,
+                        step: 5       // Should override native step="10"
+                    });
+                });
+            </script>
+        </div>
+
+        <!-- Test 12: Booster functionality -->
+        <div class="test-section">
+            <h3>Test 12: TouchSpin Booster vs Native Spinners</h3>
             <div class="test-info">
                 TouchSpin configured with booster enabled (boostat: 3, maxboostedstep: 10).<br>
-                <strong>Question:</strong> Do native spinners interfere with TouchSpin's booster functionality?
+                <strong>Expected:</strong> TouchSpin booster should work with synchronized native attributes.
             </div>
             <div class="form-group">
                 <label for="booster-test">Number Input (Booster Test)</label>
-                <input type="number" 
-                       id="booster-test" 
-                       class="form-control" 
+                <input type="number"
+                       id="booster-test"
+                       class="form-control"
                        value="10"
-                       min="0" 
-                       max="1000" 
+                       min="0"
+                       max="1000"
                        step="1">
             </div>
-            
+
             <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="booster-test"
+       class="form-control"
+       value="10"
+       min="0"
+       max="1000"
+       step="1"&gt;</code></pre>
+
                 <strong>TouchSpin Configuration:</strong>
                 <pre><code>$('#booster-test').TouchSpin({
     min: 0,
@@ -381,7 +678,7 @@ $disabledTest.prop('disabled', true);</code></pre>
     maxboostedstep: 10
 });</code></pre>
             </div>
-            
+
             <script>
                 $(document).ready(function() {
                     $('#booster-test').TouchSpin({
@@ -393,6 +690,448 @@ $disabledTest.prop('disabled', true);</code></pre>
                         maxboostedstep: 10
                     });
                 });
+            </script>
+        </div>
+
+        <!-- Test 13: Decimal Step Update Bug -->
+        <div class="test-section">
+            <h3>Test 13: Decimal Step Update Bug Reproduction</h3>
+            <div class="precedence-info">
+                <strong>Bug Report:</strong> Programmatic decimal step update causes down control to stop working
+            </div>
+            <div class="test-info">
+                Input initially configured with integer step, then programmatically updated with decimal step.<br>
+                <strong>Bug:</strong> After updating to step: 0.5, down control doesn't work, up control increments by 1 instead of 0.5.<br>
+                <strong>Test Command:</strong> <code>$("#decimal-step-update").trigger('touchspin.updatesettings', {min: 2, max: 33, step: 0.5})</code>
+            </div>
+            <div class="form-group">
+                <label for="decimal-step-update">Number Input (Decimal Step Update Test)</label>
+                <input type="number"
+                       id="decimal-step-update"
+                       class="form-control"
+                       value="8">
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML:</strong>
+                <pre><code>&lt;input type="number"
+       id="decimal-step-update"
+       class="form-control"
+       value="8"&gt;</code></pre>
+
+                <strong>Initial TouchSpin Configuration:</strong>
+                <pre><code>$('#decimal-step-update').TouchSpin({
+    min: 3,
+    max: 20,
+    step: 1,        // Integer step initially
+    decimals: 1
+});</code></pre>
+
+                <strong>Programmatic Update (Run in console):</strong>
+                <pre><code>$("#decimal-step-update").trigger('touchspin.updatesettings', {
+    min: 2,
+    max: 33,
+    step: 0.5       // Decimal step - causes bug?
+});</code></pre>
+
+                <strong>Expected After Update:</strong>
+                <ul>
+                    <li>Down control should decrement by 0.5</li>
+                    <li>Up control should increment by 0.5</li>
+                    <li>Native step attribute should be "0.5"</li>
+                </ul>
+            </div>
+
+            <div class="test-result">
+                <button type="button" class="btn btn-warning" onclick="updateDecimalStep()">🐛 Trigger Bug: Update to Decimal Step</button>
+                <button type="button" class="btn btn-info" onclick="checkDecimalStepStatus()">🔍 Check Status</button>
+                <div id="decimal-step-status" style="margin-top: 10px;"></div>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    $('#decimal-step-update').TouchSpin({
+                        min: 3,
+                        max: 20,
+                        step: 1,        // Integer step initially
+                        decimals: 1
+                    });
+                });
+
+                function updateDecimalStep() {
+                    $("#decimal-step-update").trigger('touchspin.updatesettings', {
+                        min: 2,
+                        max: 33,
+                        step: 0.5       // Decimal step - causes bug?
+                    });
+
+                    $('#decimal-step-status').html(
+                        '<div class="alert alert-warning">' +
+                        '<strong>Update Applied!</strong><br>' +
+                        'Settings updated to: min=2, max=33, step=0.5<br>' +
+                        'Now test the TouchSpin controls - does down work? Does up increment by 0.5?' +
+                        '</div>'
+                    );
+                    checkDecimalStepStatus();
+                }
+
+                function checkDecimalStepStatus() {
+                    const input = document.getElementById('decimal-step-update');
+                    const nativeMin = input.getAttribute('min');
+                    const nativeMax = input.getAttribute('max');
+                    const nativeStep = input.getAttribute('step');
+                    const currentValue = input.value;
+
+                    $('#decimal-step-status').append(
+                        '<div class="alert alert-info">' +
+                        '<strong>Current Status:</strong><br>' +
+                        'Value: ' + currentValue + '<br>' +
+                        'Native min: ' + nativeMin + '<br>' +
+                        'Native max: ' + nativeMax + '<br>' +
+                        'Native step: ' + nativeStep + '<br>' +
+                        '<em>Manual test: Try using TouchSpin up/down buttons and native browser spinners</em>' +
+                        '</div>'
+                    );
+                }
+            </script>
+        </div>
+
+        <!-- Test 14: forcestepdivisibility Behavior Comparison -->
+        <div class="test-section">
+            <h3>Test 14: forcestepdivisibility Settings Comparison</h3>
+            <div class="precedence-info">
+                <strong>Step Divisibility Issue:</strong> TouchSpin vs Native behavior with min=2, step=5
+            </div>
+            <div class="test-info">
+                <strong>Problem:</strong> TouchSpin enforces step divisibility from 0, while native controls step from min value.<br>
+                With min=2, step=5:<br>
+                • <strong>TouchSpin:</strong> allows 0, 5, 10, 15, 20... (divisible by step)<br>
+                • <strong>Native:</strong> allows 2, 7, 12, 17, 22... (min + n*step)<br>
+                <strong>Test:</strong> Compare different forcestepdivisibility settings with min=2, step=5, max=33, value=5
+            </div>
+
+            <div class="row">
+                <!-- forcestepdivisibility: 'none' -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="step-div-none">forcestepdivisibility: 'none'</label>
+                        <input type="number"
+                               id="step-div-none"
+                               class="form-control"
+                               value="7"
+                               min="2"
+                               max="33"
+                               step="5">
+                    </div>
+                </div>
+
+                <!-- forcestepdivisibility: 'round' -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="step-div-round">forcestepdivisibility: 'round' (default)</label>
+                        <input type="number"
+                               id="step-div-round"
+                               class="form-control"
+                               value="7"
+                               min="2"
+                               max="33"
+                               step="5">
+                    </div>
+                </div>
+
+                <!-- forcestepdivisibility: 'floor' -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="step-div-floor">forcestepdivisibility: 'floor'</label>
+                        <input type="number"
+                               id="step-div-floor"
+                               class="form-control"
+                               value="7"
+                               min="2"
+                               max="33"
+                               step="5">
+                    </div>
+                </div>
+
+                <!-- forcestepdivisibility: 'ceil' -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="step-div-ceil">forcestepdivisibility: 'ceil'</label>
+                        <input type="number"
+                               id="step-div-ceil"
+                               class="form-control"
+                               value="7"
+                               min="2"
+                               max="33"
+                               step="5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="initialization-code">
+                <strong>Original HTML (All inputs):</strong>
+                <pre><code>&lt;input type="number"
+       id="step-div-[setting]"
+       class="form-control"
+       value="7"
+       min="2"
+       max="33"
+       step="5"&gt;</code></pre>
+
+                <strong>TouchSpin Configurations:</strong>
+                <pre><code>// forcestepdivisibility: 'none'
+$('#step-div-none').TouchSpin({
+    min: 2, max: 33, step: 5,
+    forcestepdivisibility: 'none'    // Should allow any value
+});
+
+// forcestepdivisibility: 'round' (default)
+$('#step-div-round').TouchSpin({
+    min: 2, max: 33, step: 5,
+    forcestepdivisibility: 'round'   // Round to nearest step multiple
+});
+
+// forcestepdivisibility: 'floor'
+$('#step-div-floor').TouchSpin({
+    min: 2, max: 33, step: 5,
+    forcestepdivisibility: 'floor'   // Round down to step multiple
+});
+
+// forcestepdivisibility: 'ceil'
+$('#step-div-ceil').TouchSpin({
+    min: 2, max: 33, step: 5,
+    forcestepdivisibility: 'ceil'    // Round up to step multiple
+});</code></pre>
+
+                <strong>Expected Behavior Analysis:</strong>
+                <ul>
+                    <li><strong>'none':</strong> Should match native behavior (2, 7, 12, 17...)</li>
+                    <li><strong>'round':</strong> May round value=2 to nearest step multiple</li>
+                    <li><strong>'floor':</strong> May floor value=2 to lower step multiple (0?)</li>
+                    <li><strong>'ceil':</strong> May ceil value=2 to higher step multiple (5?)</li>
+                </ul>
+            </div>
+
+            <div class="test-result">
+                <button type="button" class="btn btn-primary" onclick="checkAllStepDivisibility()">🔍 Check All Values</button>
+                <button type="button" class="btn btn-success" onclick="testAllStepControls()">⚡ Test All Controls</button>
+                <button type="button" class="btn btn-warning" onclick="checkInitializationValues()">🎯 Check Post-Initialization Values</button>
+                <div id="step-div-status" style="margin-top: 10px;"></div>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    // forcestepdivisibility: 'none'
+                    $('#step-div-none').TouchSpin({
+                        min: 2, max: 33, step: 5,
+                        forcestepdivisibility: 'none'
+                    });
+
+                    // forcestepdivisibility: 'round' (default)
+                    $('#step-div-round').TouchSpin({
+                        min: 2, max: 33, step: 5,
+                        forcestepdivisibility: 'round'
+                    });
+
+                    // forcestepdivisibility: 'floor'
+                    $('#step-div-floor').TouchSpin({
+                        min: 2, max: 33, step: 5,
+                        forcestepdivisibility: 'floor'
+                    });
+
+                    // forcestepdivisibility: 'ceil'
+                    $('#step-div-ceil').TouchSpin({
+                        min: 2, max: 33, step: 5,
+                        forcestepdivisibility: 'ceil'
+                    });
+                });
+
+                function checkAllStepDivisibility() {
+                    const inputs = ['none', 'round', 'floor', 'ceil'];
+                    let statusHTML = '<div class="alert alert-info"><strong>Current Values & Native Attributes:</strong><br>';
+
+                    inputs.forEach(function(type) {
+                        const input = document.getElementById('step-div-' + type);
+                        const value = input.value;
+                        const nativeMin = input.getAttribute('min');
+                        const nativeMax = input.getAttribute('max');
+                        const nativeStep = input.getAttribute('step');
+
+                        statusHTML += '<strong>' + type + ':</strong> value=' + value +
+                                     ' (native: min=' + nativeMin + ', max=' + nativeMax + ', step=' + nativeStep + ')<br>';
+                    });
+
+                    statusHTML += '</div>';
+                    $('#step-div-status').html(statusHTML);
+                }
+
+                function testAllStepControls() {
+                    const inputs = ['none', 'round', 'floor', 'ceil'];
+                    let testHTML = '<div class="alert alert-warning"><strong>Step Control Test Results:</strong><br>';
+                    testHTML += '<em>Try manually clicking up/down buttons on each input to see behavior differences</em><br><br>';
+
+                    inputs.forEach(function(type) {
+                        const input = document.getElementById('step-div-' + type);
+                        const currentValue = parseFloat(input.value);
+
+                        testHTML += '<strong>' + type + ' (forcestepdivisibility):</strong><br>';
+                        testHTML += '• Current value: ' + currentValue + '<br>';
+                        testHTML += '• Expected on UP click: depends on setting<br>';
+                        testHTML += '• Expected on DOWN click: depends on setting<br><br>';
+                    });
+
+                    testHTML += '<strong>Native Control Comparison:</strong><br>';
+                    testHTML += '• Native UP from 2: should go to 7 (2 + 5)<br>';
+                    testHTML += '• Native DOWN from 2: should go to min or stay at 2<br>';
+                    testHTML += '</div>';
+
+                    $('#step-div-status').html(testHTML);
+                    checkAllStepDivisibility();
+                }
+                
+                function checkInitializationValues() {
+                    const inputs = ['none', 'round', 'floor', 'ceil'];
+                    const expectedValues = {
+                        'none': 7,   // Should keep original value (no step divisibility enforced)
+                        'round': 5,  // Should round 7 to nearest step multiple (5 or 10, 7 is closer to 5) 
+                        'floor': 5,  // Should floor 7 to lower step multiple (5)
+                        'ceil': 10   // Should ceil 7 to higher step multiple (10)
+                    };
+                    
+                    let statusHTML = '<div class="alert alert-success"><strong>🎯 Post-Initialization Values Test:</strong><br>';
+                    statusHTML += '<strong>Initial value was 7 for all inputs. Expected after TouchSpin initialization:</strong><br><br>';
+                    
+                    let allCorrect = true;
+                    
+                    inputs.forEach(function(type) {
+                        const input = document.getElementById('step-div-' + type);
+                        const actualValue = parseFloat(input.value);
+                        const expectedValue = expectedValues[type];
+                        const isCorrect = actualValue === expectedValue;
+                        
+                        if (!isCorrect) allCorrect = false;
+                        
+                        const statusIcon = isCorrect ? '✅' : '❌';
+                        const statusColor = isCorrect ? 'success' : 'danger';
+                        
+                        statusHTML += '<strong>' + type + ':</strong> ' + statusIcon + ' ';
+                        statusHTML += 'Expected: ' + expectedValue + ', Actual: ' + actualValue;
+                        if (!isCorrect) {
+                            statusHTML += ' <span class="text-' + statusColor + '">(MISMATCH)</span>';
+                        }
+                        statusHTML += '<br>';
+                    });
+                    
+                    statusHTML += '<br><strong>Step Calculation Logic (min=2, step=5):</strong><br>';
+                    statusHTML += '• <strong>none:</strong> No adjustment → keep original value 7<br>';
+                    statusHTML += '• <strong>round:</strong> Round 7 to nearest step multiple → Math.round(7/5)*5 = 1*5 = 5<br>';
+                    statusHTML += '• <strong>floor:</strong> Floor 7 to lower step multiple → Math.floor(7/5)*5 = 1*5 = 5<br>';
+                    statusHTML += '• <strong>ceil:</strong> Ceil 7 to higher step multiple → Math.ceil(7/5)*5 = 2*5 = 10<br>';
+                    
+                    if (allCorrect) {
+                        statusHTML += '<br><div class="alert alert-success">🎉 All initialization values are correct!</div>';
+                    } else {
+                        statusHTML += '<br><div class="alert alert-danger">⚠️ Some values don\'t match expectations. Check forcestepdivisibility implementation.</div>';
+                    }
+                    
+                    statusHTML += '</div>';
+                    $('#step-div-status').html(statusHTML);
+                }
+            </script>
+        </div>
+
+        <!-- Test 15: Native vs TouchSpin Step Alignment -->
+        <div class="test-section">
+            <h3>Test 15: Native vs TouchSpin Step Alignment Issue</h3>
+            <div class="precedence-info">
+                <strong>Core Issue:</strong> TouchSpin and native controls use different step calculation methods
+            </div>
+            <div class="test-info">
+                <strong>Problem Detail:</strong><br>
+                • <strong>Native behavior:</strong> Steps from min value → min + (n × step)<br>
+                • <strong>TouchSpin behavior:</strong> Steps from 0 → (n × step), then enforces min/max<br>
+                <strong>Conflict:</strong> With min=2, step=5, native allows 2,7,12... but TouchSpin may force 0,5,10...
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="native-step-test">Native Control Only</label>
+                        <input type="number"
+                               id="native-step-test"
+                               class="form-control"
+                               value="5"
+                               min="2"
+                               max="33"
+                               step="5">
+                        <small class="text-muted">No TouchSpin - pure native behavior</small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="touchspin-step-test">TouchSpin with Sync</label>
+                        <input type="number"
+                               id="touchspin-step-test"
+                               class="form-control"
+                               value="5"
+                               min="2"
+                               max="33"
+                               step="5">
+                        <small class="text-muted">TouchSpin with native sync enabled</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="initialization-code">
+                <strong>Comparison Setup:</strong>
+                <pre><code>// Native-only input (no TouchSpin initialization)
+&lt;input type="number" min="2" max="33" step="5" value="2"&gt;
+
+// TouchSpin with native sync
+$('#touchspin-step-test').TouchSpin({
+    min: 2, max: 33, step: 5
+});  // Should sync native attributes</code></pre>
+
+                <strong>Test Instructions:</strong>
+                <ol>
+                    <li>Use browser native spinner controls (up/down arrows) on both inputs</li>
+                    <li>Compare the allowed values</li>
+                    <li>Use TouchSpin buttons on the second input</li>
+                    <li>Check if native and TouchSpin controls produce the same sequence</li>
+                </ol>
+            </div>
+
+            <div class="test-result">
+                <button type="button" class="btn btn-info" onclick="compareStepBehavior()">🔄 Compare Step Behavior</button>
+                <div id="step-compare-status" style="margin-top: 10px;"></div>
+            </div>
+
+            <script>
+                $(document).ready(function() {
+                    // Only initialize TouchSpin on the second input
+                    $('#touchspin-step-test').TouchSpin({
+                        min: 2, max: 33, step: 5
+                    });
+                });
+
+                function compareStepBehavior() {
+                    const nativeInput = document.getElementById('native-step-test');
+                    const touchspinInput = document.getElementById('touchspin-step-test');
+
+                    let statusHTML = '<div class="alert alert-info">';
+                    statusHTML += '<strong>Current State Comparison:</strong><br>';
+                    statusHTML += '<strong>Native-only input:</strong><br>';
+                    statusHTML += '• Value: ' + nativeInput.value + '<br>';
+                    statusHTML += '• Attributes: min=' + nativeInput.getAttribute('min') + ', max=' + nativeInput.getAttribute('max') + ', step=' + nativeInput.getAttribute('step') + '<br>';
+                    statusHTML += '<strong>TouchSpin input:</strong><br>';
+                    statusHTML += '• Value: ' + touchspinInput.value + '<br>';
+                    statusHTML += '• Attributes: min=' + touchspinInput.getAttribute('min') + ', max=' + touchspinInput.getAttribute('max') + ', step=' + touchspinInput.getAttribute('step') + '<br>';
+                    statusHTML += '<br><strong>Manual Test:</strong> Use native spinner controls on both inputs and compare behavior<br>';
+                    statusHTML += '</div>';
+
+                    $('#step-compare-status').html(statusHTML);
+                }
             </script>
         </div>
     </div>

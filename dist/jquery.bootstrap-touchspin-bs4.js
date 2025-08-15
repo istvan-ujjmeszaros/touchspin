@@ -445,6 +445,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _initElements();
           _updateButtonDisabledState();
           _hideEmptyPrefixPostfix();
+          _syncNativeAttributes();
           _setupMutationObservers();
           _bindEvents();
           _bindEventsInterface();
@@ -532,6 +533,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               _detached_prefix: _detached_prefix,
               _detached_postfix: _detached_postfix
             });
+          }
+          if (newsettings.min !== void 0 || newsettings.max !== void 0 || newsettings.step !== void 0) {
+            _syncNativeAttributes();
           }
           _hideEmptyPrefixPostfix();
         }
@@ -746,8 +750,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (typeof MutationObserver !== "undefined") {
             var observer = new MutationObserver(function (mutations) {
               mutations.forEach(function (mutation) {
-                if (mutation.type === "attributes" && (mutation.attributeName === "disabled" || mutation.attributeName === "readonly")) {
-                  _updateButtonDisabledState();
+                if (mutation.type === "attributes") {
+                  if (mutation.attributeName === "disabled" || mutation.attributeName === "readonly") {
+                    _updateButtonDisabledState();
+                  } else if (mutation.attributeName === "min" || mutation.attributeName === "max" || mutation.attributeName === "step") {
+                    _syncSettingsFromNativeAttributes();
+                  }
                 }
               });
             });
@@ -804,6 +812,81 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             originalinput.val(returnval);
           }
           originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
+        }
+        function _syncNativeAttributes() {
+          if (originalinput.attr("type") === "number") {
+            if (settings.min !== null && settings.min !== void 0) {
+              originalinput.attr("min", settings.min);
+            } else {
+              originalinput.removeAttr("min");
+            }
+            if (settings.max !== null && settings.max !== void 0) {
+              originalinput.attr("max", settings.max);
+            } else {
+              originalinput.removeAttr("max");
+            }
+            if (settings.step !== null && settings.step !== void 0) {
+              originalinput.attr("step", settings.step);
+            } else {
+              originalinput.removeAttr("step");
+            }
+          }
+        }
+        function _syncSettingsFromNativeAttributes() {
+          var nativeMin = originalinput.attr("min");
+          var nativeMax = originalinput.attr("max");
+          var nativeStep = originalinput.attr("step");
+          var needsUpdate = false;
+          var newSettings = {};
+          if (nativeMin != null) {
+            var parsedMin = nativeMin === "" ? null : parseFloat(nativeMin);
+            if (parsedMin !== settings.min) {
+              newSettings.min = parsedMin;
+              needsUpdate = true;
+            }
+          } else if (settings.min !== null) {
+            newSettings.min = null;
+            needsUpdate = true;
+          }
+          if (nativeMax != null) {
+            var parsedMax = nativeMax === "" ? null : parseFloat(nativeMax);
+            if (parsedMax !== settings.max) {
+              newSettings.max = parsedMax;
+              needsUpdate = true;
+            }
+          } else if (settings.max !== null) {
+            newSettings.max = null;
+            needsUpdate = true;
+          }
+          if (nativeStep != null) {
+            var parsedStep = nativeStep === "" ? 1 : parseFloat(nativeStep);
+            if (parsedStep !== settings.step) {
+              newSettings.step = parsedStep;
+              needsUpdate = true;
+            }
+          } else if (settings.step !== 1) {
+            newSettings.step = 1;
+            needsUpdate = true;
+          }
+          if (needsUpdate) {
+            settings = $.extend({}, settings, newSettings);
+            if (newSettings.step !== void 0 && parseFloat(newSettings.step) !== 1) {
+              var remainder;
+              if (settings.max !== null) {
+                remainder = settings.max % settings.step;
+                if (remainder !== 0) {
+                  settings.max = parseFloat(settings.max) - remainder;
+                }
+              }
+              if (settings.min !== null) {
+                remainder = settings.min % settings.step;
+                if (remainder !== 0) {
+                  settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+                }
+              }
+            }
+            _checkValue();
+          }
         }
         function _getBoostedStep() {
           if (!settings.booster) {

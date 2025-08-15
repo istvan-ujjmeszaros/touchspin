@@ -134,6 +134,7 @@
         _initElements();
         _updateButtonDisabledState();
         _hideEmptyPrefixPostfix();
+        _syncNativeAttributes();
         _setupMutationObservers();
         _bindEvents();
         _bindEventsInterface();
@@ -255,6 +256,11 @@
             _detached_prefix: _detached_prefix,
             _detached_postfix: _detached_postfix
           });
+        }
+
+        // Sync native attributes when TouchSpin settings change
+        if (newsettings.min !== undefined || newsettings.max !== undefined || newsettings.step !== undefined) {
+          _syncNativeAttributes();
         }
 
         _hideEmptyPrefixPostfix();
@@ -535,8 +541,12 @@
           // MutationObserver is available
           const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
-              if (mutation.type === 'attributes' && (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly')) {
-                _updateButtonDisabledState();
+              if (mutation.type === 'attributes') {
+                if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
+                  _updateButtonDisabledState();
+                } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
+                  _syncSettingsFromNativeAttributes();
+                }
               }
             });
           });
@@ -606,6 +616,105 @@
         }
 
         originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
+      }
+
+      function _syncNativeAttributes() {
+        // Always set native attributes when input type is number to ensure consistency
+        if (originalinput.attr('type') === 'number') {
+          if (settings.min !== null && settings.min !== undefined) {
+            originalinput.attr('min', settings.min);
+          } else {
+            originalinput.removeAttr('min');
+          }
+          
+          if (settings.max !== null && settings.max !== undefined) {
+            originalinput.attr('max', settings.max);
+          } else {
+            originalinput.removeAttr('max');
+          }
+          
+          if (settings.step !== null && settings.step !== undefined) {
+            originalinput.attr('step', settings.step);
+          } else {
+            originalinput.removeAttr('step');
+          }
+        }
+      }
+
+      function _syncSettingsFromNativeAttributes() {
+        // Update TouchSpin settings when native attributes change externally
+        var nativeMin = originalinput.attr('min');
+        var nativeMax = originalinput.attr('max');
+        var nativeStep = originalinput.attr('step');
+        var needsUpdate = false;
+        var newSettings = {};
+
+        // Check min attribute
+        if (nativeMin != null) {
+          var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+          if (parsedMin !== settings.min) {
+            newSettings.min = parsedMin;
+            needsUpdate = true;
+          }
+        } else if (settings.min !== null) {
+          // Attribute was removed
+          newSettings.min = null;
+          needsUpdate = true;
+        }
+        
+        // Check max attribute
+        if (nativeMax != null) {
+          var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+          if (parsedMax !== settings.max) {
+            newSettings.max = parsedMax;
+            needsUpdate = true;
+          }
+        } else if (settings.max !== null) {
+          // Attribute was removed
+          newSettings.max = null;
+          needsUpdate = true;
+        }
+        
+        // Check step attribute
+        if (nativeStep != null) {
+          var parsedStep = nativeStep === '' ? 1 : parseFloat(nativeStep);
+          if (parsedStep !== settings.step) {
+            newSettings.step = parsedStep;
+            needsUpdate = true;
+          }
+        } else if (settings.step !== 1) {
+          // Attribute was removed, default to 1
+          newSettings.step = 1;
+          needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+          // Update settings without triggering another sync to avoid infinite loop
+          settings = $.extend({}, settings, newSettings);
+          
+          // Re-process step divisibility rules if step changed
+          if (newSettings.step !== undefined && parseFloat(newSettings.step) !== 1) {
+            let remainder;
+            
+            // Modify settings.max to be divisible by step
+            if (settings.max !== null) {
+              remainder = settings.max % settings.step;
+              if (remainder !== 0) {
+                settings.max = parseFloat(settings.max) - remainder;
+              }
+            }
+
+            // Do the same with min, should work with negative numbers too
+            if (settings.min !== null) {
+              remainder = settings.min % settings.step;
+              if (remainder !== 0) {
+                settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+              }
+            }
+          }
+          
+          _checkValue();
+        }
       }
 
       function _getBoostedStep() {

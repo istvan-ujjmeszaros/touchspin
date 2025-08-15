@@ -96,11 +96,92 @@ describe('Browser Native Spinner Controls', () => {
     }, TEST_TIMEOUT);
   });
 
+  describe('TouchSpin Settings Synchronization', () => {
+    it('should set native attributes to match TouchSpin settings on initialization', async () => {
+      // Verify that TouchSpin sets native attributes to match its configuration
+      const inputSelector = '#native-with-attrs';
+      
+      // Check that native attributes were updated to match TouchSpin settings
+      const nativeMin = await page.$eval(inputSelector, (el: any) => el.getAttribute('min'));
+      const nativeMax = await page.$eval(inputSelector, (el: any) => el.getAttribute('max'));
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      
+      // Should be set to TouchSpin values (min: 3, max: 20, step: 1), not native values
+      expect(nativeMin).toBe('3'); // Was native min="5", now TouchSpin min=3
+      expect(nativeMax).toBe('20'); // Was native max="15", now TouchSpin max=20
+      expect(nativeStep).toBe('1'); // Was native step="2", now TouchSpin step=1
+    }, TEST_TIMEOUT);
+
+    it('should update native attributes when TouchSpin settings are changed programmatically', async () => {
+      const inputSelector = '#native-with-attrs';
+      
+      // Update TouchSpin settings programmatically
+      await page.evaluate((selector) => {
+        // @ts-ignore
+        $(selector).trigger('touchspin.updatesettings', { min: 10, max: 50, step: 2 });
+      }, inputSelector);
+      
+      await touchspinHelpers.waitForTimeout(200);
+      
+      // Check that native attributes were updated
+      const nativeMin = await page.$eval(inputSelector, (el: any) => el.getAttribute('min'));
+      const nativeMax = await page.$eval(inputSelector, (el: any) => el.getAttribute('max'));
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      
+      expect(nativeMin).toBe('10');
+      expect(nativeMax).toBe('50');
+      expect(nativeStep).toBe('2');
+    }, TEST_TIMEOUT);
+
+    it('should sync TouchSpin settings when native attributes are changed externally', async () => {
+      const inputSelector = '#native-with-attrs';
+      
+      // Change native attributes externally (simulating programmatic changes)
+      await page.evaluate((selector) => {
+        const input = document.querySelector(selector) as HTMLInputElement;
+        if (input) {
+          input.setAttribute('min', '1');
+          input.setAttribute('max', '30');
+          input.setAttribute('step', '3');
+        }
+      }, inputSelector);
+      
+      // Wait for MutationObserver to trigger
+      await touchspinHelpers.waitForTimeout(200);
+      
+      // Test that TouchSpin now respects the new native values
+      await touchspinHelpers.fillWithValue(page, inputSelector, '2');
+      await page.focus(inputSelector);
+      
+      // Try to go below new min=1
+      for (let i = 0; i < 5; i++) {
+        await page.keyboard.press('ArrowDown');
+        await touchspinHelpers.waitForTimeout(50);
+      }
+      
+      const minValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      expect(parseInt(minValue || '0')).toBeGreaterThanOrEqual(1);
+      
+      // Test new step=3
+      await touchspinHelpers.fillWithValue(page, inputSelector, '10');
+      await page.focus(inputSelector);
+      await page.keyboard.press('ArrowUp');
+      await touchspinHelpers.waitForTimeout(100);
+      
+      const stepValue = await touchspinHelpers.readInputValue(page, inputSelector);
+      expect(parseInt(stepValue || '0')).toBe(13); // 10 + 3
+    }, TEST_TIMEOUT);
+  });
+
   describe('Native Attributes vs TouchSpin Settings', () => {
     it('should prioritize TouchSpin min/max over native when both are present', async () => {
       // Test 1: Input has native min="5" max="15", but TouchSpin min=3 max=20
-      // Expected: TouchSpin settings should win for browser native spinners
+      // Expected: TouchSpin settings should win and native attributes should be updated
       const inputSelector = '#native-with-attrs';
+      
+      // Verify native attributes were updated to TouchSpin values
+      const nativeMin = await page.$eval(inputSelector, (el: any) => el.getAttribute('min'));
+      expect(nativeMin).toBe('3'); // Should be updated from native min="5" to TouchSpin min=3
       
       await page.focus(inputSelector);
       
@@ -113,15 +194,24 @@ describe('Browser Native Spinner Controls', () => {
       
       const finalValue = await touchspinHelpers.readInputValue(page, inputSelector);
       
-      // Should respect TouchSpin min=3, not native min="5"
+      // Should respect TouchSpin min=3, not original native min="5"
       expect(parseInt(finalValue || '0')).toBeGreaterThanOrEqual(3);
       expect(parseInt(finalValue || '0')).toBeLessThan(8); // Should have decreased from initial value
     }, TEST_TIMEOUT);
 
-    it('should use TouchSpin settings when no native attributes present', async () => {
+    it('should set native attributes when no native attributes present', async () => {
       // Test 2: Input has NO native attributes, only TouchSpin min=3 max=20
-      // Expected: TouchSpin settings should be respected by native spinners
+      // Expected: TouchSpin should set native attributes and be respected by native spinners
       const inputSelector = '#native-without-attrs';
+      
+      // Verify TouchSpin set the native attributes
+      const nativeMin = await page.$eval(inputSelector, (el: any) => el.getAttribute('min'));
+      const nativeMax = await page.$eval(inputSelector, (el: any) => el.getAttribute('max'));
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      
+      expect(nativeMin).toBe('3');
+      expect(nativeMax).toBe('20');
+      expect(nativeStep).toBe('1');
       
       await page.focus(inputSelector);
       
@@ -141,8 +231,12 @@ describe('Browser Native Spinner Controls', () => {
     }, TEST_TIMEOUT);
 
     it('should respect TouchSpin max over native max', async () => {
-      // Test TouchSpin max=20 vs native max="15"
+      // Test TouchSpin max=20 vs original native max="15"
       const inputSelector = '#native-with-attrs';
+      
+      // Verify native max was updated to TouchSpin value
+      const nativeMax = await page.$eval(inputSelector, (el: any) => el.getAttribute('max'));
+      expect(nativeMax).toBe('20'); // Should be updated from native max="15" to TouchSpin max=20
       
       // Reset to a value closer to TouchSpin max
       await touchspinHelpers.fillWithValue(page, inputSelector, '18');
@@ -157,7 +251,7 @@ describe('Browser Native Spinner Controls', () => {
       
       const finalValue = await touchspinHelpers.readInputValue(page, inputSelector);
       
-      // Should respect TouchSpin max=20, not native max="15"
+      // Should respect TouchSpin max=20, not original native max="15"
       expect(parseInt(finalValue || '0')).toBeLessThanOrEqual(20);
       expect(parseInt(finalValue || '0')).toBeGreaterThan(18); // Should have increased from initial value
     }, TEST_TIMEOUT);
@@ -166,8 +260,12 @@ describe('Browser Native Spinner Controls', () => {
   describe('Step Value Conflicts', () => {
     it('should use TouchSpin step setting over native step attribute', async () => {
       // Test 6: Input has native step="10", TouchSpin step=5
-      // Expected: TouchSpin step should win
+      // Expected: TouchSpin step should win and native step should be updated
       const inputSelector = '#large-step-native';
+      
+      // Verify native step was updated to TouchSpin value
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      expect(nativeStep).toBe('5'); // Should be updated from native step="10" to TouchSpin step=5
       
       await page.focus(inputSelector);
       
@@ -177,14 +275,18 @@ describe('Browser Native Spinner Controls', () => {
       
       const newValue = await touchspinHelpers.readInputValue(page, inputSelector);
       
-      // Should increment by TouchSpin step=5 (20 + 5 = 25), not native step=10 (20 + 10 = 30)
+      // Should increment by TouchSpin step=5 (20 + 5 = 25), not original native step=10 (20 + 10 = 30)
       expect(parseInt(newValue || '0')).toBe(25);
     }, TEST_TIMEOUT);
 
     it('should handle decimal step conflicts correctly', async () => {
       // Test 4: Input has native step="0.25", TouchSpin step=0.5
-      // Expected: TouchSpin step should win
+      // Expected: TouchSpin step should win and native step should be updated
       const inputSelector = '#decimal-native-with-attrs';
+      
+      // Verify native step was updated to TouchSpin value
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      expect(nativeStep).toBe('0.5'); // Should be updated from native step="0.25" to TouchSpin step=0.5
       
       await page.focus(inputSelector);
       
@@ -194,13 +296,17 @@ describe('Browser Native Spinner Controls', () => {
       
       const newValue = await touchspinHelpers.readInputValue(page, inputSelector);
       
-      // Should increment by TouchSpin step=0.5 (2.75 + 0.5 = 3.25), not native step=0.25 (2.75 + 0.25 = 3.00)
+      // Should increment by TouchSpin step=0.5 (2.75 + 0.5 = 3.25), not original native step=0.25 (2.75 + 0.25 = 3.00)
       expect(parseFloat(newValue || '0')).toBe(3.25);
     }, TEST_TIMEOUT);
 
     it('should use TouchSpin step=1 over native step="2"', async () => {
       // Test 1: Input has native step="2", TouchSpin step=1
       const inputSelector = '#native-with-attrs';
+      
+      // Verify native step was updated to TouchSpin value
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      expect(nativeStep).toBe('1'); // Should be updated from native step="2" to TouchSpin step=1
       
       // Reset to start value
       await touchspinHelpers.fillWithValue(page, inputSelector, '8');
@@ -213,15 +319,24 @@ describe('Browser Native Spinner Controls', () => {
       
       const newValue = await touchspinHelpers.readInputValue(page, inputSelector);
       
-      // Should increment by TouchSpin step=1 (8 + 1 = 9), not native step=2 (8 + 2 = 10)
+      // Should increment by TouchSpin step=1 (8 + 1 = 9), not original native step=2 (8 + 2 = 10)
       expect(parseInt(newValue || '0')).toBe(9);
     }, TEST_TIMEOUT);
   });
 
   describe('Control Type Comparison', () => {
-    it('text input should only respect TouchSpin settings (no native spinners)', async () => {
-      // Test 3: Text input has no native spinner controls
+    it('text input should not have native attributes set', async () => {
+      // Test 3: Text input should not get native min/max/step attributes
       const inputSelector = '#text-input';
+      
+      // Verify TouchSpin doesn't set native attributes on text inputs
+      const nativeMin = await page.$eval(inputSelector, (el: any) => el.getAttribute('min'));
+      const nativeMax = await page.$eval(inputSelector, (el: any) => el.getAttribute('max'));
+      const nativeStep = await page.$eval(inputSelector, (el: any) => el.getAttribute('step'));
+      
+      expect(nativeMin).toBeNull(); // Text inputs shouldn't get native attributes
+      expect(nativeMax).toBeNull();
+      expect(nativeStep).toBeNull();
       
       await page.focus(inputSelector);
       
@@ -252,6 +367,35 @@ describe('Browser Native Spinner Controls', () => {
       // Both should behave identically (8 + 1 = 9) with TouchSpin buttons
       expect(parseInt(numberResult || '0')).toBe(9);
       expect(parseInt(textResult || '0')).toBe(9);
+      
+      // But only number input should have native attributes
+      const numberMin = await page.$eval(numberInputSelector, (el: any) => el.getAttribute('min'));
+      const textMin = await page.$eval(textInputSelector, (el: any) => el.getAttribute('min'));
+      
+      expect(numberMin).toBe('3'); // Number input should have native attributes
+      expect(textMin).toBeNull(); // Text input should not
+    }, TEST_TIMEOUT);
+
+    it('should not sync native attributes on non-number inputs', async () => {
+      // Verify that the sync functionality only works on number inputs
+      const textInputSelector = '#text-input';
+      
+      // Try to change settings on text input
+      await page.evaluate((selector) => {
+        // @ts-ignore
+        $(selector).trigger('touchspin.updatesettings', { min: 1, max: 50, step: 2 });
+      }, textInputSelector);
+      
+      await touchspinHelpers.waitForTimeout(200);
+      
+      // Native attributes should still be null
+      const nativeMin = await page.$eval(textInputSelector, (el: any) => el.getAttribute('min'));
+      const nativeMax = await page.$eval(textInputSelector, (el: any) => el.getAttribute('max'));
+      const nativeStep = await page.$eval(textInputSelector, (el: any) => el.getAttribute('step'));
+      
+      expect(nativeMin).toBeNull();
+      expect(nativeMax).toBeNull();
+      expect(nativeStep).toBeNull();
     }, TEST_TIMEOUT);
   });
 
