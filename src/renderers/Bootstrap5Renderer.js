@@ -34,6 +34,15 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
+    
+    // Add testid to existing input-group wrapper
+    const testidAttr = this.getWrapperTestId();
+    if (testidAttr) {
+      const testidValue = testidAttr.match(/data-testid="([^"]+)"/);
+      if (testidValue) {
+        parentelement.attr('data-testid', testidValue[1]);
+      }
+    }
 
     const prev = this.originalinput.prev();
     const next = this.originalinput.next();
@@ -76,11 +85,12 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildInputGroup() {
     const inputGroupSize = this.detectInputGroupSize();
+    const testidAttr = this.getWrapperTestId();
     let html;
 
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin bootstrap-touchspin-injected">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin bootstrap-touchspin-injected"${testidAttr}>
           <span class="input-group-text bootstrap-touchspin-prefix">${this.settings.prefix}</span>
           <span class="input-group-text bootstrap-touchspin-postfix">${this.settings.postfix}</span>
           <span class="bootstrap-touchspin-vertical-button-wrapper">
@@ -93,7 +103,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+        <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"${testidAttr}>
           <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" type="button">${this.settings.buttondown_txt}</button>
           <span class="input-group-text bootstrap-touchspin-prefix">${this.settings.prefix}</span>
           <span class="input-group-text bootstrap-touchspin-postfix">${this.settings.postfix}</span>

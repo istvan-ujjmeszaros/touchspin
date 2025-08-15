@@ -170,6 +170,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           this.container.addClass(classes.inputGroupLarge);
         }
       }
+      /**
+       * Get wrapper testid attribute based on input's data-testid
+       * If input has data-testid="example", returns ' data-testid="example-wrapper"'
+       * @returns {string} Testid attribute string or empty string
+       */
+    }, {
+      key: "getWrapperTestId",
+      value: function getWrapperTestId() {
+        var inputTestId = this.originalinput.attr("data-testid");
+        if (inputTestId) {
+          return " data-testid=\"".concat(inputTestId, "-wrapper\"");
+        }
+        return "";
+      }
     }]);
   }();
   if (typeof module !== "undefined" && module.exports) {
@@ -219,6 +233,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
         parentelement.addClass("bootstrap-touchspin");
+        var testidAttr = this.getWrapperTestId();
+        if (testidAttr) {
+          var testidValue = testidAttr.match(/data-testid="([^"]+)"/);
+          if (testidValue) {
+            parentelement.attr("data-testid", testidValue[1]);
+          }
+        }
         var prev = this.originalinput.prev();
         var next = this.originalinput.next();
         var prefixhtml = "\n      <span class=\"input-group-text bootstrap-touchspin-prefix bootstrap-touchspin-injected\">".concat(this.settings.prefix, "</span>\n    ");
@@ -241,11 +262,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "buildInputGroup",
       value: function buildInputGroup() {
         var inputGroupSize = this.detectInputGroupSize();
+        var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin bootstrap-touchspin-injected\">\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <span class=\"bootstrap-touchspin-vertical-button-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n            </span>\n          </span>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin bootstrap-touchspin-injected\"").concat(testidAttr, ">\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <span class=\"bootstrap-touchspin-vertical-button-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n            </span>\n          </span>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group bootstrap-touchspin bootstrap-touchspin-injected\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group bootstrap-touchspin bootstrap-touchspin-injected\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>\n      ");
         }
         this.container = this.$(html).insertBefore(this.originalinput);
         this.$(".bootstrap-touchspin-prefix", this.container).after(this.originalinput);

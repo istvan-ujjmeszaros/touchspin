@@ -152,6 +152,19 @@ class AbstractRenderer {
       this.container.addClass(classes.inputGroupLarge);
     }
   }
+
+  /**
+   * Get wrapper testid attribute based on input's data-testid
+   * If input has data-testid="example", returns ' data-testid="example-wrapper"'
+   * @returns {string} Testid attribute string or empty string
+   */
+  getWrapperTestId() {
+    const inputTestId = this.originalinput.attr('data-testid');
+    if (inputTestId) {
+      return ` data-testid="${inputTestId}-wrapper"`;
+    }
+    return '';
+  }
 }
 
 // Export for both CommonJS and ES modules
