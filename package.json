@@ -36,6 +36,7 @@
     "@types/express": "^5.0.0",
     "@vitejs/plugin-legacy": "^5.4.3",
     "@vitest/browser": "^2.1.9",
+    "@vitest/ui": "^2.1.9",
     "autoprefixer": "^10.4.21",
     "clean-css": "^5.3.3",
     "express": "^4.21.2",
