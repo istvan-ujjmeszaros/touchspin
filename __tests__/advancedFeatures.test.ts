@@ -1,14 +1,15 @@
+import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
-import {page, port} from './helpers/jestPuppeteerServerSetup';
 
-describe('Advanced Features', () => {
+test.describe('Advanced Features', () => {
 
-  beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/__tests__/html/index-bs4.html');
     await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
   });
 
-  describe('Data Attributes Configuration', () => {
-    it('should respect data-bts-* attributes for configuration', async () => {
+  test.describe('Data Attributes Configuration', () => {
+    test('should respect data-bts-* attributes for configuration', async ({ page }) => {
       const selector = '#testinput_data_attributes';
       
       // Test data-bts-min="40"
@@ -29,8 +30,8 @@ describe('Advanced Features', () => {
     });
   });
 
-  describe('Step Validation and Divisibility', () => {
-    it('should enforce step divisibility with round mode', async () => {
+  test.describe('Step Validation and Divisibility', () => {
+    test('should enforce step divisibility with round mode', async ({ page }) => {
       const selector = '#testinput_individual_min_max_step_properties';
       
       // Enter a value that doesn't align with step=3
@@ -43,8 +44,8 @@ describe('Advanced Features', () => {
     });
   });
 
-  describe('Long Press and Continuous Spinning', () => {
-    it('should start spinning when holding down button', async () => {
+  test.describe('Long Press and Continuous Spinning', () => {
+    test('should start spinning when holding down button', async ({ page }) => {
       const selector = '#testinput_default';
       
       // Get initial value
@@ -68,7 +69,7 @@ describe('Advanced Features', () => {
       expect(finalValue).toBeGreaterThan(initialValue + 1); // Should have spun multiple times
     });
 
-    it('should stop spinning on mouseup', async () => {
+    test('should stop spinning on mouseup', async ({ page }) => {
       const selector = '#testinput_default';
       
       // Start spinning
@@ -95,8 +96,8 @@ describe('Advanced Features', () => {
     });
   });
 
-  describe('Touch Support', () => {
-    it('should respond to touch events', async () => {
+  test.describe('Touch Support', () => {
+    test('should respond to touch events', async ({ page }) => {
       const selector = '#testinput_default';
       
       // Simulate touch events
@@ -113,8 +114,8 @@ describe('Advanced Features', () => {
     });
   });
 
-  describe('Callback Functions', () => {
-    it('should apply callback functions for value processing', async () => {
+  test.describe('Callback Functions', () => {
+    test('should apply callback functions for value processing', async ({ page }) => {
       // This would test if callback_before_calculation and callback_after_calculation work
       // For now, we'll test that the plugin accepts these options without errors
       const selector = '#testinput_default';
@@ -141,8 +142,8 @@ describe('Advanced Features', () => {
     });
   });
 
-  describe('Custom Events', () => {
-    it('should fire custom spin events', async () => {
+  test.describe('Custom Events', () => {
+    test('should fire custom spin events', async ({ page }) => {
       const selector = '#testinput_default';
       
       // Start spinning and check for events

@@ -1,26 +1,27 @@
+import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
-import {page, port} from './helpers/jestPuppeteerServerSetup';
 
-describe('Vertical Buttons', () => {
+test.describe('Vertical Buttons', () => {
 
-  beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/__tests__/html/index-bs4.html');
     await touchspinHelpers.waitForTouchSpinReady(page, '#input_vertical');
   });
 
-  it('should render vertical button structure correctly', async () => {
+  test('should render vertical button structure correctly', async ({ page }) => {
     // Check for vertical wrapper
-    const verticalWrapper = await page.$('.bootstrap-touchspin-vertical-button-wrapper');
-    expect(verticalWrapper).toBeTruthy();
+    const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper');
+    await expect(verticalWrapper).toBeVisible();
 
     // Check buttons are inside wrapper
-    const upButton = await page.$('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
-    const downButton = await page.$('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down');
+    const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
+    const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down');
     
-    expect(upButton).toBeTruthy();
-    expect(downButton).toBeTruthy();
+    await expect(upButton).toBeVisible();
+    await expect(downButton).toBeVisible();
   });
 
-  it('should function correctly with vertical buttons', async () => {
+  test('should function correctly with vertical buttons', async ({ page }) => {
     const selector = '#input_vertical';
     
     // Test increment
@@ -32,20 +33,20 @@ describe('Vertical Buttons', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should work with size variations and prefix/postfix', async () => {
+  test('should work with size variations and prefix/postfix', async ({ page }) => {
     // Test small size with prefix/postfix
     const smallSelector = '#input_group_sm_vertical';
     await touchspinHelpers.touchspinClickUp(page, smallSelector);
     expect(await touchspinHelpers.readInputValue(page, smallSelector)).toBe('51');
     
     // Verify prefix/postfix exist
-    const prefix = await page.$('.bootstrap-touchspin-prefix');
-    const postfix = await page.$('.bootstrap-touchspin-postfix');
-    expect(prefix).toBeTruthy();
-    expect(postfix).toBeTruthy();
+    const prefix = page.locator('.bootstrap-touchspin-prefix');
+    const postfix = page.locator('.bootstrap-touchspin-postfix');
+    await expect(prefix).toBeVisible();
+    await expect(postfix).toBeVisible();
   });
 
-  it('should work with existing DOM input groups', async () => {
+  test('should work with existing DOM input groups', async ({ page }) => {
     const selector = '#input_group_from_dom_prefix_postfix_vertical';
     
     // Should maintain existing DOM structure
@@ -60,7 +61,7 @@ describe('Vertical Buttons', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
   });
 
-  it('should handle disabled state for vertical buttons', async () => {
+  test('should handle disabled state for vertical buttons', async ({ page }) => {
     const selector = '#input_vertical';
     
     await touchspinHelpers.setInputAttr(page, selector, 'disabled', true);
@@ -78,7 +79,7 @@ describe('Vertical Buttons', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should support long press spinning for vertical buttons', async () => {
+  test('should support long press spinning for vertical buttons', async ({ page }) => {
     const selector = '#input_vertical';
     
     // Simulate long press by holding mousedown for longer than stepintervaldelay (500ms)

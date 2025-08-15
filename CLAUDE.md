@@ -21,8 +21,11 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - `npm run check-build-integrity:legacy` or `grunt check-build-integrity` - Legacy integrity check
 - `grunt clean` - Clean the dist folder
 
-### Testing
-- `npm test` - Run Jest tests with Puppeteer (runs in band for stability)
+### Testing (Vitest + Playwright)
+- `npm test` - Run Vitest tests (fast, parallel execution)
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:ui` - Run tests with Vitest UI
+- `npm run test:playwright` - Run Playwright browser tests specifically
 
 ## Architecture
 
@@ -38,10 +41,16 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
   - Source maps (.map files) included for debugging
 
 ### Testing
-- **`__tests__/`** - Jest + Puppeteer integration tests
+- **`__tests__/`** - Vitest + Playwright integration tests
   - `basicOperations.test.ts` - Core functionality tests
   - `events.test.ts` - Event handling tests
-  - `helpers/` - Test utilities and setup
+  - `browserNativeSpinners.test.ts` - Native spinner synchronization tests
+  - `renderers.test.ts` - Bootstrap version compatibility tests
+  - `advancedFeatures.test.ts` - Advanced functionality tests
+  - `apiMethods.test.ts` - API method tests
+  - `rtlSupport.test.ts` - Right-to-left language support tests
+  - `verticalButtons.test.ts` - Vertical button layout tests
+  - `helpers/` - Test utilities and Playwright setup
   - `html/` - Test HTML fixtures for different Bootstrap versions
 
 ## Key Development Notes
@@ -60,11 +69,12 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - Legacy Grunt build available as fallback (`build:legacy` commands)
 
 ### Testing Environment  
-- Uses Jest with Puppeteer for browser-based testing
-- Test timeout set to 50 seconds for stability
-- Multiple HTML fixtures test Bootstrap 3/4 compatibility and RTL support
-- Tests run in band (`--runInBand`) to avoid race conditions
-- **IMPORTANT**: Never start a server manually. Always use `npm test` to run tests
+- Uses **Vitest + Playwright** for modern, fast browser-based testing
+- Test timeout set to 60 seconds for stability
+- Multiple HTML fixtures test Bootstrap 3/4/5 compatibility and RTL support
+- Tests run sequentially by default to match previous behavior (can be parallelized)
+- Playwright automatically manages web server and browser instances
+- **IMPORTANT**: Use `npm test` for Vitest or `npm run test:playwright` for Playwright-specific tests
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
 
 ### Code Standards

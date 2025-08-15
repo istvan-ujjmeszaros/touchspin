@@ -1,13 +1,14 @@
+import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
-import {page} from './helpers/jestPuppeteerServerSetup';
 
-describe('Events', () => {
+test.describe('Events', () => {
 
-  beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/__tests__/html/index-bs4.html');
     await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
   });
 
-  it('should increase value by 1 when clicking the + button', async () => {
+  test('should increase value by 1 when clicking the + button', async ({ page }) => {
     const selector: string = '#testinput_default';
 
     // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
@@ -16,7 +17,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
   });
 
-  it('should fire the change event only once when updating the value', async () => {
+  test('should fire the change event only once when updating the value', async ({ page }) => {
     const selector: string = '#testinput_default';
 
     // Trigger the TouchSpin button
@@ -28,7 +29,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  it('should fire the change event exactly once when entering a proper value and pressing TAB', async () => {
+  test('should fire the change event exactly once when entering a proper value and pressing TAB', async ({ page }) => {
     const selector: string = '#testinput_default';
 
     await touchspinHelpers.fillWithValue(page, selector, '67');
@@ -42,7 +43,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  it('Should fire the change event only once when correcting the value according to step after pressing TAB', async () => {
+  test('Should fire the change event only once when correcting the value according to step after pressing TAB', async ({ page }) => {
     const selector: string = '#testinput_step10_min';
 
     await touchspinHelpers.fillWithValue(page, selector, '67');
@@ -56,7 +57,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  it('Should fire the change event only once when correcting the value according to step after pressing Enter', async () => {
+  test('Should fire the change event only once when correcting the value according to step after pressing Enter', async ({ page }) => {
     const selector: string = '#testinput_step10_min';
 
     await touchspinHelpers.fillWithValue(page, selector, '67');
@@ -70,7 +71,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  it('Should not fire change event when already at max value and entering a higher value', async () => {
+  test('Should not fire change event when already at max value and entering a higher value', async ({ page }) => {
     const selector: string = '#testinput_step10_max';
 
     await touchspinHelpers.fillWithValue(page, selector, '117');
@@ -85,7 +86,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.countChangeWithValue(page, "100")).toBe(0);
   });
 
-  it('Should not fire change event when already at min value and entering a lower value', async () => {
+  test('Should not fire change event when already at min value and entering a lower value', async ({ page }) => {
     const selector: string = '#testinput_step10_min';
 
     await touchspinHelpers.fillWithValue(page, selector, '-55');
@@ -100,13 +101,13 @@ describe('Events', () => {
     expect(await touchspinHelpers.countChangeWithValue(page, "0")).toBe(0);
   });
 
-  it('Should use the callback on the initial value', async () => {
+  test('Should use the callback on the initial value', async ({ page }) => {
     const selector: string = '#input_callbacks';
 
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('$5,000.00');
   });
 
-  it('Should have the decorated value when firing the change event', async () => {
+  test('Should have the decorated value when firing the change event', async ({ page }) => {
     const selector: string = '#input_callbacks';
 
     await touchspinHelpers.fillWithValue(page, selector, '1000');
@@ -118,7 +119,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
-  it('Should have the decorated value on blur', async () => {
+  test('Should have the decorated value on blur', async ({ page }) => {
     const selector: string = '#input_callbacks';
 
     await touchspinHelpers.fillWithValue(page, selector, '1000');
@@ -129,7 +130,7 @@ describe('Events', () => {
     expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
-  it('The touchspin.on.min and touchspin.on.max events should fire as soon as the value reaches the minimum or maximum value', async () => {
+  test('The touchspin.on.min and touchspin.on.max events should fire as soon as the value reaches the minimum or maximum value', async ({ page }) => {
     const selector: string = '#testinput_default';
 
     await touchspinHelpers.fillWithValue(page, selector, '1');

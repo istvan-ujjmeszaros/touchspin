@@ -1,20 +1,21 @@
+import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
-import {page, port} from './helpers/jestPuppeteerServerSetup';
 
-describe('Core functionality', () => {
+test.describe('Core functionality', () => {
 
-  beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/__tests__/html/index-bs4.html');
     await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
   });
 
-  it('should render TouchSpin buttons and handle basic increment/decrement', async () => {
+  test('should render TouchSpin buttons and handle basic increment/decrement', async ({ page }) => {
     const selector = '#testinput_default';
 
-    // Check buttons exist
-    const upButton = await page.$('.bootstrap-touchspin-up');
-    const downButton = await page.$('.bootstrap-touchspin-down');
-    expect(upButton).toBeTruthy();
-    expect(downButton).toBeTruthy();
+    // Check buttons exist - use .first() since there are multiple TouchSpin instances on the page
+    const upButton = page.locator('.bootstrap-touchspin-up').first();
+    const downButton = page.locator('.bootstrap-touchspin-down').first();
+    await expect(upButton).toBeVisible();
+    await expect(downButton).toBeVisible();
 
     // Test increment
     await touchspinHelpers.touchspinClickUp(page, selector);
@@ -25,7 +26,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should respect disabled and readonly states', async () => {
+  test('should respect disabled and readonly states', async ({ page }) => {
     const selector = '#testinput_default';
 
     // Test disabled input
@@ -42,7 +43,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
   });
 
-  it('should initialize with correct disabled state for pre-disabled inputs', async () => {
+  test('should initialize with correct disabled state for pre-disabled inputs', async ({ page }) => {
     const disabledSelector = '#testinput_disabled';
     const readonlySelector = '#testinput_readonly';
 
@@ -50,7 +51,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, readonlySelector)).toBe(true);
   });
 
-  it('should handle custom step values correctly', async () => {
+  test('should handle custom step values correctly', async ({ page }) => {
     const selector = '#testinput_individual_min_max_step_properties';
 
     // The initial value should be corrected to align with step=3
@@ -65,7 +66,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('57');
   });
 
-  it('should handle min/max boundaries', async () => {
+  test('should handle min/max boundaries', async ({ page }) => {
     const selector = '#testinput_individual_min_max_step_properties';
     
     // Test reaching max value triggers event
@@ -80,7 +81,7 @@ describe('Core functionality', () => {
     expect(finalMaxEvents).toBeGreaterThan(initialMaxEvents);
   });
 
-  it('should support keyboard navigation', async () => {
+  test('should support keyboard navigation', async ({ page }) => {
     const selector = '#testinput_default';
     
     await page.focus(selector);
@@ -91,7 +92,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should support mousewheel interaction', async () => {
+  test('should support mousewheel interaction', async ({ page }) => {
     const selector = '#testinput_default';
     
     await page.focus(selector);
@@ -121,7 +122,7 @@ describe('Core functionality', () => {
     expect(await touchspinHelpers.readInputValue(page, selector)).toBe('50');
   });
 
-  it('should handle decimal values correctly', async () => {
+  test('should handle decimal values correctly', async ({ page }) => {
     const selector = '#testinput_decimals';
     
     // Test decimal increment

@@ -1,14 +1,15 @@
+import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
-import {page, port} from './helpers/jestPuppeteerServerSetup';
 
-describe('API Methods', () => {
+test.describe('API Methods', () => {
 
-  beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/__tests__/html/index-bs4.html');
     await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
   });
 
-  describe('TouchSpin Interface Events', () => {
-    it('should respond to touchspin.uponce event', async () => {
+  test.describe('TouchSpin Interface Events', () => {
+    test('should respond to touchspin.uponce event', async ({ page }) => {
       const selector = '#testinput_default';
 
       await page.evaluate((sel) => {
@@ -18,7 +19,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('51');
     });
 
-    it('should respond to touchspin.downonce event', async () => {
+    test('should respond to touchspin.downonce event', async ({ page }) => {
       const selector = '#testinput_default';
 
       await page.evaluate((sel) => {
@@ -28,7 +29,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('49');
     });
 
-    it('should respond to touchspin.startupspin event', async () => {
+    test('should respond to touchspin.startupspin event', async ({ page }) => {
       const selector = '#testinput_default';
       const initialValue = await touchspinHelpers.readInputValue(page, selector);
 
@@ -51,7 +52,7 @@ describe('API Methods', () => {
       expect(finalValue).toBeGreaterThan(originalValue);
     });
 
-    it('should respond to touchspin.startdownspin event', async () => {
+    test('should respond to touchspin.startdownspin event', async ({ page }) => {
       const selector = '#testinput_default';
       const initialValue = await touchspinHelpers.readInputValue(page, selector);
 
@@ -74,7 +75,7 @@ describe('API Methods', () => {
       expect(finalValue).toBeLessThan(originalValue);
     });
 
-    it('should respond to touchspin.stopspin event', async () => {
+    test('should respond to touchspin.stopspin event', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Start spin
@@ -99,8 +100,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('Settings Update', () => {
-    it('should update settings via touchspin.updatesettings event', async () => {
+  test.describe('Settings Update', () => {
+    test('should update settings via touchspin.updatesettings event', async ({ page }) => {
       const selector = '#input_group_sm';
 
       // Update prefix and postfix
@@ -122,7 +123,7 @@ describe('API Methods', () => {
       expect(postfixText).toContain('TEST');
     });
 
-    it('should update min/max settings', async () => {
+    test('should update min/max settings', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Update min and max values
@@ -146,7 +147,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('20');
     });
 
-    it('should update step setting', async () => {
+    test('should update step setting', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Update step value
@@ -167,8 +168,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('Destroy Method', () => {
-    it('should destroy TouchSpin via touchspin.destroy event', async () => {
+  test.describe('Destroy Method', () => {
+    test('should destroy TouchSpin via touchspin.destroy event', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Verify TouchSpin is active - try multiple selectors like the helpers do
@@ -202,7 +203,7 @@ describe('API Methods', () => {
       expect(originalInput).toBeTruthy();
     });
 
-    it('should clean up event handlers after destroy', async () => {
+    test('should clean up event handlers after destroy', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Destroy TouchSpin
@@ -222,8 +223,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('Programmatic Value Changes', () => {
-    it('should handle direct value changes and maintain consistency', async () => {
+  test.describe('Programmatic Value Changes', () => {
+    test('should handle direct value changes and maintain consistency', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Change value programmatically
@@ -238,7 +239,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('76');
     });
 
-    it('should validate programmatically set values against constraints', async () => {
+    test('should validate programmatically set values against constraints', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Set value beyond max (100)
@@ -251,7 +252,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.readInputValue(page, selector)).toBe('100');
     });
 
-    it('should handle programmatic decimal value changes', async () => {
+    test('should handle programmatic decimal value changes', async ({ page }) => {
       const selector = '#testinput_decimals';
 
       // Set decimal value programmatically
@@ -265,8 +266,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('Mutation Observer Integration', () => {
-    it('should respond to attribute changes via mutation observer', async () => {
+  test.describe('Mutation Observer Integration', () => {
+    test('should respond to attribute changes via mutation observer', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Change disabled attribute programmatically
@@ -282,7 +283,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
     });
 
-    it('should respond to readonly attribute changes', async () => {
+    test('should respond to readonly attribute changes', async ({ page }) => {
       const selector = '#testinput_default';
 
       // Change readonly attribute programmatically
@@ -298,7 +299,7 @@ describe('API Methods', () => {
       expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, selector)).toBe(true);
     });
 
-    it('should respond to attribute removal', async () => {
+    test('should respond to attribute removal', async ({ page }) => {
       const selector = '#testinput_disabled';
 
       // Initially should be disabled
@@ -318,8 +319,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('jQuery Chain Integration', () => {
-    it('should allow method chaining after TouchSpin initialization', async () => {
+  test.describe('jQuery Chain Integration', () => {
+    test('should allow method chaining after TouchSpin initialization', async ({ page }) => {
       // Test that TouchSpin returns jQuery object for chaining
       const result = await page.evaluate(() => {
         return (window as any).$('#testinput_default').TouchSpin().hasClass('form-control');
@@ -328,7 +329,7 @@ describe('API Methods', () => {
       expect(result).toBe(true);
     });
 
-    it('should work with multiple elements', async () => {
+    test('should work with multiple elements', async ({ page }) => {
       // Initialize TouchSpin on multiple elements
       await page.evaluate(() => {
         const $ = (window as any).$;
@@ -348,8 +349,8 @@ describe('API Methods', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle invalid settings gracefully', async () => {
+  test.describe('Error Handling', () => {
+    test('should handle invalid settings gracefully', async ({ page }) => {
       // Try to initialize with invalid settings
       const result = await page.evaluate(() => {
         try {
@@ -368,7 +369,7 @@ describe('API Methods', () => {
       expect(result).toBe(true);
     });
 
-    it('should handle missing jQuery gracefully', async () => {
+    test('should handle missing jQuery gracefully', async ({ page }) => {
       // This is more of a structural test - ensure no errors when basic deps are available
       const hasJQuery = await page.evaluate(() => {
         return typeof (window as any).$ !== 'undefined';

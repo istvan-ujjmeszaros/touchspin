@@ -1,47 +1,29 @@
-import {Page} from 'puppeteer';
+import { Page, Locator } from '@playwright/test';
 
 // Standard timeout constants
 const TOUCHSPIN_EVENT_WAIT = 700;
 
 async function waitForTimeout(ms: number): Promise<void> {
-  return new Promise(r => {
-    const timeoutId = setTimeout(() => {
-      r();
-    }, ms);
-
-    // Store timeout ID for potential cleanup
-    if (typeof globalThis !== 'undefined') {
-      const global = globalThis as any;
-      if (!global._testTimeouts) global._testTimeouts = [];
-      global._testTimeouts.push(timeoutId);
-    }
-  });
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function cleanupTimeouts(): Promise<void> {
-  if (typeof globalThis !== 'undefined') {
-    const global = globalThis as any;
-    if (global._testTimeouts) {
-      global._testTimeouts.forEach((id: any) => clearTimeout(id));
-      global._testTimeouts = [];
-    }
-  }
+  // Playwright handles timeouts automatically, so this is mostly for compatibility
+  // Can be used for custom cleanup if needed
 }
 
-async function readInputValue(page: Page, selector: string): Promise<string|undefined> {
-  const input = await page.$(selector);
-  return await input?.evaluate((el) => (el as HTMLInputElement).value);
+async function readInputValue(page: Page, selector: string): Promise<string | null> {
+  const input = page.locator(selector);
+  return await input.inputValue();
 }
 
 async function setInputAttr(page: Page, selector: string, attributeName: 'disabled' | 'readonly', attributeValue: boolean): Promise<void> {
-  const input = await page.$(selector);
-  await input?.evaluate((el, attributeName, attributeValue) => {
-    if (attributeValue) {
-      (el as HTMLInputElement).setAttribute(attributeName, '');
-    } else {
-      (el as HTMLInputElement).removeAttribute(attributeName);
-    }
-  }, attributeName, attributeValue);
+  const input = page.locator(selector);
+  if (attributeValue) {
+    await input.evaluate((el, attr) => el.setAttribute(attr, ''), attributeName);
+  } else {
+    await input.evaluate((el, attr) => el.removeAttribute(attr), attributeName);
+  }
 }
 
 async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise<boolean> {
@@ -62,15 +44,14 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
   ];
 
   for (const sel of selectors) {
-    const button = await page.$(sel);
-    if (button) {
-      const isDisabled = await button.evaluate((el) => {
-        return (el as HTMLButtonElement).hasAttribute('disabled') ||
-               (el as HTMLButtonElement).disabled;
+    const button = page.locator(sel);
+    const count = await button.count();
+    
+    if (count > 0) {
+      const isDisabled = await button.first().evaluate((el: HTMLButtonElement) => {
+        return el.hasAttribute('disabled') || el.disabled;
       });
-      if (isDisabled !== undefined) {
-        return isDisabled;
-      }
+      return isDisabled;
     }
   }
 
@@ -80,7 +61,6 @@ async function checkTouchspinUpIsDisabled(page: Page, selector: string): Promise
 async function touchspinClickUp(page: Page, input_selector: string): Promise<void> {
   // Get the initial value for comparison
   const initialValue = await readInputValue(page, input_selector);
-
 
   // Find and click the specific button for this input
   const clickResult = await page.evaluate((inputSel) => {
@@ -128,8 +108,6 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
     };
   }, input_selector);
 
-
-
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
     if (clickResult.error === 'Button not clickable') {
@@ -146,71 +124,18 @@ async function touchspinClickUp(page: Page, input_selector: string): Promise<voi
         const input = document.querySelector(inputSelector) as HTMLInputElement;
         return input && input.value !== expectedInitialValue;
       },
-      { timeout: 2000 },
       input_selector,
-      initialValue
+      initialValue,
+      { timeout: 2000 }
     );
-
   } catch (error) {
     console.warn('Value did not change within timeout - this may be expected for disabled inputs');
   }
 }
 
-async function changeEventCounter(page: Page): Promise<number> {
-  // Get the event log content
-  const eventLogContent = await page.$eval('#events_log', el => el.textContent);
-
-  // Count the number of 'change' events
-  return (eventLogContent?.match(/change\[/g) ?? []).length;
-}
-
-async function countChangeWithValue(page: Page, expectedValue: string): Promise<number> {
-  const expectedText = '#input_callbacks: change[' + expectedValue + ']';
-  return await page.evaluate((text) => {
-    return Array.from(document.querySelectorAll('#events_log'))
-      .filter(element => element.textContent!.includes(text)).length;
-  }, expectedText);
-}
-
-async function countEvent(page: Page, selector: string, event: string): Promise<number> {
-  // Get the event log content
-  const eventLogContent = await page.$eval('#events_log', el => el.textContent);
-
-  // Count the number of 'change' events with the expected value
-  const searchString = selector + ': ' + event;
-  return (eventLogContent ? eventLogContent.split(searchString).length - 1 : 0);
-}
-
-async function fillWithValue(page: Page, selector: string, value: string): Promise<void> {
-  await page.focus(selector);
-  // Has to be triple click to select all text when using decorators
-  await page.click(selector, { clickCount: 3 });
-  await page.keyboard.type(value);
-}
-
-async function waitForTouchSpinReady(page: Page, input_selector: string): Promise<void> {
-  // Wait for TouchSpin to be initialized and DOM structure to be ready
-  await page.waitForFunction(
-    (selector) => {
-      const input = document.querySelector(selector) as HTMLInputElement;
-      if (!input) return false;
-
-      // Check if TouchSpin has been initialized by looking for generated structure
-      const hasButtons =
-        document.querySelector('.bootstrap-touchspin-up') !== null &&
-        document.querySelector('.bootstrap-touchspin-down') !== null;
-
-      return hasButtons;
-    },
-    { timeout: 5000 },
-    input_selector
-  );
-}
-
 async function touchspinClickDown(page: Page, input_selector: string): Promise<void> {
   // Get the initial value for comparison
   const initialValue = await readInputValue(page, input_selector);
-
 
   // Find and click the specific button for this input
   const clickResult = await page.evaluate((inputSel) => {
@@ -258,8 +183,6 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
     };
   }, input_selector);
 
-
-
   if (!clickResult.success) {
     // If button is not clickable (disabled), that's expected for some tests
     if (clickResult.error === 'Button not clickable') {
@@ -276,14 +199,65 @@ async function touchspinClickDown(page: Page, input_selector: string): Promise<v
         const input = document.querySelector(inputSelector) as HTMLInputElement;
         return input && input.value !== expectedInitialValue;
       },
-      { timeout: 2000 },
       input_selector,
-      initialValue
+      initialValue,
+      { timeout: 2000 }
     );
-
   } catch (error) {
     console.warn('Down value did not change within timeout - this may be expected for disabled inputs');
   }
+}
+
+async function changeEventCounter(page: Page): Promise<number> {
+  // Get the event log content
+  const eventLogContent = await page.locator('#events_log').textContent();
+  
+  // Count the number of 'change' events
+  return (eventLogContent?.match(/change\[/g) ?? []).length;
+}
+
+async function countChangeWithValue(page: Page, expectedValue: string): Promise<number> {
+  const expectedText = '#input_callbacks: change[' + expectedValue + ']';
+  return await page.evaluate((text) => {
+    return Array.from(document.querySelectorAll('#events_log'))
+      .filter(element => element.textContent!.includes(text)).length;
+  }, expectedText);
+}
+
+async function countEvent(page: Page, selector: string, event: string): Promise<number> {
+  // Get the event log content
+  const eventLogContent = await page.locator('#events_log').textContent();
+
+  // Count the number of events with the expected value
+  const searchString = selector + ': ' + event;
+  return (eventLogContent ? eventLogContent.split(searchString).length - 1 : 0);
+}
+
+async function fillWithValue(page: Page, selector: string, value: string): Promise<void> {
+  const input = page.locator(selector);
+  await input.focus();
+  // Has to be triple click to select all text when using decorators
+  await input.click({ clickCount: 3 });
+  await input.fill(value);
+}
+
+async function waitForTouchSpinReady(page: Page, input_selector: string): Promise<void> {
+  // Wait for TouchSpin to be initialized and DOM structure to be ready
+  await page.waitForFunction(
+    (selector) => {
+      const input = document.querySelector(selector) as HTMLInputElement;
+      if (!input) return false;
+
+      // Check if TouchSpin has been initialized by looking for generated structure
+      const hasButtons =
+        document.querySelector('.bootstrap-touchspin-up') !== null &&
+        document.querySelector('.bootstrap-touchspin-down') !== null;
+
+      return hasButtons;
+    },
+    input_selector,
+    { timeout: 5000 }
+  );
 }
 
 export default {
