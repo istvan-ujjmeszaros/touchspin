@@ -103,6 +103,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - The `tmp/` folder should be gitignored to prevent accidental commits
 - Examples of temporary files that should go in `tmp/`:
   - Test HTML files (e.g., `test-debug.html`, `test-renderer.html`, `test-working.html`)
+  - Test analysis files (e.g., `test-results-analysis.json`, `test-output.log`)
   - Debug scripts or quick prototype files
   - Any files used for temporary development or debugging purposes
 - Always clean up temporary files when debugging is complete

@@ -10,27 +10,27 @@ test.describe('Bootstrap Renderer System', () => {
     });
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
-      // Test basic button structure
-      const buttonContainer = page.locator('.input-group-btn');
+      // Test basic button structure - use .first() since multiple instances exist on page
+      const buttonContainer = page.locator('.input-group-btn').first();
       await expect(buttonContainer).toBeVisible();
       
       // Test buttons have correct classes
-      const upButton = page.locator('.bootstrap-touchspin-up');
-      const downButton = page.locator('.bootstrap-touchspin-down');
+      const upButton = page.locator('.bootstrap-touchspin-up').first();
+      const downButton = page.locator('.bootstrap-touchspin-down').first();
       await expect(upButton).toBeVisible();
       await expect(downButton).toBeVisible();
       
       // Validate button classes
-      const upButtonClasses = await upButton?.evaluate((el) => el.className);
-      const downButtonClasses = await downButton?.evaluate((el) => el.className);
+      const upButtonClasses = await upButton.evaluate((el) => el.className);
+      const downButtonClasses = await downButton.evaluate((el) => el.className);
       
       expect(upButtonClasses).toContain('btn');
       expect(downButtonClasses).toContain('btn');
     });
 
     test('should use input-group-addon class for prefix and postfix', async ({ page }) => {
-      const prefixClasses = await page.$eval('.bootstrap-touchspin-prefix', el => el.className);
-      const postfixClasses = await page.$eval('.bootstrap-touchspin-postfix', el => el.className);
+      const prefixClasses = await page.locator('.bootstrap-touchspin-prefix').first().evaluate(el => el.className);
+      const postfixClasses = await page.locator('.bootstrap-touchspin-postfix').first().evaluate(el => el.className);
       
       expect(prefixClasses).toContain('input-group-addon');
       expect(postfixClasses).toContain('input-group-addon');
@@ -53,11 +53,11 @@ test.describe('Bootstrap Renderer System', () => {
     });
 
     test('should handle vertical button markup correctly', async ({ page }) => {
-      const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper');
+      const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper').first();
       await expect(verticalWrapper).toBeVisible();
       
-      const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
-      const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down');
+      const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first();
+      const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down').first();
       
       await expect(upButton).toBeVisible();
       await expect(downButton).toBeVisible();
@@ -72,15 +72,15 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should generate correct Bootstrap 4 markup structure', async ({ page }) => {
       // Test for prepend/append structure
-      const prepend = page.locator('.input-group-prepend');
-      const append = page.locator('.input-group-append');
+      const prepend = page.locator('.input-group-prepend').first();
+      const append = page.locator('.input-group-append').first();
       
       const hasPrependOrAppend = await prepend.count() > 0 || await append.count() > 0;
       expect(hasPrependOrAppend).toBe(true);
       
       // Test input-group-text wrapper
-      const prefixText = page.locator('.bootstrap-touchspin-prefix .input-group-text');
-      const postfixText = page.locator('.bootstrap-touchspin-postfix .input-group-text');
+      const prefixText = page.locator('.bootstrap-touchspin-prefix .input-group-text').first();
+      const postfixText = page.locator('.bootstrap-touchspin-postfix .input-group-text').first();
       
       await expect(prefixText).toBeVisible();
       await expect(postfixText).toBeVisible();
@@ -119,15 +119,15 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
       // Test direct input-group-text without prepend/append wrappers
-      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text');
-      const directPostfix = page.locator('.bootstrap-touchspin-postfix.input-group-text');
+      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text').first();
+      const directPostfix = page.locator('.bootstrap-touchspin-postfix.input-group-text').first();
       
       await expect(directPrefix).toBeVisible();
       await expect(directPostfix).toBeVisible();
       
       // Ensure no deprecated prepend/append classes
-      const prepend = page.locator('.input-group-prepend');
-      const append = page.locator('.input-group-append');
+      const prepend = page.locator('.input-group-prepend').first();
+      const append = page.locator('.input-group-append').first();
       
       await expect(prepend).not.toBeVisible();
       await expect(append).not.toBeVisible();
@@ -135,7 +135,7 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should handle direct button placement', async ({ page }) => {
       // Buttons should be placed directly in input group without wrapper divs
-      const inputGroup = page.locator('.input-group');
+      const inputGroup = page.locator('.input-group').first();
       const buttons = page.locator('.input-group .btn.bootstrap-touchspin-up, .input-group .btn.bootstrap-touchspin-down');
       
       await expect(inputGroup).toBeVisible();
@@ -192,9 +192,9 @@ test.describe('Bootstrap Renderer System', () => {
         await touchspinHelpers.waitForTouchSpinReady(page, '#testinput_default');
         
         // Validate basic structure exists
-        const hasInputGroup = page.locator('.input-group');
-        const hasUpButton = page.locator('.bootstrap-touchspin-up');
-        const hasDownButton = page.locator('.bootstrap-touchspin-down');
+        const hasInputGroup = page.locator('.input-group').first();
+        const hasUpButton = page.locator('.bootstrap-touchspin-up').first();
+        const hasDownButton = page.locator('.bootstrap-touchspin-down').first();
         
         await expect(hasInputGroup).toBeVisible();
         await expect(hasUpButton).toBeVisible();

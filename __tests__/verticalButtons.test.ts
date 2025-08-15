@@ -10,12 +10,12 @@ test.describe('Vertical Buttons', () => {
 
   test('should render vertical button structure correctly', async ({ page }) => {
     // Check for vertical wrapper
-    const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper');
+    const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper').first();
     await expect(verticalWrapper).toBeVisible();
 
     // Check buttons are inside wrapper
-    const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
-    const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down');
+    const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first();
+    const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down').first();
     
     await expect(upButton).toBeVisible();
     await expect(downButton).toBeVisible();
@@ -40,8 +40,8 @@ test.describe('Vertical Buttons', () => {
     expect(await touchspinHelpers.readInputValue(page, smallSelector)).toBe('51');
     
     // Verify prefix/postfix exist
-    const prefix = page.locator('.bootstrap-touchspin-prefix');
-    const postfix = page.locator('.bootstrap-touchspin-postfix');
+    const prefix = page.locator('.bootstrap-touchspin-prefix').first();
+    const postfix = page.locator('.bootstrap-touchspin-postfix').first();
     await expect(prefix).toBeVisible();
     await expect(postfix).toBeVisible();
   });
@@ -67,9 +67,8 @@ test.describe('Vertical Buttons', () => {
     await touchspinHelpers.setInputAttr(page, selector, 'disabled', true);
     
     // Buttons should be disabled
-    const upButtonDisabled = await page.evaluate(() => {
-      const button = document.querySelector('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up') as HTMLButtonElement;
-      return button?.disabled || button?.hasAttribute('disabled');
+    const upButtonDisabled = await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
+      return (button as HTMLButtonElement).disabled || button.hasAttribute('disabled');
     });
     
     expect(upButtonDisabled).toBe(true);
@@ -83,17 +82,15 @@ test.describe('Vertical Buttons', () => {
     const selector = '#input_vertical';
     
     // Simulate long press by holding mousedown for longer than stepintervaldelay (500ms)
-    await page.evaluate(() => {
-      const button = document.querySelector('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
-      button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
+    await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
+      button.dispatchEvent(new Event('mousedown', { bubbles: true }));
     });
     
     // Wait longer than the default stepintervaldelay (500ms) to trigger spinning
     await touchspinHelpers.waitForTimeout(700);
     
-    await page.evaluate(() => {
-      const button = document.querySelector('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up');
-      button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
+    await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
+      button.dispatchEvent(new Event('mouseup', { bubbles: true }));
     });
     
     // Should have incremented multiple times due to spinning

@@ -13,9 +13,9 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const selector = '#testinput_default';
 
       // Check that the page has RTL direction
-      const htmlDir = await page.$eval('html', el => el.getAttribute('dir'));
-      const bodyDir = await page.$eval('body', el => el.getAttribute('dir'));
-      const rtlClass = await page.$eval('body', el => el.classList.contains('rtl'));
+      const htmlDir = await page.locator('html').first().evaluate(el => el.getAttribute('dir'));
+      const bodyDir = await page.locator('body').first().evaluate(el => el.getAttribute('dir'));
+      const rtlClass = await page.locator('body').first().evaluate(el => el.classList.contains('rtl'));
 
       expect(htmlDir === 'rtl' || bodyDir === 'rtl' || rtlClass).toBe(true);
 
@@ -35,8 +35,8 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
       // Test prefix/postfix elements exist and are functional
       const prefixSelector = '#input_group_sm';
-      const prefix = page.locator('.bootstrap-touchspin-prefix');
-      const postfix = page.locator('.bootstrap-touchspin-postfix');
+      const prefix = page.locator('.bootstrap-touchspin-prefix').first();
+      const postfix = page.locator('.bootstrap-touchspin-postfix').first();
 
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
@@ -56,7 +56,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const selector = '#testinput_default';
 
       // Check RTL direction
-      const htmlDir = await page.$eval('html', el => el.getAttribute('dir'));
+      const htmlDir = await page.locator('html').first().evaluate(el => el.getAttribute('dir'));
       expect(htmlDir).toBe('rtl');
 
       // Test basic functionality in RTL
@@ -82,10 +82,10 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const selector = '#testinput_default';
 
       // Check RTL direction and Bootstrap 5 RTL CSS
-      const htmlDir = await page.$eval('html', el => el.getAttribute('dir'));
+      const htmlDir = await page.locator('html').first().evaluate(el => el.getAttribute('dir'));
       expect(htmlDir).toBe('rtl');
 
-      const rtlCSS = page.locator('link[href*="bootstrap.rtl.min.css"]');
+      const rtlCSS = page.locator('link[href*="bootstrap.rtl.min.css"]').first();
       await expect(rtlCSS).toBeVisible();
 
       // Test functionality
@@ -106,7 +106,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
       // Test prefix/postfix with direct input-group-text
       const prefixSelector = '#input_group_sm';
-      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text');
+      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text').first();
       await expect(directPrefix).toBeVisible();
 
       await touchspinHelpers.touchspinClickUp(page, prefixSelector);
