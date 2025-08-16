@@ -10,15 +10,17 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
       // Test basic button structure scoped to specific testid
-      const spin = page.getByTestId('touchspin-default');
-      const buttonContainer = spin.locator('.input-group-btn');
-      await expect(buttonContainer).toBeVisible();
+      const wrapper = page.getByTestId('touchspin-default-wrapper');
       
-      // Test buttons have correct classes
-      const upButton = spin.locator('.bootstrap-touchspin-up');
-      const downButton = spin.locator('.bootstrap-touchspin-down');
+      // Test buttons have correct classes (Bootstrap 3 has individual .input-group-btn containers)
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const downButton = wrapper.locator('.bootstrap-touchspin-down');
       await expect(upButton).toBeVisible();
       await expect(downButton).toBeVisible();
+      
+      // Verify button containers exist (Bootstrap 3 has 2 .input-group-btn elements)
+      const buttonContainers = wrapper.locator('.input-group-btn');
+      await expect(buttonContainers).toHaveCount(2);
       
       // Validate button classes
       const upButtonClasses = await upButton.evaluate((el) => el.className);

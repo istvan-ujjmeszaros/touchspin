@@ -225,12 +225,19 @@ async function countChangeWithValue(page: Page, expectedValue: string): Promise<
   }, expectedText);
 }
 
-async function countEvent(page: Page, selector: string, event: string): Promise<number> {
+async function getElementIdFromTestId(page: Page, testid: string): Promise<string> {
+  // Get the element ID from a testid for event counting
+  const elementId = await page.getByTestId(testid).getAttribute('id');
+  return elementId || testid;
+}
+
+async function countEvent(page: Page, elementIdOrSelector: string, event: string): Promise<number> {
   // Get the event log content (this is global, not scoped to a specific TouchSpin)
   const eventLogContent = await page.locator('#events_log').textContent();
 
   // Count the number of events with the expected value
-  const searchString = selector + ': ' + event;
+  // Event log format is "#elementId: event" so ensure we have the # prefix
+  const searchString = (elementIdOrSelector.startsWith('#') ? '' : '#') + elementIdOrSelector + ': ' + event;
   return (eventLogContent ? eventLogContent.split(searchString).length - 1 : 0);
 }
 
@@ -260,5 +267,6 @@ export default {
   countEvent,
   countChangeWithValue,
   fillWithValue,
+  getElementIdFromTestId,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

@@ -69,15 +69,18 @@ test.describe('Core functionality', () => {
   test('should handle min/max boundaries', async ({ page }) => {
     const testid = 'touchspin-individual-props';
     
+    // Get element ID for event counting (events are logged with element ID, not testid)
+    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+    
     // Test reaching max value triggers event
-    const initialMaxEvents = await touchspinHelpers.countEvent(page, testid, 'touchspin.on.max');
+    const initialMaxEvents = await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max');
     
     // Multiple clicks should eventually hit the max
     for (let i = 0; i < 5; i++) {
       await touchspinHelpers.touchspinClickUp(page, testid);
     }
     
-    const finalMaxEvents = await touchspinHelpers.countEvent(page, testid, 'touchspin.on.max');
+    const finalMaxEvents = await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max');
     expect(finalMaxEvents).toBeGreaterThan(initialMaxEvents);
   });
 
