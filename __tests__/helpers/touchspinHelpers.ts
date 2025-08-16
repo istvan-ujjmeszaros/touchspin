@@ -119,12 +119,11 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
   // Wait for the value to actually change
   try {
     await page.waitForFunction(
-      (inputTestId, expectedInitialValue) => {
-        const input = document.querySelector(`[data-testid="${inputTestId}"]`) as HTMLInputElement;
-        return input && input.value !== expectedInitialValue;
+      ({ testId, initialVal }: { testId: string; initialVal: string | null }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+        return input && input.value !== initialVal;
       },
-      inputTestId,
-      initialValue,
+      { testId: inputTestId, initialVal: initialValue },
       { timeout: 2000 }
     );
   } catch (error) {
@@ -196,12 +195,11 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
   // Wait for the value to actually change
   try {
     await page.waitForFunction(
-      (inputTestId, expectedInitialValue) => {
-        const input = document.querySelector(`[data-testid="${inputTestId}"]`) as HTMLInputElement;
-        return input && input.value !== expectedInitialValue;
+      ({ testId, initialVal }: { testId: string; initialVal: string | null }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+        return input && input.value !== initialVal;
       },
-      inputTestId,
-      initialValue,
+      { testId: inputTestId, initialVal: initialValue },
       { timeout: 2000 }
     );
   } catch (error) {
