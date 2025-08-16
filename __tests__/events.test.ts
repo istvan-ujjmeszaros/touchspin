@@ -133,14 +133,15 @@ test.describe('Events', () => {
 
   test('The touchspin.on.min and touchspin.on.max events should fire as soon as the value reaches the minimum or maximum value', async ({ page }) => {
     const testid: string = 'touchspin-default';
+    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
 
     await touchspinHelpers.fillWithValue(page, testid, '1');
     await page.keyboard.press('ArrowDown');
-    expect(await touchspinHelpers.countEvent(page, testid, 'touchspin.on.min')).toBe(1);
+    expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.min')).toBe(1);
 
     await touchspinHelpers.fillWithValue(page, testid, '99');
     await page.keyboard.press('ArrowUp');
-    expect(await touchspinHelpers.countEvent(page, testid, 'touchspin.on.max')).toBe(1);
+    expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max')).toBe(1);
   });
 
 });
