@@ -101,17 +101,15 @@ test.describe('Events', () => {
   });
 
   test('Should use the callback on the initial value', async ({ page }) => {
-    // TODO: Add testid to input_callbacks in HTML files
-    const selector: string = '#input_callbacks';
+    const testid: string = 'touchspin-callbacks';
 
-    expect(await touchspinHelpers.readInputValue(page, selector)).toBe('$5,000.00');
+    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('$5,000.00');
   });
 
   test('Should have the decorated value when firing the change event', async ({ page }) => {
-    // TODO: Add testid to input_callbacks in HTML files
-    const selector: string = '#input_callbacks';
+    const testid: string = 'touchspin-callbacks';
 
-    await touchspinHelpers.fillWithValue(page, selector, '1000');
+    await touchspinHelpers.fillWithValue(page, testid, '1000');
 
     await page.keyboard.press('Enter');
 
@@ -121,13 +119,13 @@ test.describe('Events', () => {
   });
 
   test('Should have the decorated value on blur', async ({ page }) => {
-    // TODO: Add testid to input_callbacks in HTML files
-    const selector: string = '#input_callbacks';
+    const testid: string = 'touchspin-callbacks';
 
-    await touchspinHelpers.fillWithValue(page, selector, '1000');
+    await touchspinHelpers.fillWithValue(page, testid, '1000');
 
-    // TODO: Add testid to input_group_lg in HTML files
-    await page.click('#input_group_lg', { clickCount: 1 });
+    // Click on another element to trigger blur - using a different TouchSpin element
+    const otherInput = page.getByTestId('touchspin-group-lg');
+    await otherInput.click({ clickCount: 1 });
 
     expect(await touchspinHelpers.countChangeWithValue(page, '1000')).toBe(0);
     expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
