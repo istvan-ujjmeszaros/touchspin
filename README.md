@@ -31,7 +31,7 @@ TouchSpin is a mobile-first jQuery plugin that transforms number inputs into use
 
 ## Quick Start
 
-### CDN Installation (Recommended)
+### File Installation (Recommended)
 
 Choose the build that matches your Bootstrap version:
 
@@ -207,10 +207,14 @@ Remove TouchSpin functionality and restore original input:
 $('#spinner').trigger('touchspin.destroy');
 ```
 
-### Enable/Disable
-```javascript
-$('#spinner').trigger('touchspin.updatesettings', {disabled: false}); // Enable
-$('#spinner').trigger('touchspin.updatesettings', {disabled: true});  // Disable
+### Disabled State
+TouchSpin automatically observes the `disabled` and `readonly` attributes:
+```html
+<input type="number" id="spinner" disabled>
+<!-- TouchSpin buttons automatically become disabled -->
+
+<input type="number" id="spinner" readonly>
+<!-- TouchSpin buttons automatically become disabled -->
 ```
 
 ### Update Settings
@@ -238,7 +242,7 @@ $('#spinner').on('touchspin.on.startspin', function() {
   console.log('Started spinning');
 });
 
-$('#spinner').on('touchspin.on.stopspinning', function() {
+$('#spinner').on('touchspin.on.stopspin', function() {
   console.log('Stopped spinning');
 });
 ```
@@ -247,7 +251,7 @@ $('#spinner').on('touchspin.on.stopspinning', function() {
 - `touchspin.on.min` - Minimum value reached
 - `touchspin.on.max` - Maximum value reached  
 - `touchspin.on.startspin` - Started spinning (any direction)
-- `touchspin.on.stopspinning` - Stopped spinning (any direction)
+- `touchspin.on.stopspin` - Stopped spinning (any direction)
 - `touchspin.on.startupspin` - Started spinning up
 - `touchspin.on.startdownspin` - Started spinning down
 - `touchspin.on.stopupspin` - Stopped spinning up
@@ -323,7 +327,7 @@ TouchSpin uses standard HTML elements but **does not currently implement ARIA at
 - Uses semantic `<input type="number">` and `<button>` elements
 - Relies on browser's native accessibility support
 - May require additional ARIA attributes for optimal screen reader support
-- Keyboard navigation depends on browser's default number input behavior
+- Limited keyboard support: Up/Down arrow keys work on number inputs, Space/Enter on TouchSpin buttons
 
 ### Recommendations for Better Accessibility
 - Add ARIA labels and descriptions manually
@@ -351,6 +355,9 @@ npm run build
 # Run tests
 npm test
 
+# Run tests with coverage report
+npm run test:coverage
+
 ```
 
 ### Project Structure
@@ -362,18 +369,18 @@ npm test
 │   └── renderers/               # Bootstrap version renderers
 ├── dist/                        # Built files (generated)
 ├── demo/                        # Live demos and examples
-├── __tests__/                   # Jest + Puppeteer tests
+├── __tests__/                   # Playwright browser tests
 └── tmp/                         # Temporary development files
 ```
 
 ### Testing
 
-Comprehensive test suite using Jest + Puppeteer:
+Comprehensive test suite using Playwright:
 
-- Cross-browser compatibility testing
-- Mobile device simulation
-- Bootstrap version compatibility
-- Core functionality and UI interactions
+- Real browser testing with Chromium 
+- Touch and mobile interaction simulation
+- Bootstrap version compatibility (3, 4 & 5)
+- UI component and event testing with coverage reporting
 
 ### Contributing
 

@@ -4,7 +4,12 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 test.describe('API Methods', () => {
 
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'apiMethods');
   });
 
   test.describe('TouchSpin Interface Events', () => {

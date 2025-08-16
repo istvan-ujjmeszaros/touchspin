@@ -248,6 +248,45 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
   await input.fill(value);
 }
 
+// Coverage collection functionality
+async function startCoverage(page: Page): Promise<void> {
+  await page.coverage.startJSCoverage({
+    reportAnonymousScripts: false,
+    resetOnNavigation: true
+  });
+}
+
+async function collectCoverage(page: Page, testName: string): Promise<void> {
+  const coverage = await page.coverage.stopJSCoverage();
+  await saveCoverageData(coverage, testName);
+}
+
+async function saveCoverageData(coverage: any[], testName: string): Promise<void> {
+  const fs = require('fs');
+  const path = require('path');
+  
+  const coverageDir = 'coverage/raw';
+  if (!fs.existsSync(coverageDir)) {
+    fs.mkdirSync(coverageDir, { recursive: true });
+  }
+  
+  // Filter coverage to only include TouchSpin source files
+  const touchspinCoverage = coverage.filter(entry => 
+    entry.url && (
+      entry.url.includes('jquery.bootstrap-touchspin') ||
+      entry.url.includes('touchspin')
+    )
+  );
+  
+  if (touchspinCoverage.length > 0) {
+    const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+    fs.writeFileSync(
+      path.join(coverageDir, fileName), 
+      JSON.stringify(touchspinCoverage, null, 2)
+    );
+  }
+}
+
 // NOTE: waitForTouchSpinReady is no longer needed!
 // TouchSpin now automatically creates wrapper testids as: {inputTestId}-wrapper
 // All helper functions automatically wait for the wrapper to exist.
@@ -266,5 +305,7 @@ export default {
   countChangeWithValue,
   fillWithValue,
   getElementIdFromTestId,
+  startCoverage,
+  collectCoverage,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

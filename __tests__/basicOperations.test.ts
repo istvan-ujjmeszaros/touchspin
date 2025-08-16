@@ -4,7 +4,12 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 test.describe('Core functionality', () => {
 
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'basicOperations');
   });
 
   test('should render TouchSpin buttons and handle basic increment/decrement', async ({ page }) => {

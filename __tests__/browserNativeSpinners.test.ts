@@ -20,11 +20,16 @@ const TEST_TIMEOUT = 50000;
 
 test.describe('Browser Native Spinner Controls', () => {
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     // Navigate to dedicated native spinner test page
     await page.goto('/__tests__/html/native-spinner-test.html', {
       waitUntil: 'networkidle',
       timeout: 10000
     });
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'browserNativeSpinners');
   });
 
   test.describe('Native Attributes Only', () => {

@@ -5,7 +5,12 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
   test.describe('Bootstrap 3 RTL', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs3.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -45,7 +50,12 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
   test.describe('Bootstrap 4 RTL', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs4.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -70,7 +80,12 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
   test.describe('Bootstrap 5 RTL', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs5.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -110,7 +125,12 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
   test.describe('RTL Text Input Handling', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs4.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should handle manual text input correctly in RTL', async ({ page }) => {

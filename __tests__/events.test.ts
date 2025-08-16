@@ -4,7 +4,12 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 test.describe('Events', () => {
 
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'events');
   });
 
   test('should increase value by 1 when clicking the + button', async ({ page }) => {

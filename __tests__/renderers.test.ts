@@ -5,7 +5,12 @@ test.describe('Bootstrap Renderer System', () => {
 
   test.describe('Bootstrap 3 Renderer', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs3.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'renderers');
     });
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
@@ -68,7 +73,12 @@ test.describe('Bootstrap Renderer System', () => {
 
   test.describe('Bootstrap 4 Renderer', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs4.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'renderers');
     });
 
     test('should generate correct Bootstrap 4 markup structure', async ({ page }) => {
@@ -114,7 +124,12 @@ test.describe('Bootstrap Renderer System', () => {
 
   test.describe('Bootstrap 5 Renderer', () => {
     test.beforeEach(async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs5.html');
+    });
+
+    test.afterEach(async ({ page }) => {
+      await touchspinHelpers.collectCoverage(page, 'renderers');
     });
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {

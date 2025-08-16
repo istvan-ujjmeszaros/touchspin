@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
 
 /**
  * TestID Propagation Test Suite
@@ -26,7 +27,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('TestID Propagation Behavior', () => {
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     await page.goto('http://localhost:3000/__tests__/html/testid-propagation-test.html');
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'testidPropagation');
   });
 
   test('should propagate testid from input to new wrapper container', async ({ page }) => {
