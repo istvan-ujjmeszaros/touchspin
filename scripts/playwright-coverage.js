@@ -118,7 +118,7 @@ async function main() {
     console.log('\n✅ Test execution completed successfully!')
     console.log('\n📊 Results available:')
     console.log('   📋 Summary: reports/coverage/test-summary.json')
-    console.log('   🌐 Playwright HTML Report: npx playwright show-report')
+    console.log('   🌐 Playwright HTML Report: npm run test:report')
     console.log('   📈 Coverage HTML Report: reports/coverage/html/index.html')
     console.log('   📄 Coverage JSON: reports/coverage/coverage-final.json')
     console.log('   📂 Raw V8 Coverage Data: reports/coverage/raw/*.json')

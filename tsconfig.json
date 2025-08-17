@@ -11,12 +11,11 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": ["vitest/globals", "@playwright/test"]
+    "types": ["node", "@playwright/test"]
   },
   "include": [
     "./src/**/*.ts",
     "./__tests__/**/*.ts",
-    "./vitest.config.ts",
     "./playwright.config.ts"
   ],
   "exclude": [

@@ -252,8 +252,7 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
 async function startCoverage(page: Page): Promise<void> {
   await page.coverage.startJSCoverage({
     reportAnonymousScripts: true,
-    resetOnNavigation: false,
-    includeRawScriptCoverage: true
+    resetOnNavigation: false
   });
 }
 
