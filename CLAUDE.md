@@ -21,11 +21,12 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - `npm run check-build-integrity:legacy` or `grunt check-build-integrity` - Legacy integrity check
 - `grunt clean` - Clean the dist folder
 
-### Testing (Vitest + Playwright)
-- `npm test` - Run Vitest tests (fast, parallel execution)
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:ui` - Run tests with Vitest UI
-- `npm run test:playwright` - Run Playwright browser tests specifically
+### Testing (Playwright + Coverage)
+- `npm test` - Run Playwright tests (browser-based tests)
+- `npm run test:coverage` - Run tests with automatic coverage report generation
+- `npm run coverage:open` - Open HTML coverage reports in browser
+- `npm run test:headed` - Run tests with visible browser
+- `npm run test:ui` - Run tests with Playwright UI
 
 ## Architecture
 
@@ -41,7 +42,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
   - Source maps (.map files) included for debugging
 
 ### Testing
-- **`__tests__/`** - Vitest + Playwright integration tests
+- **`__tests__/`** - Playwright browser tests with NYC/Istanbul coverage
   - `basicOperations.test.ts` - Core functionality tests
   - `events.test.ts` - Event handling tests
   - `browserNativeSpinners.test.ts` - Native spinner synchronization tests
@@ -69,19 +70,21 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - Legacy Grunt build available as fallback (`build:legacy` commands)
 
 ### Testing Environment  
-- Uses **Vitest + Playwright** for modern, fast browser-based testing
+- Uses **Vitest + Playwright** for browser-based testing
 - Test timeout set to 60 seconds for stability
 - Multiple HTML fixtures test Bootstrap 3/4/5 compatibility and RTL support
 - Tests run sequentially by default to match previous behavior (can be parallelized)
 - Playwright automatically manages web server and browser instances
-- **IMPORTANT**: Use `npm test` for Vitest or `npm run test:playwright` for Playwright-specific tests
+- **Coverage System**: Uses NYC/Istanbul for coverage reporting with LCOV and HTML formats
+- **IDE Integration**: LCOV reports generated at `reports/coverage/lcov.info` for PHPStorm
+- **Visual Reports**: HTML coverage reports at `reports/coverage/html/index.html`
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
 
 ### Code Standards
 - Follows jQuery Core Style Guide
 - JSHint configuration in `.jshintrc` (used by legacy Grunt build)
 - ES6+ code is transpiled via Babel for ES5 compatibility
-- Modern development workflow with Vite provides fast builds and hot reload
+- Development workflow with Vite provides fast builds and hot reload
 
 ### Refactoring Guidelines
 - **IMPORTANT**: When refactoring involves renaming classes, methods, or files, ALWAYS ask the user to decide on the new name instead of choosing it yourself
@@ -90,7 +93,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - This ensures naming consistency with project conventions and user preferences
 
 ### Modern Build System Details
-- **Vite** for fast development and optimized production builds
+- **Vite** for fast development and production builds
 - **Rollup** (via Vite) for efficient library bundling with tree-shaking
 - **Babel** for ES5 transpilation targeting `> 1%, last 2 versions, ie >= 9`
 - **Terser** for JavaScript minification with banner preservation
@@ -107,3 +110,13 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
   - Debug scripts or quick prototype files
   - Any files used for temporary development or debugging purposes
 - Always clean up temporary files when debugging is complete
+
+### Documentation Language Guidelines
+- **Avoid self-promotional language** in README and documentation files
+- **Use factual, neutral tone** instead of marketing language
+- **Prohibited terms**: "comprehensive", "extensive", "perfect", "optimal", "amazing", "excellent", "superior", "cutting-edge"
+- **Avoid superlatives**: Don't use "best", "fastest", "most advanced", etc.
+- **Be precise**: Use "designed for" instead of "optimized for", "supports" instead of "expertly handles"
+- **No emotional appeals**: Avoid "Made with ❤️" or similar promotional footers
+- **Technical accuracy**: Ensure descriptions accurately reflect functionality (e.g., events are programmatic, not user interactions)
+- **Professional tone**: Documentation should inform, not convince or impress

@@ -1,14 +1,14 @@
 # Bootstrap TouchSpin
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa)](https://github.com/sponsors/istvan-ujjmeszaros)
 [![run-tests](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/actions/workflows/run-tests.yml/badge.svg)](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/actions/workflows/run-tests.yml)
 [![npm version](https://img.shields.io/npm/v/bootstrap-touchspin)](https://www.npmjs.com/package/bootstrap-touchspin)
 [![npm downloads](https://img.shields.io/npm/dm/bootstrap-touchspin)](https://www.npmjs.com/package/bootstrap-touchspin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/bootstrap-touchspin)](https://bundlephobia.com/package/bootstrap-touchspin)
 
 **A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.**
 
-TouchSpin is a mobile-first jQuery plugin that transforms number inputs into user-friendly spinner controls with increment/decrement buttons, perfect for touch interfaces and desktop environments alike.
+TouchSpin is a mobile-first jQuery plugin that transforms number inputs into spinner controls with increment/decrement buttons for touch interfaces and desktop environments.
 
 **[Live Demo & Documentation](https://www.virtuosoft.eu/code/bootstrap-touchspin/)**
 
@@ -16,15 +16,15 @@ TouchSpin is a mobile-first jQuery plugin that transforms number inputs into use
 
 ## Key Features
 
-- **Mobile-First Design** - Optimized for touch interfaces and mobile devices
-- **Bootstrap 3/4/5 Support** - Version-specific builds for optimal performance
+- **Mobile-First Design** - Designed for touch interfaces and mobile devices
+- **Bootstrap 3/4/5 Support** - Version-specific builds for compatibility
 - **Standard HTML Controls** - Uses semantic button and input elements
 - **RTL Language Support** - Full right-to-left language compatibility
 - **Lightweight & Fast** - Minimal footprint with targeted builds
-- **Highly Customizable** - Extensive configuration options
+- **Customizable** - Multiple configuration options
 - **Decimal Precision** - Support for floating-point numbers
 - **Booster Mode** - Accelerated value changes for large ranges
-- **Event System** - Comprehensive event handling
+- **Event System** - Programmatic event handling
 - **Vertical Layout** - Alternative button arrangement
 
 ---
@@ -261,7 +261,7 @@ $('#spinner').on('touchspin.on.stopspin', function() {
 
 ## Bootstrap Version Support
 
-TouchSpin provides optimized builds for each Bootstrap version:
+TouchSpin provides separate builds for each Bootstrap version:
 
 ### Version-Specific Features
 
@@ -273,11 +273,11 @@ TouchSpin provides optimized builds for each Bootstrap version:
 
 ### Why Version-Specific Builds?
 
-- **Improved reliability** - Eliminates compatibility issues between Bootstrap versions
+- **Reliability** - Eliminates compatibility issues between Bootstrap versions
 - **Error prevention** - No risk of using incorrect markup or classes for your Bootstrap version
 - **Easier maintenance** - Clear, predictable behavior without version detection logic
 - **Smaller file size** - Only includes renderer for your Bootstrap version  
-- **Optimized markup** - Tailored HTML structure for each version  
+- **Tailored markup** - HTML structure specific to each version  
 - **Explicit dependencies** - Clear compatibility requirements
 
 ---
@@ -300,7 +300,7 @@ TouchSpin provides optimized builds for each Bootstrap version:
 ### Touch Support
 - Full touch event support
 - Responsive touch targets (44px minimum)
-- Optimized for mobile interfaces
+- Designed for mobile interfaces
 - Gesture-friendly interactions
 
 ---
@@ -329,7 +329,7 @@ TouchSpin uses standard HTML elements but **does not currently implement ARIA at
 - May require additional ARIA attributes for optimal screen reader support
 - Limited keyboard support: Up/Down arrow keys work on number inputs, Space/Enter on TouchSpin buttons
 
-### Recommendations for Better Accessibility
+### Accessibility Recommendations
 - Add ARIA labels and descriptions manually
 - Consider implementing `aria-valuenow`, `aria-valuemin`, `aria-valuemax` attributes
 - Test with screen readers to ensure proper announcement of value changes
@@ -378,12 +378,12 @@ npm run coverage:open
 
 ### Testing
 
-Comprehensive test suite using Playwright with automated coverage reporting:
+Test suite using Playwright with automated coverage reporting:
 
 - **Real browser testing** with Chromium 
 - **Touch and mobile interaction** simulation
 - **Bootstrap version compatibility** (3, 4 & 5)
-- **UI component and event testing** with comprehensive coverage
+- **UI component and event testing** with coverage reporting
 - **Automated coverage reports** using NYC/Istanbul with LCOV and HTML formats
 - **PHPStorm integration** via LCOV format at `reports/coverage/lcov.info`
 - **Visual HTML reports** automatically generated at `reports/coverage/html/index.html`
@@ -478,7 +478,7 @@ input[type="number"] {
 - **Local Demos** - Open `demo/index-new.html` in your browser
 
 ### Local Examples
-Explore the comprehensive demos in the `demo/` directory:
+Explore the demos in the `demo/` directory:
 - `demo/bootstrap3.html` - Bootstrap 3 examples
 - `demo/bootstrap4.html` - Bootstrap 4 examples  
 - `demo/bootstrap5.html` - Bootstrap 5 examples
@@ -504,15 +504,15 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 - **Issues**: [GitHub Issues](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/discussions)
 - **Documentation**: [Official Docs](https://www.virtuosoft.eu/code/bootstrap-touchspin/)
+- **Sponsorship**: [GitHub Sponsors](https://github.com/sponsors/istvan-ujjmeszaros) - Support ongoing development
 
 ---
 
 ## Version History
 
-**Latest: v4.7.3** - Fast build system, version-specific builds, improved accessibility
+**Latest: v4.7.3** - Vite build system, version-specific builds, accessibility updates
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
 
-*Made with ❤️ for the web development community*
