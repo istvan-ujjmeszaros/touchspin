@@ -18,7 +18,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- TouchSpin JS -->
-    <script src="../../dist/jquery.bootstrap-touchspin-bs4.js"></script>
+    <!-- Load source renderer files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+  
+  <!-- Create Bootstrap 4 RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new Bootstrap4Renderer($, settings, originalinput);
+      }
+      
+      static getVersion() {
+        return 4;
+      }
+    };
+  </script>
+  
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
 
     <style>
         .test-section {

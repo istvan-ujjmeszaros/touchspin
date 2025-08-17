@@ -251,8 +251,9 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
 // Coverage collection functionality
 async function startCoverage(page: Page): Promise<void> {
   await page.coverage.startJSCoverage({
-    reportAnonymousScripts: false,
-    resetOnNavigation: true
+    reportAnonymousScripts: true,
+    resetOnNavigation: false,
+    includeRawScriptCoverage: true
   });
 }
 
@@ -270,11 +271,13 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
     fs.mkdirSync(coverageDir, { recursive: true });
   }
   
-  // Filter coverage to only include TouchSpin source files
+  // Filter coverage to include all TouchSpin source files
   const touchspinCoverage = coverage.filter(entry => 
     entry.url && (
       entry.url.includes('jquery.bootstrap-touchspin') ||
-      entry.url.includes('touchspin')
+      entry.url.includes('touchspin') ||
+      entry.url.includes('/src/') ||
+      entry.url.includes('/renderers/')
     )
   );
   

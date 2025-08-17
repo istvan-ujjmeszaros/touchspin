@@ -15,8 +15,28 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
-  <link href="../../dist/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <script src="../../dist/jquery.bootstrap-touchspin-bs4.js"></script>
+  <!-- Load source CSS -->
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  
+  <!-- Load source renderer files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+  
+  <!-- Create Bootstrap 4 RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new Bootstrap4Renderer($, settings, originalinput);
+      }
+      
+      static getVersion() {
+        return 4;
+      }
+    };
+  </script>
+  
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
 
 
 </head>
