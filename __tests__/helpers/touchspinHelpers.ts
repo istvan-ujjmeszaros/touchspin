@@ -264,8 +264,9 @@ async function collectCoverage(page: Page, testName: string): Promise<void> {
 async function saveCoverageData(coverage: any[], testName: string): Promise<void> {
   const fs = require('fs');
   const path = require('path');
+  const v8toIstanbul = require('v8-to-istanbul');
   
-  const coverageDir = 'reports/coverage/raw';
+  const coverageDir = 'reports/coverage';
   if (!fs.existsSync(coverageDir)) {
     fs.mkdirSync(coverageDir, { recursive: true });
   }
@@ -281,10 +282,34 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
   );
   
   if (touchspinCoverage.length > 0) {
+    // Convert V8 coverage to Istanbul format for NYC
+    const istanbulCoverage: Record<string, any> = {};
+    
+    for (const entry of touchspinCoverage) {
+      try {
+        // Extract file path from URL
+        let filePath = '';
+        if (entry.url.includes('src/')) {
+          const srcIndex = entry.url.indexOf('src/');
+          filePath = path.join(process.cwd(), entry.url.substring(srcIndex));
+        }
+        
+        if (filePath && fs.existsSync(filePath)) {
+          const converter = v8toIstanbul(filePath);
+          await converter.load();
+          converter.applyCoverage(entry.functions);
+          Object.assign(istanbulCoverage, converter.toIstanbul());
+        }
+      } catch (error) {
+        console.warn(`Failed to process coverage for ${entry.url}:`, error.message);
+      }
+    }
+    
+    // Save in Istanbul format that NYC expects
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     fs.writeFileSync(
       path.join(coverageDir, fileName), 
-      JSON.stringify(touchspinCoverage, null, 2)
+      JSON.stringify(istanbulCoverage, null, 2)
     );
   }
 }

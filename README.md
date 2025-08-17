@@ -340,7 +340,7 @@ TouchSpin uses standard HTML elements but **does not currently implement ARIA at
 
 ### Build Process
 
-TouchSpin uses a modern Vite-based build system:
+TouchSpin uses a fast Vite-based build system:
 
 ```bash
 # Install dependencies
@@ -355,8 +355,11 @@ npm run build
 # Run tests
 npm test
 
-# Run tests with coverage report
+# Run tests with automatic coverage report generation
 npm run test:coverage
+
+# Open coverage HTML report in browser
+npm run coverage:open
 
 ```
 
@@ -375,20 +378,25 @@ npm run test:coverage
 
 ### Testing
 
-Comprehensive test suite using Playwright:
+Comprehensive test suite using Playwright with automated coverage reporting:
 
-- Real browser testing with Chromium 
-- Touch and mobile interaction simulation
-- Bootstrap version compatibility (3, 4 & 5)
-- UI component and event testing with coverage reporting
+- **Real browser testing** with Chromium 
+- **Touch and mobile interaction** simulation
+- **Bootstrap version compatibility** (3, 4 & 5)
+- **UI component and event testing** with comprehensive coverage
+- **Automated coverage reports** using NYC/Istanbul with LCOV and HTML formats
+- **PHPStorm integration** via LCOV format at `reports/coverage/lcov.info`
+- **Visual HTML reports** automatically generated at `reports/coverage/html/index.html`
+- **Single command workflow** - `npm run test:coverage` runs tests and generates all reports
 
 ### Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/new-feature`
 3. Make your changes in `src/` directory
-4. Run tests: `npm test`
-5. Commit your changes
+4. Run tests: `npm test` (fast) or `npm run test:coverage` (with automatic report generation)
+5. Review coverage with `npm run coverage:open` to view detailed HTML reports
+6. Commit your changes
 7. Push to the branch: `git push origin feature/new-feature`
 8. Create a Pull Request
 
@@ -501,7 +509,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Version History
 
-**Latest: v4.7.3** - Modern build system, version-specific builds, improved accessibility
+**Latest: v4.7.3** - Fast build system, version-specific builds, improved accessibility
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
