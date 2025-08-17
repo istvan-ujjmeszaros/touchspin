@@ -19,11 +19,82 @@
 }(function ($) {
   'use strict';
 
+  /**
+   * @fileoverview Bootstrap TouchSpin - Mobile-friendly input spinner component
+   * @version 4.7.3
+   * @author István Ujj-Mészáros <https://github.com/istvan-ujjmeszaros>
+   * @requires jQuery
+   * @license MIT
+   */
+
   // Include renderer classes
   // These will be included during build process or loaded separately
   
   var _currentSpinnerId = 0;
 
+  /**
+   * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners
+   * @param {Object} [options] - Configuration options for TouchSpin
+   * @param {number|null} [options.min=0] - Minimum allowed value (null for no minimum)
+   * @param {number|null} [options.max=100] - Maximum allowed value (null for no maximum) 
+   * @param {string} [options.initval=''] - Initial value if input is empty
+   * @param {string} [options.replacementval=''] - Value to show when input is empty
+   * @param {number|null} [options.firstclickvalueifempty=null] - Value to set on first click if input is empty
+   * @param {number} [options.step=1] - Step increment/decrement amount
+   * @param {number} [options.decimals=0] - Number of decimal places to display
+   * @param {number} [options.stepinterval=100] - Milliseconds between steps when holding button
+   * @param {string} [options.forcestepdivisibility='round'] - How to handle step divisibility: 'none', 'floor', 'round', 'ceil'
+   * @param {number} [options.stepintervaldelay=500] - Delay in milliseconds before step interval begins
+   * @param {boolean} [options.verticalbuttons=false] - Whether to display buttons vertically
+   * @param {string} [options.verticalup='&plus;'] - HTML content for vertical up button
+   * @param {string} [options.verticaldown='&minus;'] - HTML content for vertical down button
+   * @param {string} [options.verticalupclass=''] - CSS classes for vertical up button
+   * @param {string} [options.verticaldownclass=''] - CSS classes for vertical down button
+   * @param {string} [options.prefix=''] - Text or HTML to display before the input
+   * @param {string} [options.postfix=''] - Text or HTML to display after the input
+   * @param {string} [options.prefix_extraclass=''] - Additional CSS classes for prefix element
+   * @param {string} [options.postfix_extraclass=''] - Additional CSS classes for postfix element
+   * @param {boolean} [options.booster=true] - Enable accelerated value changes for rapid input
+   * @param {number} [options.boostat=10] - Number of steps before booster mode activates
+   * @param {number|false} [options.maxboostedstep=false] - Maximum step size during boost mode
+   * @param {boolean} [options.mousewheel=true] - Enable mouse wheel support for value changes
+   * @param {string} [options.buttondown_class='btn btn-primary'] - CSS classes for decrement button
+   * @param {string} [options.buttonup_class='btn btn-primary'] - CSS classes for increment button
+   * @param {string} [options.buttondown_txt='&minus;'] - HTML content for decrement button
+   * @param {string} [options.buttonup_txt='&plus;'] - HTML content for increment button
+   * @param {Object|null} [options.renderer=null] - Custom renderer instance for Bootstrap version compatibility
+   * @param {Function} [options.callback_before_calculation] - Function called before value calculation
+   * @param {Function} [options.callback_after_calculation] - Function called after value calculation
+   * @returns {jQuery} jQuery object for chaining
+   * @example
+   * // Basic usage
+   * $('#myinput').TouchSpin();
+   * 
+   * @example
+   * // With configuration
+   * $('#myinput').TouchSpin({
+   *   min: 0,
+   *   max: 100,
+   *   step: 5,
+   *   prefix: '$',
+   *   postfix: '.00'
+   * });
+   * 
+   * @example
+   * // Event handling
+   * $('#myinput').on('touchspin.on.min', function() {
+   *   console.log('Minimum value reached');
+   * });
+   * 
+   * @fires touchspin.on.min - Triggered when minimum value is reached
+   * @fires touchspin.on.max - Triggered when maximum value is reached
+   * @fires touchspin.on.startspin - Triggered when spinning starts (any direction)
+   * @fires touchspin.on.stopspin - Triggered when spinning stops (any direction)
+   * @fires touchspin.on.startupspin - Triggered when upward spinning starts
+   * @fires touchspin.on.startdownspin - Triggered when downward spinning starts
+   * @fires touchspin.on.stopupspin - Triggered when upward spinning stops
+   * @fires touchspin.on.stopdownspin - Triggered when downward spinning stops
+   */
   $.fn.TouchSpin = function (options) {
 
     var defaults = {
@@ -56,9 +127,19 @@
       buttonup_txt: '&plus;',
       // Renderer system options
       renderer: null, // Custom renderer instance
+      /**
+       * Callback function executed before value calculation
+       * @param {string} value - The raw input value
+       * @returns {string} - The processed value to be used in calculation
+       */
       callback_before_calculation: function (value) {
         return value;
       },
+      /**
+       * Callback function executed after value calculation
+       * @param {string} value - The calculated value
+       * @returns {string} - The final value to be displayed
+       */
       callback_after_calculation: function (value) {
         return value;
       }
