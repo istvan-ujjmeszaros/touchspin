@@ -1,33 +1,42 @@
-name: run-tests
-run-name: Run tests
+name: CI Tests
+run-name: Run Bootstrap TouchSpin Tests
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches: [ master, main ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Run tests
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Check build integrity
+        run: npm run check-build-integrity
+
+      - name: Run Playwright tests
         run: npm test
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: reports/
+          retention-days: 7
