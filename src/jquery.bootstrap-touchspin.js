@@ -213,8 +213,9 @@
     };
 
     /**
-     * Maps TouchSpin option names to their corresponding data attribute names.
-     * @type {Object<string, string>}
+     * Maps TouchSpin option names to data attribute names.
+     * Example: data-bts-step-interval="100" → stepinterval: 100
+     * @type {Record<string,string>}
      * @private
      */
     var attributeMap = {
@@ -343,6 +344,10 @@
       function _initSettings() {
         settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
 
+        // Normalize step (guard against "any", 0, negatives, NaN)
+        var stepNum = Number(settings.step);
+        if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
+
         if (parseFloat(settings.step) !== 1) {
           let remainder;
 
@@ -436,6 +441,9 @@
 
         originalinput.off('touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
 
+        // Clean up document-level event handlers
+        $(document).off('.touchspin.doc.' + originalinput.data('spinnerid'));
+
         if ($parent.hasClass('bootstrap-touchspin-injected')) {
           originalinput.siblings().remove();
           originalinput.unwrap();
@@ -456,7 +464,7 @@
         settings = $.extend({}, settings, newsettings);
 
         // Update postfix and prefix texts if those settings were changed.
-        if (newsettings.postfix || newsettings.prefix) {
+        if ('postfix' in newsettings || 'prefix' in newsettings) {
           if (!renderer) {
             throw new Error('Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.');
           }
@@ -566,7 +574,8 @@
         });
 
         // change is fired before blur, so we need to work around that
-        $(document).on('mousedown touchstart', function(event) {
+        var docNs = '.touchspin.doc.' + _currentSpinnerId;
+        $(document).on('mousedown' + docNs + ' touchstart' + docNs, function(event) {
           if ($(event.target).is(originalinput)) {
             return;
           }
@@ -833,7 +842,8 @@
 
         if (isNaN(parsedval)) {
           if (settings.replacementval !== '') {
-            parsedval = settings.replacementval;
+            var rv = parseFloat(String(settings.replacementval));
+            parsedval = isNaN(rv) ? 0 : rv;
           } else {
             parsedval = 0;
           }
@@ -929,7 +939,8 @@
         
         // Check step attribute
         if (nativeStep != null) {
-          var parsedStep = nativeStep === '' ? 1 : parseFloat(nativeStep);
+          var parsedStep = (nativeStep === '' || nativeStep === 'any') ? 1 : parseFloat(nativeStep);
+          if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
           if (parsedStep !== settings.step) {
             newSettings.step = parsedStep;
             needsUpdate = true;

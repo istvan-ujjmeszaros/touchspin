@@ -491,6 +491,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _initSettings() {
           settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
+          var stepNum = Number(settings.step);
+          if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
           if (parseFloat(settings.step) !== 1) {
             var remainder;
             if (settings.max != null) {
@@ -545,6 +547,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var $parent = originalinput.parent();
           stopSpin();
           originalinput.off("touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
+          $(document).off(".touchspin.doc." + originalinput.data("spinnerid"));
           if ($parent.hasClass("bootstrap-touchspin-injected")) {
             originalinput.siblings().remove();
             originalinput.unwrap();
@@ -556,7 +559,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _updateSettings(newsettings) {
           settings = $.extend({}, settings, newsettings);
-          if (newsettings.postfix || newsettings.prefix) {
+          if ("postfix" in newsettings || "prefix" in newsettings) {
             if (!renderer) {
               throw new Error("Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.");
             }
@@ -629,7 +632,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               stopSpin();
             }
           });
-          $(document).on("mousedown touchstart", function (event) {
+          var docNs = ".touchspin.doc." + _currentSpinnerId;
+          $(document).on("mousedown" + docNs + " touchstart" + docNs, function (event) {
             if ($(event.target).is(originalinput)) {
               return;
             }
@@ -823,7 +827,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           parsedval = parseFloat(val);
           if (isNaN(parsedval)) {
             if (settings.replacementval !== "") {
-              parsedval = settings.replacementval;
+              var rv = parseFloat(String(settings.replacementval));
+              parsedval = isNaN(rv) ? 0 : rv;
             } else {
               parsedval = 0;
             }
@@ -890,7 +895,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             needsUpdate = true;
           }
           if (nativeStep != null) {
-            var parsedStep = nativeStep === "" ? 1 : parseFloat(nativeStep);
+            var parsedStep = nativeStep === "" || nativeStep === "any" ? 1 : parseFloat(nativeStep);
+            if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
             if (parsedStep !== settings.step) {
               newSettings.step = parsedStep;
               needsUpdate = true;
