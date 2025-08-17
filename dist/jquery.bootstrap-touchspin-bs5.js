@@ -437,7 +437,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           downDelayTimeout,
           upDelayTimeout,
           spincount = 0,
-          spinning = false;
+          spinning = false,
+          mutationObserver;
         init();
         function init() {
           if (originalinput.data("alreadyinitialized")) {
@@ -475,7 +476,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var raw = String((_a = elements.input.val()) != null ? _a : "");
           if (raw !== "") {
             var num = parseFloat(settings.callback_before_calculation(raw));
-            elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+            if (isFinite(num)) {
+              elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+            }
           }
         }
         function _initSettings() {
@@ -537,6 +540,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           stopSpin();
           originalinput.off("touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
           $(document).off(".touchspin.doc." + originalinput.data("spinnerid"));
+          if (mutationObserver) {
+            mutationObserver.disconnect();
+            mutationObserver = void 0;
+          }
           if ($parent.hasClass("bootstrap-touchspin-injected")) {
             originalinput.siblings().remove();
             originalinput.unwrap();
@@ -621,7 +628,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               stopSpin();
             }
           });
-          var docNs = ".touchspin.doc." + _currentSpinnerId;
+          var docNs = ".touchspin.doc." + originalinput.data("spinnerid");
           $(document).on("mousedown" + docNs + " touchstart" + docNs, function (event) {
             if ($(event.target).is(originalinput)) {
               return;
@@ -631,7 +638,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           originalinput.on("blur.touchspin", function () {
             _checkValue();
           });
-          elements.down.on("keydown", function (ev) {
+          elements.down.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
             if (code === 32 || code === 13) {
               if (spinning !== "down") {
@@ -731,7 +738,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             ev.stopPropagation();
             ev.preventDefault();
           });
-          originalinput.on("mousewheel.touchspin DOMMouseScroll.touchspin", function (ev) {
+          originalinput.on("mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin", function (ev) {
             if (!settings.mousewheel || !originalinput.is(":focus")) {
               return;
             }
@@ -772,7 +779,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _setupMutationObservers() {
           if (typeof MutationObserver !== "undefined") {
-            var observer = new MutationObserver(function (mutations) {
+            mutationObserver = new MutationObserver(function (mutations) {
               mutations.forEach(function (mutation) {
                 if (mutation.type === "attributes") {
                   if (mutation.attributeName === "disabled" || mutation.attributeName === "readonly") {
@@ -783,7 +790,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 }
               });
             });
-            observer.observe(originalinput[0], {
+            mutationObserver.observe(originalinput[0], {
               attributes: true
             });
           }

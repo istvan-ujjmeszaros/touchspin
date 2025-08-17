@@ -273,7 +273,9 @@
         /** @type {number} Current spin count for booster calculation */
         spincount = 0,
         /** @type {false|'up'|'down'} Current spinning direction */
-        spinning = false;
+        spinning = false,
+        /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
+        mutationObserver;
 
       init();
 
@@ -333,7 +335,9 @@
 
         if (raw !== '') {
           var num = parseFloat(settings.callback_before_calculation(raw));
-          elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+          if (isFinite(num)) {
+            elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+          }
         }
       }
 
@@ -379,7 +383,7 @@
 
         // Setting up based on data attributes
         $.each(attributeMap, function (key, value) {
-          var attrName = 'bts-' + value + '';
+          var attrName = 'bts-' + value;
 
           if (originalinput.is('[data-' + attrName + ']')) {
             data[key] = originalinput.data(attrName);
@@ -443,6 +447,12 @@
 
         // Clean up document-level event handlers
         $(document).off('.touchspin.doc.' + originalinput.data('spinnerid'));
+
+        // Disconnect MutationObserver
+        if (mutationObserver) {
+          mutationObserver.disconnect();
+          mutationObserver = undefined;
+        }
 
         if ($parent.hasClass('bootstrap-touchspin-injected')) {
           originalinput.siblings().remove();
@@ -574,7 +584,7 @@
         });
 
         // change is fired before blur, so we need to work around that
-        var docNs = '.touchspin.doc.' + _currentSpinnerId;
+        var docNs = '.touchspin.doc.' + originalinput.data('spinnerid');
         $(document).on('mousedown' + docNs + ' touchstart' + docNs, function(event) {
           if ($(event.target).is(originalinput)) {
             return;
@@ -587,7 +597,7 @@
           _checkValue();
         });
 
-        elements.down.on('keydown', function (ev) {
+        elements.down.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
 
           if (code === 32 || code === 13) {
@@ -719,7 +729,7 @@
           ev.preventDefault();
         });
 
-        originalinput.on('mousewheel.touchspin DOMMouseScroll.touchspin', function (ev) {
+        originalinput.on('mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin', function (ev) {
           if (!settings.mousewheel || !originalinput.is(':focus')) {
             return;
           }
@@ -780,7 +790,7 @@
       function _setupMutationObservers() {
         if (typeof MutationObserver !== 'undefined') {
           // MutationObserver is available
-          const observer = new MutationObserver((mutations) => {
+          mutationObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
               if (mutation.type === 'attributes') {
                 if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
@@ -792,7 +802,7 @@
             });
           });
 
-          observer.observe(originalinput[0], {attributes: true});
+          mutationObserver.observe(originalinput[0], {attributes: true});
         }
       }
 
