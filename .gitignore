@@ -11,10 +11,8 @@ bower_components
 # Temporary files folder for debugging and development
 tmp/
 
-# Test results and reports
-playwright-report/
-test-results/
-coverage/
+# Test results and reports - consolidated under reports/
+reports/
 
 # Playwright browsers (if locally installed)
 .playwright/

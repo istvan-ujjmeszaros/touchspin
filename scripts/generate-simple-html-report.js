@@ -10,8 +10,8 @@ const path = require('path');
 const libCoverage = require('istanbul-lib-coverage');
 
 function generateSimpleHtmlReport() {
-  const coverageFile = path.join(process.cwd(), 'coverage', 'coverage-final.json');
-  const htmlOutputDir = path.join(process.cwd(), 'coverage', 'html');
+  const coverageFile = path.join(process.cwd(), 'reports', 'coverage', 'coverage-final.json');
+  const htmlOutputDir = path.join(process.cwd(), 'reports', 'coverage', 'html');
 
   if (!fs.existsSync(coverageFile)) {
     console.error('❌ Coverage JSON file not found:', coverageFile);

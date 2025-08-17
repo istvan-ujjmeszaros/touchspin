@@ -3,7 +3,7 @@
  * 
  * This script runs all 94 Playwright tests, collects V8 coverage data,
  * and generates HTML coverage reports using the v8-to-istanbul conversion.
- * Raw coverage data is saved in coverage/raw/ and HTML reports in coverage/html/.
+ * Raw coverage data is saved in reports/coverage/raw/ and HTML reports in reports/coverage/html/.
  */
 
 const { spawn } = require('child_process')
@@ -74,7 +74,7 @@ async function generateSummary() {
     ],
     coverageNote: 'V8 coverage data collected from each test and processed to HTML reports',
     htmlReport: 'Available via: npx playwright show-report',
-    coverageHtmlReport: 'Available at: coverage/html/index.html'
+    coverageHtmlReport: 'Available at: reports/coverage/html/index.html'
   }
   
   const summaryFile = path.join(coverageDir, 'test-summary.json')
@@ -117,11 +117,11 @@ async function main() {
     
     console.log('\n✅ Test execution completed successfully!')
     console.log('\n📊 Results available:')
-    console.log('   📋 Summary: coverage/test-summary.json')
+    console.log('   📋 Summary: reports/coverage/test-summary.json')
     console.log('   🌐 Playwright HTML Report: npx playwright show-report')
-    console.log('   📈 Coverage HTML Report: coverage/html/index.html')
-    console.log('   📄 Coverage JSON: coverage/coverage-final.json')
-    console.log('   📂 Raw V8 Coverage Data: coverage/raw/*.json')
+    console.log('   📈 Coverage HTML Report: reports/coverage/html/index.html')
+    console.log('   📄 Coverage JSON: reports/coverage/coverage-final.json')
+    console.log('   📂 Raw V8 Coverage Data: reports/coverage/raw/*.json')
     
   } catch (error) {
     console.error('\n❌ Test execution failed:', error.message)

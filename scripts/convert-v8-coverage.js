@@ -11,8 +11,8 @@ const v8toIstanbul = require('v8-to-istanbul');
 const libCoverage = require('istanbul-lib-coverage');
 
 async function convertV8ToIstanbul() {
-  const rawCoverageDir = path.join(process.cwd(), 'coverage', 'raw');
-  const outputFile = path.join(process.cwd(), 'coverage', 'coverage-final.json');
+  const rawCoverageDir = path.join(process.cwd(), 'reports', 'coverage', 'raw');
+  const outputFile = path.join(process.cwd(), 'reports', 'coverage', 'coverage-final.json');
 
   if (!fs.existsSync(rawCoverageDir)) {
     console.warn('⚠️  Raw coverage directory not found:', rawCoverageDir);
@@ -155,9 +155,9 @@ async function convertV8ToIstanbul() {
   console.log('='.repeat(60));
 
   console.log('\n💡 To generate HTML reports, you can now use:');
-  console.log(`   npx nyc report --reporter=html --temp-dir=coverage --report-dir=coverage/html`);
+  console.log(`   npx nyc report --reporter=html --temp-dir=reports/coverage --report-dir=reports/coverage/html`);
   console.log(`   or`);
-  console.log(`   npx istanbul-reports html coverage/coverage-final.json`);
+  console.log(`   npx istanbul-reports html reports/coverage/coverage-final.json`);
 
   return true;
 }

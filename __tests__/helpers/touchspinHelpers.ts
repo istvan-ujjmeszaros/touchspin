@@ -266,7 +266,7 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
   const fs = require('fs');
   const path = require('path');
   
-  const coverageDir = 'coverage/raw';
+  const coverageDir = 'reports/coverage/raw';
   if (!fs.existsSync(coverageDir)) {
     fs.mkdirSync(coverageDir, { recursive: true });
   }
