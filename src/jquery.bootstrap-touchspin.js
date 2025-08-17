@@ -1,3 +1,4 @@
+// @ts-check
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -20,52 +21,133 @@
   'use strict';
 
   /**
-   * @fileoverview Bootstrap TouchSpin - Mobile-friendly input spinner component
-   * @version 4.7.3
-   * @author István Ujj-Mészáros <https://github.com/istvan-ujjmeszaros>
+   * @fileoverview Bootstrap TouchSpin — mobile-friendly numeric input spinner.
+   * @typedef {import('jquery').JQuery} JQuery
+   * @typedef {import('jquery').JQueryStatic} JQueryStatic
    * @requires jQuery
-   * @license MIT
    */
 
   // Include renderer classes
   // These will be included during build process or loaded separately
+
+  /**
+   * How to handle step divisibility.
+   * @typedef {'none'|'floor'|'round'|'ceil'} ForceStepDivisibility
+   */
+
+  /**
+   * TouchSpin calculation callback.
+   * @callback TouchSpinCalcCallback
+   * @param {string} value Raw input value (string from the <input>).
+   * @returns {string} Processed value to use/display.
+   */
+
+  /**
+   * Renderer instance interface (built for the active Bootstrap flavor).
+   * @typedef {Object} TouchSpinRenderer
+   * @property {function(): JQuery} buildInputGroup
+   * @property {function(JQuery): JQuery} buildAdvancedInputGroup
+   * @property {function(JQuery): TouchSpinElements} initElements
+   * @property {function(): { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }} hideEmptyPrefixPostfix
+   * @property {function(Partial<TouchSpinOptions>, { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }): void} updatePrefixPostfix
+   */
+
+  /**
+   * Renderer factory (global).
+   * @typedef {Object} RendererFactoryType
+   * @property {function(JQueryStatic, TouchSpinOptions, JQuery): TouchSpinRenderer} createRenderer
+   */
+
+  /**
+   * Elements returned by renderer.initElements(container)
+   * @typedef {Object} TouchSpinElements
+   * @property {JQuery<HTMLInputElement>} input
+   * @property {JQuery<HTMLButtonElement>} up
+   * @property {JQuery<HTMLButtonElement>} down
+   */
+
+  /**
+   * @typedef TouchSpinOptions
+   * @property {number|null} [min=0] - Minimum allowed value (null for no minimum)
+   * @property {number|null} [max=100] - Maximum allowed value (null for no maximum)
+   * @property {string} [initval=''] - Initial value if input is empty
+   * @property {string} [replacementval=''] - Value to show when input is empty
+   * @property {number|null} [firstclickvalueifempty=null] - Value to set on first click if input is empty
+   * @property {number} [step=1] - Step increment/decrement amount
+   * @property {number} [decimals=0] - Number of decimal places to display
+   * @property {number} [stepinterval=100] - Milliseconds between steps when holding button
+   * @property {ForceStepDivisibility} [forcestepdivisibility='round'] - How to handle step divisibility
+   * @property {number} [stepintervaldelay=500] - Delay in milliseconds before step interval begins
+   * @property {boolean} [verticalbuttons=false] - Whether to display buttons vertically
+   * @property {string} [verticalup='&plus;'] - HTML content for vertical up button
+   * @property {string} [verticaldown='&minus;'] - HTML content for vertical down button
+   * @property {string} [verticalupclass=''] - CSS classes for vertical up button
+   * @property {string} [verticaldownclass=''] - CSS classes for vertical down button
+   * @property {string} [prefix=''] - Text or HTML to display before the input
+   * @property {string} [postfix=''] - Text or HTML to display after the input
+   * @property {string} [prefix_extraclass=''] - Additional CSS classes for prefix element
+   * @property {string} [postfix_extraclass=''] - Additional CSS classes for postfix element
+   * @property {boolean} [booster=true] - Enable accelerated value changes for rapid input
+   * @property {number} [boostat=10] - Number of steps before booster mode activates
+   * @property {number|false} [maxboostedstep=false] - Maximum step size during boost mode
+   * @property {boolean} [mousewheel=true] - Enable mouse wheel support for value changes
+   * @property {string} [buttondown_class='btn btn-primary'] - CSS classes for decrement button
+   * @property {string} [buttonup_class='btn btn-primary'] - CSS classes for increment button
+   * @property {string} [buttondown_txt='&minus;'] - HTML content for decrement button
+   * @property {string} [buttonup_txt='&plus;'] - HTML content for increment button
+   * @property {TouchSpinRenderer|null} [renderer=null] - Custom renderer instance for Bootstrap version compatibility
+   * @property {TouchSpinCalcCallback} [callback_before_calculation] - Function called before value calculation
+   * @property {TouchSpinCalcCallback} [callback_after_calculation] - Function called after value calculation
+   */
+
+  /**
+   * Fired when minimum value is reached.
+   * @event touchspin.on.min
+   */
+
+  /**
+   * Fired when maximum value is reached.
+   * @event touchspin.on.max
+   */
+
+  /**
+   * Fired when spinning starts (any direction).
+   * @event touchspin.on.startspin
+   */
+
+  /**
+   * Fired when spinning stops (any direction).
+   * @event touchspin.on.stopspin
+   */
+
+  /** @event touchspin.on.startupspin */
+  /** @event touchspin.on.startdownspin */
+  /** @event touchspin.on.stopupspin */
+  /** @event touchspin.on.stopdownspin */
   
+  /**
+   * Global counter for unique TouchSpin instance IDs.
+   * @type {number}
+   * @private
+   */
   var _currentSpinnerId = 0;
 
   /**
-   * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners
-   * @param {Object} [options] - Configuration options for TouchSpin
-   * @param {number|null} [options.min=0] - Minimum allowed value (null for no minimum)
-   * @param {number|null} [options.max=100] - Maximum allowed value (null for no maximum) 
-   * @param {string} [options.initval=''] - Initial value if input is empty
-   * @param {string} [options.replacementval=''] - Value to show when input is empty
-   * @param {number|null} [options.firstclickvalueifempty=null] - Value to set on first click if input is empty
-   * @param {number} [options.step=1] - Step increment/decrement amount
-   * @param {number} [options.decimals=0] - Number of decimal places to display
-   * @param {number} [options.stepinterval=100] - Milliseconds between steps when holding button
-   * @param {string} [options.forcestepdivisibility='round'] - How to handle step divisibility: 'none', 'floor', 'round', 'ceil'
-   * @param {number} [options.stepintervaldelay=500] - Delay in milliseconds before step interval begins
-   * @param {boolean} [options.verticalbuttons=false] - Whether to display buttons vertically
-   * @param {string} [options.verticalup='&plus;'] - HTML content for vertical up button
-   * @param {string} [options.verticaldown='&minus;'] - HTML content for vertical down button
-   * @param {string} [options.verticalupclass=''] - CSS classes for vertical up button
-   * @param {string} [options.verticaldownclass=''] - CSS classes for vertical down button
-   * @param {string} [options.prefix=''] - Text or HTML to display before the input
-   * @param {string} [options.postfix=''] - Text or HTML to display after the input
-   * @param {string} [options.prefix_extraclass=''] - Additional CSS classes for prefix element
-   * @param {string} [options.postfix_extraclass=''] - Additional CSS classes for postfix element
-   * @param {boolean} [options.booster=true] - Enable accelerated value changes for rapid input
-   * @param {number} [options.boostat=10] - Number of steps before booster mode activates
-   * @param {number|false} [options.maxboostedstep=false] - Maximum step size during boost mode
-   * @param {boolean} [options.mousewheel=true] - Enable mouse wheel support for value changes
-   * @param {string} [options.buttondown_class='btn btn-primary'] - CSS classes for decrement button
-   * @param {string} [options.buttonup_class='btn btn-primary'] - CSS classes for increment button
-   * @param {string} [options.buttondown_txt='&minus;'] - HTML content for decrement button
-   * @param {string} [options.buttonup_txt='&plus;'] - HTML content for increment button
-   * @param {Object|null} [options.renderer=null] - Custom renderer instance for Bootstrap version compatibility
-   * @param {Function} [options.callback_before_calculation] - Function called before value calculation
-   * @param {Function} [options.callback_after_calculation] - Function called after value calculation
-   * @returns {jQuery} jQuery object for chaining
+   * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners.
+   * @function TouchSpin
+   * @memberof jQuery.fn
+   * @this {JQuery<HTMLInputElement>} jQuery collection of <input> elements
+   * @param {TouchSpinOptions=} options
+   * @returns {JQuery<HTMLInputElement>} The original jQuery collection (chainable).
+   * @fires touchspin.on.min
+   * @fires touchspin.on.max
+   * @fires touchspin.on.startspin
+   * @fires touchspin.on.stopspin
+   * @fires touchspin.on.startupspin
+   * @fires touchspin.on.startdownspin
+   * @fires touchspin.on.stopupspin
+   * @fires touchspin.on.stopdownspin
+   * @throws {Error} If a renderer factory cannot be found or a renderer cannot be created.
    * @example
    * // Basic usage
    * $('#myinput').TouchSpin();
@@ -85,18 +167,11 @@
    * $('#myinput').on('touchspin.on.min', function() {
    *   console.log('Minimum value reached');
    * });
-   * 
-   * @fires touchspin.on.min - Triggered when minimum value is reached
-   * @fires touchspin.on.max - Triggered when maximum value is reached
-   * @fires touchspin.on.startspin - Triggered when spinning starts (any direction)
-   * @fires touchspin.on.stopspin - Triggered when spinning stops (any direction)
-   * @fires touchspin.on.startupspin - Triggered when upward spinning starts
-   * @fires touchspin.on.startdownspin - Triggered when downward spinning starts
-   * @fires touchspin.on.stopupspin - Triggered when upward spinning stops
-   * @fires touchspin.on.stopdownspin - Triggered when downward spinning stops
+   *
    */
   $.fn.TouchSpin = function (options) {
 
+    /** @type {TouchSpinOptions} */
     var defaults = {
       min: 0, // If null, there is no minimum enforced
       max: 100, // If null, there is no maximum enforced
@@ -127,24 +202,21 @@
       buttonup_txt: '&plus;',
       // Renderer system options
       renderer: null, // Custom renderer instance
-      /**
-       * Callback function executed before value calculation
-       * @param {string} value - The raw input value
-       * @returns {string} - The processed value to be used in calculation
-       */
+      /** @type {TouchSpinCalcCallback} */
       callback_before_calculation: function (value) {
         return value;
       },
-      /**
-       * Callback function executed after value calculation
-       * @param {string} value - The calculated value
-       * @returns {string} - The final value to be displayed
-       */
+      /** @type {TouchSpinCalcCallback} */
       callback_after_calculation: function (value) {
         return value;
       }
     };
 
+    /**
+     * Maps TouchSpin option names to their corresponding data attribute names.
+     * @type {Object<string, string>}
+     * @private
+     */
     var attributeMap = {
       min: 'min',
       max: 'max',
@@ -175,24 +247,39 @@
 
     return this.each(function () {
 
+      /** @type {TouchSpinOptions} Final merged settings */
       var settings,
+        /** @type {JQuery<HTMLInputElement>} Original input element */
         originalinput = $(this),
+        /** @type {Record<string, any>} Data attributes from original input */
         originalinput_data = originalinput.data(),
+        /** @type {JQuery|null} Detached prefix element */
         _detached_prefix,
+        /** @type {JQuery|null} Detached postfix element */
         _detached_postfix,
+        /** @type {JQuery} TouchSpin container element */
         container,
+        /** @type {TouchSpinElements} TouchSpin DOM elements */
         elements,
-        renderer, // Bootstrap version-specific renderer
+        /** @type {TouchSpinRenderer|undefined} Bootstrap version-specific renderer */
+        renderer,
+        /** @type {number} Current numeric value */
         value,
-        downSpinTimer,
-        upSpinTimer,
-        downDelayTimeout,
-        upDelayTimeout,
+        /** @type {ReturnType<typeof setInterval>|undefined} */ downSpinTimer,
+        /** @type {ReturnType<typeof setInterval>|undefined} */ upSpinTimer,
+        /** @type {ReturnType<typeof setTimeout>|undefined} */ downDelayTimeout,
+        /** @type {ReturnType<typeof setTimeout>|undefined} */ upDelayTimeout,
+        /** @type {number} Current spin count for booster calculation */
         spincount = 0,
+        /** @type {false|'up'|'down'} Current spinning direction */
         spinning = false;
 
       init();
 
+      /**
+       * Initializes the TouchSpin plugin for a single input element.
+       * @private
+       */
       function init() {
         if (originalinput.data('alreadyinitialized')) {
           return;
@@ -221,24 +308,38 @@
         _bindEventsInterface();
       }
 
+      /**
+       * Sets the initial value from settings if input is empty.
+       * @private
+       */
       function _setInitval() {
         if (settings.initval !== '' && originalinput.val() === '') {
           originalinput.val(settings.initval);
         }
       }
 
+      /**
+       * Updates TouchSpin settings and applies changes.
+       * @private
+       * @param {Partial<TouchSpinOptions>} newsettings - New settings to apply
+       */
       function changeSettings(newsettings) {
         _updateSettings(newsettings);
         _checkValue();
 
-        var value = elements.input.val();
+        /** @type {string} */
+        var raw = String(elements.input.val() ?? '');
 
-        if (value !== '') {
-          value = parseFloat(settings.callback_before_calculation(elements.input.val()));
-          elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+        if (raw !== '') {
+          var num = parseFloat(settings.callback_before_calculation(raw));
+          elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
         }
       }
 
+      /**
+       * Initializes settings by merging defaults, data attributes, and options.
+       * @private
+       */
       function _initSettings() {
         settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
 
@@ -246,19 +347,28 @@
           let remainder;
 
           // Modify settings.max to be divisible by step
-          remainder = settings.max % settings.step;
-          if (remainder !== 0) {
-            settings.max = parseFloat(settings.max) - remainder;
+          if (settings.max != null) {
+            remainder = settings.max % settings.step;
+            if (remainder !== 0) {
+              settings.max = parseFloat(String(settings.max)) - remainder;
+            }
           }
 
           // Do the same with min, should work with negative numbers too
-          remainder = settings.min % settings.step;
-          if (remainder !== 0) {
-            settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+          if (settings.min != null) {
+            remainder = settings.min % settings.step;
+            if (remainder !== 0) {
+              settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
+            }
           }
         }
       }
 
+      /**
+       * Parses data attributes and native input attributes into settings.
+       * @private
+       * @returns {Partial<TouchSpinOptions>} Parsed attribute values
+       */
       function _parseAttributes() {
         var data = {};
 
@@ -284,6 +394,11 @@
         return data;
       }
 
+      /**
+       * Initializes the Bootstrap version-specific renderer.
+       * @private
+       * @throws {Error} If renderer factory is unavailable or renderer creation fails
+       */
       function _initRenderer() {
         // Initialize the Bootstrap version-specific renderer
         if (settings.renderer) {
@@ -293,8 +408,11 @@
         }
 
         // Check for RendererFactory availability
-        const factory = (typeof RendererFactory !== 'undefined' && RendererFactory) ||
-                       (typeof window !== 'undefined' && window.RendererFactory);
+        const rf = /** @type {any} */ (typeof globalThis !== 'undefined' ? globalThis : {});
+        /** @type {RendererFactoryType|undefined} */
+        const factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function'
+          ? rf.RendererFactory
+          : undefined;
         
         if (!factory || !factory.createRenderer) {
           throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
@@ -307,6 +425,10 @@
         }
       }
 
+      /**
+       * Destroys the TouchSpin instance and restores original input.
+       * @private
+       */
       function _destroy() {
         var $parent = originalinput.parent();
 
@@ -325,6 +447,11 @@
         originalinput.data('alreadyinitialized', false);
       }
 
+      /**
+       * Updates internal settings and synchronizes with DOM.
+       * @private
+       * @param {Partial<TouchSpinOptions>} newsettings - Settings to update
+       */
       function _updateSettings(newsettings) {
         settings = $.extend({}, settings, newsettings);
 
@@ -347,6 +474,10 @@
         _hideEmptyPrefixPostfix();
       }
 
+      /**
+       * Builds the HTML structure for TouchSpin using the renderer system.
+       * @private
+       */
       function _buildHtml() {
         var initval = originalinput.val(),
           parentelement = originalinput.parent();
@@ -375,6 +506,10 @@
 
 
 
+      /**
+       * Initializes TouchSpin DOM elements using the renderer.
+       * @private
+       */
       function _initElements() {
         if (!renderer) {
           throw new Error('Bootstrap TouchSpin: Renderer not available for element initialization.');
@@ -382,6 +517,10 @@
         elements = renderer.initElements(container);
       }
 
+      /**
+       * Hides empty prefix/postfix elements and stores detached elements.
+       * @private
+       */
       function _hideEmptyPrefixPostfix() {
         if (!renderer) {
           throw new Error('Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.');
@@ -391,6 +530,10 @@
         _detached_postfix = detached._detached_postfix;
       }
 
+      /**
+       * Binds all TouchSpin interaction events (keyboard, mouse, touch).
+       * @private
+       */
       function _bindEvents() {
         originalinput.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
@@ -585,6 +728,10 @@
         });
       }
 
+      /**
+       * Binds TouchSpin API events for external control.
+       * @private
+       */
       function _bindEventsInterface() {
         originalinput.on('touchspin.destroy', function () {
           _destroy();
@@ -617,6 +764,10 @@
         });
       }
 
+      /**
+       * Sets up MutationObserver to watch for attribute changes.
+       * @private
+       */
       function _setupMutationObservers() {
         if (typeof MutationObserver !== 'undefined') {
           // MutationObserver is available
@@ -636,6 +787,12 @@
         }
       }
 
+      /**
+       * Applies step divisibility rules to a value.
+       * @private
+       * @param {number} value - Value to apply divisibility to
+       * @returns {string} Value adjusted for step divisibility
+       */
       function _forcestepdivisibility(value) {
         switch (settings.forcestepdivisibility) {
           case 'round':
@@ -649,6 +806,12 @@
         }
       }
 
+      /**
+       * Validates and corrects the input value according to constraints.
+       * @private
+       * @fires touchspin.on.min
+       * @fires touchspin.on.max
+       */
       function _checkValue() {
         var val, parsedval, returnval;
 
@@ -699,6 +862,10 @@
         originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
       }
 
+      /**
+       * Synchronizes TouchSpin settings with native input attributes.
+       * @private
+       */
       function _syncNativeAttributes() {
         // Always set native attributes when input type is number to ensure consistency
         if (originalinput.attr('type') === 'number') {
@@ -722,6 +889,10 @@
         }
       }
 
+      /**
+       * Updates TouchSpin settings when native attributes change externally.
+       * @private
+       */
       function _syncSettingsFromNativeAttributes() {
         // Update TouchSpin settings when native attributes change externally
         var nativeMin = originalinput.attr('min');
@@ -778,18 +949,18 @@
             let remainder;
             
             // Modify settings.max to be divisible by step
-            if (settings.max !== null) {
+            if (settings.max != null) {
               remainder = settings.max % settings.step;
               if (remainder !== 0) {
-                settings.max = parseFloat(settings.max) - remainder;
+                settings.max = parseFloat(String(settings.max)) - remainder;
               }
             }
 
             // Do the same with min, should work with negative numbers too
-            if (settings.min !== null) {
+            if (settings.min != null) {
               remainder = settings.min % settings.step;
               if (remainder !== 0) {
-                settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+                settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
               }
             }
           }
@@ -798,6 +969,11 @@
         }
       }
 
+      /**
+       * Calculates the boosted step value based on spin count.
+       * @private
+       * @returns {number} Current step value (potentially boosted)
+       */
       function _getBoostedStep() {
         if (!settings.booster) {
           return settings.step;
@@ -815,14 +991,25 @@
         }
       }
 
+      /**
+       * Returns a fallback value when input is NaN.
+       * @private
+       * @returns {number} Fallback value (firstclickvalueifempty or midpoint)
+       */
       function valueIfIsNaN() {
-        if (typeof (settings.firstclickvalueifempty) === 'number') {
+        if (typeof settings.firstclickvalueifempty === 'number') {
           return settings.firstclickvalueifempty;
         } else {
-          return (settings.min + settings.max) / 2;
+          const min = typeof settings.min === 'number' ? settings.min : 0;
+          const max = typeof settings.max === 'number' ? settings.max : min;
+          return (min + max) / 2;
         }
       }
 
+      /**
+       * Updates TouchSpin button disabled state based on input state.
+       * @private
+       */
       function _updateButtonDisabledState() {
         const isDisabled = originalinput.is(':disabled,[readonly]');
         elements.up.prop('disabled', isDisabled);
@@ -833,6 +1020,11 @@
         }
       }
 
+      /**
+       * Increments the value by one step.
+       * @private
+       * @fires touchspin.on.max
+       */
       function upOnce() {
         if (originalinput.is(':disabled,[readonly]')) {
           return;
@@ -865,6 +1057,11 @@
         }
       }
 
+      /**
+       * Decrements the value by one step.
+       * @private
+       * @fires touchspin.on.min
+       */
       function downOnce() {
         if (originalinput.is(':disabled,[readonly]')) {
           return;
@@ -897,6 +1094,12 @@
         }
       }
 
+      /**
+       * Starts continuous downward spinning.
+       * @private
+       * @fires touchspin.on.startspin
+       * @fires touchspin.on.startdownspin
+       */
       function startDownSpin() {
         if (originalinput.is(':disabled,[readonly]')) {
           return;
@@ -918,6 +1121,12 @@
         }, settings.stepintervaldelay);
       }
 
+      /**
+       * Starts continuous upward spinning.
+       * @private
+       * @fires touchspin.on.startspin
+       * @fires touchspin.on.startupspin
+       */
       function startUpSpin() {
         if (originalinput.is(':disabled,[readonly]')) {
           return;
@@ -939,6 +1148,13 @@
         }, settings.stepintervaldelay);
       }
 
+      /**
+       * Stops all spinning and clears timers.
+       * @private
+       * @fires touchspin.on.stopupspin
+       * @fires touchspin.on.stopdownspin
+       * @fires touchspin.on.stopspin
+       */
       function stopSpin() {
         clearTimeout(downDelayTimeout);
         clearTimeout(upDelayTimeout);

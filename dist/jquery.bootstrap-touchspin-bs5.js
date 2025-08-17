@@ -304,11 +304,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   } else if (typeof window !== "undefined") {
     window.Bootstrap5Renderer = Bootstrap5Renderer;
   }
-  var RendererFactory2 = /*#__PURE__*/function () {
-    function RendererFactory2() {
-      _classCallCheck(this, RendererFactory2);
+  var RendererFactory = /*#__PURE__*/function () {
+    function RendererFactory() {
+      _classCallCheck(this, RendererFactory);
     }
-    return _createClass(RendererFactory2, null, [{
+    return _createClass(RendererFactory, null, [{
       key: "createRenderer",
       value: function createRenderer($, settings, originalinput) {
         return new Bootstrap5Renderer($, settings, originalinput);
@@ -323,7 +323,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   if (typeof window !== "undefined") {
     window.AbstractRenderer = AbstractRenderer;
     window.Bootstrap5Renderer = Bootstrap5Renderer;
-    window.RendererFactory = RendererFactory2;
+    window.RendererFactory = RendererFactory;
   }
 })();
 (function (factory) {
@@ -386,9 +386,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         // Renderer system options
         renderer: null,
         // Custom renderer instance
+        /** @type {TouchSpinCalcCallback} */
         callback_before_calculation: function callback_before_calculation(value) {
           return value;
         },
+        /** @type {TouchSpinCalcCallback} */
         callback_after_calculation: function callback_after_calculation(value) {
           return value;
         }
@@ -467,25 +469,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
         }
         function changeSettings(newsettings) {
+          var _a;
           _updateSettings(newsettings);
           _checkValue();
-          var value2 = elements.input.val();
-          if (value2 !== "") {
-            value2 = parseFloat(settings.callback_before_calculation(elements.input.val()));
-            elements.input.val(settings.callback_after_calculation(parseFloat(value2).toFixed(settings.decimals)));
+          var raw = String((_a = elements.input.val()) != null ? _a : "");
+          if (raw !== "") {
+            var num = parseFloat(settings.callback_before_calculation(raw));
+            elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
           }
         }
         function _initSettings() {
           settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
           if (parseFloat(settings.step) !== 1) {
             var remainder;
-            remainder = settings.max % settings.step;
-            if (remainder !== 0) {
-              settings.max = parseFloat(settings.max) - remainder;
+            if (settings.max != null) {
+              remainder = settings.max % settings.step;
+              if (remainder !== 0) {
+                settings.max = parseFloat(String(settings.max)) - remainder;
+              }
             }
-            remainder = settings.min % settings.step;
-            if (remainder !== 0) {
-              settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+            if (settings.min != null) {
+              remainder = settings.min % settings.step;
+              if (remainder !== 0) {
+                settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
+              }
             }
           }
         }
@@ -512,7 +519,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             renderer = settings.renderer;
             return;
           }
-          var factory = typeof RendererFactory !== "undefined" && RendererFactory || typeof window !== "undefined" && window.RendererFactory;
+          var rf = /** @type {any} */
+          typeof globalThis !== "undefined" ? globalThis : {};
+          var factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === "function" ? rf.RendererFactory : void 0;
           if (!factory || !factory.createRenderer) {
             throw new Error("Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.");
           }
@@ -883,16 +892,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             settings = $.extend({}, settings, newSettings);
             if (newSettings.step !== void 0 && parseFloat(newSettings.step) !== 1) {
               var remainder;
-              if (settings.max !== null) {
+              if (settings.max != null) {
                 remainder = settings.max % settings.step;
                 if (remainder !== 0) {
-                  settings.max = parseFloat(settings.max) - remainder;
+                  settings.max = parseFloat(String(settings.max)) - remainder;
                 }
               }
-              if (settings.min !== null) {
+              if (settings.min != null) {
                 remainder = settings.min % settings.step;
                 if (remainder !== 0) {
-                  settings.min = parseFloat(settings.min) + (parseFloat(settings.step) - remainder);
+                  settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
                 }
               }
             }
@@ -917,7 +926,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (typeof settings.firstclickvalueifempty === "number") {
             return settings.firstclickvalueifempty;
           } else {
-            return (settings.min + settings.max) / 2;
+            var min = typeof settings.min === "number" ? settings.min : 0;
+            var max = typeof settings.max === "number" ? settings.max : min;
+            return (min + max) / 2;
           }
         }
         function _updateButtonDisabledState() {
