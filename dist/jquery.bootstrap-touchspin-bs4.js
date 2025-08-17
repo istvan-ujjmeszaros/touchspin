@@ -496,6 +496,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
           var stepNum = Number(settings.step);
           if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
+          var dec = parseInt(String(settings.decimals), 10);
+          settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
+          settings.stepinterval = Math.max(0, parseInt(String(settings.stepinterval), 10) || 0);
+          settings.stepintervaldelay = Math.max(0, parseInt(String(settings.stepintervaldelay), 10) || 0);
+          settings.boostat = Math.max(1, parseInt(String(settings.boostat), 10) || 10);
+          if (settings.maxboostedstep !== false) {
+            var mbs = Number(settings.maxboostedstep);
+            settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
+          }
           if (parseFloat(settings.step) !== 1) {
             var remainder;
             if (settings.max != null) {
@@ -647,6 +656,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             _checkValue();
           });
           originalinput.on("blur.touchspin", function () {
+            stopSpin();
             _checkValue();
           });
           elements.down.on("keydown.touchspin", function (ev) {
