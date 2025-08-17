@@ -300,7 +300,7 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
           converter.applyCoverage(entry.functions);
           Object.assign(istanbulCoverage, converter.toIstanbul());
         }
-      } catch (error) {
+      } catch (error: any) {
         console.warn(`Failed to process coverage for ${entry.url}:`, error.message);
       }
     }
