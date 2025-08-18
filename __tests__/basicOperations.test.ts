@@ -110,11 +110,10 @@ test.describe('Core functionality', () => {
     // Simulate wheel up event (should increment)
     await page.evaluate((testId) => {
       const input = document.querySelector(`[data-testid="${testId}"]`);
-      const $ = (window as any).$;
-      if ($ && input) {
-        $(input).trigger($.Event('mousewheel', {
-          originalEvent: { deltaY: -100, wheelDelta: 100 }
-        }));
+      if (input) {
+        const ev = new WheelEvent('wheel', { deltaY: -100 });
+        Object.defineProperty(ev, 'wheelDelta', { value: 100 });
+        input.dispatchEvent(ev);
       }
     }, testid);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
@@ -122,11 +121,10 @@ test.describe('Core functionality', () => {
     // Simulate wheel down event (should decrement)
     await page.evaluate((testId) => {
       const input = document.querySelector(`[data-testid="${testId}"]`);
-      const $ = (window as any).$;
-      if ($ && input) {
-        $(input).trigger($.Event('mousewheel', {
-          originalEvent: { deltaY: 100, wheelDelta: -100 }
-        }));
+      if (input) {
+        const ev = new WheelEvent('wheel', { deltaY: 100 });
+        Object.defineProperty(ev, 'wheelDelta', { value: -100 });
+        input.dispatchEvent(ev);
       }
     }, testid);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
