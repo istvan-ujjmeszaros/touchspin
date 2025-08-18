@@ -19,6 +19,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       
       // Reset to a known value and set a larger step
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.val('50');
         const inputElement = $input[0];
@@ -37,6 +38,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       
       // Test with different step value
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.val('60');
         const inputElement = $input[0];
@@ -59,6 +61,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       
       // First set a custom step
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.val('50');
         const inputElement = $input[0];
@@ -73,6 +76,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       
       // Now remove the step attribute (should default to step=1)
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.val('60');
         const inputElement = $input[0];

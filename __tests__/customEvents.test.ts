@@ -19,6 +19,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger the uponce event programmatically
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.uponce');
       }, testid);
@@ -35,6 +36,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger the downonce event programmatically
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.downonce');
       }, testid);
@@ -51,6 +53,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger the startupspin event programmatically
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.startupspin');
       }, testid);
@@ -64,6 +67,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Stop the spinning
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.stopspin');
       }, testid);
@@ -77,6 +81,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger the startdownspin event programmatically
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.startdownspin');
       }, testid);
@@ -90,6 +95,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Stop the spinning
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.stopspin');
       }, testid);
@@ -102,6 +108,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Start spinning first
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.startupspin');
       }, testid);
@@ -113,6 +120,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Stop spinning
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.stopspin');
       }, testid);
@@ -136,6 +144,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger multiple uponce events
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.uponce');
         $input.trigger('touchspin.uponce');
@@ -154,6 +163,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Trigger multiple downonce events
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.downonce');
         $input.trigger('touchspin.downonce');
@@ -171,6 +181,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Test that we can trigger different spin directions
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         
         // Start up spin then immediately change to down spin
@@ -187,6 +198,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Just verify no errors occurred and input is still functional
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.uponce');
       }, testid);
@@ -203,6 +215,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // This input has step=10 and min=0
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.uponce');
       }, testid);
@@ -214,6 +227,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Test downonce to go back to min
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.downonce');
       }, testid);
@@ -230,6 +244,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Try to trigger events on disabled input
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.uponce');
         $input.trigger('touchspin.downonce');
@@ -243,6 +258,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Stop any potential spinning
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         $input.trigger('touchspin.stopspin');
       }, testid);
@@ -254,6 +270,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Rapidly trigger mixed events
       await page.evaluate((testId) => {
+        const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
         
         // Rapid sequence of different events

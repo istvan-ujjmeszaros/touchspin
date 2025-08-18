@@ -15,6 +15,7 @@ test.describe('Double Initialization and Non-Input Element Tests', () => {
   test('should maintain first initialization settings when double initialized', async ({ page }) => {
     // The HTML already initializes this element twice - just verify first settings are kept
     const settings = await page.evaluate(() => {
+      const $ = (window as any).jQuery;
       const $input = $('#double-init-input');
       return {
         alreadyinitialized: $input.data('alreadyinitialized'),

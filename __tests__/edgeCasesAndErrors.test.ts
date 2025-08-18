@@ -233,9 +233,10 @@ test.describe('Edge Cases and Error Handling', () => {
 
     test('should handle renderer creation failure', async ({ page }) => {
       const errorMessage = await page.evaluate(() => {
+        // Store original factory outside try block so it's accessible in catch
+        const originalFactory = (window as any).RendererFactory;
         try {
           // Mock a failing renderer factory
-          const originalFactory = (window as any).RendererFactory;
           (window as any).RendererFactory = {
             createRenderer: () => null, // Return null to simulate failure
             getVersion: () => 4
@@ -250,7 +251,7 @@ test.describe('Edge Cases and Error Handling', () => {
           return null;
         } catch (error: any) {
           // Restore original factory even if error occurs
-          (window as any).RendererFactory = (window as any).RendererFactory || originalFactory;
+          (window as any).RendererFactory = originalFactory;
           return error.message;
         }
       });

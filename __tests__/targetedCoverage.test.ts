@@ -345,7 +345,7 @@ test.describe('Targeted Coverage Tests', () => {
         
         // Simulate AMD environment
         const originalDefine = (window as any).define;
-        (window as any).define = function(deps, factory) {
+        (window as any).define = function(deps: any, factory: any) {
           results.push('AMD detected');
           return factory;
         };
@@ -443,7 +443,7 @@ test.describe('Targeted Coverage Tests', () => {
       await touchspinHelpers.waitForTimeout(200);
       
       const value = await touchspinHelpers.readInputValue(page, 'large-numbers-test');
-      expect(parseFloat(value)).toBeCloseTo(999999999999999, -3); // Allow for floating point precision
+      expect(parseFloat(value || '0')).toBeCloseTo(999999999999999, -3); // Allow for floating point precision
     });
   });
 });

@@ -21,7 +21,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const upButton = container?.querySelector('.bootstrap-touchspin-up');
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Simulate Space keydown
           upButton.dispatchEvent(new KeyboardEvent('keydown', { 
@@ -61,7 +61,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const upButton = container?.querySelector('.bootstrap-touchspin-up');
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Simulate Enter keydown
           upButton.dispatchEvent(new KeyboardEvent('keydown', { 
@@ -101,7 +101,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const downButton = container?.querySelector('.bootstrap-touchspin-down');
         if (downButton) {
-          downButton.focus();
+          (downButton as HTMLElement).focus();
           
           // Simulate Space keydown
           downButton.dispatchEvent(new KeyboardEvent('keydown', { 
@@ -141,7 +141,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const downButton = container?.querySelector('.bootstrap-touchspin-down');
         if (downButton) {
-          downButton.focus();
+          (downButton as HTMLElement).focus();
           
           // Simulate Enter keydown
           downButton.dispatchEvent(new KeyboardEvent('keydown', { 
@@ -181,7 +181,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const upButton = container?.querySelector('.bootstrap-touchspin-up');
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Start spinning with Space keydown
           upButton.dispatchEvent(new KeyboardEvent('keydown', { 
@@ -225,7 +225,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         let preventDefaultWasCalled = false;
         
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Create event and override preventDefault to detect if it's called
           const event = new KeyboardEvent('keydown', { 
@@ -258,7 +258,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const upButton = container?.querySelector('.bootstrap-touchspin-up');
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Test various keys that should be ignored
           const ignoredKeys = [27, 65, 66, 9, 16]; // Escape, A, B, Tab, Shift
@@ -287,7 +287,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         const upButton = container?.querySelector('.bootstrap-touchspin-up');
         if (upButton) {
-          upButton.focus();
+          (upButton as HTMLElement).focus();
           
           // Simulate rapid key presses
           for (let i = 0; i < 3; i++) {
