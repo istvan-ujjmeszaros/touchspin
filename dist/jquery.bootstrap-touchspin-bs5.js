@@ -437,7 +437,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           upDelayTimeout,
           spincount = 0,
           spinning = false,
-          suppressNextFocusout = false,
           mutationObserver;
         init();
         function init() {
@@ -555,7 +554,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.sanitize");
+          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
           if (container) {
             container.off(".touchspin");
           }
@@ -691,8 +690,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               ev.preventDefault();
             } else if (code === 13) {
               _checkValue(true);
-            } else if (code === 9) {
-              suppressNextFocusout = true;
             }
           });
           originalinput.on("keyup.touchspin", function (ev) {
@@ -710,10 +707,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             var next = /** @type {HTMLElement|null|undefined} */
             e.relatedTarget;
             if (!leavingWidget(next)) return;
-            if (suppressNextFocusout) {
-              suppressNextFocusout = false;
-              return;
-            }
             setTimeout(function () {
               var ae = /** @type {HTMLElement|null} */
               document.activeElement;
@@ -725,9 +718,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
-            if (code === 9) {
-              suppressNextFocusout = true;
-            } else if (code === 32 || code === 13) {
+            if (code === 32 || code === 13) {
               if (spinning !== "down") {
                 downOnce();
                 startDownSpin();
@@ -743,9 +734,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
-            if (code === 9) {
-              suppressNextFocusout = true;
-            } else if (code === 32 || code === 13) {
+            if (code === 32 || code === 13) {
               if (spinning !== "up") {
                 upOnce();
                 startUpSpin();
@@ -865,9 +854,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           originalinput.on("touchspin.updatesettings", function (e, newsettings) {
             changeSettings(newsettings);
-          });
-          originalinput.on("touchspin.sanitize", function () {
-            _checkValue(true);
           });
         }
         function _setupMutationObservers() {

@@ -73,8 +73,8 @@ test.describe('Events', () => {
     // TAB should trigger sanitization and fire change event
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
     
-    // Verify the value is still unsanitized
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('67');
+    // Verify the value has been sanitized (step=10, so 67 rounds to 70)
+    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('70');
   });
 
   test('Should fire the change event only once when correcting the value according to step after focus loss', async ({ page }) => {

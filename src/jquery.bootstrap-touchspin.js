@@ -268,8 +268,6 @@
         spincount = 0,
         /** @type {false|'up'|'down'} Current spinning direction */
         spinning = false,
-        /** @type {boolean} Flag to suppress focusout sanitization (e.g., after Tab key) */
-        suppressNextFocusout = false,
         /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
         mutationObserver;
 
@@ -465,7 +463,7 @@
         stopSpin();
 
         // Remove all plugin handlers bound on the input
-        originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.sanitize');
+        originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
 
         // Clean up container event handlers
         if (container) {
@@ -674,8 +672,6 @@
             ev.preventDefault();
           } else if (code === 13) { // Enter confirms/commits value
             _checkValue(true);
-          } else if (code === 9) { // Tab key - suppress focusout sanitization
-            suppressNextFocusout = true;
           }
         });
 
@@ -701,17 +697,12 @@
           // If we still stay within the widget, skip
           if (!leavingWidget(next)) return;
 
-          // Check if this focusout should be suppressed (e.g., Tab key)
-          if (suppressNextFocusout) {
-            suppressNextFocusout = false;
-            return;
-          }
-
           // Defer 1 tick so document.activeElement is reliable (Safari, etc.)
           setTimeout(function () {
             var ae = /** @type {HTMLElement|null} */ (document.activeElement);
             if (leavingWidget(ae)) {
               stopSpin();
+              // Sanitize on widget exit and emit change if value changes
               _checkValue(true);
             }
           }, 0);
@@ -722,9 +713,7 @@
         elements.down.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
 
-          if (code === 9) { // Tab
-            suppressNextFocusout = true;
-          } else if (code === 32 || code === 13) {
+          if (code === 32 || code === 13) {
             if (spinning !== 'down') {
               downOnce();
               startDownSpin();
@@ -744,9 +733,7 @@
         elements.up.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
 
-          if (code === 9) { // Tab
-            suppressNextFocusout = true;
-          } else if (code === 32 || code === 13) {
+          if (code === 32 || code === 13) {
             if (spinning !== 'up') {
               upOnce();
               startUpSpin();
@@ -909,10 +896,6 @@
           changeSettings(newsettings);
         });
 
-        // Public API: sanitize value and emit change if display updates
-        originalinput.on('touchspin.sanitize', function () {
-          _checkValue(true);
-        });
       }
 
       /**
