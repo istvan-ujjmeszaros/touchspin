@@ -47,7 +47,7 @@ test.describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  test('Should not fire change event when pressing TAB (only Enter sanitizes)', async ({ page }) => {
+  test('Should fire change event when pressing TAB (focus loss triggers sanitization)', async ({ page }) => {
     const testid: string = 'touchspin-step10-min';
 
     // Clear the events log before starting the test
@@ -70,14 +70,14 @@ test.describe('Events', () => {
     // Wait for a short period to ensure all events are processed
     await touchspinHelpers.waitForTimeout(500);
 
-    // TAB should not sanitize, so no change event expected
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(0);
+    // TAB should trigger sanitization and fire change event
+    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
     
     // Verify the value is still unsanitized
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('67');
   });
 
-  test('Should fire the change event only once when correcting the value according to step after pressing Enter', async ({ page }) => {
+  test('Should fire the change event only once when correcting the value according to step after focus loss', async ({ page }) => {
     const testid: string = 'touchspin-step10-min';
 
     // Clear the events log before starting the test
@@ -94,8 +94,8 @@ test.describe('Events', () => {
       $input.val('67'); // Set value without triggering change event
     }, testid);
 
-    // Press Enter to commit the value (should sanitize and fire change)
-    await page.keyboard.press('Enter');
+    // Press Tab to blur and commit the value (should sanitize and fire change)
+    await page.keyboard.press('Tab');
 
     // Wait for a short period to ensure all events are processed
     await touchspinHelpers.waitForTimeout(500);
@@ -120,8 +120,8 @@ test.describe('Events', () => {
       $input.val('117'); // Set value above max without triggering change event
     }, testid);
 
-    // Press Enter to commit/sanitize the value
-    await page.keyboard.press('Enter');
+    // Press Tab to trigger blur and commit/sanitize the value
+    await page.keyboard.press('Tab');
 
     // Wait for a short period to ensure all events are processed
     await touchspinHelpers.waitForTimeout(500);
@@ -149,8 +149,8 @@ test.describe('Events', () => {
       $input.val('-55'); // Set value below min without triggering change event
     }, testid);
 
-    // Press Enter to commit/sanitize the value
-    await page.keyboard.press('Enter');
+    // Press Tab to trigger blur and commit/sanitize the value
+    await page.keyboard.press('Tab');
 
     // Wait for a short period to ensure all events are processed
     await touchspinHelpers.waitForTimeout(500);
@@ -172,14 +172,14 @@ test.describe('Events', () => {
 
     await touchspinHelpers.fillWithValue(page, testid, '1000');
 
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Tab');
 
     await touchspinHelpers.waitForTimeout(500);
 
     // FIXME: Currently firing 2 change events with decorated value instead of 1
     // This may be due to double processing in _checkValue or callback chains
     // For now, accepting the current behavior to focus on core contract fixes
-    expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(2);
+    expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
   test('Should have the decorated value on blur', async ({ page }) => {

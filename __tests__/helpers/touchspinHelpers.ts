@@ -336,6 +336,11 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
   }
 }
 
+async function blurAway(page: Page): Promise<void> {
+  // Click the blur target to move focus away from TouchSpin widget
+  await page.click('#blur-target');
+}
+
 // NOTE: waitForTouchSpinReady is no longer needed!
 // TouchSpin now automatically creates wrapper testids as: {inputTestId}-wrapper
 // All helper functions automatically wait for the wrapper to exist.
@@ -356,6 +361,7 @@ export default {
   focusUpButton,
   focusDownButton,
   focusOutside,
+  blurAway,
   getElementIdFromTestId,
   startCoverage,
   collectCoverage,

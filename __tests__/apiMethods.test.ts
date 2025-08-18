@@ -153,13 +153,13 @@ test.describe('API Methods', () => {
 
       // Try to set below new min
       await touchspinHelpers.fillWithValue(page, testid, '5');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab');
 
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('10');
 
       // Try to set above new max
       await touchspinHelpers.fillWithValue(page, testid, '25');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab');
 
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('20');
     });

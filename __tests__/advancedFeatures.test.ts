@@ -18,17 +18,17 @@ test.describe('Advanced Features', () => {
       
       // Test data-bts-min="40"
       await touchspinHelpers.fillWithValue(page, testid, '30');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab'); // triggers blur → sanitize
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('40');
       
       // Test data-bts-max="60"
       await touchspinHelpers.fillWithValue(page, testid, '70');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab'); // triggers blur → sanitize
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('60');
       
       // Test data-bts-step="2"
       await touchspinHelpers.fillWithValue(page, testid, '50');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab'); // triggers blur → sanitize
       await touchspinHelpers.touchspinClickUp(page, testid);
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('52');
     });
@@ -40,7 +40,7 @@ test.describe('Advanced Features', () => {
       
       // Enter a value that doesn't align with step=3
       await touchspinHelpers.fillWithValue(page, testid, '46');
-      await page.keyboard.press('Enter');
+      await page.keyboard.press('Tab'); // triggers blur → sanitize
       
       // Should round to nearest valid step value
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '0');
