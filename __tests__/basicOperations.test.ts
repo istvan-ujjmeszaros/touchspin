@@ -111,7 +111,7 @@ test.describe('Core functionality', () => {
     await page.evaluate((testId) => {
       const input = document.querySelector(`[data-testid="${testId}"]`);
       if (input) {
-        const ev = new WheelEvent('wheel', { deltaY: -100 });
+        const ev = new WheelEvent('wheel', { deltaY: -100, bubbles: true, cancelable: true });
         Object.defineProperty(ev, 'wheelDelta', { value: 100 });
         input.dispatchEvent(ev);
       }
@@ -122,7 +122,7 @@ test.describe('Core functionality', () => {
     await page.evaluate((testId) => {
       const input = document.querySelector(`[data-testid="${testId}"]`);
       if (input) {
-        const ev = new WheelEvent('wheel', { deltaY: 100 });
+        const ev = new WheelEvent('wheel', { deltaY: 100, bubbles: true, cancelable: true });
         Object.defineProperty(ev, 'wheelDelta', { value: -100 });
         input.dispatchEvent(ev);
       }

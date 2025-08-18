@@ -909,6 +909,7 @@
           changeSettings(newsettings);
         });
 
+        // Public API: sanitize value and emit change if display updates
         originalinput.on('touchspin.sanitize', function () {
           _checkValue(true);
         });

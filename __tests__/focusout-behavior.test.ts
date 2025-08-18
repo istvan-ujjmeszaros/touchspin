@@ -11,26 +11,15 @@ test.describe('Focus and Outside Click Behavior', () => {
     await touchspinHelpers.collectCoverage(page, 'focusout-behavior');
   });
 
-  test.fixme('CURRENT BEHAVIOR: clicking outside widget sanitizes value (document listener)', async ({ page }) => {
+  test('clicking body without leaving widget does not sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
-    
-    // Type an invalid value that needs sanitization
+
     await touchspinHelpers.fillWithValue(page, testid, '3');
-    
-    // Click completely outside the TouchSpin widget (document listener should trigger)
+
+    // Clicking the document body should not sanitize since focus remains on the input
     await page.click('body');
-    
-    // Get the actual step and expected sanitized value
-    const { step, expected } = await page.evaluate(() => {
-      const $ = (window as any).jQuery;
-      const input = $('[data-testid="touchspin-default"]');
-      const stepVal = Number(input.attr('step') || 1);
-      const expected = (Math.round(3 / stepVal) * stepVal).toString();
-      return { step: stepVal, expected };
-    });
-    
     const finalValue = await touchspinHelpers.readInputValue(page, testid);
-    expect(finalValue).toBe(expected);
+    expect(finalValue).toBe('3');
   });
 
   test('sanity: no touchspin doc-level listeners (post-refactor)', async ({ page }) => {
