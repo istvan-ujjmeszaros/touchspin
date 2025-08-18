@@ -439,9 +439,7 @@
         // Check for RendererFactory availability
         const rf = /** @type {any} */ (typeof globalThis !== 'undefined' ? globalThis : {});
         /** @type {RendererFactoryType|undefined} */
-        const factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function'
-          ? rf.RendererFactory
-          : undefined;
+        const factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function' ? rf.RendererFactory : undefined;
         
         if (!factory || !factory.createRenderer) {
           throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
