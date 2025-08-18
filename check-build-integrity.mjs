@@ -4,12 +4,12 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 const distFolder = 'dist/';
-const tempDistFolder = 'tmp/dist/';
+const tempDistFolder = 'dist-integrity/';
 
 function calculateChecksum(folderPath) {
   const hasher = crypto.createHash('md5');
 
-  // Get all files in folder
+  // Get all files in folder, excluding source maps
   const files = [];
   function getAllFiles(dirPath) {
     if (!fs.existsSync(dirPath)) return;
@@ -20,6 +20,7 @@ function calculateChecksum(folderPath) {
       if (entry.isDirectory()) {
         getAllFiles(fullPath);
       } else {
+        // Include all files including source maps now that paths are consistent
         files.push(fullPath);
       }
     }
@@ -27,6 +28,8 @@ function calculateChecksum(folderPath) {
 
   getAllFiles(folderPath);
   files.sort(); // Ensure consistent order
+
+  // Removed verbose file listing for cleaner output
 
   files.forEach(filePath => {
     if (fs.lstatSync(filePath).isFile()) {
