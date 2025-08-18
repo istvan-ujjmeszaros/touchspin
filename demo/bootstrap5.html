@@ -5,26 +5,26 @@
   <title>Bootstrap TouchSpin - Bootstrap 5 Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Bootstrap TouchSpin demo with Bootstrap 5.3.0">
-  
+
   <link rel="shortcut icon" href="favicon.ico">
 
   <!-- jQuery -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-  
+
   <!-- Bootstrap 5.3.0 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  
+
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-  
+
   <!-- TouchSpin Bootstrap 5 Specific Build -->
   <link href="../dist/jquery.bootstrap-touchspin.css" rel="stylesheet">
   <script src="../dist/jquery.bootstrap-touchspin-bs5.js"></script>
-  
+
   <!-- Demo CSS -->
   <link href="demo.css" rel="stylesheet">
-  
+
   <style>
     .demo-version-badge {
       background: #6f42c1;
@@ -70,6 +70,10 @@
     .hero-unit .btn {
       margin: 5px;
     }
+    .hint {
+      font-size: .9rem;
+      color: #6c757d;
+    }
   </style>
 </head>
 
@@ -101,7 +105,7 @@
 
   <div class="demo-section">
     <h2><i class="bi bi-play-circle"></i> Basic Examples</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
@@ -118,7 +122,7 @@
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
-          <label for="demo2" class="form-label">With Prefix & Postfix:</label>
+          <label for="demo2" class="form-label">With Prefix &amp; Postfix:</label>
           <input id="demo2" type="text" value="50" name="demo2" class="form-control">
         </div>
         <div class="col-md-8">
@@ -128,6 +132,38 @@
   postfix: '.00',
   min: 0,
   max: 1000
+});</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW: Callbacks example (currency formatting inside the input value) -->
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo2cb" class="form-label">Currency (callbacks):</label>
+          <input id="demo2cb" type="text" value="1000" name="demo2cb" class="form-control">
+          <div class="hint mt-2">
+            Try typing: <code>$1,234abc</code> or <code> 1000.5 </code> then press Enter / blur / use arrows.
+            Value will normalize and format to <code>$1,234.50</code>.
+          </div>
+        </div>
+        <div class="col-md-8">
+          <h5><i class="bi bi-code-slash"></i> Code (callbacks):</h5>
+          <pre class="bg-dark text-light p-3 rounded"><code>const before = (raw) =&gt; (raw ?? '').replace(/[^\d\.\-]/g, '');
+const after  = (numStr) =&gt; {
+  const n = parseFloat(numStr);
+  if (!isFinite(n)) return '';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD',
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+  }).format(n);
+};
+
+$("input[name='demo2cb']").TouchSpin({
+  min: 0, max: 100000, step: 0.5, decimals: 2,
+  callback_before_calculation: before,
+  callback_after_calculation:  after
 });</code></pre>
         </div>
       </div>
@@ -154,7 +190,7 @@
 
   <div class="demo-section">
     <h2><i class="bi bi-arrows-expand"></i> Bootstrap 5 Sizing</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
@@ -186,7 +222,7 @@ $("input[name='demo5']").TouchSpin();</code></pre>
 
   <div class="demo-section">
     <h2><i class="bi bi-arrow-up-down"></i> Vertical Buttons</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
@@ -207,7 +243,7 @@ $("input[name='demo5']").TouchSpin();</code></pre>
 
   <div class="demo-section">
     <h2><i class="bi bi-ui-checks-grid"></i> Bootstrap 5 Input Groups</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-8">
@@ -250,7 +286,7 @@ $("input[name='demo5']").TouchSpin();</code></pre>
 
   <div class="demo-section">
     <h2><i class="bi bi-palette"></i> Bootstrap 5 Color System</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
@@ -290,7 +326,7 @@ $("input[name='demo5']").TouchSpin();</code></pre>
 
   <div class="demo-section">
     <h2><i class="bi bi-speedometer2"></i> Advanced Features</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-4">
@@ -361,7 +397,7 @@ $("input[name='demo11']").TouchSpin({
 
   <div class="demo-section">
     <h2><i class="bi bi-card-checklist"></i> Form Validation</h2>
-    
+
     <div class="demo-example">
       <div class="row">
         <div class="col-md-6">
@@ -394,7 +430,7 @@ $("input[name='demo11']").TouchSpin({
   </div>
 
   <hr class="my-5">
-  
+
   <footer class="text-center pb-4">
     <div class="btn-group" role="group">
       <a href="bootstrap3.html" class="btn btn-outline-primary">
@@ -414,88 +450,106 @@ $("input[name='demo11']").TouchSpin({
 </div>
 
 <script>
-$(document).ready(function() {
-  // Initialize all TouchSpins
-  $("input[name='demo1']").TouchSpin();
+  $(document).ready(function() {
+    // Initialize all TouchSpins
+    $("input[name='demo1']").TouchSpin();
 
-  $("input[name='demo2']").TouchSpin({
-    prefix: '$',
-    postfix: '.00',
-    min: 0,
-    max: 1000
+    $("input[name='demo2']").TouchSpin({
+      prefix: '$',
+      postfix: '.00',
+      min: 0,
+      max: 1000
+    });
+
+    // NEW: Callbacks example (currency formatting inside the input value)
+    (function() {
+      const before = (raw) => (raw ?? '').replace(/[^\d\.\-]/g, ''); // strip $, commas, spaces, etc.
+      const after  = (numStr) => {
+        const n = parseFloat(numStr);
+        if (!isFinite(n)) return '';
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency', currency: 'USD',
+          minimumFractionDigits: 2, maximumFractionDigits: 2
+        }).format(n);
+      };
+      $("input[name='demo2cb']").TouchSpin({
+        min: 0, max: 100000, step: 0.5, decimals: 2,
+        callback_before_calculation: before,
+        callback_after_calculation:  after
+      });
+    })();
+
+    $("input[name='demo3']").TouchSpin({
+      min: 0,
+      max: 10,
+      step: 0.00001,
+      decimals: 5
+    });
+
+    $("input[name='demo4']").TouchSpin();
+
+    $("input[name='demo5']").TouchSpin();
+
+    $("input[name='demo6']").TouchSpin({
+      verticalbuttons: true,
+      verticalup: '<i class="bi bi-chevron-up"></i>',
+      verticaldown: '<i class="bi bi-chevron-down"></i>'
+    });
+
+    $("input[name='demo7']").TouchSpin({
+      prefix: "Value:",
+      postfix: "units"
+    });
+
+    $("input[name='demo8']").TouchSpin({
+      buttondown_class: "btn btn-outline-danger",
+      buttonup_class: "btn btn-outline-success",
+      buttondown_txt: '<i class="bi bi-dash-lg"></i>',
+      buttonup_txt: '<i class="bi bi-plus-lg"></i>'
+    });
+
+    $("input[name='demo9']").TouchSpin({
+      buttondown_class: "btn btn-info",
+      buttonup_class: "btn btn-warning",
+      prefix: "Qty:",
+      postfix: " items"
+    });
+
+    $("input[name='demo10']").TouchSpin({
+      min: 0,
+      max: 100000,
+      step: 100
+    });
+
+    $("input[name='demo11']").TouchSpin({
+      min: 0,
+      max: 100,
+      step: 5
+    });
+
+    $("input[name='demo12']").TouchSpin({
+      min: 0,
+      max: 50000,
+      step: 25,
+      booster: true,
+      boostat: 2,
+      maxboostedstep: 2500,
+      postfix: " GB"
+    });
+
+    $("input[name='demo13']").TouchSpin({
+      min: 0,
+      max: 100,
+      step: 5
+    });
+
+    $("input[name='demo14']").TouchSpin({
+      min: 20,
+      max: 100,
+      step: 5
+    });
+
   });
-
-  $("input[name='demo3']").TouchSpin({
-    min: 0,
-    max: 10,
-    step: 0.00001,
-    decimals: 5
-  });
-
-  $("input[name='demo4']").TouchSpin();
-
-  $("input[name='demo5']").TouchSpin();
-
-  $("input[name='demo6']").TouchSpin({
-    verticalbuttons: true,
-    verticalup: '<i class="bi bi-chevron-up"></i>',
-    verticaldown: '<i class="bi bi-chevron-down"></i>'
-  });
-
-  $("input[name='demo7']").TouchSpin({
-    prefix: "Value:",
-    postfix: "units"
-  });
-
-  $("input[name='demo8']").TouchSpin({
-    buttondown_class: "btn btn-outline-danger",
-    buttonup_class: "btn btn-outline-success",
-    buttondown_txt: '<i class="bi bi-dash-lg"></i>',
-    buttonup_txt: '<i class="bi bi-plus-lg"></i>'
-  });
-
-  $("input[name='demo9']").TouchSpin({
-    buttondown_class: "btn btn-info",
-    buttonup_class: "btn btn-warning",
-    prefix: "Qty:",
-    postfix: " items"
-  });
-
-  $("input[name='demo10']").TouchSpin({
-    min: 0,
-    max: 100000,
-    step: 100
-  });
-
-  $("input[name='demo11']").TouchSpin({
-    min: 0,
-    max: 100,
-    step: 5
-  });
-
-  $("input[name='demo12']").TouchSpin({
-    min: 0,
-    max: 50000,
-    step: 25,
-    booster: true,
-    boostat: 2,
-    maxboostedstep: 2500,
-    postfix: " GB"
-  });
-
-  $("input[name='demo13']").TouchSpin({
-    min: 0,
-    max: 100,
-    step: 5
-  });
-
-  $("input[name='demo14']").TouchSpin({
-    min: 20,
-    max: 100,
-    step: 5
-  });
-
-});
 </script>
 </body>
 </html>
