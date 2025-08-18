@@ -457,6 +457,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _checkValue();
           _buildHtml();
           _initElements();
+          _initAriaAttributes();
           _updateButtonDisabledState();
           _hideEmptyPrefixPostfix();
           _syncNativeAttributes();
@@ -485,6 +486,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
           var stepNum = Number(settings.step);
           if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
+          if (settings.min != null) {
+            var minNum = Number(settings.min);
+            settings.min = isFinite(minNum) ? minNum : null;
+          }
+          if (settings.max != null) {
+            var maxNum = Number(settings.max);
+            settings.max = isFinite(maxNum) ? maxNum : null;
+          }
           var dec = parseInt(String(settings.decimals), 10);
           settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
           settings.stepinterval = Math.max(0, parseInt(String(settings.stepinterval), 10) || 0);
@@ -576,6 +585,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           if (newsettings.min !== void 0 || newsettings.max !== void 0 || newsettings.step !== void 0) {
             _syncNativeAttributes();
+            _updateAriaAttributes();
           }
           _hideEmptyPrefixPostfix();
         }
@@ -602,6 +612,40 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             throw new Error("Bootstrap TouchSpin: Renderer not available for element initialization.");
           }
           elements = renderer.initElements(container);
+        }
+        function _initAriaAttributes() {
+          originalinput.attr("role", "spinbutton");
+          if (settings.min !== null && settings.min !== void 0) {
+            originalinput.attr("aria-valuemin", settings.min);
+          }
+          if (settings.max !== null && settings.max !== void 0) {
+            originalinput.attr("aria-valuemax", settings.max);
+          }
+          var currentValue = parseFloat(originalinput.val()) || 0;
+          originalinput.attr("aria-valuenow", currentValue);
+          if (elements && elements.up && elements.down) {
+            elements.up.attr("aria-label", "Increase value");
+            elements.down.attr("aria-label", "Decrease value");
+            var inputId = originalinput.attr("id");
+            if (inputId) {
+              elements.up.attr("aria-describedby", inputId);
+              elements.down.attr("aria-describedby", inputId);
+            }
+          }
+        }
+        function _updateAriaAttributes() {
+          var currentValue = parseFloat(originalinput.val()) || 0;
+          originalinput.attr("aria-valuenow", currentValue);
+          if (settings.min !== null && settings.min !== void 0) {
+            originalinput.attr("aria-valuemin", settings.min);
+          } else {
+            originalinput.removeAttr("aria-valuemin");
+          }
+          if (settings.max !== null && settings.max !== void 0) {
+            originalinput.attr("aria-valuemax", settings.max);
+          } else {
+            originalinput.removeAttr("aria-valuemax");
+          }
         }
         function _hideEmptyPrefixPostfix() {
           if (!renderer) {
@@ -856,6 +900,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             originalinput.val(returnval);
           }
           originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
+          _updateAriaAttributes();
         }
         function _syncNativeAttributes() {
           if (originalinput.attr("type") === "number") {
@@ -884,6 +929,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var newSettings = {};
           if (nativeMin != null) {
             var parsedMin = nativeMin === "" ? null : parseFloat(nativeMin);
+            if (parsedMin != null) {
+              var minNum = Number(parsedMin);
+              parsedMin = isFinite(minNum) ? minNum : null;
+            }
             if (parsedMin !== settings.min) {
               newSettings.min = parsedMin;
               needsUpdate = true;
@@ -894,6 +943,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           if (nativeMax != null) {
             var parsedMax = nativeMax === "" ? null : parseFloat(nativeMax);
+            if (parsedMax != null) {
+              var maxNum = Number(parsedMax);
+              parsedMax = isFinite(maxNum) ? maxNum : null;
+            }
             if (parsedMax !== settings.max) {
               newSettings.max = parsedMax;
               needsUpdate = true;
@@ -931,6 +984,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               settings.max = align(settings.max, settings.step, "down");
               settings.min = align(settings.min, settings.step, "up");
             }
+            _updateAriaAttributes();
             _checkValue();
           }
         }

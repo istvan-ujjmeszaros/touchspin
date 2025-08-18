@@ -303,6 +303,7 @@
         _checkValue();
         _buildHtml();
         _initElements();
+        _initAriaAttributes();
         _updateButtonDisabledState();
         _hideEmptyPrefixPostfix();
         _syncNativeAttributes();
@@ -351,6 +352,16 @@
         // Normalize step (guard against "any", 0, negatives, NaN)
         var stepNum = Number(settings.step);
         if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
+        
+        // Normalize min/max to numbers for consistency (null/undefined preserved)
+        if (settings.min != null) {
+          var minNum = Number(settings.min);
+          settings.min = isFinite(minNum) ? minNum : null;
+        }
+        if (settings.max != null) {
+          var maxNum = Number(settings.max);
+          settings.max = isFinite(maxNum) ? maxNum : null;
+        }
         
         // Normalize decimals (ensure non-negative integer)
         var dec = parseInt(String(settings.decimals), 10);
@@ -497,6 +508,7 @@
         // Sync native attributes when TouchSpin settings change
         if (newsettings.min !== undefined || newsettings.max !== undefined || newsettings.step !== undefined) {
           _syncNativeAttributes();
+          _updateAriaAttributes();
         }
 
         _hideEmptyPrefixPostfix();
@@ -543,6 +555,61 @@
           throw new Error('Bootstrap TouchSpin: Renderer not available for element initialization.');
         }
         elements = renderer.initElements(container);
+      }
+
+      /**
+       * Initializes ARIA attributes for accessibility.
+       * @private
+       */
+      function _initAriaAttributes() {
+        // Set ARIA attributes on the input for screen readers
+        originalinput.attr('role', 'spinbutton');
+        
+        // Set aria-valuemin and aria-valuemax if they exist
+        if (settings.min !== null && settings.min !== undefined) {
+          originalinput.attr('aria-valuemin', settings.min);
+        }
+        if (settings.max !== null && settings.max !== undefined) {
+          originalinput.attr('aria-valuemax', settings.max);
+        }
+        
+        // Set current value
+        var currentValue = parseFloat(originalinput.val()) || 0;
+        originalinput.attr('aria-valuenow', currentValue);
+        
+        // Add descriptive labels to buttons for screen readers
+        if (elements && elements.up && elements.down) {
+          elements.up.attr('aria-label', 'Increase value');
+          elements.down.attr('aria-label', 'Decrease value');
+          
+          // Associate buttons with the input
+          var inputId = originalinput.attr('id');
+          if (inputId) {
+            elements.up.attr('aria-describedby', inputId);
+            elements.down.attr('aria-describedby', inputId);
+          }
+        }
+      }
+
+      /**
+       * Updates ARIA attributes when value changes.
+       * @private
+       */
+      function _updateAriaAttributes() {
+        var currentValue = parseFloat(originalinput.val()) || 0;
+        originalinput.attr('aria-valuenow', currentValue);
+        
+        // Update min/max if they've changed
+        if (settings.min !== null && settings.min !== undefined) {
+          originalinput.attr('aria-valuemin', settings.min);
+        } else {
+          originalinput.removeAttr('aria-valuemin');
+        }
+        if (settings.max !== null && settings.max !== undefined) {
+          originalinput.attr('aria-valuemax', settings.max);
+        } else {
+          originalinput.removeAttr('aria-valuemax');
+        }
       }
 
       /**
@@ -894,6 +961,9 @@
         }
 
         originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
+        
+        // Update ARIA attributes after value changes
+        _updateAriaAttributes();
       }
 
       /**
@@ -938,6 +1008,11 @@
         // Check min attribute
         if (nativeMin != null) {
           var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+          // Normalize min to number for consistency (same as _initSettings)
+          if (parsedMin != null) {
+            var minNum = Number(parsedMin);
+            parsedMin = isFinite(minNum) ? minNum : null;
+          }
           if (parsedMin !== settings.min) {
             newSettings.min = parsedMin;
             needsUpdate = true;
@@ -951,6 +1026,11 @@
         // Check max attribute
         if (nativeMax != null) {
           var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+          // Normalize max to number for consistency (same as _initSettings)
+          if (parsedMax != null) {
+            var maxNum = Number(parsedMax);
+            parsedMax = isFinite(maxNum) ? maxNum : null;
+          }
           if (parsedMax !== settings.max) {
             newSettings.max = parsedMax;
             needsUpdate = true;
@@ -996,6 +1076,8 @@
             settings.min = align(settings.min, settings.step, 'up');
           }
           
+          // Update ARIA attributes when min/max settings change
+          _updateAriaAttributes();
           _checkValue();
         }
       }
