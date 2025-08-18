@@ -323,7 +323,7 @@
        */
       function changeSettings(newsettings) {
         _updateSettings(newsettings);
-        _checkValue();
+        _checkValue(true);
 
         /** @type {string} */
         var raw = String(elements.input.val() ?? '');
@@ -465,7 +465,7 @@
         stopSpin();
 
         // Remove all plugin handlers bound on the input
-        originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
+        originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.sanitize');
 
         // Clean up container event handlers
         if (container) {
@@ -908,6 +908,10 @@
         originalinput.on('touchspin.updatesettings', function (e, newsettings) {
           changeSettings(newsettings);
         });
+
+        originalinput.on('touchspin.sanitize', function () {
+          _checkValue(true);
+        });
       }
 
       /**
@@ -1136,7 +1140,7 @@
           
           // Update ARIA attributes when min/max settings change
           _updateAriaAttributes();
-          _checkValue();
+          _checkValue(true);
         }
       }
 

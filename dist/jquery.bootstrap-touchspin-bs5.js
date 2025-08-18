@@ -437,6 +437,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           upDelayTimeout,
           spincount = 0,
           spinning = false,
+          suppressNextFocusout = false,
           mutationObserver;
         init();
         function init() {
@@ -470,7 +471,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function changeSettings(newsettings) {
           var _a;
           _updateSettings(newsettings);
-          _checkValue();
+          _checkValue(true);
           var raw = String((_a = elements.input.val()) != null ? _a : "");
           if (raw !== "") {
             var num = parseFloat(settings.callback_before_calculation(raw));
@@ -554,7 +555,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
+          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.sanitize");
           if (container) {
             container.off(".touchspin");
           }
@@ -641,13 +642,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _updateAriaAttributes() {
           var _a;
-          var currentValue = parseFloat(originalinput.val()) || 0;
-          originalinput.attr("aria-valuenow", currentValue);
-          var displayText = String((_a = originalinput.val()) != null ? _a : "");
-          if (displayText) {
-            originalinput.attr("aria-valuetext", displayText);
-          } else {
+          var raw = String((_a = originalinput.val()) != null ? _a : "");
+          if (raw === "") {
+            originalinput.removeAttr("aria-valuenow");
             originalinput.removeAttr("aria-valuetext");
+          } else {
+            var n = parseFloat(raw);
+            if (!isNaN(n)) {
+              originalinput.attr("aria-valuenow", n);
+            } else {
+              originalinput.removeAttr("aria-valuenow");
+            }
+            originalinput.attr("aria-valuetext", raw);
           }
           if (settings.min !== null && settings.min !== void 0) {
             originalinput.attr("aria-valuemin", settings.min);
@@ -685,6 +691,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               ev.preventDefault();
             } else if (code === 13) {
               _checkValue(true);
+            } else if (code === 9) {
+              suppressNextFocusout = true;
             }
           });
           originalinput.on("keyup.touchspin", function (ev) {
@@ -702,6 +710,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             var next = /** @type {HTMLElement|null|undefined} */
             e.relatedTarget;
             if (!leavingWidget(next)) return;
+            if (suppressNextFocusout) {
+              suppressNextFocusout = false;
+              return;
+            }
             setTimeout(function () {
               var ae = /** @type {HTMLElement|null} */
               document.activeElement;
@@ -713,7 +725,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
+            if (code === 9) {
+              suppressNextFocusout = true;
+            } else if (code === 32 || code === 13) {
               if (spinning !== "down") {
                 downOnce();
                 startDownSpin();
@@ -729,7 +743,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
+            if (code === 9) {
+              suppressNextFocusout = true;
+            } else if (code === 32 || code === 13) {
               if (spinning !== "up") {
                 upOnce();
                 startUpSpin();
@@ -850,6 +866,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           originalinput.on("touchspin.updatesettings", function (e, newsettings) {
             changeSettings(newsettings);
           });
+          originalinput.on("touchspin.sanitize", function () {
+            _checkValue(true);
+          });
         }
         function _setupMutationObservers() {
           if (typeof MutationObserver !== "undefined") {
@@ -895,8 +914,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               originalinput.removeAttr("aria-valuenow");
             }
             if (mayTriggerChange) {
-              var nextDisplayEmpty = String((_b = originalinput.val()) != null ? _b : "");
-              if (nextDisplayEmpty !== prevDisplay) {
+              var finalDisplay = String((_b = originalinput.val()) != null ? _b : "");
+              if (finalDisplay !== prevDisplay) {
                 originalinput.trigger("change");
               }
             }
@@ -915,9 +934,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             }
           }
           returnval = parsedval;
-          if (parsedval.toString() !== val) {
-            returnval = parsedval;
-          }
           returnval = _forcestepdivisibility(parsedval);
           if (settings.min !== null && parsedval < settings.min) {
             returnval = settings.min;
@@ -1009,7 +1025,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               settings.min = _alignToStep(settings.min, settings.step, "up");
             }
             _updateAriaAttributes();
-            _checkValue();
+            _checkValue(true);
           }
         }
         function _getBoostedStep() {

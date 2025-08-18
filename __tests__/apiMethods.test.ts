@@ -148,15 +148,18 @@ test.describe('API Methods', () => {
         }]);
       }, testid);
 
+      // Check if current value was immediately clamped after updatesettings
+      console.log('Value immediately after updatesettings:', await touchspinHelpers.readInputValue(page, testid));
+
       // Try to set below new min
       await touchspinHelpers.fillWithValue(page, testid, '5');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('Enter');
 
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('10');
 
       // Try to set above new max
       await touchspinHelpers.fillWithValue(page, testid, '25');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('Enter');
 
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('20');
     });
