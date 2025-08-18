@@ -361,6 +361,35 @@
         </script>
       </div>
 
+      <div class="wrapper">
+        <label for="double-init-input">#double-init-input:</label>
+        <input id="double-init-input" type="text" value="100" data-testid="double-init-input">
+
+        <script>
+          // First initialization
+          $('#double-init-input').TouchSpin({
+            min: 0,
+            max: 200,
+            step: 5
+          });
+
+          // Second initialization - should be blocked by alreadyinitialized check
+          $('#double-init-input').TouchSpin({
+            min: 0,
+            max: 300,
+            step: 10
+          });
+        </script>
+      </div>
+
+      <div class="wrapper">
+        <div id="not-an-input" data-testid="not-an-input">This is not an input element</div>
+
+        <script>
+          $('#not-an-input').TouchSpin();
+        </script>
+      </div>
+
     </div>
 
     <div class="col-md-8" style="height:100vh;">
