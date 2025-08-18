@@ -67,6 +67,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - Source changes must be made in `src/`, never in `dist/`
 - The Vite build process includes ES5 transpilation via Babel for broad browser compatibility
 - Build outputs are deterministic and checked for integrity via MD5 checksums
+- **Source Maps**: All `.map` files in `dist/` must be committed to git (use `git add -f dist/*.map` if needed to override global gitignore rules)
 - Legacy Grunt build available as fallback (`build:legacy` commands)
 
 ### Testing Environment  
