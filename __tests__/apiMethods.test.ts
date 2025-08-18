@@ -152,17 +152,11 @@ test.describe('API Methods', () => {
       console.log('Value immediately after updatesettings:', await touchspinHelpers.readInputValue(page, testid));
 
       // Try to set below new min
-      await touchspinHelpers.fillWithValue(page, testid, '5');
-      await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(50); // Allow time for sanitization
-
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '5');
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('10');
 
       // Try to set above new max
-      await touchspinHelpers.fillWithValue(page, testid, '25');
-      await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(50); // Allow time for sanitization
-
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '25');
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('20');
     });
 
@@ -178,8 +172,7 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Reset to known value
-      await touchspinHelpers.fillWithValue(page, testid, '10');
-      await page.keyboard.press('Tab');
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '10');
 
       // Click up once
       await touchspinHelpers.touchspinClickUp(page, testid);

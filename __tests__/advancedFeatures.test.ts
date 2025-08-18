@@ -17,18 +17,15 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-data-attributes';
       
       // Test data-bts-min="40"
-      await touchspinHelpers.fillWithValue(page, testid, '30');
-      await page.keyboard.press('Tab'); // triggers blur → sanitize
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '30');
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('40');
       
       // Test data-bts-max="60"
-      await touchspinHelpers.fillWithValue(page, testid, '70');
-      await page.keyboard.press('Tab'); // triggers blur → sanitize
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '70');
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('60');
       
       // Test data-bts-step="2"
-      await touchspinHelpers.fillWithValue(page, testid, '50');
-      await page.keyboard.press('Tab'); // triggers blur → sanitize
+      await touchspinHelpers.fillWithValueAndBlur(page, testid, '50');
       await touchspinHelpers.touchspinClickUp(page, testid);
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('52');
     });

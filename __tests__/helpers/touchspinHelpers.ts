@@ -248,6 +248,40 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
   // Has to be triple click to select all text when using decorators
   await input.click({ clickCount: 3 });
   await input.fill(value);
+  // Wait a small amount to ensure the value is set
+  await waitForTimeout(10);
+}
+
+async function fillWithValueAndBlur(page: Page, inputTestId: string, value: string): Promise<void> {
+  // Fill the input with a value and trigger blur-based sanitization
+  await fillWithValue(page, inputTestId, value);
+  
+  // Get the current value to detect if sanitization occurs
+  const initialValue = await readInputValue(page, inputTestId);
+  
+  // Press Tab to trigger blur
+  await page.keyboard.press('Tab');
+  
+  // Wait for sanitization to complete - check if value changed or wait a reasonable time
+  try {
+    await page.waitForFunction(
+      ({ testId, initial }: { testId: string; initial: string | null }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+        // Either the value changed (sanitization happened) or we need to give it time
+        return input && (input.value !== initial || Date.now() > (window as any)._sanitizeWaitStart + 100);
+      },
+      { testId: inputTestId, initial: initialValue },
+      { timeout: 1000 }
+    );
+  } catch (error) {
+    // If waitForFunction times out, just wait a fixed amount for sanitization
+    await waitForTimeout(100);
+  }
+}
+
+async function waitForSanitization(page: Page, inputTestId: string): Promise<void> {
+  // Wait for any async sanitization to complete after user input
+  await waitForTimeout(100);
 }
 
 async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
@@ -358,6 +392,8 @@ export default {
   countEvent,
   countChangeWithValue,
   fillWithValue,
+  fillWithValueAndBlur,
+  waitForSanitization,
   focusUpButton,
   focusDownButton,
   focusOutside,
