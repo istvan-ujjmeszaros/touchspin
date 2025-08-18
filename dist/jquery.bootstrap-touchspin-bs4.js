@@ -506,19 +506,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
           }
           if (parseFloat(settings.step) !== 1) {
-            var remainder;
-            if (settings.max != null) {
-              remainder = settings.max % settings.step;
-              if (remainder !== 0) {
-                settings.max = parseFloat(String(settings.max)) - remainder;
-              }
-            }
-            if (settings.min != null) {
-              remainder = settings.min % settings.step;
-              if (remainder !== 0) {
-                settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
-              }
-            }
+            var align = function align(val, step, dir) {
+              if (val == null) return val;
+              var k = 1,
+                s = step;
+              while (s * k % 1 !== 0 && k < 1e6) k *= 10;
+              var V = Math.round(val * k),
+                S = Math.round(step * k);
+              if (S === 0) return val;
+              var r = V % S;
+              if (r === 0) return val;
+              return (dir === "down" ? V - r : V + (S - r)) / k;
+            };
+            settings.max = align(settings.max, settings.step, "down");
+            settings.min = align(settings.min, settings.step, "up");
           }
         }
         function _parseAttributes() {
@@ -558,7 +559,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off("touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
+          originalinput.off("keydown.touchspin keyup.touchspin blur.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
           $(document).off(".touchspin.doc." + originalinput.data("spinnerid"));
           if (mutationObserver) {
             mutationObserver.disconnect();
@@ -812,7 +813,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               });
             });
             mutationObserver.observe(originalinput[0], {
-              attributes: true
+              attributes: true,
+              attributeFilter: ["disabled", "readonly", "min", "max", "step"]
             });
           }
         }
@@ -925,19 +927,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (needsUpdate) {
             settings = $.extend({}, settings, newSettings);
             if (newSettings.step !== void 0 && parseFloat(newSettings.step) !== 1) {
-              var remainder;
-              if (settings.max != null) {
-                remainder = settings.max % settings.step;
-                if (remainder !== 0) {
-                  settings.max = parseFloat(String(settings.max)) - remainder;
-                }
-              }
-              if (settings.min != null) {
-                remainder = settings.min % settings.step;
-                if (remainder !== 0) {
-                  settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
-                }
-              }
+              var align = function align(val, step, dir) {
+                if (val == null) return val;
+                var k = 1,
+                  s = step;
+                while (s * k % 1 !== 0 && k < 1e6) k *= 10;
+                var V = Math.round(val * k),
+                  S = Math.round(step * k);
+                if (S === 0) return val;
+                var r = V % S;
+                if (r === 0) return val;
+                return (dir === "down" ? V - r : V + (S - r)) / k;
+              };
+              settings.max = align(settings.max, settings.step, "down");
+              settings.min = align(settings.min, settings.step, "up");
             }
             _checkValue();
           }

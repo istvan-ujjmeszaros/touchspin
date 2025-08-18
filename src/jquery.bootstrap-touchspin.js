@@ -366,23 +366,19 @@
         }
 
         if (parseFloat(settings.step) !== 1) {
-          let remainder;
-
-          // Modify settings.max to be divisible by step
-          if (settings.max != null) {
-            remainder = settings.max % settings.step;
-            if (remainder !== 0) {
-              settings.max = parseFloat(String(settings.max)) - remainder;
-            }
-          }
-
-          // Do the same with min, should work with negative numbers too
-          if (settings.min != null) {
-            remainder = settings.min % settings.step;
-            if (remainder !== 0) {
-              settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
-            }
-          }
+          var align = function(val, step, dir) {
+            if (val == null) return val;
+            // scale to integers to avoid float mod issues
+            var k = 1, s = step;
+            while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
+            var V = Math.round(val * k), S = Math.round(step * k);
+            if (S === 0) return val;
+            var r = V % S;
+            if (r === 0) return val;
+            return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
+          };
+          settings.max = align(settings.max, settings.step, 'down');
+          settings.min = align(settings.min, settings.step, 'up');
         }
       }
 
@@ -456,7 +452,8 @@
 
         stopSpin();
 
-        originalinput.off('touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
+        // Remove all plugin handlers bound on the input
+        originalinput.off('keydown.touchspin keyup.touchspin blur.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
 
         // Clean up document-level event handlers
         $(document).off('.touchspin.doc.' + originalinput.data('spinnerid'));
@@ -816,7 +813,10 @@
             });
           });
 
-          mutationObserver.observe(originalinput[0], {attributes: true});
+          mutationObserver.observe(originalinput[0], {
+            attributes: true,
+            attributeFilter: ['disabled','readonly','min','max','step']
+          });
         }
       }
 
@@ -981,23 +981,19 @@
           
           // Re-process step divisibility rules if step changed
           if (newSettings.step !== undefined && parseFloat(newSettings.step) !== 1) {
-            let remainder;
-            
-            // Modify settings.max to be divisible by step
-            if (settings.max != null) {
-              remainder = settings.max % settings.step;
-              if (remainder !== 0) {
-                settings.max = parseFloat(String(settings.max)) - remainder;
-              }
-            }
-
-            // Do the same with min, should work with negative numbers too
-            if (settings.min != null) {
-              remainder = settings.min % settings.step;
-              if (remainder !== 0) {
-                settings.min = parseFloat(String(settings.min)) + (parseFloat(String(settings.step)) - remainder);
-              }
-            }
+            var align = function(val, step, dir) {
+              if (val == null) return val;
+              // scale to integers to avoid float mod issues
+              var k = 1, s = step;
+              while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
+              var V = Math.round(val * k), S = Math.round(step * k);
+              if (S === 0) return val;
+              var r = V % S;
+              if (r === 0) return val;
+              return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
+            };
+            settings.max = align(settings.max, settings.step, 'down');
+            settings.min = align(settings.min, settings.step, 'up');
           }
           
           _checkValue();
