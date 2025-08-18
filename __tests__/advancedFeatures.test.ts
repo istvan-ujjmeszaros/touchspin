@@ -38,13 +38,14 @@ test.describe('Advanced Features', () => {
     test('should enforce step divisibility with round mode', async ({ page }) => {
       const testid = 'touchspin-individual-props';
       
-      // Enter a value that doesn't align with step=3
-      await touchspinHelpers.fillWithValue(page, testid, '46');
+      // Enter a value that doesn't align with step=2 (data-bts-step takes precedence over native step=3)
+      await touchspinHelpers.fillWithValue(page, testid, '47');
       await page.keyboard.press('Tab'); // triggers blur → sanitize
+      await touchspinHelpers.waitForTimeout(50); // Allow time for sanitization
       
-      // Should round to nearest valid step value
+      // Should round to nearest valid step value (step=2, so should be even)
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '0');
-      expect(finalValue % 3).toBe(0); // Should be divisible by step
+      expect(finalValue % 2).toBe(0); // Should be divisible by step=2
     });
   });
 
