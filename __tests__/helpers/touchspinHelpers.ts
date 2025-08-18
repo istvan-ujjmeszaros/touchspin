@@ -248,6 +248,26 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
   await input.fill(value);
 }
 
+async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
+  // Focus the up button within the specific TouchSpin widget
+  const wrapper = page.getByTestId(inputTestId + '-wrapper');
+  const upButton = wrapper.locator('.bootstrap-touchspin-up');
+  await upButton.focus();
+}
+
+async function focusDownButton(page: Page, inputTestId: string): Promise<void> {
+  // Focus the down button within the specific TouchSpin widget
+  const wrapper = page.getByTestId(inputTestId + '-wrapper');
+  const downButton = wrapper.locator('.bootstrap-touchspin-down');
+  await downButton.focus();
+}
+
+async function focusOutside(page: Page, outsideTestId: string): Promise<void> {
+  // Focus an element completely outside the TouchSpin widget
+  const outsideElement = page.getByTestId(outsideTestId);
+  await outsideElement.focus();
+}
+
 // Coverage collection functionality
 async function startCoverage(page: Page): Promise<void> {
   await page.coverage.startJSCoverage({
@@ -331,6 +351,9 @@ export default {
   countEvent,
   countChangeWithValue,
   fillWithValue,
+  focusUpButton,
+  focusDownButton,
+  focusOutside,
   getElementIdFromTestId,
   startCoverage,
   collectCoverage,

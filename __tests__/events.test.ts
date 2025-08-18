@@ -47,10 +47,22 @@ test.describe('Events', () => {
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
   });
 
-  test('Should fire the change event only once when correcting the value according to step after pressing TAB', async ({ page }) => {
+  test('Should not fire change event when pressing TAB (only Enter sanitizes)', async ({ page }) => {
     const testid: string = 'touchspin-step10-min';
 
-    await touchspinHelpers.fillWithValue(page, testid, '67');
+    // Clear the events log before starting the test
+    await page.evaluate(() => {
+      const eventsLog = document.getElementById('events_log');
+      if (eventsLog) eventsLog.textContent = '';
+    });
+
+    // Focus input and set value directly without triggering jQuery change events
+    await page.evaluate((testid) => {
+      const $ = (window as any).jQuery;
+      const $input = $(`[data-testid="${testid}"]`);
+      $input.focus();
+      $input.val('67'); // Set value without triggering change event
+    }, testid);
 
     // Press the TAB key to move out of the input field
     await page.keyboard.press('Tab');
@@ -58,7 +70,11 @@ test.describe('Events', () => {
     // Wait for a short period to ensure all events are processed
     await touchspinHelpers.waitForTimeout(500);
 
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+    // TAB should not sanitize, so no change event expected
+    expect(await touchspinHelpers.changeEventCounter(page)).toBe(0);
+    
+    // Verify the value is still unsanitized
+    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('67');
   });
 
   test('Should fire the change event only once when correcting the value according to step after pressing Enter', async ({ page }) => {
@@ -128,12 +144,18 @@ test.describe('Events', () => {
 
     await touchspinHelpers.fillWithValue(page, testid, '1000');
 
-    // Click on another element to trigger blur - using a different TouchSpin element
+    // Click on another element to trigger focusout - using a different TouchSpin element
     const otherInput = page.getByTestId('touchspin-group-lg');
     await otherInput.click({ clickCount: 1 });
+    
+    // Allow the deferred focusout commit to run
+    await page.waitForTimeout(0);
 
+    // Raw '1000' should NOT be the committed value
     expect(await touchspinHelpers.countChangeWithValue(page, '1000')).toBe(0);
-    expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
+    
+    // Decorated value should be committed with change event
+    await expect.poll(() => touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
   test('The touchspin.on.min and touchspin.on.max events should fire as soon as the value reaches the minimum or maximum value', async ({ page }) => {

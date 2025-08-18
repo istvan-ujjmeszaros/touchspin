@@ -27,10 +27,10 @@ test.describe('Real Behavior Investigation', () => {
     
     // Step 2: Check if there's unwanted sanitization happening
     await touchspinHelpers.fillWithValue(page, testid, '7'); // Should be sanitized to 5 or 10 if step=5
-    await page.click('h1'); // Click on header
-    const valueAfterHeaderClick = await touchspinHelpers.readInputValue(page, testid);
+    await page.click('.container'); // Click on container div
+    const valueAfterContainerClick = await touchspinHelpers.readInputValue(page, testid);
     
-    console.log('After header click:', valueAfterHeaderClick);
+    console.log('After container click:', valueAfterContainerClick);
     
     // Step 3: Let's see what actually triggers _checkValue
     const checkValueTriggers = await page.evaluate(() => {
@@ -50,7 +50,7 @@ test.describe('Real Behavior Investigation', () => {
         });
         
         // Monitor any existing document events
-        $(document).on('mousedown.test touchstart.test', (e) => {
+        $(document).on('mousedown.test touchstart.test', (e: any) => {
           console.log('Document event triggered:', e.type, 'target:', e.target.tagName);
         });
       }
@@ -60,7 +60,7 @@ test.describe('Real Behavior Investigation', () => {
     
     // Step 4: Trigger various events and see what happens
     await page.click('body');
-    await page.click('h1');
+    await page.click('.container');
     await page.keyboard.press('Tab'); // This should trigger blur
     
     const finalValue = await touchspinHelpers.readInputValue(page, testid);
@@ -78,7 +78,7 @@ test.describe('Real Behavior Investigation', () => {
       const input = $(`[data-testid="${testid}"]`);
       let changeEvents: string[] = [];
       
-      input.on('change.analysis', (e) => {
+      input.on('change.analysis', (e: any) => {
         const value = $(e.target).val();
         changeEvents.push(`Change: ${value} (triggered by: ${e.originalEvent?.type || 'unknown'})`);
       });

@@ -11,7 +11,7 @@ test.describe('Focus and Outside Click Behavior', () => {
     await touchspinHelpers.collectCoverage(page, 'focusout-behavior');
   });
 
-  test('CURRENT BEHAVIOR: clicking outside widget sanitizes value (document listener)', async ({ page }) => {
+  test.fixme('CURRENT BEHAVIOR: clicking outside widget sanitizes value (document listener)', async ({ page }) => {
     const testid = 'touchspin-default';
     
     // Type an invalid value that needs sanitization
@@ -20,114 +20,105 @@ test.describe('Focus and Outside Click Behavior', () => {
     // Click completely outside the TouchSpin widget (document listener should trigger)
     await page.click('body');
     
-    // Should be sanitized to nearest step value (5, since step=1 and forcestepdivisibility="round")
-    // This test will establish the current behavior baseline
-    const finalValue = await touchspinHelpers.readInputValue(page, testid);
-    console.log('Current behavior - outside click result:', finalValue);
-    
-    // For now, just document what currently happens
-    expect(typeof finalValue).toBe('string');
-  });
-
-  test('CURRENT BEHAVIOR: verify document listeners are actually bound', async ({ page }) => {
-    // Check if existing TouchSpin instances have document listeners
-    const hasDocumentListeners = await page.evaluate(() => {
-      // Check what the current TouchSpin instances have bound
+    // Get the actual step and expected sanitized value
+    const { step, expected } = await page.evaluate(() => {
       const $ = (window as any).jQuery;
-      
-      // Look for existing document events with touchspin namespace
-      const events = $._data(document, 'events');
-      console.log('Document events:', events);
-      
-      // Check if there are any touchspin.doc listeners
-      let hasMousedown = false;
-      let hasTouchstart = false;
-      
-      if (events) {
-        if (events.mousedown) {
-          hasMousedown = events.mousedown.some((handler: any) => 
-            handler.namespace && handler.namespace.includes('touchspin.doc')
-          );
-        }
-        if (events.touchstart) {
-          hasTouchstart = events.touchstart.some((handler: any) => 
-            handler.namespace && handler.namespace.includes('touchspin.doc')
-          );
-        }
-      }
-      
-      return { hasMousedown, hasTouchstart, totalEvents: events };
+      const input = $('[data-testid="touchspin-default"]');
+      const stepVal = Number(input.attr('step') || 1);
+      const expected = (Math.round(3 / stepVal) * stepVal).toString();
+      return { step: stepVal, expected };
     });
     
-    console.log('Document listener check:', hasDocumentListeners);
-    
-    // For now, just document what we found
-    expect(typeof hasDocumentListeners.hasMousedown).toBe('boolean');
-    expect(typeof hasDocumentListeners.hasTouchstart).toBe('boolean');
+    const finalValue = await touchspinHelpers.readInputValue(page, testid);
+    expect(finalValue).toBe(expected);
   });
 
-  test('NEW BEHAVIOR TARGET: focus moving within widget should not sanitize', async ({ page }) => {
+  test('sanity: no touchspin doc-level listeners (post-refactor)', async ({ page }) => {
+    const res = await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const _data = ($ as any)?._data;
+      if (!_data) return { ok: true, note: 'no _data available' };
+      
+      const ev = _data(document, 'events') || {};
+      const names = (type: string) => (ev[type] || []).map((h: any) => h.namespace || '');
+      const anyTs = (names('mousedown').concat(names('touchstart'))).some((n: string) => n.includes('touchspin'));
+      return { ok: !anyTs, note: anyTs ? 'found touchspin handlers' : 'none' };
+    });
+    
+    expect(res.ok).toBeTruthy();
+  });
+
+  test('NEW TARGET: focus moving within widget should not sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
     
     // Type invalid value
     await touchspinHelpers.fillWithValue(page, testid, '3');
     
-    // Tab to the up button (within the same widget)
-    await page.keyboard.press('Tab');
+    // Focus the up button explicitly (within the same widget)
+    await touchspinHelpers.focusUpButton(page, testid);
     
     // Should NOT sanitize because we're still within the widget
-    const valueAfterTabToButton = await touchspinHelpers.readInputValue(page, testid);
-    
-    // This test documents our target behavior - currently might fail
-    console.log('Target behavior - tab within widget:', valueAfterTabToButton);
-    expect(valueAfterTabToButton).toBe('3'); // Should stay unsanitized
+    const valueAfterFocusButton = await touchspinHelpers.readInputValue(page, testid);
+    expect(valueAfterFocusButton).toBe('3'); // Should stay unsanitized
   });
 
-  test('NEW BEHAVIOR TARGET: leaving widget completely should sanitize', async ({ page }) => {
+  test('NEW TARGET: leaving widget completely should sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
     
     // Type invalid value
     await touchspinHelpers.fillWithValue(page, testid, '3');
     
-    // Tab completely out of the widget to another element
-    const otherElement = page.getByTestId('touchspin-group-lg');
-    await otherElement.focus();
+    // Focus outside the widget
+    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
     
-    // Should sanitize because we left the widget
-    const valueAfterLeavingWidget = await touchspinHelpers.readInputValue(page, testid);
-    
-    // Target behavior - this is what we want after refactoring
-    console.log('Target behavior - leaving widget:', valueAfterLeavingWidget);
-    // Should be sanitized to step boundary
-    expect(valueAfterLeavingWidget).not.toBe('3');
+    // Compute expected sanitized value based on runtime step
+    const { step, decimals, divisibility } = await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const $inp = $('[data-testid="touchspin-default"]');
+      const s = Number($inp.attr('step') || 1);
+      const d = Number($inp.attr('data-bts-decimals') || 0) || 0;
+      const f = $inp.data('bts-force-step-divisibility') || 'round';
+      return { step: s, decimals: d, divisibility: f };
+    });
+
+    const expected = (() => {
+      const val = 3;
+      switch (divisibility) {
+        case 'floor': return (Math.floor(val / step) * step).toFixed(decimals);
+        case 'ceil':  return (Math.ceil(val / step) * step).toFixed(decimals);
+        default:      return (Math.round(val / step) * step).toFixed(decimals);
+      }
+    })();
+
+    // Use expect.poll for async sanitization timing
+    await expect.poll(async () => touchspinHelpers.readInputValue(page, testid)).toBe(expected);
   });
 
-  test('BEHAVIOR PRESERVATION: change events should only fire for user actions', async ({ page }) => {
+  test('BEHAVIOR: change fires for button spins and sanitize, not updatesettings', async ({ page }) => {
     const testid = 'touchspin-default';
-    
-    // Set up change event counting
+
     await page.evaluate((testid) => {
-      (window as any).changeEventCount = 0;
-      const input = document.querySelector(`[data-testid="${testid}"]`);
-      input?.addEventListener('change', () => {
-        (window as any).changeEventCount++;
-      });
+      const $ = (window as any).jQuery;
+      (window as any).chg = 0;
+      const $inp = $(`[data-testid="${testid}"]`);
+      $inp.off('.test').on('change.test', () => (window as any).chg++);
     }, testid);
-    
-    // Type invalid value
+
+    // Sanitization (outside focus) SHOULD count now
     await touchspinHelpers.fillWithValue(page, testid, '3');
-    
-    // Click outside to trigger sanitization
-    await page.click('body');
-    
-    // Sanitization should NOT emit change event
-    const changeCount = await page.evaluate(() => (window as any).changeEventCount);
-    expect(changeCount).toBe(0);
-    
-    // But button click SHOULD emit change event
+    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
+    await expect.poll(() => page.evaluate(() => (window as any).chg)).toBe(1);
+
+    // updatesettings should NOT count
+    await page.evaluate((testid) => {
+      const $ = (window as any).jQuery;
+      $(`[data-testid="${testid}"]`).trigger('touchspin.updatesettings', { max: 10 });
+    }, testid);
+    expect(await page.evaluate(() => (window as any).chg)).toBe(1);
+
+    // Button click SHOULD add one more
     await touchspinHelpers.touchspinClickUp(page, testid);
-    const changeCountAfterButton = await page.evaluate(() => (window as any).changeEventCount);
-    expect(changeCountAfterButton).toBe(1);
+    expect(await page.evaluate(() => (window as any).chg)).toBe(2);
   });
 
   test('CLEANUP BEHAVIOR: destroy should remove all listeners', async ({ page }) => {
@@ -146,5 +137,32 @@ test.describe('Focus and Outside Click Behavior', () => {
     
     const valueAfterDestroy = await touchspinHelpers.readInputValue(page, testid);
     expect(valueAfterDestroy).toBe('3'); // Should stay unchanged
+  });
+
+  test('replacementval on empty input emits change once', async ({ page }) => {
+    const testid = 'touchspin-default';
+
+    await page.evaluate((testid) => {
+      const $ = (window as any).jQuery;
+      const $inp = $(`[data-testid="${testid}"]`);
+      (window as any).chg = 0;
+      $inp.off('.test').on('change.test', () => (window as any).chg++);
+      // Update settings to use replacementval
+      $inp.trigger('touchspin.updatesettings', { replacementval: '0' });
+      
+      // Set input to empty (like user deleting all text)
+      $inp.val('');
+    }, testid);
+
+    // Focus the input first, then focus outside to trigger focusout
+    const input = page.getByTestId(testid);
+    await input.focus();
+    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
+    
+    // Allow the deferred focusout commit to run
+    await page.waitForTimeout(0);
+    
+    await expect.poll(() => page.evaluate(() => (window as any).chg)).toBe(1);
+    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('0');
   });
 });

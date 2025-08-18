@@ -125,12 +125,6 @@
   /** @event touchspin.on.stopupspin */
   /** @event touchspin.on.stopdownspin */
   
-  /**
-   * Global counter for unique TouchSpin instance IDs.
-   * @type {number}
-   * @private
-   */
-  var _currentSpinnerId = 0;
 
   /**
    * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners.
@@ -274,6 +268,8 @@
         spincount = 0,
         /** @type {false|'up'|'down'} Current spinning direction */
         spinning = false,
+        /** @type {boolean} Flag to suppress focusout sanitization (e.g., after Tab key) */
+        suppressNextFocusout = false,
         /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
         mutationObserver;
 
@@ -289,8 +285,6 @@
         }
 
         originalinput.data('alreadyinitialized', true);
-        _currentSpinnerId += 1;
-        originalinput.data('spinnerid', _currentSpinnerId);
 
         if (!originalinput.is('input')) {
           console.log('Must be an input.');
@@ -343,6 +337,26 @@
       }
 
       /**
+       * Aligns a value to step boundaries using integer arithmetic to avoid float issues.
+       * @private
+       * @param {number|null} val - Value to align
+       * @param {number} step - Step size 
+       * @param {string} dir - Direction: 'up' or 'down'
+       * @returns {number|null} Aligned value
+       */
+      function _alignToStep(val, step, dir) {
+        if (val == null) return val;
+        // scale to integers to avoid float mod issues
+        var k = 1, s = step;
+        while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
+        var V = Math.round(val * k), S = Math.round(step * k);
+        if (S === 0) return val;
+        var r = V % S;
+        if (r === 0) return val;
+        return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
+      }
+
+      /**
        * Initializes settings by merging defaults, data attributes, and options.
        * @private
        */
@@ -377,19 +391,8 @@
         }
 
         if (parseFloat(settings.step) !== 1) {
-          var align = function(val, step, dir) {
-            if (val == null) return val;
-            // scale to integers to avoid float mod issues
-            var k = 1, s = step;
-            while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
-            var V = Math.round(val * k), S = Math.round(step * k);
-            if (S === 0) return val;
-            var r = V % S;
-            if (r === 0) return val;
-            return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
-          };
-          settings.max = align(settings.max, settings.step, 'down');
-          settings.min = align(settings.min, settings.step, 'up');
+          settings.max = _alignToStep(settings.max, settings.step, 'down');
+          settings.min = _alignToStep(settings.min, settings.step, 'up');
         }
       }
 
@@ -462,10 +465,12 @@
         stopSpin();
 
         // Remove all plugin handlers bound on the input
-        originalinput.off('keydown.touchspin keyup.touchspin blur.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
+        originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
 
-        // Clean up document-level event handlers
-        $(document).off('.touchspin.doc.' + originalinput.data('spinnerid'));
+        // Clean up container event handlers
+        if (container) {
+          container.off('.touchspin');
+        }
 
         // Disconnect MutationObserver
         if (mutationObserver) {
@@ -491,6 +496,17 @@
        */
       function _updateSettings(newsettings) {
         settings = $.extend({}, settings, newsettings);
+
+        // Re-align bounds to step if any of these changed
+        if (
+          (newsettings.step !== undefined ||
+           newsettings.min  !== undefined ||
+           newsettings.max  !== undefined) &&
+          parseFloat(settings.step) !== 1
+        ) {
+          settings.max = _alignToStep(settings.max, settings.step, 'down');
+          settings.min = _alignToStep(settings.min, settings.step, 'up');
+        }
 
         // Update postfix and prefix texts if those settings were changed.
         if ('postfix' in newsettings || 'prefix' in newsettings) {
@@ -521,9 +537,11 @@
           parentelement = originalinput.parent();
 
         if (initval !== '') {
-	  // initval may not be parsable as a number (callback_after_calculation() may decorate it so it cant be parsed).  Use the callbacks if provided.
-	  initval = settings.callback_before_calculation(initval);
-          initval = settings.callback_after_calculation(parseFloat(initval).toFixed(settings.decimals));
+          var raw = settings.callback_before_calculation(initval);
+          var num = parseFloat(raw);
+          initval = isFinite(num)
+            ? settings.callback_after_calculation(num.toFixed(settings.decimals))
+            : settings.callback_after_calculation(raw);
         }
 
         originalinput.data('initvalue', initval).val(initval);
@@ -561,7 +579,9 @@
        */
       function _initAriaAttributes() {
         // Set ARIA attributes on the input for screen readers
-        originalinput.attr('role', 'spinbutton');
+        if (!originalinput.attr('role')) {
+          originalinput.attr('role', 'spinbutton');
+        }
         
         // Set aria-valuemin and aria-valuemax if they exist
         if (settings.min !== null && settings.min !== undefined) {
@@ -571,21 +591,19 @@
           originalinput.attr('aria-valuemax', settings.max);
         }
         
-        // Set current value
-        var currentValue = parseFloat(originalinput.val()) || 0;
-        originalinput.attr('aria-valuenow', currentValue);
+        // Set current value (don't force 0 on empty input)
+        var rawInit = originalinput.val();
+        var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
+        if (!isNaN(nInit)) {
+          originalinput.attr('aria-valuenow', nInit);
+        } else {
+          originalinput.removeAttr('aria-valuenow');
+        }
         
         // Add descriptive labels to buttons for screen readers
         if (elements && elements.up && elements.down) {
           elements.up.attr('aria-label', 'Increase value');
           elements.down.attr('aria-label', 'Decrease value');
-          
-          // Associate buttons with the input
-          var inputId = originalinput.attr('id');
-          if (inputId) {
-            elements.up.attr('aria-describedby', inputId);
-            elements.down.attr('aria-describedby', inputId);
-          }
         }
       }
 
@@ -596,6 +614,14 @@
       function _updateAriaAttributes() {
         var currentValue = parseFloat(originalinput.val()) || 0;
         originalinput.attr('aria-valuenow', currentValue);
+        
+        // Set aria-valuetext to the display string so screen readers announce what users see
+        var displayText = String(originalinput.val() ?? '');
+        if (displayText) {
+          originalinput.attr('aria-valuetext', displayText);
+        } else {
+          originalinput.removeAttr('aria-valuetext');
+        }
         
         // Update min/max if they've changed
         if (settings.min !== null && settings.min !== undefined) {
@@ -643,8 +669,10 @@
               startDownSpin();
             }
             ev.preventDefault();
-          } else if (code === 9 || code === 13) {
-            _checkValue();
+          } else if (code === 13) { // Enter confirms/commits value
+            _checkValue(true);
+          } else if (code === 9) { // Tab key - suppress focusout sanitization
+            suppressNextFocusout = true;
           }
         });
 
@@ -658,20 +686,35 @@
           }
         });
 
-        // change is fired before blur, so we need to work around that
-        var docNs = '.touchspin.doc.' + originalinput.data('spinnerid');
-        $(document).on('mousedown' + docNs + ' touchstart' + docNs, function(event) {
-          if ($(event.target).is(originalinput)) {
+        // Container focusout handler - sanitizes when leaving the entire widget
+        function leavingWidget(nextEl) {
+          return !nextEl || !container[0].contains(nextEl);
+        }
+
+        container.on('focusout.touchspin', function (e) {
+          // e.relatedTarget is the element gaining focus (if provided)
+          var next = /** @type {HTMLElement|null|undefined} */ (e.relatedTarget);
+
+          // If we still stay within the widget, skip
+          if (!leavingWidget(next)) return;
+
+          // Check if this focusout should be suppressed (e.g., Tab key)
+          if (suppressNextFocusout) {
+            suppressNextFocusout = false;
             return;
           }
 
-          _checkValue();
+          // Defer 1 tick so document.activeElement is reliable (Safari, etc.)
+          setTimeout(function () {
+            var ae = /** @type {HTMLElement|null} */ (document.activeElement);
+            if (leavingWidget(ae)) {
+              stopSpin();
+              _checkValue(true);
+            }
+          }, 0);
         });
 
-        originalinput.on('blur.touchspin', function () {
-          stopSpin();
-          _checkValue();
-        });
+        // Note: blur.touchspin handler removed - replaced by container focusout handler
 
         elements.down.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
@@ -810,7 +853,8 @@
             return;
           }
 
-          var delta = ev.originalEvent.wheelDelta || -ev.originalEvent.deltaY || -ev.originalEvent.detail;
+          var oe = ev.originalEvent || {};
+          var delta = oe.wheelDelta || -oe.deltaY || -oe.detail;
 
           ev.stopPropagation();
           ev.preventDefault();
@@ -907,18 +951,29 @@
       /**
        * Validates and corrects the input value according to constraints.
        * @private
+       * @param {boolean} [mayTriggerChange=false] - Whether to fire change event if display value changes
        * @fires touchspin.on.min
        * @fires touchspin.on.max
        */
-      function _checkValue() {
+      function _checkValue(mayTriggerChange) {
         var val, parsedval, returnval;
-
+        var prevDisplay = String(originalinput.val() ?? '');
+        
         val = settings.callback_before_calculation(originalinput.val());
 
         if (val === '') {
           if (settings.replacementval !== '') {
             originalinput.val(settings.replacementval);
-            originalinput.trigger('change');
+            _updateAriaAttributes();
+          } else {
+            originalinput.removeAttr('aria-valuenow');
+          }
+          // For empty values, compare final result with initial value
+          if (mayTriggerChange) {
+            var finalDisplay = String(originalinput.val() ?? '');
+            if (finalDisplay !== prevDisplay) {
+              originalinput.trigger('change');
+            }
           }
           return;
         }
@@ -954,14 +1009,22 @@
           returnval = settings.max;
         }
 
-        if (parseFloat(parsedval).toString() !== parseFloat(returnval).toString()) {
-          originalinput.val(returnval);
+        var newValue = settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals));
+        var currentValue = originalinput.val();
+        
+        if (currentValue !== newValue) {
+          originalinput.val(newValue);
         }
-
-        originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
         
         // Update ARIA attributes after value changes
         _updateAriaAttributes();
+
+        if (mayTriggerChange) {
+          var nextDisplay = String(originalinput.val() ?? '');
+          if (nextDisplay !== prevDisplay) {
+            originalinput.trigger('change');
+          }
+        }
       }
 
       /**
@@ -1057,21 +1120,15 @@
           // Update settings without triggering another sync to avoid infinite loop
           settings = $.extend({}, settings, newSettings);
           
-          // Re-process step divisibility rules if step changed
-          if (newSettings.step !== undefined && parseFloat(newSettings.step) !== 1) {
-            var align = function(val, step, dir) {
-              if (val == null) return val;
-              // scale to integers to avoid float mod issues
-              var k = 1, s = step;
-              while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
-              var V = Math.round(val * k), S = Math.round(step * k);
-              if (S === 0) return val;
-              var r = V % S;
-              if (r === 0) return val;
-              return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
-            };
-            settings.max = align(settings.max, settings.step, 'down');
-            settings.min = align(settings.min, settings.step, 'up');
+          // Re-process step divisibility rules if step, min, or max changed
+          if (
+            (newSettings.step !== undefined ||
+             newSettings.min  !== undefined ||
+             newSettings.max  !== undefined) &&
+            parseFloat(settings.step) !== 1
+          ) {
+            settings.max = _alignToStep(settings.max, settings.step, 'down');
+            settings.min = _alignToStep(settings.min, settings.step, 'up');
           }
           
           // Update ARIA attributes when min/max settings change
@@ -1162,6 +1219,7 @@
         }
 
         elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+        _updateAriaAttributes();
 
         if (initvalue !== value) {
           originalinput.trigger('change');
@@ -1199,6 +1257,7 @@
         }
 
         elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+        _updateAriaAttributes();
 
         if (initvalue !== value) {
           originalinput.trigger('change');

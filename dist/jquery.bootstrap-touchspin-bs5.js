@@ -350,7 +350,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       factory(jQuery);
     }
   })(function ($) {
-    var _currentSpinnerId = 0;
     $.fn.TouchSpin = function (options) {
       var defaults = {
         min: 0,
@@ -445,8 +444,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return;
           }
           originalinput.data("alreadyinitialized", true);
-          _currentSpinnerId += 1;
-          originalinput.data("spinnerid", _currentSpinnerId);
           if (!originalinput.is("input")) {
             console.log("Must be an input.");
             return;
@@ -482,6 +479,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             }
           }
         }
+        function _alignToStep(val, step, dir) {
+          if (val == null) return val;
+          var k = 1,
+            s = step;
+          while (s * k % 1 !== 0 && k < 1e6) k *= 10;
+          var V = Math.round(val * k),
+            S = Math.round(step * k);
+          if (S === 0) return val;
+          var r = V % S;
+          if (r === 0) return val;
+          return (dir === "down" ? V - r : V + (S - r)) / k;
+        }
         function _initSettings() {
           settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
           var stepNum = Number(settings.step);
@@ -504,20 +513,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
           }
           if (parseFloat(settings.step) !== 1) {
-            var align = function align(val, step, dir) {
-              if (val == null) return val;
-              var k = 1,
-                s = step;
-              while (s * k % 1 !== 0 && k < 1e6) k *= 10;
-              var V = Math.round(val * k),
-                S = Math.round(step * k);
-              if (S === 0) return val;
-              var r = V % S;
-              if (r === 0) return val;
-              return (dir === "down" ? V - r : V + (S - r)) / k;
-            };
-            settings.max = align(settings.max, settings.step, "down");
-            settings.min = align(settings.min, settings.step, "up");
+            settings.max = _alignToStep(settings.max, settings.step, "down");
+            settings.min = _alignToStep(settings.min, settings.step, "up");
           }
         }
         function _parseAttributes() {
@@ -557,8 +554,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off("keydown.touchspin keyup.touchspin blur.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
-          $(document).off(".touchspin.doc." + originalinput.data("spinnerid"));
+          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
+          if (container) {
+            container.off(".touchspin");
+          }
           if (mutationObserver) {
             mutationObserver.disconnect();
             mutationObserver = void 0;
@@ -574,6 +573,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _updateSettings(newsettings) {
           settings = $.extend({}, settings, newsettings);
+          if ((newsettings.step !== void 0 || newsettings.min !== void 0 || newsettings.max !== void 0) && parseFloat(settings.step) !== 1) {
+            settings.max = _alignToStep(settings.max, settings.step, "down");
+            settings.min = _alignToStep(settings.min, settings.step, "up");
+          }
           if ("postfix" in newsettings || "prefix" in newsettings) {
             if (!renderer) {
               throw new Error("Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.");
@@ -593,8 +596,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var initval = originalinput.val(),
             parentelement = originalinput.parent();
           if (initval !== "") {
-            initval = settings.callback_before_calculation(initval);
-            initval = settings.callback_after_calculation(parseFloat(initval).toFixed(settings.decimals));
+            var raw = settings.callback_before_calculation(initval);
+            var num = parseFloat(raw);
+            initval = isFinite(num) ? settings.callback_after_calculation(num.toFixed(settings.decimals)) : settings.callback_after_calculation(raw);
           }
           originalinput.data("initvalue", initval).val(initval);
           originalinput.addClass("form-control");
@@ -614,28 +618,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           elements = renderer.initElements(container);
         }
         function _initAriaAttributes() {
-          originalinput.attr("role", "spinbutton");
+          if (!originalinput.attr("role")) {
+            originalinput.attr("role", "spinbutton");
+          }
           if (settings.min !== null && settings.min !== void 0) {
             originalinput.attr("aria-valuemin", settings.min);
           }
           if (settings.max !== null && settings.max !== void 0) {
             originalinput.attr("aria-valuemax", settings.max);
           }
-          var currentValue = parseFloat(originalinput.val()) || 0;
-          originalinput.attr("aria-valuenow", currentValue);
+          var rawInit = originalinput.val();
+          var nInit = rawInit !== "" ? parseFloat(String(rawInit)) : NaN;
+          if (!isNaN(nInit)) {
+            originalinput.attr("aria-valuenow", nInit);
+          } else {
+            originalinput.removeAttr("aria-valuenow");
+          }
           if (elements && elements.up && elements.down) {
             elements.up.attr("aria-label", "Increase value");
             elements.down.attr("aria-label", "Decrease value");
-            var inputId = originalinput.attr("id");
-            if (inputId) {
-              elements.up.attr("aria-describedby", inputId);
-              elements.down.attr("aria-describedby", inputId);
-            }
           }
         }
         function _updateAriaAttributes() {
+          var _a;
           var currentValue = parseFloat(originalinput.val()) || 0;
           originalinput.attr("aria-valuenow", currentValue);
+          var displayText = String((_a = originalinput.val()) != null ? _a : "");
+          if (displayText) {
+            originalinput.attr("aria-valuetext", displayText);
+          } else {
+            originalinput.removeAttr("aria-valuetext");
+          }
           if (settings.min !== null && settings.min !== void 0) {
             originalinput.attr("aria-valuemin", settings.min);
           } else {
@@ -670,8 +683,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 startDownSpin();
               }
               ev.preventDefault();
-            } else if (code === 9 || code === 13) {
-              _checkValue();
+            } else if (code === 13) {
+              _checkValue(true);
             }
           });
           originalinput.on("keyup.touchspin", function (ev) {
@@ -682,16 +695,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               stopSpin();
             }
           });
-          var docNs = ".touchspin.doc." + originalinput.data("spinnerid");
-          $(document).on("mousedown" + docNs + " touchstart" + docNs, function (event) {
-            if ($(event.target).is(originalinput)) {
-              return;
-            }
-            _checkValue();
-          });
-          originalinput.on("blur.touchspin", function () {
-            stopSpin();
-            _checkValue();
+          function leavingWidget(nextEl) {
+            return !nextEl || !container[0].contains(nextEl);
+          }
+          container.on("focusout.touchspin", function (e) {
+            var next = /** @type {HTMLElement|null|undefined} */
+            e.relatedTarget;
+            if (!leavingWidget(next)) return;
+            setTimeout(function () {
+              var ae = /** @type {HTMLElement|null} */
+              document.activeElement;
+              if (leavingWidget(ae)) {
+                stopSpin();
+                _checkValue(true);
+              }
+            }, 0);
           });
           elements.down.on("keydown.touchspin", function (ev) {
             var code = ev.keyCode || ev.which;
@@ -797,7 +815,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             if (!settings.mousewheel || !originalinput.is(":focus")) {
               return;
             }
-            var delta = ev.originalEvent.wheelDelta || -ev.originalEvent.deltaY || -ev.originalEvent.detail;
+            var oe = ev.originalEvent || {};
+            var delta = oe.wheelDelta || -oe.deltaY || -oe.detail;
             ev.stopPropagation();
             ev.preventDefault();
             if (delta < 0) {
@@ -863,13 +882,23 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               return value2.toFixed(settings.decimals);
           }
         }
-        function _checkValue() {
+        function _checkValue(mayTriggerChange) {
+          var _a, _b, _c;
           var val, parsedval, returnval;
+          var prevDisplay = String((_a = originalinput.val()) != null ? _a : "");
           val = settings.callback_before_calculation(originalinput.val());
           if (val === "") {
             if (settings.replacementval !== "") {
               originalinput.val(settings.replacementval);
-              originalinput.trigger("change");
+              _updateAriaAttributes();
+            } else {
+              originalinput.removeAttr("aria-valuenow");
+            }
+            if (mayTriggerChange) {
+              var nextDisplayEmpty = String((_b = originalinput.val()) != null ? _b : "");
+              if (nextDisplayEmpty !== prevDisplay) {
+                originalinput.trigger("change");
+              }
             }
             return;
           }
@@ -896,11 +925,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (settings.max !== null && parsedval > settings.max) {
             returnval = settings.max;
           }
-          if (parseFloat(parsedval).toString() !== parseFloat(returnval).toString()) {
-            originalinput.val(returnval);
+          var newValue = settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals));
+          var currentValue = originalinput.val();
+          if (currentValue !== newValue) {
+            originalinput.val(newValue);
           }
-          originalinput.val(settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals)));
           _updateAriaAttributes();
+          if (mayTriggerChange) {
+            var nextDisplay = String((_c = originalinput.val()) != null ? _c : "");
+            if (nextDisplay !== prevDisplay) {
+              originalinput.trigger("change");
+            }
+          }
         }
         function _syncNativeAttributes() {
           if (originalinput.attr("type") === "number") {
@@ -968,21 +1004,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           if (needsUpdate) {
             settings = $.extend({}, settings, newSettings);
-            if (newSettings.step !== void 0 && parseFloat(newSettings.step) !== 1) {
-              var align = function align(val, step, dir) {
-                if (val == null) return val;
-                var k = 1,
-                  s = step;
-                while (s * k % 1 !== 0 && k < 1e6) k *= 10;
-                var V = Math.round(val * k),
-                  S = Math.round(step * k);
-                if (S === 0) return val;
-                var r = V % S;
-                if (r === 0) return val;
-                return (dir === "down" ? V - r : V + (S - r)) / k;
-              };
-              settings.max = align(settings.max, settings.step, "down");
-              settings.min = align(settings.min, settings.step, "up");
+            if ((newSettings.step !== void 0 || newSettings.min !== void 0 || newSettings.max !== void 0) && parseFloat(settings.step) !== 1) {
+              settings.max = _alignToStep(settings.max, settings.step, "down");
+              settings.min = _alignToStep(settings.min, settings.step, "up");
             }
             _updateAriaAttributes();
             _checkValue();
@@ -1039,6 +1063,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             stopSpin();
           }
           elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+          _updateAriaAttributes();
           if (initvalue !== value) {
             originalinput.trigger("change");
           }
@@ -1063,6 +1088,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             stopSpin();
           }
           elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+          _updateAriaAttributes();
           if (initvalue !== value) {
             originalinput.trigger("change");
           }
