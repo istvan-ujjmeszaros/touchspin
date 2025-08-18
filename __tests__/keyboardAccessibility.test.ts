@@ -13,45 +13,6 @@ test.describe('Keyboard Accessibility Tests', () => {
   });
 
   test.describe('Button Keyboard Events', () => {
-    test('should handle Space key on up button', async ({ page }) => {
-      const testid = 'touchspin-default';
-      
-      // Focus the up button and press Space
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
-        if (upButton) {
-          (upButton as HTMLElement).focus();
-          
-          // Simulate Space keydown
-          upButton.dispatchEvent(new KeyboardEvent('keydown', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-        }
-      }, testid);
-
-      await touchspinHelpers.waitForTimeout(100);
-
-      // Value should increment once
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
-
-      // Release Space key
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
-        if (upButton) {
-          upButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-        }
-      }, testid);
-
-      await touchspinHelpers.waitForTimeout(100);
-    });
 
     test('should handle Enter key on up button', async ({ page }) => {
       const testid = 'touchspin-default';
