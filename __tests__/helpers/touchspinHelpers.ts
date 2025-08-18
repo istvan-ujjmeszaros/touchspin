@@ -216,11 +216,13 @@ async function changeEventCounter(page: Page): Promise<number> {
 }
 
 async function countChangeWithValue(page: Page, expectedValue: string): Promise<number> {
-  const expectedText = '#input_callbacks: change[' + expectedValue + ']';
-  return await page.evaluate((text) => {
-    return Array.from(document.querySelectorAll('#events_log'))
-      .filter(element => element.textContent!.includes(text)).length;
-  }, expectedText);
+  const expectedPattern = 'change[' + expectedValue + ']';
+  return await page.evaluate((pattern) => {
+    const eventsLog = document.getElementById('events_log');
+    if (!eventsLog) return 0;
+    const logContent = eventsLog.textContent || '';
+    return (logContent.match(new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+  }, expectedPattern);
 }
 
 async function getElementIdFromTestId(page: Page, testid: string): Promise<string> {

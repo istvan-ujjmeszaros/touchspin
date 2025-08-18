@@ -612,15 +612,18 @@
        * @private
        */
       function _updateAriaAttributes() {
-        var currentValue = parseFloat(originalinput.val()) || 0;
-        originalinput.attr('aria-valuenow', currentValue);
-        
-        // Set aria-valuetext to the display string so screen readers announce what users see
-        var displayText = String(originalinput.val() ?? '');
-        if (displayText) {
-          originalinput.attr('aria-valuetext', displayText);
-        } else {
+        var raw = String(originalinput.val() ?? '');
+        if (raw === '') {
+          originalinput.removeAttr('aria-valuenow');
           originalinput.removeAttr('aria-valuetext');
+        } else {
+          var n = parseFloat(raw);
+          if (!isNaN(n)) {
+            originalinput.attr('aria-valuenow', n);
+          } else {
+            originalinput.removeAttr('aria-valuenow');
+          }
+          originalinput.attr('aria-valuetext', raw);
         }
         
         // Update min/max if they've changed
@@ -719,7 +722,9 @@
         elements.down.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
 
-          if (code === 32 || code === 13) {
+          if (code === 9) { // Tab
+            suppressNextFocusout = true;
+          } else if (code === 32 || code === 13) {
             if (spinning !== 'down') {
               downOnce();
               startDownSpin();
@@ -739,7 +744,9 @@
         elements.up.on('keydown.touchspin', function (ev) {
           var code = ev.keyCode || ev.which;
 
-          if (code === 32 || code === 13) {
+          if (code === 9) { // Tab
+            suppressNextFocusout = true;
+          } else if (code === 32 || code === 13) {
             if (spinning !== 'up') {
               upOnce();
               startUpSpin();
@@ -994,10 +1001,6 @@
         }
 
         returnval = parsedval;
-
-        if (parsedval.toString() !== val) {
-          returnval = parsedval;
-        }
 
         returnval = _forcestepdivisibility(parsedval);
 
