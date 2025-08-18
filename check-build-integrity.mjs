@@ -4,7 +4,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 const distFolder = 'dist/';
-const tempDistFolder = 'dist-integrity/';
+const tempDistFolder = 'tmp-dist-integrity-check/';
 
 function calculateChecksum(folderPath) {
   const hasher = crypto.createHash('md5');

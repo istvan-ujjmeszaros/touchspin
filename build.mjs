@@ -87,9 +87,9 @@ async function buildAll() {
   // Use environment variable for output directory, default to 'dist'
   const outputDir = process.env.BUILD_OUTPUT_DIR || 'dist';
 
-  // Safety check: only allow 'dist', 'dist-integrity', or paths starting with 'tmp/'
-  if (outputDir !== 'dist' && outputDir !== 'dist-integrity' && !outputDir.startsWith('tmp/')) {
-    console.error(`❌ Invalid output directory: ${outputDir}. Only 'dist', 'dist-integrity', or 'tmp/*' paths are allowed.`);
+  // Safety check: only allow 'dist' or the specific integrity check folder
+  if (outputDir !== 'dist' && outputDir !== 'tmp-dist-integrity-check') {
+    console.error(`❌ Invalid output directory: ${outputDir}. Only 'dist' or 'tmp-dist-integrity-check' paths are allowed.`);
     process.exit(1);
   }
 
