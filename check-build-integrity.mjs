@@ -4,13 +4,16 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 const distFolder = 'dist/';
+const tempDistFolder = 'tmp/dist/';
 
 function calculateChecksum(folderPath) {
   const hasher = crypto.createHash('md5');
   
-  // Get all files in dist folder
+  // Get all files in folder
   const files = [];
   function getAllFiles(dirPath) {
+    if (!fs.existsSync(dirPath)) return;
+    
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
@@ -22,17 +25,15 @@ function calculateChecksum(folderPath) {
     }
   }
   
-  if (fs.existsSync(folderPath)) {
-    getAllFiles(folderPath);
-    files.sort(); // Ensure consistent order
-    
-    files.forEach(filePath => {
-      if (fs.lstatSync(filePath).isFile()) {
-        const content = fs.readFileSync(filePath);
-        hasher.update(content);
-      }
-    });
-  }
+  getAllFiles(folderPath);
+  files.sort(); // Ensure consistent order
+  
+  files.forEach(filePath => {
+    if (fs.lstatSync(filePath).isFile()) {
+      const content = fs.readFileSync(filePath);
+      hasher.update(content);
+    }
+  });
   
   return hasher.digest('hex');
 }
@@ -40,33 +41,48 @@ function calculateChecksum(folderPath) {
 function checkBuildIntegrity() {
   console.log('🔍 Checking build integrity...');
   
-  // Calculate initial checksum
-  const initialChecksum = calculateChecksum(distFolder);
-  console.log('Initial checksum:', initialChecksum);
-  
-  // Clean dist folder
-  if (fs.existsSync(distFolder)) {
-    fs.rmSync(distFolder, { recursive: true });
+  // Check if committed dist folder exists
+  if (!fs.existsSync(distFolder)) {
+    console.error('❌ Committed dist folder does not exist! Please run "npm run build" first.');
+    process.exit(1);
   }
   
-  // Rebuild
-  console.log('🔨 Rebuilding...');
+  // Calculate checksum of committed dist files
+  const committedChecksum = calculateChecksum(distFolder);
+  console.log('Committed dist checksum:', committedChecksum);
+  
+  // Clean temp dist folder
+  if (fs.existsSync(tempDistFolder)) {
+    fs.rmSync(tempDistFolder, { recursive: true });
+  }
+  
   try {
-    execSync('node build.mjs', { stdio: 'inherit' });
+    // Build fresh dist files into temp folder using environment variable
+    console.log(`🔨 Building fresh dist files into ${tempDistFolder} for comparison...`);
+    execSync('node build.mjs', { 
+      stdio: 'inherit',
+      env: { ...process.env, BUILD_OUTPUT_DIR: tempDistFolder.replace(/\/$/, '') }
+    });
+    
+    // Calculate checksum of freshly built files
+    const freshChecksum = calculateChecksum(tempDistFolder);
+    console.log('Fresh build checksum:', freshChecksum);
+    
+    if (committedChecksum !== freshChecksum) {
+      console.error('❌ Checksums do not match! The committed dist files are outdated.');
+      console.error('Please rebuild the dist files with "npm run build" and commit the changes.');
+      process.exit(1);
+    } else {
+      console.log('✅ Checksums match! The committed dist files are up-to-date.');
+    }
   } catch (error) {
     console.error('❌ Build failed:', error.message);
     process.exit(1);
-  }
-  
-  // Calculate final checksum
-  const finalChecksum = calculateChecksum(distFolder);
-  console.log('Final checksum:', finalChecksum);
-  
-  if (initialChecksum !== finalChecksum) {
-    console.error('❌ Checksums do not match! Please rebuild the dist files with "npm run build"');
-    process.exit(1);
-  } else {
-    console.log('✅ Checksums match! The dist folder is up-to-date.');
+  } finally {
+    // Clean up temp folder
+    if (fs.existsSync(tempDistFolder)) {
+      fs.rmSync(tempDistFolder, { recursive: true });
+    }
   }
 }
 

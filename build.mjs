@@ -16,7 +16,7 @@ const banner = `/*
  *  Under ${pkg.license} License
  */`;
 
-async function buildVersionSpecific(version) {
+async function buildVersionSpecific(version, outputDir) {
   const fileName = `jquery.bootstrap-touchspin-bs${version}.js`;
   
   console.log(`🔨 Building Bootstrap ${version} version...`);
@@ -73,7 +73,7 @@ async function buildVersionSpecific(version) {
           banner: banner + '\n' + rendererCode
         }
       },
-      outDir: 'dist',
+      outDir: outputDir,
       emptyOutDir: false,
       sourcemap: true,
       minify: false
@@ -84,16 +84,25 @@ async function buildVersionSpecific(version) {
 }
 
 async function buildAll() {
-  // Clean dist directory
-  if (fs.existsSync('./dist')) {
+  // Use environment variable for output directory, default to 'dist'
+  const outputDir = process.env.BUILD_OUTPUT_DIR || 'dist';
+  
+  // Safety check: only allow 'dist' or paths starting with 'tmp/'
+  if (outputDir !== 'dist' && !outputDir.startsWith('tmp/')) {
+    console.error(`❌ Invalid output directory: ${outputDir}. Only 'dist' or 'tmp/*' paths are allowed.`);
+    process.exit(1);
+  }
+  
+  // Clean output directory
+  if (fs.existsSync(`./${outputDir}`)) {
     try {
-      fs.rmSync('./dist', { recursive: true, force: true });
+      fs.rmSync(`./${outputDir}`, { recursive: true, force: true });
     } catch (e) {
-      console.warn('Could not clean dist directory, continuing...');
+      console.warn(`Could not clean ${outputDir} directory, continuing...`);
     }
   }
-  if (!fs.existsSync('./dist')) {
-    fs.mkdirSync('./dist', { recursive: true });
+  if (!fs.existsSync(`./${outputDir}`)) {
+    fs.mkdirSync(`./${outputDir}`, { recursive: true });
   }
 
   console.log('🔨 Building JavaScript variants...');
@@ -103,7 +112,7 @@ async function buildAll() {
   
   // Build Bootstrap-specific versions
   for (const version of [3, 4, 5]) {
-    const fileName = await buildVersionSpecific(version);
+    const fileName = await buildVersionSpecific(version, outputDir);
     builtFiles.push(fileName);
   }
   
@@ -114,7 +123,7 @@ async function buildAll() {
   // Process each built file
   const processedFiles = [];
   for (const fileName of builtFiles) {
-    const jsContent = fs.readFileSync(`./dist/${fileName}`, 'utf-8');
+    const jsContent = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
   
     // Remove Vite's banner temporarily
     const jsWithoutBanner = jsContent.replace(/^\/\*[\s\S]*?\*\/\n?/, '');
@@ -132,7 +141,7 @@ async function buildAll() {
     });
 
     const transpiledWithBanner = `${banner}\n${transpiled.code}`;
-    fs.writeFileSync(`./dist/${fileName}`, transpiledWithBanner);
+    fs.writeFileSync(`./${outputDir}/${fileName}`, transpiledWithBanner);
     processedFiles.push(fileName);
   }
 
@@ -140,7 +149,7 @@ async function buildAll() {
   
   // Minify each file
   for (const fileName of processedFiles) {
-    const content = fs.readFileSync(`./dist/${fileName}`, 'utf-8');
+    const content = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
     const baseName = fileName.replace('.js', '');
     
     const minified = await minify(content, {
@@ -156,9 +165,9 @@ async function buildAll() {
       }
     });
 
-    fs.writeFileSync(`./dist/${baseName}.min.js`, minified.code);
+    fs.writeFileSync(`./${outputDir}/${baseName}.min.js`, minified.code);
     if (minified.map) {
-      fs.writeFileSync(`./dist/${baseName}.min.js.map`, minified.map);
+      fs.writeFileSync(`./${outputDir}/${baseName}.min.js.map`, minified.map);
     }
   }
 
@@ -169,7 +178,7 @@ async function buildAll() {
   const cssWithBanner = `${banner}\n${cssContent}`;
   
   // Write unminified CSS
-  fs.writeFileSync('./dist/jquery.bootstrap-touchspin.css', cssWithBanner);
+  fs.writeFileSync(`./${outputDir}/jquery.bootstrap-touchspin.css`, cssWithBanner);
   
   // Minify CSS
   const cleanCSS = new CleanCSS({
@@ -178,7 +187,7 @@ async function buildAll() {
     }
   });
   const minifiedCSS = cleanCSS.minify(cssWithBanner);
-  fs.writeFileSync('./dist/jquery.bootstrap-touchspin.min.css', minifiedCSS.styles);
+  fs.writeFileSync(`./${outputDir}/jquery.bootstrap-touchspin.min.css`, minifiedCSS.styles);
 
   console.log('✅ Build completed successfully!');
   console.log('📦 Generated files:');
