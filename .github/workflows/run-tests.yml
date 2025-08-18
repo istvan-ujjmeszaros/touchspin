@@ -10,6 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Make Playwright use a stable cache location
+      PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
 
     steps:
       - name: Checkout code
@@ -21,16 +24,24 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+      - name: Install Playwright browsers (cached)
+        run: npx playwright install chromium
 
       - name: Check build integrity
         run: npm run check-build-integrity
 
-      - name: Run Playwright tests
+      - name: Run tests
         run: npm test
 
       - name: Upload test results
