@@ -18,19 +18,19 @@ const banner = `/*
 
 async function buildVersionSpecific(version, outputDir) {
   const fileName = `jquery.bootstrap-touchspin-bs${version}.js`;
-  
+
   console.log(`🔨 Building Bootstrap ${version} version...`);
-  
+
   // Include only specific renderer and dependencies
   const rendererFile = `Bootstrap${version}Renderer.js`;
   let rendererIncludes = '';
-  
+
   // Always include base renderer
   rendererIncludes += fs.readFileSync('./src/renderers/AbstractRenderer.js', 'utf-8') + '\n';
-  
+
   // Include the target renderer
   rendererIncludes += fs.readFileSync(`./src/renderers/${rendererFile}`, 'utf-8') + '\n';
-  
+
   const rendererCode = `
 // Bootstrap ${version} specific build - BEFORE main plugin
 (function() {
@@ -56,7 +56,7 @@ async function buildVersionSpecific(version, outputDir) {
 })();
 
 `;
-  
+
   // Build with version-specific renderer
   await build({
     build: {
@@ -79,20 +79,20 @@ async function buildVersionSpecific(version, outputDir) {
       minify: false
     }
   });
-  
+
   return fileName;
 }
 
 async function buildAll() {
   // Use environment variable for output directory, default to 'dist'
   const outputDir = process.env.BUILD_OUTPUT_DIR || 'dist';
-  
+
   // Safety check: only allow 'dist' or paths starting with 'tmp/'
   if (outputDir !== 'dist' && !outputDir.startsWith('tmp/')) {
     console.error(`❌ Invalid output directory: ${outputDir}. Only 'dist' or 'tmp/*' paths are allowed.`);
     process.exit(1);
   }
-  
+
   // Clean output directory
   if (fs.existsSync(`./${outputDir}`)) {
     try {
@@ -106,32 +106,32 @@ async function buildAll() {
   }
 
   console.log('🔨 Building JavaScript variants...');
-  
+
   // Build all variants
   const builtFiles = [];
-  
+
   // Build Bootstrap-specific versions
   for (const version of [3, 4, 5]) {
     const fileName = await buildVersionSpecific(version, outputDir);
     builtFiles.push(fileName);
   }
-  
+
   // Universal build removed - impossible to use multiple Bootstrap versions on same page
 
   console.log('🔄 Transpiling to ES5 with Babel...');
-  
+
   // Process each built file
   const processedFiles = [];
   for (const fileName of builtFiles) {
     const jsContent = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
-  
+
     // Remove Vite's banner temporarily
     const jsWithoutBanner = jsContent.replace(/^\/\*[\s\S]*?\*\/\n?/, '');
-    
+
     const transpiled = transformSync(jsWithoutBanner, {
-      presets: [['@babel/preset-env', { 
-        targets: { 
-          browsers: ['> 1%', 'last 2 versions', 'ie >= 9'] 
+      presets: [['@babel/preset-env', {
+        targets: {
+          browsers: ['> 1%', 'last 2 versions', 'ie >= 9']
         }
       }]],
       plugins: [
@@ -146,12 +146,12 @@ async function buildAll() {
   }
 
   console.log('🗜️ Minifying JavaScript...');
-  
+
   // Minify each file
   for (const fileName of processedFiles) {
     const content = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
     const baseName = fileName.replace('.js', '');
-    
+
     const minified = await minify(content, {
       format: {
         comments: (node, comment) => {
@@ -172,14 +172,14 @@ async function buildAll() {
   }
 
   console.log('🎨 Processing CSS...');
-  
+
   // Copy and process CSS
   const cssContent = fs.readFileSync('./src/jquery.bootstrap-touchspin.css', 'utf-8');
   const cssWithBanner = `${banner}\n${cssContent}`;
-  
+
   // Write unminified CSS
   fs.writeFileSync(`./${outputDir}/jquery.bootstrap-touchspin.css`, cssWithBanner);
-  
+
   // Minify CSS
   const cleanCSS = new CleanCSS({
     format: {

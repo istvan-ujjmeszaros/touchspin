@@ -11,7 +11,7 @@ if (typeof require !== 'undefined') {
   global.Bootstrap4Renderer = require('./Bootstrap4Renderer');
   global.Bootstrap5Renderer = require('./Bootstrap5Renderer');
   global.RendererFactory = require('./RendererFactory');
-  
+
   module.exports = {
     BootstrapRenderer: global.BootstrapRenderer,
     Bootstrap3Renderer: global.Bootstrap3Renderer,
@@ -22,7 +22,7 @@ if (typeof require !== 'undefined') {
 } else if (typeof window !== 'undefined') {
   // Browser environment - classes are already loaded via script tags
   // or will be loaded by the build system
-  
+
   if (typeof window.TouchSpinRenderers === 'undefined') {
     window.TouchSpinRenderers = {
       BootstrapRenderer: window.BootstrapRenderer,

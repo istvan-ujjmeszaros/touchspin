@@ -4,7 +4,7 @@
  * Bootstrap 5 simplified input group structure by removing prepend/append wrappers
  */
 class Bootstrap5Renderer extends AbstractRenderer {
-  
+
   getVersion() {
     return 5;
   }
@@ -16,16 +16,16 @@ class Bootstrap5Renderer extends AbstractRenderer {
       inputLarge: 'form-control-lg',
       formControlSmall: 'form-control-sm',
       formControlLarge: 'form-control-lg',
-      
+
       // Input group size classes
       inputGroupSmall: 'input-group-sm',
       inputGroupLarge: 'input-group-lg',
-      
+
       // Button wrapper classes - BS5 doesn't use these
       inputGroupBtn: '', // Removed in BS5
       inputGroupPrepend: '', // Removed in BS5
       inputGroupAppend: '', // Removed in BS5
-      
+
       // BS5 simplified structure - no prepend/append wrappers needed
       inputGroupAddon: '', // Not used in BS5
       inputGroupText: 'input-group-text' // Still used in BS5
@@ -34,7 +34,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
-    
+
     // Add testid to existing input-group wrapper
     const testidAttr = this.getWrapperTestId();
     if (testidAttr) {
@@ -51,7 +51,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const prefixhtml = `
       <span class="input-group-text bootstrap-touchspin-prefix bootstrap-touchspin-injected">${this.settings.prefix}</span>
     `;
-    
+
     const postfixhtml = `
       <span class="input-group-text bootstrap-touchspin-postfix bootstrap-touchspin-injected">${this.settings.postfix}</span>
     `;
@@ -65,7 +65,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       const downhtml = `
         <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down bootstrap-touchspin-injected" type="button">${this.settings.buttondown_txt}</button>
       `;
-      
+
       const uphtml = `
         <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up bootstrap-touchspin-injected" type="button">${this.settings.buttonup_txt}</button>
       `;

@@ -124,7 +124,7 @@
   /** @event touchspin.on.startdownspin */
   /** @event touchspin.on.stopupspin */
   /** @event touchspin.on.stopdownspin */
-  
+
 
   /**
    * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners.
@@ -145,7 +145,7 @@
    * @example
    * // Basic usage
    * $('#myinput').TouchSpin();
-   * 
+   *
    * @example
    * // With configuration
    * $('#myinput').TouchSpin({
@@ -155,7 +155,7 @@
    *   prefix: '$',
    *   postfix: '.00'
    * });
-   * 
+   *
    * @example
    * // Event handling
    * $('#myinput').on('touchspin.on.min', function() {
@@ -338,7 +338,7 @@
        * Aligns a value to step boundaries using integer arithmetic to avoid float issues.
        * @private
        * @param {number|null} val - Value to align
-       * @param {number} step - Step size 
+       * @param {number} step - Step size
        * @param {string} dir - Direction: 'up' or 'down'
        * @returns {number|null} Aligned value
        */
@@ -364,7 +364,7 @@
         // Normalize step (guard against "any", 0, negatives, NaN)
         var stepNum = Number(settings.step);
         if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
-        
+
         // Normalize min/max to numbers for consistency (null/undefined preserved)
         if (settings.min != null) {
           var minNum = Number(settings.min);
@@ -374,11 +374,11 @@
           var maxNum = Number(settings.max);
           settings.max = isFinite(maxNum) ? maxNum : null;
         }
-        
+
         // Normalize decimals (ensure non-negative integer)
         var dec = parseInt(String(settings.decimals), 10);
         settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
-        
+
         // Normalize timing and boost options
         settings.stepinterval = Math.max(0, parseInt(String(settings.stepinterval), 10) || 0);
         settings.stepintervaldelay = Math.max(0, parseInt(String(settings.stepintervaldelay), 10) || 0);
@@ -441,13 +441,13 @@
         const rf = /** @type {any} */ (typeof globalThis !== 'undefined' ? globalThis : {});
         /** @type {RendererFactoryType|undefined} */
         const factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function' ? rf.RendererFactory : undefined;
-        
+
         if (!factory || !factory.createRenderer) {
           throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
         }
 
         renderer = factory.createRenderer($, settings, originalinput);
-        
+
         if (!renderer) {
           throw new Error('Bootstrap TouchSpin: Failed to create renderer');
         }
@@ -580,7 +580,7 @@
         if (!originalinput.attr('role')) {
           originalinput.attr('role', 'spinbutton');
         }
-        
+
         // Set aria-valuemin and aria-valuemax if they exist
         if (settings.min !== null && settings.min !== undefined) {
           originalinput.attr('aria-valuemin', settings.min);
@@ -588,7 +588,7 @@
         if (settings.max !== null && settings.max !== undefined) {
           originalinput.attr('aria-valuemax', settings.max);
         }
-        
+
         // Set current value (don't force 0 on empty input)
         var rawInit = originalinput.val();
         var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
@@ -597,7 +597,7 @@
         } else {
           originalinput.removeAttr('aria-valuenow');
         }
-        
+
         // Add descriptive labels to buttons for screen readers
         if (elements && elements.up && elements.down) {
           elements.up.attr('aria-label', 'Increase value');
@@ -623,7 +623,7 @@
           }
           originalinput.attr('aria-valuetext', raw);
         }
-        
+
         // Update min/max if they've changed
         if (settings.min !== null && settings.min !== undefined) {
           originalinput.attr('aria-valuemin', settings.min);
@@ -953,7 +953,7 @@
       function _checkValue(mayTriggerChange) {
         var val, parsedval, returnval;
         var prevDisplay = String(originalinput.val() ?? '');
-        
+
         val = settings.callback_before_calculation(originalinput.val());
 
         if (val === '') {
@@ -1002,11 +1002,11 @@
 
         var newValue = settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals));
         var currentValue = originalinput.val();
-        
+
         if (currentValue !== newValue) {
           originalinput.val(newValue);
         }
-        
+
         // Update ARIA attributes after value changes
         _updateAriaAttributes();
 
@@ -1030,13 +1030,13 @@
           } else {
             originalinput.removeAttr('min');
           }
-          
+
           if (settings.max !== null && settings.max !== undefined) {
             originalinput.attr('max', settings.max);
           } else {
             originalinput.removeAttr('max');
           }
-          
+
           if (settings.step !== null && settings.step !== undefined) {
             originalinput.attr('step', settings.step);
           } else {
@@ -1074,7 +1074,7 @@
           newSettings.min = null;
           needsUpdate = true;
         }
-        
+
         // Check max attribute
         if (nativeMax != null) {
           var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
@@ -1092,7 +1092,7 @@
           newSettings.max = null;
           needsUpdate = true;
         }
-        
+
         // Check step attribute
         if (nativeStep != null) {
           var parsedStep = (nativeStep === '' || nativeStep === 'any') ? 1 : parseFloat(nativeStep);
@@ -1110,7 +1110,7 @@
         if (needsUpdate) {
           // Update settings without triggering another sync to avoid infinite loop
           settings = $.extend({}, settings, newSettings);
-          
+
           // Re-process step divisibility rules if step, min, or max changed
           if (
             (newSettings.step !== undefined ||
@@ -1121,7 +1121,7 @@
             settings.max = _alignToStep(settings.max, settings.step, 'down');
             settings.min = _alignToStep(settings.min, settings.step, 'up');
           }
-          
+
           // Update ARIA attributes when min/max settings change
           _updateAriaAttributes();
           _checkValue(true);

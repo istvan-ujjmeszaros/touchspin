@@ -3,7 +3,7 @@
  * Handles HTML generation for Bootstrap 3 specific classes and structure
  */
 class Bootstrap3Renderer extends AbstractRenderer {
-  
+
   getVersion() {
     return 3;
   }
@@ -15,15 +15,15 @@ class Bootstrap3Renderer extends AbstractRenderer {
       inputLarge: 'input-lg',
       formControlSmall: 'form-control-sm', // Not used in BS3, but kept for compatibility
       formControlLarge: 'form-control-lg', // Not used in BS3, but kept for compatibility
-      
+
       // Input group size classes
       inputGroupSmall: 'input-group-sm',
       inputGroupLarge: 'input-group-lg',
-      
+
       // Button wrapper classes
       inputGroupBtn: 'input-group-btn',
       inputGroupAddon: 'input-group-addon',
-      
+
       // No prepend/append classes in BS3
       inputGroupPrepend: '',
       inputGroupAppend: '',
@@ -44,7 +44,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
-    
+
     // Add testid to existing input-group wrapper
     const testidAttr = this.getWrapperTestId();
     if (testidAttr) {
@@ -64,7 +64,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
         ${this.settings.prefix}
       </span>
     `;
-    
+
     const postfixhtml = `
       <span class="input-group-addon bootstrap-touchspin-postfix bootstrap-touchspin-injected">
         ${this.settings.postfix}

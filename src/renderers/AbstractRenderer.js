@@ -33,7 +33,7 @@ class AbstractRenderer {
    */
   detectInputGroupSize() {
     const classes = this.getClasses();
-    
+
     if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
       return classes.inputGroupSmall;
     } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {
@@ -72,11 +72,11 @@ class AbstractRenderer {
    */
   initElements(container) {
     this.container = container;
-    
+
     // Look for elements within container first
     let downButtons = this.$('.bootstrap-touchspin-down', container);
     let upButtons = this.$('.bootstrap-touchspin-up', container);
-    
+
     // If not found in container, look for vertical buttons as siblings of the input
     if (downButtons.length === 0 || upButtons.length === 0) {
       const verticalContainer = this.$('.bootstrap-touchspin-vertical-button-wrapper', container.parent());
@@ -85,7 +85,7 @@ class AbstractRenderer {
         upButtons = this.$('.bootstrap-touchspin-up', verticalContainer);
       }
     }
-    
+
     this.elements = {
       down: downButtons,
       up: upButtons,
@@ -102,7 +102,7 @@ class AbstractRenderer {
    */
   hideEmptyPrefixPostfix() {
     const detached = {};
-    
+
     if (this.settings.prefix === '') {
       detached._detached_prefix = this.elements.prefix.detach();
     }
@@ -145,7 +145,7 @@ class AbstractRenderer {
    */
   applySizeClasses() {
     const classes = this.getClasses();
-    
+
     if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
       this.container.addClass(classes.inputGroupSmall);
     } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {

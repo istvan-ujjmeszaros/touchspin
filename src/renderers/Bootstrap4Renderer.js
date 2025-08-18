@@ -3,7 +3,7 @@
  * Handles HTML generation for Bootstrap 4 specific classes and structure
  */
 class Bootstrap4Renderer extends AbstractRenderer {
-  
+
   getVersion() {
     return 4;
   }
@@ -15,16 +15,16 @@ class Bootstrap4Renderer extends AbstractRenderer {
       inputLarge: 'input-lg', // Legacy BS3 class, still supported
       formControlSmall: 'form-control-sm', // BS4 class
       formControlLarge: 'form-control-lg', // BS4 class
-      
+
       // Input group size classes
       inputGroupSmall: 'input-group-sm',
       inputGroupLarge: 'input-group-lg',
-      
+
       // Button wrapper classes - BS4 uses input-group-prepend/append
       inputGroupBtn: 'input-group-btn', // Legacy, still works
       inputGroupPrepend: 'input-group-prepend',
       inputGroupAppend: 'input-group-append',
-      
+
       // BS4 addon classes
       inputGroupAddon: 'input-group-addon', // Deprecated in BS4, but still supported
       inputGroupText: 'input-group-text' // New BS4 class
@@ -44,7 +44,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
-    
+
     // Add testid to existing input-group wrapper
     const testidAttr = this.getWrapperTestId();
     if (testidAttr) {
@@ -64,7 +64,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
         <span class="input-group-text">${this.settings.prefix}</span>
       </div>
     `;
-    
+
     const postfixhtml = `
       <div class="input-group-append bootstrap-touchspin-postfix bootstrap-touchspin-injected">
         <span class="input-group-text">${this.settings.postfix}</span>
