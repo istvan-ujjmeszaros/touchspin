@@ -60,11 +60,11 @@ function checkBuildIntegrity() {
   }
 
   try {
-    // Build fresh dist files into temp folder using environment variable
+    // Build fresh dist files into temp folder using integrity check mode
     console.log(`🔨 Building fresh dist files into ${tempDistFolder} for comparison...`);
     execSync('node build.mjs', {
       stdio: 'inherit',
-      env: { ...process.env, BUILD_OUTPUT_DIR: tempDistFolder.replace(/\/$/, '') }
+      env: { ...process.env, BUILD_INTEGRITY_CHECK: 'true' }
     });
 
     // Calculate checksum of freshly built files

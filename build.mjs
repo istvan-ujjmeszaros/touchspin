@@ -84,13 +84,12 @@ async function buildVersionSpecific(version, outputDir) {
 }
 
 async function buildAll() {
-  // Use environment variable for output directory, default to 'dist'
-  const outputDir = process.env.BUILD_OUTPUT_DIR || 'dist';
+  // Determine build mode and output directory
+  const isIntegrityCheck = process.env.BUILD_INTEGRITY_CHECK === 'true';
+  const outputDir = isIntegrityCheck ? 'tmp-dist-integrity-check' : 'dist';
 
-  // Safety check: only allow 'dist' or the specific integrity check folder
-  if (outputDir !== 'dist' && outputDir !== 'tmp-dist-integrity-check') {
-    console.error(`❌ Invalid output directory: ${outputDir}. Only 'dist' or 'tmp-dist-integrity-check' paths are allowed.`);
-    process.exit(1);
+  if (isIntegrityCheck) {
+    console.log('🔍 Running integrity check build...');
   }
 
   // Clean output directory
