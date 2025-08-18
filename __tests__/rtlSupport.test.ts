@@ -95,7 +95,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const htmlDir = await page.locator('html').first().evaluate(el => el.getAttribute('dir'));
       expect(htmlDir).toBe('rtl');
 
-      const rtlCSS = page.locator('link[href*="bootstrap.rtl.min.css"]').first();
+      const rtlCSS = page.locator('link[href*="bootstrap-5.3.2.rtl.min.css"]').first();
       await expect(rtlCSS).toBeAttached();
 
       // Test functionality

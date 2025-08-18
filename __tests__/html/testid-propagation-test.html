@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <title>TestID Propagation Test</title>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
   
   <!-- BOOTSTRAP 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
 
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
   <!-- Load source renderer files -->
   <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+  <script src="../../src/renderers/Bootstrap5Renderer.js"></script>
   
-  <!-- Create Bootstrap 4 RendererFactory -->
+  <!-- Create Bootstrap 5 RendererFactory -->
   <script>
     window.RendererFactory = class {
       static createRenderer($, settings, originalinput) {
-        return new Bootstrap4Renderer($, settings, originalinput);
+        return new Bootstrap5Renderer($, settings, originalinput);
       }
       
       static getVersion() {
-        return 4;
+        return 5;
       }
     };
   </script>
