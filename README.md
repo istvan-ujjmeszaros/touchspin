@@ -24,8 +24,9 @@ TouchSpin is a mobile-first jQuery plugin that transforms number inputs into spi
 - **Customizable** - Multiple configuration options
 - **Decimal Precision** - Support for floating-point numbers
 - **Booster Mode** - Accelerated value changes for large ranges
-- **Event System** - Programmatic event handling
+- **Event System** - Programmatic event handling with blur-based sanitization
 - **Vertical Layout** - Alternative button arrangement
+- **ARIA Support** - Automatic accessibility attributes for screen readers
 
 ---
 
@@ -257,6 +258,24 @@ $('#spinner').on('touchspin.on.stopspin', function() {
 - `touchspin.on.stopupspin` - Stopped spinning up
 - `touchspin.on.stopdownspin` - Stopped spinning down
 
+### Change Events & Value Sanitization
+
+TouchSpin fires the standard `change` event when values are committed. Value sanitization (step enforcement, min/max clamping) occurs automatically when focus leaves the input:
+
+```javascript
+$('#spinner').on('change', function() {
+  console.log('Value changed to:', $(this).val());
+});
+```
+
+**Sanitization Triggers:**
+- **Focus Loss**: Tab key, clicking outside the input, blur events
+- **Enter Key**: Pressing Enter commits and sanitizes the current value  
+- **Button Clicks**: Up/down buttons automatically commit changes
+- **Programmatic Updates**: `touchspin.updatesettings` and mutation observer changes
+
+**Important**: Only **one** `change` event fires per value commitment, and only when the final sanitized value actually differs from the previous committed value.
+
 ---
 
 ## Bootstrap Version Support
@@ -307,32 +326,40 @@ TouchSpin provides separate builds for each Bootstrap version:
 
 ## Accessibility Considerations
 
-TouchSpin uses standard HTML elements but **does not currently implement ARIA attributes**. For improved accessibility, consider:
+TouchSpin automatically implements ARIA attributes for enhanced screen reader support:
 
-### Manual ARIA Implementation
+### Automatic ARIA Implementation
+- **Role Attribution**: Inputs automatically receive `role="spinbutton"`
+- **Value Attributes**: `aria-valuenow`, `aria-valuemin`, `aria-valuemax` automatically maintained
+- **Button Labels**: Up/down buttons get descriptive `aria-label` attributes
+- **Dynamic Updates**: ARIA attributes update automatically when values or settings change
+
 ```html
-<!-- You can manually add ARIA attributes -->
+<!-- TouchSpin automatically adds these attributes -->
 <input type="number" 
        id="spinner"
-       aria-label="Quantity" 
-       aria-describedby="quantity-help"
-       role="spinbutton" 
+       role="spinbutton"
        aria-valuenow="5"
        aria-valuemin="1" 
        aria-valuemax="100">
-<div id="quantity-help" class="sr-only">Use arrow keys or buttons to change value</div>
 ```
 
-### Current Accessibility Status
-- Uses semantic `<input type="number">` and `<button>` elements
-- Relies on browser's native accessibility support
-- May require additional ARIA attributes for optimal screen reader support
-- Limited keyboard support: Up/Down arrow keys work on number inputs, Space/Enter on TouchSpin buttons
+### Accessibility Features
+- **Semantic Elements**: Uses proper `<input type="number">` and `<button>` elements
+- **Keyboard Navigation**: Full keyboard support with Up/Down arrows, Tab, Enter, Space
+- **Screen Reader Support**: Values and changes properly announced to assistive technologies
+- **Focus Management**: Proper focus handling with blur-based value sanitization
 
-### Accessibility Recommendations
-- Add ARIA labels and descriptions manually
-- Consider implementing `aria-valuenow`, `aria-valuemin`, `aria-valuemax` attributes
-- Test with screen readers to ensure proper announcement of value changes
+### Additional Customization
+For specialized accessibility needs, you can add additional attributes:
+
+```html
+<input type="number" 
+       id="spinner"
+       aria-label="Quantity selector"
+       aria-describedby="quantity-help">
+<div id="quantity-help" class="sr-only">Use arrow keys, buttons, or type to change value</div>
+```
 
 ---
 

@@ -65,6 +65,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Blur Handling**: Stops spinning timers when input loses focus to prevent runaway spinning
 - **Step Validation**: Handles `step="any"`, zero, and negative step values gracefully
 
+#### Blur-Based Sanitization
+- **Universal Focus Loss Handling**: Sanitization now triggers on ANY focus loss (Tab, click away, blur) instead of Enter key only
+- **Unified Change Events**: Eliminated duplicate change event firing through single focusout handler
+- **Consistent Behavior**: One change event per value commitment when sanitized value actually differs
+- **Removed Tab Suppression**: Simplified architecture by removing complex Tab key suppression logic
+
 #### Type Safety & Validation
 - **Min/Max Normalization**: Consistent number type conversion throughout plugin lifecycle
 - **Configuration Validation**: Robust validation of all numeric settings with safe fallbacks
@@ -140,8 +146,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🏆 Quality Metrics
 
-- **94 Tests**: 100% pass rate across all functionality
-- **73.47% Code Coverage**: Line-by-line coverage of source files
+- **104 Tests**: 99% pass rate (103 passing, 1 flaky) across all functionality
+- **Enhanced Change Event Testing**: Comprehensive blur-based sanitization test coverage
 - **4 Source Files Tracked**: Main plugin + all renderer classes
 - **Zero Runtime Errors**: Comprehensive edge case handling
 - **ES5 Compatible Output**: Works in IE9+ and all modern browsers
