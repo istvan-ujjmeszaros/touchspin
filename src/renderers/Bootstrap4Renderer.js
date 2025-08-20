@@ -4,31 +4,34 @@
  */
 class Bootstrap4Renderer extends AbstractRenderer {
 
-  getVersion() {
-    return 4;
+  getFrameworkId() {
+    return 'bootstrap4';
   }
 
-  getClasses() {
-    return {
-      // Input size classes
-      inputSmall: 'input-sm', // Legacy BS3 class, still supported
-      inputLarge: 'input-lg', // Legacy BS3 class, still supported
-      formControlSmall: 'form-control-sm', // BS4 class
-      formControlLarge: 'form-control-lg', // BS4 class
+  /**
+   * Detect input group size from original input classes (Bootstrap 4 specific)
+   * @private
+   * @returns {string} Size class for input group
+   */
+  _detectInputGroupSize() {
+    if (this.originalinput.hasClass('input-sm') || this.originalinput.hasClass('form-control-sm')) {
+      return 'input-group-sm';
+    } else if (this.originalinput.hasClass('input-lg') || this.originalinput.hasClass('form-control-lg')) {
+      return 'input-group-lg';
+    }
+    return '';
+  }
 
-      // Input group size classes
-      inputGroupSmall: 'input-group-sm',
-      inputGroupLarge: 'input-group-lg',
-
-      // Button wrapper classes - BS4 uses input-group-prepend/append
-      inputGroupBtn: 'input-group-btn', // Legacy, still works
-      inputGroupPrepend: 'input-group-prepend',
-      inputGroupAppend: 'input-group-append',
-
-      // BS4 addon classes
-      inputGroupAddon: 'input-group-addon', // Deprecated in BS4, but still supported
-      inputGroupText: 'input-group-text' // New BS4 class
-    };
+  /**
+   * Apply size classes to container based on input classes (Bootstrap 4 specific)
+   * @private
+   */
+  _applySizeClasses() {
+    if (this.originalinput.hasClass('input-sm') || this.originalinput.hasClass('form-control-sm')) {
+      this.container.addClass('input-group-sm');
+    } else if (this.originalinput.hasClass('input-lg') || this.originalinput.hasClass('form-control-lg')) {
+      this.container.addClass('input-group-lg');
+    }
   }
 
   buildVerticalButtons() {
@@ -56,7 +59,6 @@ class Bootstrap4Renderer extends AbstractRenderer {
 
     const prev = this.originalinput.prev();
     const next = this.originalinput.next();
-    const classes = this.getClasses();
 
     // Prefix and postfix HTML for BS4 using input-group-text
     const prefixhtml = `
@@ -75,7 +77,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       this.$(this.buildVerticalButtons()).insertAfter(this.originalinput);
     } else {
       // Handle down button - BS4 prefers input-group-prepend
-      if (prev.hasClass(classes.inputGroupBtn) || prev.hasClass(classes.inputGroupPrepend)) {
+      if (prev.hasClass('input-group-btn') || prev.hasClass('input-group-prepend')) {
         const downhtml = `
           <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down bootstrap-touchspin-injected" type="button">${this.settings.buttondown_txt}</button>
         `;
@@ -90,7 +92,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       }
 
       // Handle up button - BS4 prefers input-group-append
-      if (next.hasClass(classes.inputGroupBtn) || next.hasClass(classes.inputGroupAppend)) {
+      if (next.hasClass('input-group-btn') || next.hasClass('input-group-append')) {
         const uphtml = `
           <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up bootstrap-touchspin-injected" type="button">${this.settings.buttonup_txt}</button>
         `;
@@ -114,7 +116,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const inputGroupSize = this.detectInputGroupSize();
+    const inputGroupSize = this._detectInputGroupSize();
     const testidAttr = this.getWrapperTestId();
     let html;
 
@@ -155,7 +157,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.$('.bootstrap-touchspin-prefix', this.container).after(this.originalinput);
 
     // Apply size classes
-    this.applySizeClasses();
+    this._applySizeClasses();
 
     return this.container;
   }

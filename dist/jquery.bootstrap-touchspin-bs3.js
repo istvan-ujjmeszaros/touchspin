@@ -34,37 +34,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.elements = null;
     }
     /**
-     * Get Bootstrap version this renderer supports
-     * @returns {number} Bootstrap major version (3, 4, 5, etc.)
+     * Get framework identifier this renderer supports
+     * @returns {string} Framework identifier (e.g., "bootstrap3", "bootstrap4", "bootstrap5", "tailwind")
      */
     return _createClass(AbstractRenderer, [{
-      key: "getVersion",
-      value: function getVersion() {
-        throw new Error("getVersion() must be implemented by subclasses");
-      }
-      /**
-       * Get version-specific CSS classes
-       * @returns {object} Object containing CSS class mappings
-       */
-    }, {
-      key: "getClasses",
-      value: function getClasses() {
-        throw new Error("getClasses() must be implemented by subclasses");
-      }
-      /**
-       * Detect input group size from original input classes
-       * @returns {string} Size class for input group
-       */
-    }, {
-      key: "detectInputGroupSize",
-      value: function detectInputGroupSize() {
-        var classes = this.getClasses();
-        if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
-          return classes.inputGroupSmall;
-        } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {
-          return classes.inputGroupLarge;
-        }
-        return "";
+      key: "getFrameworkId",
+      value: function getFrameworkId() {
+        throw new Error("getFrameworkId() must be implemented by subclasses");
       }
       /**
        * Build HTML structure when parent already has input-group class
@@ -136,39 +112,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return detached;
       }
       /**
-       * Update prefix/postfix content
+       * Update prefix/postfix content - to be implemented by subclasses
        * @param {object} newsettings New settings object
+       * @param {object} detached Detached elements object
        */
     }, {
       key: "updatePrefixPostfix",
       value: function updatePrefixPostfix(newsettings, detached) {
-        if (newsettings.postfix) {
-          var $postfix = this.originalinput.parent().find(".bootstrap-touchspin-postfix");
-          if ($postfix.length === 0 && detached._detached_postfix) {
-            detached._detached_postfix.insertAfter(this.originalinput);
-          }
-          this.originalinput.parent().find(".bootstrap-touchspin-postfix .input-group-text").text(newsettings.postfix);
-        }
-        if (newsettings.prefix) {
-          var $prefix = this.originalinput.parent().find(".bootstrap-touchspin-prefix");
-          if ($prefix.length === 0 && detached._detached_prefix) {
-            detached._detached_prefix.insertBefore(this.originalinput);
-          }
-          this.originalinput.parent().find(".bootstrap-touchspin-prefix .input-group-text").text(newsettings.prefix);
-        }
-      }
-      /**
-       * Apply size classes to container based on input classes
-       */
-    }, {
-      key: "applySizeClasses",
-      value: function applySizeClasses() {
-        var classes = this.getClasses();
-        if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
-          this.container.addClass(classes.inputGroupSmall);
-        } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {
-          this.container.addClass(classes.inputGroupLarge);
-        }
+        throw new Error("updatePrefixPostfix() must be implemented by subclasses");
       }
       /**
        * Get wrapper testid attribute based on input's data-testid
@@ -198,33 +149,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }
     _inherits(Bootstrap3Renderer, _AbstractRenderer);
     return _createClass(Bootstrap3Renderer, [{
-      key: "getVersion",
-      value: function getVersion() {
-        return 3;
+      key: "getFrameworkId",
+      value: function getFrameworkId() {
+        return "bootstrap3";
       }
+      /**
+       * Detect input group size from original input classes (Bootstrap 3 specific)
+       * @private
+       * @returns {string} Size class for input group
+       */
     }, {
-      key: "getClasses",
-      value: function getClasses() {
-        return {
-          // Input size classes
-          inputSmall: "input-sm",
-          inputLarge: "input-lg",
-          formControlSmall: "form-control-sm",
-          // Not used in BS3, but kept for compatibility
-          formControlLarge: "form-control-lg",
-          // Not used in BS3, but kept for compatibility
-          // Input group size classes
-          inputGroupSmall: "input-group-sm",
-          inputGroupLarge: "input-group-lg",
-          // Button wrapper classes
-          inputGroupBtn: "input-group-btn",
-          inputGroupAddon: "input-group-addon",
-          // No prepend/append classes in BS3
-          inputGroupPrepend: "",
-          inputGroupAppend: "",
-          inputGroupText: ""
-          // No input-group-text in BS3
-        };
+      key: "_detectInputGroupSize",
+      value: function _detectInputGroupSize() {
+        if (this.originalinput.hasClass("input-sm")) {
+          return "input-group-sm";
+        } else if (this.originalinput.hasClass("input-lg")) {
+          return "input-group-lg";
+        }
+        return "";
+      }
+      /**
+       * Apply size classes to container based on input classes (Bootstrap 3 specific)
+       * @private
+       */
+    }, {
+      key: "_applySizeClasses",
+      value: function _applySizeClasses() {
+        if (this.originalinput.hasClass("input-sm")) {
+          this.container.addClass("input-group-sm");
+        } else if (this.originalinput.hasClass("input-lg")) {
+          this.container.addClass("input-group-lg");
+        }
       }
     }, {
       key: "buildVerticalButtons",
@@ -244,20 +199,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         var prev = this.originalinput.prev();
         var next = this.originalinput.next();
-        var classes = this.getClasses();
         var prefixhtml = "\n      <span class=\"input-group-addon bootstrap-touchspin-prefix bootstrap-touchspin-injected\">\n        ".concat(this.settings.prefix, "\n      </span>\n    ");
         var postfixhtml = "\n      <span class=\"input-group-addon bootstrap-touchspin-postfix bootstrap-touchspin-injected\">\n        ".concat(this.settings.postfix, "\n      </span>\n    ");
         if (this.settings.verticalbuttons) {
           this.$(this.buildVerticalButtons()).insertAfter(this.originalinput);
         } else {
-          if (prev.hasClass(classes.inputGroupBtn)) {
+          if (prev.hasClass("input-group-btn")) {
             var downhtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down bootstrap-touchspin-injected\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n        ");
             prev.append(downhtml);
           } else {
             var _downhtml = "\n          <span class=\"input-group-btn bootstrap-touchspin-injected\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          </span>\n        ");
             this.$(_downhtml).insertBefore(this.originalinput);
           }
-          if (next.hasClass(classes.inputGroupBtn)) {
+          if (next.hasClass("input-group-btn")) {
             var uphtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up bootstrap-touchspin-injected\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        ");
             next.prepend(uphtml);
           } else {
@@ -273,7 +227,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "buildInputGroup",
       value: function buildInputGroup() {
-        var inputGroupSize = this.detectInputGroupSize();
+        var inputGroupSize = this._detectInputGroupSize();
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
@@ -283,7 +237,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         this.container = this.$(html).insertBefore(this.originalinput);
         this.$(".bootstrap-touchspin-prefix", this.container).after(this.originalinput);
-        this.applySizeClasses();
+        this._applySizeClasses();
         return this.container;
       }
     }, {
@@ -321,9 +275,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return new Bootstrap3Renderer($, settings, originalinput);
       }
     }, {
-      key: "getVersion",
-      value: function getVersion() {
-        return 3;
+      key: "getFrameworkId",
+      value: function getFrameworkId() {
+        return "bootstrap3";
       }
     }]);
   }();

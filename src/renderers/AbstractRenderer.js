@@ -12,35 +12,13 @@ class AbstractRenderer {
   }
 
   /**
-   * Get Bootstrap version this renderer supports
-   * @returns {number} Bootstrap major version (3, 4, 5, etc.)
+   * Get framework identifier this renderer supports
+   * @returns {string} Framework identifier (e.g., "bootstrap3", "bootstrap4", "bootstrap5", "tailwind")
    */
-  getVersion() {
-    throw new Error('getVersion() must be implemented by subclasses');
+  getFrameworkId() {
+    throw new Error('getFrameworkId() must be implemented by subclasses');
   }
 
-  /**
-   * Get version-specific CSS classes
-   * @returns {object} Object containing CSS class mappings
-   */
-  getClasses() {
-    throw new Error('getClasses() must be implemented by subclasses');
-  }
-
-  /**
-   * Detect input group size from original input classes
-   * @returns {string} Size class for input group
-   */
-  detectInputGroupSize() {
-    const classes = this.getClasses();
-
-    if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
-      return classes.inputGroupSmall;
-    } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {
-      return classes.inputGroupLarge;
-    }
-    return '';
-  }
 
   /**
    * Build HTML structure when parent already has input-group class
@@ -115,43 +93,14 @@ class AbstractRenderer {
   }
 
   /**
-   * Update prefix/postfix content
+   * Update prefix/postfix content - to be implemented by subclasses
    * @param {object} newsettings New settings object
+   * @param {object} detached Detached elements object
    */
   updatePrefixPostfix(newsettings, detached) {
-    if (newsettings.postfix) {
-      const $postfix = this.originalinput.parent().find('.bootstrap-touchspin-postfix');
-
-      if ($postfix.length === 0 && detached._detached_postfix) {
-        detached._detached_postfix.insertAfter(this.originalinput);
-      }
-
-      this.originalinput.parent().find('.bootstrap-touchspin-postfix .input-group-text').text(newsettings.postfix);
-    }
-
-    if (newsettings.prefix) {
-      const $prefix = this.originalinput.parent().find('.bootstrap-touchspin-prefix');
-
-      if ($prefix.length === 0 && detached._detached_prefix) {
-        detached._detached_prefix.insertBefore(this.originalinput);
-      }
-
-      this.originalinput.parent().find('.bootstrap-touchspin-prefix .input-group-text').text(newsettings.prefix);
-    }
+    throw new Error('updatePrefixPostfix() must be implemented by subclasses');
   }
 
-  /**
-   * Apply size classes to container based on input classes
-   */
-  applySizeClasses() {
-    const classes = this.getClasses();
-
-    if (this.originalinput.hasClass(classes.inputSmall) || this.originalinput.hasClass(classes.formControlSmall)) {
-      this.container.addClass(classes.inputGroupSmall);
-    } else if (this.originalinput.hasClass(classes.inputLarge) || this.originalinput.hasClass(classes.formControlLarge)) {
-      this.container.addClass(classes.inputGroupLarge);
-    }
-  }
 
   /**
    * Get wrapper testid attribute based on input's data-testid

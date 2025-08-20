@@ -5,31 +5,34 @@
  */
 class Bootstrap5Renderer extends AbstractRenderer {
 
-  getVersion() {
-    return 5;
+  getFrameworkId() {
+    return 'bootstrap5';
   }
 
-  getClasses() {
-    return {
-      // Input size classes - BS5 removed .input-sm/.input-lg legacy classes
-      inputSmall: 'form-control-sm', // Only BS4+ form-control-* classes
-      inputLarge: 'form-control-lg',
-      formControlSmall: 'form-control-sm',
-      formControlLarge: 'form-control-lg',
+  /**
+   * Detect input group size from original input classes (Bootstrap 5 specific)
+   * @private
+   * @returns {string} Size class for input group
+   */
+  _detectInputGroupSize() {
+    if (this.originalinput.hasClass('form-control-sm')) {
+      return 'input-group-sm';
+    } else if (this.originalinput.hasClass('form-control-lg')) {
+      return 'input-group-lg';
+    }
+    return '';
+  }
 
-      // Input group size classes
-      inputGroupSmall: 'input-group-sm',
-      inputGroupLarge: 'input-group-lg',
-
-      // Button wrapper classes - BS5 doesn't use these
-      inputGroupBtn: '', // Removed in BS5
-      inputGroupPrepend: '', // Removed in BS5
-      inputGroupAppend: '', // Removed in BS5
-
-      // BS5 simplified structure - no prepend/append wrappers needed
-      inputGroupAddon: '', // Not used in BS5
-      inputGroupText: 'input-group-text' // Still used in BS5
-    };
+  /**
+   * Apply size classes to container based on input classes (Bootstrap 5 specific)
+   * @private
+   */
+  _applySizeClasses() {
+    if (this.originalinput.hasClass('form-control-sm')) {
+      this.container.addClass('input-group-sm');
+    } else if (this.originalinput.hasClass('form-control-lg')) {
+      this.container.addClass('input-group-lg');
+    }
   }
 
   buildAdvancedInputGroup(parentelement) {
@@ -84,7 +87,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const inputGroupSize = this.detectInputGroupSize();
+    const inputGroupSize = this._detectInputGroupSize();
     const testidAttr = this.getWrapperTestId();
     let html;
 
@@ -118,7 +121,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.$('.bootstrap-touchspin-prefix', this.container).after(this.originalinput);
 
     // Apply size classes
-    this.applySizeClasses();
+    this._applySizeClasses();
 
     return this.container;
   }

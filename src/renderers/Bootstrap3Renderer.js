@@ -4,31 +4,34 @@
  */
 class Bootstrap3Renderer extends AbstractRenderer {
 
-  getVersion() {
-    return 3;
+  getFrameworkId() {
+    return 'bootstrap3';
   }
 
-  getClasses() {
-    return {
-      // Input size classes
-      inputSmall: 'input-sm',
-      inputLarge: 'input-lg',
-      formControlSmall: 'form-control-sm', // Not used in BS3, but kept for compatibility
-      formControlLarge: 'form-control-lg', // Not used in BS3, but kept for compatibility
+  /**
+   * Detect input group size from original input classes (Bootstrap 3 specific)
+   * @private
+   * @returns {string} Size class for input group
+   */
+  _detectInputGroupSize() {
+    if (this.originalinput.hasClass('input-sm')) {
+      return 'input-group-sm';
+    } else if (this.originalinput.hasClass('input-lg')) {
+      return 'input-group-lg';
+    }
+    return '';
+  }
 
-      // Input group size classes
-      inputGroupSmall: 'input-group-sm',
-      inputGroupLarge: 'input-group-lg',
-
-      // Button wrapper classes
-      inputGroupBtn: 'input-group-btn',
-      inputGroupAddon: 'input-group-addon',
-
-      // No prepend/append classes in BS3
-      inputGroupPrepend: '',
-      inputGroupAppend: '',
-      inputGroupText: '' // No input-group-text in BS3
-    };
+  /**
+   * Apply size classes to container based on input classes (Bootstrap 3 specific)
+   * @private
+   */
+  _applySizeClasses() {
+    if (this.originalinput.hasClass('input-sm')) {
+      this.container.addClass('input-group-sm');
+    } else if (this.originalinput.hasClass('input-lg')) {
+      this.container.addClass('input-group-lg');
+    }
   }
 
   buildVerticalButtons() {
@@ -56,7 +59,6 @@ class Bootstrap3Renderer extends AbstractRenderer {
 
     const prev = this.originalinput.prev();
     const next = this.originalinput.next();
-    const classes = this.getClasses();
 
     // Prefix and postfix HTML for BS3
     const prefixhtml = `
@@ -75,7 +77,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       this.$(this.buildVerticalButtons()).insertAfter(this.originalinput);
     } else {
       // Handle down button
-      if (prev.hasClass(classes.inputGroupBtn)) {
+      if (prev.hasClass('input-group-btn')) {
         const downhtml = `
           <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down bootstrap-touchspin-injected" type="button">${this.settings.buttondown_txt}</button>
         `;
@@ -90,7 +92,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       }
 
       // Handle up button
-      if (next.hasClass(classes.inputGroupBtn)) {
+      if (next.hasClass('input-group-btn')) {
         const uphtml = `
           <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up bootstrap-touchspin-injected" type="button">${this.settings.buttonup_txt}</button>
         `;
@@ -114,7 +116,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const inputGroupSize = this.detectInputGroupSize();
+    const inputGroupSize = this._detectInputGroupSize();
     const testidAttr = this.getWrapperTestId();
     let html;
 
@@ -155,7 +157,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
     this.$('.bootstrap-touchspin-prefix', this.container).after(this.originalinput);
 
     // Apply size classes
-    this.applySizeClasses();
+    this._applySizeClasses();
 
     return this.container;
   }

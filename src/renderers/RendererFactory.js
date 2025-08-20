@@ -17,10 +17,10 @@ class RendererFactory {
   }
 
   /**
-   * Get the Bootstrap version supported by this build
-   * @returns {number} Bootstrap version (3, 4, or 5)
+   * Get the framework identifier supported by this build
+   * @returns {string} Framework identifier (e.g., "bootstrap3", "bootstrap4", "bootstrap5")
    */
-  static getVersion() {
+  static getFrameworkId() {
     // This method is overridden in version-specific builds
     throw new Error('TouchSpin: Use version-specific build files');
   }

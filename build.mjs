@@ -43,8 +43,8 @@ async function buildVersionSpecific(version, outputDir) {
       return new Bootstrap${version}Renderer($, settings, originalinput);
     }
     
-    static getVersion() {
-      return ${version};
+    static getFrameworkId() {
+      return 'bootstrap${version}';
     }
   }
   

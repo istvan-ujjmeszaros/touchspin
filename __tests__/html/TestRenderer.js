@@ -5,31 +5,34 @@
  */
 class TestRenderer extends AbstractRenderer {
 
-  getVersion() {
-    return 999; // Custom version for testing
+  getFrameworkId() {
+    return 'test'; // Custom identifier for testing
   }
 
-  getClasses() {
-    return {
-      // Input size classes - same as BS5
-      inputSmall: 'form-control-sm',
-      inputLarge: 'form-control-lg', 
-      formControlSmall: 'form-control-sm',
-      formControlLarge: 'form-control-lg',
+  /**
+   * Detect input group size from original input classes (Test renderer specific)
+   * @private
+   * @returns {string} Size class for input group
+   */
+  _detectInputGroupSize() {
+    if (this.originalinput.hasClass('form-control-sm')) {
+      return 'input-group-sm';
+    } else if (this.originalinput.hasClass('form-control-lg')) {
+      return 'input-group-lg';
+    }
+    return '';
+  }
 
-      // Input group size classes
-      inputGroupSmall: 'input-group-sm',
-      inputGroupLarge: 'input-group-lg',
-
-      // Button wrapper classes - simplified like BS5
-      inputGroupBtn: '',
-      inputGroupPrepend: '',
-      inputGroupAppend: '',
-
-      // Text wrapper classes
-      inputGroupAddon: '',
-      inputGroupText: 'input-group-text'
-    };
+  /**
+   * Apply size classes to container based on input classes (Test renderer specific)
+   * @private
+   */
+  _applySizeClasses() {
+    if (this.originalinput.hasClass('form-control-sm')) {
+      this.container.addClass('input-group-sm');
+    } else if (this.originalinput.hasClass('form-control-lg')) {
+      this.container.addClass('input-group-lg');
+    }
   }
 
   buildAdvancedInputGroup(parentelement) {
@@ -87,7 +90,7 @@ class TestRenderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const inputGroupSize = this.detectInputGroupSize();
+    const inputGroupSize = this._detectInputGroupSize();
     const testidAttr = this.getWrapperTestId();
     let html;
 
@@ -121,7 +124,7 @@ class TestRenderer extends AbstractRenderer {
     this.$('.bootstrap-touchspin-prefix', this.container).after(this.originalinput);
 
     // Apply size classes
-    this.applySizeClasses();
+    this._applySizeClasses();
 
     return this.container;
   }
