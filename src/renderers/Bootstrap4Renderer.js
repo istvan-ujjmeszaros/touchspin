@@ -9,6 +9,20 @@ class Bootstrap4Renderer extends AbstractRenderer {
   }
 
   /**
+   * Get Bootstrap 4 framework-specific default settings
+   * Provides appropriate button classes for Bootstrap 4
+   * @returns {object} Bootstrap 4-specific default settings
+   */
+  getDefaultSettings() {
+    return {
+      buttonup_class: 'btn btn-outline-secondary',
+      buttondown_class: 'btn btn-outline-secondary',
+      verticalupclass: 'btn btn-outline-secondary',
+      verticaldownclass: 'btn btn-outline-secondary'
+    };
+  }
+
+  /**
    * Detect input group size from original input classes (Bootstrap 4 specific)
    * @private
    * @returns {string} Size class for input group

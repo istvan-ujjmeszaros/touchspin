@@ -362,8 +362,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         verticalbuttons: false,
         verticalup: "&plus;",
         verticaldown: "&minus;",
-        verticalupclass: "",
-        verticaldownclass: "",
+        verticalupclass: null,
+        // Framework-specific, will be provided by renderer  
+        verticaldownclass: null,
+        // Framework-specific, will be provided by renderer
         prefix: "",
         postfix: "",
         prefix_extraclass: "",
@@ -372,8 +374,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         boostat: 10,
         maxboostedstep: false,
         mousewheel: true,
-        buttondown_class: "btn btn-primary",
-        buttonup_class: "btn btn-primary",
+        buttondown_class: null,
+        // Framework-specific, will be provided by renderer
+        buttonup_class: null,
+        // Framework-specific, will be provided by renderer
         buttondown_txt: "&minus;",
         buttonup_txt: "&plus;",
         // Renderer system options
@@ -544,7 +548,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (tempRenderer && typeof tempRenderer.getDefaultSettings === "function") {
             var rendererDefaults = tempRenderer.getDefaultSettings();
             Object.keys(rendererDefaults).forEach(function (key) {
-              if (settings[key] === defaults[key]) {
+              if (settings[key] === null) {
                 settings[key] = rendererDefaults[key];
               }
             });

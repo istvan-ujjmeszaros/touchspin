@@ -164,6 +164,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return "bootstrap4";
       }
       /**
+       * Get Bootstrap 4 framework-specific default settings
+       * Provides appropriate button classes for Bootstrap 4
+       * @returns {object} Bootstrap 4-specific default settings
+       */
+    }, {
+      key: "getDefaultSettings",
+      value: function getDefaultSettings() {
+        return {
+          buttonup_class: "btn btn-outline-secondary",
+          buttondown_class: "btn btn-outline-secondary",
+          verticalupclass: "btn btn-outline-secondary",
+          verticaldownclass: "btn btn-outline-secondary"
+        };
+      }
+      /**
        * Detect input group size from original input classes (Bootstrap 4 specific)
        * @private
        * @returns {string} Size class for input group
@@ -339,8 +354,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         verticalbuttons: false,
         verticalup: "&plus;",
         verticaldown: "&minus;",
-        verticalupclass: "",
-        verticaldownclass: "",
+        verticalupclass: null,
+        // Framework-specific, will be provided by renderer  
+        verticaldownclass: null,
+        // Framework-specific, will be provided by renderer
         prefix: "",
         postfix: "",
         prefix_extraclass: "",
@@ -349,8 +366,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         boostat: 10,
         maxboostedstep: false,
         mousewheel: true,
-        buttondown_class: "btn btn-primary",
-        buttonup_class: "btn btn-primary",
+        buttondown_class: null,
+        // Framework-specific, will be provided by renderer
+        buttonup_class: null,
+        // Framework-specific, will be provided by renderer
         buttondown_txt: "&minus;",
         buttonup_txt: "&plus;",
         // Renderer system options
@@ -521,7 +540,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (tempRenderer && typeof tempRenderer.getDefaultSettings === "function") {
             var rendererDefaults = tempRenderer.getDefaultSettings();
             Object.keys(rendererDefaults).forEach(function (key) {
-              if (settings[key] === defaults[key]) {
+              if (settings[key] === null) {
                 settings[key] = rendererDefaults[key];
               }
             });

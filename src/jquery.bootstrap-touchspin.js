@@ -81,8 +81,8 @@
    * @property {boolean} [verticalbuttons=false] - Whether to display buttons vertically
    * @property {string} [verticalup='&plus;'] - HTML content for vertical up button
    * @property {string} [verticaldown='&minus;'] - HTML content for vertical down button
-   * @property {string} [verticalupclass=''] - CSS classes for vertical up button
-   * @property {string} [verticaldownclass=''] - CSS classes for vertical down button
+   * @property {string} [verticalupclass=null] - CSS classes for vertical up button (framework-specific, provided by renderer)
+   * @property {string} [verticaldownclass=null] - CSS classes for vertical down button (framework-specific, provided by renderer)
    * @property {string} [prefix=''] - Text or HTML to display before the input
    * @property {string} [postfix=''] - Text or HTML to display after the input
    * @property {string} [prefix_extraclass=''] - Additional CSS classes for prefix element
@@ -91,8 +91,8 @@
    * @property {number} [boostat=10] - Number of steps before booster mode activates
    * @property {number|false} [maxboostedstep=false] - Maximum step size during boost mode
    * @property {boolean} [mousewheel=true] - Enable mouse wheel support for value changes
-   * @property {string} [buttondown_class='btn btn-primary'] - CSS classes for decrement button
-   * @property {string} [buttonup_class='btn btn-primary'] - CSS classes for increment button
+   * @property {string} [buttondown_class=null] - CSS classes for decrement button (framework-specific, provided by renderer)
+   * @property {string} [buttonup_class=null] - CSS classes for increment button (framework-specific, provided by renderer)
    * @property {string} [buttondown_txt='&minus;'] - HTML content for decrement button
    * @property {string} [buttonup_txt='&plus;'] - HTML content for increment button
    * @property {TouchSpinRenderer|null} [renderer=null] - Custom renderer instance for Bootstrap version compatibility
@@ -180,8 +180,8 @@
       verticalbuttons: false,
       verticalup: '&plus;',
       verticaldown: '&minus;',
-      verticalupclass: '',
-      verticaldownclass: '',
+      verticalupclass: null,   // Framework-specific, will be provided by renderer  
+      verticaldownclass: null, // Framework-specific, will be provided by renderer
       prefix: '',
       postfix: '',
       prefix_extraclass: '',
@@ -190,8 +190,8 @@
       boostat: 10,
       maxboostedstep: false,
       mousewheel: true,
-      buttondown_class: 'btn btn-primary',
-      buttonup_class: 'btn btn-primary',
+      buttondown_class: null,  // Framework-specific, will be provided by renderer
+      buttonup_class: null,    // Framework-specific, will be provided by renderer
       buttondown_txt: '&minus;',
       buttonup_txt: '&plus;',
       // Renderer system options
@@ -451,11 +451,11 @@
         if (tempRenderer && typeof tempRenderer.getDefaultSettings === 'function') {
           const rendererDefaults = tempRenderer.getDefaultSettings();
           
-          // Override settings only if they still match the main plugin defaults
-          // This allows renderer-specific defaults while preserving user customizations
+          // Only apply renderer defaults for null values (framework-agnostic placeholders)
+          // This preserves user customizations while filling in framework-specific defaults
           Object.keys(rendererDefaults).forEach(key => {
-            if (settings[key] === defaults[key]) {
-              // User hasn't customized this setting, so use renderer default
+            if (settings[key] === null) {
+              // Fill in framework-specific default for null placeholder
               settings[key] = rendererDefaults[key];
             }
           });

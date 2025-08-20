@@ -10,6 +10,20 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   /**
+   * Get Bootstrap 5 framework-specific default settings
+   * Provides appropriate button classes for Bootstrap 5
+   * @returns {object} Bootstrap 5-specific default settings
+   */
+  getDefaultSettings() {
+    return {
+      buttonup_class: 'btn btn-outline-secondary',
+      buttondown_class: 'btn btn-outline-secondary',
+      verticalupclass: 'btn btn-outline-secondary',
+      verticaldownclass: 'btn btn-outline-secondary'
+    };
+  }
+
+  /**
    * Detect input group size from original input classes (Bootstrap 5 specific)
    * @private
    * @returns {string} Size class for input group

@@ -6,7 +6,6 @@
 // Load all renderer classes
 if (typeof require !== 'undefined') {
   // CommonJS/Node.js environment
-  global.BootstrapRenderer = require('./BootstrapRenderer');
   global.Bootstrap3Renderer = require('./Bootstrap3Renderer');
   global.Bootstrap4Renderer = require('./Bootstrap4Renderer');
   global.Bootstrap5Renderer = require('./Bootstrap5Renderer');
@@ -14,7 +13,6 @@ if (typeof require !== 'undefined') {
   global.RendererFactory = require('./RendererFactory');
 
   module.exports = {
-    BootstrapRenderer: global.BootstrapRenderer,
     Bootstrap3Renderer: global.Bootstrap3Renderer,
     Bootstrap4Renderer: global.Bootstrap4Renderer,
     Bootstrap5Renderer: global.Bootstrap5Renderer,
@@ -27,7 +25,6 @@ if (typeof require !== 'undefined') {
 
   if (typeof window.TouchSpinRenderers === 'undefined') {
     window.TouchSpinRenderers = {
-      BootstrapRenderer: window.BootstrapRenderer,
       Bootstrap3Renderer: window.Bootstrap3Renderer,
       Bootstrap4Renderer: window.Bootstrap4Renderer,
       Bootstrap5Renderer: window.Bootstrap5Renderer,

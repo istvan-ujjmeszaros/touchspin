@@ -9,6 +9,20 @@ class Bootstrap3Renderer extends AbstractRenderer {
   }
 
   /**
+   * Get Bootstrap 3 framework-specific default settings
+   * Provides appropriate button classes for Bootstrap 3
+   * @returns {object} Bootstrap 3-specific default settings
+   */
+  getDefaultSettings() {
+    return {
+      buttonup_class: 'btn btn-default',
+      buttondown_class: 'btn btn-default',
+      verticalupclass: 'btn btn-default',
+      verticaldownclass: 'btn btn-default'
+    };
+  }
+
+  /**
    * Detect input group size from original input classes (Bootstrap 3 specific)
    * @private
    * @returns {string} Size class for input group
