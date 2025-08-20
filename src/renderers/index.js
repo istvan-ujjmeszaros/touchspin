@@ -10,6 +10,7 @@ if (typeof require !== 'undefined') {
   global.Bootstrap3Renderer = require('./Bootstrap3Renderer');
   global.Bootstrap4Renderer = require('./Bootstrap4Renderer');
   global.Bootstrap5Renderer = require('./Bootstrap5Renderer');
+  global.TailwindRenderer = require('./TailwindRenderer');
   global.RendererFactory = require('./RendererFactory');
 
   module.exports = {
@@ -17,6 +18,7 @@ if (typeof require !== 'undefined') {
     Bootstrap3Renderer: global.Bootstrap3Renderer,
     Bootstrap4Renderer: global.Bootstrap4Renderer,
     Bootstrap5Renderer: global.Bootstrap5Renderer,
+    TailwindRenderer: global.TailwindRenderer,
     RendererFactory: global.RendererFactory
   };
 } else if (typeof window !== 'undefined') {
@@ -29,6 +31,7 @@ if (typeof require !== 'undefined') {
       Bootstrap3Renderer: window.Bootstrap3Renderer,
       Bootstrap4Renderer: window.Bootstrap4Renderer,
       Bootstrap5Renderer: window.Bootstrap5Renderer,
+      TailwindRenderer: window.TailwindRenderer,
       RendererFactory: window.RendererFactory
     };
   }

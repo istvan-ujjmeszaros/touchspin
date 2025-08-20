@@ -17,12 +17,16 @@ const banner = `/*
  */`;
 
 async function buildVersionSpecific(version, outputDir) {
-  const fileName = `jquery.bootstrap-touchspin-bs${version}.js`;
-
-  console.log(`🔨 Building Bootstrap ${version} version...`);
+  const isNumeric = typeof version === 'number';
+  const versionSuffix = isNumeric ? `bs${version}` : version.toLowerCase();
+  const fileName = `jquery.bootstrap-touchspin-${versionSuffix}.js`;
+  const frameworkName = isNumeric ? `Bootstrap ${version}` : version;
+  const rendererName = isNumeric ? `Bootstrap${version}` : version.charAt(0).toUpperCase() + version.slice(1);
+  
+  console.log(`🔨 Building ${frameworkName} version...`);
 
   // Include only specific renderer and dependencies
-  const rendererFile = `Bootstrap${version}Renderer.js`;
+  const rendererFile = `${rendererName}Renderer.js`;
   let rendererIncludes = '';
 
   // Always include base renderer
@@ -31,8 +35,9 @@ async function buildVersionSpecific(version, outputDir) {
   // Include the target renderer
   rendererIncludes += fs.readFileSync(`./src/renderers/${rendererFile}`, 'utf-8') + '\n';
 
+  const frameworkId = isNumeric ? `bootstrap${version}` : version;
   const rendererCode = `
-// Bootstrap ${version} specific build - BEFORE main plugin
+// ${frameworkName} specific build - BEFORE main plugin
 (function() {
   'use strict';
   ${rendererIncludes}
@@ -40,17 +45,17 @@ async function buildVersionSpecific(version, outputDir) {
   // Simple factory for single version - no auto-detection needed
   class RendererFactory {
     static createRenderer($, settings, originalinput) {
-      return new Bootstrap${version}Renderer($, settings, originalinput);
+      return new ${rendererName}Renderer($, settings, originalinput);
     }
     
     static getFrameworkId() {
-      return 'bootstrap${version}';
+      return '${frameworkId}';
     }
   }
   
   if (typeof window !== 'undefined') {
     window.AbstractRenderer = AbstractRenderer;
-    window.Bootstrap${version}Renderer = Bootstrap${version}Renderer;
+    window.${rendererName}Renderer = ${rendererName}Renderer;
     window.RendererFactory = RendererFactory;
   }
 })();
@@ -109,8 +114,8 @@ async function buildAll() {
   // Build all variants
   const builtFiles = [];
 
-  // Build Bootstrap-specific versions
-  for (const version of [3, 4, 5]) {
+  // Build all framework versions
+  for (const version of [3, 4, 5, 'tailwind']) {
     const fileName = await buildVersionSpecific(version, outputDir);
     builtFiles.push(fileName);
   }

@@ -19,6 +19,16 @@ class AbstractRenderer {
     throw new Error('getFrameworkId() must be implemented by subclasses');
   }
 
+  /**
+   * Get framework-specific default settings
+   * Override this method in subclasses to provide appropriate defaults for each framework
+   * @returns {object} Default settings object
+   */
+  getDefaultSettings() {
+    // Base defaults - can be overridden by subclasses
+    return {};
+  }
+
 
   /**
    * Build HTML structure when parent already has input-group class

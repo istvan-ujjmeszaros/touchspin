@@ -446,6 +446,21 @@
           throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
         }
 
+        // Create temporary renderer to get framework-specific defaults
+        const tempRenderer = factory.createRenderer($, {}, originalinput);
+        if (tempRenderer && typeof tempRenderer.getDefaultSettings === 'function') {
+          const rendererDefaults = tempRenderer.getDefaultSettings();
+          
+          // Override settings only if they still match the main plugin defaults
+          // This allows renderer-specific defaults while preserving user customizations
+          Object.keys(rendererDefaults).forEach(key => {
+            if (settings[key] === defaults[key]) {
+              // User hasn't customized this setting, so use renderer default
+              settings[key] = rendererDefaults[key];
+            }
+          });
+        }
+
         renderer = factory.createRenderer($, settings, originalinput);
 
         if (!renderer) {

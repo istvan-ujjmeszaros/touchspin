@@ -43,6 +43,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         throw new Error("getFrameworkId() must be implemented by subclasses");
       }
       /**
+       * Get framework-specific default settings
+       * Override this method in subclasses to provide appropriate defaults for each framework
+       * @returns {object} Default settings object
+       */
+    }, {
+      key: "getDefaultSettings",
+      value: function getDefaultSettings() {
+        return {};
+      }
+      /**
        * Build HTML structure when parent already has input-group class
        * @param {jQuery} parentelement Parent element with input-group class
        */
@@ -506,6 +516,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           var factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === "function" ? rf.RendererFactory : void 0;
           if (!factory || !factory.createRenderer) {
             throw new Error("Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.");
+          }
+          var tempRenderer = factory.createRenderer($, {}, originalinput);
+          if (tempRenderer && typeof tempRenderer.getDefaultSettings === "function") {
+            var rendererDefaults = tempRenderer.getDefaultSettings();
+            Object.keys(rendererDefaults).forEach(function (key) {
+              if (settings[key] === defaults[key]) {
+                settings[key] = rendererDefaults[key];
+              }
+            });
           }
           renderer = factory.createRenderer($, settings, originalinput);
           if (!renderer) {

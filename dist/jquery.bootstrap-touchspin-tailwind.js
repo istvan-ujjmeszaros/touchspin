@@ -152,49 +152,75 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   } else if (typeof window !== "undefined") {
     window.AbstractRenderer = AbstractRenderer;
   }
-  var Bootstrap5Renderer = /*#__PURE__*/function (_AbstractRenderer) {
-    function Bootstrap5Renderer() {
-      _classCallCheck(this, Bootstrap5Renderer);
-      return _callSuper(this, Bootstrap5Renderer, arguments);
+  var TailwindRenderer = /*#__PURE__*/function (_AbstractRenderer) {
+    function TailwindRenderer() {
+      _classCallCheck(this, TailwindRenderer);
+      return _callSuper(this, TailwindRenderer, arguments);
     }
-    _inherits(Bootstrap5Renderer, _AbstractRenderer);
-    return _createClass(Bootstrap5Renderer, [{
+    _inherits(TailwindRenderer, _AbstractRenderer);
+    return _createClass(TailwindRenderer, [{
       key: "getFrameworkId",
       value: function getFrameworkId() {
-        return "bootstrap5";
+        return "tailwind";
       }
       /**
-       * Detect input group size from original input classes (Bootstrap 5 specific)
-       * @private
-       * @returns {string} Size class for input group
+       * Get Tailwind CSS framework-specific default settings
+       * Overrides Bootstrap classes with empty strings for CSS independence
+       * @returns {object} Tailwind-specific default settings
        */
     }, {
-      key: "_detectInputGroupSize",
-      value: function _detectInputGroupSize() {
-        if (this.originalinput.hasClass("form-control-sm")) {
-          return "input-group-sm";
-        } else if (this.originalinput.hasClass("form-control-lg")) {
-          return "input-group-lg";
-        }
-        return "";
+      key: "getDefaultSettings",
+      value: function getDefaultSettings() {
+        return {
+          buttonup_class: "",
+          // Remove Bootstrap button classes
+          buttondown_class: "",
+          // Remove Bootstrap button classes  
+          verticalupclass: "",
+          // Remove Bootstrap button classes for vertical
+          verticaldownclass: "",
+          // Remove Bootstrap button classes for vertical
+          input_class: ""
+          // Remove Bootstrap form-control class
+        };
       }
       /**
-       * Apply size classes to container based on input classes (Bootstrap 5 specific)
+       * Detect input size from Tailwind size classes
+       * @private
+       * @returns {string} Size classes for container elements
+       */
+    }, {
+      key: "_detectInputSize",
+      value: function _detectInputSize() {
+        if (this.originalinput.hasClass("text-sm") || this.originalinput.hasClass("py-1")) {
+          return "text-sm py-1 px-2";
+        } else if (this.originalinput.hasClass("text-lg") || this.originalinput.hasClass("py-3")) {
+          return "text-lg py-3 px-4";
+        }
+        return "text-base py-2 px-3";
+      }
+      /**
+       * Apply size classes to container and elements (Tailwind specific)
        * @private
        */
     }, {
       key: "_applySizeClasses",
       value: function _applySizeClasses() {
-        if (this.originalinput.hasClass("form-control-sm")) {
-          this.container.addClass("input-group-sm");
-        } else if (this.originalinput.hasClass("form-control-lg")) {
-          this.container.addClass("input-group-lg");
+        var sizeClasses = this._detectInputSize();
+        if (sizeClasses.includes("text-sm")) {
+          this.container.addClass("text-sm");
+          this.container.find(".tailwind-btn").addClass("py-1 px-2 text-sm");
+          this.container.find(".tailwind-addon").addClass("py-1 px-2 text-sm");
+        } else if (sizeClasses.includes("text-lg")) {
+          this.container.addClass("text-lg");
+          this.container.find(".tailwind-btn").addClass("py-3 px-4 text-lg");
+          this.container.find(".tailwind-addon").addClass("py-3 px-4 text-lg");
         }
       }
     }, {
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
-        parentelement.addClass("bootstrap-touchspin");
+        parentelement.addClass("flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500");
         var testidAttr = this.getWrapperTestId();
         if (testidAttr) {
           var testidValue = testidAttr.match(/data-testid="([^"]+)"/);
@@ -202,44 +228,50 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             parentelement.attr("data-testid", testidValue[1]);
           }
         }
-        var prev = this.originalinput.prev();
-        var next = this.originalinput.next();
-        var prefixhtml = "\n      <span class=\"input-group-text bootstrap-touchspin-prefix bootstrap-touchspin-injected\">".concat(this.settings.prefix, "</span>\n    ");
-        var postfixhtml = "\n      <span class=\"input-group-text bootstrap-touchspin-postfix bootstrap-touchspin-injected\">".concat(this.settings.postfix, "</span>\n    ");
+        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix bootstrap-touchspin-injected\">\n        ".concat(this.settings.prefix, "\n      </span>\n    ");
+        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix bootstrap-touchspin-injected\">\n        ".concat(this.settings.postfix, "\n      </span>\n    ");
         if (this.settings.verticalbuttons) {
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
-          var downhtml = "\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down bootstrap-touchspin-injected\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n      ");
-          var uphtml = "\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up bootstrap-touchspin-injected\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n      ");
+          var downhtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down bootstrap-touchspin-injected ".concat(this.settings.buttondown_class, "\" type=\"button\">\n          ").concat(this.settings.buttondown_txt, "\n        </button>\n      ");
+          var uphtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up bootstrap-touchspin-injected ".concat(this.settings.buttonup_class, "\" type=\"button\">\n          ").concat(this.settings.buttonup_txt, "\n        </button>\n      ");
           this.$(downhtml).insertBefore(this.originalinput);
           this.$(uphtml).insertAfter(this.originalinput);
         }
-        this.$(prefixhtml).insertBefore(this.originalinput);
-        this.$(postfixhtml).insertAfter(this.originalinput);
+        if (this.settings.prefix !== "") {
+          this.$(prefixhtml).insertBefore(this.originalinput);
+        }
+        if (this.settings.postfix !== "") {
+          this.$(postfixhtml).insertAfter(this.originalinput);
+        }
+        this.originalinput.removeClass("form-control");
+        this.originalinput.addClass("flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500");
         this.container = parentelement;
         return parentelement;
       }
     }, {
       key: "buildInputGroup",
       value: function buildInputGroup() {
-        var inputGroupSize = this._detectInputGroupSize();
+        var inputSizeClasses = this._detectInputSize();
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin bootstrap-touchspin-injected\"").concat(testidAttr, ">\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <span class=\"bootstrap-touchspin-vertical-button-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n            </span>\n          </span>\n        </div>\n      ");
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin bootstrap-touchspin-injected focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">\n              ").concat(this.settings.verticalup, "\n            </button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">\n              ").concat(this.settings.verticaldown, "\n            </button>\n          </div>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group bootstrap-touchspin bootstrap-touchspin-injected\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          <span class=\"input-group-text bootstrap-touchspin-prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"input-group-text bootstrap-touchspin-postfix\">").concat(this.settings.postfix, "</span>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>\n      ");
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin bootstrap-touchspin-injected focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class, "\" type=\"button\">\n            ").concat(this.settings.buttondown_txt, "\n          </button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class, "\" type=\"button\">\n            ").concat(this.settings.buttonup_txt, "\n          </button>\n        </div>\n      ");
         }
         this.container = this.$(html).insertBefore(this.originalinput);
         this.$(".bootstrap-touchspin-prefix", this.container).after(this.originalinput);
+        this.originalinput.removeClass("form-control");
+        this.originalinput.addClass("flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500");
         this._applySizeClasses();
         return this.container;
       }
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
+        return "\n      <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\">\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ".concat(this.settings.verticalupclass, "\" type=\"button\">\n          ").concat(this.settings.verticalup, "\n        </button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">\n          ").concat(this.settings.verticaldown, "\n        </button>\n      </div>\n    ");
       }
     }, {
       key: "updatePrefixPostfix",
@@ -262,9 +294,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }]);
   }(AbstractRenderer);
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = Bootstrap5Renderer;
+    module.exports = TailwindRenderer;
   } else if (typeof window !== "undefined") {
-    window.Bootstrap5Renderer = Bootstrap5Renderer;
+    window.TailwindRenderer = TailwindRenderer;
   }
   var RendererFactory = /*#__PURE__*/function () {
     function RendererFactory() {
@@ -273,18 +305,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return _createClass(RendererFactory, null, [{
       key: "createRenderer",
       value: function createRenderer($, settings, originalinput) {
-        return new Bootstrap5Renderer($, settings, originalinput);
+        return new TailwindRenderer($, settings, originalinput);
       }
     }, {
       key: "getFrameworkId",
       value: function getFrameworkId() {
-        return "bootstrap5";
+        return "tailwind";
       }
     }]);
   }();
   if (typeof window !== "undefined") {
     window.AbstractRenderer = AbstractRenderer;
-    window.Bootstrap5Renderer = Bootstrap5Renderer;
+    window.TailwindRenderer = TailwindRenderer;
     window.RendererFactory = RendererFactory;
   }
 })();
