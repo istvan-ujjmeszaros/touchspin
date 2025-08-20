@@ -80,7 +80,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🏗️ Architecture Improvements
 
 #### Code Quality & Maintainability
-- **Renderer Pattern**: Clean separation between Bootstrap version-specific rendering logic
+- **New Framework-Agnostic Renderer System**: Clean architectural pattern for CSS framework compatibility
+  - AbstractRenderer base class providing framework-agnostic foundation for any CSS framework
+  - Template-based renderers for different frameworks (currently Bootstrap 3/4/5, extensible to Tailwind, Foundation, Bulma, etc.)
+  - Each renderer contains hard-coded HTML templates with framework-specific CSS classes
+  - Framework identification via `getFrameworkId()` returning string identifiers (e.g., "bootstrap3", "tailwind", "foundation")
+  - Framework-specific logic implemented as private methods within each renderer
+  - Each renderer fully self-contained and independent
+- **Multi-Framework Architecture**: System designed from the ground up to support any CSS framework, not just Bootstrap
 - **JSDoc Documentation**: Professional-grade documentation with usage examples
 - **ESLint/JSHint Compliance**: Updated configuration for ES11 features with style consistency
 - **Memory Management**: Proper cleanup patterns and observer lifecycle management
@@ -100,6 +107,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### API Changes
 - **Removed Automatic Bootstrap Detection**: Explicit version builds eliminate runtime detection
+- **New Framework-Agnostic Renderer API**: Clean renderer interface designed for any CSS framework
+  - AbstractRenderer base class with universal methods: `getFrameworkId()`, `buildInputGroup()`, `buildAdvancedInputGroup()`, `buildVerticalButtons()`, `updatePrefixPostfix()`
+  - Framework renderers implement all HTML generation through template-based approach
+  - No class mapping abstractions - all CSS classes embedded directly in framework-specific HTML templates
+  - Designed to support any CSS framework: Bootstrap, Tailwind, Foundation, Bulma, custom frameworks
 - **Removed Legacy Renderer**: ~200 lines of compatibility code eliminated in favor of clean renderer system
 - **Improved Event Handler Cleanup**: Enhanced destroy method with explicit event listing for backward compatibility
 

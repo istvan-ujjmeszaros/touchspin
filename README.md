@@ -299,6 +299,14 @@ TouchSpin provides separate builds for each Bootstrap version:
 - **Tailored markup** - HTML structure specific to each version  
 - **Explicit dependencies** - Clear compatibility requirements
 
+### Extensible Architecture
+
+TouchSpin's simplified renderer system is designed for easy extension to other CSS frameworks:
+
+- **Framework-agnostic core** - AbstractRenderer base class with no Bootstrap assumptions
+- **Template-based renderers** - Each renderer simply provides HTML templates with framework-specific classes
+- **Future framework support** - Architecture ready for Tailwind CSS, Foundation, Bulma, and custom frameworks
+
 ---
 
 ## Browser & Device Support
