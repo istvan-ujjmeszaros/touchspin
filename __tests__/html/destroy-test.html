@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin Destroy/Reinitialize Test</title>
+  
+  <!-- Bootstrap 4 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- TouchSpin CSS -->
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  
+  <style>
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .control-buttons {
+      margin: 15px 0;
+    }
+    .control-buttons button {
+      margin: 5px;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>TouchSpin Destroy/Reinitialize Test</h1>
+    <p>Use the buttons below to test destroy and reinitialize functionality manually.</p>
+
+    <!-- Test 1: New Container Creation -->
+    <div class="test-section">
+      <h3>Test 1: New Container Creation (buildInputGroup)</h3>
+      <p>This input will get a new wrapper container when TouchSpin is initialized.</p>
+      
+      <div class="form-group">
+        <label for="test-input-new">Test Input (New Container):</label>
+        <input id="test-input-new" type="text" value="10" data-testid="test-input-new" class="form-control">
+      </div>
+
+      <div class="control-buttons">
+        <button id="init-new-btn" data-testid="init-new-btn" class="btn btn-primary">Initialize TouchSpin</button>
+        <button id="destroy-new-btn" data-testid="destroy-new-btn" class="btn btn-danger">Destroy TouchSpin</button>
+        <button id="reinit-new-btn" data-testid="reinit-new-btn" class="btn btn-success">Reinitialize TouchSpin</button>
+      </div>
+
+      <div class="status" id="status-new">Status: Not initialized</div>
+    </div>
+
+    <!-- Test 2: Existing Container Enhancement -->
+    <div class="test-section">
+      <h3>Test 2: Existing Container Enhancement (buildAdvancedInputGroup)</h3>
+      <p>This input is already in an input-group and will be enhanced when TouchSpin is initialized.</p>
+      
+      <div class="form-group">
+        <label>Test Input (Existing Container):</label>
+        <div class="input-group existing-container" id="existing-container" data-testid="existing-container">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Pre</span>
+          </div>
+          <input id="test-input-existing" type="text" value="42" data-testid="test-input-existing" class="form-control">
+          <div class="input-group-append">
+            <span class="input-group-text">Post</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-buttons">
+        <button id="init-existing-btn" data-testid="init-existing-btn" class="btn btn-primary">Initialize TouchSpin</button>
+        <button id="destroy-existing-btn" data-testid="destroy-existing-btn" class="btn btn-danger">Destroy TouchSpin</button>
+        <button id="reinit-existing-btn" data-testid="reinit-existing-btn" class="btn btn-success">Reinitialize TouchSpin</button>
+      </div>
+
+      <div class="status" id="status-existing">Status: Not initialized</div>
+    </div>
+
+    <!-- Test 3: Vertical Buttons -->
+    <div class="test-section">
+      <h3>Test 3: Vertical Buttons</h3>
+      <p>This input will use vertical buttons layout.</p>
+      
+      <div class="form-group">
+        <label for="test-input-vertical">Test Input (Vertical Buttons):</label>
+        <input id="test-input-vertical" type="text" value="15" data-testid="test-input-vertical" class="form-control">
+      </div>
+
+      <div class="control-buttons">
+        <button id="init-vertical-btn" data-testid="init-vertical-btn" class="btn btn-primary">Initialize TouchSpin</button>
+        <button id="destroy-vertical-btn" data-testid="destroy-vertical-btn" class="btn btn-danger">Destroy TouchSpin</button>
+        <button id="reinit-vertical-btn" data-testid="reinit-vertical-btn" class="btn btn-success">Reinitialize TouchSpin</button>
+      </div>
+
+      <div class="status" id="status-vertical">Status: Not initialized</div>
+    </div>
+  </div>
+
+  <!-- jQuery and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Load source renderer files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+
+  <!-- Create Bootstrap 4 RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new Bootstrap4Renderer($, settings, originalinput);
+      }
+
+      static getVersion() {
+        return 4;
+      }
+    };
+  </script>
+
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      
+      // Test 1: New Container Creation
+      $('#init-new-btn').click(function() {
+        $('#test-input-new').TouchSpin({
+          min: 0,
+          max: 100,
+          prefix: '$',
+          postfix: '.00'
+        });
+        $('#status-new').text('Status: Initialized with prefix/postfix');
+      });
+
+      $('#destroy-new-btn').click(function() {
+        $('#test-input-new').trigger('touchspin.destroy');
+        $('#status-new').text('Status: Destroyed');
+      });
+
+      $('#reinit-new-btn').click(function() {
+        $('#test-input-new').TouchSpin({
+          min: 5,
+          max: 50,
+          step: 5,
+          prefix: '€',
+          postfix: ' EUR'
+        });
+        $('#status-new').text('Status: Reinitialized with different settings');
+      });
+
+      // Test 2: Existing Container Enhancement
+      $('#init-existing-btn').click(function() {
+        $('#test-input-existing').TouchSpin({
+          min: 0,
+          max: 100,
+          prefix: '$',
+          postfix: '.00'
+        });
+        $('#status-existing').text('Status: Enhanced existing input-group');
+      });
+
+      $('#destroy-existing-btn').click(function() {
+        $('#test-input-existing').trigger('touchspin.destroy');
+        $('#status-existing').text('Status: Destroyed (should restore original structure)');
+      });
+
+      $('#reinit-existing-btn').click(function() {
+        $('#test-input-existing').TouchSpin({
+          min: 10,
+          max: 200,
+          step: 10,
+          prefix: '€',
+          postfix: ' EUR'
+        });
+        $('#status-existing').text('Status: Reinitialized on existing structure');
+      });
+
+      // Test 3: Vertical Buttons
+      $('#init-vertical-btn').click(function() {
+        $('#test-input-vertical').TouchSpin({
+          min: 0,
+          max: 100,
+          verticalbuttons: true,
+          verticalup: '▲',
+          verticaldown: '▼'
+        });
+        $('#status-vertical').text('Status: Initialized with vertical buttons');
+      });
+
+      $('#destroy-vertical-btn').click(function() {
+        $('#test-input-vertical').trigger('touchspin.destroy');
+        $('#status-vertical').text('Status: Destroyed vertical buttons');
+      });
+
+      $('#reinit-vertical-btn').click(function() {
+        $('#test-input-vertical').TouchSpin({
+          min: 0,
+          max: 50,
+          step: 5,
+          verticalbuttons: true,
+          verticalup: '↑',
+          verticaldown: '↓'
+        });
+        $('#status-vertical').text('Status: Reinitialized with different vertical buttons');
+      });
+
+      // Helper function to log DOM state for debugging
+      window.debugDOMState = function(inputId) {
+        const input = document.getElementById(inputId);
+        const container = input.parentElement;
+        console.log('=== DOM STATE DEBUG ===');
+        console.log('Input:', input.outerHTML);
+        console.log('Container:', container.outerHTML);
+        console.log('Container classes:', container.className);
+        console.log('Children count:', container.children.length);
+        console.log('TouchSpin elements:', container.querySelectorAll('[class*="bootstrap-touchspin"]').length);
+        console.log('========================');
+      };
+    });
+  </script>
+</body>
+</html>
