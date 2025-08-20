@@ -138,7 +138,7 @@
           prefix: '$',
           postfix: '.00'
         });
-        $('#status-new').text('Status: Initialized with prefix/postfix');
+        $('#status-new').text('Status: Initialized ($ prefix, .00 postfix)');
       });
 
       $('#destroy-new-btn').click(function() {
@@ -154,7 +154,7 @@
           prefix: '€',
           postfix: ' EUR'
         });
-        $('#status-new').text('Status: Reinitialized with different settings');
+        $('#status-new').text('Status: Reinitialized (€ prefix, EUR postfix, step 5)');
       });
 
       // Test 2: Existing Container Enhancement
@@ -165,7 +165,7 @@
           prefix: '$',
           postfix: '.00'
         });
-        $('#status-existing').text('Status: Enhanced existing input-group');
+        $('#status-existing').text('Status: Enhanced existing input-group ($ prefix, .00 postfix)');
       });
 
       $('#destroy-existing-btn').click(function() {
@@ -181,7 +181,7 @@
           prefix: '€',
           postfix: ' EUR'
         });
-        $('#status-existing').text('Status: Reinitialized on existing structure');
+        $('#status-existing').text('Status: Reinitialized (€ prefix, EUR postfix, step 10)');
       });
 
       // Test 3: Vertical Buttons
@@ -193,12 +193,12 @@
           verticalup: '▲',
           verticaldown: '▼'
         });
-        $('#status-vertical').text('Status: Initialized with vertical buttons');
+        $('#status-vertical').text('Status: Initialized (vertical buttons ▲/▼)');
       });
 
       $('#destroy-vertical-btn').click(function() {
         $('#test-input-vertical').trigger('touchspin.destroy');
-        $('#status-vertical').text('Status: Destroyed vertical buttons');
+        $('#status-vertical').text('Status: Destroyed');
       });
 
       $('#reinit-vertical-btn').click(function() {
@@ -210,7 +210,7 @@
           verticalup: '↑',
           verticaldown: '↓'
         });
-        $('#status-vertical').text('Status: Reinitialized with different vertical buttons');
+        $('#status-vertical').text('Status: Reinitialized (vertical buttons ↑/↓, step 5)');
       });
 
       // Helper function to log DOM state for debugging
