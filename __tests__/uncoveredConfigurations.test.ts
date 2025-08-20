@@ -277,6 +277,121 @@ test.describe('Uncovered Configuration Options', () => {
     });
   });
 
+  test.describe('Settings Precedence System', () => {
+    test('should preserve user button classes over renderer defaults', async ({ page }) => {
+      const customUpClass = 'user-custom-up-btn';
+      const customDownClass = 'user-custom-down-btn';
+      
+      await page.evaluate(({ customUpClass, customDownClass }) => {
+        const $ = (window as any).jQuery;
+        $('body').append('<input id="precedence-test" type="text" value="50" data-testid="precedence-test">');
+        $('#precedence-test').TouchSpin({
+          buttonup_class: customUpClass,
+          buttondown_class: customDownClass
+        });
+      }, { customUpClass, customDownClass });
+
+      // Check that user classes are present and renderer defaults are not
+      const result = await page.evaluate((testId) => {
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+        const upButton = container?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+        const downButton = container?.querySelector('.bootstrap-touchspin-down') as HTMLElement;
+        return {
+          upClasses: upButton?.className || '',
+          downClasses: downButton?.className || ''
+        };
+      }, 'precedence-test');
+
+      // Should contain user-provided classes
+      expect(result.upClasses).toContain(customUpClass);
+      expect(result.downClasses).toContain(customDownClass);
+      
+      // Should NOT contain Bootstrap 4 renderer defaults since user provided custom classes
+      expect(result.upClasses).not.toContain('btn btn-outline-secondary');
+      expect(result.downClasses).not.toContain('btn btn-outline-secondary');
+    });
+
+    test('should apply renderer defaults when user provides no button classes', async ({ page }) => {
+      await page.evaluate(() => {
+        const $ = (window as any).jQuery;
+        $('body').append('<input id="defaults-test" type="text" value="50" data-testid="defaults-test">');
+        $('#defaults-test').TouchSpin({
+          // No button classes provided - should get renderer defaults
+        });
+      });
+
+      // Check that renderer defaults are applied
+      const result = await page.evaluate((testId) => {
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+        const upButton = container?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+        const downButton = container?.querySelector('.bootstrap-touchspin-down') as HTMLElement;
+        return {
+          upClasses: upButton?.className || '',
+          downClasses: downButton?.className || ''
+        };
+      }, 'defaults-test');
+
+      // Should contain Bootstrap 4 renderer defaults (since we're on bootstrap4.html)
+      expect(result.upClasses).toContain('btn btn-outline-secondary');
+      expect(result.downClasses).toContain('btn btn-outline-secondary');
+    });
+
+    test('should handle mixed user settings and renderer defaults', async ({ page }) => {
+      const customUpClass = 'only-up-custom';
+      
+      await page.evaluate((customUpClass) => {
+        const $ = (window as any).jQuery;
+        $('body').append('<input id="mixed-test" type="text" value="50" data-testid="mixed-test">');
+        $('#mixed-test').TouchSpin({
+          buttonup_class: customUpClass
+          // buttondown_class intentionally omitted - should get renderer default
+        });
+      }, customUpClass);
+
+      const result = await page.evaluate((testId) => {
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+        const upButton = container?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+        const downButton = container?.querySelector('.bootstrap-touchspin-down') as HTMLElement;
+        return {
+          upClasses: upButton?.className || '',
+          downClasses: downButton?.className || ''
+        };
+      }, 'mixed-test');
+
+      // Up button should have user-provided class
+      expect(result.upClasses).toContain(customUpClass);
+      expect(result.upClasses).not.toContain('btn btn-outline-secondary');
+      
+      // Down button should have renderer default since user didn't provide it
+      expect(result.downClasses).toContain('btn btn-outline-secondary');
+      expect(result.downClasses).not.toContain(customUpClass);
+    });
+
+    test('should respect data attribute settings over renderer defaults', async ({ page }) => {
+      const dataAttrClass = 'data-attr-custom-class';
+      
+      await page.evaluate((dataAttrClass) => {
+        const $ = (window as any).jQuery;
+        const input = $('<input id="data-attr-test" type="text" value="50" data-testid="data-attr-test">');
+        input.attr('data-bts-button-up-class', dataAttrClass);
+        $('body').append(input);
+        $('#data-attr-test').TouchSpin({
+          // No buttonup_class provided - should use data attribute
+        });
+      }, dataAttrClass);
+
+      const result = await page.evaluate((testId) => {
+        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+        const upButton = container?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+        return upButton?.className || '';
+      }, 'data-attr-test');
+
+      // Should contain data attribute value, not renderer default
+      expect(result).toContain(dataAttrClass);
+      expect(result).not.toContain('btn btn-outline-secondary');
+    });
+  });
+
   test.describe('Decimal Precision Edge Cases', () => {
     test('should handle decimals=0 with decimal input', async ({ page }) => {
       await page.evaluate(() => {
