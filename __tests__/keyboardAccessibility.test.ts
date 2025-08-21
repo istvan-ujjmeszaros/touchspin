@@ -30,19 +30,8 @@ test.describe('Keyboard Accessibility Tests', () => {
             which: 13, 
             bubbles: true 
           }));
-        }
-      }, testid);
-
-      await touchspinHelpers.waitForTimeout(100);
-
-      // Value should increment once
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
-
-      // Release Enter key
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
-        if (upButton) {
+          
+          // Immediately simulate keyup to stop spinning
           upButton.dispatchEvent(new KeyboardEvent('keyup', { 
             keyCode: 13, 
             which: 13, 
@@ -50,6 +39,11 @@ test.describe('Keyboard Accessibility Tests', () => {
           }));
         }
       }, testid);
+
+      await touchspinHelpers.waitForTimeout(100);
+
+      // Value should increment once
+      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
 
       await touchspinHelpers.waitForTimeout(100);
     });

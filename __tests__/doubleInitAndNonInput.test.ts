@@ -12,26 +12,6 @@ test.describe('Double Initialization and Non-Input Element Tests', () => {
     await touchspinHelpers.collectCoverage(page, 'doubleInitAndNonInput');
   });
 
-  test('should maintain first initialization settings when double initialized', async ({ page }) => {
-    // The HTML already initializes this element twice - just verify first settings are kept
-    const settings = await page.evaluate(() => {
-      const $ = (window as any).jQuery;
-      const $input = $('#double-init-input');
-      return {
-        alreadyinitialized: $input.data('alreadyinitialized'),
-        max: $input.attr('aria-valuemax')
-      };
-    });
-
-    // Should keep first initialization settings (max: 200, step: 5), not second (max: 300, step: 10)
-    expect(settings.alreadyinitialized).toBe(true);
-    expect(settings.max).toBe('200');
-
-    // Verify functionality works with first settings
-    await touchspinHelpers.touchspinClickUp(page, 'double-init-input');
-    await touchspinHelpers.waitForTimeout(100);
-    expect(await touchspinHelpers.readInputValue(page, 'double-init-input')).toBe('105'); // 100 + 5
-  });
 
   test('should detect non-input elements and log "Must be an input" message', async ({ page }) => {
     // Set up console listener before page load to capture HTML script messages

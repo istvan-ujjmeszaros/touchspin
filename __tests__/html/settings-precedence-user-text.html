@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Settings Precedence: User Text Content</title>
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Settings Precedence: User Text Content</h1>
+    
+    <!-- Test: User button text should override renderer defaults -->
+    <div class="test-group">
+      <label for="test-button-text">User Button Text Override:</label>
+      <input id="test-button-text" data-testid="test-button-text" type="text" value="50" class="form-control">
+    </div>
+
+    <!-- Test: User prefix/postfix should be applied even when empty by default -->
+    <div class="test-group">
+      <label for="test-prefix-postfix">User Prefix/Postfix Content:</label>
+      <input id="test-prefix-postfix" data-testid="test-prefix-postfix" type="text" value="50" class="form-control">
+    </div>
+
+    <!-- Test: User vertical button content -->
+    <div class="test-group">
+      <label for="test-vertical">User Vertical Button Content:</label>
+      <input id="test-vertical" data-testid="test-vertical" type="text" value="50" class="form-control">
+    </div>
+  </div>
+
+  <!-- Load TouchSpin source files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="TestRenderer.js"></script>
+
+  <!-- Create Test RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new TestRenderer($, settings, originalinput);
+      }
+      static getVersion() {
+        return 'test';
+      }
+    };
+  </script>
+
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+  <!-- Initialize inputs with custom user settings -->
+  <script>
+    $(document).ready(function() {
+      // Test 1: User button text should override renderer defaults
+      $("#test-button-text").TouchSpin({
+        buttonup_txt: 'USER-UP',
+        buttondown_txt: 'USER-DOWN'
+      });
+
+      // Test 2: User prefix/postfix content
+      $("#test-prefix-postfix").TouchSpin({
+        prefix: 'USER-PREFIX-',
+        postfix: '-USER-POSTFIX'
+      });
+
+      // Test 3: User vertical button content
+      $("#test-vertical").TouchSpin({
+        verticalbuttons: true,
+        verticalup: 'USER-↑',
+        verticaldown: 'USER-↓'
+      });
+    });
+  </script>
+</body>
+</html>

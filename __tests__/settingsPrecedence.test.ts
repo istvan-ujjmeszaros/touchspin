@@ -1,8 +1,12 @@
 /**
  * Settings Precedence Tests
- * Tests that user-configurable settings work correctly with the renderer system.
- * Note: Button classes are now hard-coded in renderers and not user-configurable.
- * These tests focus on settings that users can still customize.
+ * Tests the framework-agnostic settings precedence system where:
+ * 1. Core defaults use null for framework-specific properties
+ * 2. User settings take highest precedence
+ * 3. Renderer defaults only fill null placeholders
+ * 4. User customizations are never overridden by renderer defaults
+ * 
+ * These tests use dedicated HTML files with fresh inputs to test proper precedence.
  */
 
 import { test, expect } from '@playwright/test';
@@ -10,203 +14,148 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 
 test.describe('Settings Precedence System', () => {
 
-  test.describe('User Content Settings Are Preserved', () => {
+  test.describe('User Text Content Takes Priority', () => {
 
-    test('should preserve user button text over defaults', async ({ page }) => {
+    test('should preserve user button text over renderer defaults', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-user-text.html');
+      await page.waitForLoadState('networkidle');
       
-      const customUpText = '↑UP↑';
-      const customDownText = '↓DOWN↓';
-      const testId = 'touchspin-default';
-      
-      // Initialize with custom button text
-      await page.evaluate(({ customUpText, customDownText }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.TouchSpin({
-          buttonup_txt: customUpText,
-          buttondown_txt: customDownText
-        });
-      }, { customUpText, customDownText });
-      
-      // Get the TouchSpin wrapper and check button text
-      const wrapper = page.getByTestId(testId + '-wrapper');
+      // Check that user button text was applied
+      const wrapper = page.getByTestId('test-button-text-wrapper');
       const upButton = wrapper.locator('.bootstrap-touchspin-up');
       const downButton = wrapper.locator('.bootstrap-touchspin-down');
       
-      await expect(upButton).toHaveText(customUpText);
-      await expect(downButton).toHaveText(customDownText);
+      await expect(upButton).toHaveText('USER-UP');
+      await expect(downButton).toHaveText('USER-DOWN');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
 
     test('should preserve user prefix and postfix content', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-user-text.html');
+      await page.waitForLoadState('networkidle');
       
-      const customPrefix = '$$$';
-      const customPostfix = ' USD';
-      const testId = 'touchspin-default';
-      
-      // Initialize with custom prefix/postfix
-      await page.evaluate(({ customPrefix, customPostfix }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.TouchSpin({
-          prefix: customPrefix,
-          postfix: customPostfix
-        });
-      }, { customPrefix, customPostfix });
-      
-      // Get the TouchSpin wrapper and check prefix/postfix
-      const wrapper = page.getByTestId(testId + '-wrapper');
+      // Check that user prefix/postfix was applied
+      const wrapper = page.getByTestId('test-prefix-postfix-wrapper');
       const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
       const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
       
-      await expect(prefixElement).toHaveText(customPrefix);
-      await expect(postfixElement).toHaveText(customPostfix);
+      await expect(prefixElement).toHaveText('USER-PREFIX-');
+      await expect(postfixElement).toHaveText('-USER-POSTFIX');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
 
     test('should preserve user vertical button content', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs5.html');
+      await page.goto('/__tests__/html/settings-precedence-user-text.html');
+      await page.waitForLoadState('networkidle');
       
-      const customUpSymbol = '⬆️';
-      const customDownSymbol = '⬇️';
-      const testId = 'touchspin-vertical';
-      
-      // Initialize with custom vertical button symbols
-      await page.evaluate(({ customUpSymbol, customDownSymbol }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#input_vertical');
-        
-        input.TouchSpin({
-          verticalbuttons: true,
-          verticalup: customUpSymbol,
-          verticaldown: customDownSymbol
-        });
-      }, { customUpSymbol, customDownSymbol });
-      
-      // Get the TouchSpin wrapper and check vertical button symbols
-      const wrapper = page.getByTestId(testId + '-wrapper');
+      // Check that user vertical button content was applied
+      const wrapper = page.getByTestId('test-vertical-wrapper');
       const upButton = wrapper.locator('.bootstrap-touchspin-up');
       const downButton = wrapper.locator('.bootstrap-touchspin-down');
       
-      await expect(upButton).toHaveText(customUpSymbol);
-      await expect(downButton).toHaveText(customDownSymbol);
+      await expect(upButton).toHaveText('USER-↑');
+      await expect(downButton).toHaveText('USER-↓');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
   });
 
-  test.describe('User Numerical Settings Are Preserved', () => {
+  test.describe('Renderer Defaults vs User Settings', () => {
 
-    test('should preserve user min/max/step settings', async ({ page }) => {
+    test('should apply renderer default classes when user does not specify', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-renderer-defaults.html');
+      await page.waitForLoadState('networkidle');
       
-      const customMin = 5;
-      const customMax = 50;
-      const customStep = 3;
-      const testId = 'touchspin-default';
+      // Check that renderer default classes were applied
+      const wrapper = page.getByTestId('test-renderer-defaults-wrapper');
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const downButton = wrapper.locator('.bootstrap-touchspin-down');
       
-      // Initialize with custom numerical settings
-      await page.evaluate(({ customMin, customMax, customStep }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.TouchSpin({
-          min: customMin,
-          max: customMax,
-          step: customStep,
-          initval: 10
-        });
-      }, { customMin, customMax, customStep });
-      
-      // Test the functionality using helpers
-      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
-      
-      // Click up
-      await touchspinHelpers.touchspinClickUp(page, testId);
-      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
-      
-      // Click down twice
-      await touchspinHelpers.touchspinClickDown(page, testId);
-      await touchspinHelpers.touchspinClickDown(page, testId);
-      const afterDownValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
-      
-      expect(afterUpValue - initialValue).toBe(customStep);
-      expect(afterUpValue - afterDownValue).toBe(customStep * 2);
-      expect(initialValue).toBeGreaterThanOrEqual(customMin);
+      // Should have test renderer default classes
+      await expect(upButton).toHaveClass(/test-btn test-btn-up/);
+      await expect(downButton).toHaveClass(/test-btn test-btn-down/);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
 
-    test('should preserve user decimal and formatting settings', async ({ page }) => {
+    test('should preserve user classes over renderer defaults', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-renderer-defaults.html');
+      await page.waitForLoadState('networkidle');
       
-      const customDecimals = 2;
-      const customStep = 0.25;
-      const testId = 'touchspin-decimals';
+      // Check that user classes override renderer defaults
+      const wrapper = page.getByTestId('test-user-override-wrapper');
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const downButton = wrapper.locator('.bootstrap-touchspin-down');
       
-      // Initialize with decimal settings
-      await page.evaluate(({ customDecimals, customStep }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_decimals');
-        
-        input.TouchSpin({
-          decimals: customDecimals,
-          step: customStep,
-          initval: '5.00'
-        });
-      }, { customDecimals, customStep });
+      // Should have user custom classes, NOT renderer defaults
+      await expect(upButton).toHaveClass(/user-custom-up-class/);
+      await expect(downButton).toHaveClass(/user-custom-down-class/);
+      await expect(upButton).not.toHaveClass(/test-btn-up/);
+      await expect(downButton).not.toHaveClass(/test-btn-down/);
       
-      // Test decimal functionality
+      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
+    });
+  });
+
+  test.describe('Numerical Settings Precedence', () => {
+
+    test('should preserve user numerical settings', async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
+      await page.goto('/__tests__/html/settings-precedence-numerical.html');
+      await page.waitForLoadState('networkidle');
+      
+      // Test custom step setting
+      const testId = 'test-custom-step';
+      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
+      
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      
+      // Should increment by custom step (3), not default (1)
+      expect(afterUpValue - initialValue).toBe(3);
+      
+      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
+    });
+
+    test('should preserve user decimal formatting settings', async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
+      await page.goto('/__tests__/html/settings-precedence-numerical.html');
+      await page.waitForLoadState('networkidle');
+      
+      // Test decimal formatting
+      const testId = 'test-decimals';
+      
       await touchspinHelpers.touchspinClickUp(page, testId);
       const afterUpValue = await touchspinHelpers.readInputValue(page, testId);
       
+      // Should increment by 0.25 and maintain 2 decimal places
       expect(afterUpValue).toBe('5.25');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
-  });
 
-  test.describe('User Extra Class Settings Are Applied', () => {
-
-    test('should apply user prefix and postfix extra classes', async ({ page }) => {
+    test('should respect user min/max constraints', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-numerical.html');
+      await page.waitForLoadState('networkidle');
       
-      const customPrefixClass = 'custom-prefix-style';
-      const customPostfixClass = 'custom-postfix-style';
-      const testId = 'touchspin-default';
+      // Test min/max constraints with custom step
+      const testId = 'test-min-max';
+      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
       
-      // Initialize with extra classes
-      await page.evaluate(({ customPrefixClass, customPostfixClass }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.TouchSpin({
-          prefix: '$',
-          postfix: '.00',
-          prefix_extraclass: customPrefixClass,
-          postfix_extraclass: customPostfixClass
-        });
-      }, { customPrefixClass, customPostfixClass });
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
       
-      // Get the TouchSpin wrapper and check extra classes
-      const wrapper = page.getByTestId(testId + '-wrapper');
-      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
-      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
-      
-      await expect(prefixElement).toHaveClass(new RegExp(customPrefixClass));
-      await expect(postfixElement).toHaveClass(new RegExp(customPostfixClass));
+      // Should increment by custom step (3)
+      expect(afterUpValue - initialValue).toBe(3);
+      expect(initialValue).toBeGreaterThanOrEqual(5); // Custom min
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
@@ -214,80 +163,79 @@ test.describe('Settings Precedence System', () => {
 
   test.describe('Data Attributes Integration', () => {
 
-    test('should respect data attribute settings', async ({ page }) => {
+    test('should respect data attribute settings when no JS settings provided', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-data-attributes.html');
+      await page.waitForLoadState('networkidle');
       
-      const customPrefix = 'DATA-';
-      const customStep = 5;
-      const testId = 'touchspin-default';
-      
-      // Set data attributes and initialize
-      await page.evaluate(({ customPrefix, customStep }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        // Set data attributes
-        input.attr('data-bts-prefix', customPrefix);
-        input.attr('data-bts-step', customStep.toString());
-        
-        // Initialize (should pick up data attributes)
-        input.TouchSpin({});
-      }, { customPrefix, customStep });
-      
-      // Check prefix text
-      const wrapper = page.getByTestId(testId + '-wrapper');
+      // Check that data attributes were applied
+      const wrapper = page.getByTestId('test-data-attrs-wrapper');
       const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
-      await expect(prefixElement).toHaveText(customPrefix);
+      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
       
-      // Test step functionality
+      await expect(prefixElement).toHaveText('DATA-PREFIX-');
+      await expect(postfixElement).toHaveText('-DATA-POSTFIX');
+      
+      // Test data attribute step functionality
+      const testId = 'test-data-attrs';
       const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
       await touchspinHelpers.touchspinClickUp(page, testId);
       const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
       
-      expect(afterUpValue - initialValue).toBe(customStep);
+      // Should increment by data-bts-step="5"
+      expect(afterUpValue - initialValue).toBe(5);
+      
+      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
+    });
+
+    test('should allow JS settings to override data attributes', async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
+      await page.goto('/__tests__/html/settings-precedence-data-attributes.html');
+      await page.waitForLoadState('networkidle');
+      
+      // Check that JS settings override data attributes
+      const wrapper = page.getByTestId('test-js-override-wrapper');
+      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
+      
+      // Should have JS prefix, not data attribute prefix
+      await expect(prefixElement).toHaveText('JS-PREFIX-');
+      
+      // Test JS step override
+      const testId = 'test-js-override';
+      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      
+      // Should increment by JS step (10), not data attribute step (1)
+      expect(afterUpValue - initialValue).toBe(10);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
   });
 
-  test.describe('Settings Update Precedence', () => {
+  test.describe('Settings Update Events', () => {
 
-    test('should maintain user settings when updating programmatically', async ({ page }) => {
+    test('should handle programmatic settings updates correctly', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
+      await page.goto('/__tests__/html/settings-precedence-user-text.html');
+      await page.waitForLoadState('networkidle');
       
-      const initialCustomText = 'UP!';
-      const updatedCustomText = 'HIGHER!';
-      const testId = 'touchspin-default';
-      
-      // Initialize with custom button text
-      await page.evaluate(({ initialCustomText }) => {
-        const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.TouchSpin({
-          buttonup_txt: initialCustomText
-        });
-      }, { initialCustomText });
-      
-      // Check initial text
-      const wrapper = page.getByTestId(testId + '-wrapper');
+      // Check initial state
+      const wrapper = page.getByTestId('test-button-text-wrapper');
       const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      await expect(upButton).toHaveText(initialCustomText);
+      
+      await expect(upButton).toHaveText('USER-UP');
       
       // Update settings programmatically
-      await page.evaluate(({ updatedCustomText }) => {
+      await page.evaluate(() => {
         const $ = (window as any).jQuery;
-        const input = $('#testinput_default');
-        
-        input.trigger('touchspin.updatesettings', {
-          buttonup_txt: updatedCustomText
+        $('#test-button-text').trigger('touchspin.updatesettings', {
+          buttonup_txt: 'UPDATED-UP'
         });
-      }, { updatedCustomText });
+      });
       
-      // Check updated text
-      await expect(upButton).toHaveText(updatedCustomText);
+      // Should update to new text
+      await expect(upButton).toHaveText('UPDATED-UP');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });

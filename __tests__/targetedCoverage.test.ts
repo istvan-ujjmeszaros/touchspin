@@ -299,7 +299,7 @@ test.describe('Targeted Coverage Tests', () => {
       const hasTestClasses = await page.evaluate((testId) => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         return !!(container && (
-          container.querySelector('.test-renderer-wrapper') ||
+          container.classList.contains('test-container') ||
           container.querySelector('.test-prefix') ||
           container.querySelector('.test-postfix') ||
           container.querySelector('.test-btn-up') ||
@@ -323,7 +323,7 @@ test.describe('Targeted Coverage Tests', () => {
       const testSpecificElements = await page.evaluate((testId) => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
         return {
-          hasTestWrapper: !!(container && container.classList.contains('test-renderer-wrapper')),
+          hasTestWrapper: !!(container && container.classList.contains('test-container')),
           hasTestPrefix: !!(container && container.querySelector('.test-prefix')),
           hasTestPostfix: !!(container && container.querySelector('.test-postfix')),
           hasTestButtons: !!(container && container.querySelector('.test-btn-up') && container.querySelector('.test-btn-down'))

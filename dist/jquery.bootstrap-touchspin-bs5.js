@@ -422,7 +422,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         init();
         function init() {
           if (originalinput.data("alreadyinitialized")) {
-            return;
+            originalinput.trigger("touchspin.destroy");
           }
           originalinput.data("alreadyinitialized", true);
           if (!originalinput.is("input")) {
@@ -575,6 +575,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               _detached_prefix: _detached_prefix,
               _detached_postfix: _detached_postfix
             });
+          }
+          if ("buttonup_txt" in newsettings || "buttondown_txt" in newsettings || "verticalup" in newsettings || "verticaldown" in newsettings) {
+            if (newsettings.buttonup_txt !== void 0 && elements.up) {
+              elements.up.html(newsettings.buttonup_txt);
+            }
+            if (newsettings.buttondown_txt !== void 0 && elements.down) {
+              elements.down.html(newsettings.buttondown_txt);
+            }
+            if (newsettings.verticalup !== void 0 && elements.up) {
+              elements.up.html(newsettings.verticalup);
+            }
+            if (newsettings.verticaldown !== void 0 && elements.down) {
+              elements.down.html(newsettings.verticaldown);
+            }
           }
           if (newsettings.min !== void 0 || newsettings.max !== void 0 || newsettings.step !== void 0) {
             _syncNativeAttributes();

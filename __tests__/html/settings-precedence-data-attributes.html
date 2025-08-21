@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Settings Precedence: Data Attributes</title>
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Settings Precedence: Data Attributes</h1>
+    
+    <!-- Test: Data attributes should be respected -->
+    <div class="test-group">
+      <label for="test-data-attrs">Data Attributes Test:</label>
+      <input id="test-data-attrs" data-testid="test-data-attrs" type="text" value="0" class="form-control"
+             data-bts-prefix="DATA-PREFIX-" 
+             data-bts-postfix="-DATA-POSTFIX"
+             data-bts-step="5"
+             data-bts-min="0"
+             data-bts-max="100">
+    </div>
+
+    <!-- Test: JavaScript settings should override data attributes -->
+    <div class="test-group">
+      <label for="test-js-override">JS Should Override Data Attrs:</label>
+      <input id="test-js-override" data-testid="test-js-override" type="text" value="0" class="form-control"
+             data-bts-prefix="DATA-PREFIX"
+             data-bts-step="1">
+    </div>
+  </div>
+
+  <!-- Load TouchSpin source files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="TestRenderer.js"></script>
+
+  <!-- Create Test RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new TestRenderer($, settings, originalinput);
+      }
+      static getVersion() {
+        return 'test';
+      }
+    };
+  </script>
+
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+  <!-- Initialize inputs to test data attribute precedence -->
+  <script>
+    $(document).ready(function() {
+      // Test 1: Initialize with no JS settings - should use data attributes
+      $("#test-data-attrs").TouchSpin({});
+
+      // Test 2: JS settings should override data attributes
+      $("#test-js-override").TouchSpin({
+        prefix: 'JS-PREFIX-',  // Should override data-bts-prefix="DATA-PREFIX"
+        step: 10               // Should override data-bts-step="1"
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Settings Precedence: Renderer Defaults</title>
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Settings Precedence: Renderer Defaults</h1>
+    
+    <!-- Test: Renderer defaults should be applied when user doesn't specify -->
+    <div class="test-group">
+      <label for="test-renderer-defaults">Renderer Default Classes:</label>
+      <input id="test-renderer-defaults" data-testid="test-renderer-defaults" type="text" value="50" class="form-control">
+    </div>
+
+    <!-- Test: Renderer defaults should NOT override user settings -->
+    <div class="test-group">
+      <label for="test-user-override">User Should Override Renderer:</label>
+      <input id="test-user-override" data-testid="test-user-override" type="text" value="50" class="form-control">
+    </div>
+  </div>
+
+  <!-- Load TouchSpin source files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="TestRenderer.js"></script>
+
+  <!-- Create Test RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new TestRenderer($, settings, originalinput);
+      }
+      static getVersion() {
+        return 'test';
+      }
+    };
+  </script>
+
+  <!-- Load main TouchSpin source file -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+  <!-- Initialize inputs to test renderer defaults vs user settings -->
+  <script>
+    $(document).ready(function() {
+      // Test 1: No button classes specified - should get renderer defaults
+      $("#test-renderer-defaults").TouchSpin({
+        // No buttonup_class or buttondown_class specified
+        // Should get TestRenderer defaults: 'test-btn test-btn-up/down'
+      });
+
+      // Test 2: User classes specified - should override renderer defaults
+      $("#test-user-override").TouchSpin({
+        buttonup_class: 'user-custom-up-class',
+        buttondown_class: 'user-custom-down-class'
+      });
+    });
+  </script>
+</body>
+</html>

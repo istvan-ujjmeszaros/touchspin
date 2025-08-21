@@ -534,6 +534,22 @@
           });
         }
 
+        // Update button text if those settings were changed
+        if ('buttonup_txt' in newsettings || 'buttondown_txt' in newsettings || 'verticalup' in newsettings || 'verticaldown' in newsettings) {
+          if (newsettings.buttonup_txt !== undefined && elements.up) {
+            elements.up.html(newsettings.buttonup_txt);
+          }
+          if (newsettings.buttondown_txt !== undefined && elements.down) {
+            elements.down.html(newsettings.buttondown_txt);
+          }
+          if (newsettings.verticalup !== undefined && elements.up) {
+            elements.up.html(newsettings.verticalup);
+          }
+          if (newsettings.verticaldown !== undefined && elements.down) {
+            elements.down.html(newsettings.verticaldown);
+          }
+        }
+
         // Sync native attributes when TouchSpin settings change
         if (newsettings.min !== undefined || newsettings.max !== undefined || newsettings.step !== undefined) {
           _syncNativeAttributes();
