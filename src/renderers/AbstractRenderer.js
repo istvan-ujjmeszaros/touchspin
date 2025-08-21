@@ -1,6 +1,30 @@
 /**
  * Abstract Renderer Base Class
  * Defines the interface and common functionality for Bootstrap version-specific renderers
+ * 
+ * REQUIRED DATA ATTRIBUTES FOR HTML ELEMENTS:
+ * All renderers must generate HTML elements with the following data attributes for framework-agnostic identification:
+ * 
+ * - Container wrapper: data-touchspin-injected="wrapper"
+ *   The main container that wraps the entire TouchSpin component
+ * 
+ * - Up button: data-touchspin-injected="up" 
+ *   The button used to increment the input value
+ * 
+ * - Down button: data-touchspin-injected="down"
+ *   The button used to decrement the input value
+ * 
+ * - Prefix element: data-touchspin-injected="prefix"
+ *   Element displaying text/content before the input (optional)
+ * 
+ * - Postfix element: data-touchspin-injected="postfix" 
+ *   Element displaying text/content after the input (optional)
+ * 
+ * - Vertical wrapper: data-touchspin-injected="vertical-wrapper"
+ *   Container for vertical button layout (when verticalbuttons: true)
+ * 
+ * These data attributes are used internally by TouchSpin for element identification and should not be 
+ * modified by users. CSS classes are maintained for styling and backward compatibility only.
  */
 class AbstractRenderer {
   constructor($, settings, originalinput) {
@@ -88,8 +112,8 @@ class AbstractRenderer {
    * Find elements using data attributes
    * @private
    * @param {jQuery} container Container to search within
-   * @param {string} role Element role (up, down, prefix, postfix, vertical-wrapper)
-   * @returns {jQuery} Found elements
+   * @param {string} role Element role - must be one of: "wrapper", "up", "down", "prefix", "postfix", "vertical-wrapper"
+   * @returns {jQuery} Found elements with data-touchspin-injected attribute matching the role
    */
   _findElements(container, role) {
     // Use data attribute for element identification
