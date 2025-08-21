@@ -64,6 +64,11 @@
     "build": "node build.mjs",
     "check-build-integrity": "node check-build-integrity.mjs",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:visual": "playwright test --project=visual-tests",
+    "test:visual:update": "playwright test --project=visual-tests --update-snapshots",
+    "test:visual:ui": "playwright test --project=visual-tests --ui",
+    "test:visual:headed": "playwright test --project=visual-tests --headed",
+    "test:visual:report": "playwright show-report reports/playwright"
   }
 }

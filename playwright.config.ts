@@ -59,6 +59,27 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     
+    // Visual regression testing project
+    {
+      name: 'visual-tests',
+      testMatch: '**/visual/**/*.test.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Fixed viewport for consistent screenshots
+        viewport: { width: 1280, height: 720 },
+        // Consistent color scheme
+        colorScheme: 'light',
+        // Disable animations for consistent screenshots
+        launchOptions: {
+          args: [
+            '--force-prefers-reduced-motion',
+            '--disable-web-security',
+            '--disable-features=IsolateOrigins,site-per-process'
+          ]
+        }
+      }
+    },
+    
     // Uncomment to test other browsers
     // {
     //   name: 'firefox',
