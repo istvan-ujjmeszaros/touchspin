@@ -109,8 +109,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
        * Find elements using data attributes
        * @private
        * @param {jQuery} container Container to search within
-       * @param {string} role Element role (up, down, prefix, postfix, vertical-wrapper)
-       * @returns {jQuery} Found elements
+       * @param {string} role Element role - must be one of: "wrapper", "up", "down", "prefix", "postfix", "vertical-wrapper"
+       * @returns {jQuery} Found elements with data-touchspin-injected attribute matching the role
        */
     }, {
       key: "_findElements",

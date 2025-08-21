@@ -61,7 +61,7 @@ class TailwindRenderer extends AbstractRenderer {
   }
 
   buildAdvancedInputGroup(parentelement) {
-    parentelement.addClass('flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500');
+    parentelement.addClass('flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50');
 
     // Add testid to existing container
     const testidAttr = this.getWrapperTestId();
@@ -91,13 +91,13 @@ class TailwindRenderer extends AbstractRenderer {
     } else {
       // Tailwind buttons - pure utility classes, no Bootstrap dependency
       const downhtml = `
-        <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class}" data-touchspin-injected="down" type="button">
+        <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class}" data-touchspin-injected="down" type="button">
           ${this.settings.buttondown_txt}
         </button>
       `;
 
       const uphtml = `
-        <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ${this.settings.buttonup_class}" data-touchspin-injected="up" type="button">
+        <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ${this.settings.buttonup_class}" data-touchspin-injected="up" type="button">
           ${this.settings.buttonup_txt}
         </button>
       `;
@@ -117,7 +117,7 @@ class TailwindRenderer extends AbstractRenderer {
 
     // Apply Tailwind classes to the original input and remove Bootstrap classes
     this.originalinput.removeClass('form-control');
-    this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500');
+    this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed');
 
     this.container = parentelement;
     return parentelement;
@@ -130,7 +130,7 @@ class TailwindRenderer extends AbstractRenderer {
 
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">
             ${this.settings.prefix}
           </span>
@@ -138,10 +138,10 @@ class TailwindRenderer extends AbstractRenderer {
             ${this.settings.postfix}
           </span>
           <div class="flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
-            <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">
+            <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">
               ${this.settings.verticalup}
             </button>
-            <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">
+            <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">
               ${this.settings.verticaldown}
             </button>
           </div>
@@ -149,8 +149,8 @@ class TailwindRenderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500" data-touchspin-injected="wrapper"${testidAttr}>
-          <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class}" data-touchspin-injected="down" type="button">
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
+          <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class}" data-touchspin-injected="down" type="button">
             ${this.settings.buttondown_txt}
           </button>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">
@@ -159,7 +159,7 @@ class TailwindRenderer extends AbstractRenderer {
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">
             ${this.settings.postfix}
           </span>
-          <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ${this.settings.buttonup_class}" data-touchspin-injected="up" type="button">
+          <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ${this.settings.buttonup_class}" data-touchspin-injected="up" type="button">
             ${this.settings.buttonup_txt}
           </button>
         </div>
@@ -171,7 +171,7 @@ class TailwindRenderer extends AbstractRenderer {
     // Insert the original input after the prefix and apply Tailwind classes
     this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
     this.originalinput.removeClass('form-control');
-    this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500');
+    this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed');
 
     // Apply size classes
     this._applySizeClasses();
@@ -182,10 +182,10 @@ class TailwindRenderer extends AbstractRenderer {
   buildVerticalButtons() {
     return `
       <div class="flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
-        <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">
+        <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">
           ${this.settings.verticalup}
         </button>
-        <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">
+        <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">
           ${this.settings.verticaldown}
         </button>
       </div>
