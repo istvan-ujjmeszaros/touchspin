@@ -1,10 +1,8 @@
 /**
  * Settings Precedence Tests
- * Tests the framework-agnostic settings precedence system where:
- * 1. Core defaults use null for framework-specific properties
- * 2. User settings take highest precedence
- * 3. Renderer defaults only fill null placeholders
- * 4. User customizations are never overridden by renderer defaults
+ * Tests that user-configurable settings work correctly with the renderer system.
+ * Note: Button classes are now hard-coded in renderers and not user-configurable.
+ * These tests focus on settings that users can still customize.
  */
 
 import { test, expect } from '@playwright/test';
@@ -12,332 +10,286 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 
 test.describe('Settings Precedence System', () => {
 
-  test.describe('User Settings Take Priority Over Renderer Defaults', () => {
+  test.describe('User Content Settings Are Preserved', () => {
 
-    test('should preserve user buttonup_class over Bootstrap 3 renderer defaults', async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs3.html');
-      
-      const customClass = 'my-custom-btn-class';
-      
-      const result = await page.evaluate((customClass) => {
-        const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
-        
-        // Initialize with user-provided buttonup_class
-        input.TouchSpin({
-          buttonup_class: customClass
-        });
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        return upButton?.className || '';
-      }, customClass);
-      
-      expect(result).toContain(customClass);
-      expect(result).not.toContain('btn btn-default'); // Should not contain Bootstrap 3 default
-      
-      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
-    });
-
-    test('should preserve user buttondown_class over Bootstrap 4 renderer defaults', async ({ page }) => {
+    test('should preserve user button text over defaults', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs4.html');
       
-      const customClass = 'my-custom-down-btn';
+      const customUpText = '↑UP↑';
+      const customDownText = '↓DOWN↓';
+      const testId = 'touchspin-default';
       
-      const result = await page.evaluate((customClass) => {
+      // Initialize with custom button text
+      await page.evaluate(({ customUpText, customDownText }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#testinput_default');
         
-        // Initialize with user-provided buttondown_class
         input.TouchSpin({
-          buttondown_class: customClass
+          buttonup_txt: customUpText,
+          buttondown_txt: customDownText
         });
-        
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        return downButton?.className || '';
-      }, customClass);
+      }, { customUpText, customDownText });
       
-      expect(result).toContain(customClass);
-      expect(result).not.toContain('btn btn-outline-secondary'); // Should not contain Bootstrap 4 default
+      // Get the TouchSpin wrapper and check button text
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const downButton = wrapper.locator('.bootstrap-touchspin-down');
+      
+      await expect(upButton).toHaveText(customUpText);
+      await expect(downButton).toHaveText(customDownText);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
 
-    test('should preserve user vertical button classes over Bootstrap 5 renderer defaults', async ({ page }) => {
+    test('should preserve user prefix and postfix content', async ({ page }) => {
+      await touchspinHelpers.startCoverage(page);
+      await page.goto('/__tests__/html/index-bs4.html');
+      
+      const customPrefix = '$$$';
+      const customPostfix = ' USD';
+      const testId = 'touchspin-default';
+      
+      // Initialize with custom prefix/postfix
+      await page.evaluate(({ customPrefix, customPostfix }) => {
+        const $ = (window as any).jQuery;
+        const input = $('#testinput_default');
+        
+        input.TouchSpin({
+          prefix: customPrefix,
+          postfix: customPostfix
+        });
+      }, { customPrefix, customPostfix });
+      
+      // Get the TouchSpin wrapper and check prefix/postfix
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
+      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
+      
+      await expect(prefixElement).toHaveText(customPrefix);
+      await expect(postfixElement).toHaveText(customPostfix);
+      
+      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
+    });
+
+    test('should preserve user vertical button content', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs5.html');
       
-      const customUpClass = 'custom-vertical-up';
-      const customDownClass = 'custom-vertical-down';
+      const customUpSymbol = '⬆️';
+      const customDownSymbol = '⬇️';
+      const testId = 'touchspin-vertical';
       
-      const result = await page.evaluate(({ customUpClass, customDownClass }) => {
+      // Initialize with custom vertical button symbols
+      await page.evaluate(({ customUpSymbol, customDownSymbol }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#input_vertical');
         
-        // Initialize with user-provided vertical button classes
         input.TouchSpin({
           verticalbuttons: true,
-          verticalupclass: customUpClass,
-          verticaldownclass: customDownClass
+          verticalup: customUpSymbol,
+          verticaldown: customDownSymbol
         });
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      }, { customUpClass, customDownClass });
+      }, { customUpSymbol, customDownSymbol });
       
-      expect(result.upClasses).toContain(customUpClass);
-      expect(result.downClasses).toContain(customDownClass);
-      expect(result.upClasses).not.toContain('btn btn-outline-secondary');
-      expect(result.downClasses).not.toContain('btn btn-outline-secondary');
+      // Get the TouchSpin wrapper and check vertical button symbols
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const downButton = wrapper.locator('.bootstrap-touchspin-down');
+      
+      await expect(upButton).toHaveText(customUpSymbol);
+      await expect(downButton).toHaveText(customDownSymbol);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
-
   });
 
-  test.describe('Renderer Defaults Fill Null Placeholders', () => {
+  test.describe('User Numerical Settings Are Preserved', () => {
 
-    test('should apply Bootstrap 3 renderer defaults when user provides no button classes', async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs3.html');
-      
-      const result = await page.evaluate(() => {
-        const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
-        
-        // Initialize without providing button classes (should use renderer defaults)
-        input.TouchSpin({});
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      });
-      
-      // Should contain Bootstrap 3 default classes
-      expect(result.upClasses).toContain('btn btn-default');
-      expect(result.downClasses).toContain('btn btn-default');
-      
-      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
-    });
-
-    test('should apply Bootstrap 4 renderer defaults when user provides no button classes', async ({ page }) => {
+    test('should preserve user min/max/step settings', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs4.html');
       
-      const result = await page.evaluate(() => {
-        const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
-        
-        // Initialize without providing button classes (should use renderer defaults)
-        input.TouchSpin({});
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      });
+      const customMin = 5;
+      const customMax = 50;
+      const customStep = 3;
+      const testId = 'touchspin-default';
       
-      // Should contain Bootstrap 4 default classes
-      expect(result.upClasses).toContain('btn btn-outline-secondary');
-      expect(result.downClasses).toContain('btn btn-outline-secondary');
+      // Initialize with custom numerical settings
+      await page.evaluate(({ customMin, customMax, customStep }) => {
+        const $ = (window as any).jQuery;
+        const input = $('#testinput_default');
+        
+        input.TouchSpin({
+          min: customMin,
+          max: customMax,
+          step: customStep,
+          initval: 10
+        });
+      }, { customMin, customMax, customStep });
+      
+      // Test the functionality using helpers
+      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
+      
+      // Click up
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      
+      // Click down twice
+      await touchspinHelpers.touchspinClickDown(page, testId);
+      await touchspinHelpers.touchspinClickDown(page, testId);
+      const afterDownValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      
+      expect(afterUpValue - initialValue).toBe(customStep);
+      expect(afterUpValue - afterDownValue).toBe(customStep * 2);
+      expect(initialValue).toBeGreaterThanOrEqual(customMin);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
 
-    test('should apply Bootstrap 5 renderer defaults when user provides no button classes', async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs5.html');
-      
-      const result = await page.evaluate(() => {
-        const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
-        
-        // Initialize without providing button classes (should use renderer defaults)
-        input.TouchSpin({});
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      });
-      
-      // Should contain Bootstrap 5 default classes  
-      expect(result.upClasses).toContain('btn btn-outline-secondary');
-      expect(result.downClasses).toContain('btn btn-outline-secondary');
-      
-      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
-    });
-
-  });
-
-  test.describe('Mixed User Settings and Renderer Defaults', () => {
-
-    test('should apply user setting for one property and renderer default for another', async ({ page }) => {
+    test('should preserve user decimal and formatting settings', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs4.html');
       
-      const customUpClass = 'user-provided-up-btn';
+      const customDecimals = 2;
+      const customStep = 0.25;
+      const testId = 'touchspin-decimals';
       
-      const result = await page.evaluate((customUpClass) => {
+      // Initialize with decimal settings
+      await page.evaluate(({ customDecimals, customStep }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#testinput_decimals');
         
-        // Provide only buttonup_class, leave buttondown_class as null
         input.TouchSpin({
-          buttonup_class: customUpClass
-          // buttondown_class intentionally omitted - should get renderer default
+          decimals: customDecimals,
+          step: customStep,
+          initval: '5.00'
         });
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      }, customUpClass);
+      }, { customDecimals, customStep });
       
-      // Up button should have user-provided class
-      expect(result.upClasses).toContain(customUpClass);
-      expect(result.upClasses).not.toContain('btn btn-outline-secondary');
+      // Test decimal functionality
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = await touchspinHelpers.readInputValue(page, testId);
       
-      // Down button should have renderer default since user didn't provide it
-      expect(result.downClasses).toContain('btn btn-outline-secondary');
-      expect(result.downClasses).not.toContain(customUpClass);
+      expect(afterUpValue).toBe('5.25');
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
+  });
 
-    test('should handle vertical buttons with mixed user/renderer settings', async ({ page }) => {
+  test.describe('User Extra Class Settings Are Applied', () => {
+
+    test('should apply user prefix and postfix extra classes', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs3-vertical.html');
+      await page.goto('/__tests__/html/index-bs4.html');
       
-      const customVerticalUp = 'custom-vertical-up-class';
+      const customPrefixClass = 'custom-prefix-style';
+      const customPostfixClass = 'custom-postfix-style';
+      const testId = 'touchspin-default';
       
-      const result = await page.evaluate((customVerticalUp) => {
+      // Initialize with extra classes
+      await page.evaluate(({ customPrefixClass, customPostfixClass }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#testinput_default');
         
-        // Provide only verticalupclass, leave verticaldownclass as null
         input.TouchSpin({
-          verticalbuttons: true,
-          verticalupclass: customVerticalUp
-          // verticaldownclass intentionally omitted - should get renderer default
+          prefix: '$',
+          postfix: '.00',
+          prefix_extraclass: customPrefixClass,
+          postfix_extraclass: customPostfixClass
         });
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        const downButton = input.parent().find('.bootstrap-touchspin-down')[0];
-        
-        return {
-          upClasses: upButton?.className || '',
-          downClasses: downButton?.className || ''
-        };
-      }, customVerticalUp);
+      }, { customPrefixClass, customPostfixClass });
       
-      // Up button should have user-provided class
-      expect(result.upClasses).toContain(customVerticalUp);
+      // Get the TouchSpin wrapper and check extra classes
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
+      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
       
-      // Down button should have renderer default since user didn't provide it
-      expect(result.downClasses).toContain('btn btn-default');
-      expect(result.downClasses).not.toContain(customVerticalUp);
+      await expect(prefixElement).toHaveClass(new RegExp(customPrefixClass));
+      await expect(postfixElement).toHaveClass(new RegExp(customPostfixClass));
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
-
   });
 
   test.describe('Data Attributes Integration', () => {
 
-    test('should respect data attribute settings over renderer defaults', async ({ page }) => {
+    test('should respect data attribute settings', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
       await page.goto('/__tests__/html/index-bs4.html');
       
-      const dataAttrClass = 'data-attr-custom-btn';
+      const customPrefix = 'DATA-';
+      const customStep = 5;
+      const testId = 'touchspin-default';
       
-      const result = await page.evaluate((dataAttrClass) => {
+      // Set data attributes and initialize
+      await page.evaluate(({ customPrefix, customStep }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#testinput_default');
         
-        // Set data attribute for button class
-        input.attr('data-bts-buttonup-class', dataAttrClass);
+        // Set data attributes
+        input.attr('data-bts-prefix', customPrefix);
+        input.attr('data-bts-step', customStep.toString());
         
-        // Initialize without explicit buttonup_class option
+        // Initialize (should pick up data attributes)
         input.TouchSpin({});
-        
-        const upButton = input.parent().find('.bootstrap-touchspin-up')[0];
-        return upButton?.className || '';
-      }, dataAttrClass);
+      }, { customPrefix, customStep });
       
-      // Should contain data attribute value, not renderer default
-      expect(result).toContain(dataAttrClass);
-      expect(result).not.toContain('btn btn-outline-secondary');
+      // Check prefix text
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
+      await expect(prefixElement).toHaveText(customPrefix);
+      
+      // Test step functionality
+      const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      await touchspinHelpers.touchspinClickUp(page, testId);
+      const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
+      
+      expect(afterUpValue - initialValue).toBe(customStep);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
-
   });
 
   test.describe('Settings Update Precedence', () => {
 
-    test('should maintain precedence when updating settings programmatically', async ({ page }) => {
+    test('should maintain user settings when updating programmatically', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs5.html');
+      await page.goto('/__tests__/html/index-bs4.html');
       
-      const initialCustomClass = 'initial-custom-class';
-      const updatedCustomClass = 'updated-custom-class';
+      const initialCustomText = 'UP!';
+      const updatedCustomText = 'HIGHER!';
+      const testId = 'touchspin-default';
       
-      const result = await page.evaluate(({ initialCustomClass, updatedCustomClass }) => {
+      // Initialize with custom button text
+      await page.evaluate(({ initialCustomText }) => {
         const $ = (window as any).jQuery;
-        const input = $('#default-spinner');
+        const input = $('#testinput_default');
         
-        // Initialize with custom button class
         input.TouchSpin({
-          buttonup_class: initialCustomClass
+          buttonup_txt: initialCustomText
         });
+      }, { initialCustomText });
+      
+      // Check initial text
+      const wrapper = page.getByTestId(testId + '-wrapper');
+      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      await expect(upButton).toHaveText(initialCustomText);
+      
+      // Update settings programmatically
+      await page.evaluate(({ updatedCustomText }) => {
+        const $ = (window as any).jQuery;
+        const input = $('#testinput_default');
         
-        let initialClasses = input.parent().find('.bootstrap-touchspin-up')[0]?.className || '';
-        
-        // Update settings - should preserve user setting precedence
         input.trigger('touchspin.updatesettings', {
-          buttonup_class: updatedCustomClass
+          buttonup_txt: updatedCustomText
         });
-        
-        let updatedClasses = input.parent().find('.bootstrap-touchspin-up')[0]?.className || '';
-        
-        return {
-          initial: initialClasses,
-          updated: updatedClasses
-        };
-      }, { initialCustomClass, updatedCustomClass });
+      }, { updatedCustomText });
       
-      // Initial should have initial custom class
-      expect(result.initial).toContain(initialCustomClass);
-      expect(result.initial).not.toContain('btn btn-outline-secondary');
-      
-      // Updated should have updated custom class  
-      expect(result.updated).toContain(updatedCustomClass);
-      expect(result.updated).not.toContain(initialCustomClass);
-      expect(result.updated).not.toContain('btn btn-outline-secondary');
+      // Check updated text
+      await expect(upButton).toHaveText(updatedCustomText);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });
-
   });
-
 });
