@@ -279,9 +279,9 @@
        */
       function init() {
         if (originalinput.data('alreadyinitialized')) {
-          // If already initialized, update settings instead of ignoring
-          originalinput.trigger('touchspin.updatesettings', options);
-          return;
+          // If already initialized, destroy current instance and reinitialize with new settings
+          originalinput.trigger('touchspin.destroy');
+          // Continue with normal initialization after destroy
         }
 
         originalinput.data('alreadyinitialized', true);
@@ -324,26 +324,6 @@
       function changeSettings(newsettings) {
         _updateSettings(newsettings);
         _checkValue(true);
-
-        // Update DOM elements if text settings changed
-        if (newsettings.buttonup_txt !== undefined && elements.up) {
-          elements.up.html(settings.buttonup_txt);
-        }
-        if (newsettings.buttondown_txt !== undefined && elements.down) {
-          elements.down.html(settings.buttondown_txt);
-        }
-        if (newsettings.prefix !== undefined && elements.prefix) {
-          elements.prefix.html(settings.prefix);
-        }
-        if (newsettings.postfix !== undefined && elements.postfix) {
-          elements.postfix.html(settings.postfix);
-        }
-        if (newsettings.verticalup !== undefined && elements.up && settings.verticalbuttons) {
-          elements.up.html(settings.verticalup);
-        }
-        if (newsettings.verticaldown !== undefined && elements.down && settings.verticalbuttons) {
-          elements.down.html(settings.verticaldown);
-        }
 
         /** @type {string} */
         var raw = String(elements.input.val() ?? '');
