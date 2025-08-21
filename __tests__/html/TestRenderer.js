@@ -103,25 +103,25 @@ class TestRenderer extends AbstractRenderer {
 
   updatePrefixPostfix(newsettings, detached) {
     if (newsettings.postfix) {
-      const $postfix = this.originalinput.parent().find('.bootstrap-touchspin-postfix');
+      const $postfix = this.originalinput.parent().find('[data-touchspin-injected="postfix"]');
 
       if ($postfix.length === 0 && detached._detached_postfix) {
         detached._detached_postfix.insertAfter(this.originalinput);
       }
 
       // Test renderer simply updates text content
-      this.originalinput.parent().find('.bootstrap-touchspin-postfix').text(newsettings.postfix);
+      this.originalinput.parent().find('[data-touchspin-injected="postfix"]').text(newsettings.postfix);
     }
 
     if (newsettings.prefix) {
-      const $prefix = this.originalinput.parent().find('.bootstrap-touchspin-prefix');
+      const $prefix = this.originalinput.parent().find('[data-touchspin-injected="prefix"]');
 
       if ($prefix.length === 0 && detached._detached_prefix) {
         detached._detached_prefix.insertBefore(this.originalinput);
       }
 
       // Test renderer simply updates text content
-      this.originalinput.parent().find('.bootstrap-touchspin-prefix').text(newsettings.prefix);
+      this.originalinput.parent().find('[data-touchspin-injected="prefix"]').text(newsettings.prefix);
     }
   }
 }

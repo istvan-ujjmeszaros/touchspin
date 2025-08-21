@@ -110,12 +110,12 @@ test.describe('Tailwind CSS Renderer', () => {
       const wrapper = prefixPostfixTest.locator('..');
       
       // Verify prefix is displayed
-      const prefix = wrapper.locator('.bootstrap-touchspin-prefix');
+      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
       await expect(prefix).toBeVisible();
       expect((await prefix.textContent()).trim()).toBe('$');
       
       // Verify postfix is displayed
-      const postfix = wrapper.locator('.bootstrap-touchspin-postfix');
+      const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
       await expect(postfix).toBeVisible();
       expect((await postfix.textContent()).trim()).toBe('.00');
 
@@ -199,7 +199,7 @@ test.describe('Tailwind CSS Renderer', () => {
       const wrapper = verticalPrefixTest.locator('..');
       
       // Verify prefix is present
-      const prefix = wrapper.locator('.bootstrap-touchspin-prefix');
+      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
       await expect(prefix).toBeVisible();
       expect((await prefix.textContent()).trim()).toBe('#');
       
@@ -263,8 +263,8 @@ test.describe('Tailwind CSS Renderer', () => {
       await expect(testSection).toBeVisible();
       
       // Verify prefix and postfix work
-      const prefix = wrapper.locator('.bootstrap-touchspin-prefix');
-      const postfix = wrapper.locator('.bootstrap-touchspin-postfix');
+      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
+      const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
       
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();

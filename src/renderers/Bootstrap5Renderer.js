@@ -51,6 +51,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
+    parentelement.attr('data-touchspin-injected', 'wrapper');
 
     // Add testid to existing input-group wrapper
     const testidAttr = this.getWrapperTestId();
@@ -66,11 +67,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     // BS5 simplified prefix and postfix HTML - no prepend/append wrappers
     const prefixhtml = `
-      <span class="input-group-text bootstrap-touchspin-prefix bootstrap-touchspin-injected">${this.settings.prefix}</span>
+      <span class="input-group-text" data-touchspin-injected="prefix">${this.settings.prefix}</span>
     `;
 
     const postfixhtml = `
-      <span class="input-group-text bootstrap-touchspin-postfix bootstrap-touchspin-injected">${this.settings.postfix}</span>
+      <span class="input-group-text" data-touchspin-injected="postfix">${this.settings.postfix}</span>
     `;
 
     if (this.settings.verticalbuttons) {
@@ -80,11 +81,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
     } else {
       // BS5 simplified structure - buttons are direct children of input-group
       const downhtml = `
-        <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down bootstrap-touchspin-injected" type="button">${this.settings.buttondown_txt}</button>
+        <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
       `;
 
       const uphtml = `
-        <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up bootstrap-touchspin-injected" type="button">${this.settings.buttonup_txt}</button>
+        <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
       `;
 
       // Insert buttons directly as siblings of the input
@@ -107,24 +108,24 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin bootstrap-touchspin-injected"${testidAttr}>
-          <span class="input-group-text bootstrap-touchspin-prefix">${this.settings.prefix}</span>
-          <span class="input-group-text bootstrap-touchspin-postfix">${this.settings.postfix}</span>
-          <span class="bootstrap-touchspin-vertical-button-wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+          <span class="input-group-text" data-touchspin-injected="prefix">${this.settings.prefix}</span>
+          <span class="input-group-text" data-touchspin-injected="postfix">${this.settings.postfix}</span>
+          <span class="bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
             <span class="input-group-btn-vertical">
-              <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-              <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+              <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">${this.settings.verticalup}</button>
+              <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">${this.settings.verticaldown}</button>
             </span>
           </span>
         </div>
       `;
     } else {
       html = `
-        <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected"${testidAttr}>
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" type="button">${this.settings.buttondown_txt}</button>
-          <span class="input-group-text bootstrap-touchspin-prefix">${this.settings.prefix}</span>
-          <span class="input-group-text bootstrap-touchspin-postfix">${this.settings.postfix}</span>
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" type="button">${this.settings.buttonup_txt}</button>
+        <div class="input-group bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
+          <span class="input-group-text" data-touchspin-injected="prefix">${this.settings.prefix}</span>
+          <span class="input-group-text" data-touchspin-injected="postfix">${this.settings.postfix}</span>
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
         </div>
       `;
     }
@@ -132,7 +133,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.container = this.$(html).insertBefore(this.originalinput);
 
     // Insert the original input after the prefix
-    this.$('.bootstrap-touchspin-prefix', this.container).after(this.originalinput);
+    this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
 
     // Apply size classes
     this._applySizeClasses();
@@ -142,10 +143,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildVerticalButtons() {
     return `
-      <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper">
+      <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" type="button">${this.settings.verticalup}</button>
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" type="button">${this.settings.verticaldown}</button>
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up ${this.settings.verticalupclass}" data-touchspin-injected="up" type="button">${this.settings.verticalup}</button>
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down ${this.settings.verticaldownclass}" data-touchspin-injected="down" type="button">${this.settings.verticaldown}</button>
         </span>
       </span>
     `;
@@ -153,25 +154,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   updatePrefixPostfix(newsettings, detached) {
     if (newsettings.postfix) {
-      const $postfix = this.originalinput.parent().find('.bootstrap-touchspin-postfix');
+      const $postfix = this.originalinput.parent().find('[data-touchspin-injected="postfix"]');
 
       if ($postfix.length === 0 && detached._detached_postfix) {
         detached._detached_postfix.insertAfter(this.originalinput);
       }
 
       // BS5 - content goes directly in input-group-text
-      this.originalinput.parent().find('.bootstrap-touchspin-postfix').text(newsettings.postfix);
+      this.originalinput.parent().find('[data-touchspin-injected="postfix"]').text(newsettings.postfix);
     }
 
     if (newsettings.prefix) {
-      const $prefix = this.originalinput.parent().find('.bootstrap-touchspin-prefix');
+      const $prefix = this.originalinput.parent().find('[data-touchspin-injected="prefix"]');
 
       if ($prefix.length === 0 && detached._detached_prefix) {
         detached._detached_prefix.insertBefore(this.originalinput);
       }
 
       // BS5 - content goes directly in input-group-text
-      this.originalinput.parent().find('.bootstrap-touchspin-prefix').text(newsettings.prefix);
+      this.originalinput.parent().find('[data-touchspin-injected="prefix"]').text(newsettings.prefix);
     }
   }
 }

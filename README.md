@@ -307,6 +307,43 @@ TouchSpin's simplified renderer system is designed for easy extension to other C
 - **Template-based renderers** - Each renderer simply provides HTML templates with framework-specific classes
 - **Future framework support** - Architecture ready for Tailwind CSS, Foundation, Bulma, and custom frameworks
 
+### Framework-Agnostic Element Identification
+
+TouchSpin uses data attributes for internal functionality while maintaining CSS classes for styling and backward compatibility:
+
+#### Data Attributes for Functional Elements
+```html
+<!-- Main container identification -->
+<div data-touchspin="container" class="bootstrap-touchspin">
+  <input type="number" value="1">
+  
+  <!-- Functional buttons identified by role -->
+  <button data-touchspin-role="down" class="bootstrap-touchspin-down">-</button>
+  <button data-touchspin-role="up" class="bootstrap-touchspin-up">+</button>
+  
+  <!-- Injected elements marked for cleanup -->
+  <span data-touchspin="injected" class="bootstrap-touchspin-injected">...</span>
+</div>
+```
+
+#### Benefits of Data Attribute Approach
+- **Framework Independence** - Core functionality works without CSS framework dependencies
+- **Backward Compatibility** - Existing CSS class selectors continue to work
+- **Semantic Clarity** - Data attributes clearly indicate functional purpose vs styling
+- **Future Proof** - Easy migration path for framework-agnostic implementations
+
+#### Selector Compatibility
+Both approaches work identically:
+```javascript
+// Legacy CSS class selectors (still supported)
+$('.bootstrap-touchspin-up').click();
+$('.bootstrap-touchspin').find('input');
+
+// Modern data attribute selectors  
+$('[data-touchspin-role="up"]').click();
+$('[data-touchspin="container"]').find('input');
+```
+
 ---
 
 ## Browser & Device Support
@@ -436,6 +473,60 @@ Test suite using Playwright with automated coverage reporting:
 8. Create a Pull Request
 
 **Important**: Never edit files in `dist/` directly - they are automatically generated.
+
+---
+
+## Migration Guide for v4.8.0
+
+### Breaking Changes: CSS Class Dependencies Removed
+
+To improve framework independence, TouchSpin no longer uses certain CSS classes for internal functionality. These classes have been replaced with data attributes:
+
+#### Removed CSS Classes (Internal Use Only)
+- `.bootstrap-touchspin-prefix` 
+- `.bootstrap-touchspin-postfix`
+- `.bootstrap-touchspin-injected`
+
+#### Maintained CSS Classes (For Styling)
+These classes remain unchanged and are still applied for styling purposes:
+- `.bootstrap-touchspin` (container)
+- `.bootstrap-touchspin-up` (up button)
+- `.bootstrap-touchspin-down` (down button)
+- `.bootstrap-touchspin-vertical-button-wrapper` (vertical wrapper)
+
+### Migration Steps
+
+If you were using the removed classes for custom styling or JavaScript targeting:
+
+#### CSS Selectors
+```css
+/* Before */
+.bootstrap-touchspin-prefix { color: blue; }
+.bootstrap-touchspin-postfix { color: red; }
+.bootstrap-touchspin-injected { opacity: 0.8; }
+
+/* After */
+[data-touchspin-injected="prefix"] { color: blue; }
+[data-touchspin-injected="postfix"] { color: red; }
+[data-touchspin-injected] { opacity: 0.8; }
+```
+
+#### JavaScript Selectors
+```javascript
+// Before
+$('.bootstrap-touchspin-prefix').text('New prefix');
+$('.bootstrap-touchspin-postfix').text('New postfix');
+$('.bootstrap-touchspin-injected').remove();
+
+// After
+$('[data-touchspin-injected="prefix"]').text('New prefix');
+$('[data-touchspin-injected="postfix"]').text('New postfix');
+$('[data-touchspin-injected]').remove();
+```
+
+### Why This Change?
+
+This change enables TouchSpin to work with any CSS framework while maintaining full backward compatibility for styling classes. The plugin's internal functionality is now completely independent of Bootstrap-specific CSS classes.
 
 ---
 

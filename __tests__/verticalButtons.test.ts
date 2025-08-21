@@ -46,8 +46,8 @@ test.describe('Vertical Buttons', () => {
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
     
     // Verify prefix/postfix exist
-    const prefix = page.locator('.bootstrap-touchspin-prefix').first();
-    const postfix = page.locator('.bootstrap-touchspin-postfix').first();
+    const prefix = page.locator('[data-touchspin-injected="prefix"]').first();
+    const postfix = page.locator('[data-touchspin-injected="postfix"]').first();
     await expect(prefix).toBeVisible();
     await expect(postfix).toBeVisible();
   });
@@ -59,7 +59,7 @@ test.describe('Vertical Buttons', () => {
     const existingPrefix = await page.evaluate((testId) => {
       const input = document.querySelector(`[data-testid="${testId}"]`);
       const container = input?.parentElement;
-      return container?.querySelector('.input-group-addon:not(.bootstrap-touchspin-prefix), .input-group-text:not(.bootstrap-touchspin-prefix)') !== null;
+      return container?.querySelector('.input-group-addon:not([data-touchspin-injected="prefix"]), .input-group-text:not([data-touchspin-injected="prefix"])') !== null;
     }, testid);
     expect(existingPrefix).toBe(true);
     

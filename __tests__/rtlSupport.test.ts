@@ -37,8 +37,8 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(await touchspinHelpers.readInputValue(page, verticalTestid)).toBe('51');
 
       const prefixTestid = 'touchspin-rtl-group-sm';
-      const prefix = page.locator('.bootstrap-touchspin-prefix').first();
-      const postfix = page.locator('.bootstrap-touchspin-postfix').first();
+      const prefix = page.locator('[data-touchspin-injected="prefix"]').first();
+      const postfix = page.locator('[data-touchspin-injected="postfix"]').first();
 
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
@@ -115,7 +115,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(hasDeprecatedClasses).toBe(false);
 
       const prefixTestid = 'touchspin-rtl-group-sm';
-      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text').first();
+      const directPrefix = page.locator('[data-touchspin-injected="prefix"].input-group-text').first();
       await expect(directPrefix).toBeVisible();
 
       await touchspinHelpers.touchspinClickUp(page, prefixTestid);

@@ -27,8 +27,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await expect(container).toHaveClass(/bootstrap-touchspin/);
     await expect(page.locator('.bootstrap-touchspin-up')).toBeVisible();
     await expect(page.locator('.bootstrap-touchspin-down')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-prefix')).toHaveText('$');
-    await expect(page.locator('.bootstrap-touchspin-postfix')).toHaveText('.00');
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('$');
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText('.00');
 
     // Test functionality - increment
     await page.locator('.bootstrap-touchspin-up').click();
@@ -41,8 +41,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     // Verify TouchSpin UI elements are removed
     await expect(page.locator('.bootstrap-touchspin-up')).not.toBeVisible();
     await expect(page.locator('.bootstrap-touchspin-down')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-prefix')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-postfix')).not.toBeVisible();
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).not.toBeVisible();
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).not.toBeVisible();
     
     // Verify original structure is restored (input should not be in bootstrap-touchspin container)
     const parentAfterDestroy = input.locator('xpath=..');
@@ -53,8 +53,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 5)');
     
     // Verify new settings are applied
-    await expect(page.locator('.bootstrap-touchspin-prefix')).toHaveText('€');
-    await expect(page.locator('.bootstrap-touchspin-postfix')).toHaveText(' EUR');
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('€');
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText(' EUR');
     
     // Test new step value
     const initialValue = await input.inputValue();
@@ -89,8 +89,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await expect(existingContainer).toHaveClass(/bootstrap-touchspin/);
     await expect(page.locator('.bootstrap-touchspin-up')).toBeVisible();
     await expect(page.locator('.bootstrap-touchspin-down')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-prefix')).toHaveText('$');
-    await expect(page.locator('.bootstrap-touchspin-postfix')).toHaveText('.00');
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('$');
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText('.00');
     
     // Verify original elements are still present alongside TouchSpin elements
     await expect(page.locator('.input-group-prepend').first().locator('.input-group-text')).toHaveText('Pre');
@@ -107,8 +107,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     // Verify TouchSpin elements are removed
     await expect(page.locator('.bootstrap-touchspin-up')).not.toBeVisible();
     await expect(page.locator('.bootstrap-touchspin-down')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-prefix')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-postfix')).not.toBeVisible();
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).not.toBeVisible();
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).not.toBeVisible();
     
     // Verify original structure is restored
     await expect(existingContainer).toHaveClass(/input-group/);
@@ -122,8 +122,8 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 10)');
     
     // Verify new settings are applied
-    await expect(page.locator('.bootstrap-touchspin-prefix')).toHaveText('€');
-    await expect(page.locator('.bootstrap-touchspin-postfix')).toHaveText(' EUR');
+    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('€');
+    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText(' EUR');
     
     // Test new step value
     const initialValue = await input.inputValue();

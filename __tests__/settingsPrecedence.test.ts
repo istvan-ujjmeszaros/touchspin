@@ -39,8 +39,8 @@ test.describe('Settings Precedence System', () => {
       
       // Check that user prefix/postfix was applied
       const wrapper = page.getByTestId('test-prefix-postfix-wrapper');
-      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
-      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
+      const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
+      const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
       
       await expect(prefixElement).toHaveText('USER-PREFIX-');
       await expect(postfixElement).toHaveText('-USER-POSTFIX');
@@ -170,8 +170,8 @@ test.describe('Settings Precedence System', () => {
       
       // Check that data attributes were applied
       const wrapper = page.getByTestId('test-data-attrs-wrapper');
-      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
-      const postfixElement = wrapper.locator('.bootstrap-touchspin-postfix');
+      const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
+      const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
       
       await expect(prefixElement).toHaveText('DATA-PREFIX-');
       await expect(postfixElement).toHaveText('-DATA-POSTFIX');
@@ -195,7 +195,7 @@ test.describe('Settings Precedence System', () => {
       
       // Check that JS settings override data attributes
       const wrapper = page.getByTestId('test-js-override-wrapper');
-      const prefixElement = wrapper.locator('.bootstrap-touchspin-prefix');
+      const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       
       // Should have JS prefix, not data attribute prefix
       await expect(prefixElement).toHaveText('JS-PREFIX-');

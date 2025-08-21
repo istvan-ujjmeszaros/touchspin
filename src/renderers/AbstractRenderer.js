@@ -61,16 +61,16 @@ class AbstractRenderer {
   initElements(container) {
     this.container = container;
 
-    // Look for elements within container first
-    let downButtons = this.$('.bootstrap-touchspin-down', container);
-    let upButtons = this.$('.bootstrap-touchspin-up', container);
+    // Look for elements within container first using data attributes with CSS class fallback
+    let downButtons = this._findElements(container, 'down');
+    let upButtons = this._findElements(container, 'up');
 
     // If not found in container, look for vertical buttons as siblings of the input
     if (downButtons.length === 0 || upButtons.length === 0) {
-      const verticalContainer = this.$('.bootstrap-touchspin-vertical-button-wrapper', container.parent());
+      const verticalContainer = this._findElements(container.parent(), 'vertical-wrapper');
       if (verticalContainer.length > 0) {
-        downButtons = this.$('.bootstrap-touchspin-down', verticalContainer);
-        upButtons = this.$('.bootstrap-touchspin-up', verticalContainer);
+        downButtons = this._findElements(verticalContainer, 'down');
+        upButtons = this._findElements(verticalContainer, 'up');
       }
     }
 
@@ -78,10 +78,22 @@ class AbstractRenderer {
       down: downButtons,
       up: upButtons,
       input: this.$('input', container),
-      prefix: this.$('.bootstrap-touchspin-prefix', container).addClass(this.settings.prefix_extraclass),
-      postfix: this.$('.bootstrap-touchspin-postfix', container).addClass(this.settings.postfix_extraclass)
+      prefix: this._findElements(container, 'prefix').addClass(this.settings.prefix_extraclass),
+      postfix: this._findElements(container, 'postfix').addClass(this.settings.postfix_extraclass)
     };
     return this.elements;
+  }
+
+  /**
+   * Find elements using data attributes
+   * @private
+   * @param {jQuery} container Container to search within
+   * @param {string} role Element role (up, down, prefix, postfix, vertical-wrapper)
+   * @returns {jQuery} Found elements
+   */
+  _findElements(container, role) {
+    // Use data attribute for element identification
+    return this.$(`[data-touchspin-injected="${role}"]`, container);
   }
 
   /**

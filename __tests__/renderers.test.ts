@@ -36,8 +36,8 @@ test.describe('Bootstrap Renderer System', () => {
     });
 
     test('should use input-group-addon class for prefix and postfix', async ({ page }) => {
-      const prefixClasses = await page.locator('.bootstrap-touchspin-prefix').first().evaluate(el => el.className);
-      const postfixClasses = await page.locator('.bootstrap-touchspin-postfix').first().evaluate(el => el.className);
+      const prefixClasses = await page.locator('[data-touchspin-injected="prefix"]').first().evaluate(el => el.className);
+      const postfixClasses = await page.locator('[data-touchspin-injected="postfix"]').first().evaluate(el => el.className);
       
       expect(prefixClasses).toContain('input-group-addon');
       expect(postfixClasses).toContain('input-group-addon');
@@ -90,8 +90,8 @@ test.describe('Bootstrap Renderer System', () => {
       expect(hasPrependOrAppend).toBe(true);
       
       // Test input-group-text wrapper
-      const prefixText = page.locator('.bootstrap-touchspin-prefix .input-group-text').first();
-      const postfixText = page.locator('.bootstrap-touchspin-postfix .input-group-text').first();
+      const prefixText = page.locator('[data-touchspin-injected="prefix"] .input-group-text').first();
+      const postfixText = page.locator('[data-touchspin-injected="postfix"] .input-group-text').first();
       
       await expect(prefixText).toBeVisible();
       await expect(postfixText).toBeVisible();
@@ -105,7 +105,7 @@ test.describe('Bootstrap Renderer System', () => {
       // Ensure original prepend/append are preserved
       const originalPrepend = await page.evaluate(() => {
         const container = document.querySelector('#input_group_from_dom_prefix_postfix')?.parentElement;
-        return container?.querySelector('.input-group-prepend:not(.bootstrap-touchspin-prefix)') !== null;
+        return container?.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])') !== null;
       });
       expect(originalPrepend).toBe(true);
     });
@@ -134,8 +134,8 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
       // Test direct input-group-text without prepend/append wrappers
-      const directPrefix = page.locator('.bootstrap-touchspin-prefix.input-group-text').first();
-      const directPostfix = page.locator('.bootstrap-touchspin-postfix.input-group-text').first();
+      const directPrefix = page.locator('[data-touchspin-injected="prefix"].input-group-text').first();
+      const directPostfix = page.locator('[data-touchspin-injected="postfix"].input-group-text').first();
       
       await expect(directPrefix).toBeVisible();
       await expect(directPostfix).toBeVisible();
@@ -159,7 +159,7 @@ test.describe('Bootstrap Renderer System', () => {
 
     test('should preserve existing input-group-text elements', async ({ page }) => {
       const existingElements = await page.evaluate(() => {
-        const elements = document.querySelectorAll('.input-group .input-group-text:not(.bootstrap-touchspin-prefix):not(.bootstrap-touchspin-postfix)');
+        const elements = document.querySelectorAll('.input-group .input-group-text:not([data-touchspin-injected="prefix"]):not([data-touchspin-injected="postfix"])');
         return elements.length;
       });
       

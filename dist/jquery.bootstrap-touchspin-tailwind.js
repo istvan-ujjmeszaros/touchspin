@@ -87,23 +87,35 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "initElements",
       value: function initElements(container) {
         this.container = container;
-        var downButtons = this.$(".bootstrap-touchspin-down", container);
-        var upButtons = this.$(".bootstrap-touchspin-up", container);
+        var downButtons = this._findElements(container, "down");
+        var upButtons = this._findElements(container, "up");
         if (downButtons.length === 0 || upButtons.length === 0) {
-          var verticalContainer = this.$(".bootstrap-touchspin-vertical-button-wrapper", container.parent());
+          var verticalContainer = this._findElements(container.parent(), "vertical-wrapper");
           if (verticalContainer.length > 0) {
-            downButtons = this.$(".bootstrap-touchspin-down", verticalContainer);
-            upButtons = this.$(".bootstrap-touchspin-up", verticalContainer);
+            downButtons = this._findElements(verticalContainer, "down");
+            upButtons = this._findElements(verticalContainer, "up");
           }
         }
         this.elements = {
           down: downButtons,
           up: upButtons,
           input: this.$("input", container),
-          prefix: this.$(".bootstrap-touchspin-prefix", container).addClass(this.settings.prefix_extraclass),
-          postfix: this.$(".bootstrap-touchspin-postfix", container).addClass(this.settings.postfix_extraclass)
+          prefix: this._findElements(container, "prefix").addClass(this.settings.prefix_extraclass),
+          postfix: this._findElements(container, "postfix").addClass(this.settings.postfix_extraclass)
         };
         return this.elements;
+      }
+      /**
+       * Find elements using data attributes
+       * @private
+       * @param {jQuery} container Container to search within
+       * @param {string} role Element role (up, down, prefix, postfix, vertical-wrapper)
+       * @returns {jQuery} Found elements
+       */
+    }, {
+      key: "_findElements",
+      value: function _findElements(container, role) {
+        return this.$("[data-touchspin-injected=\"".concat(role, "\"]"), container);
       }
       /**
        * Hide empty prefix/postfix elements
@@ -228,14 +240,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             parentelement.attr("data-testid", testidValue[1]);
           }
         }
-        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix bootstrap-touchspin-injected\">\n        ".concat(this.settings.prefix, "\n      </span>\n    ");
-        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix bootstrap-touchspin-injected\">\n        ".concat(this.settings.postfix, "\n      </span>\n    ");
+        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n        ".concat(this.settings.prefix, "\n      </span>\n    ");
+        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n        ".concat(this.settings.postfix, "\n      </span>\n    ");
         if (this.settings.verticalbuttons) {
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
-          var downhtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down bootstrap-touchspin-injected ".concat(this.settings.buttondown_class, "\" type=\"button\">\n          ").concat(this.settings.buttondown_txt, "\n        </button>\n      ");
-          var uphtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up bootstrap-touchspin-injected ".concat(this.settings.buttonup_class, "\" type=\"button\">\n          ").concat(this.settings.buttonup_txt, "\n        </button>\n      ");
+          var downhtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ".concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">\n          ").concat(this.settings.buttondown_txt, "\n        </button>\n      ");
+          var uphtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ".concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">\n          ").concat(this.settings.buttonup_txt, "\n        </button>\n      ");
           this.$(downhtml).insertBefore(this.originalinput);
           this.$(uphtml).insertAfter(this.originalinput);
         }
@@ -257,12 +269,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin bootstrap-touchspin-injected focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" type=\"button\">\n              ").concat(this.settings.verticalup, "\n            </button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">\n              ").concat(this.settings.verticaldown, "\n            </button>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">\n              ").concat(this.settings.verticalup, "\n            </button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">\n              ").concat(this.settings.verticaldown, "\n            </button>\n          </div>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin bootstrap-touchspin-injected focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class, "\" type=\"button\">\n            ").concat(this.settings.buttondown_txt, "\n          </button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon bootstrap-touchspin-postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class, "\" type=\"button\">\n            ").concat(this.settings.buttonup_txt, "\n          </button>\n        </div>\n      ");
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">\n            ").concat(this.settings.buttondown_txt, "\n          </button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">\n            ").concat(this.settings.buttonup_txt, "\n          </button>\n        </div>\n      ");
         }
         this.container = this.$(html).insertBefore(this.originalinput);
-        this.$(".bootstrap-touchspin-prefix", this.container).after(this.originalinput);
+        this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
         this.originalinput.removeClass("form-control");
         this.originalinput.addClass("flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500");
         this._applySizeClasses();
@@ -271,24 +283,24 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        return "\n      <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\">\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ".concat(this.settings.verticalupclass, "\" type=\"button\">\n          ").concat(this.settings.verticalup, "\n        </button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" type=\"button\">\n          ").concat(this.settings.verticaldown, "\n        </button>\n      </div>\n    ");
+        return "\n      <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ".concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">\n          ").concat(this.settings.verticalup, "\n        </button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">\n          ").concat(this.settings.verticaldown, "\n        </button>\n      </div>\n    ");
       }
     }, {
       key: "updatePrefixPostfix",
       value: function updatePrefixPostfix(newsettings, detached) {
         if (newsettings.postfix) {
-          var $postfix = this.originalinput.parent().find(".bootstrap-touchspin-postfix");
+          var $postfix = this.originalinput.parent().find('[data-touchspin-injected="postfix"]');
           if ($postfix.length === 0 && detached._detached_postfix) {
             detached._detached_postfix.insertAfter(this.originalinput);
           }
-          this.originalinput.parent().find(".bootstrap-touchspin-postfix").text(newsettings.postfix);
+          this.originalinput.parent().find('[data-touchspin-injected="postfix"]').text(newsettings.postfix);
         }
         if (newsettings.prefix) {
-          var $prefix = this.originalinput.parent().find(".bootstrap-touchspin-prefix");
+          var $prefix = this.originalinput.parent().find('[data-touchspin-injected="prefix"]');
           if ($prefix.length === 0 && detached._detached_prefix) {
             detached._detached_prefix.insertBefore(this.originalinput);
           }
-          this.originalinput.parent().find(".bootstrap-touchspin-prefix").text(newsettings.prefix);
+          this.originalinput.parent().find('[data-touchspin-injected="prefix"]').text(newsettings.prefix);
         }
       }
     }]);
@@ -569,12 +581,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             mutationObserver.disconnect();
             mutationObserver = void 0;
           }
-          if ($parent.hasClass("bootstrap-touchspin-injected")) {
+          if ($parent.attr("data-touchspin-injected") === "wrapper") {
             originalinput.siblings().remove();
             originalinput.unwrap();
           } else {
-            $(".bootstrap-touchspin-injected", $parent).remove();
+            $("[data-touchspin-injected]", $parent).remove();
             $parent.removeClass("bootstrap-touchspin");
+            $parent.removeAttr("data-touchspin-injected");
           }
           originalinput.data("alreadyinitialized", false);
         }

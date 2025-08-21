@@ -493,12 +493,17 @@
           mutationObserver = undefined;
         }
 
-        if ($parent.hasClass('bootstrap-touchspin-injected')) {
+        // Check for injected container using data attribute
+        if ($parent.attr('data-touchspin-injected') === 'wrapper') {
           originalinput.siblings().remove();
           originalinput.unwrap();
         } else {
-          $('.bootstrap-touchspin-injected', $parent).remove();
+          // Remove all injected elements using data attribute
+          $('[data-touchspin-injected]', $parent).remove();
+          
+          // Remove container class (kept for styling) and data attribute
           $parent.removeClass('bootstrap-touchspin');
+          $parent.removeAttr('data-touchspin-injected');
         }
 
         originalinput.data('alreadyinitialized', false);
