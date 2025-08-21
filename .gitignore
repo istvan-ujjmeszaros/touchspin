@@ -17,3 +17,12 @@ reports/
 
 # Playwright browsers (if locally installed)
 .playwright/
+
+# JetBrains/PhpStorm terminal history files
+*history*
+bootstrap-touchspin-history*
+
+# Prevent Windows AppData paths from being tracked (malformed filenames)
+**/AppData/**
+C:/Users/*/AppData/*
+*\\Users\\*\\AppData\\*
