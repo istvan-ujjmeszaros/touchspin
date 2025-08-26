@@ -377,11 +377,7 @@
               adjusted = settings.max;
             }
             var prev = String(elements.input.val() ?? '');
-            var next = settings.callback_after_calculation(parseFloat(adjusted).toFixed(settings.decimals));
-            if (prev !== next) {
-              elements.input.val(next);
-            }
-            _updateAriaAttributes();
+            var next = _setDisplay(adjusted);
             if (prev !== next) {
               originalinput.trigger('change');
             }
@@ -450,8 +446,22 @@
        * @param {number} num
        * @returns {string}
        */
-      function _formatDisplay(num) {
-        return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+function _formatDisplay(num) {
+  return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+}
+
+      /**
+       * Applies a numeric value to the input's display and updates ARIA.
+       * Caller remains responsible for emitting change events if needed.
+       * @private
+       * @param {number} num
+       * @returns {string} the display string written to the input
+       */
+      function _setDisplay(num) {
+        var next = _formatDisplay(num);
+        elements.input.val(next);
+        _updateAriaAttributes();
+        return next;
       }
 
       /**
@@ -1404,8 +1414,7 @@
           originalinput.trigger('touchspin.on.max');
           stopSpin();
         }
-        elements.input.val(_formatDisplay(value));
-        _updateAriaAttributes();
+        _setDisplay(value);
 
         if (initvalue !== value) {
           originalinput.trigger('change');
@@ -1430,8 +1439,7 @@
           originalinput.trigger('touchspin.on.min');
           stopSpin();
         }
-        elements.input.val(_formatDisplay(value));
-        _updateAriaAttributes();
+        _setDisplay(value);
 
         if (initvalue !== value) {
           originalinput.trigger('change');
