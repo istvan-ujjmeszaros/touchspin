@@ -22,7 +22,7 @@
 - Coverage: `npm run test:coverage` | open report: `npm run coverage:open`
 - Visual: `npm run test:visual` | update: `npm run test:visual:update` | UI: `npm run test:visual:ui` | headed: `npm run test:visual:headed` | report: `npm run test:visual:report`
 
-Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite.
+Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite. During local iteration, do NOT rebuild `dist/` after every change; only rebuild at phase checkpoints or right before publishing/pushing. Always commit `dist/` before push (CI integrity checks rely on it).
 
 ## Usage: APIs
 
