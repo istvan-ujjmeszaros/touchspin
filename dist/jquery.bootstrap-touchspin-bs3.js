@@ -481,7 +481,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           upDelayTimeout,
           spincount = 0,
           spinning = false,
-          mutationObserver;
+          mutationObserver,
+          _nativeListeners = [];
         init();
         function init() {
           if (originalinput.data("alreadyinitialized")) {
@@ -677,6 +678,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (container) {
             container.off(".touchspin");
           }
+          _offAllNative();
           if (mutationObserver) {
             mutationObserver.disconnect();
             mutationObserver = void 0;
@@ -810,37 +812,54 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _detached_postfix = detached._detached_postfix;
         }
         function _bindEvents() {
-          originalinput.on("keydown.touchspin", function (ev) {
-            var code = ev.keyCode || ev.which;
+          var inputEl = /** @type {HTMLInputElement} */
+          originalinput[0];
+          var containerEl = /** @type {HTMLElement} */
+          container && container[0];
+          elements.up && elements.up[0];
+          elements.down && elements.down[0];
+          function _onNative(el, type, handler, options2) {
+            if (!el) return;
+            el.addEventListener(type, handler, options2);
+            _nativeListeners.push([el, type, handler, options2]);
+          }
+          _onNative(inputEl, "keydown", function (ev) {
+            var e = /** @type {KeyboardEvent} */
+            ev;
+            var code = e.keyCode || e.which || 0;
             if (code === 38) {
               if (spinning !== "up") {
                 upOnce();
                 startUpSpin();
               }
-              ev.preventDefault();
+              e.preventDefault();
             } else if (code === 40) {
               if (spinning !== "down") {
                 downOnce();
                 startDownSpin();
               }
-              ev.preventDefault();
+              e.preventDefault();
             } else if (code === 13) {
               _checkValue(true);
             }
           });
-          originalinput.on("keyup.touchspin", function (ev) {
-            var code = ev.keyCode || ev.which;
-            if (code === 38) {
-              stopSpin();
-            } else if (code === 40) {
+          _onNative(inputEl, "keyup", function (ev) {
+            var e = /** @type {KeyboardEvent} */
+            ev;
+            var code = e.keyCode || e.which || 0;
+            if (code === 38 || code === 40) {
               stopSpin();
             }
           });
+          originalinput.on("blur.touchspin", function () {
+            _checkValue(true);
+          });
           function leavingWidget(nextEl) {
-            return !nextEl || !container[0].contains(nextEl);
+            return !nextEl || !containerEl.contains(nextEl);
           }
-          container.on("focusout.touchspin", function (e) {
+          _onNative(containerEl, "focusout", function (e) {
             var next = /** @type {HTMLElement|null|undefined} */
+            /** @type {FocusEvent} */
             e.relatedTarget;
             if (!leavingWidget(next)) return;
             setTimeout(function () {
@@ -886,9 +905,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("mousedown.touchspin", function (ev) {
             elements.down.off("touchstart.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) {
-              return;
-            }
+            if (originalinput.is(":disabled,[readonly]")) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
@@ -896,9 +913,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("touchstart.touchspin", function (ev) {
             elements.down.off("mousedown.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) {
-              return;
-            }
+            if (originalinput.is(":disabled,[readonly]")) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
@@ -906,9 +921,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("mousedown.touchspin", function (ev) {
             elements.up.off("touchstart.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) {
-              return;
-            }
+            if (originalinput.is(":disabled,[readonly]")) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
@@ -916,48 +929,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("touchstart.touchspin", function (ev) {
             elements.up.off("mousedown.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) {
-              return;
-            }
+            if (originalinput.is(":disabled,[readonly]")) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
             ev.stopPropagation();
           });
           elements.up.on("mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin", function (ev) {
-            if (!spinning) {
-              return;
-            }
+            if (!spinning) return;
             ev.stopPropagation();
             stopSpin();
           });
           elements.down.on("mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin", function (ev) {
-            if (!spinning) {
-              return;
-            }
+            if (!spinning) return;
             ev.stopPropagation();
             stopSpin();
           });
           elements.down.on("mousemove.touchspin touchmove.touchspin", function (ev) {
-            if (!spinning) {
-              return;
-            }
+            if (!spinning) return;
             ev.stopPropagation();
             ev.preventDefault();
           });
           elements.up.on("mousemove.touchspin touchmove.touchspin", function (ev) {
-            if (!spinning) {
-              return;
-            }
+            if (!spinning) return;
             ev.stopPropagation();
             ev.preventDefault();
           });
-          originalinput.on("mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin", function (ev) {
-            if (!settings.mousewheel || !originalinput.is(":focus")) {
-              return;
-            }
-            var oe = ev.originalEvent || {};
-            var delta = oe.wheelDelta || -oe.deltaY || -oe.detail;
+          _onNative(inputEl, "wheel", function (ev) {
+            if (!settings.mousewheel || !originalinput.is(":focus")) return;
+            var oe = /** @type {any} */
+            ev;
+            var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
             ev.stopPropagation();
             ev.preventDefault();
             if (delta < 0) {
@@ -991,6 +993,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           originalinput.on("touchspin.updatesettings", function (e, newsettings) {
             changeSettings(newsettings);
           });
+        }
+        function _offAllNative() {
+          for (var i = 0; i < _nativeListeners.length; i++) {
+            var rec = _nativeListeners[i];
+            rec[0].removeEventListener(rec[1], rec[2], rec[3]);
+          }
+          _nativeListeners = [];
         }
         function _setupMutationObservers() {
           if (typeof MutationObserver !== "undefined") {
@@ -1290,8 +1299,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         destroy: api.destroy
       };
     };
-    if (typeof Element !== "undefined" && Element.prototype && !Element.prototype.TouchSpin) {
-      Object.defineProperty(Element.prototype, "TouchSpin", {
+    var _Element = typeof globalThis !== "undefined" && /** @type {any} */
+    globalThis.Element || void 0;
+    if (_Element && _Element.prototype && !_Element.prototype.TouchSpin) {
+      Object.defineProperty(_Element.prototype, "TouchSpin", {
         configurable: true,
         writable: true,
         value: function value(opts) {
