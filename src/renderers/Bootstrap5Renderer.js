@@ -62,8 +62,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       }
     }
 
-    const prev = this.originalinput.prev();
-    const next = this.originalinput.next();
+    // Bootstrap 5 simplified structure doesn't need sibling wrappers
 
     // BS5 simplified prefix and postfix HTML - no prepend/append wrappers
     const prefixhtml = `

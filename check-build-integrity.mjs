@@ -41,7 +41,7 @@ function calculateChecksum(folderPath) {
 
 function calculateFileChecksums(folderPath) {
   const fileChecksums = {};
-  
+
   // Get all files in folder
   const files = [];
   function getAllFiles(dirPath) {
@@ -106,22 +106,20 @@ function checkBuildIntegrity() {
 
     if (committedChecksum !== freshChecksum) {
       console.error('❌ Checksums do not match! The committed dist files are outdated.');
-      
+
       // Perform detailed file-by-file comparison
       console.log('\n🔍 Detailed file-by-file comparison:');
       const committedFiles = calculateFileChecksums(distFolder);
       const freshFiles = calculateFileChecksums(tempDistFolder);
-      
+
       // Find all unique file names
       const allFiles = new Set([...Object.keys(committedFiles), ...Object.keys(freshFiles)]);
-      
-      let hasMatches = false;
       let hasDifferences = false;
-      
+
       for (const fileName of Array.from(allFiles).sort()) {
         const committedHash = committedFiles[fileName];
         const freshHash = freshFiles[fileName];
-        
+
         if (!committedHash) {
           console.log(`❌ ${fileName}: missing in committed dist/`);
           hasDifferences = true;
@@ -130,7 +128,6 @@ function checkBuildIntegrity() {
           hasDifferences = true;
         } else if (committedHash === freshHash) {
           console.log(`✅ ${fileName}: matches`);
-          hasMatches = true;
         } else {
           console.log(`❌ ${fileName}: differs`);
           console.log(`   Committed: ${committedHash}`);
@@ -138,7 +135,7 @@ function checkBuildIntegrity() {
           hasDifferences = true;
         }
       }
-      
+
       if (hasDifferences) {
         console.error('\nPlease rebuild the dist files with "npm run build" and commit the changes.');
       }

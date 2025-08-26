@@ -22,7 +22,7 @@ async function buildVersionSpecific(version, outputDir) {
   const fileName = `jquery.bootstrap-touchspin-${versionSuffix}.js`;
   const frameworkName = isNumeric ? `Bootstrap ${version}` : version;
   const rendererName = isNumeric ? `Bootstrap${version}` : version.charAt(0).toUpperCase() + version.slice(1);
-  
+
   console.log(`🔨 Building ${frameworkName} version...`);
 
   // Include only specific renderer and dependencies
@@ -101,7 +101,7 @@ async function buildAll() {
   if (fs.existsSync(`./${outputDir}`)) {
     try {
       fs.rmSync(`./${outputDir}`, { recursive: true, force: true });
-    } catch (e) {
+    } catch {
       console.warn(`Could not clean ${outputDir} directory, continuing...`);
     }
   }

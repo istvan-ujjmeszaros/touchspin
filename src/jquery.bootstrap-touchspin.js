@@ -180,7 +180,7 @@
       verticalbuttons: false,
       verticalup: '&plus;',
       verticaldown: '&minus;',
-      verticalupclass: null,   // Framework-specific, will be provided by renderer  
+      verticalupclass: null,   // Framework-specific, will be provided by renderer
       verticaldownclass: null, // Framework-specific, will be provided by renderer
       prefix: '',
       postfix: '',
@@ -452,7 +452,7 @@
         const tempRenderer = factory.createRenderer($, {}, originalinput);
         if (tempRenderer && typeof tempRenderer.getDefaultSettings === 'function') {
           const rendererDefaults = tempRenderer.getDefaultSettings();
-          
+
           // Only apply renderer defaults for null values (framework-agnostic placeholders)
           // This preserves user customizations while filling in framework-specific defaults
           Object.keys(rendererDefaults).forEach(key => {

@@ -34,7 +34,6 @@ export default [
         require: 'readonly',
         
         // Build-time globals
-        AbstractRenderer: 'readonly',
         MutationObserver: 'readonly'
       }
     },
@@ -66,6 +65,23 @@ export default [
     rules: {
       'prefer-const': 'warn',
       'no-var': 'warn'
+    }
+  }
+  ,
+  {
+    // Renderer subclasses rely on global AbstractRenderer at runtime
+    files: ['src/renderers/*Renderer.js'],
+    languageOptions: {
+      globals: {
+        AbstractRenderer: 'readonly'
+      }
+    }
+  },
+  {
+    // Base class intentionally declares AbstractRenderer
+    files: ['src/renderers/AbstractRenderer.js'],
+    rules: {
+      'no-redeclare': 'off'
     }
   }
 ];

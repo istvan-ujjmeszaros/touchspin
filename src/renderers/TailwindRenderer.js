@@ -17,7 +17,7 @@ class TailwindRenderer extends AbstractRenderer {
   getDefaultSettings() {
     return {
       buttonup_class: '',      // Remove Bootstrap button classes
-      buttondown_class: '',    // Remove Bootstrap button classes  
+      buttondown_class: '',    // Remove Bootstrap button classes
       verticalupclass: '',     // Remove Bootstrap button classes for vertical
       verticaldownclass: '',   // Remove Bootstrap button classes for vertical
       input_class: ''          // Remove Bootstrap form-control class
@@ -45,14 +45,14 @@ class TailwindRenderer extends AbstractRenderer {
    */
   _applySizeClasses() {
     const sizeClasses = this._detectInputSize();
-    
+
     if (sizeClasses.includes('text-sm')) {
       // Small variant
       this.container.addClass('text-sm');
       this.container.find('.tailwind-btn').addClass('py-1 px-2 text-sm');
       this.container.find('.tailwind-addon').addClass('py-1 px-2 text-sm');
     } else if (sizeClasses.includes('text-lg')) {
-      // Large variant  
+      // Large variant
       this.container.addClass('text-lg');
       this.container.find('.tailwind-btn').addClass('py-3 px-4 text-lg');
       this.container.find('.tailwind-addon').addClass('py-3 px-4 text-lg');
@@ -125,13 +125,13 @@ class TailwindRenderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const inputSizeClasses = this._detectInputSize();
+    // Tailwind sizing is applied via _applySizeClasses after insertion
     const testidAttr = this.getWrapperTestId();
     let html;
 
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper" data-touchspin-origin="injected"${testidAttr}>
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">
             ${this.settings.prefix}
           </span>
@@ -150,7 +150,7 @@ class TailwindRenderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper" data-touchspin-origin="injected"${testidAttr}>
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class}" data-touchspin-injected="down" type="button">
             ${this.settings.buttondown_txt}
           </button>
