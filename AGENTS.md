@@ -46,5 +46,6 @@
 ## Notes
 
 - Active working branch: `openai/refactor`
-- Do not edit `dist/` directly; all changes originate in `src/` and are built
-- When adding a renderer, follow `src/renderers/RendererFactory.js` and include focused tests plus an HTML fixture
+- Always run `npm run build` before pushing, and commit the updated `dist/` outputs. A CI workflow verifies build integrity against the committed `dist/`.
+- Do not edit `dist/` directly; all changes originate in `src/` and are built.
+- When adding a renderer, follow `src/renderers/RendererFactory.js` and include focused tests plus an HTML fixture.

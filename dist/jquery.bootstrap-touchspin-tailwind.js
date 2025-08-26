@@ -187,7 +187,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           buttonup_class: "",
           // Remove Bootstrap button classes
           buttondown_class: "",
-          // Remove Bootstrap button classes  
+          // Remove Bootstrap button classes
           verticalupclass: "",
           // Remove Bootstrap button classes for vertical
           verticaldownclass: "",
@@ -233,6 +233,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
         parentelement.addClass("flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50");
+        parentelement.attr("data-touchspin-injected", "enhanced-wrapper");
         var testidAttr = this.getWrapperTestId();
         if (testidAttr) {
           var testidValue = testidAttr.match(/data-testid="([^"]+)"/);
@@ -265,7 +266,6 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "buildInputGroup",
       value: function buildInputGroup() {
-        var inputSizeClasses = this._detectInputSize();
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
@@ -375,7 +375,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         verticalup: "&plus;",
         verticaldown: "&minus;",
         verticalupclass: null,
-        // Framework-specific, will be provided by renderer  
+        // Framework-specific, will be provided by renderer
         verticaldownclass: null,
         // Framework-specific, will be provided by renderer
         prefix: "",
@@ -581,8 +581,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             mutationObserver.disconnect();
             mutationObserver = void 0;
           }
-          if ($parent.attr("data-touchspin-injected") === "wrapper") {
-            originalinput.siblings().remove();
+          var injectedMarker = $parent.attr("data-touchspin-injected");
+          if (injectedMarker === "wrapper") {
+            originalinput.siblings("[data-touchspin-injected]").remove();
             originalinput.unwrap();
           } else {
             $("[data-touchspin-injected]", $parent).remove();

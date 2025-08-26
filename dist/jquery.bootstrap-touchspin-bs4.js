@@ -227,7 +227,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
         parentelement.addClass("bootstrap-touchspin");
-        parentelement.attr("data-touchspin-injected", "wrapper");
+        parentelement.attr("data-touchspin-injected", "enhanced-wrapper");
         var testidAttr = this.getWrapperTestId();
         if (testidAttr) {
           var testidValue = testidAttr.match(/data-testid="([^"]+)"/);
@@ -368,7 +368,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         verticalup: "&plus;",
         verticaldown: "&minus;",
         verticalupclass: null,
-        // Framework-specific, will be provided by renderer  
+        // Framework-specific, will be provided by renderer
         verticaldownclass: null,
         // Framework-specific, will be provided by renderer
         prefix: "",
@@ -574,8 +574,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             mutationObserver.disconnect();
             mutationObserver = void 0;
           }
-          if ($parent.attr("data-touchspin-injected") === "wrapper") {
-            originalinput.siblings().remove();
+          var injectedMarker = $parent.attr("data-touchspin-injected");
+          if (injectedMarker === "wrapper") {
+            originalinput.siblings("[data-touchspin-injected]").remove();
             originalinput.unwrap();
           } else {
             $("[data-touchspin-injected]", $parent).remove();
