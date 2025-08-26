@@ -459,7 +459,12 @@ function _formatDisplay(num) {
        */
       function _setDisplay(num) {
         var next = _formatDisplay(num);
-        elements.input.val(next);
+        if (elements && elements.input) {
+          elements.input.val(next);
+        } else {
+          // Early init path: elements not yet created; update original input
+          originalinput.val(next);
+        }
         _updateAriaAttributes();
         return next;
       }
