@@ -919,7 +919,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("mousedown.touchspin", function (ev) {
             elements.down.off("touchstart.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) return;
+            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
@@ -927,7 +927,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.down.on("touchstart.touchspin", function (ev) {
             elements.down.off("mousedown.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) return;
+            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
@@ -935,7 +935,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("mousedown.touchspin", function (ev) {
             elements.up.off("touchstart.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) return;
+            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
@@ -943,7 +943,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           elements.up.on("touchstart.touchspin", function (ev) {
             elements.up.off("mousedown.touchspin");
-            if (originalinput.is(":disabled,[readonly]")) return;
+            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
@@ -970,7 +970,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             ev.preventDefault();
           });
           _onNative(inputEl, "wheel", function (ev) {
-            if (!settings.mousewheel || !originalinput.is(":focus")) return;
+            if (!settings.mousewheel || document.activeElement !== inputEl) return;
             var oe = /** @type {any} */
             ev;
             var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
@@ -1190,7 +1190,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           clearInterval(upSpinTimer);
         }
         function _startSpin(dir) {
-          if (originalinput.is(":disabled,[readonly]")) {
+          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
             return;
           }
           _clearSpinTimers();
@@ -1225,7 +1225,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
         }
         function _updateButtonDisabledState() {
-          var isDisabled = originalinput.is(":disabled,[readonly]");
+          var isDisabled = inputEl.disabled || inputEl.hasAttribute("readonly");
           elements.up.prop("disabled", isDisabled);
           elements.down.prop("disabled", isDisabled);
           if (isDisabled) {
@@ -1234,7 +1234,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function upOnce() {
           var _a;
-          if (originalinput.is(":disabled,[readonly]")) {
+          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
             return;
           }
           _checkValue();
@@ -1250,7 +1250,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function downOnce() {
           var _a;
-          if (originalinput.is(":disabled,[readonly]")) {
+          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
             return;
           }
           _checkValue();
