@@ -312,7 +312,9 @@
         /** @type {false|'up'|'down'} Current spinning direction */
         spinning = false,
         /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
-        mutationObserver;
+        mutationObserver,
+        /** @type {Array<[Element,string,EventListenerOrEventListenerObject,any]>} */
+        _nativeListeners = [];
 
       init();
 
@@ -620,6 +622,9 @@ function _formatDisplay(num) {
           container.off('.touchspin');
         }
 
+        // Remove native listeners bound by this instance
+        _offAllNative();
+
         // Disconnect MutationObserver
         if (mutationObserver) {
           mutationObserver.disconnect();
@@ -829,204 +834,185 @@ function _formatDisplay(num) {
        * @private
        */
       function _bindEvents() {
-        originalinput.on('keydown.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
+        var inputEl = /** @type {HTMLInputElement} */ (originalinput[0]);
+        var containerEl = /** @type {HTMLElement} */ (container && container[0]);
+        var upEl = /** @type {HTMLElement} */ (elements.up && elements.up[0]);
+        var downEl = /** @type {HTMLElement} */ (elements.down && elements.down[0]);
 
+        function _onNative(el, type, handler, options) {
+          if (!el) return;
+          el.addEventListener(type, handler, options);
+          _nativeListeners.push([el, type, handler, options]);
+        }
+
+        // Keyboard on input
+        _onNative(inputEl, 'keydown', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
           if (code === 38) {
             if (spinning !== 'up') {
               upOnce();
               startUpSpin();
             }
-            ev.preventDefault();
+            e.preventDefault();
           } else if (code === 40) {
             if (spinning !== 'down') {
               downOnce();
               startDownSpin();
             }
-            ev.preventDefault();
-          } else if (code === 13) { // Enter confirms/commits value
+            e.preventDefault();
+          } else if (code === 13) {
             _checkValue(true);
           }
         });
 
-        originalinput.on('keyup.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
-
-          if (code === 38) {
-            stopSpin();
-          } else if (code === 40) {
+        _onNative(inputEl, 'keyup', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
+          if (code === 38 || code === 40) {
             stopSpin();
           }
         });
 
         // Container focusout handler - sanitizes when leaving the entire widget
         function leavingWidget(nextEl) {
-          return !nextEl || !container[0].contains(nextEl);
+          return !nextEl || !containerEl.contains(nextEl);
         }
 
-        container.on('focusout.touchspin', function (e) {
-          // e.relatedTarget is the element gaining focus (if provided)
-          var next = /** @type {HTMLElement|null|undefined} */ (e.relatedTarget);
-
-          // If we still stay within the widget, skip
+        _onNative(containerEl, 'focusout', function (e) {
+          var next = /** @type {HTMLElement|null|undefined} */ ((/** @type {FocusEvent} */(e)).relatedTarget);
           if (!leavingWidget(next)) return;
-
-          // Defer 1 tick so document.activeElement is reliable (Safari, etc.)
           setTimeout(function () {
             var ae = /** @type {HTMLElement|null} */ (document.activeElement);
             if (leavingWidget(ae)) {
               stopSpin();
-              // Sanitize on widget exit and emit change if value changes
               _checkValue(true);
             }
           }, 0);
         });
 
-        // Note: blur.touchspin handler removed - replaced by container focusout handler
-
-        elements.down.on('keydown.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
-
+        // Buttons: keyboard
+        _onNative(downEl, 'keydown', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
           if (code === 32 || code === 13) {
             if (spinning !== 'down') {
               downOnce();
               startDownSpin();
             }
-            ev.preventDefault();
+            e.preventDefault();
           }
         });
 
-        elements.down.on('keyup.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
-
+        _onNative(downEl, 'keyup', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
           if (code === 32 || code === 13) {
             stopSpin();
           }
         });
 
-        elements.up.on('keydown.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
-
+        _onNative(upEl, 'keydown', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
           if (code === 32 || code === 13) {
             if (spinning !== 'up') {
               upOnce();
               startUpSpin();
             }
-            ev.preventDefault();
+            e.preventDefault();
           }
         });
 
-        elements.up.on('keyup.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
-
+        _onNative(upEl, 'keyup', function (ev) {
+          var e = /** @type {KeyboardEvent} */ (ev);
+          var code = e.keyCode || e.which || 0;
           if (code === 32 || code === 13) {
             stopSpin();
           }
         });
 
-        elements.down.on('mousedown.touchspin', function (ev) {
-          elements.down.off('touchstart.touchspin');  // android 4 workaround
+        // Pointer suppression to avoid double fire when both touch and mouse are emitted
+        var suppressMouseUntil = 0;
+        var suppressTouchUntil = 0;
+        function nowTs() { return Date.now(); }
 
-          if (originalinput.is(':disabled,[readonly]')) {
-            return;
-          }
-
+        // Down button pointer start
+        _onNative(downEl, 'mousedown', function (ev) {
+          if (nowTs() < suppressMouseUntil) return;
+          suppressTouchUntil = nowTs() + 400;
+          if (originalinput.is(':disabled,[readonly]')) return;
           downOnce();
           startDownSpin();
-
           ev.preventDefault();
           ev.stopPropagation();
         });
-
-        elements.down.on('touchstart.touchspin', function (ev) {
-          elements.down.off('mousedown.touchspin');  // android 4 workaround
-
-          if (originalinput.is(':disabled,[readonly]')) {
-            return;
-          }
-
+        _onNative(downEl, 'touchstart', function (ev) {
+          if (nowTs() < suppressTouchUntil) return;
+          suppressMouseUntil = nowTs() + 400;
+          if (originalinput.is(':disabled,[readonly]')) return;
           downOnce();
           startDownSpin();
-
           ev.preventDefault();
           ev.stopPropagation();
         });
 
-        elements.up.on('mousedown.touchspin', function (ev) {
-          elements.up.off('touchstart.touchspin');  // android 4 workaround
-
-          if (originalinput.is(':disabled,[readonly]')) {
-            return;
-          }
-
+        // Up button pointer start
+        _onNative(upEl, 'mousedown', function (ev) {
+          if (nowTs() < suppressMouseUntil) return;
+          suppressTouchUntil = nowTs() + 400;
+          if (originalinput.is(':disabled,[readonly]')) return;
           upOnce();
           startUpSpin();
-
           ev.preventDefault();
           ev.stopPropagation();
         });
-
-        elements.up.on('touchstart.touchspin', function (ev) {
-          elements.up.off('mousedown.touchspin');  // android 4 workaround
-
-          if (originalinput.is(':disabled,[readonly]')) {
-            return;
-          }
-
+        _onNative(upEl, 'touchstart', function (ev) {
+          if (nowTs() < suppressTouchUntil) return;
+          suppressMouseUntil = nowTs() + 400;
+          if (originalinput.is(':disabled,[readonly]')) return;
           upOnce();
           startUpSpin();
-
           ev.preventDefault();
           ev.stopPropagation();
         });
 
-        elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
-          if (!spinning) {
-            return;
-          }
-
+        // Pointer end/leave
+        function stopIfSpinning(ev) {
+          if (!spinning) return;
           ev.stopPropagation();
           stopSpin();
-        });
+        }
+        _onNative(upEl, 'mouseup', stopIfSpinning);
+        _onNative(upEl, 'mouseout', stopIfSpinning);
+        _onNative(upEl, 'touchleave', stopIfSpinning);
+        _onNative(upEl, 'touchend', stopIfSpinning);
+        _onNative(upEl, 'touchcancel', stopIfSpinning);
 
-        elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
-          if (!spinning) {
-            return;
-          }
+        _onNative(downEl, 'mouseup', stopIfSpinning);
+        _onNative(downEl, 'mouseout', stopIfSpinning);
+        _onNative(downEl, 'touchleave', stopIfSpinning);
+        _onNative(downEl, 'touchend', stopIfSpinning);
+        _onNative(downEl, 'touchcancel', stopIfSpinning);
 
-          ev.stopPropagation();
-          stopSpin();
-        });
-
-        elements.down.on('mousemove.touchspin touchmove.touchspin', function (ev) {
-          if (!spinning) {
-            return;
-          }
-
-          ev.stopPropagation();
-          ev.preventDefault();
-        });
-
-        elements.up.on('mousemove.touchspin touchmove.touchspin', function (ev) {
-          if (!spinning) {
-            return;
-          }
-
+        // Move suppression
+        function suppress(ev) {
+          if (!spinning) return;
           ev.stopPropagation();
           ev.preventDefault();
-        });
+        }
+        _onNative(downEl, 'mousemove', suppress);
+        _onNative(downEl, 'touchmove', suppress);
+        _onNative(upEl, 'mousemove', suppress);
+        _onNative(upEl, 'touchmove', suppress);
 
-        originalinput.on('mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin', function (ev) {
-          if (!settings.mousewheel || !originalinput.is(':focus')) {
-            return;
-          }
-
-          var oe = ev.originalEvent || {};
-          var delta = oe.wheelDelta || -oe.deltaY || -oe.detail;
-
+        // Mouse wheel on input (native)
+        _onNative(inputEl, 'wheel', function (ev) {
+          if (!settings.mousewheel || !originalinput.is(':focus')) return;
+          var oe = /** @type {any} */ (ev);
+          var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
           ev.stopPropagation();
           ev.preventDefault();
-
           if (delta < 0) {
             downOnce();
           } else {
@@ -1070,6 +1056,18 @@ function _formatDisplay(num) {
           changeSettings(newsettings);
         });
 
+      }
+
+      /**
+       * Remove all native listeners registered by this instance.
+       * @private
+       */
+      function _offAllNative() {
+        for (var i = 0; i < _nativeListeners.length; i++) {
+          var rec = _nativeListeners[i];
+          rec[0].removeEventListener(rec[1], rec[2], rec[3]);
+        }
+        _nativeListeners = [];
       }
 
       /**
@@ -1527,8 +1525,9 @@ function _formatDisplay(num) {
     };
   };
 
-  if (typeof Element !== 'undefined' && Element.prototype && !Element.prototype.TouchSpin) {
-    Object.defineProperty(Element.prototype, 'TouchSpin', {
+  var _Element = (typeof globalThis !== 'undefined' && /** @type {any} */ (globalThis).Element) || undefined;
+  if (_Element && _Element.prototype && !_Element.prototype.TouchSpin) {
+    Object.defineProperty(_Element.prototype, 'TouchSpin', {
       configurable: true,
       writable: true,
       value: function (opts) { return window.TouchSpin.attach(this, opts); }
