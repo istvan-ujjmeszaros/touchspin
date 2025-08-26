@@ -5,10 +5,10 @@ Purpose
 
 Resume Block (single source of truth)
 - Current checkpoint tag: LGTM-2
-- Current focus: COMPLETE — Keyboard/mousewheel consistency; single-change emission on Enter/focusout; spin start/stop verified via manual pages and tests.
+- Current focus: Theme 1 — Events + Timers. Add `emit()/on()/offAll()` helpers; migrate `_bindEvents()` to native listeners for input/buttons/container while preserving jQuery `trigger(...)` emissions and event order.
 - Completed verification summary: ARIA sync and vertical semantics tested (green). Renderer parity inspected across BS3/4/5/Tailwind — button classes, vertical wiring, prefix/postfix handling, and disabled/readonly cues consistent; no changes required. Increment/decrement paths audit complete — keyboard, mouse wheel, buttons, and command API converge on shared calc/display/sanitation helpers; no changes required.
-- Next manual verification: N/A (covered); continue spot checks as needed.
-- Next checkpoint: Tag LGTM-3, then build `dist/` and commit it (CI will verify integrity of PR contains updated `dist/`).
+- Next manual verification: Bridge + ESM pages — keyboard, wheel, press/hold spin, focusout sanitation; confirm no duplicate change events.
+- Next checkpoint: Tag LGTM-3 (Events+Timers migrated), then run `npm run build` and commit `dist/` (CI integrity check relies on committed `dist/`).
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands

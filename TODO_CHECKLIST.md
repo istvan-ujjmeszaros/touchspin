@@ -1,6 +1,6 @@
-Bootstrap TouchSpin — Current Checklist
+Bootstrap TouchSpin — Checklist (Themed, verifiable)
 
-Scope: Track concrete, verifiable steps for the incremental modernization while keeping behavior and tests stable. This complements TODO_PLAN.md (higher-level strategy).
+Scope: Track concrete, verifiable steps for modernization while preserving behavior and public API. Complements TODO_PLAN.md (strategy).
 
 - [x] Blur/focusout sanitation: uniform helpers
   - [x] Confirm container `focusout.touchspin` path sanitizes via `_checkValue(true)` (uses `_forcestepdivisibility` and `_setDisplay`).
@@ -48,3 +48,38 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
 - [x] Tests follow-up (non-visual)
   - [x] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.
   - [x] Add a quick check for vertical buttons behavior not affecting change emission semantics.
+
+---
+
+Theme 1 — Events + Timers
+- [ ] Introduce internal `emit()`, `on()`, `offAll()` helpers; document teardown.
+- [ ] Switch `_bindEvents()` to native `addEventListener` for input, buttons, container (keep jQuery `trigger` emissions).
+- [ ] Normalize wheel handling (use `wheel` primarily; tolerate legacy event types if still bound).
+- [ ] Verify focusout sanitation order with native listeners (defer tick still applied).
+- [ ] Destroy path removes all listeners via `offAll()`.
+- [ ] Validate: `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `advancedFeatures.test.ts` pass.
+
+Theme 2 — DOM + Attributes (core only; renderers unchanged)
+- [ ] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
+- [ ] Replace `.val/.attr/.removeAttr/.prop/.is/.addClass/.removeClass` in core with native equivalents.
+- [ ] Destroy: replace `.siblings(...).remove()` and `.unwrap()` with native node ops; keep DOM structure identical.
+- [ ] Keep jQuery `.data('touchspin*')` mirrored to a private WeakMap store.
+- [ ] Validate: `nativeAttributeSync.test.ts`, `destroyAndReinitialize.test.ts`, `testidPropagation.test.ts` pass.
+
+Theme 3 — Value Pipeline + ARIA
+- [ ] Confirm all paths route through `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`.
+- [ ] Ensure `change` fires only when display string changes across keyboard, wheel, buttons, programmatic set.
+- [ ] ARIA effective min/max reflect step alignment on settings change.
+- [ ] Validate: `aria-sync.test.ts`, `events.test.ts`, `settingsPrecedence.test.ts` pass.
+
+Theme 4 — Facade + Command API plumbing
+- [ ] Ensure `$(el).TouchSpin('...')` maps to `data('touchspinInternal')` methods.
+- [ ] Keep `$(el).data('touchspin')` facade intact and in sync with internal map.
+- [ ] Modern facade (`Element.prototype.TouchSpin`) returns method-only instance wired to same internals.
+- [ ] Validate: `apiMethods.test.ts`, manual bridge + ESM pages.
+
+Checkpoints
+- [ ] LGTM-3 (after Theme 1): build + commit `dist/`.
+- [ ] LGTM-4 (after Theme 2): build + commit `dist/`.
+- [ ] LGTM-5 (after Theme 3): build + commit `dist/`.
+- [ ] LGTM-6 (after Theme 4): build + commit `dist/`.

@@ -1,70 +1,102 @@
-# TouchSpin Modernization Plan (No‑Rewrite)
+# De‑jQuery Strategy (Single Source of Truth; No‑Rewrite)
 
-Goal
-- Keep `src/jquery.bootstrap-touchspin.js` as the single source of truth. Do NOT rewrite from scratch.
-- Expose a clean, modern API from the existing implementation while preserving 100% backward compatibility via jQuery (including callable events and DOM structure).
-- Provide a module-friendly entry so modern consumers can use the plugin without writing jQuery code, while internals still lean on jQuery during migration.
+Context and guardrails
+- Single source: keep `src/jquery.bootstrap-touchspin.js` as truth. No rewrite.
+- Preserve public API: jQuery plugin, callable events, command API, DOM structure, and CSS hooks remain identical.
+- Modern facade remains: `Element.prototype.TouchSpin` and `window.TouchSpin.attach` backed by the same internals.
+- Emit `change` only when display text actually changes; keep step alignment, booster timing, and clamping semantics; keep ARIA logic (valuetext formatting; effective step‑aligned min/max).
 
-Principles
-- One source of truth; small, targeted changes; no behavior regressions.
-- Add new API surfaces on top; change internals only behind those APIs.
-- Migrate away from jQuery gradually, method by method, after API proves stable.
+## Themes and Phases
 
-## ✅ Phase 0: Baseline
-- Tests green; build integrity check enabled. Always commit `dist/` after `npm run build`.
+1) Events + Timers
+- Objective: Replace internal jQuery event binding with native listeners and a small internal event helper while preserving jQuery custom event emissions and timing.
+- Changes:
+  - Introduce internal helpers: `on(el,type,fn,opts)`, `offAll()` tracked list; `emit(name, detail)` dispatches both `jQuery.trigger(name, ...)` and a bubbling `CustomEvent(name)` on the input for non‑jQuery consumers.
+  - Convert internal bindings in `_bindEvents()` from `originalinput.on(...)`, `elements.up/down.on(...)`, `container.on(...)` to native `addEventListener` on `input`, `up`, `down`, and `container` elements.
+  - Keep emission sites as is but behind `emit(...)`: `touchspin.on.*`, command events, and change emission.
+  - Centralize spin control: keep `_startSpin`, `_clearSpinTimers`, `stopSpin()` intact; no timing semantics change.
+- jQuery APIs to replace: `.on/.off` on input/buttons/container; handler namespaces; `mousewheel/DOMMouseScroll/wheel` multi‑event binding.
+- How (behind boundaries): Only touch `_bindEvents()` and `stopSpin()` teardown; do not change method surfaces (`upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
+- Risks: wheel delta normalization, key repeat parity, focusout target semantics, handler removal on destroy, duplicate emission if both jQuery and native handlers run; event order of `startupspin` vs `startspin`.
+- Validation:
+  - Non‑visual: `events.test.ts`, `keyboardAccessibility.test.ts`, `advancedFeatures.test.ts` (spin behavior), `customEvents.test.ts` (jQuery listeners still OK), `focusout-behavior.test.ts`.
+  - Manual: `__tests__/html/destroy-test-bridge.html` and `destroy-test-esm.html` for spin start/stop, keyboard, wheel.
+- Exit criteria/checkpoint: All tests pass; manual parity good; tag `LGTM-3`, then `npm run build` and commit `dist/`.
 
-## ✅ Phase 1: Public API + ESM Entry
-- Stable methods surfaced from the existing plugin (backed by current logic):
-  - `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`.
-- jQuery command API passthrough: `$(el).TouchSpin('get'|'set'|'uponce'|'downonce'|'startupspin'|'startdownspin'|'stopspin'|'updatesettings'|'destroy')`.
-- Internal API map at `$(el).data('touchspinInternal')` for wrappers/facades.
-- ESM twin loader `src/jquery.bootstrap-touchspin.esm.js` registers the classic plugin in module contexts (no behavior change).
-- Optional modern facade (non-breaking): `window.TouchSpin.attach(input, opts)` and/or `Element.prototype.TouchSpin(opts)` returning a method-only instance.
+2) DOM + Attributes
+- Objective: Replace internal jQuery DOM/attr/value/class usage with native APIs, keeping renderer jQuery‑based for now.
+- Changes:
+  - Add dual handles: `const el = originalinput[0]`, `const upEl = elements.up[0]`, `const downEl = elements.down[0]`, `const containerEl = container[0]`.
+  - Replace internal reads/writes: `.val()` → `el.value`; `.attr/removeAttr` → `setAttribute/removeAttribute`; `.prop('disabled')` → `el.disabled`; `.is(':disabled,[readonly]')` → `el.disabled || el.readOnly`; `.addClass/removeClass/hasClass` → `classList` in core; keep renderer code intact.
+  - Replace sibling removal on destroy: use `parentElement.querySelectorAll('[data-touchspin-injected]')` and remove nodes; unwrap with `parentElement.replaceWith(el)` for injected wrapper path.
+  - Keep jQuery data mirroring for public contract; introduce a private `WeakMap<Element, Instance>` as the core store; keep `$(el).data('touchspin')` and `data('touchspinInternal')` in sync.
+- jQuery APIs to replace: `.val`, `.attr`, `.removeAttr`, `.prop`, `.addClass/removeClass/hasClass`, `.siblings`, `.unwrap`, `.parent`, `.find` (in core only), `.is` checks; `$.extend` → `Object.assign`.
+- How: Limit changes to core helpers (`_setDisplay`, `_initAriaAttributes`, `_updateAriaAttributes`, `_syncNativeAttributes`, `_syncSettingsFromNativeAttributes`, `_destroy`, `_buildHtml` value write) and state helpers; do not change renderers.
+- Risks: attribute precedence with native number inputs, unwrap edge cases, `data-testid` propagation, classList parity with renderer expectations.
+- Validation:
+  - Non‑visual: `nativeAttributeSync.test.ts`, `testidPropagation.test.ts`, `rendererErrors.test.ts`, `destroyAndReinitialize.test.ts`.
+  - Manual: bridge page destroy/reinit; visually confirm wrappers persist/remove correctly.
+- Exit criteria/checkpoint: All tests green; tag `LGTM-4`, then build/commit `dist/`.
 
-## ✅ Phase 2: Bridge + Manual Parity Pages
-- jQuery bridge facade (`src/wrappers/jquery-bridge.js`) attaches `$(el).data('touchspin')` and prefers direct internal calls (falls back to legacy events).
-- Manual pages for quick verification:
-  - `__tests__/html/destroy-test-bridge.html`: legacy callable events + facade buttons verified in browser.
-  - `__tests__/html/destroy-test-esm.html`: ESM twin loader exercising init/destroy/reinit/vertical flows.
+3) Value Pipeline + ARIA
+- Objective: Ensure all paths route through `_nextValue` → `_forcestepdivisibility` → `_alignToStep` (for bounds alignment) → `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`; emit `change` only on display change.
+- Changes:
+  - Keep `_setDisplay` as the single write point; ensure `setValue`, `upOnce`, `downOnce`, focusout/Enter, wheel and button paths all use it and rely on the same `change` emission rule.
+  - Ensure ARIA effective bounds reflect step‑aligned min/max whenever `step|min|max` change (already implemented); keep `aria-valuetext` equal to formatted display string.
+- jQuery APIs to replace: `$.extend` in `_updateSettings` and `_syncSettingsFromNativeAttributes`; `.val`, `.attr/removeAttr` usages already covered by Theme 2.
+- Risks: double‑change on sanitize, precision with decimals and large steps, booster rounding.
+- Validation:
+  - Non‑visual: `aria-sync.test.ts`, `events.test.ts` change counting, `settingsPrecedence.test.ts`, `targetedCoverage.test.ts` decimals/min/max.
+  - Manual: free‑form typing → Tab; Enter to commit; verify a single change, correct formatting.
+- Exit criteria/checkpoint: No change count regressions; aria snapshots match expectations; tag `LGTM-5`, then build/commit `dist/`.
 
-## Phase 3: Incremental De‑jQuery (inside current file)
-- Keep external API and DOM unchanged; modify internals behind stable methods.
-- Migrate one area at a time, replacing jQuery usage with native DOM where low risk:
-  - Value pipeline: `getValue`/`setValue` (step/decimals/min/max) — implemented for `setValue`.
-  - Single-step ops: `upOnce`/`downOnce`.
-  - Spin timers and state: `startUpSpin`/`startDownSpin`/`stopSpin`.
-  - ARIA updates and attribute sync.
-- After each change: verify with bridge page; optionally run non-visual tests; keep visuals unchanged.
+4) Facade + Command API plumbing
+- Objective: Keep all surfaces stable and backed by one internal instance; ensure jQuery command API and modern facade are thin veneers.
+- Changes:
+  - Keep `$(el).TouchSpin('get'|'set'|...)` mapping to `data('touchspinInternal')` methods; ensure mirror stays consistent if WeakMap is introduced.
+  - Maintain `$(el).data('touchspin')` facade for legacy direct calls; keep modern `Element.prototype.TouchSpin` returning the same method map.
+- jQuery APIs to replace: `.data` reads/writes can mirror native store; keep `.trigger` for public events.
+- Risks: drift between mirrors, destroy cleanup ordering.
+- Validation: `apiMethods.test.ts`, `destroyAndReinitialize.test.ts`, bridge pages.
+- Exit criteria/checkpoint: Surfaces unchanged; tag `LGTM-6`, then build/commit `dist/`.
 
-## Phase 4: jQuery Back‑Compat and Facade
-- Preserve callable events: `touchspin.uponce`, `touchspin.downonce`, `touchspin.startupspin`, `touchspin.startdownspin`, `touchspin.stopspin`, `touchspin.updatesettings`, `touchspin.destroy`.
-- Maintain `$(el).TouchSpin(...)` API and `$(el).data('touchspin')` facade for direct method calls in jQuery land.
-- Command API remains supported for parity and convenience.
+Deferred (post‑migration)
+- Renderer de‑jQuery: convert renderers to native while preserving generated markup; separate task with visual tests.
+- Advanced a11y: revisit role/valuenow policies and screen‑reader audits.
 
-## Phase 5: Tests and Coverage
-- Keep existing tests green; run visual tests on demand and update snapshots intentionally.
-- Extend manual pages as we migrate internals; add targeted Playwright tests only where they increase confidence.
+## Backlog by Area (exact replacements)
 
-## Phase 6: Build/Repo Tasks
-- Continue emitting UMD builds; keep integrity checks and commit `dist/`.
-- ESM twin loader remains the module entry while internals depend on jQuery; later, flip to a jQuery‑free modern build after internals are decoupled.
+- Events: `.on/.off/.trigger` → `addEventListener/removeEventListener` (internal) + `CustomEvent` via `emit()`; keep `jQuery.trigger(...)` for compatibility. Targets and sites:
+  - Input: keydown/keyup, wheel, custom `touchspin.*` bindings in `_bindEvents()` and `_bindEventsInterface()` (src/jquery.bootstrap-touchspin.js: 832–1069)
+  - Buttons: `mousedown/mouseup/mouseout`, `touchstart/touchend/touchleave/touchcancel/touchmove` (lines ~887–1010)
+  - Container: `focusout` handling (lines ~867–880)
+  - Teardown: replace `originalinput.off(...)` and `container.off('.touchspin')` with `offAll()` (lines ~616–623)
 
-## Phase 7: Docs and Migration
-- Document modern usage (attach/facade) vs. legacy jQuery plugin.
-- Provide mapping for callable events → methods and command API examples.
-- Migration guide: “Using methods instead of events”, “Gradual de‑jQuery under the hood”.
+- DOM: `.val`, `.attr/removeAttr`, `.prop`, `.addClass/removeClass/hasClass`, `.siblings`, `.unwrap`, `.parent`, `.find`, `.is` in core only:
+  - Value writes: `_setDisplay`, `_setInitval`, `_checkValue`, `setValue` helper (lines ~393–466, 1129–1183)
+  - ARIA: `_initAriaAttributes`, `_updateAriaAttributes` (lines ~752–810)
+  - Native sync: `_syncNativeAttributes`, `_syncSettingsFromNativeAttributes` (lines ~1192–1294)
+  - Destroy: injected siblings removal and unwrap (lines ~610–643)
 
-## Future (Optional Extraction)
-- When internals are sufficiently decoupled, extract a small jQuery‑free core and let the jQuery plugin become a thin wrapper. Keep the public API identical so consumers aren’t impacted.
+- Data/attrs: `$.extend` → `Object.assign` in `_initSettings`, `_updateSettings`, `_syncSettingsFromNativeAttributes`; `.data('touchspin*')` mirrored to WeakMap store.
 
-## Success Criteria
-- One source of truth (`src/jquery.bootstrap-touchspin.js`), no rewrite.
-- Modern API available without writing jQuery; legacy jQuery path fully backward compatible.
-- Behavior, DOM, and callable events preserved; pages and tests continue to pass.
-- Build integrity enforced; `dist/` committed before push.
+- Value pipeline: keep `_nextValue`, `_forcestepdivisibility`, `_alignToStep`, `_checkValue`, `_setDisplay` as single route; confirm all callers use them (already mostly true).
 
----
+## Minimal Test Additions
 
-Current Sprint (Resume Here)
-- See `WORKLOG.md` for the current checkpoint and the immediate next focus. Use `TODO_CHECKLIST.md` to verify each concrete step.
-- CI note: Integrity check (`npm run check-build-integrity`) is CI-only and should not be run locally. Ensure you commit `dist/` after `npm run build` when creating a checkpoint or before push.
+- If adding `emit()` dual‑dispatch: add one non‑visual test asserting a native `CustomEvent('touchspin.on.startspin')` is received on the input in addition to jQuery listeners. Skip if not implementing DOM events yet.
+- Otherwise, no new tests initially; rely on existing coverage for change counts, ARIA sync, and spin timing.
+
+## Rollback Plan
+
+- Tag at every theme exit: `LGTM-3` (Events+Timers), `LGTM-4` (DOM+Attrs), `LGTM-5` (Value+ARIA), `LGTM-6` (Facade plumbing).
+- At each tag: run `npm run build`, commit updated `dist/`, push tag. CI verifies build integrity against committed `dist/`.
+- Revert on regression: `git reset --hard <last-good-tag>` (or `git revert` the theme PR); rebuild to keep `dist/` consistent with sources.
+
+## Current Sprint (resume here)
+- Focus next: Theme 1 — prepare `emit()/on()/offAll()` helpers and migrate `_bindEvents` to native listeners while keeping all jQuery `trigger(...)` emissions untouched.
+- After migration, verify `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `customEvents.test.ts` locally. If green, tag `LGTM-3`, build, and commit `dist/`.
+
+Notes
+- Tests load from `src/` (not `dist/`). Do not rebuild on every change; only at checkpoints or before pushing.
+- CI-only: do not run `npm run check-build-integrity` locally.
