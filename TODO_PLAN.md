@@ -106,8 +106,8 @@ Deferred (post‑migration)
 - Revert on regression: `git reset --hard <last-good-tag>` (or `git revert` the theme PR); rebuild to keep `dist/` consistent with sources.
 
 ## Current Sprint (resume here)
-- Focus next: Theme 1 — prepare `emit()/on()/offAll()` helpers and migrate `_bindEvents` to native listeners while keeping all jQuery `trigger(...)` emissions untouched.
-- After migration, verify `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `customEvents.test.ts` locally. If green, tag `LGTM-3`, build, and commit `dist/`.
+- Focus next: Theme 2 wrap‑up (native DOM/attr in core where safe) and Theme 3 validation (all paths route through `_checkValue(true)` + `_setDisplay`, change only on display change). Confirm ARIA expectations and effective step‑aligned min/max.
+- When green, tag `LGTM-5`, run `npm run build`, and commit updated `dist/` (CI integrity depends on it).
 
 Notes
 - Tests load from `src/` (not `dist/`). Do not rebuild on every change; only at checkpoints or before pushing.

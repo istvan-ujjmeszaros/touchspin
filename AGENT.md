@@ -187,3 +187,14 @@ container.on('focusout.touchspin', function (e) {
 ---
 
 **Last Updated**: Based on comprehensive ChatGPT review implementation achieving 99/104 tests passing with modern change event semantics, memory leak prevention, and enhanced accessibility.
+## Progress & Resume Protocol (Agent discipline)
+
+Always keep these files up to date so any new session can resume without prior chat history:
+
+- `WORKLOG.md` (Resume Block): single source of truth for current checkpoint tag, current focus, completed summary, next checkpoint. Update this after each meaningful step and at every checkpoint.
+- `TODO_PLAN.md`: strategy and themes. Adjust the “Current Sprint” to reflect the immediate next focus.
+- `TODO_CHECKLIST.md`: concrete, verifiable items. Tick completed items; add/adjust items as work unfolds.
+- Checkpoints: for every checkpoint (e.g., `LGTM-4`, `LGTM-5`), tag in git, run `npm run build`, and commit `dist/` along with source changes (CI integrity depends on committed `dist/`).
+- Tests: prefer running Playwright with the JSON reporter and write results to `reports/playwright/results.json`. Summarize failures to `reports/playwright/failures.json` to make machine‑readable triage easy.
+
+This protocol is mandatory for handoffs and for safe, traceable increments.

@@ -58,6 +58,8 @@ Theme 1 — Events + Timers
 - [ ] Verify focusout sanitation order with native listeners (defer tick still applied).
 - [ ] Destroy path removes all listeners via `offAll()`.
 - [ ] Validate: `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `advancedFeatures.test.ts` pass.
+  - [x] Input keyboard/wheel native bindings, container focusout native; button handlers remain jQuery for namespaced triggers.
+  - [x] Programmatic `blur` triggers sanitation.
 
 Theme 1.5 — Bridge + Packaging
 - [ ] Document build outputs: UMD (bs3/bs4/bs5/tailwind), ESM core (`dist/esm/touchspin.js`).
@@ -65,6 +67,7 @@ Theme 1.5 — Bridge + Packaging
 - [ ] Keep `src/core/TouchSpinCore.js` and `src/wrappers/jquery.js` as scaffolds; do not wire into UMD yet.
 - [ ] Update README/WORKLOG to reflect packaging and future extraction plan.
 - [ ] Tag `LGTM-3.1` (docs/packaging only).
+  - [x] Plan/worklog updated; ESM core built; dev ESM twin documented.
 
 Theme 2 — DOM + Attributes (core only; renderers unchanged)
 - [ ] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
@@ -72,12 +75,14 @@ Theme 2 — DOM + Attributes (core only; renderers unchanged)
 - [ ] Destroy: replace `.siblings(...).remove()` and `.unwrap()` with native node ops; keep DOM structure identical.
 - [ ] Keep jQuery `.data('touchspin*')` mirrored to a private WeakMap store.
 - [ ] Validate: `nativeAttributeSync.test.ts`, `destroyAndReinitialize.test.ts`, `testidPropagation.test.ts` pass.
+  - [x] Cached handles and native value/ARIA/attr sync in helpers; tests green.
 
 Theme 3 — Value Pipeline + ARIA
 - [ ] Confirm all paths route through `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`.
 - [ ] Ensure `change` fires only when display string changes across keyboard, wheel, buttons, programmatic set.
 - [ ] ARIA effective min/max reflect step alignment on settings change.
 - [ ] Validate: `aria-sync.test.ts`, `events.test.ts`, `settingsPrecedence.test.ts` pass.
+  - [x] upOnce/downOnce emit change only on display string change.
 
 Theme 4 — Facade + Command API plumbing
 - [ ] Ensure `$(el).TouchSpin('...')` maps to `data('touchspinInternal')` methods.
