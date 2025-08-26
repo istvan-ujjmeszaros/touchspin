@@ -187,16 +187,24 @@ bower install bootstrap-touchspin
 All options can also be set via data attributes using the `data-bts-` prefix:
 
 ```html
-<input type="number" 
-       data-bts-min="0" 
-       data-bts-max="100" 
-       data-bts-step="5" 
+<input type="number"
+       data-bts-min="0"
+       data-bts-max="100"
+       data-bts-step="5"
        data-bts-decimals="1"
        data-bts-prefix="$"
        data-bts-postfix=".00"
        data-bts-boostat="10"
        data-bts-vertical-buttons="true">
 ```
+
+---
+
+## Accessibility Notes
+
+- Display value: `aria-valuetext` reflects the formatted display string, including any prefixes/postfixes or custom formatting applied via `callback_after_calculation` (for example, `€ 35` or `$5,000.10`).
+- Bounds: When applicable, ARIA min/max reflect the effective, step‑aligned bounds that the user can actually reach with the configured `step`. This may differ from the raw `min`/`max` settings if alignment is required.
+- Where to verify: Use the manual pages under `__tests__/html/` (e.g., `index-bs5.html`, the bridge and ESM pages) to confirm keyboard, mouse wheel, Enter/focusout sanitation, and change emission behavior. The non‑visual Playwright tests also exercise these paths.
 
 ---
 
@@ -641,4 +649,3 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
-

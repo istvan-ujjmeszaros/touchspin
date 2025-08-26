@@ -53,6 +53,10 @@ Tests automatically start their own local server; you do not need to run a serve
 - Focusout/Enter sanitation: Leaving the widget (container `focusout.touchspin`) or pressing Enter commits and sanitizes via `_checkValue(true)`, which applies `_forcestepdivisibility`, clamps to min/max, updates display through `_setDisplay`, and emits a single `change` only if the display value actually changes.
 - Where to verify: Use both manual pages to test typing arbitrary values, tabbing out, and pressing Enter. Confirm that spinners stop, values sanitize once, and no duplicate `change` events fire.
 
+Accessibility specifics
+- `aria-valuetext` reflects the formatted display string, including formatting from `callback_after_calculation` (e.g., currency symbols and thousand separators).
+- ARIA min/max reflect the effective, step‑aligned bounds when alignment applies. This can differ from raw `min`/`max` if the current `step` enforces alignment. Tests assert against these effective values.
+
 ## Coding Style & Naming Conventions
 
 - Indentation: 2 spaces; LF; UTF‑8 (`.editorconfig`)
