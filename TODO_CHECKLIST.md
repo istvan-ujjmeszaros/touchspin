@@ -34,3 +34,13 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
 - [ ] Documentation nits (post-checkpoint)
   - [ ] Note the focusout/Enter-key sanitation behavior in AGENTS.md and TODO_PLAN.md (stability guarantees and where to test manually).
   - [ ] Brief usage snippet for modern facade in README (optional until publish).
+
+- [ ] Renderer parity and ARIA/state sync
+  - [ ] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
+  - [ ] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
+  - [ ] Validate disabled/readonly visual cues update alongside attribute changes.
+  - [ ] Ensure ARIA attributes (aria-valuenow/min/max/valuetext) stay in sync on value and settings changes.
+
+- [ ] Tests follow-up (non-visual)
+  - [ ] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.
+  - [ ] Add a quick check for vertical buttons behavior not affecting change emission semantics.
