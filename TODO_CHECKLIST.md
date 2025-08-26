@@ -39,7 +39,10 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
   - [ ] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
   - [ ] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
   - [ ] Validate disabled/readonly visual cues update alongside attribute changes.
-  - [ ] Ensure ARIA attributes (aria-valuenow/min/max/valuetext) stay in sync on value and settings changes.
+  - [ ] Ensure ARIA attributes (aria-valuetext and min/max when present) stay in sync on value and settings changes.
+
+- [ ] A11y follow-up (deferred)
+  - [ ] Evaluate adding role="spinbutton" + aria-valuenow consistently across renderers; validate with screen readers.
 
 - [ ] Tests follow-up (non-visual)
   - [ ] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.

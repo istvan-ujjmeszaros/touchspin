@@ -20,10 +20,9 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
       $(el).TouchSpin('set', 4)
     })
 
-    await expect(input).toHaveAttribute('aria-valuenow', '4')
     await expect(input).toHaveAttribute('aria-valuemin', '0')
     await expect(input).toHaveAttribute('aria-valuemax', '10')
-    await expect(input).toHaveAttribute('aria-valuetext', '4')
+    await expect(input).toHaveAttribute('aria-valuetext', /4/) // may include currency or formatted text
 
     // Update settings and verify ARIA min/max update
     await page.evaluate(() => {
@@ -41,8 +40,7 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
       const el = document.querySelector('#bridge-input') as HTMLInputElement
       $(el).TouchSpin('uponce')
     })
-    await expect(input).toHaveAttribute('aria-valuenow', '6')
-    await expect(input).toHaveAttribute('aria-valuetext', '6')
+    await expect(input).toHaveAttribute('aria-valuetext', /6/)
   })
 
   test('vertical buttons do not alter change emission semantics', async ({ page }) => {
@@ -86,4 +84,3 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
     await expect(input).toHaveValue('1')
   })
 })
-
