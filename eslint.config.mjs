@@ -5,7 +5,7 @@ export default [
   {
     languageOptions: {
       ecmaVersion: 2020,
-      sourceType: 'script', // jQuery plugins use script mode
+      sourceType: 'script', // jQuery plugins use script mode by default
       globals: {
         // Browser globals
         window: 'readonly',
@@ -55,6 +55,13 @@ export default [
       'no-prototype-builtins': 'off',
       'no-inner-declarations': 'off'
     }
+  },
+  {
+    // ESM core uses module syntax
+    files: ['src/core/**/*.js', 'src/wrappers/**/*.js'],
+    languageOptions: {
+      sourceType: 'module',
+    },
   },
   {
     // Separate config for modern build scripts

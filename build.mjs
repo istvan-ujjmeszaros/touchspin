@@ -193,6 +193,11 @@ async function buildAll() {
   const minifiedCSS = cleanCSS.minify(cssWithBanner);
   fs.writeFileSync(`./${outputDir}/jquery.bootstrap-touchspin.min.css`, minifiedCSS.styles);
 
+  // Build ESM core bundle alongside UMD variants
+  console.log('📦 Building ESM core bundle...');
+  await buildEsmCore(outputDir);
+  console.log('✅ ESM core built at', `${outputDir}/esm/touchspin.js`);
+
   console.log('✅ Build completed successfully!');
   console.log('📦 Generated files:');
   console.log('   - jquery.bootstrap-touchspin.js');
@@ -204,3 +209,27 @@ async function buildAll() {
 }
 
 buildAll().catch(console.error);
+
+// Build ESM core bundle function
+async function buildEsmCore(outputDir) {
+  const esmOut = `${outputDir}/esm`;
+  if (!fs.existsSync(esmOut)) fs.mkdirSync(esmOut, { recursive: true });
+  await build({
+    build: {
+      lib: {
+        entry: resolve('src/core/TouchSpinCore.js'),
+        formats: ['es'],
+        fileName: () => 'touchspin.js',
+      },
+      rollupOptions: {
+        output: {
+          banner
+        }
+      },
+      outDir: esmOut,
+      emptyOutDir: false,
+      sourcemap: true,
+      minify: false
+    }
+  });
+}
