@@ -1310,6 +1310,54 @@
       }
 
       /**
+       * Clears spin timers (delay + interval) without triggering events.
+       * @private
+       */
+      function _clearSpinTimers() {
+        clearTimeout(downDelayTimeout);
+        clearTimeout(upDelayTimeout);
+        clearInterval(downSpinTimer);
+        clearInterval(upSpinTimer);
+      }
+
+      /**
+       * Starts continuous spinning in the specified direction using shared helpers.
+       * Preserves original event order and semantics.
+       * @private
+       * @param {'up'|'down'} dir
+       */
+      function _startSpin(dir) {
+        if (originalinput.is(':disabled,[readonly]')) {
+          return;
+        }
+
+        // stop any previous spin and reset state
+        _clearSpinTimers();
+        spincount = 0;
+        spinning = dir;
+
+        // fire start events
+        originalinput.trigger('touchspin.on.startspin');
+        if (dir === 'up') {
+          originalinput.trigger('touchspin.on.startupspin');
+          upDelayTimeout = setTimeout(function () {
+            upSpinTimer = setInterval(function () {
+              spincount++;
+              upOnce();
+            }, settings.stepinterval);
+          }, settings.stepintervaldelay);
+        } else {
+          originalinput.trigger('touchspin.on.startdownspin');
+          downDelayTimeout = setTimeout(function () {
+            downSpinTimer = setInterval(function () {
+              spincount++;
+              downOnce();
+            }, settings.stepinterval);
+          }, settings.stepintervaldelay);
+        }
+      }
+
+      /**
        * Returns a fallback value when input is NaN.
        * @private
        * @returns {number} Fallback value (firstclickvalueifempty or midpoint)
@@ -1397,24 +1445,7 @@
        * @fires touchspin.on.startdownspin
        */
       function startDownSpin() {
-        if (originalinput.is(':disabled,[readonly]')) {
-          return;
-        }
-
-        stopSpin();
-
-        spincount = 0;
-        spinning = 'down';
-
-        originalinput.trigger('touchspin.on.startspin');
-        originalinput.trigger('touchspin.on.startdownspin');
-
-        downDelayTimeout = setTimeout(function () {
-          downSpinTimer = setInterval(function () {
-            spincount++;
-            downOnce();
-          }, settings.stepinterval);
-        }, settings.stepintervaldelay);
+        _startSpin('down');
       }
 
       /**
@@ -1424,24 +1455,7 @@
        * @fires touchspin.on.startupspin
        */
       function startUpSpin() {
-        if (originalinput.is(':disabled,[readonly]')) {
-          return;
-        }
-
-        stopSpin();
-
-        spincount = 0;
-        spinning = 'up';
-
-        originalinput.trigger('touchspin.on.startspin');
-        originalinput.trigger('touchspin.on.startupspin');
-
-        upDelayTimeout = setTimeout(function () {
-          upSpinTimer = setInterval(function () {
-            spincount++;
-            upOnce();
-          }, settings.stepinterval);
-        }, settings.stepintervaldelay);
+        _startSpin('up');
       }
 
       /**
@@ -1452,10 +1466,7 @@
        * @fires touchspin.on.stopspin
        */
       function stopSpin() {
-        clearTimeout(downDelayTimeout);
-        clearTimeout(upDelayTimeout);
-        clearInterval(downSpinTimer);
-        clearInterval(upSpinTimer);
+        _clearSpinTimers();
 
         switch (spinning) {
           case 'up':
