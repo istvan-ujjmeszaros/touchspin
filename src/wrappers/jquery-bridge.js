@@ -23,6 +23,19 @@ function installBridge($) {
           if (i && typeof i.destroy === 'function') return i.destroy();
           $input.trigger('touchspin.destroy');
         },
+        getValue() {
+          const i = getInternal();
+          if (i && typeof i.getValue === 'function') return i.getValue();
+          const raw = String($input.val() ?? '');
+          const n = parseFloat(raw);
+          return Number.isFinite(n) ? n : NaN;
+        },
+        setValue(v) {
+          const i = getInternal();
+          if (i && typeof i.setValue === 'function') return i.setValue(v);
+          // Fallback: trigger updatesettings then set input
+          $input.val(v).trigger('change');
+        },
         upOnce() {
           const i = getInternal();
           if (i && typeof i.upOnce === 'function') return i.upOnce();

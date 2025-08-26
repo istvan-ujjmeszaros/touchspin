@@ -50,6 +50,8 @@
 
       <div class="control-buttons">
         <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade-get" data-target="#test-input-new">getValue</button>
+        <button class="btn btn-outline-primary" data-action="facade-set" data-target="#test-input-new" data-value="77">setValue(77)</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="upOnce">up once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="downOnce">down once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="startUpSpin">start up</button>
@@ -92,6 +94,8 @@
 
       <div class="control-buttons">
         <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade-get" data-target="#test-input-existing">getValue</button>
+        <button class="btn btn-outline-primary" data-action="facade-set" data-target="#test-input-existing" data-value="33">setValue(33)</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="upOnce">up once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="downOnce">down once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="startUpSpin">start up</button>
@@ -130,6 +134,8 @@
 
       <div class="control-buttons">
         <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade-get" data-target="#test-input-vertical">getValue</button>
+        <button class="btn btn-outline-primary" data-action="facade-set" data-target="#test-input-vertical" data-value="12">setValue(12)</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="upOnce">up once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="downOnce">down once</button>
         <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="startUpSpin">start up</button>
@@ -228,6 +234,18 @@
         const inst = $(target).data('touchspin');
         if (inst && typeof inst[method] === 'function') inst[method]();
       });
+      $(document).on('click', '[data-action="facade-get"]', function() {
+        const target = $(this).data('target');
+        const inst = $(target).data('touchspin');
+        const val = inst && typeof inst.getValue === 'function' ? inst.getValue() : undefined;
+        alert('getValue() = ' + val);
+      });
+      $(document).on('click', '[data-action="facade-set"]', function() {
+        const target = $(this).data('target');
+        const v = Number($(this).data('value'));
+        const inst = $(target).data('touchspin');
+        if (inst && typeof inst.setValue === 'function') inst.setValue(v);
+      });
       $(document).on('click', '[data-action="facade-update"]', function() {
         const target = $(this).data('target');
         const inst = $(target).data('touchspin');
@@ -237,4 +255,3 @@
   </script>
 </body>
 </html>
-

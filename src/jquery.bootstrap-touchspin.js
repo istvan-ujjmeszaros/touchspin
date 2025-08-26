@@ -313,7 +313,29 @@
           startDownSpin: startDownSpin,
           stopSpin: stopSpin,
           updateSettings: changeSettings,
-          destroy: function() { _destroy(); }
+          destroy: function() { _destroy(); },
+          getValue: function() {
+            var raw = String(elements.input.val() ?? '');
+            if (raw === '') return NaN;
+            var num = parseFloat(settings.callback_before_calculation(raw));
+            return isFinite(num) ? num : NaN;
+          },
+          setValue: function(v) {
+            if (originalinput.is(':disabled,[readonly]')) return;
+            stopSpin();
+            var num = Number(v);
+            if (!isFinite(num)) return;
+            // Clamp to bounds
+            if (settings.max !== null && settings.max !== undefined && num > settings.max) num = settings.max;
+            if (settings.min !== null && settings.min !== undefined && num < settings.min) num = settings.min;
+            var prev = String(elements.input.val() ?? '');
+            var next = settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+            elements.input.val(next);
+            _updateAriaAttributes();
+            if (prev !== next) {
+              originalinput.trigger('change');
+            }
+          }
         });
       }
 

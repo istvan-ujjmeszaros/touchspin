@@ -47,6 +47,7 @@ Additional progress in this phase
 - [x] Added a lightweight jQuery bridge `src/wrappers/jquery-bridge.js` that attaches an instance facade at `$(input).data('touchspin')` and maps facade methods to current callable events (no internal refactor yet). Includes `destroy`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`.
 - [x] Created `__tests__/html/destroy-test-bridge.html` with both legacy event buttons and facade buttons to verify parity. Confirmed working in browser.
 - [x] Exposed internal instance methods from the classic plugin at `$(input).data('touchspinInternal')` and updated the bridge to prefer direct method calls with event fallbacks.
+  - Facade now also supports `getValue` and `setValue`, with internal implementations in the plugin and safe fallbacks.
 
 ## Phase 5: Tests and Coverage
 - [x] Add a minimal ESM usage test page (using ESM twin with jQuery present): `__tests__/html/destroy-test-esm.html`.

@@ -462,6 +462,29 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             updateSettings: changeSettings,
             destroy: function destroy() {
               _destroy();
+            },
+            getValue: function getValue() {
+              var _a;
+              var raw = String((_a = elements.input.val()) != null ? _a : "");
+              if (raw === "") return NaN;
+              var num = parseFloat(settings.callback_before_calculation(raw));
+              return isFinite(num) ? num : NaN;
+            },
+            setValue: function setValue(v) {
+              var _a;
+              if (originalinput.is(":disabled,[readonly]")) return;
+              stopSpin();
+              var num = Number(v);
+              if (!isFinite(num)) return;
+              if (settings.max !== null && settings.max !== void 0 && num > settings.max) num = settings.max;
+              if (settings.min !== null && settings.min !== void 0 && num < settings.min) num = settings.min;
+              var prev = String((_a = elements.input.val()) != null ? _a : "");
+              var next = settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+              elements.input.val(next);
+              _updateAriaAttributes();
+              if (prev !== next) {
+                originalinput.trigger("change");
+              }
             }
           });
         }
