@@ -338,7 +338,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       factory(jQuery);
     }
   })(function ($) {
-    $.fn.TouchSpin = function (options) {
+    $.fn.TouchSpin = function (options, arg) {
       var defaults = {
         min: 0,
         // If null, there is no minimum enforced
@@ -413,6 +413,47 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         buttondown_txt: "button-down-txt",
         buttonup_txt: "button-up-txt"
       };
+      if (typeof options === "string") {
+        var cmd = String(options).toLowerCase();
+        var ret;
+        this.each(function () {
+          var $el = $(this);
+          var api = $el.data("touchspinInternal");
+          if (!api) return;
+          switch (cmd) {
+            case "destroy":
+              api.destroy();
+              break;
+            case "uponce":
+              api.upOnce();
+              break;
+            case "downonce":
+              api.downOnce();
+              break;
+            case "startupspin":
+              api.startUpSpin();
+              break;
+            case "startdownspin":
+              api.startDownSpin();
+              break;
+            case "stopspin":
+              api.stopSpin();
+              break;
+            case "updatesettings":
+              api.updateSettings(arg || {});
+              break;
+            case "getvalue":
+            case "get":
+              if (ret === void 0) ret = api.getValue();
+              break;
+            case "setvalue":
+            case "set":
+              api.setValue(arg);
+              break;
+          }
+        });
+        return ret === void 0 ? this : ret;
+      }
       return this.each(function () {
         var settings,
           originalinput = $(this),
@@ -474,13 +515,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               var _a;
               if (originalinput.is(":disabled,[readonly]")) return;
               stopSpin();
-              var num = Number(v);
-              if (!isFinite(num)) return;
-              if (settings.max !== null && settings.max !== void 0 && num > settings.max) num = settings.max;
-              if (settings.min !== null && settings.min !== void 0 && num < settings.min) num = settings.min;
+              var parsed = Number(v);
+              if (!isFinite(parsed)) return;
+              var adjusted = parseFloat(_forcestepdivisibility(parsed));
+              if (settings.min !== null && adjusted < settings.min) {
+                adjusted = settings.min;
+              }
+              if (settings.max !== null && adjusted > settings.max) {
+                adjusted = settings.max;
+              }
               var prev = String((_a = elements.input.val()) != null ? _a : "");
-              var next = settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
-              elements.input.val(next);
+              var next = settings.callback_after_calculation(parseFloat(adjusted).toFixed(settings.decimals));
+              if (prev !== next) {
+                elements.input.val(next);
+              }
               _updateAriaAttributes();
               if (prev !== next) {
                 originalinput.trigger("change");
