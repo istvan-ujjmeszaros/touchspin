@@ -5,9 +5,9 @@ Purpose
 
 Resume Block (single source of truth)
 - Current checkpoint tag: LGTM-2
-- Current focus: Keyboard/mousewheel consistency audit; confirm single-change emission and correct spin start/stop. Unify paths only if risk-free.
-- Next manual verification: Use bridge and ESM pages to validate typing → Enter → focusout; mouse wheel; arrow keys; start/stop spin; callbacks.
-- Next checkpoint: If behavior holds, tag LGTM-3, then build `dist/` and commit it (CI will verify integrity of PR contains updated `dist/`).
+- Current focus: COMPLETE — Keyboard/mousewheel consistency; single-change emission on Enter/focusout; spin start/stop verified via manual pages and tests.
+- Next manual verification: N/A (covered); continue spot checks as needed.
+- Next checkpoint: Tag LGTM-3, then build `dist/` and commit it (CI will verify integrity of PR contains updated `dist/`).
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
