@@ -1395,18 +1395,15 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
+        var prevDisplay = String(inputEl.value ?? '');
         value = parseFloat(settings.callback_before_calculation(inputEl.value));
-        var initvalue = value;
         value = _nextValue('up', value);
         if ((settings.max !== null) && (value === settings.max)) {
           originalinput.trigger('touchspin.on.max');
           stopSpin();
         }
-        _setDisplay(value);
-
-        if (initvalue !== value) {
-          originalinput.trigger('change');
-        }
+        var nextDisplay = _setDisplay(value);
+        if (prevDisplay !== nextDisplay) originalinput.trigger('change');
       }
 
       /**
@@ -1420,18 +1417,15 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
+        var prevDisplay = String(inputEl.value ?? '');
         value = parseFloat(settings.callback_before_calculation(inputEl.value));
-        var initvalue = value;
         value = _nextValue('down', value);
         if ((settings.min !== null) && (value === settings.min)) {
           originalinput.trigger('touchspin.on.min');
           stopSpin();
         }
-        _setDisplay(value);
-
-        if (initvalue !== value) {
-          originalinput.trigger('change');
-        }
+        var nextDisplay = _setDisplay(value);
+        if (prevDisplay !== nextDisplay) originalinput.trigger('change');
       }
 
       /**
