@@ -57,6 +57,13 @@ export default [
     }
   },
   {
+    // Main plugin now uses ESM module syntax
+    files: ['src/jquery.bootstrap-touchspin.js'],
+    languageOptions: {
+      sourceType: 'module',
+    },
+  },
+  {
     // ESM core uses module syntax
     files: ['src/core/**/*.js', 'src/wrappers/**/*.js'],
     languageOptions: {

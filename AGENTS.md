@@ -22,6 +22,8 @@
 - Coverage: `npm run test:coverage` | open report: `npm run coverage:open`
 - Visual: `npm run test:visual` | update: `npm run test:visual:update` | UI: `npm run test:visual:ui` | headed: `npm run test:visual:headed` | report: `npm run test:visual:report`
 
+Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite.
+
 ## Coding Style & Naming Conventions
 
 - Indentation: 2 spaces; LF; UTF‑8 (`.editorconfig`)

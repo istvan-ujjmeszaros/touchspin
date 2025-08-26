@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin Bridge Test (Events + Facade)</title>
+
+  <!-- Bootstrap 4 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- TouchSpin CSS -->
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+
+  <style>
+    .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+    .control-buttons { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn-group-title { font-weight: 600; margin-right: 8px; align-self: center; }
+    .status { margin: 10px 0; padding: 10px; background-color: #f8f9fa; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>TouchSpin Bridge Test</h1>
+    <p>Validate legacy callable events and the new method facade side-by-side.</p>
+
+    <!-- Test 1: New Container Creation -->
+    <div class="test-section">
+      <h3>Test 1: New Container Creation (buildInputGroup)</h3>
+      <div class="form-group">
+        <label for="test-input-new">Test Input (New Container):</label>
+        <input id="test-input-new" type="text" value="10" data-testid="test-input-new" class="form-control">
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Init:</span>
+        <button id="init-new-btn" class="btn btn-primary">Initialize TouchSpin</button>
+        <button id="destroy-new-btn" class="btn btn-danger">Destroy</button>
+        <button id="reinit-new-btn" class="btn btn-success">Reinitialize</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Events:</span>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-new" data-evt="touchspin.uponce">up once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-new" data-evt="touchspin.downonce">down once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-new" data-evt="touchspin.startupspin">start up</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-new" data-evt="touchspin.startdownspin">start down</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-new" data-evt="touchspin.stopspin">stop</button>
+        <button class="btn btn-outline-secondary" data-action="event-update" data-target="#test-input-new">update settings</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="upOnce">up once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="downOnce">down once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="startUpSpin">start up</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="startDownSpin">start down</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-new" data-method="stopSpin">stop</button>
+        <button class="btn btn-outline-primary" data-action="facade-update" data-target="#test-input-new">update settings</button>
+      </div>
+
+      <div class="status" id="status-new">Status: Not initialized</div>
+    </div>
+
+    <!-- Test 2: Existing Container Enhancement -->
+    <div class="test-section">
+      <h3>Test 2: Existing Container Enhancement (buildAdvancedInputGroup)</h3>
+      <div class="form-group">
+        <label>Test Input (Existing Container):</label>
+        <div class="input-group existing-container" id="existing-container">
+          <div class="input-group-prepend"><span class="input-group-text">Pre</span></div>
+          <input id="test-input-existing" type="text" value="42" class="form-control">
+          <div class="input-group-append"><span class="input-group-text">Post</span></div>
+        </div>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Init:</span>
+        <button id="init-existing-btn" class="btn btn-primary">Initialize</button>
+        <button id="destroy-existing-btn" class="btn btn-danger">Destroy</button>
+        <button id="reinit-existing-btn" class="btn btn-success">Reinitialize</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Events:</span>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-existing" data-evt="touchspin.uponce">up once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-existing" data-evt="touchspin.downonce">down once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-existing" data-evt="touchspin.startupspin">start up</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-existing" data-evt="touchspin.startdownspin">start down</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-existing" data-evt="touchspin.stopspin">stop</button>
+        <button class="btn btn-outline-secondary" data-action="event-update" data-target="#test-input-existing">update settings</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="upOnce">up once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="downOnce">down once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="startUpSpin">start up</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="startDownSpin">start down</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-existing" data-method="stopSpin">stop</button>
+        <button class="btn btn-outline-primary" data-action="facade-update" data-target="#test-input-existing">update settings</button>
+      </div>
+
+      <div class="status" id="status-existing">Status: Not initialized</div>
+    </div>
+
+    <!-- Test 3: Vertical Buttons -->
+    <div class="test-section">
+      <h3>Test 3: Vertical Buttons</h3>
+      <div class="form-group">
+        <label for="test-input-vertical">Test Input (Vertical Buttons):</label>
+        <input id="test-input-vertical" type="text" value="15" class="form-control">
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Init:</span>
+        <button id="init-vertical-btn" class="btn btn-primary">Initialize</button>
+        <button id="destroy-vertical-btn" class="btn btn-danger">Destroy</button>
+        <button id="reinit-vertical-btn" class="btn btn-success">Reinitialize</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Events:</span>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-vertical" data-evt="touchspin.uponce">up once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-vertical" data-evt="touchspin.downonce">down once</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-vertical" data-evt="touchspin.startupspin">start up</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-vertical" data-evt="touchspin.startdownspin">start down</button>
+        <button class="btn btn-outline-secondary" data-action="event" data-target="#test-input-vertical" data-evt="touchspin.stopspin">stop</button>
+        <button class="btn btn-outline-secondary" data-action="event-update" data-target="#test-input-vertical">update settings</button>
+      </div>
+
+      <div class="control-buttons">
+        <span class="btn-group-title">Facade:</span>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="upOnce">up once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="downOnce">down once</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="startUpSpin">start up</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="startDownSpin">start down</button>
+        <button class="btn btn-outline-primary" data-action="facade" data-target="#test-input-vertical" data-method="stopSpin">stop</button>
+        <button class="btn btn-outline-primary" data-action="facade-update" data-target="#test-input-vertical">update settings</button>
+      </div>
+
+      <div class="status" id="status-vertical">Status: Not initialized</div>
+    </div>
+  </div>
+
+  <!-- jQuery and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Load source renderer files -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
+
+  <!-- Create Bootstrap 4 RendererFactory -->
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) {
+        return new Bootstrap4Renderer($, settings, originalinput);
+      }
+      static getVersion() { return 4; }
+    };
+  </script>
+
+  <!-- Load main TouchSpin source file (classic) -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+
+  <!-- Install bridge as a module (after plugin is loaded) -->
+  <script type="module" src="../../src/wrappers/jquery-bridge.js"></script>
+
+  <script>
+    (function($) {
+      function updateStatus(id, msg) { $(id).text('Status: ' + msg); }
+
+      // Init/destroy/reinit wiring
+      $('#init-new-btn').click(function(){
+        $('#test-input-new').TouchSpin({ min:0, max:100, prefix:'$', postfix:'.00' });
+        updateStatus('#status-new', 'Initialized ($ prefix, .00 postfix)');
+      });
+      $('#destroy-new-btn').click(function(){
+        $('#test-input-new').trigger('touchspin.destroy');
+        updateStatus('#status-new', 'Destroyed');
+      });
+      $('#reinit-new-btn').click(function(){
+        $('#test-input-new').TouchSpin({ min:5, max:50, step:5, prefix:'€', postfix:' EUR' });
+        updateStatus('#status-new', 'Reinitialized (€ prefix, EUR postfix, step 5)');
+      });
+
+      $('#init-existing-btn').click(function(){
+        $('#test-input-existing').TouchSpin({ min:0, max:100, prefix:'$', postfix:'.00' });
+        updateStatus('#status-existing', 'Enhanced existing input-group ($ prefix, .00 postfix)');
+      });
+      $('#destroy-existing-btn').click(function(){
+        $('#test-input-existing').trigger('touchspin.destroy');
+        updateStatus('#status-existing', 'Destroyed (restored original)');
+      });
+      $('#reinit-existing-btn').click(function(){
+        $('#test-input-existing').TouchSpin({ min:10, max:200, step:10, prefix:'€', postfix:' EUR' });
+        updateStatus('#status-existing', 'Reinitialized (€ prefix, EUR postfix, step 10)');
+      });
+
+      $('#init-vertical-btn').click(function(){
+        $('#test-input-vertical').TouchSpin({ min:0, max:100, verticalbuttons:true, verticalup:'▲', verticaldown:'▼' });
+        updateStatus('#status-vertical', 'Initialized (vertical ▲/▼)');
+      });
+      $('#destroy-vertical-btn').click(function(){
+        $('#test-input-vertical').trigger('touchspin.destroy');
+        updateStatus('#status-vertical', 'Destroyed');
+      });
+      $('#reinit-vertical-btn').click(function(){
+        $('#test-input-vertical').TouchSpin({ min:0, max:50, step:5, verticalbuttons:true, verticalup:'↑', verticaldown:'↓' });
+        updateStatus('#status-vertical', 'Reinitialized (vertical ↑/↓, step 5)');
+      });
+
+      // Events group
+      $(document).on('click', '[data-action="event"]', function() {
+        const target = $(this).data('target');
+        const evt = $(this).data('evt');
+        $(target).trigger(evt);
+      });
+      $(document).on('click', '[data-action="event-update"]', function() {
+        const target = $(this).data('target');
+        $(target).trigger('touchspin.updatesettings', [{ step: 10 }]);
+      });
+
+      // Facade group
+      $(document).on('click', '[data-action="facade"]', function() {
+        const target = $(this).data('target');
+        const method = $(this).data('method');
+        const inst = $(target).data('touchspin');
+        if (inst && typeof inst[method] === 'function') inst[method]();
+      });
+      $(document).on('click', '[data-action="facade-update"]', function() {
+        const target = $(this).data('target');
+        const inst = $(target).data('touchspin');
+        if (inst && typeof inst.updateSettings === 'function') inst.updateSettings({ step: 10 });
+      });
+    })(jQuery);
+  </script>
+</body>
+</html>
+

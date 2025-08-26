@@ -7,17 +7,19 @@ Goal: Split the plugin into a framework‑agnostic ESM core and a thin jQuery wr
 - Build integrity workflow active; always commit `dist/` after `npm run build`.
 
 ## Phase 1: Build Outputs Split (Core ESM + jQuery Wrapper)
-- [ ] Create `src/core/TouchSpinCore.ts` (ESM): exports a class with methods: `init`, `destroy`, `updateSettings`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`. No callable event triggers reside in the core.
-- [ ] Add `src/wrappers/jquery.js` that registers `$.fn.TouchSpin` and bridges to `TouchSpinCore` instances.
+- [x] Create `src/core/TouchSpinCore.js` (ESM scaffold): exports a class with methods: `init`, `destroy`, `updateSettings`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`. No callable event triggers reside in the core.
+- [x] Add `src/wrappers/jquery.js` that registers `$.fn.TouchSpin` and bridges to `TouchSpinCore` instances (scaffold; not yet wired into UMD builds).
 - [ ] Preserve callable events in the jQuery wrapper only by mapping triggers to core methods:
   - `touchspin.updatesettings` → `updateSettings(newOptions)`
   - `touchspin.uponce` / `downonce` → `upOnce()` / `downOnce()`
   - `touchspin.startupspin` / `startdownspin` → `startUpSpin()` / `startDownSpin()`
   - `touchspin.stopspin` → `stopSpin()`
 - [ ] Expose instance for direct calls via jQuery: `$(input).data('touchspin').upOnce()` (back‑compat + gradual migration).
-- [ ] Update build to produce:
+- [x] Update build to produce:
   - UMD jQuery builds (current filenames, unchanged) for BS3/BS4/BS5/Tailwind.
-  - ESM core bundle at `dist/esm/touchspin.js` (and renderers if needed) for modern consumers.
+  - ESM core bundle at `dist/esm/touchspin.js` for modern consumers.
+
+Note: Tests currently reference `src/jquery.bootstrap-touchspin.js` as a classic script in HTML fixtures. Converting that file itself to ESM would defer execution and break inline initializers. We will introduce a new ESM entry (wrapper around the core) and migrate fixtures to `type="module"` in a later phase before flipping the source file over.
 
 ## Phase 2: Core API and Adapter Design
 - [ ] Define renderer‑agnostic DOM adapter interface used by core (query, create, add/remove, events, class ops).
