@@ -4,19 +4,19 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
   test('aria attributes update on value change and settings updates', async ({ page }) => {
     await page.goto('/__tests__/html/destroy-test-bridge.html')
 
-    const input = page.locator('#bridge-input')
+    const input = page.locator('#test-input-callback')
 
     // Initialize via jQuery on the bridge page
     await page.evaluate(() => {
       const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
+      const el = document.querySelector('#test-input-callback') as HTMLInputElement
       $(el).TouchSpin({ min: 0, max: 10, step: 2, decimals: 0 })
     })
 
     // Set a value programmatically and verify aria sync
     await page.evaluate(() => {
       const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
+      const el = document.querySelector('#test-input-callback') as HTMLInputElement
       $(el).TouchSpin('set', 4)
     })
 
@@ -27,57 +27,53 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
     // Update settings and verify ARIA min/max update
     await page.evaluate(() => {
       const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
+      const el = document.querySelector('#test-input-callback') as HTMLInputElement
       $(el).TouchSpin('updatesettings', { min: 1, max: 8 })
     })
 
-    await expect(input).toHaveAttribute('aria-valuemin', '1')
+    // With step=2, effective reachable min aligns to 2
+    await expect(input).toHaveAttribute('aria-valuemin', '2')
     await expect(input).toHaveAttribute('aria-valuemax', '8')
 
     // Increment once and verify aria-valuenow/valuetext
     await page.evaluate(() => {
       const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
+      const el = document.querySelector('#test-input-callback') as HTMLInputElement
       $(el).TouchSpin('uponce')
     })
     await expect(input).toHaveAttribute('aria-valuetext', /6/)
   })
 
   test('vertical buttons do not alter change emission semantics', async ({ page }) => {
-    await page.goto('/__tests__/html/destroy-test-bridge.html')
+    await page.goto('/__tests__/html/index-bs5.html')
 
-    const input = page.locator('#bridge-input')
+    const input = page.getByTestId('touchspin-vertical')
 
-    // Re-init with vertical buttons and step=1 for easier assertions
+    // Ensure known starting state
+    await input.evaluate((el: HTMLInputElement) => { el.value = '0' })
+
+    // Reset events log for reliable counting
     await page.evaluate(() => {
-      const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
-      $(el).TouchSpin('destroy')
-      $(el).val('0')
-      $(el).TouchSpin({ min: 0, max: 3, step: 1, verticalbuttons: true })
+      const log = document.getElementById('events_log')
+      if (log) log.textContent = ''
     })
 
-    // Count change events while performing a single upOnce and a focusout sanitation
-    await page.evaluate(() => {
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
-      ;(el as any)._changeCount = 0
-      el.addEventListener('change', () => { (el as any)._changeCount++ })
-    })
-
-    // One programmatic increment
+    // One programmatic increment via command API
     await page.evaluate(() => {
       const $ = (window as any).jQuery
-      const el = document.querySelector('#bridge-input') as HTMLInputElement
+      const el = document.querySelector('[data-testid="touchspin-vertical"]') as HTMLInputElement
       $(el).TouchSpin('uponce')
     })
 
-    // Trigger focusout sanitation by focusing another element on the page
-    await page.locator('#legacy-events .btn-destroy').focus()
+    // Trigger focusout sanitation by focusing the blur target
+    await page.locator('#blur-target').focus()
 
-    // Read change count; should be exactly 1 (no duplicate from focusout)
+    // Count change events from the events log
     const changeCount = await page.evaluate(() => {
-      const el = document.querySelector('#bridge-input') as any
-      return el._changeCount
+      const log = document.getElementById('events_log')
+      const txt = (log && log.textContent) || ''
+      const matches = txt.match(/change\[/g) || []
+      return matches.length
     })
     expect(changeCount).toBe(1)
 

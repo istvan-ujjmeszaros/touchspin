@@ -35,15 +35,15 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
   - [ ] Note the focusout/Enter-key sanitation behavior in AGENTS.md and TODO_PLAN.md (stability guarantees and where to test manually).
   - [ ] Brief usage snippet for modern facade in README (optional until publish).
 
-- [ ] Renderer parity and ARIA/state sync
-  - [ ] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
-  - [ ] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
-  - [ ] Validate disabled/readonly visual cues update alongside attribute changes.
-  - [ ] Ensure ARIA attributes (aria-valuetext and min/max when present) stay in sync on value and settings changes.
+- [x] Renderer parity and ARIA/state sync
+  - [x] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
+  - [x] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
+  - [x] Validate disabled/readonly visual cues update alongside attribute changes.
+  - [x] Ensure ARIA attributes (aria-valuetext and min/max when present) stay in sync on value and settings changes.
 
 - [ ] A11y follow-up (deferred)
   - [ ] Evaluate adding role="spinbutton" + aria-valuenow consistently across renderers; validate with screen readers.
 
-- [ ] Tests follow-up (non-visual)
-  - [ ] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.
-  - [ ] Add a quick check for vertical buttons behavior not affecting change emission semantics.
+- [x] Tests follow-up (non-visual)
+  - [x] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.
+  - [x] Add a quick check for vertical buttons behavior not affecting change emission semantics.
