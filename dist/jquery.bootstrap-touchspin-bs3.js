@@ -470,7 +470,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             startUpSpin: startUpSpin,
             startDownSpin: startDownSpin,
             stopSpin: stopSpin,
-            updateSettings: changeSettings
+            updateSettings: changeSettings,
+            destroy: function destroy() {
+              _destroy();
+            }
           });
         }
         function _setInitval() {

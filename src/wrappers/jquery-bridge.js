@@ -18,6 +18,11 @@ function installBridge($) {
       // Attach a simple facade that re-triggers callable events.
       function getInternal() { return $input.data('touchspinInternal'); }
       const facade = {
+        destroy() {
+          const i = getInternal();
+          if (i && typeof i.destroy === 'function') return i.destroy();
+          $input.trigger('touchspin.destroy');
+        },
         upOnce() {
           const i = getInternal();
           if (i && typeof i.upOnce === 'function') return i.upOnce();

@@ -312,7 +312,8 @@
           startUpSpin: startUpSpin,
           startDownSpin: startDownSpin,
           stopSpin: stopSpin,
-          updateSettings: changeSettings
+          updateSettings: changeSettings,
+          destroy: function() { _destroy(); }
         });
       }
 

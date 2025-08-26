@@ -14,7 +14,8 @@ Goal: Split the plugin into a framework‑agnostic ESM core and a thin jQuery wr
   - `touchspin.uponce` / `downonce` → `upOnce()` / `downOnce()`
   - `touchspin.startupspin` / `startdownspin` → `startUpSpin()` / `startDownSpin()`
   - `touchspin.stopspin` → `stopSpin()`
-- [ ] Expose instance for direct calls via jQuery: `$(input).data('touchspin').upOnce()` (back‑compat + gradual migration).
+  - `touchspin.destroy` → `destroy()`
+- [x] Expose instance for direct calls via jQuery: `$(input).data('touchspin').upOnce()` (back‑compat + gradual migration) — implemented via bridge.
 - [x] Update build to produce:
   - UMD jQuery builds (current filenames, unchanged) for BS3/BS4/BS5/Tailwind.
   - ESM core bundle at `dist/esm/touchspin.js` for modern consumers.
@@ -43,7 +44,7 @@ Additional progress in this phase
 - [ ] Document direct method calls as an additional option (ESM/core) while keeping event triggers first‑class in the jQuery wrapper.
 
 Additional progress in this phase
-- [x] Added a lightweight jQuery bridge `src/wrappers/jquery-bridge.js` that attaches an instance facade at `$(input).data('touchspin')` and maps facade methods to current callable events (no internal refactor yet).
+- [x] Added a lightweight jQuery bridge `src/wrappers/jquery-bridge.js` that attaches an instance facade at `$(input).data('touchspin')` and maps facade methods to current callable events (no internal refactor yet). Includes `destroy`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`.
 - [x] Created `__tests__/html/destroy-test-bridge.html` with both legacy event buttons and facade buttons to verify parity. Confirmed working in browser.
 - [x] Exposed internal instance methods from the classic plugin at `$(input).data('touchspinInternal')` and updated the bridge to prefer direct method calls with event fallbacks.
 
