@@ -6,6 +6,7 @@ Purpose
 Resume Block (single source of truth)
 - Current checkpoint tag: LGTM-2
 - Current focus: COMPLETE — Keyboard/mousewheel consistency; single-change emission on Enter/focusout; spin start/stop verified via manual pages and tests.
+- Completed verification summary: ARIA sync and vertical semantics tested (green). Renderer parity inspected across BS3/4/5/Tailwind — button classes, vertical wiring, prefix/postfix handling, and disabled/readonly cues consistent; no changes required.
 - Next manual verification: N/A (covered); continue spot checks as needed.
 - Next checkpoint: Tag LGTM-3, then build `dist/` and commit it (CI will verify integrity of PR contains updated `dist/`).
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.

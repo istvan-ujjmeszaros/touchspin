@@ -40,6 +40,7 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
   - [x] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
   - [x] Validate disabled/readonly visual cues update alongside attribute changes.
   - [x] Ensure ARIA attributes (aria-valuetext and min/max when present) stay in sync on value and settings changes.
+  - [x] Audit recorded: No inconsistencies found across BS3/4/5/Tailwind; no code changes required.
 
 - [ ] A11y follow-up (deferred)
   - [ ] Evaluate adding role="spinbutton" + aria-valuenow consistently across renderers; validate with screen readers.
