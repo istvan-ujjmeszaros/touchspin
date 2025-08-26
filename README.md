@@ -146,6 +146,24 @@ bower install bootstrap-touchspin
 </script>
 ```
 
+### Modern API (no jQuery in user code)
+
+```html
+<input type="number" id="modern-input" value="5">
+
+<script type="module">
+  import './dist/jquery.bootstrap-touchspin.min.js';
+  // After loading, a convenience is available on elements
+  const input = document.getElementById('modern-input');
+  const inst = input.TouchSpin({ min: 0, max: 100, step: 1 });
+  // Or: const inst = window.TouchSpin.attach(input, { step: 1 });
+  inst.upOnce();
+  inst.updateSettings({ step: 10 });
+  inst.destroy();
+  // Methods: upOnce, downOnce, startUpSpin, startDownSpin, stopSpin,
+  //          updateSettings, getValue, setValue, destroy
+```
+
 ---
 
 ## Configuration Options

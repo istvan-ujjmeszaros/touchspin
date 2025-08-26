@@ -28,12 +28,12 @@ Scope: Track concrete, verifiable steps for the incremental modernization while 
 
 - [x] Checkpoint and dist build
   - [x] If all above is good, tag `LGTM-2`.
-  - [ ] Build dist (`npm run build`).
-  - [ ] Commit `dist/` before pushing (per AGENTS.md policy). CI will verify integrity (PR includes up‑to‑date `dist/`).
+  - [x] Build dist (`npm run build`).
+  - [x] Commit `dist/` before pushing (per AGENTS.md policy). CI will verify integrity (PR includes up‑to‑date `dist/`).
 
-- [ ] Documentation nits (post-checkpoint)
-  - [ ] Note the focusout/Enter-key sanitation behavior in AGENTS.md and TODO_PLAN.md (stability guarantees and where to test manually).
-  - [ ] Brief usage snippet for modern facade in README (optional until publish).
+- [x] Documentation nits (post-checkpoint)
+  - [x] Note the focusout/Enter-key sanitation behavior in AGENTS.md and TODO_PLAN.md (stability guarantees and where to test manually).
+  - [x] Brief usage snippet for modern facade in README (optional until publish).
 
 - [x] Renderer parity and ARIA/state sync
   - [x] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
