@@ -947,7 +947,7 @@ function _formatDisplay(num) {
         // Buttons: pointer (jQuery to support tests using namespaced triggers)
         elements.down.on('mousedown.touchspin', function (ev) {
           elements.down.off('touchstart.touchspin');
-          if (originalinput.is(':disabled,[readonly]')) return;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
           downOnce();
           startDownSpin();
           ev.preventDefault();
@@ -955,7 +955,7 @@ function _formatDisplay(num) {
         });
         elements.down.on('touchstart.touchspin', function (ev) {
           elements.down.off('mousedown.touchspin');
-          if (originalinput.is(':disabled,[readonly]')) return;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
           downOnce();
           startDownSpin();
           ev.preventDefault();
@@ -963,7 +963,7 @@ function _formatDisplay(num) {
         });
         elements.up.on('mousedown.touchspin', function (ev) {
           elements.up.off('touchstart.touchspin');
-          if (originalinput.is(':disabled,[readonly]')) return;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
           upOnce();
           startUpSpin();
           ev.preventDefault();
@@ -971,7 +971,7 @@ function _formatDisplay(num) {
         });
         elements.up.on('touchstart.touchspin', function (ev) {
           elements.up.off('mousedown.touchspin');
-          if (originalinput.is(':disabled,[readonly]')) return;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
           upOnce();
           startUpSpin();
           ev.preventDefault();
@@ -1000,7 +1000,7 @@ function _formatDisplay(num) {
 
         // Mouse wheel on input (native)
         _onNative(inputEl, 'wheel', function (ev) {
-          if (!settings.mousewheel || !originalinput.is(':focus')) return;
+          if (!settings.mousewheel || document.activeElement !== inputEl) return;
           var oe = /** @type {any} */ (ev);
           var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
           ev.stopPropagation();
@@ -1325,7 +1325,7 @@ function _formatDisplay(num) {
        * @param {'up'|'down'} dir
        */
       function _startSpin(dir) {
-        if (originalinput.is(':disabled,[readonly]')) {
+        if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
           return;
         }
 
@@ -1375,7 +1375,7 @@ function _formatDisplay(num) {
        * @private
        */
       function _updateButtonDisabledState() {
-        const isDisabled = originalinput.is(':disabled,[readonly]');
+        const isDisabled = inputEl.disabled || inputEl.hasAttribute('readonly');
         elements.up.prop('disabled', isDisabled);
         elements.down.prop('disabled', isDisabled);
 
@@ -1390,7 +1390,7 @@ function _formatDisplay(num) {
        * @fires touchspin.on.max
        */
       function upOnce() {
-        if (originalinput.is(':disabled,[readonly]')) {
+        if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
           return;
         }
 
@@ -1412,7 +1412,7 @@ function _formatDisplay(num) {
        * @fires touchspin.on.min
        */
       function downOnce() {
-        if (originalinput.is(':disabled,[readonly]')) {
+        if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
           return;
         }
 
