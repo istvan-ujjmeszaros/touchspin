@@ -105,8 +105,9 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
+    // Allow dynamic port override to support constrained sandboxes; default remains 3000 locally/CI
     command: 'node scripts/serve.mjs',
-    port: 3000,
+    port: Number(process.env.PORT) || 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
