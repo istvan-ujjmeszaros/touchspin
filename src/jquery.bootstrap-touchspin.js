@@ -314,7 +314,15 @@
         /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
         mutationObserver,
         /** @type {Array<[Element,string,EventListenerOrEventListenerObject,any]>} */
-        _nativeListeners = [];
+        _nativeListeners = [],
+        /** @type {HTMLInputElement} */
+        inputEl,
+        /** @type {HTMLElement|undefined} */
+        containerEl,
+        /** @type {HTMLElement|undefined} */
+        upEl,
+        /** @type {HTMLElement|undefined} */
+        downEl;
 
       init();
 
@@ -335,6 +343,9 @@
           console.log('Must be an input.');
           return;
         }
+
+        // Cache DOM element reference
+        inputEl = /** @type {HTMLInputElement} */ (originalinput[0]);
 
         _initSettings();
         _initRenderer();
@@ -360,7 +371,7 @@
           updateSettings: changeSettings,
           destroy: function() { _destroy(); },
           getValue: function() {
-            var raw = String(elements.input.val() ?? '');
+            var raw = String(inputEl.value ?? '');
             if (raw === '') return NaN;
             var num = parseFloat(settings.callback_before_calculation(raw));
             return isFinite(num) ? num : NaN;
@@ -378,7 +389,7 @@
             if ((settings.max !== null) && (adjusted > settings.max)) {
               adjusted = settings.max;
             }
-            var prev = String(elements.input.val() ?? '');
+            var prev = String(inputEl.value ?? '');
             var next = _setDisplay(adjusted);
             if (prev !== next) {
               originalinput.trigger('change');
@@ -392,8 +403,8 @@
        * @private
        */
       function _setInitval() {
-        if (settings.initval !== '' && originalinput.val() === '') {
-          originalinput.val(settings.initval);
+        if (settings.initval !== '' && inputEl.value === '') {
+          inputEl.value = settings.initval;
         }
       }
 
@@ -407,7 +418,7 @@
         _checkValue(true);
 
         /** @type {string} */
-        var raw = String(elements.input.val() ?? '');
+        var raw = String(inputEl.value ?? '');
 
         if (raw !== '') {
           var num = parseFloat(settings.callback_before_calculation(raw));
@@ -461,10 +472,9 @@ function _formatDisplay(num) {
        */
       function _setDisplay(num) {
         var next = _formatDisplay(num);
-        if (elements && elements.input) {
-          elements.input.val(next);
+        if (inputEl) {
+          inputEl.value = next;
         } else {
-          // Early init path: elements not yet created; update original input
           originalinput.val(next);
         }
         _updateAriaAttributes();
@@ -710,7 +720,7 @@ function _formatDisplay(num) {
        * @private
        */
       function _buildHtml() {
-        var initval = originalinput.val(),
+        var initval = inputEl.value,
           parentelement = originalinput.parent();
 
         if (initval !== '') {
@@ -748,6 +758,10 @@ function _formatDisplay(num) {
           throw new Error('Bootstrap TouchSpin: Renderer not available for element initialization.');
         }
         elements = renderer.initElements(container);
+        // Cache element handles
+        containerEl = container && container[0];
+        upEl = elements && elements.up && elements.up[0];
+        downEl = elements && elements.down && elements.down[0];
       }
 
       /**
@@ -756,25 +770,25 @@ function _formatDisplay(num) {
        */
       function _initAriaAttributes() {
         // Set ARIA attributes on the input for screen readers
-        if (!originalinput.attr('role')) {
-          originalinput.attr('role', 'spinbutton');
+        if (!inputEl.getAttribute('role')) {
+          inputEl.setAttribute('role', 'spinbutton');
         }
 
         // Set aria-valuemin and aria-valuemax if they exist
         if (settings.min !== null && settings.min !== undefined) {
-          originalinput.attr('aria-valuemin', settings.min);
+          inputEl.setAttribute('aria-valuemin', String(settings.min));
         }
         if (settings.max !== null && settings.max !== undefined) {
-          originalinput.attr('aria-valuemax', settings.max);
+          inputEl.setAttribute('aria-valuemax', String(settings.max));
         }
 
         // Set current value (don't force 0 on empty input)
-        var rawInit = originalinput.val();
+        var rawInit = inputEl.value;
         var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
         if (!isNaN(nInit)) {
-          originalinput.attr('aria-valuenow', nInit);
+          inputEl.setAttribute('aria-valuenow', String(nInit));
         } else {
-          originalinput.removeAttr('aria-valuenow');
+          inputEl.removeAttribute('aria-valuenow');
         }
 
         // Add descriptive labels to buttons for screen readers
@@ -789,30 +803,30 @@ function _formatDisplay(num) {
        * @private
        */
       function _updateAriaAttributes() {
-        var raw = String(originalinput.val() ?? '');
+        var raw = String(inputEl.value ?? '');
         if (raw === '') {
-          originalinput.removeAttr('aria-valuenow');
-          originalinput.removeAttr('aria-valuetext');
+          inputEl.removeAttribute('aria-valuenow');
+          inputEl.removeAttribute('aria-valuetext');
         } else {
           var n = parseFloat(raw);
           if (!isNaN(n)) {
-            originalinput.attr('aria-valuenow', n);
+            inputEl.setAttribute('aria-valuenow', String(n));
           } else {
-            originalinput.removeAttr('aria-valuenow');
+            inputEl.removeAttribute('aria-valuenow');
           }
-          originalinput.attr('aria-valuetext', raw);
+          inputEl.setAttribute('aria-valuetext', raw);
         }
 
         // Update min/max if they've changed
         if (settings.min !== null && settings.min !== undefined) {
-          originalinput.attr('aria-valuemin', settings.min);
+          inputEl.setAttribute('aria-valuemin', String(settings.min));
         } else {
-          originalinput.removeAttr('aria-valuemin');
+          inputEl.removeAttribute('aria-valuemin');
         }
         if (settings.max !== null && settings.max !== undefined) {
-          originalinput.attr('aria-valuemax', settings.max);
+          inputEl.setAttribute('aria-valuemax', String(settings.max));
         } else {
-          originalinput.removeAttr('aria-valuemax');
+          inputEl.removeAttribute('aria-valuemax');
         }
       }
 
@@ -834,10 +848,10 @@ function _formatDisplay(num) {
        * @private
        */
       function _bindEvents() {
-        var inputEl = /** @type {HTMLInputElement} */ (originalinput[0]);
-        var containerEl = /** @type {HTMLElement} */ (container && container[0]);
-        var upEl = /** @type {HTMLElement} */ (elements.up && elements.up[0]);
-        var downEl = /** @type {HTMLElement} */ (elements.down && elements.down[0]);
+        inputEl = /** @type {HTMLInputElement} */ (originalinput[0]);
+        containerEl = /** @type {HTMLElement} */ (container && container[0]);
+        upEl = /** @type {HTMLElement} */ (elements.up && elements.up[0]);
+        downEl = /** @type {HTMLElement} */ (elements.down && elements.down[0]);
 
         function _onNative(el, type, handler, options) {
           if (!el) return;
@@ -881,7 +895,7 @@ function _formatDisplay(num) {
 
         // Container focusout handler - sanitizes when leaving the entire widget
         function leavingWidget(nextEl) {
-          return !nextEl || !containerEl.contains(nextEl);
+          return !nextEl || (containerEl ? !containerEl.contains(nextEl) : true);
         }
 
         _onNative(containerEl, 'focusout', function (e) {
@@ -1102,20 +1116,20 @@ function _formatDisplay(num) {
        */
       function _checkValue(mayTriggerChange) {
         var val, parsedval, returnval;
-        var prevDisplay = String(originalinput.val() ?? '');
+        var prevDisplay = String(inputEl.value ?? '');
 
-        val = settings.callback_before_calculation(originalinput.val());
+        val = settings.callback_before_calculation(inputEl.value);
 
         if (val === '') {
           if (settings.replacementval !== '') {
-            originalinput.val(settings.replacementval);
+            inputEl.value = String(settings.replacementval);
             _updateAriaAttributes();
           } else {
-            originalinput.removeAttr('aria-valuenow');
+            inputEl.removeAttribute('aria-valuenow');
           }
           // For empty values, compare final result with initial value
           if (mayTriggerChange) {
-            var finalDisplay = String(originalinput.val() ?? '');
+            var finalDisplay = String(inputEl.value ?? '');
             if (finalDisplay !== prevDisplay) {
               originalinput.trigger('change');
             }
@@ -1150,11 +1164,11 @@ function _formatDisplay(num) {
           returnval = settings.max;
         }
 
-        var currentValue = String(originalinput.val() ?? '');
+        var currentValue = String(inputEl.value ?? '');
         var newValue = _setDisplay(parseFloat(returnval));
 
         if (mayTriggerChange) {
-          var nextDisplay = String(originalinput.val() ?? '');
+          var nextDisplay = String(inputEl.value ?? '');
           if (nextDisplay !== prevDisplay) {
             originalinput.trigger('change');
           }
@@ -1167,23 +1181,23 @@ function _formatDisplay(num) {
        */
       function _syncNativeAttributes() {
         // Always set native attributes when input type is number to ensure consistency
-        if (originalinput.attr('type') === 'number') {
+        if (inputEl.getAttribute('type') === 'number') {
           if (settings.min !== null && settings.min !== undefined) {
-            originalinput.attr('min', settings.min);
+            inputEl.setAttribute('min', String(settings.min));
           } else {
-            originalinput.removeAttr('min');
+            inputEl.removeAttribute('min');
           }
 
           if (settings.max !== null && settings.max !== undefined) {
-            originalinput.attr('max', settings.max);
+            inputEl.setAttribute('max', String(settings.max));
           } else {
-            originalinput.removeAttr('max');
+            inputEl.removeAttribute('max');
           }
 
           if (settings.step !== null && settings.step !== undefined) {
-            originalinput.attr('step', settings.step);
+            inputEl.setAttribute('step', String(settings.step));
           } else {
-            originalinput.removeAttr('step');
+            inputEl.removeAttribute('step');
           }
         }
       }
@@ -1194,9 +1208,9 @@ function _formatDisplay(num) {
        */
       function _syncSettingsFromNativeAttributes() {
         // Update TouchSpin settings when native attributes change externally
-        var nativeMin = originalinput.attr('min');
-        var nativeMax = originalinput.attr('max');
-        var nativeStep = originalinput.attr('step');
+        var nativeMin = inputEl.getAttribute('min');
+        var nativeMax = inputEl.getAttribute('max');
+        var nativeStep = inputEl.getAttribute('step');
         var needsUpdate = false;
         var newSettings = {};
 
@@ -1381,7 +1395,7 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
-        value = parseFloat(settings.callback_before_calculation(elements.input.val()));
+        value = parseFloat(settings.callback_before_calculation(inputEl.value));
         var initvalue = value;
         value = _nextValue('up', value);
         if ((settings.max !== null) && (value === settings.max)) {
@@ -1406,7 +1420,7 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
-        value = parseFloat(settings.callback_before_calculation(elements.input.val()));
+        value = parseFloat(settings.callback_before_calculation(inputEl.value));
         var initvalue = value;
         value = _nextValue('down', value);
         if ((settings.min !== null) && (value === settings.min)) {

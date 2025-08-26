@@ -59,6 +59,13 @@ Theme 1 — Events + Timers
 - [ ] Destroy path removes all listeners via `offAll()`.
 - [ ] Validate: `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `advancedFeatures.test.ts` pass.
 
+Theme 1.5 — Bridge + Packaging
+- [ ] Document build outputs: UMD (bs3/bs4/bs5/tailwind), ESM core (`dist/esm/touchspin.js`).
+- [ ] Mark `src/jquery.bootstrap-touchspin.esm.js` as dev‑only; add ESLint override or directive to silence `import.meta` error.
+- [ ] Keep `src/core/TouchSpinCore.js` and `src/wrappers/jquery.js` as scaffolds; do not wire into UMD yet.
+- [ ] Update README/WORKLOG to reflect packaging and future extraction plan.
+- [ ] Tag `LGTM-3.1` (docs/packaging only).
+
 Theme 2 — DOM + Attributes (core only; renderers unchanged)
 - [ ] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
 - [ ] Replace `.val/.attr/.removeAttr/.prop/.is/.addClass/.removeClass` in core with native equivalents.

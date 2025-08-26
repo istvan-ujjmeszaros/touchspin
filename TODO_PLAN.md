@@ -20,8 +20,20 @@ Context and guardrails
 - Risks: wheel delta normalization, key repeat parity, focusout target semantics, handler removal on destroy, duplicate emission if both jQuery and native handlers run; event order of `startupspin` vs `startspin`.
 - Validation:
   - Non‑visual: `events.test.ts`, `keyboardAccessibility.test.ts`, `advancedFeatures.test.ts` (spin behavior), `customEvents.test.ts` (jQuery listeners still OK), `focusout-behavior.test.ts`.
-  - Manual: `__tests__/html/destroy-test-bridge.html` and `destroy-test-esm.html` for spin start/stop, keyboard, wheel.
+ - Manual: `__tests__/html/destroy-test-bridge.html` and `destroy-test-esm.html` for spin start/stop, keyboard, wheel.
 - Exit criteria/checkpoint: All tests pass; manual parity good; tag `LGTM-3`, then `npm run build` and commit `dist/`.
+
+1.5) Bridge + Packaging (no behavior change)
+- Objective: Establish packaging and bridging that enable multiple distributables (UMD jQuery, ESM core, future ESM jQuery wrapper) without changing runtime behavior.
+- Changes:
+  - Keep `src/jquery.bootstrap-touchspin.js` as truth; continue shipping versioned UMD builds (BS3/4/5/Tailwind).
+  - Keep modern facade available (`window.TouchSpin.attach` and `Element.prototype.TouchSpin`).
+  - Clarify `src/jquery.bootstrap-touchspin.esm.js` is a dev‑only twin loader used by manual ESM page; exclude/override in ESLint, or add a file override directive to avoid lint noise.
+  - Maintain `src/core/TouchSpinCore.js` as an extraction target. Do not wire yet; build as `dist/esm/touchspin.js` (experimental) for wrapper spikes and early adopters.
+  - Keep `src/wrappers/jquery.js` (scaffold) to demonstrate event→method bridging when core becomes authoritative. Keep out of UMD pipeline for now.
+- Risks: Confusion about which ESM to consume; lint warnings on `import.meta`; accidental duplication of APIs.
+- Validation: No tests change; document outputs and dev usage in README/WORKLOG.
+- Exit criteria/checkpoint: Docs updated; tag `LGTM-3.1` (docs/packaging only).
 
 2) DOM + Attributes
 - Objective: Replace internal jQuery DOM/attr/value/class usage with native APIs, keeping renderer jQuery‑based for now.
