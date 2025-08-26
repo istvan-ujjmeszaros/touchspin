@@ -420,6 +420,41 @@
       }
 
       /**
+       * Computes the next numeric value in a given direction without touching the DOM.
+       * Pure calculation using current settings and spin state.
+       * @private
+       * @param {'up'|'down'} dir
+       * @param {number} current
+       * @returns {number} next numeric value (clamped to min/max)
+       */
+      function _nextValue(dir, current) {
+        var v = current;
+        if (isNaN(v)) {
+          v = valueIfIsNaN();
+        } else {
+          var step = _getBoostedStep();
+          v = dir === 'up' ? (v + step) : (v - step);
+        }
+        if ((settings.max !== null) && (v >= settings.max)) {
+          v = settings.max;
+        }
+        if ((settings.min !== null) && (v <= settings.min)) {
+          v = settings.min;
+        }
+        return v;
+      }
+
+      /**
+       * Formats a numeric value for display using decimals and callbacks.
+       * @private
+       * @param {number} num
+       * @returns {string}
+       */
+      function _formatDisplay(num) {
+        return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+      }
+
+      /**
        * Aligns a value to step boundaries using integer arithmetic to avoid float issues.
        * @private
        * @param {number|null} val - Value to align
@@ -1314,26 +1349,14 @@
         }
 
         _checkValue();
-
         value = parseFloat(settings.callback_before_calculation(elements.input.val()));
-
         var initvalue = value;
-        var boostedstep;
-
-        if (isNaN(value)) {
-          value = valueIfIsNaN();
-        } else {
-          boostedstep = _getBoostedStep();
-          value = value + boostedstep;
-        }
-
-        if ((settings.max !== null) && (value >= settings.max)) {
-          value = settings.max;
+        value = _nextValue('up', value);
+        if ((settings.max !== null) && (value === settings.max)) {
           originalinput.trigger('touchspin.on.max');
           stopSpin();
         }
-
-        elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+        elements.input.val(_formatDisplay(value));
         _updateAriaAttributes();
 
         if (initvalue !== value) {
@@ -1352,26 +1375,14 @@
         }
 
         _checkValue();
-
         value = parseFloat(settings.callback_before_calculation(elements.input.val()));
-
         var initvalue = value;
-        var boostedstep;
-
-        if (isNaN(value)) {
-          value = valueIfIsNaN();
-        } else {
-          boostedstep = _getBoostedStep();
-          value = value - boostedstep;
-        }
-
-        if ((settings.min !== null) && (value <= settings.min)) {
-          value = settings.min;
+        value = _nextValue('down', value);
+        if ((settings.min !== null) && (value === settings.min)) {
           originalinput.trigger('touchspin.on.min');
           stopSpin();
         }
-
-        elements.input.val(settings.callback_after_calculation(parseFloat(value).toFixed(settings.decimals)));
+        elements.input.val(_formatDisplay(value));
         _updateAriaAttributes();
 
         if (initvalue !== value) {
