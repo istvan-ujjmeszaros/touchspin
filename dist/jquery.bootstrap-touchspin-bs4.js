@@ -536,11 +536,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 adjusted = settings.max;
               }
               var prev = String((_a = elements.input.val()) != null ? _a : "");
-              var next = settings.callback_after_calculation(parseFloat(adjusted).toFixed(settings.decimals));
-              if (prev !== next) {
-                elements.input.val(next);
-              }
-              _updateAriaAttributes();
+              var next = _setDisplay(adjusted);
               if (prev !== next) {
                 originalinput.trigger("change");
               }
@@ -560,7 +556,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (raw !== "") {
             var num = parseFloat(settings.callback_before_calculation(raw));
             if (isFinite(num)) {
-              elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+              _setDisplay(num);
             }
           }
         }
@@ -582,6 +578,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _formatDisplay(num) {
           return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
+        }
+        function _setDisplay(num) {
+          var next = _formatDisplay(num);
+          if (elements && elements.input) {
+            elements.input.val(next);
+          } else {
+            originalinput.val(next);
+          }
+          _updateAriaAttributes();
+          return next;
         }
         function _alignToStep(val, step, dir) {
           if (val == null) return val;
@@ -1018,7 +1024,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
         }
         function _checkValue(mayTriggerChange) {
-          var _a, _b, _c;
+          var _a, _b, _c, _d;
           var val, parsedval, returnval;
           var prevDisplay = String((_a = originalinput.val()) != null ? _a : "");
           val = settings.callback_before_calculation(originalinput.val());
@@ -1057,14 +1063,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (settings.max !== null && parsedval > settings.max) {
             returnval = settings.max;
           }
-          var newValue = settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals));
-          var currentValue = originalinput.val();
-          if (currentValue !== newValue) {
-            originalinput.val(newValue);
-          }
-          _updateAriaAttributes();
+          String((_c = originalinput.val()) != null ? _c : "");
+          _setDisplay(parseFloat(returnval));
           if (mayTriggerChange) {
-            var nextDisplay = String((_c = originalinput.val()) != null ? _c : "");
+            var nextDisplay = String((_d = originalinput.val()) != null ? _d : "");
             if (nextDisplay !== prevDisplay) {
               originalinput.trigger("change");
             }
@@ -1158,6 +1160,38 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return Math.max(settings.step, boosted);
           }
         }
+        function _clearSpinTimers() {
+          clearTimeout(downDelayTimeout);
+          clearTimeout(upDelayTimeout);
+          clearInterval(downSpinTimer);
+          clearInterval(upSpinTimer);
+        }
+        function _startSpin(dir) {
+          if (originalinput.is(":disabled,[readonly]")) {
+            return;
+          }
+          _clearSpinTimers();
+          spincount = 0;
+          spinning = dir;
+          originalinput.trigger("touchspin.on.startspin");
+          if (dir === "up") {
+            originalinput.trigger("touchspin.on.startupspin");
+            upDelayTimeout = setTimeout(function () {
+              upSpinTimer = setInterval(function () {
+                spincount++;
+                upOnce();
+              }, settings.stepinterval);
+            }, settings.stepintervaldelay);
+          } else {
+            originalinput.trigger("touchspin.on.startdownspin");
+            downDelayTimeout = setTimeout(function () {
+              downSpinTimer = setInterval(function () {
+                spincount++;
+                downOnce();
+              }, settings.stepinterval);
+            }, settings.stepintervaldelay);
+          }
+        }
         function valueIfIsNaN() {
           if (typeof settings.firstclickvalueifempty === "number") {
             return settings.firstclickvalueifempty;
@@ -1187,8 +1221,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             originalinput.trigger("touchspin.on.max");
             stopSpin();
           }
-          elements.input.val(_formatDisplay(value));
-          _updateAriaAttributes();
+          _setDisplay(value);
           if (initvalue !== value) {
             originalinput.trigger("change");
           }
@@ -1205,49 +1238,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             originalinput.trigger("touchspin.on.min");
             stopSpin();
           }
-          elements.input.val(_formatDisplay(value));
-          _updateAriaAttributes();
+          _setDisplay(value);
           if (initvalue !== value) {
             originalinput.trigger("change");
           }
         }
         function startDownSpin() {
-          if (originalinput.is(":disabled,[readonly]")) {
-            return;
-          }
-          stopSpin();
-          spincount = 0;
-          spinning = "down";
-          originalinput.trigger("touchspin.on.startspin");
-          originalinput.trigger("touchspin.on.startdownspin");
-          downDelayTimeout = setTimeout(function () {
-            downSpinTimer = setInterval(function () {
-              spincount++;
-              downOnce();
-            }, settings.stepinterval);
-          }, settings.stepintervaldelay);
+          _startSpin("down");
         }
         function startUpSpin() {
-          if (originalinput.is(":disabled,[readonly]")) {
-            return;
-          }
-          stopSpin();
-          spincount = 0;
-          spinning = "up";
-          originalinput.trigger("touchspin.on.startspin");
-          originalinput.trigger("touchspin.on.startupspin");
-          upDelayTimeout = setTimeout(function () {
-            upSpinTimer = setInterval(function () {
-              spincount++;
-              upOnce();
-            }, settings.stepinterval);
-          }, settings.stepintervaldelay);
+          _startSpin("up");
         }
         function stopSpin() {
-          clearTimeout(downDelayTimeout);
-          clearTimeout(upDelayTimeout);
-          clearInterval(downSpinTimer);
-          clearInterval(upSpinTimer);
+          _clearSpinTimers();
           switch (spinning) {
             case "up":
               originalinput.trigger("touchspin.on.stopupspin");
