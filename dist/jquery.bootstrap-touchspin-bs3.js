@@ -482,7 +482,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           spincount = 0,
           spinning = false,
           mutationObserver,
-          _nativeListeners = [];
+          _nativeListeners = [],
+          inputEl,
+          containerEl;
         init();
         function init() {
           if (originalinput.data("alreadyinitialized")) {
@@ -493,6 +495,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             console.log("Must be an input.");
             return;
           }
+          inputEl = /** @type {HTMLInputElement} */
+          originalinput[0];
           _initSettings();
           _initRenderer();
           _setInitval();
@@ -518,7 +522,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             },
             getValue: function getValue() {
               var _a;
-              var raw = String((_a = elements.input.val()) != null ? _a : "");
+              var raw = String((_a = inputEl.value) != null ? _a : "");
               if (raw === "") return NaN;
               var num = parseFloat(settings.callback_before_calculation(raw));
               return isFinite(num) ? num : NaN;
@@ -536,7 +540,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               if (settings.max !== null && adjusted > settings.max) {
                 adjusted = settings.max;
               }
-              var prev = String((_a = elements.input.val()) != null ? _a : "");
+              var prev = String((_a = inputEl.value) != null ? _a : "");
               var next = _setDisplay(adjusted);
               if (prev !== next) {
                 originalinput.trigger("change");
@@ -545,15 +549,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
         }
         function _setInitval() {
-          if (settings.initval !== "" && originalinput.val() === "") {
-            originalinput.val(settings.initval);
+          if (settings.initval !== "" && inputEl.value === "") {
+            inputEl.value = settings.initval;
           }
         }
         function changeSettings(newsettings) {
           var _a;
           _updateSettings(newsettings);
           _checkValue(true);
-          var raw = String((_a = elements.input.val()) != null ? _a : "");
+          var raw = String((_a = inputEl.value) != null ? _a : "");
           if (raw !== "") {
             var num = parseFloat(settings.callback_before_calculation(raw));
             if (isFinite(num)) {
@@ -582,8 +586,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _setDisplay(num) {
           var next = _formatDisplay(num);
-          if (elements && elements.input) {
-            elements.input.val(next);
+          if (inputEl) {
+            inputEl.value = next;
           } else {
             originalinput.val(next);
           }
@@ -731,7 +735,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _hideEmptyPrefixPostfix();
         }
         function _buildHtml() {
-          var initval = originalinput.val(),
+          var initval = inputEl.value,
             parentelement = originalinput.parent();
           if (initval !== "") {
             var raw = settings.callback_before_calculation(initval);
@@ -754,23 +758,26 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             throw new Error("Bootstrap TouchSpin: Renderer not available for element initialization.");
           }
           elements = renderer.initElements(container);
+          containerEl = container && container[0];
+          elements && elements.up && elements.up[0];
+          elements && elements.down && elements.down[0];
         }
         function _initAriaAttributes() {
-          if (!originalinput.attr("role")) {
-            originalinput.attr("role", "spinbutton");
+          if (!inputEl.getAttribute("role")) {
+            inputEl.setAttribute("role", "spinbutton");
           }
           if (settings.min !== null && settings.min !== void 0) {
-            originalinput.attr("aria-valuemin", settings.min);
+            inputEl.setAttribute("aria-valuemin", String(settings.min));
           }
           if (settings.max !== null && settings.max !== void 0) {
-            originalinput.attr("aria-valuemax", settings.max);
+            inputEl.setAttribute("aria-valuemax", String(settings.max));
           }
-          var rawInit = originalinput.val();
+          var rawInit = inputEl.value;
           var nInit = rawInit !== "" ? parseFloat(String(rawInit)) : NaN;
           if (!isNaN(nInit)) {
-            originalinput.attr("aria-valuenow", nInit);
+            inputEl.setAttribute("aria-valuenow", String(nInit));
           } else {
-            originalinput.removeAttr("aria-valuenow");
+            inputEl.removeAttribute("aria-valuenow");
           }
           if (elements && elements.up && elements.down) {
             elements.up.attr("aria-label", "Increase value");
@@ -779,28 +786,28 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         function _updateAriaAttributes() {
           var _a;
-          var raw = String((_a = originalinput.val()) != null ? _a : "");
+          var raw = String((_a = inputEl.value) != null ? _a : "");
           if (raw === "") {
-            originalinput.removeAttr("aria-valuenow");
-            originalinput.removeAttr("aria-valuetext");
+            inputEl.removeAttribute("aria-valuenow");
+            inputEl.removeAttribute("aria-valuetext");
           } else {
             var n = parseFloat(raw);
             if (!isNaN(n)) {
-              originalinput.attr("aria-valuenow", n);
+              inputEl.setAttribute("aria-valuenow", String(n));
             } else {
-              originalinput.removeAttr("aria-valuenow");
+              inputEl.removeAttribute("aria-valuenow");
             }
-            originalinput.attr("aria-valuetext", raw);
+            inputEl.setAttribute("aria-valuetext", raw);
           }
           if (settings.min !== null && settings.min !== void 0) {
-            originalinput.attr("aria-valuemin", settings.min);
+            inputEl.setAttribute("aria-valuemin", String(settings.min));
           } else {
-            originalinput.removeAttr("aria-valuemin");
+            inputEl.removeAttribute("aria-valuemin");
           }
           if (settings.max !== null && settings.max !== void 0) {
-            originalinput.attr("aria-valuemax", settings.max);
+            inputEl.setAttribute("aria-valuemax", String(settings.max));
           } else {
-            originalinput.removeAttr("aria-valuemax");
+            inputEl.removeAttribute("aria-valuemax");
           }
         }
         function _hideEmptyPrefixPostfix() {
@@ -812,9 +819,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _detached_postfix = detached._detached_postfix;
         }
         function _bindEvents() {
-          var inputEl = /** @type {HTMLInputElement} */
+          inputEl = /** @type {HTMLInputElement} */
           originalinput[0];
-          var containerEl = /** @type {HTMLElement} */
+          containerEl = /** @type {HTMLElement} */
           container && container[0];
           elements.up && elements.up[0];
           elements.down && elements.down[0];
@@ -855,7 +862,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             _checkValue(true);
           });
           function leavingWidget(nextEl) {
-            return !nextEl || !containerEl.contains(nextEl);
+            return !nextEl || (containerEl ? !containerEl.contains(nextEl) : true);
           }
           _onNative(containerEl, "focusout", function (e) {
             var next = /** @type {HTMLElement|null|undefined} */
@@ -1035,17 +1042,17 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         function _checkValue(mayTriggerChange) {
           var _a, _b, _c, _d;
           var val, parsedval, returnval;
-          var prevDisplay = String((_a = originalinput.val()) != null ? _a : "");
-          val = settings.callback_before_calculation(originalinput.val());
+          var prevDisplay = String((_a = inputEl.value) != null ? _a : "");
+          val = settings.callback_before_calculation(inputEl.value);
           if (val === "") {
             if (settings.replacementval !== "") {
-              originalinput.val(settings.replacementval);
+              inputEl.value = String(settings.replacementval);
               _updateAriaAttributes();
             } else {
-              originalinput.removeAttr("aria-valuenow");
+              inputEl.removeAttribute("aria-valuenow");
             }
             if (mayTriggerChange) {
-              var finalDisplay = String((_b = originalinput.val()) != null ? _b : "");
+              var finalDisplay = String((_b = inputEl.value) != null ? _b : "");
               if (finalDisplay !== prevDisplay) {
                 originalinput.trigger("change");
               }
@@ -1072,38 +1079,38 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (settings.max !== null && parsedval > settings.max) {
             returnval = settings.max;
           }
-          String((_c = originalinput.val()) != null ? _c : "");
+          String((_c = inputEl.value) != null ? _c : "");
           _setDisplay(parseFloat(returnval));
           if (mayTriggerChange) {
-            var nextDisplay = String((_d = originalinput.val()) != null ? _d : "");
+            var nextDisplay = String((_d = inputEl.value) != null ? _d : "");
             if (nextDisplay !== prevDisplay) {
               originalinput.trigger("change");
             }
           }
         }
         function _syncNativeAttributes() {
-          if (originalinput.attr("type") === "number") {
+          if (inputEl.getAttribute("type") === "number") {
             if (settings.min !== null && settings.min !== void 0) {
-              originalinput.attr("min", settings.min);
+              inputEl.setAttribute("min", String(settings.min));
             } else {
-              originalinput.removeAttr("min");
+              inputEl.removeAttribute("min");
             }
             if (settings.max !== null && settings.max !== void 0) {
-              originalinput.attr("max", settings.max);
+              inputEl.setAttribute("max", String(settings.max));
             } else {
-              originalinput.removeAttr("max");
+              inputEl.removeAttribute("max");
             }
             if (settings.step !== null && settings.step !== void 0) {
-              originalinput.attr("step", settings.step);
+              inputEl.setAttribute("step", String(settings.step));
             } else {
-              originalinput.removeAttr("step");
+              inputEl.removeAttribute("step");
             }
           }
         }
         function _syncSettingsFromNativeAttributes() {
-          var nativeMin = originalinput.attr("min");
-          var nativeMax = originalinput.attr("max");
-          var nativeStep = originalinput.attr("step");
+          var nativeMin = inputEl.getAttribute("min");
+          var nativeMax = inputEl.getAttribute("max");
+          var nativeStep = inputEl.getAttribute("step");
           var needsUpdate = false;
           var newSettings = {};
           if (nativeMin != null) {
@@ -1223,7 +1230,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return;
           }
           _checkValue();
-          value = parseFloat(settings.callback_before_calculation(elements.input.val()));
+          value = parseFloat(settings.callback_before_calculation(inputEl.value));
           var initvalue = value;
           value = _nextValue("up", value);
           if (settings.max !== null && value === settings.max) {
@@ -1240,7 +1247,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return;
           }
           _checkValue();
-          value = parseFloat(settings.callback_before_calculation(elements.input.val()));
+          value = parseFloat(settings.callback_before_calculation(inputEl.value));
           var initvalue = value;
           value = _nextValue("down", value);
           if (settings.min !== null && value === settings.min) {
