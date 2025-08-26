@@ -63,3 +63,8 @@ Principles
 - Behavior, DOM, and callable events preserved; pages and tests continue to pass.
 - Build integrity enforced; `dist/` committed before push.
 
+---
+
+Current Sprint (Resume Here)
+- See `WORKLOG.md` for the current checkpoint and the immediate next focus. Use `TODO_CHECKLIST.md` to verify each concrete step.
+- CI note: Integrity check (`npm run check-build-integrity`) is CI-only and should not be run locally. Ensure you commit `dist/` after `npm run build` when creating a checkpoint or before push.

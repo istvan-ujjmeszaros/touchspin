@@ -15,14 +15,14 @@
 ## Build, Test, and Development Commands
 
 - Setup: `corepack enable && npm ci` and `npx playwright install --with-deps chromium`
-- Build: `npm run build` (writes to `dist/`) | Integrity: `npm run check-build-integrity`
+- Build: `npm run build` (writes to `dist/`)
 - Dev: `npm run dev` (serve) | Preview: `npm run preview`
 - Lint: `npm run lint` (ESLint over `src/` + scripts)
 - Tests (non-visual): `npm test` | headed: `npm run test:headed` | UI: `npm run test:ui` | report: `npm run test:report`
 - Coverage: `npm run test:coverage` | open report: `npm run coverage:open`
 - Visual: `npm run test:visual` | update: `npm run test:visual:update` | UI: `npm run test:visual:ui` | headed: `npm run test:visual:headed` | report: `npm run test:visual:report`
 
-Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite. During local iteration, do NOT rebuild `dist/` after every change; only rebuild at phase checkpoints or right before publishing/pushing. Always commit `dist/` before push (CI integrity checks rely on it).
+Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite. During local iteration, do NOT rebuild `dist/` after every change; only rebuild at phase checkpoints or right before publishing/pushing. Always commit `dist/` before push (CI integrity checks rely on it). Do not run `npm run check-build-integrity` locally — it is CI‑only and used to verify that the PR includes up‑to‑date `dist/` files.
 
 ## Usage: APIs
 
@@ -45,6 +45,11 @@ Note: Playwright tests load source files from `src/` directly (not `dist/`), exc
 - ESM page: `__tests__/html/destroy-test-esm.html`
   - Loads renderers + plugin via ESM twin and exercises init/destroy/reinit.
   - Includes a “Modern API” section that uses `Element.prototype.TouchSpin` without writing jQuery.
+
+## Behavior Notes
+
+- Focusout/Enter sanitation: Leaving the widget (container `focusout.touchspin`) or pressing Enter commits and sanitizes via `_checkValue(true)`, which applies `_forcestepdivisibility`, clamps to min/max, updates display through `_setDisplay`, and emits a single `change` only if the display value actually changes.
+- Where to verify: Use both manual pages to test typing arbitrary values, tabbing out, and pressing Enter. Confirm that spinners stop, values sanitize once, and no duplicate `change` events fire.
 
 ## Coding Style & Naming Conventions
 
@@ -73,3 +78,10 @@ Note: Playwright tests load source files from `src/` directly (not `dist/`), exc
 - Always run `npm run build` before pushing, and commit the updated `dist/` outputs. A CI workflow verifies build integrity against the committed `dist/`.
 - Do not edit `dist/` directly; all changes originate in `src/` and are built.
 - When adding a renderer, follow `src/renderers/RendererFactory.js` and include focused tests plus an HTML fixture.
+
+## Fast Resume
+
+- Start by reading `WORKLOG.md` (Resume Block) to see the current checkpoint and next focus.
+- Use `TODO_CHECKLIST.md` to execute the concrete verification steps.
+- High-level rationale and multi-phase plan live in `TODO_PLAN.md`.
+- CI-only reminder: The integrity check script is not for local use; CI ensures that PRs include up-to-date `dist/` files.
