@@ -410,7 +410,7 @@
         if (raw !== '') {
           var num = parseFloat(settings.callback_before_calculation(raw));
           if (isFinite(num)) {
-            elements.input.val(settings.callback_after_calculation(num.toFixed(settings.decimals)));
+            _setDisplay(num);
           }
         }
       }
@@ -1169,15 +1169,8 @@ function _formatDisplay(num) {
           returnval = settings.max;
         }
 
-        var newValue = settings.callback_after_calculation(parseFloat(returnval).toFixed(settings.decimals));
-        var currentValue = originalinput.val();
-
-        if (currentValue !== newValue) {
-          originalinput.val(newValue);
-        }
-
-        // Update ARIA attributes after value changes
-        _updateAriaAttributes();
+        var currentValue = String(originalinput.val() ?? '');
+        var newValue = _setDisplay(parseFloat(returnval));
 
         if (mayTriggerChange) {
           var nextDisplay = String(originalinput.val() ?? '');
