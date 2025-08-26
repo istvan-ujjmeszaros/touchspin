@@ -24,6 +24,28 @@
 
 Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite.
 
+## Usage: APIs
+
+- jQuery (legacy, full back-compat):
+  - Initialize: `$("#input").TouchSpin({ min: 0, max: 100 })`
+  - Callable events: `trigger('touchspin.uponce')`, `('...downonce')`, `('...startupspin')`, `('...startdownspin')`, `('...stopspin')`, `('...updatesettings', [opts])`, `('...destroy')`
+  - Command API: `$("#input").TouchSpin('get') | ('set', 42) | ('uponce') | ('updatesettings', { step: 10 })`
+  - Facade: `$("#input").data('touchspin')` exposes methods (`upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
+
+- Modern facade (no jQuery in user code, uses internals under the hood):
+  - Attach: `const inst = window.TouchSpin.attach(inputEl, opts)`
+  - Element convenience: `const inst = document.querySelector('#input').TouchSpin(opts)`
+  - Methods: `inst.upOnce()`, `inst.downOnce()`, `inst.startUpSpin()`, `inst.startDownSpin()`, `inst.stopSpin()`, `inst.updateSettings(opts)`, `inst.getValue()`, `inst.setValue(v)`, `inst.destroy()`
+
+## Manual Pages
+
+- Bridge page: `__tests__/html/destroy-test-bridge.html`
+  - Buttons for legacy callable events and the jQuery facade methods side by side.
+
+- ESM page: `__tests__/html/destroy-test-esm.html`
+  - Loads renderers + plugin via ESM twin and exercises init/destroy/reinit.
+  - Includes a “Modern API” section that uses `Element.prototype.TouchSpin` without writing jQuery.
+
 ## Coding Style & Naming Conventions
 
 - Indentation: 2 spaces; LF; UTF‑8 (`.editorconfig`)
