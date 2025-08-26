@@ -16,13 +16,38 @@ function installBridge($) {
     this.each(function () {
       const $input = $(this);
       // Attach a simple facade that re-triggers callable events.
+      function getInternal() { return $input.data('touchspinInternal'); }
       const facade = {
-        upOnce() { $input.trigger('touchspin.uponce'); },
-        downOnce() { $input.trigger('touchspin.downonce'); },
-        startUpSpin() { $input.trigger('touchspin.startupspin'); },
-        startDownSpin() { $input.trigger('touchspin.startdownspin'); },
-        stopSpin() { $input.trigger('touchspin.stopspin'); },
-        updateSettings(opts) { $input.trigger('touchspin.updatesettings', [opts || {}]); },
+        upOnce() {
+          const i = getInternal();
+          if (i && typeof i.upOnce === 'function') return i.upOnce();
+          $input.trigger('touchspin.uponce');
+        },
+        downOnce() {
+          const i = getInternal();
+          if (i && typeof i.downOnce === 'function') return i.downOnce();
+          $input.trigger('touchspin.downonce');
+        },
+        startUpSpin() {
+          const i = getInternal();
+          if (i && typeof i.startUpSpin === 'function') return i.startUpSpin();
+          $input.trigger('touchspin.startupspin');
+        },
+        startDownSpin() {
+          const i = getInternal();
+          if (i && typeof i.startDownSpin === 'function') return i.startDownSpin();
+          $input.trigger('touchspin.startdownspin');
+        },
+        stopSpin() {
+          const i = getInternal();
+          if (i && typeof i.stopSpin === 'function') return i.stopSpin();
+          $input.trigger('touchspin.stopspin');
+        },
+        updateSettings(opts) {
+          const i = getInternal();
+          if (i && typeof i.updateSettings === 'function') return i.updateSettings(opts || {});
+          $input.trigger('touchspin.updatesettings', [opts || {}]);
+        },
       };
       $input.data('touchspin', facade);
 
@@ -41,4 +66,3 @@ if (typeof window !== 'undefined' && window.jQuery) {
 }
 
 export default installBridge;
-

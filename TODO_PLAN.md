@@ -21,6 +21,10 @@ Goal: Split the plugin into a framework‑agnostic ESM core and a thin jQuery wr
 
 Note: Tests currently reference `src/jquery.bootstrap-touchspin.js` as a classic script in HTML fixtures. Converting that file itself to ESM would defer execution and break inline initializers. We will introduce a new ESM entry (wrapper around the core) and migrate fixtures to `type="module"` in a later phase before flipping the source file over.
 
+Additional progress in this phase
+- [x] Added ESM twin entry `src/jquery.bootstrap-touchspin.esm.js` that registers the classic plugin when jQuery is present (no behavior change).
+- [x] Created manual ESM page `__tests__/html/destroy-test-esm.html` to validate initialization/destroy/reinit/vertical flows via `type="module"`.
+
 ## Phase 2: Core API and Adapter Design
 - [ ] Define renderer‑agnostic DOM adapter interface used by core (query, create, add/remove, events, class ops).
 - [ ] Keep existing renderers but allow injection of a minimal adapter:
@@ -38,10 +42,17 @@ Note: Tests currently reference `src/jquery.bootstrap-touchspin.js` as a classic
 - [ ] Emit DOM CustomEvents from core for modern integrations (`touchspin:init`, `:change`, `:min`, `:max`, `:destroy`, `:update`) without affecting jQuery behavior.
 - [ ] Document direct method calls as an additional option (ESM/core) while keeping event triggers first‑class in the jQuery wrapper.
 
+Additional progress in this phase
+- [x] Added a lightweight jQuery bridge `src/wrappers/jquery-bridge.js` that attaches an instance facade at `$(input).data('touchspin')` and maps facade methods to current callable events (no internal refactor yet).
+- [x] Created `__tests__/html/destroy-test-bridge.html` with both legacy event buttons and facade buttons to verify parity. Confirmed working in browser.
+- [x] Exposed internal instance methods from the classic plugin at `$(input).data('touchspinInternal')` and updated the bridge to prefer direct method calls with event fallbacks.
+
 ## Phase 5: Tests and Coverage
-- [ ] Add a minimal ESM usage test page (no jQuery) and parallel Playwright tests.
+- [x] Add a minimal ESM usage test page (using ESM twin with jQuery present): `__tests__/html/destroy-test-esm.html`.
 - [ ] Keep all existing tests passing under jQuery wrapper.
 - [ ] Expand tests to assert direct method calls on the instance (no event triggers).
+  - [x] Manual parity check via facade on `destroy-test-bridge.html`.
+  - [ ] Add automated checks later (Playwright), once method implementation backs the facade.
 
 ### 5.1 Incremental Bridging Workflow (One event/method at a time)
 - Order: `uponce` → `downonce` → `stopspin` → `startupspin` → `startdownspin` → `updatesettings`.
@@ -59,9 +70,9 @@ Done criteria per event
 - No HTML structure changes (visual diffs clean or acknowledged). 
 
 ## Phase 6: Build/Repo Tasks
-- [ ] Update `build.mjs` to emit ESM outputs alongside current UMD variants.
-- [ ] Update integrity check to include ESM outputs.
-- [ ] Ensure `npm run build` is required before push (CI enforces dist integrity).
+- [x] Update `build.mjs` to emit ESM outputs alongside current UMD variants.
+- [x] Update integrity check to include ESM outputs.
+- [x] Ensure `npm run build` is required before push (CI enforces dist integrity).
 
 ## Phase 7: Docs and Migration
 - [ ] New “Core (ESM) API” docs with examples:

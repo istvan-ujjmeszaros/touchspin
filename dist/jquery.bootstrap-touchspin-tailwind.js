@@ -332,12 +332,30 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     window.RendererFactory = RendererFactory;
   }
 })();
-(function (global, factory) {
-  (typeof exports === "undefined" ? "undefined" : _typeof(exports)) === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.TouchSpin = {}));
-})(void 0, function (exports2) {
+(function (factory) {
+  typeof define === "function" && define.amd ? define(factory) : factory();
+})(function () {
   "use strict";
 
-  function registerJQueryPlugin($) {
+  (function (factory) {
+    if (typeof define === "function" && define.amd) {
+      define(["jquery"], factory);
+    } else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
+      module.exports = function (root, jQuery2) {
+        if (jQuery2 === void 0) {
+          if (typeof window !== "undefined") {
+            jQuery2 = require("jquery");
+          } else {
+            jQuery2 = require("jquery")(root);
+          }
+        }
+        factory(jQuery2);
+        return jQuery2;
+      };
+    } else {
+      factory(jQuery);
+    }
+  })(function ($) {
     $.fn.TouchSpin = function (options) {
       var defaults = {
         min: 0,
@@ -453,6 +471,14 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _setupMutationObservers();
           _bindEvents();
           _bindEventsInterface();
+          originalinput.data("touchspinInternal", {
+            upOnce: upOnce,
+            downOnce: downOnce,
+            startUpSpin: startUpSpin,
+            startDownSpin: startDownSpin,
+            stopSpin: stopSpin,
+            updateSettings: changeSettings
+          });
         }
         function _setInitval() {
           if (settings.initval !== "" && originalinput.val() === "") {
@@ -573,6 +599,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             $parent.removeAttr("data-touchspin-injected");
           }
           originalinput.data("alreadyinitialized", false);
+          originalinput.removeData("touchspinInternal");
         }
         function _updateSettings(newsettings) {
           settings = $.extend({}, settings, newsettings);
@@ -1164,14 +1191,5 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
       });
     };
-  }
-  if (typeof window !== "undefined" && window.jQuery && !window.jQuery.fn.TouchSpin) {
-    try {
-      registerJQueryPlugin(window.jQuery);
-    } catch (e) {}
-  }
-  exports2.registerJQueryPlugin = registerJQueryPlugin;
-  Object.defineProperty(exports2, Symbol.toStringTag, {
-    value: "Module"
   });
 });

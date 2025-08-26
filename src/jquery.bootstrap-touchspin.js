@@ -304,6 +304,16 @@
         _setupMutationObservers();
         _bindEvents();
         _bindEventsInterface();
+
+        // Expose internal instance methods for facades/wrappers
+        originalinput.data('touchspinInternal', {
+          upOnce: upOnce,
+          downOnce: downOnce,
+          startUpSpin: startUpSpin,
+          startDownSpin: startDownSpin,
+          stopSpin: stopSpin,
+          updateSettings: changeSettings
+        });
       }
 
       /**
@@ -508,6 +518,8 @@
         }
 
         originalinput.data('alreadyinitialized', false);
+        // Cleanup internal facade reference
+        originalinput.removeData('touchspinInternal');
       }
 
       /**
