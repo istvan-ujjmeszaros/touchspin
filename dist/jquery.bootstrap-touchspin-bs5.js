@@ -596,7 +596,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           return (dir === "down" ? V - r : V + (S - r)) / k;
         }
         function _initSettings() {
-          settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
+          settings = Object.assign({}, defaults, originalinput_data, _parseAttributes(), options);
           var stepNum = Number(settings.step);
           if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
           if (settings.min != null) {
@@ -689,7 +689,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           originalinput.removeData("touchspinInternal");
         }
         function _updateSettings(newsettings) {
-          settings = $.extend({}, settings, newsettings);
+          settings = Object.assign({}, settings, newsettings);
           if ((newsettings.step !== void 0 || newsettings.min !== void 0 || newsettings.max !== void 0) && parseFloat(settings.step) !== 1) {
             settings.max = _alignToStep(settings.max, settings.step, "down");
             settings.min = _alignToStep(settings.min, settings.step, "up");
@@ -1142,7 +1142,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             needsUpdate = true;
           }
           if (needsUpdate) {
-            settings = $.extend({}, settings, newSettings);
+            settings = Object.assign({}, settings, newSettings);
             if ((newSettings.step !== void 0 || newSettings.min !== void 0 || newSettings.max !== void 0) && parseFloat(settings.step) !== 1) {
               settings.max = _alignToStep(settings.max, settings.step, "down");
               settings.min = _alignToStep(settings.min, settings.step, "up");
