@@ -1470,3 +1470,40 @@
 // Renderer classes are included before this file during the build process
 // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
 // and RendererFactory should be available
+
+// Modern facade: expose a method-only API without requiring callers to use jQuery directly.
+// This uses the existing plugin internally (no behavior change) and returns an
+// object with stable methods. During migration, internals can move behind these methods.
+(function () {
+  if (typeof window === 'undefined') return;
+  if (!window.jQuery || !window.jQuery.fn || typeof window.jQuery.fn.TouchSpin !== 'function') return;
+
+  window.TouchSpin = window.TouchSpin || {};
+  window.TouchSpin.attach = function (input, opts) {
+    var el = (input && input.nodeType === 1) ? input : document.querySelector(input);
+    if (!el) throw new Error('TouchSpin.attach: invalid element');
+    var $el = window.jQuery(el);
+    $el.TouchSpin(opts);
+    var api = $el.data('touchspinInternal');
+    if (!api) throw new Error('TouchSpin failed to initialize');
+    return {
+      upOnce: api.upOnce,
+      downOnce: api.downOnce,
+      startUpSpin: api.startUpSpin,
+      startDownSpin: api.startDownSpin,
+      stopSpin: api.stopSpin,
+      updateSettings: api.updateSettings,
+      getValue: api.getValue,
+      setValue: api.setValue,
+      destroy: api.destroy
+    };
+  };
+
+  if (typeof Element !== 'undefined' && Element.prototype && !Element.prototype.TouchSpin) {
+    Object.defineProperty(Element.prototype, 'TouchSpin', {
+      configurable: true,
+      writable: true,
+      value: function (opts) { return window.TouchSpin.attach(this, opts); }
+    });
+  }
+})();
