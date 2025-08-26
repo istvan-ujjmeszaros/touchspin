@@ -506,7 +506,7 @@ function _formatDisplay(num) {
        * @private
        */
       function _initSettings() {
-        settings = $.extend({}, defaults, originalinput_data, _parseAttributes(), options);
+        settings = Object.assign({}, defaults, originalinput_data, _parseAttributes(), options);
 
         // Normalize step (guard against "any", 0, negatives, NaN)
         var stepNum = Number(settings.step);
@@ -666,7 +666,7 @@ function _formatDisplay(num) {
        * @param {Partial<TouchSpinOptions>} newsettings - Settings to update
        */
       function _updateSettings(newsettings) {
-        settings = $.extend({}, settings, newsettings);
+        settings = Object.assign({}, settings, newsettings);
 
         // Re-align bounds to step if any of these changed
         if (
@@ -1266,7 +1266,7 @@ function _formatDisplay(num) {
 
         if (needsUpdate) {
           // Update settings without triggering another sync to avoid infinite loop
-          settings = $.extend({}, settings, newSettings);
+          settings = Object.assign({}, settings, newSettings);
 
           // Re-process step divisibility rules if step, min, or max changed
           if (
