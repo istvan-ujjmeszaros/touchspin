@@ -11,14 +11,14 @@ Resume Block (single source of truth)
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
-- Tests (non-visual): `npm test`
-- Serve manual pages: `node scripts/serve.mjs`
+- Tests (non-visual): `npm test` (spawns its own test web server; no manual server needed)
 - Build at checkpoint: `npm run build` (then commit `dist/`)
 - Visual tests (optional): `npm run test:visual` (separate Playwright project)
 
 Manual Pages
-- Bridge: `http://localhost:3000/__tests__/html/destroy-test-bridge.html`
-- ESM: `http://localhost:3000/__tests__/html/destroy-test-esm.html`
+- Bridge: `__tests__/html/destroy-test-bridge.html`
+- ESM: `__tests__/html/destroy-test-esm.html`
+  Open these via your editor's built-in server (e.g., PhpStorm) or your preferred local server. Do not run `scripts/serve.mjs` manually.
 
 Verification Targets
 - Focusout/Enter sanitation: One sanitize on widget exit or Enter; uses `_checkValue(true)` → `_forcestepdivisibility` + bounds + `_setDisplay`; emits a single `change` only if display actually changes.
@@ -36,4 +36,3 @@ When Finishing a Step
 - Update the Resume Block: set the next focus, note any caveats, and the next checkpoint tag name.
 - Tick items in `TODO_CHECKLIST.md` that were completed.
 - If creating a checkpoint: create tag (e.g., `LGTM-3`), run `npm run build`, commit `dist/` and your changes.
-

@@ -23,6 +23,7 @@
 - Visual: `npm run test:visual` | update: `npm run test:visual:update` | UI: `npm run test:visual:ui` | headed: `npm run test:visual:headed` | report: `npm run test:visual:report`
 
 Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite. During local iteration, do NOT rebuild `dist/` after every change; only rebuild at phase checkpoints or right before publishing/pushing. Always commit `dist/` before push (CI integrity checks rely on it). Do not run `npm run check-build-integrity` locally — it is CI‑only and used to verify that the PR includes up‑to‑date `dist/` files.
+Tests automatically start their own local server; you do not need to run a server manually to execute `npm test`.
 
 ## Usage: APIs
 
@@ -45,6 +46,7 @@ Note: Playwright tests load source files from `src/` directly (not `dist/`), exc
 - ESM page: `__tests__/html/destroy-test-esm.html`
   - Loads renderers + plugin via ESM twin and exercises init/destroy/reinit.
   - Includes a “Modern API” section that uses `Element.prototype.TouchSpin` without writing jQuery.
+  - Open manual pages using your IDE/editor’s built‑in server (e.g., PhpStorm) or any preferred local server. No manual use of `scripts/serve.mjs` is required.
 
 ## Behavior Notes
 
