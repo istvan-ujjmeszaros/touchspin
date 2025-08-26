@@ -51,7 +51,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildAdvancedInputGroup(parentelement) {
     parentelement.addClass('bootstrap-touchspin');
-    parentelement.attr('data-touchspin-injected', 'wrapper');
+    parentelement.attr('data-touchspin-injected', 'enhanced-wrapper');
 
     // Add testid to existing input-group wrapper
     const testidAttr = this.getWrapperTestId();

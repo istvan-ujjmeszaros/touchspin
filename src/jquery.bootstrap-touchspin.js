@@ -493,15 +493,16 @@
           mutationObserver = undefined;
         }
 
-        // Check for injected container using data attribute
-        if ($parent.attr('data-touchspin-injected') === 'wrapper') {
-          originalinput.siblings().remove();
+        // Teardown logic differs for injected vs existing wrappers
+        const injectedMarker = $parent.attr('data-touchspin-injected');
+
+        if (injectedMarker === 'wrapper') {
+          // Injected wrapper: remove only plugin-injected siblings, then unwrap
+          originalinput.siblings('[data-touchspin-injected]').remove();
           originalinput.unwrap();
         } else {
-          // Remove all injected elements using data attribute
+          // Existing container or non-wrapper: remove injected elements, keep container
           $('[data-touchspin-injected]', $parent).remove();
-          
-          // Remove container class (kept for styling) and data attribute
           $parent.removeClass('bootstrap-touchspin');
           $parent.removeAttr('data-touchspin-injected');
         }
@@ -1384,4 +1385,3 @@
 // Renderer classes are included before this file during the build process
 // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
 // and RendererFactory should be available
-

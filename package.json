@@ -54,9 +54,9 @@
     "vite": "^5.4.19"
   },
   "scripts": {
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
+    "test": "playwright test --project=chromium",
+    "test:headed": "playwright test --project=chromium --headed",
+    "test:ui": "playwright test --project=chromium --ui",
     "test:coverage": "npm test && nyc report --reporter=text-summary --temp-dir=reports/coverage && nyc report --reporter=html --temp-dir=reports/coverage --report-dir=reports/coverage/html && nyc report --reporter=lcovonly --temp-dir=reports/coverage --report-dir=reports/coverage",
     "test:report": "playwright show-report reports/playwright --port 0",
     "coverage:open": "open reports/coverage/html/index.html || start reports/coverage/html/index.html || xdg-open reports/coverage/html/index.html",

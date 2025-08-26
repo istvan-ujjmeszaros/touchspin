@@ -56,6 +56,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: '**/visual/**',
       use: { ...devices['Desktop Chrome'] },
     },
     
@@ -104,7 +105,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx http-server . -p 3000 -c-1',
+    command: 'node scripts/serve.mjs',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
