@@ -193,7 +193,7 @@ Always keep these files up to date so any new session can resume without prior c
 
 - `WORKLOG.md` (Resume Block): single source of truth for current checkpoint tag, current focus, completed summary, next checkpoint. Update this after each meaningful step and at every checkpoint.
 - `TODO_HIGHLEVEL.md`: strategy and themes. Adjust the “Current Sprint” to reflect the immediate next focus.
-- `TODO_CHECKLIST.md`: concrete, verifiable items. Tick completed items; add/adjust items as work unfolds.
+- `TODO_CHECKLIST.md`: concrete, verifiable items. Maintain checkboxes after each small step — update `[ ]/[~]/[x]` immediately as work progresses; do not batch these updates. Add/adjust items as work unfolds.
 - Checkpoints: for every checkpoint (e.g., `LGTM-4`, `LGTM-5`), tag in git, run `npm run build`, and commit `dist/` along with source changes (CI integrity depends on committed `dist/`).
 - Tests: prefer running Playwright with the JSON reporter and write results to `reports/playwright/results.json`. Summarize failures to `reports/playwright/failures.json` to make machine‑readable triage easy.
 

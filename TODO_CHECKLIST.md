@@ -1,6 +1,8 @@
 Bootstrap TouchSpin — Implementation Checklist (Package Split Roadmap)
 
-Scope: Actionable steps to implement the multi‑package split while preserving backward compatibility. Complements `TODO_HIGHLEVEL.md` (goals). Legend: [ ] pending  [~] in progress  [x] done
+Scope: Actionable steps to implement the multi‑package split while preserving backward compatibility. Complements `TODO_HIGHLEVEL.md` (goals).
+
+Maintenance: Keep these checkboxes accurate after each small step — update `[ ]` (pending), `[~]` (in progress), `[x]` (done) immediately as progress is made. Do not batch updates.
 
 Phase 0 — Baseline and Naming (no behavior change)
 - [x] Emit preview alias filenames in dist: `touchspin.jquery.bs{3,4,5}.js`, `touchspin.jquery.tailwind.js`.
