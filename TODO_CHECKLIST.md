@@ -19,7 +19,7 @@ Phase A — Extract Core (packages/core)
  - [x] A3.1: Enable TS static checking for core (add `packages/core/tsconfig.json` with `checkJs`/`allowJs`, no emit).
 - [x] A4: Move value pipeline and state intact: `_nextValue`, `_forcestepdivisibility`, `_alignToStep`, `_checkValue`, `_setDisplay`, ARIA/attribute sync.
 - [x] A5: Replace residual jQuery usages in core with native APIs (renderers remain jQuery‑based for now).
-- [ ] A6: Provide a minimal internal emitter that wrappers can bridge to jQuery events.
+- [x] A6: Provide a minimal internal emitter that wrappers can bridge to jQuery events.
 - [ ] A7: Build ESM for core (dist/esm) and export public API with method parity (`upOnce`, `downOnce`, `startUpSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
 - [ ] A8: Smoke test core via a tiny harness; wire temporary adapter so current UMD plugin can delegate for verification.
 

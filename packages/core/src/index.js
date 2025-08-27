@@ -65,37 +65,71 @@ export class TouchSpinCore {
     this.spinning = false;
     /** @type {number} */
     this.spincount = 0;
+    /** @type {false|'up'|'down'} */
+    this.direction = false;
+    /** @type {Map<string, Set<Function>>} */
+    this._events = new Map();
   }
 
   /** Increment once according to step */
   upOnce() {
     const v = this.getValue();
     const next = this._nextValue('up', v);
+    const prevNum = v;
     this._setDisplay(next, true);
+    if (isFinite(prevNum) && next !== prevNum) {
+      if (this.settings.max != null && next === this.settings.max) this.emit('max');
+      if (this.settings.min != null && next === this.settings.min) this.emit('min');
+    }
   }
 
   /** Decrement once according to step */
   downOnce() {
     const v = this.getValue();
     const next = this._nextValue('down', v);
+    const prevNum = v;
     this._setDisplay(next, true);
+    if (isFinite(prevNum) && next !== prevNum) {
+      if (this.settings.max != null && next === this.settings.max) this.emit('max');
+      if (this.settings.min != null && next === this.settings.min) this.emit('min');
+    }
   }
 
   /** Start increasing repeatedly (placeholder) */
   startUpSpin() {
-    this.spinning = true;
-    this.spincount++;
+    if (!this.spinning || this.direction !== 'up') {
+      this.spinning = true;
+      this.direction = 'up';
+      this.spincount++;
+      this.emit('startupspin');
+      this.emit('startspin');
+    }
   }
 
   /** Start decreasing repeatedly (placeholder) */
   startDownSpin() {
-    this.spinning = true;
-    this.spincount++;
+    if (!this.spinning || this.direction !== 'down') {
+      this.spinning = true;
+      this.direction = 'down';
+      this.spincount++;
+      this.emit('startdownspin');
+      this.emit('startspin');
+    }
   }
 
   /** Stop spinning (placeholder) */
   stopSpin() {
+    if (this.spinning) {
+      if (this.direction === 'up') {
+        this.emit('stopupspin');
+        this.emit('stopspin');
+      } else if (this.direction === 'down') {
+        this.emit('stopdownspin');
+        this.emit('stopspin');
+      }
+    }
     this.spinning = false;
+    this.direction = false;
     this.spincount = 0;
   }
 
@@ -130,6 +164,49 @@ export class TouchSpinCore {
   /** Cleanup (placeholder) */
   destroy() {
     this.stopSpin();
+  }
+
+  // --- Minimal internal emitter API ---
+  /**
+   * Subscribe to a core event.
+   * Events: 'min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'
+   * @param {string} event
+   * @param {(detail?: any) => void} handler
+   */
+  on(event, handler) {
+    const set = this._events.get(event) || new Set();
+    set.add(handler);
+    this._events.set(event, set);
+    return () => this.off(event, handler);
+  }
+
+  /**
+   * Unsubscribe from a core event.
+   * @param {string} event
+   * @param {(detail?: any) => void=} handler
+   */
+  off(event, handler) {
+    const set = this._events.get(event);
+    if (!set) return;
+    if (!handler) {
+      this._events.delete(event);
+      return;
+    }
+    set.delete(handler);
+    if (set.size === 0) this._events.delete(event);
+  }
+
+  /**
+   * Emit a core event to subscribers.
+   * @param {string} event
+   * @param {any=} detail
+   */
+  emit(event, detail) {
+    const set = this._events.get(event);
+    if (!set || set.size === 0) return;
+    for (const fn of [...set]) {
+      try { fn(detail); } catch (_) {}
+    }
   }
 
   /**
