@@ -119,9 +119,9 @@
       status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`;
     }
 
-    document.getElementById('btn-init').addEventListener('click', () => init({ min: 0, max: 100, step: 1 }));
+    document.getElementById('btn-init').addEventListener('click', () => init({ min: 0, max: 100, step: 1, buttondown_txt: '\u2212', buttonup_txt: '+', prefix: '', postfix: '' }));
     document.getElementById('btn-destroy').addEventListener('click', destroy);
-    document.getElementById('btn-reinit').addEventListener('click', () => init({ min: 5, max: 50, step: 5 }));
+    document.getElementById('btn-reinit').addEventListener('click', () => init({ min: 5, max: 50, step: 5, buttondown_txt: '\u2212', buttonup_txt: '+', prefix: '', postfix: '' }));
 
     document.getElementById('btn-uponce').addEventListener('click', () => inst && inst.upOnce());
     document.getElementById('btn-downonce').addEventListener('click', () => inst && inst.downOnce());
@@ -134,4 +134,3 @@
   </script>
 </body>
 </html>
-

@@ -19,6 +19,8 @@ export function installJqueryTouchSpin($) {
     booster: true,
     boostat: 10,
     maxboostedstep: false,
+    buttondown_txt: '&minus;',
+    buttonup_txt: '&plus;',
     prefix: '',
     postfix: '',
     verticalbuttons: false,
