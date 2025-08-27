@@ -1,23 +1,19 @@
 // @ts-check
-(function (factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = function (root, jQuery) {
-      if (jQuery === undefined) {
-        if (typeof window !== 'undefined') {
-          jQuery = require('jquery');
-        } else {
-          jQuery = require('jquery')(root);
-        }
-      }
-      factory(jQuery);
-      return jQuery;
-    };
-  } else {
-    factory(jQuery);
-  }
-}(function ($) {
+/**
+ * A2 migration: Convert UMD plugin snapshot to ESM initializer without
+ * auto‑registering a jQuery plugin. This still uses jQuery internally,
+ * returning the internal API object stored on the element.
+ *
+ * NOTE: This is transitional. Later A4–A6 phases will remove jQuery usage
+ * from the core and introduce a framework‑agnostic class.
+ *
+ * @param {import('jquery').JQueryStatic} $
+ * @param {HTMLInputElement} inputEl
+ * @param {any=} options
+ * @param {any=} arg
+ * @returns {any} internal API object with core methods
+ */
+export function initCoreOnJqueryInput($, inputEl, options, arg) {
   'use strict';
 
   // Internal instance store to support future wrapper/core decoupling
@@ -167,7 +163,7 @@
    * });
    *
    */
-  $.fn.TouchSpin = function (options, arg) {
+  function TouchSpinPlugin(options, arg) {
 
     /** @type {TouchSpinOptions} */
     var defaults = {
@@ -1485,9 +1481,13 @@ function _formatDisplay(num) {
 
     });
 
-  };
+  }
 
-}));
+  // Initialize on a single input element without registering a plugin globally
+  var $el = $(inputEl);
+  TouchSpinPlugin.call($el, options, arg);
+  return $el.data('touchspinInternal') || null;
+}
 
 // Renderer classes are included before this file during the build process
 // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.

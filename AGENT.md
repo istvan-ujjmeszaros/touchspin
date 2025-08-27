@@ -91,6 +91,12 @@ npm test
 - **Never edit dist/**, always run integrity check before commits
 - **No comments** unless explicitly requested by user
 
+### Types & JSDoc
+- Enable `@ts-check` at the top of new/edited JS files when practical.
+- Add JSDoc type definitions for public APIs, options objects, renderer interfaces, and non-trivial helpers. Keep them concise and accurate.
+- Prefer `@typedef` blocks for shared shapes (e.g., `TouchSpinOptions`, renderer interfaces) and `@returns`/`@param` on functions and methods.
+- Avoid noisy prose comments; focus on type information and brief intent. Update JSDoc alongside code changes.
+
 ### Test Patterns
 - Import: `import touchspinHelpers from './helpers/touchspinHelpers'` (default export)
 - Async/await for Playwright test helpers
