@@ -73,6 +73,11 @@ export class TouchSpinCore {
     // Initialize ARIA attributes and sanitize display immediately
     this._updateAriaAttributes();
     this._checkValue(false);
+
+    /** @type {ReturnType<typeof setTimeout>|null} */
+    this._spinDelayTimeout = null;
+    /** @type {ReturnType<typeof setInterval>|null} */
+    this._spinIntervalTimer = null;
   }
 
   /** Increment once according to step */
@@ -100,29 +105,14 @@ export class TouchSpinCore {
   }
 
   /** Start increasing repeatedly (placeholder) */
-  startUpSpin() {
-    if (!this.spinning || this.direction !== 'up') {
-      this.spinning = true;
-      this.direction = 'up';
-      this.spincount++;
-      this.emit('startupspin');
-      this.emit('startspin');
-    }
-  }
+  startUpSpin() { this._startSpin('up'); }
 
   /** Start decreasing repeatedly (placeholder) */
-  startDownSpin() {
-    if (!this.spinning || this.direction !== 'down') {
-      this.spinning = true;
-      this.direction = 'down';
-      this.spincount++;
-      this.emit('startdownspin');
-      this.emit('startspin');
-    }
-  }
+  startDownSpin() { this._startSpin('down'); }
 
   /** Stop spinning (placeholder) */
   stopSpin() {
+    this._clearSpinTimers();
     if (this.spinning) {
       if (this.direction === 'up') {
         this.emit('stopupspin');
@@ -232,6 +222,47 @@ export class TouchSpinCore {
     for (const fn of [...set]) {
       try { fn(detail); } catch (_) {}
     }
+  }
+
+  /**
+   * Internal: start timed spin in a direction with initial step, delay, then interval.
+   * @param {'up'|'down'} dir
+   */
+  _startSpin(dir) {
+    if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+    // If changing direction, reset counters
+    const changed = (!this.spinning || this.direction !== dir);
+    if (changed) {
+      this.spinning = true;
+      this.direction = dir;
+      this.spincount = 0;
+      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
+      this.emit('startspin');
+    }
+
+    // Clear previous timers
+    this._clearSpinTimers();
+
+    // Immediate one step
+    if (dir === 'up') this.upOnce(); else this.downOnce();
+
+    // Schedule repeat after delay, then at interval
+    const delay = this.settings.stepintervaldelay || 500;
+    const interval = this.settings.stepinterval || 100;
+    this._spinDelayTimeout = setTimeout(() => {
+      this._spinDelayTimeout = null;
+      this._spinIntervalTimer = setInterval(() => {
+        if (!this.spinning || this.direction !== dir) return; // safety
+        if (dir === 'up') this.upOnce(); else this.downOnce();
+      }, interval);
+    }, delay);
+  }
+
+  _clearSpinTimers() {
+    try { if (this._spinDelayTimeout) { clearTimeout(this._spinDelayTimeout); } } catch {}
+    try { if (this._spinIntervalTimer) { clearInterval(this._spinIntervalTimer); } } catch {}
+    this._spinDelayTimeout = null;
+    this._spinIntervalTimer = null;
   }
 
   /**
