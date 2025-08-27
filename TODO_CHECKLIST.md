@@ -16,6 +16,7 @@ Phase A — Extract Core (packages/core)
   - [x] `packages/core/src/index.js` exporting the public Core API.
 - [x] A2: From `TouchSpinCore.migrated.js`, remove UMD/AMD and jQuery plugin registration. Export a Core class/function.
 - [x] A3: Define a renderer interface compatible with current renderers (init/build/enhance/elements). Document in code.
+ - [x] A3.1: Enable TS static checking for core (add `packages/core/tsconfig.json` with `checkJs`/`allowJs`, no emit).
 - [ ] A4: Move value pipeline and state intact: `_nextValue`, `_forcestepdivisibility`, `_alignToStep`, `_checkValue`, `_setDisplay`, ARIA/attribute sync.
 - [ ] A5: Replace residual jQuery usages in core with native APIs (renderers remain jQuery‑based for now).
 - [ ] A6: Provide a minimal internal emitter that wrappers can bridge to jQuery events.

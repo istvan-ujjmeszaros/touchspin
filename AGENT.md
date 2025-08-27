@@ -96,6 +96,7 @@ npm test
 - Add JSDoc type definitions for public APIs, options objects, renderer interfaces, and non-trivial helpers. Keep them concise and accurate.
 - Prefer `@typedef` blocks for shared shapes (e.g., `TouchSpinOptions`, renderer interfaces) and `@returns`/`@param` on functions and methods.
 - Avoid noisy prose comments; focus on type information and brief intent. Update JSDoc alongside code changes.
+ - Core package uses TypeScript for static checking via `checkJs` (see `packages/core/tsconfig.json`). We remain JavaScript-first during Phase A–C to avoid build churn; revisit full `.ts` migration once the core stabilizes.
 
 ### Test Patterns
 - Import: `import touchspinHelpers from './helpers/touchspinHelpers'` (default export)
