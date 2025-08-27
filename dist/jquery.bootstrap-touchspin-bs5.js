@@ -338,6 +338,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       factory(jQuery);
     }
   })(function ($) {
+    var __touchspinInternalStore = typeof WeakMap !== "undefined" ? /* @__PURE__ */new WeakMap() : null;
     $.fn.TouchSpin = function (options, arg) {
       var defaults = {
         min: 0,
@@ -518,7 +519,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             },
             setValue: function setValue(v) {
               var _a;
-              if (originalinput.is(":disabled,[readonly]")) return;
+              if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
               stopSpin();
               var parsed = Number(v);
               if (!isFinite(parsed)) return;
@@ -536,6 +537,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               }
             }
           });
+          if (__touchspinInternalStore) {
+            try {
+              __touchspinInternalStore.set(originalinput[0], originalinput.data("touchspinInternal"));
+            } catch (e) {}
+          }
         }
         function _setInitval() {
           if (settings.initval !== "" && inputEl.value === "") {
@@ -687,6 +693,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           originalinput.data("alreadyinitialized", false);
           originalinput.removeData("touchspinInternal");
+          if (__touchspinInternalStore) {
+            try {
+              __touchspinInternalStore.delete(originalinput[0]);
+            } catch (e) {}
+          }
         }
         function _updateSettings(newsettings) {
           settings = Object.assign({}, settings, newsettings);
