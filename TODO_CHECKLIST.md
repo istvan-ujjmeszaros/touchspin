@@ -96,3 +96,14 @@ Checkpoints
 - [ ] LGTM-4 (after Theme 2): build + commit `dist/`.
 - [ ] LGTM-5 (after Theme 3): build + commit `dist/`.
 - [ ] LGTM-6 (after Theme 4): build + commit `dist/`.
+ - [ ] LGTM-7a (modern facade isolated → wrapper; manual pages load wrapper): build + commit `dist/`.
+ - [ ] LGTM-7b (build footer hook for wrappers disabled-by-default): build + commit `dist/`.
+ - [ ] LGTM-8 (flip builds to include wrappers where intended; trim duplicate from plugin): build + commit `dist/`.
+
+Wrapper‑First Extraction (detailed)
+- [ ] Isolate modern facade in plugin behind a clear boundary (no behavior change).
+- [ ] Create `src/wrappers/modern-facade.js` with identical logic; export an install function. Do not auto-install.
+- [ ] Update manual pages to load the modern facade wrapper after plugin for ESM/dev only; verify no duplicate install (LGTM-7a).
+- [ ] Add optional build footer hook in `build.mjs` to append wrappers after the main bundle (off by default initially) (LGTM-7b).
+- [ ] Validation pass: `apiMethods.test.ts`, destroy/reinit, manual bridge/ESM, and change/event counts stable.
+- [ ] Flip builds to include wrappers where intended; remove duplicate facade code from plugin; preserve callable events and command API (LGTM-8).

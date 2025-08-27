@@ -72,6 +72,21 @@ Context and guardrails
 - Validation: `apiMethods.test.ts`, `destroyAndReinitialize.test.ts`, bridge pages.
 - Exit criteria/checkpoint: Surfaces unchanged; tag `LGTM-6`, then build/commit `dist/`.
 
+5) Wrapper‑First Core Extraction (planning)
+- Objective: Safely peel “wrapping/bridging” from the current plugin into wrappers so the main file naturally becomes the core. Rename only at the end.
+- Changes:
+  - Isolate modern facade boundary in the plugin (no behavior change); later move identical code to `src/wrappers/modern-facade.js` and load after the plugin.
+  - Keep `src/wrappers/jquery-bridge.js` as the jQuery facade provider for `data('touchspin')`; do not auto-install from UMD builds yet; used in manual pages only.
+  - Add build hooks (footer injection points) in `build.mjs` to optionally append wrappers after the main bundle (off by default until validated).
+  - ESM twin loader: optionally import wrappers for dev pages once validated, keeping tests green.
+  - Only after wrappers are proven and manual pages updated, start trimming wrapper code from the plugin; at parity, rename the plugin file to `TouchSpinCore.js` and ship the UMD plugin as a thin wrapper.
+- Risks: Double-install of facades if both plugin and wrapper run; manual pages loading order; subtle event duplicate triggers.
+- Validation: `apiMethods.test.ts`, `destroyAndReinitialize.test.ts`, manual bridge + ESM pages; targeted checks for duplicate change/events; run full suite.
+- Exit criteria/checkpoint(s):
+  - `LGTM-7a`: Modern facade isolated and moved to wrapper (loaded only in manual page); tests green.
+  - `LGTM-7b`: Build footer hook added (disabled by default); docs updated; tests green.
+  - `LGTM-8`: Flip build to include wrapper(s) where intended; remove duplicated facade code from plugin; tests green; dist updated.
+
 Deferred (post‑migration)
 - Renderer de‑jQuery: convert renderers to native while preserving generated markup; separate task with visual tests.
 - Advanced a11y: revisit role/valuenow policies and screen‑reader audits.
@@ -101,7 +116,7 @@ Deferred (post‑migration)
 
 ## Rollback Plan
 
-- Tag at every theme exit: `LGTM-3` (Events+Timers), `LGTM-4` (DOM+Attrs), `LGTM-5` (Value+ARIA), `LGTM-6` (Facade plumbing).
+- Tag at every theme exit: `LGTM-3` (Events+Timers), `LGTM-4` (DOM+Attrs), `LGTM-5` (Value+ARIA), `LGTM-6` (Facade plumbing), `LGTM-7a/7b` (Wrapper-first steps), `LGTM-8` (Flip to wrappers).
 - At each tag: run `npm run build`, commit updated `dist/`, push tag. CI verifies build integrity against committed `dist/`.
 - Revert on regression: `git reset --hard <last-good-tag>` (or `git revert` the theme PR); rebuild to keep `dist/` consistent with sources.
 
