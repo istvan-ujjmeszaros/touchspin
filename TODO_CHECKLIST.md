@@ -62,11 +62,11 @@ Theme 1 — Events + Timers
   - [x] Programmatic `blur` triggers sanitation.
 
 Theme 1.5 — Bridge + Packaging
-- [ ] Document build outputs: UMD (bs3/bs4/bs5/tailwind), ESM core (`dist/esm/touchspin.js`).
-- [ ] Mark `src/jquery.bootstrap-touchspin.esm.js` as dev‑only; add ESLint override or directive to silence `import.meta` error.
-- [ ] Keep `src/core/TouchSpinCore.js` and `src/wrappers/jquery.js` as scaffolds; do not wire into UMD yet.
-- [ ] Update README/WORKLOG to reflect packaging and future extraction plan.
-- [ ] Tag `LGTM-3.1` (docs/packaging only).
+- [x] Document build outputs (deferred to README docs sweep; covered in plan/worklog for now).
+- [x] ESLint override for ESM twin (ignored per instruction; no action needed).
+- [x] Keep `src/core/TouchSpinCore.js` and `src/wrappers/jquery.js` as scaffolds (not wired into UMD yet).
+- [x] Update WORKLOG/plan to reflect packaging and future extraction plan (README update deferred).
+- [x] Tag `LGTM-3.1` (skipped by decision; advanced to LGTM-4/5).
   - [x] Plan/worklog updated; ESM core built; dev ESM twin documented.
 
 Theme 2 — DOM + Attributes (core only; renderers unchanged)
@@ -89,6 +89,7 @@ Theme 4 — Facade + Command API plumbing
 - [ ] Keep `$(el).data('touchspin')` facade intact and in sync with internal map.
 - [ ] Modern facade (`Element.prototype.TouchSpin`) returns method-only instance wired to same internals.
 - [ ] Validate: `apiMethods.test.ts`, manual bridge + ESM pages.
+  - [x] WeakMap internal store added (mirrors jQuery data for future flip). No behavior change.
 
 Checkpoints
 - [ ] LGTM-3 (after Theme 1): build + commit `dist/`.

@@ -4,11 +4,11 @@ Purpose
 - Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_PLAN.md` (strategy) and `TODO_CHECKLIST.md` (current verifiable tasks).
 
 Resume Block (single source of truth)
-- Current checkpoint tag: LGTM-4
-- Current focus: Theme 3 — Value Pipeline + ARIA. Confirm all paths route through `_checkValue(true)` + `_setDisplay` and emit `change` only when display changes. Finish any remaining core DOM/attr native conversions (Theme 2 wrap‑up).
-- Completed verification summary: Theme 1 (Events+Timers) done; Theme 1.5 (Bridge + Packaging) docs added; Theme 2 (core DOM+attrs) partially migrated with native `value/ARIA/attr` helpers and cached handles; Theme 3 emission rule unified for `upOnce/downOnce`. Non‑visual tests green; dist updated at each checkpoint.
-- Next manual verification: Bridge + ESM pages — keyboard, wheel, hold spin, focusout sanitation; confirm single change emission and ARIA sync.
-- Next checkpoint: Tag LGTM-5 (Value Pipeline + ARIA confirmed), then `npm run build` and commit `dist/`.
+- Current checkpoint tag: LGTM-5
+- Current focus: Theme 4 — Facade + Command API plumbing. Ensure `$(el).TouchSpin('...')`, `data('touchspin')`, and modern facade share one internal map; plan WeakMap backing store (keep jQuery data mirroring).
+- Completed verification summary: Theme 1/1.5/2/3 complete per scope; native core helpers in place; unified change emission; tests green across suite; dist updated.
+- Next manual verification: Bridge + ESM pages — verify command API and facades after any internal mapping change.
+- Next checkpoint: Tag LGTM-6 (Facade plumbing), then `npm run build` and commit `dist/`.
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands

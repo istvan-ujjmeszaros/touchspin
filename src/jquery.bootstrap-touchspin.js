@@ -20,6 +20,10 @@
 }(function ($) {
   'use strict';
 
+  // Internal instance store to support future wrapper/core decoupling
+  // Mirrors jQuery .data('touchspinInternal') without changing behavior
+  var __touchspinInternalStore = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
+
   /**
    * @fileoverview Bootstrap TouchSpin — mobile-friendly numeric input spinner.
    * @typedef {import('jquery').JQuery} JQuery
@@ -377,7 +381,7 @@
             return isFinite(num) ? num : NaN;
           },
           setValue: function(v) {
-            if (originalinput.is(':disabled,[readonly]')) return;
+            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             stopSpin();
             var parsed = Number(v);
             if (!isFinite(parsed)) return;
@@ -396,6 +400,9 @@
             }
           }
         });
+        if (__touchspinInternalStore) {
+          try { __touchspinInternalStore.set(originalinput[0], originalinput.data('touchspinInternal')); } catch (e) {}
+        }
       }
 
       /**
@@ -658,6 +665,9 @@ function _formatDisplay(num) {
         originalinput.data('alreadyinitialized', false);
         // Cleanup internal facade reference
         originalinput.removeData('touchspinInternal');
+        if (__touchspinInternalStore) {
+          try { __touchspinInternalStore.delete(originalinput[0]); } catch (e) {}
+        }
       }
 
       /**
