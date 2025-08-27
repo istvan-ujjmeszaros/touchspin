@@ -178,8 +178,16 @@ bower install bootstrap-touchspin
 - ESM Core (experimental):
   - `dist/esm/touchspin.js`
   - Note: The ESM core is a scaffold for future framework wrappers; the UMD plugin remains the single source of truth. Use the UMD builds in production unless you are experimenting with custom wrappers.
- - Dev-only ESM twin loader:
-   - `src/jquery.bootstrap-touchspin.esm.js` registers the classic plugin in module contexts for the ESM manual page/tests.
+- Dev-only ESM twin loader:
+  - `src/jquery.bootstrap-touchspin.esm.js` registers the classic plugin in module contexts for the ESM manual page/tests.
+
+New filenames (preview)
+- Alongside existing filenames, the build now also emits:
+  - `dist/touchspin.jquery.bs3(.min).js`
+  - `dist/touchspin.jquery.bs4(.min).js`
+  - `dist/touchspin.jquery.bs5(.min).js`
+  - `dist/touchspin.jquery.tailwind(.min).js`
+- ESM core alias: `dist/esm/touchspin-core.js` (same as `dist/esm/touchspin.js`).
 
 Wrapper inclusion
 - Modern facade is appended to UMD builds by default (LGTM‑8) to preserve prior inline behavior.
