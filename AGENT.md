@@ -140,12 +140,14 @@ container.on('focusout.touchspin', function (e) {
 - **Coverage collection** tracks code usage across tests
 
 ### Manual Pages & Harnesses
-- Classic plugin fixtures: `__tests__/html/destroy-test-bridge.html`, `__tests__/html/destroy-test-esm.html`.
-- Core smoke harness: `__tests__/html/core-smoke.html` (ESM, no jQuery). Use this to manually verify the new core API:
-  - Imports `createPublicApi` and `CORE_EVENTS` from `packages/core/src/index.js`.
-  - Buttons call `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
-  - Logs core events; includes an optional jQuery bridge that maps core events to `touchspin.on.*` on the input for parity checks.
-  - Note: start/stop spin currently emit events but do not auto-repeat values (timed spin logic is pending extraction).
+- Core smoke: `__tests__/html/core-smoke.html` (ESM core only, Tailwind page, no jQuery)
+  - Imports `createPublicApi` + `CORE_EVENTS` from `packages/core/src/index.js`.
+  - Buttons: `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
+  - Logs core events. Note: start/stop spin emit events only; no auto-repeat yet.
+- jQuery plugin smoke: `__tests__/html/jquery-plugin-smoke.html` (source-based wrapper)
+  - Loads renderer from `packages/renderers/bootstrap4/src/*`, defines `window.RendererFactory`.
+  - Installs wrapper from `packages/jquery-plugin/src/index.js` and exercises the same callable events and command API as legacy plugin.
+  - Event log shows `touchspin.on.*` events; markup/classes come from the selected renderer.
 
 ### Memory Management
 - **No document-level event handlers** (all container-scoped)

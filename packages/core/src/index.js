@@ -69,6 +69,9 @@ export class TouchSpinCore {
     this.direction = false;
     /** @type {Map<string, Set<Function>>} */
     this._events = new Map();
+
+    // Initialize ARIA attributes immediately so init reflects state in DOM
+    this._updateAriaAttributes();
   }
 
   /** Increment once according to step */
