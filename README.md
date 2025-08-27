@@ -178,18 +178,18 @@ bower install bootstrap-touchspin
 - ESM Core (experimental):
   - `dist/esm/touchspin.js`
   - Note: The ESM core is a scaffold for future framework wrappers; the UMD plugin remains the single source of truth. Use the UMD builds in production unless you are experimenting with custom wrappers.
-- Dev-only ESM twin loader:
-  - `src/jquery.bootstrap-touchspin.esm.js` is used by the ESM manual page to register the classic plugin in a module context for development and tests.
+ - Dev-only ESM twin loader:
+   - `src/jquery.bootstrap-touchspin.esm.js` registers the classic plugin in module contexts for the ESM manual page/tests.
 
 Wrapper inclusion
-- Modern facade is included in UMD builds by default (LGTM-8) to preserve prior inline behavior.
-- You can control wrapper append via env var:
+- Modern facade is appended to UMD builds by default (LGTM‑8) to preserve prior inline behavior.
+- Control wrapper append via env var:
   - `APPEND_WRAPPERS=modern-facade` (default)
-  - `APPEND_WRAPPERS=none` to disable all wrapper appends
+  - `APPEND_WRAPPERS=none` to disable
   - `APPEND_WRAPPERS=jquery-bridge,modern-facade` to include both
-  - The plugin remains the single source of truth; wrappers only provide facades.
+- The plugin remains the single source of truth; wrappers only provide facades.
 
-Publishing note: Tests load from `src/` during development. Only rebuild `dist/` at checkpoints or before publishing, and always commit `dist/` (CI verifies build integrity).
+Publishing note: Tests load from `src/` during development. Rebuild `dist/` at checkpoints or before publishing, and always commit `dist/` (CI verifies build integrity).
 ```
 
 ---
@@ -695,3 +695,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
+## Architecture and Roadmap
+
+- See `ARCHITECTURE.md` for the target multi‑package layout (core, renderers, wrappers).  
+- See `ROADMAP.md` for milestones (core extraction, renderer packages, React/Angular/Web Component wrappers) and planned artifact naming.

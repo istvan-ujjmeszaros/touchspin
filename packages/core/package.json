@@ -1,0 +1,10 @@
+{
+  "name": "@touchspin/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Core logic for TouchSpin (framework-agnostic)",
+  "license": "MIT",
+  "sideEffects": false
+}
+

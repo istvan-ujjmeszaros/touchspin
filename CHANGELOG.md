@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.0.0] - 2025-01-XX
 
+### Modernization (LGTM-7a/7b/8)
+- Moved modern facade to `src/wrappers/modern-facade.js` and updated manual pages (LGTM-7a).
+- Added build footer hooks via `APPEND_WRAPPERS` to append wrappers after UMD bundle (LGTM-7b).
+- Removed inline modern facade from plugin; default UMD builds now append modern-facade wrapper (LGTM-8).
+- Fixed ESM manual page by waiting for plugin registration before installing the facade.
+- Docs: Added ARCHITECTURE.md and ROADMAP.md; refined README build variants and wrapper control; updated TODOs/WORKLOG.
+
 ### 🚀 Major Features
 
 #### Modern Build System

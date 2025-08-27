@@ -86,6 +86,22 @@ Context and guardrails
   - `LGTM-7a`: Modern facade wrapper created and loaded only in manual pages; plugin remains source of truth; tests green.
   - `LGTM-7b`: Build footer hook added (APPEND_WRAPPERS, disabled by default); docs updated; tests green.
   - `LGTM-8`: Flip build to include wrapper(s) where intended; remove duplicated facade code from plugin; tests green; dist updated.
+    - Completed: Modern facade moved out of plugin; default UMD appends modern facade via APPEND_WRAPPERS.
+
+6) Multi‑Package Split (planning)
+- Objective: Transition to a workspace with packages for core, renderers, and wrappers without breaking current consumers.
+- Proposed packages:
+  - `@touchspin/core` (no jQuery, ESM)
+  - `@touchspin/renderer-*` (bootstrap3/4/5, tailwind)
+  - `@touchspin/jquery-plugin` (thin adapter around core)
+  - `@touchspin/react`, `@touchspin/angular`, `@touchspin/webcomponent`
+- Steps:
+  - Create `packages/` scaffolds (done) and wire build scripts gradually.
+  - Extract renderer code into packages while preserving generated markup.
+  - Extract core state and value pipeline from UMD plugin into `@touchspin/core`; refactor UMD to delegate.
+  - Add example React/Angular/Web Component wrappers.
+  - Add CI workflows and publishing strategy (versions, tags).
+  - Provide migration guidance and artifact naming consistency.
     - Completed: Modern facade moved out of plugin; default build appends modern facade via APPEND_WRAPPERS; tests green.
 
 Deferred (post‑migration)

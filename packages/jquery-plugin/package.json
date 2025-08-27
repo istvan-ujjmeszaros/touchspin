@@ -1,0 +1,12 @@
+{
+  "name": "@touchspin/jquery-plugin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "jQuery plugin wrapper for @touchspin/core",
+  "license": "MIT",
+  "peerDependencies": {
+    "jquery": ">=3"
+  }
+}
+

@@ -12,10 +12,10 @@ Scope: Track concrete, verifiable steps for modernization while preserving behav
   - [x] Mouse wheel while focused increments/decrements once; does not emit extra changes.
 
 - [x] Programmatic API sanity
-  - [ ] jQuery command API: `('get'|'set'|'uponce'|'downonce'|'startupspin'|'startdownspin'|'stopspin'|'updatesettings'|'destroy')` work on an initialized input.
-  - [ ] Internal method map via `data('touchspinInternal')` exposes: `getValue`, `setValue`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `destroy`.
-  - [ ] Bridge facade via `data('touchspin')` proxies to internal methods (fallbacks to events if missing).
-  - [ ] Modern facade: `window.TouchSpin.attach(input, opts)` or `Element.prototype.TouchSpin(opts)` returns an instance with method-only API.
+  - [x] jQuery command API: `('get'|'set'|'uponce'|'downonce'|'startupspin'|'startdownspin'|'stopspin'|'updatesettings'|'destroy')` work on an initialized input.
+  - [x] Internal method map via `data('touchspinInternal')` exposes: `getValue`, `setValue`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `destroy`.
+  - [~] Bridge facade via `data('touchspin')` proxies to internal methods (fallbacks to events if missing).
+  - [x] Modern facade: `window.TouchSpin.attach(input, opts)` or `Element.prototype.TouchSpin(opts)` returns an instance with method-only API.
 
 - [x] Manual pages sanity-check
   - [x] `__tests__/html/destroy-test-bridge.html`: init → interact → destroy → reinit; try legacy events and facade methods; verify callbacks (before/after calculation).
@@ -70,18 +70,18 @@ Theme 1.5 — Bridge + Packaging
   - [x] Plan/worklog updated; ESM core built; dev ESM twin documented.
 
 Theme 2 — DOM + Attributes (core only; renderers unchanged)
-- [ ] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
-- [ ] Replace `.val/.attr/.removeAttr/.prop/.is/.addClass/.removeClass` in core with native equivalents.
-- [ ] Destroy: replace `.siblings(...).remove()` and `.unwrap()` with native node ops; keep DOM structure identical.
-- [ ] Keep jQuery `.data('touchspin*')` mirrored to a private WeakMap store.
-- [ ] Validate: `nativeAttributeSync.test.ts`, `destroyAndReinitialize.test.ts`, `testidPropagation.test.ts` pass.
+- [x] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
+- [x] Replace `.val/.attr/.removeAttr/.prop/.is/.addClass/.removeClass` in core with native equivalents.
+- [x] Destroy: replace `.siblings(...).remove()` and `.unwrap()` with native node ops; keep DOM structure identical.
+- [x] Keep jQuery `.data('touchspin*')` mirrored to a private WeakMap store.
+- [x] Validate: `nativeAttributeSync.test.ts`, `destroyAndReinitialize.test.ts`, `testidPropagation.test.ts` pass.
   - [x] Cached handles and native value/ARIA/attr sync in helpers; tests green.
 
 Theme 3 — Value Pipeline + ARIA
-- [ ] Confirm all paths route through `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`.
-- [ ] Ensure `change` fires only when display string changes across keyboard, wheel, buttons, programmatic set.
-- [ ] ARIA effective min/max reflect step alignment on settings change.
-- [ ] Validate: `aria-sync.test.ts`, `events.test.ts`, `settingsPrecedence.test.ts` pass.
+- [x] Confirm all paths route through `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`.
+- [x] Ensure `change` fires only when display string changes across keyboard, wheel, buttons, programmatic set.
+- [x] ARIA effective min/max reflect step alignment on settings change.
+- [x] Validate: `aria-sync.test.ts`, `events.test.ts`, `settingsPrecedence.test.ts` pass.
   - [x] upOnce/downOnce emit change only on display string change.
 
 Theme 4 — Facade + Command API plumbing
@@ -92,10 +92,10 @@ Theme 4 — Facade + Command API plumbing
 - [x] Validate: `apiMethods.test.ts` and suite pass; manual pages unaffected.
 
 Checkpoints
-- [ ] LGTM-3 (after Theme 1): build + commit `dist/`.
-- [ ] LGTM-4 (after Theme 2): build + commit `dist/`.
-- [ ] LGTM-5 (after Theme 3): build + commit `dist/`.
-- [ ] LGTM-6 (after Theme 4): build + commit `dist/`.
+- [x] LGTM-3 (after Theme 1): build + commit `dist/`.
+- [x] LGTM-4 (after Theme 2): build + commit `dist/`.
+- [x] LGTM-5 (after Theme 3): build + commit `dist/`.
+- [x] LGTM-6 (after Theme 4): build + commit `dist/`.
  - [x] LGTM-7a (modern facade isolated → wrapper; manual pages load wrapper): build + commit `dist/`.
  - [x] LGTM-7b (build footer hook for wrappers disabled-by-default): build + commit `dist/`.
  - [x] LGTM-8 (flip builds to include wrappers where intended; trim duplicate from plugin): build + commit `dist/`.
@@ -104,6 +104,6 @@ Wrapper‑First Extraction (detailed)
 - [x] Isolate modern facade boundary (no behavior change). Wrapper mirrors inline facade.
 - [x] Create `src/wrappers/modern-facade.js` with identical logic; export install function; auto-installs on window.jQuery for manual pages.
 - [x] Update manual pages to load the modern facade wrapper after plugin for ESM/dev only; ensure idempotent install (LGTM-7a).
-- [ ] Add optional build footer hook in `build.mjs` to append wrappers after the main bundle (off by default initially) (LGTM-7b).
-- [ ] Validation pass: `apiMethods.test.ts`, destroy/reinit, manual bridge/ESM, and change/event counts stable.
-- [ ] Flip builds to include wrappers where intended; remove duplicate facade code from plugin; preserve callable events and command API (LGTM-8).
+- [x] Add optional build footer hook in `build.mjs` to append wrappers after the main bundle (off by default initially) (LGTM-7b).
+- [x] Validation pass: `apiMethods.test.ts`, destroy/reinit, manual bridge/ESM, and change/event counts stable.
+- [x] Flip builds to include wrappers where intended; remove duplicate facade code from plugin; preserve callable events and command API (LGTM-8).
