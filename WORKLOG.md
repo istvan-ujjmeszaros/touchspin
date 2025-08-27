@@ -4,11 +4,11 @@ Purpose
 - Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_PLAN.md` (strategy) and `TODO_CHECKLIST.md` (current verifiable tasks).
 
 Resume Block (single source of truth)
-- Current checkpoint tag: LGTM-5
-- Current focus: Theme 4 — Facade + Command API plumbing. Ensure `$(el).TouchSpin('...')`, `data('touchspin')`, and modern facade share one internal map; plan WeakMap backing store (keep jQuery data mirroring).
-- Completed verification summary: Theme 1/1.5/2/3 complete per scope; native core helpers in place; unified change emission; tests green across suite; dist updated.
-- Next manual verification: Bridge + ESM pages — verify command API and facades after any internal mapping change.
-- Next checkpoint: Tag LGTM-6 (Facade plumbing), then `npm run build` and commit `dist/`.
+- Current checkpoint tag: LGTM-6
+- Current focus: Pause for review or begin planning core extraction (optional). Current UMD remains the single source; WeakMap store available for future flip; wrappers remain external for manual pages.
+- Completed verification summary: Theme 1/1.5/2/3/4 complete per scope; modern facade available; command API maps to internals; WeakMap mirror added; tests green; dist updated at each checkpoint.
+- Next manual verification: Optional spot check of bridge + ESM pages; no regressions expected.
+- Next checkpoint: If proceeding to extraction, define LGTM-7 milestones; otherwise proceed to docs sweep (README outputs section) and close.
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands

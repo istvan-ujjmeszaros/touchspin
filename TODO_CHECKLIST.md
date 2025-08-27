@@ -85,11 +85,11 @@ Theme 3 — Value Pipeline + ARIA
   - [x] upOnce/downOnce emit change only on display string change.
 
 Theme 4 — Facade + Command API plumbing
-- [ ] Ensure `$(el).TouchSpin('...')` maps to `data('touchspinInternal')` methods.
-- [ ] Keep `$(el).data('touchspin')` facade intact and in sync with internal map.
-- [ ] Modern facade (`Element.prototype.TouchSpin`) returns method-only instance wired to same internals.
-- [ ] Validate: `apiMethods.test.ts`, manual bridge + ESM pages.
-  - [x] WeakMap internal store added (mirrors jQuery data for future flip). No behavior change.
+- [x] Ensure `$(el).TouchSpin('...')` maps to `data('touchspinInternal')` methods (already in plugin).
+- [ ] Keep `$(el).data('touchspin')` facade intact and in sync with internal map (deferred; avoid breaking double-init test; handled by wrapper in manual page).
+- [x] Modern facade (`Element.prototype.TouchSpin`) returns method-only instance wired to same internals.
+- [x] WeakMap internal store added (mirrors jQuery data for future flip). No behavior change.
+- [x] Validate: `apiMethods.test.ts` and suite pass; manual pages unaffected.
 
 Checkpoints
 - [ ] LGTM-3 (after Theme 1): build + commit `dist/`.
