@@ -1493,40 +1493,4 @@ function _formatDisplay(num) {
 // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
 // and RendererFactory should be available
 
-// Modern facade: expose a method-only API without requiring callers to use jQuery directly.
-// This uses the existing plugin internally (no behavior change) and returns an
-// object with stable methods. During migration, internals can move behind these methods.
-(function () {
-  if (typeof window === 'undefined') return;
-  if (!window.jQuery || !window.jQuery.fn || typeof window.jQuery.fn.TouchSpin !== 'function') return;
-
-  window.TouchSpin = window.TouchSpin || {};
-  window.TouchSpin.attach = function (input, opts) {
-    var el = (input && input.nodeType === 1) ? input : document.querySelector(input);
-    if (!el) throw new Error('TouchSpin.attach: invalid element');
-    var $el = window.jQuery(el);
-    $el.TouchSpin(opts);
-    var api = $el.data('touchspinInternal');
-    if (!api) throw new Error('TouchSpin failed to initialize');
-    return {
-      upOnce: api.upOnce,
-      downOnce: api.downOnce,
-      startUpSpin: api.startUpSpin,
-      startDownSpin: api.startDownSpin,
-      stopSpin: api.stopSpin,
-      updateSettings: api.updateSettings,
-      getValue: api.getValue,
-      setValue: api.setValue,
-      destroy: api.destroy
-    };
-  };
-
-  var _Element = (typeof globalThis !== 'undefined' && /** @type {any} */ (globalThis).Element) || undefined;
-  if (_Element && _Element.prototype && !_Element.prototype.TouchSpin) {
-    Object.defineProperty(_Element.prototype, 'TouchSpin', {
-      configurable: true,
-      writable: true,
-      value: function (opts) { return window.TouchSpin.attach(this, opts); }
-    });
-  }
-})();
+// Modern facade moved to wrapper (src/wrappers/modern-facade.js) in LGTM-7a/8.

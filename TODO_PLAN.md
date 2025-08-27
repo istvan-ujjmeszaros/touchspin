@@ -86,6 +86,7 @@ Context and guardrails
   - `LGTM-7a`: Modern facade wrapper created and loaded only in manual pages; plugin remains source of truth; tests green.
   - `LGTM-7b`: Build footer hook added (APPEND_WRAPPERS, disabled by default); docs updated; tests green.
   - `LGTM-8`: Flip build to include wrapper(s) where intended; remove duplicated facade code from plugin; tests green; dist updated.
+    - Completed: Modern facade moved out of plugin; default build appends modern facade via APPEND_WRAPPERS; tests green.
 
 Deferred (post‑migration)
 - Renderer de‑jQuery: convert renderers to native while preserving generated markup; separate task with visual tests.

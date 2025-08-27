@@ -129,9 +129,16 @@ async function buildAll() {
   // Optional: which wrappers to append after bundle (disabled by default)
   // e.g., APPEND_WRAPPERS=modern-facade or APPEND_WRAPPERS=jquery-bridge,modern-facade
   const appendWrappersEnv = (process.env.APPEND_WRAPPERS || '').trim();
-  const wrappersToAppend = appendWrappersEnv
-    ? appendWrappersEnv.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
-    : [];
+  let wrappersToAppend = [];
+  if (appendWrappersEnv) {
+    const v = appendWrappersEnv.toLowerCase();
+    if (v !== 'none' && v !== '0' && v !== 'false' && v !== 'no') {
+      wrappersToAppend = v.split(',').map(s => s.trim()).filter(Boolean);
+    }
+  } else {
+    // Default from LGTM-8: include modern facade to preserve prior inline behavior
+    wrappersToAppend = ['modern-facade'];
+  }
 
   function readWrapperSource(kind) {
     const map = {

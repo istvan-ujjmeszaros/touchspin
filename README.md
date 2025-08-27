@@ -181,11 +181,13 @@ bower install bootstrap-touchspin
 - Dev-only ESM twin loader:
   - `src/jquery.bootstrap-touchspin.esm.js` is used by the ESM manual page to register the classic plugin in a module context for development and tests.
 
-Optional wrapper append (dev-only)
-- You can append wrapper scripts after the UMD bundle during build for experiments:
-  - Env var: `APPEND_WRAPPERS=modern-facade` or `APPEND_WRAPPERS=jquery-bridge,modern-facade`
-  - Default: disabled. The main plugin remains the single source of truth.
-  - The wrappers auto-install if `window.jQuery` is present. Keep this off unless you are validating wrapper-first extraction locally.
+Wrapper inclusion
+- Modern facade is included in UMD builds by default (LGTM-8) to preserve prior inline behavior.
+- You can control wrapper append via env var:
+  - `APPEND_WRAPPERS=modern-facade` (default)
+  - `APPEND_WRAPPERS=none` to disable all wrapper appends
+  - `APPEND_WRAPPERS=jquery-bridge,modern-facade` to include both
+  - The plugin remains the single source of truth; wrappers only provide facades.
 
 Publishing note: Tests load from `src/` during development. Only rebuild `dist/` at checkpoints or before publishing, and always commit `dist/` (CI verifies build integrity).
 ```

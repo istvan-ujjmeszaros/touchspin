@@ -98,7 +98,7 @@ Checkpoints
 - [ ] LGTM-6 (after Theme 4): build + commit `dist/`.
  - [x] LGTM-7a (modern facade isolated → wrapper; manual pages load wrapper): build + commit `dist/`.
  - [x] LGTM-7b (build footer hook for wrappers disabled-by-default): build + commit `dist/`.
- - [ ] LGTM-8 (flip builds to include wrappers where intended; trim duplicate from plugin): build + commit `dist/`.
+ - [x] LGTM-8 (flip builds to include wrappers where intended; trim duplicate from plugin): build + commit `dist/`.
 
 Wrapper‑First Extraction (detailed)
 - [x] Isolate modern facade boundary (no behavior change). Wrapper mirrors inline facade.
