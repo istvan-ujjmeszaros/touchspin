@@ -25,15 +25,28 @@ async function buildVersionSpecific(version, outputDir) {
 
   console.log(`🔨 Building ${frameworkName} version...`);
 
-  // Include only specific renderer and dependencies
+  // Include only specific renderer and dependencies (from packages/renderers/*)
   const rendererFile = `${rendererName}Renderer.js`;
   let rendererIncludes = '';
 
-  // Always include base renderer
-  rendererIncludes += fs.readFileSync('./src/renderers/AbstractRenderer.js', 'utf-8') + '\n';
+  // Determine package base directory for the chosen renderer
+  const pkgBase = isNumeric
+    ? `./packages/renderers/bootstrap${version}/src`
+    : `./packages/renderers/${version}/src`;
 
-  // Include the target renderer
-  rendererIncludes += fs.readFileSync(`./src/renderers/${rendererFile}`, 'utf-8') + '\n';
+  // Always include base renderer from package
+  const abstractPath = `${pkgBase}/AbstractRenderer.js`;
+  if (!fs.existsSync(abstractPath)) {
+    throw new Error(`Missing AbstractRenderer at ${abstractPath} for ${frameworkName}`);
+  }
+  rendererIncludes += fs.readFileSync(abstractPath, 'utf-8') + '\n';
+
+  // Include the target renderer from package
+  const rendererPath = `${pkgBase}/${rendererFile}`;
+  if (!fs.existsSync(rendererPath)) {
+    throw new Error(`Missing ${rendererFile} at ${rendererPath} for ${frameworkName}`);
+  }
+  rendererIncludes += fs.readFileSync(rendererPath, 'utf-8') + '\n';
 
   const frameworkId = isNumeric ? `bootstrap${version}` : version;
   const rendererCode = `
@@ -62,7 +75,7 @@ async function buildVersionSpecific(version, outputDir) {
 
 `;
 
-  // Build with version-specific renderer
+  // Build with version-specific renderer (packages/renderers/*)
   await build({
     build: {
       lib: {

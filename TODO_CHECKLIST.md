@@ -35,7 +35,7 @@ Phase B — Extract Renderers (packages/renderers)
   - [x] B2.3: Bootstrap 3 renderer migrated.
   - [x] B2.4: Tailwind renderer migrated.
 - [x] B3: Expose a consistent factory or named export; document `getFrameworkId()`.
-- [ ] B4: Update the build to consume renderer packages when producing UMD variants.
+ - [x] B4: Update the build to consume renderer packages when producing UMD variants.
 
 Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
 - [ ] C1: Implement `@touchspin/jquery-plugin` that registers `$.fn.TouchSpin`, delegating to the core.
