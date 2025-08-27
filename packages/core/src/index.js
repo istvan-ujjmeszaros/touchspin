@@ -166,6 +166,26 @@ export class TouchSpinCore {
     this.stopSpin();
   }
 
+  /**
+   * Create a plain public API object with bound methods for wrappers.
+   * @returns {TouchSpinCorePublicAPI}
+   */
+  toPublicApi() {
+    return {
+      upOnce: this.upOnce.bind(this),
+      downOnce: this.downOnce.bind(this),
+      startUpSpin: this.startUpSpin.bind(this),
+      startDownSpin: this.startDownSpin.bind(this),
+      stopSpin: this.stopSpin.bind(this),
+      updateSettings: this.updateSettings.bind(this),
+      getValue: this.getValue.bind(this),
+      setValue: this.setValue.bind(this),
+      destroy: this.destroy.bind(this),
+      on: this.on.bind(this),
+      off: this.off.bind(this),
+    };
+  }
+
   // --- Minimal internal emitter API ---
   /**
    * Subscribe to a core event.
@@ -333,6 +353,43 @@ export class TouchSpinCore {
     el.setAttribute('aria-valuetext', String(raw));
   }
 }
+
+/**
+ * @typedef {Object} TouchSpinCorePublicAPI
+ * @property {() => void} upOnce
+ * @property {() => void} downOnce
+ * @property {() => void} startUpSpin
+ * @property {() => void} startDownSpin
+ * @property {() => void} stopSpin
+ * @property {(opts: Partial<TouchSpinCoreOptions>) => void} updateSettings
+ * @property {() => number} getValue
+ * @property {(v: number|string) => void} setValue
+ * @property {() => void} destroy
+ * @property {(event: string, handler: (detail?: any) => void) => () => void} on
+ * @property {(event: string, handler?: (detail?: any) => void) => void} off
+ */
+
+/**
+ * Create and return a plain public API bound to a new core instance.
+ * @param {HTMLInputElement} inputEl
+ * @param {Partial<TouchSpinCoreOptions>=} opts
+ * @returns {TouchSpinCorePublicAPI}
+ */
+export function createPublicApi(inputEl, opts) {
+  return new TouchSpinCore(inputEl, opts).toPublicApi();
+}
+
+/** Event name constants for wrappers to map/bridge. */
+export const CORE_EVENTS = Object.freeze({
+  MIN: 'min',
+  MAX: 'max',
+  START_SPIN: 'startspin',
+  START_UP: 'startupspin',
+  START_DOWN: 'startdownspin',
+  STOP_SPIN: 'stopspin',
+  STOP_UP: 'stopupspin',
+  STOP_DOWN: 'stopdownspin',
+});
 
 /**
  * Convenience helper to attach core to an input element.
