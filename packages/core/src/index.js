@@ -12,6 +12,7 @@
  * @property {number|null=} max
  * @property {number=} step
  * @property {number=} decimals
+ * @property {import('./renderer-interface.js').TSRenderer=} renderer  // future DOM renderer
  */
 
 const DEFAULTS = {
@@ -107,4 +108,3 @@ export function attach(inputEl, opts) {
 }
 
 export default TouchSpinCore;
-
