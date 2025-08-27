@@ -84,7 +84,7 @@ Context and guardrails
 - Validation: `apiMethods.test.ts`, `destroyAndReinitialize.test.ts`, manual bridge + ESM pages; targeted checks for duplicate change/events; run full suite.
 - Exit criteria/checkpoint(s):
   - `LGTM-7a`: Modern facade wrapper created and loaded only in manual pages; plugin remains source of truth; tests green.
-  - `LGTM-7b`: Build footer hook added (disabled by default); docs updated; tests green.
+  - `LGTM-7b`: Build footer hook added (APPEND_WRAPPERS, disabled by default); docs updated; tests green.
   - `LGTM-8`: Flip build to include wrapper(s) where intended; remove duplicated facade code from plugin; tests green; dist updated.
 
 Deferred (post‑migration)
