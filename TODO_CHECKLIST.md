@@ -11,9 +11,9 @@ Phase 0 — Baseline and Naming (no behavior change)
 - [x] Snapshot current plugin to `packages/core/src/TouchSpinCore.migrated.js` for iterative cleanup.
 
 Phase A — Extract Core (packages/core)
-- [ ] A1: Create `@touchspin/core` structure:
-  - [ ] `packages/core/package.json` with exports, `type: module`, `sideEffects: false`.
-  - [ ] `packages/core/src/index.js` exporting the public Core API.
+- [x] A1: Create `@touchspin/core` structure:
+  - [x] `packages/core/package.json` with exports, `type: module`, `sideEffects: false`.
+  - [x] `packages/core/src/index.js` exporting the public Core API.
 - [ ] A2: From `TouchSpinCore.migrated.js`, remove UMD/AMD and jQuery plugin registration. Export a Core class/function.
 - [ ] A3: Define a renderer interface compatible with current renderers (init/build/enhance/elements). Document in code.
 - [ ] A4: Move value pipeline and state intact: `_nextValue`, `_forcestepdivisibility`, `_alignToStep`, `_checkValue`, `_setDisplay`, ARIA/attribute sync.
