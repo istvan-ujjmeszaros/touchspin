@@ -89,5 +89,5 @@ Accessibility specifics
 
 - Start by reading `WORKLOG.md` (Resume Block) to see the current checkpoint and next focus.
 - Use `TODO_CHECKLIST.md` to execute the concrete verification steps.
-- High-level rationale and multi-phase plan live in `TODO_PLAN.md`.
+- High-level rationale and multi-phase plan live in `TODO_HIGHLEVEL.md`.
 - CI-only reminder: The integrity check script is not for local use; CI ensures that PRs include up-to-date `dist/` files.

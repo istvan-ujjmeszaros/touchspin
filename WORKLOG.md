@@ -1,7 +1,7 @@
 Bootstrap TouchSpin — Worklog & Resume Guide
 
 Purpose
-- Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_PLAN.md` (strategy) and `TODO_CHECKLIST.md` (current verifiable tasks).
+- Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_HIGHLEVEL.md` (high-level goals) and `TODO_CHECKLIST.md` (current detailed roadmap).
 
 Resume Block (single source of truth)
 - Current checkpoint tag: LGTM-8
@@ -36,5 +36,5 @@ Recent Checkpoints (most recent first)
 
 When Finishing a Step
 - Update the Resume Block: set the next focus, note any caveats, and the next checkpoint tag name.
-- Tick items in `TODO_CHECKLIST.md` that were completed and adjust `TODO_PLAN.md` as needed.
+- Tick items in `TODO_CHECKLIST.md` that were completed and adjust `TODO_HIGHLEVEL.md` as needed.
 - If creating a checkpoint: create tag (e.g., `LGTM-5`), run `npm run build`, commit `dist/` and your changes.

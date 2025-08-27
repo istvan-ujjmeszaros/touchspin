@@ -1,109 +1,61 @@
-Bootstrap TouchSpin — Checklist (Themed, verifiable)
+Bootstrap TouchSpin — Implementation Checklist (Package Split Roadmap)
 
-Scope: Track concrete, verifiable steps for modernization while preserving behavior and public API. Complements TODO_PLAN.md (strategy).
+Scope: Actionable steps to implement the multi‑package split while preserving backward compatibility. Complements `TODO_HIGHLEVEL.md` (goals). Legend: [ ] pending  [~] in progress  [x] done
 
-- [x] Blur/focusout sanitation: uniform helpers
-  - [x] Confirm container `focusout.touchspin` path sanitizes via `_checkValue(true)` (uses `_forcestepdivisibility` and `_setDisplay`).
-  - [x] Ensure no duplicate change events when leaving the widget; change fires only when display value actually changes.
-  - [x] Verify Enter key (`keydown:13`) commits via `_checkValue(true)` as well.
+Phase 0 — Baseline and Naming (no behavior change)
+- [x] Emit preview alias filenames in dist: `touchspin.jquery.bs{3,4,5}.js`, `touchspin.jquery.tailwind.js`.
+- [x] Add ESM alias `dist/esm/touchspin-core.js`.
+- [x] Document wrapper control via `APPEND_WRAPPERS` and new filenames in README.
+- [x] Snapshot current plugin to `packages/core/src/TouchSpinCore.migrated.js` for iterative cleanup.
 
-- [x] Keyboard/mousewheel consistency
-  - [x] Arrow up/down trigger `upOnce`/`downOnce` then start/stop spin correctly.
-  - [x] Mouse wheel while focused increments/decrements once; does not emit extra changes.
+Phase A — Extract Core (packages/core)
+- [ ] A1: Create `@touchspin/core` structure:
+  - [ ] `packages/core/package.json` with exports, `type: module`, `sideEffects: false`.
+  - [ ] `packages/core/src/index.js` exporting the public Core API.
+- [ ] A2: From `TouchSpinCore.migrated.js`, remove UMD/AMD and jQuery plugin registration. Export a Core class/function.
+- [ ] A3: Define a renderer interface compatible with current renderers (init/build/enhance/elements). Document in code.
+- [ ] A4: Move value pipeline and state intact: `_nextValue`, `_forcestepdivisibility`, `_alignToStep`, `_checkValue`, `_setDisplay`, ARIA/attribute sync.
+- [ ] A5: Replace residual jQuery usages in core with native APIs (renderers remain jQuery‑based for now).
+- [ ] A6: Provide a minimal internal emitter that wrappers can bridge to jQuery events.
+- [ ] A7: Build ESM for core (dist/esm) and export public API with method parity (`upOnce`, `downOnce`, `startUpSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
+- [ ] A8: Smoke test core via a tiny harness; wire temporary adapter so current UMD plugin can delegate for verification.
 
-- [x] Programmatic API sanity
-  - [x] jQuery command API: `('get'|'set'|'uponce'|'downonce'|'startupspin'|'startdownspin'|'stopspin'|'updatesettings'|'destroy')` work on an initialized input.
-  - [x] Internal method map via `data('touchspinInternal')` exposes: `getValue`, `setValue`, `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `destroy`.
-  - [~] Bridge facade via `data('touchspin')` proxies to internal methods (fallbacks to events if missing).
-  - [x] Modern facade: `window.TouchSpin.attach(input, opts)` or `Element.prototype.TouchSpin(opts)` returns an instance with method-only API.
+Phase B — Extract Renderers (packages/renderers)
+- [ ] B1: Create packages:
+  - [ ] `@touchspin/renderer-bootstrap5`
+  - [ ] `@touchspin/renderer-bootstrap4`
+  - [ ] `@touchspin/renderer-bootstrap3`
+  - [ ] `@touchspin/renderer-tailwind`
+- [ ] B2: Move `src/renderers/*` code into packages, preserving markup/classes and behavior.
+- [ ] B3: Expose a consistent factory or named export; document `getFrameworkId()`.
+- [ ] B4: Update the build to consume renderer packages when producing UMD variants.
 
-- [x] Manual pages sanity-check
-  - [x] `__tests__/html/destroy-test-bridge.html`: init → interact → destroy → reinit; try legacy events and facade methods; verify callbacks (before/after calculation).
-  - [x] `__tests__/html/destroy-test-esm.html`: ESM twin flow; modern facade operations; destroy/reinit.
-  - [x] Verify ARIA updates and disabled/readonly visual cues during interactions.
+Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
+- [ ] C1: Implement `@touchspin/jquery-plugin` that registers `$.fn.TouchSpin`, delegating to the core.
+- [ ] C2: Preserve Command API and callable event emissions (map core events to `$(...).trigger(...)`).
+- [ ] C3: Keep modern facade appended (or re-home into this wrapper) without behavior change.
+- [ ] C4: Update build pipeline to bundle wrapper + selected renderer into UMD outputs.
+- [ ] C5: Verify all non-visual tests pass; ensure manual pages remain unchanged.
 
-- [x] Tests and config
-  - [x] Run Playwright non-visual tests locally (`npm test`) — should pass on src/ (not dist).
-  - [x] Visual tests excluded by default (separate `visual-tests` project) — confirm config/scripts.
+Phase D — Framework Wrappers (optional deliverables after core split)
+- [ ] D1: Web Component (`@touchspin/webcomponent`): custom element; attributes map to options; emit DOM `CustomEvent`s.
+- [ ] D2: React (`@touchspin/react`): functional component; props map to options; effects manage lifecycle; expose ref methods.
+- [ ] D3: Angular (`@touchspin/angular`): component/directive; Inputs/Outputs; module packaging.
+- [ ] D4: Examples and usage snippets for each wrapper.
 
-- [x] Checkpoint and dist build
-  - [x] If all above is good, tag `LGTM-2`.
-  - [x] Build dist (`npm run build`).
-  - [x] Commit `dist/` before pushing (per AGENTS.md policy). CI will verify integrity (PR includes up‑to‑date `dist/`).
+Phase E — Workspaces, CI, Build, Release
+- [ ] E1: Enable npm workspaces in root `package.json`; wire scripts for per‑package builds.
+- [ ] E2: Refactor `build.mjs` or add per‑package builds (Vite/Rollup) for core + wrappers.
+- [ ] E3: Extend `check-build-integrity.mjs` for new aliases/package outputs.
+- [ ] E4: Versioning and publishing strategy (scoped packages), dry‑run publish, access tokens.
+- [ ] E5: GitHub Actions: matrix build/test/publish per package.
 
-- [x] Documentation nits (post-checkpoint)
-  - [x] Note the focusout/Enter-key sanitation behavior in AGENTS.md and TODO_PLAN.md (stability guarantees and where to test manually).
-  - [x] Brief usage snippet for modern facade in README (optional until publish).
+Phase F — Docs and Migration
+- [ ] F1: Package READMEs with install/usage/migration notes.
+- [ ] F2: Main README update with new names and packages; migration guide from jQuery plugin → wrappers.
+- [ ] F3: Website/docs updates; examples for each renderer and wrapper.
 
-- [x] Renderer parity and ARIA/state sync
-  - [x] Verify Bootstrap3/4/5/Tailwind renderers share consistent button classes and vertical layout wiring.
-  - [x] Confirm prefix/postfix hide/show logic matches across renderers and respects empty states.
-  - [x] Validate disabled/readonly visual cues update alongside attribute changes.
-  - [x] Ensure ARIA attributes (aria-valuetext and min/max when present) stay in sync on value and settings changes.
-  - [x] Audit recorded: No inconsistencies found across BS3/4/5/Tailwind; no code changes required.
-
-- [ ] A11y follow-up (deferred)
-  - [ ] Evaluate adding role="spinbutton" + aria-valuenow consistently across renderers; validate with screen readers.
-
-- [x] Tests follow-up (non-visual)
-  - [x] Add a targeted test to assert ARIA updates on value change and on `updateSettings({ min, max })`.
-  - [x] Add a quick check for vertical buttons behavior not affecting change emission semantics.
-
----
-
-Theme 1 — Events + Timers
-- [ ] Introduce internal `emit()`, `on()`, `offAll()` helpers; document teardown.
-- [ ] Switch `_bindEvents()` to native `addEventListener` for input, buttons, container (keep jQuery `trigger` emissions).
-- [ ] Normalize wheel handling (use `wheel` primarily; tolerate legacy event types if still bound).
-- [ ] Verify focusout sanitation order with native listeners (defer tick still applied).
-- [ ] Destroy path removes all listeners via `offAll()`.
-- [ ] Validate: `events.test.ts`, `keyboardAccessibility.test.ts`, `focusout-behavior.test.ts`, `advancedFeatures.test.ts` pass.
-  - [x] Input keyboard/wheel native bindings, container focusout native; button handlers remain jQuery for namespaced triggers.
-  - [x] Programmatic `blur` triggers sanitation.
-
-Theme 1.5 — Bridge + Packaging
-- [x] Document build outputs (deferred to README docs sweep; covered in plan/worklog for now).
-- [x] ESLint override for ESM twin (ignored per instruction; no action needed).
-- [x] Keep `src/core/TouchSpinCore.js` and `src/wrappers/jquery.js` as scaffolds (not wired into UMD yet).
-- [x] Update WORKLOG/plan to reflect packaging and future extraction plan (README update deferred).
-- [x] Tag `LGTM-3.1` (skipped by decision; advanced to LGTM-4/5).
-  - [x] Plan/worklog updated; ESM core built; dev ESM twin documented.
-
-Theme 2 — DOM + Attributes (core only; renderers unchanged)
-- [x] Dual handles: cache `el`, `upEl`, `downEl`, `containerEl`.
-- [x] Replace `.val/.attr/.removeAttr/.prop/.is/.addClass/.removeClass` in core with native equivalents.
-- [x] Destroy: replace `.siblings(...).remove()` and `.unwrap()` with native node ops; keep DOM structure identical.
-- [x] Keep jQuery `.data('touchspin*')` mirrored to a private WeakMap store.
-- [x] Validate: `nativeAttributeSync.test.ts`, `destroyAndReinitialize.test.ts`, `testidPropagation.test.ts` pass.
-  - [x] Cached handles and native value/ARIA/attr sync in helpers; tests green.
-
-Theme 3 — Value Pipeline + ARIA
-- [x] Confirm all paths route through `_checkValue(true)` → `_setDisplay` → `_updateAriaAttributes`.
-- [x] Ensure `change` fires only when display string changes across keyboard, wheel, buttons, programmatic set.
-- [x] ARIA effective min/max reflect step alignment on settings change.
-- [x] Validate: `aria-sync.test.ts`, `events.test.ts`, `settingsPrecedence.test.ts` pass.
-  - [x] upOnce/downOnce emit change only on display string change.
-
-Theme 4 — Facade + Command API plumbing
-- [x] Ensure `$(el).TouchSpin('...')` maps to `data('touchspinInternal')` methods (already in plugin).
-- [ ] Keep `$(el).data('touchspin')` facade intact and in sync with internal map (deferred; avoid breaking double-init test; handled by wrapper in manual page).
-- [x] Modern facade (`Element.prototype.TouchSpin`) returns method-only instance wired to same internals.
-- [x] WeakMap internal store added (mirrors jQuery data for future flip). No behavior change.
-- [x] Validate: `apiMethods.test.ts` and suite pass; manual pages unaffected.
-
-Checkpoints
-- [x] LGTM-3 (after Theme 1): build + commit `dist/`.
-- [x] LGTM-4 (after Theme 2): build + commit `dist/`.
-- [x] LGTM-5 (after Theme 3): build + commit `dist/`.
-- [x] LGTM-6 (after Theme 4): build + commit `dist/`.
- - [x] LGTM-7a (modern facade isolated → wrapper; manual pages load wrapper): build + commit `dist/`.
- - [x] LGTM-7b (build footer hook for wrappers disabled-by-default): build + commit `dist/`.
- - [x] LGTM-8 (flip builds to include wrappers where intended; trim duplicate from plugin): build + commit `dist/`.
-
-Wrapper‑First Extraction (detailed)
-- [x] Isolate modern facade boundary (no behavior change). Wrapper mirrors inline facade.
-- [x] Create `src/wrappers/modern-facade.js` with identical logic; export install function; auto-installs on window.jQuery for manual pages.
-- [x] Update manual pages to load the modern facade wrapper after plugin for ESM/dev only; ensure idempotent install (LGTM-7a).
-- [x] Add optional build footer hook in `build.mjs` to append wrappers after the main bundle (off by default initially) (LGTM-7b).
-- [x] Validation pass: `apiMethods.test.ts`, destroy/reinit, manual bridge/ESM, and change/event counts stable.
-- [x] Flip builds to include wrappers where intended; remove duplicate facade code from plugin; preserve callable events and command API (LGTM-8).
+Acceptance & Rollout
+- [ ] Tests green at each phase; manual pages parity.
+- [ ] Keep legacy filenames as aliases until a major release can drop them.
+- [ ] Beta release of `@touchspin/core` + jQuery wrapper before flipping default consumption.
