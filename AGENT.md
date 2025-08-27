@@ -139,6 +139,14 @@ container.on('focusout.touchspin', function (e) {
 - **Multiple HTML fixtures** test Bootstrap 3/4/5 compatibility
 - **Coverage collection** tracks code usage across tests
 
+### Manual Pages & Harnesses
+- Classic plugin fixtures: `__tests__/html/destroy-test-bridge.html`, `__tests__/html/destroy-test-esm.html`.
+- Core smoke harness: `__tests__/html/core-smoke.html` (ESM, no jQuery). Use this to manually verify the new core API:
+  - Imports `createPublicApi` and `CORE_EVENTS` from `packages/core/src/index.js`.
+  - Buttons call `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
+  - Logs core events; includes an optional jQuery bridge that maps core events to `touchspin.on.*` on the input for parity checks.
+  - Note: start/stop spin currently emit events but do not auto-repeat values (timed spin logic is pending extraction).
+
 ### Memory Management
 - **No document-level event handlers** (all container-scoped)
 - **Proper cleanup** on `touchspin.destroy` removes all listeners
