@@ -166,6 +166,26 @@ bower install bootstrap-touchspin
 
 ---
 
+## Build Outputs and Variants
+
+- UMD builds (choose your UI stack):
+  - `dist/jquery.bootstrap-touchspin-bs3(.min).js`
+  - `dist/jquery.bootstrap-touchspin-bs4(.min).js`
+  - `dist/jquery.bootstrap-touchspin-bs5(.min).js`
+  - `dist/jquery.bootstrap-touchspin-tailwind(.min).js`
+- CSS:
+  - `dist/jquery.bootstrap-touchspin(.min).css`
+- ESM Core (experimental):
+  - `dist/esm/touchspin.js`
+  - Note: The ESM core is a scaffold for future framework wrappers; the UMD plugin remains the single source of truth. Use the UMD builds in production unless you are experimenting with custom wrappers.
+- Dev-only ESM twin loader:
+  - `src/jquery.bootstrap-touchspin.esm.js` is used by the ESM manual page to register the classic plugin in a module context for development and tests.
+
+Publishing note: Tests load from `src/` during development. Only rebuild `dist/` at checkpoints or before publishing, and always commit `dist/` (CI verifies build integrity).
+```
+
+---
+
 ## Configuration Options
 
 | Option | Type | Default | Description |
