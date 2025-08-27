@@ -38,10 +38,10 @@ Phase B — Extract Renderers (packages/renderers)
  - [x] B4: Update the build to consume renderer packages when producing UMD variants.
 
 Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
-- [ ] C1: Implement `@touchspin/jquery-plugin` that registers `$.fn.TouchSpin`, delegating to the core.
-- [ ] C2: Preserve Command API and callable event emissions (map core events to `$(...).trigger(...)`).
-- [ ] C3: Keep modern facade appended (or re-home into this wrapper) without behavior change.
-- [ ] C4: Update build pipeline to bundle wrapper + selected renderer into UMD outputs.
+- [x] C1: Implement `@touchspin/jquery-plugin` that registers `$.fn.TouchSpin`, delegating to the core (via migrated initializer).
+- [x] C2: Preserve Command API and callable event emissions (leverages migrated initializer triggering semantics).
+- [x] C3: Keep modern facade appended (build default still appends `modern-facade`).
+- [x] C4: Update build pipeline to bundle wrapper + selected renderer into UMD outputs (guarded by `USE_JQUERY_WRAPPER=true`).
 - [ ] C5: Verify all non-visual tests pass; ensure manual pages remain unchanged.
 
 Phase D — Framework Wrappers (optional deliverables after core split)

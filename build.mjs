@@ -75,11 +75,34 @@ async function buildVersionSpecific(version, outputDir) {
 
 `;
 
+  // Optional: build using jQuery wrapper instead of legacy plugin
+  const useWrapper = String(process.env.USE_JQUERY_WRAPPER || '').toLowerCase() === 'true';
+  let wrapperPrelude = '';
+  if (useWrapper) {
+    // Read core migrated initializer and wrapper installer, strip ESM exports/imports
+    function readAsScript(p) {
+      let code = fs.readFileSync(p, 'utf-8');
+      code = code.replace(/\bexport\s+function\s+/g, 'function ');
+      code = code.replace(/\bexport\s+default\b[\s\S]*?;\s*$/m, '');
+      code = code.replace(/\bexport\s+\{[\s\S]*?\};?/g, '');
+      code = code.replace(/\bimport\s+[^;]+;\s*/g, '');
+      return code;
+    }
+    const coreInitPath = './packages/core/src/TouchSpinCore.migrated.js';
+    const wrapperPath = './packages/jquery-plugin/src/index.js';
+    if (!fs.existsSync(coreInitPath) || !fs.existsSync(wrapperPath)) {
+      throw new Error('Wrapper build requested but required sources are missing');
+    }
+    const coreInit = readAsScript(coreInitPath);
+    const wrapperInstall = readAsScript(wrapperPath);
+    wrapperPrelude = `\n// Wrapper-based plugin registration (core initializer + wrapper)\n(function(){\n'use strict';\n${coreInit}\n${wrapperInstall}\nif (typeof window !== 'undefined' && window.jQuery) { installJqueryTouchSpin(window.jQuery); }\n})();\n`;
+  }
+
   // Build with version-specific renderer (packages/renderers/*)
   await build({
     build: {
       lib: {
-        entry: resolve('src/jquery.bootstrap-touchspin.js'),
+        entry: resolve(useWrapper ? 'src/entry-wrapper.js' : 'src/jquery.bootstrap-touchspin.js'),
         formats: ['umd'],
         name: 'TouchSpin',
         fileName: () => fileName
@@ -88,7 +111,7 @@ async function buildVersionSpecific(version, outputDir) {
         external: ['jquery'],
         output: {
           globals: { jquery: 'jQuery' },
-          banner: banner + '\n' + rendererCode
+          banner: banner + '\n' + rendererCode + (useWrapper ? wrapperPrelude : '')
         }
       },
       outDir: outputDir,
