@@ -134,15 +134,18 @@ export function installJqueryTouchSpin($) {
         if (code === 38 || code === 40) { inst.stopSpin(); __dir = false; }
       });
 
-      // Mouse wheel interaction
+      // Mouse wheel interaction (requires focus, like the original src)
       $input.on('wheel.touchspin', (ev) => {
         const e = ev.originalEvent || ev;
         // Support legacy wheelDelta (positive up) and deltaY (negative up)
         const wheelDelta = typeof e.wheelDelta === 'number' ? e.wheelDelta : 0;
         const deltaY = typeof e.deltaY === 'number' ? e.deltaY : 0;
         const up = wheelDelta > 0 || deltaY < 0;
-        if (up) inst.upOnce(); else inst.downOnce();
-        ev.preventDefault();
+        // Only act if the input is focused to match source-of-truth behavior
+        if (document.activeElement === $input[0]) {
+          if (up) inst.upOnce(); else inst.downOnce();
+          ev.preventDefault();
+        }
       });
 
       // Container focusout: stop spin and sanitize when leaving the widget
