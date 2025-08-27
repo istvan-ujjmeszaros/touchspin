@@ -1360,10 +1360,44 @@ function installModernFacade($) {
   }
 }
 
-// Auto-install if jQuery is on window (manual pages only)
+// Auto-install if jQuery is on window, with a short retry loop in case the
+// plugin registers asynchronously (ESM twin scenario in manual pages).
+let __tsModernFacadeAutoTimer = null;
+let __tsModernFacadeInstalled = false;
+function tryAutoInstall() {
+  try {
+    if (typeof window === 'undefined') return done();
+    const $ = window.jQuery;
+    if (!$) return schedule();
+    if ($.fn && typeof $.fn.TouchSpin === 'function') {
+      installModernFacade($);
+      // Check whether Element.prototype.TouchSpin is now present
+      const _Element = (typeof globalThis !== 'undefined' && /** @type {any} */ (globalThis).Element) || undefined;
+      if (_Element && _Element.prototype && _Element.prototype.TouchSpin) return done();
+    }
+    schedule();
+  } catch {
+    schedule();
+  }
+}
+
+let __tries = 0;
+const __maxTries = 60; // ~3s at 50ms per try
+function schedule() {
+  if (__tries++ > __maxTries) return done();
+  __tsModernFacadeAutoTimer = setTimeout(tryAutoInstall, 50);
+}
+function done() {
+  if (__tsModernFacadeAutoTimer) {
+    clearTimeout(__tsModernFacadeAutoTimer);
+    __tsModernFacadeAutoTimer = null;
+  }
+  __tsModernFacadeInstalled = true;
+}
+
 try {
-  if (typeof window !== 'undefined' && window.jQuery) {
-    installModernFacade(window.jQuery);
+  if (typeof window !== 'undefined') {
+    tryAutoInstall();
   }
 } catch {}
 
