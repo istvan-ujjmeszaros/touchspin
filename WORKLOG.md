@@ -4,11 +4,11 @@ Purpose
 - Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_PLAN.md` (strategy) and `TODO_CHECKLIST.md` (current verifiable tasks).
 
 Resume Block (single source of truth)
-- Current checkpoint tag: LGTM-6
-- Current focus: Pause for review or begin planning core extraction (optional). Current UMD remains the single source; WeakMap store available for future flip; wrappers remain external for manual pages.
+- Current checkpoint tag: LGTM-7a
+- Current focus: Wrapper-first extraction. Modern facade wrapper added and loaded only in manual pages; no behavior change. Current UMD remains the single source; WeakMap store available for future flip.
 - Completed verification summary: Theme 1/1.5/2/3/4 complete per scope; modern facade available; command API maps to internals; WeakMap mirror added; tests green; dist updated at each checkpoint.
 - Next manual verification: Optional spot check of bridge + ESM pages; no regressions expected.
-- Next checkpoint: If proceeding to extraction, define LGTM-7 milestones; otherwise proceed to docs sweep (README outputs section) and close.
+- Next checkpoint: LGTM-7b — add build footer hook (disabled by default) to optionally append wrappers; then verify, update docs.
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
