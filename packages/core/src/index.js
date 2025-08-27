@@ -264,11 +264,7 @@ export class TouchSpinCore {
 
     // Clear previous timers
     this._clearSpinTimers();
-
-    // Immediate one step with booster tracking
-    this._spinStep(dir);
-
-    // Schedule repeat after delay, then at interval
+    // Schedule repeat after delay, then at interval (no immediate step; wrapper triggers first step)
     const delay = this.settings.stepintervaldelay || 500;
     const interval = this.settings.stepinterval || 100;
     this._spinDelayTimeout = setTimeout(() => {

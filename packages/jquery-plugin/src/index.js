@@ -91,18 +91,56 @@ export function installJqueryTouchSpin($) {
         unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
       });
 
-      // Wire buttons if present
+      // Wire buttons if present (match src: immediate once, then start spin)
       if (elements && elements.up && elements.up.length) {
-        elements.up.on('click.touchspin', () => inst.upOnce());
-        // Hold-to-spin (up)
-        elements.up.on('mousedown.touchspin touchstart.touchspin', (e) => { e.preventDefault(); inst.startUpSpin(); });
-        elements.up.on('mouseup.touchspin mouseleave.touchspin touchend.touchspin touchcancel.touchspin', () => inst.stopSpin());
+        elements.up.on('mousedown.touchspin', (e) => {
+          if ($input.is(':disabled') || $input.is('[readonly]')) return;
+          inst.upOnce();
+          inst.startUpSpin();
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        elements.up.on('touchstart.touchspin', (e) => {
+          if ($input.is(':disabled') || $input.is('[readonly]')) return;
+          inst.upOnce();
+          inst.startUpSpin();
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', (e) => {
+          inst.stopSpin();
+          e.stopPropagation();
+        });
+        elements.up.on('mousemove.touchspin touchmove.touchspin', (e) => {
+          if (!$input.data('touchspinInternal')) return;
+          e.stopPropagation();
+          e.preventDefault();
+        });
       }
       if (elements && elements.down && elements.down.length) {
-        elements.down.on('click.touchspin', () => inst.downOnce());
-        // Hold-to-spin (down)
-        elements.down.on('mousedown.touchspin touchstart.touchspin', (e) => { e.preventDefault(); inst.startDownSpin(); });
-        elements.down.on('mouseup.touchspin mouseleave.touchspin touchend.touchspin touchcancel.touchspin', () => inst.stopSpin());
+        elements.down.on('mousedown.touchspin', (e) => {
+          if ($input.is(':disabled') || $input.is('[readonly]')) return;
+          inst.downOnce();
+          inst.startDownSpin();
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        elements.down.on('touchstart.touchspin', (e) => {
+          if ($input.is(':disabled') || $input.is('[readonly]')) return;
+          inst.downOnce();
+          inst.startDownSpin();
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', (e) => {
+          inst.stopSpin();
+          e.stopPropagation();
+        });
+        elements.down.on('mousemove.touchspin touchmove.touchspin', (e) => {
+          if (!$input.data('touchspinInternal')) return;
+          e.stopPropagation();
+          e.preventDefault();
+        });
       }
 
       // Callable events
@@ -113,7 +151,7 @@ export function installJqueryTouchSpin($) {
       $input.on('touchspin.stopspin', () => inst.stopSpin());
       $input.on('touchspin.updatesettings', (e, o) => inst.updateSettings(o || {}));
 
-      // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes)
+      // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes) — requires focus
       let __dir = false;
       $input.on('keydown.touchspin', (ev) => {
         const e = ev.originalEvent || ev;
