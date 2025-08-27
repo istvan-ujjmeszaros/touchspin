@@ -219,6 +219,21 @@ async function buildAll() {
     if (minified.map) {
       fs.writeFileSync(`./${outputDir}/${baseName}.min.js.map`, minified.map);
     }
+
+    // Write alias filenames with the future naming scheme
+    // Example: jquery.bootstrap-touchspin-bs5.js -> touchspin.jquery.bs5.js
+    try {
+      const m = /jquery\.bootstrap-touchspin-(bs\d+|tailwind)$/i.exec(baseName);
+      if (m) {
+        const suffix = m[1];
+        const aliasBase = `touchspin.jquery.${suffix}`;
+        fs.writeFileSync(`./${outputDir}/${aliasBase}.js`, content);
+        fs.writeFileSync(`./${outputDir}/${aliasBase}.min.js`, minified.code);
+        if (minified.map) {
+          fs.writeFileSync(`./${outputDir}/${aliasBase}.min.js.map`, minified.map);
+        }
+      }
+    } catch {}
   }
 
   console.log('🎨 Processing CSS...');
@@ -243,6 +258,12 @@ async function buildAll() {
   console.log('📦 Building ESM core bundle...');
   await buildEsmCore(outputDir);
   console.log('✅ ESM core built at', `${outputDir}/esm/touchspin.js`);
+  // Alias ESM core for future naming (touchspin-core.js)
+  try {
+    const src = `${outputDir}/esm/touchspin.js`;
+    const dst = `${outputDir}/esm/touchspin-core.js`;
+    if (fs.existsSync(src)) fs.copyFileSync(src, dst);
+  } catch {}
 
   console.log('✅ Build completed successfully!');
   console.log('📦 Generated files:');
