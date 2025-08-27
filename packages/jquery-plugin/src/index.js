@@ -54,15 +54,15 @@ export function installJqueryTouchSpin($) {
       try { if ($input.data('touchspinInternal')) teardown($input); } catch {}
       const opts = $.extend({}, DEFAULTS, options || {});
 
-      // Build UI via RendererFactory
+      // Optional UI via RendererFactory; if absent, run core-only with no wrapper UI
       /* global RendererFactory */
-      if (!window.RendererFactory) throw new Error('RendererFactory not found');
-      const renderer = window.RendererFactory.createRenderer($, opts, $input);
-      const container = renderer.buildInputGroup();
-      const elements = renderer.initElements(container);
-
-      // Hide empty prefix/postfix initially
-      try { renderer.hideEmptyPrefixPostfix(); } catch {}
+      let elements = { up: null, down: null };
+      if (typeof window !== 'undefined' && window.RendererFactory) {
+        const renderer = window.RendererFactory.createRenderer($, opts, $input);
+        const container = renderer.buildInputGroup();
+        elements = renderer.initElements(container);
+        try { renderer.hideEmptyPrefixPostfix(); } catch {}
+      }
 
       // Create core API
       const inst = createPublicApi(/** @type {HTMLInputElement} */ ($input[0]), opts);
@@ -86,9 +86,9 @@ export function installJqueryTouchSpin($) {
         unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
       });
 
-      // Wire buttons
-      if (elements.up && elements.up.length) elements.up.on('click.touchspin', () => inst.upOnce());
-      if (elements.down && elements.down.length) elements.down.on('click.touchspin', () => inst.downOnce());
+      // Wire buttons if present
+      if (elements && elements.up && elements.up.length) elements.up.on('click.touchspin', () => inst.upOnce());
+      if (elements && elements.down && elements.down.length) elements.down.on('click.touchspin', () => inst.downOnce());
 
       // Callable events
       $input.on('touchspin.uponce', () => inst.upOnce());

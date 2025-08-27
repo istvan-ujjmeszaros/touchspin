@@ -75,7 +75,7 @@
     }
 
     function init() {
-      if (api) return;
+      if (api) { try { destroy(); } catch {} }
       api = createPublicApi(input, { min: 0, max: 100, step: 1 });
       subEvents(api);
       status.textContent = 'Initialized (min 0, max 100, step 1)';
@@ -109,4 +109,3 @@
   </script>
 </body>
 </html>
-

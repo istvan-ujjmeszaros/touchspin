@@ -3,108 +3,102 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TouchSpin jQuery Plugin Smoke Test (Source)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>TouchSpin jQuery Plugin Smoke Test (Core-only, same as core-smoke)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-    .control-buttons { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; }
-    .status { margin: 10px 0; padding: 10px; background-color: #f8f9fa; border-radius: 3px; }
+    .control-buttons button { margin: 4px; }
     pre { background:#f8f9fa; padding:10px; }
   </style>
 </head>
 <body>
-  <div class="container mt-4">
-    <h1>TouchSpin jQuery Plugin Smoke Test</h1>
-    <p>Tests the wrapper-based plugin initialized from source files.</p>
+  <div class="max-w-3xl mx-auto mt-6">
+    <h1 class="text-2xl font-semibold">TouchSpin jQuery Plugin Smoke Test</h1>
+    <p class="text-gray-700">Core-only behavior via jQuery wrapper; no renderer. Matches core-smoke.</p>
 
     <div class="test-section">
-      <h3>Plugin</h3>
-      <div class="form-group">
-        <label for="jq-input">Input:</label>
-        <input id="jq-input" type="text" value="7" class="form-control" />
+      <div class="mb-2">
+        <label for="jq-input" class="block mb-1 font-medium">Numeric input:</label>
+        <input id="jq-input" type="text" value="10" class="w-full border rounded px-2 py-2" />
       </div>
       <div class="control-buttons">
-        <button id="jq-init" class="btn btn-primary">Init $.fn.TouchSpin</button>
-        <button id="jq-destroy" class="btn btn-danger">Destroy</button>
-        <button id="jq-reinit" class="btn btn-success">Reinit different settings</button>
+        <button id="btn-init" class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Init</button>
+        <button id="btn-destroy" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">Destroy</button>
+        <button id="btn-reinit" class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">Reinit (different)</button>
       </div>
       <div class="control-buttons">
-        <button data-jq-evt="touchspin.uponce" class="btn btn-outline-secondary">evt: uponce</button>
-        <button data-jq-evt="touchspin.downonce" class="btn btn-outline-secondary">evt: downonce</button>
-        <button data-jq-evt="touchspin.startupspin" class="btn btn-outline-secondary">evt: startupspin</button>
-        <button data-jq-evt="touchspin.startdownspin" class="btn btn-outline-secondary">evt: startdownspin</button>
-        <button data-jq-evt="touchspin.stopspin" class="btn btn-outline-secondary">evt: stopspin</button>
-        <button id="jq-update" class="btn btn-outline-secondary">evt: updatesettings {step:10}</button>
+        <button id="btn-uponce" class="px-3 py-2 border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 rounded">upOnce()</button>
+        <button id="btn-downonce" class="px-3 py-2 border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 rounded">downOnce()</button>
+        <button id="btn-startup" class="px-3 py-2 border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 rounded">startUpSpin()</button>
+        <button id="btn-startdown" class="px-3 py-2 border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 rounded">startDownSpin()</button>
+        <button id="btn-stop" class="px-3 py-2 border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 rounded">stopSpin()</button>
+        <button id="btn-get" class="px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded">getValue()</button>
+        <button id="btn-set" class="px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded">setValue(64)</button>
+        <button id="btn-update" class="px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded">updateSettings({ step: 10 })</button>
       </div>
-      <div class="control-buttons">
-        <button id="jq-get" class="btn btn-outline-primary">API: get</button>
-        <button id="jq-set" class="btn btn-outline-primary">API: set 64</button>
-      </div>
-      <div class="mt-2"><strong>Plugin Status:</strong> <span id="jq-status">Not initialized</span></div>
-      <h5 class="mt-3">Events</h5>
-      <pre id="jq-log"></pre>
+      <div class="mt-2"><strong>Status:</strong> <span id="status">Not initialized</span></div>
+      <h5 class="mt-3 font-medium">Events</h5>
+      <pre id="log"></pre>
     </div>
   </div>
 
-  <!-- jQuery and Bootstrap JS -->
+  <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Renderer (Bootstrap 4) from packages, then provide a RendererFactory -->
-  <script src="../../packages/renderers/bootstrap4/src/AbstractRenderer.js"></script>
-  <script src="../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js"></script>
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) { return new Bootstrap4Renderer($, settings, originalinput); }
-      static getFrameworkId() { return 'bootstrap4'; }
-    };
-  </script>
-
-  <!-- Install the jQuery plugin wrapper from source (new core) -->
+  <!-- Install the jQuery plugin wrapper (core-based) -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     installJqueryTouchSpin(window.jQuery);
+  </script>
 
-    const $ = window.jQuery;
-    const $jq = $('#jq-input');
-    const jqLog = document.getElementById('jq-log');
-    const jqStatus = document.getElementById('jq-status');
-    function addJq(msg) {
-      const ts = new Date().toISOString().split('T')[1].replace('Z','');
-      jqLog.textContent += `[${ts}] ${msg}\n`;
-      jqLog.scrollTop = jqLog.scrollHeight;
-    }
-    // bind plugin events
-    const evs = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
-    $jq.on(evs, function(e){ addJq('jq:' + e.type); });
+  <script>
+    (function(){
+      const $ = window.jQuery;
+      const $input = $('#jq-input');
+      const status = document.getElementById('status');
+      const log = document.getElementById('log');
+      function addLog(msg) {
+        const ts = new Date().toISOString().split('T')[1].replace('Z','');
+        log.textContent += `[${ts}] ${msg}\n`;
+        log.scrollTop = log.scrollHeight;
+      }
 
-    document.getElementById('jq-init').addEventListener('click', () => {
-      $jq.TouchSpin({ min: 10, max: 200, step: 5, prefix: '$', postfix: '.00' });
-      jqStatus.textContent = 'Initialized (min 10, max 200, step 5, $/.00)';
-    });
-    document.getElementById('jq-destroy').addEventListener('click', () => {
-      $jq.trigger('touchspin.destroy');
-      jqStatus.textContent = 'Destroyed';
-    });
-    document.getElementById('jq-reinit').addEventListener('click', () => {
-      $jq.TouchSpin({ min: 3, max: 60, step: 3, prefix: '€', postfix: ' EUR' });
-      jqStatus.textContent = 'Reinitialized (min 3, max 60, step 3, €/EUR)';
-    });
-    document.getElementById('jq-update').addEventListener('click', () => {
-      $jq.trigger('touchspin.updatesettings', [{ step: 10 }]);
-      addJq('jq: updatesettings {step:10}');
-    });
-    document.querySelectorAll('[data-jq-evt]').forEach(btn => {
-      btn.addEventListener('click', () => { $jq.trigger(btn.getAttribute('data-jq-evt')); });
-    });
-    document.getElementById('jq-get').addEventListener('click', () => {
-      const v = $jq.TouchSpin('get');
-      addJq('API get => ' + v);
-    });
-    document.getElementById('jq-set').addEventListener('click', () => {
-      $jq.TouchSpin('set', 64);
-    });
+      // Normalize jQuery plugin events to core-like labels for parity
+      const evs = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
+      $input.on(evs, function(e){
+        const name = String(e.type).replace('touchspin.on.','');
+        addLog('core:' + name);
+      });
+
+      function init() {
+        // Always fresh init like core page
+        try { destroy(); } catch {}
+        $input.TouchSpin({ min: 0, max: 100, step: 1 });
+        status.textContent = 'Initialized (min 0, max 100, step 1)';
+      }
+      function destroy() {
+        $input.trigger('touchspin.destroy');
+        status.textContent = 'Destroyed';
+      }
+
+      document.getElementById('btn-init').addEventListener('click', init);
+      document.getElementById('btn-destroy').addEventListener('click', destroy);
+      document.getElementById('btn-reinit').addEventListener('click', () => {
+        destroy();
+        $input.TouchSpin({ min: 5, max: 50, step: 5 });
+        status.textContent = 'Reinitialized (min 5, max 50, step 5)';
+      });
+
+      document.getElementById('btn-uponce').addEventListener('click', () => $input.TouchSpin('uponce'));
+      document.getElementById('btn-downonce').addEventListener('click', () => $input.TouchSpin('downonce'));
+      document.getElementById('btn-startup').addEventListener('click', () => $input.TouchSpin('startupspin'));
+      document.getElementById('btn-startdown').addEventListener('click', () => $input.TouchSpin('startdownspin'));
+      document.getElementById('btn-stop').addEventListener('click', () => $input.TouchSpin('stopspin'));
+      document.getElementById('btn-get').addEventListener('click', () => addLog('getValue()=' + $input.TouchSpin('get')));
+      document.getElementById('btn-set').addEventListener('click', () => $input.TouchSpin('set', 64));
+      document.getElementById('btn-update').addEventListener('click', () => $input.trigger('touchspin.updatesettings', [{ step: 10 }]));
+    })();
   </script>
 </body>
 </html>
+

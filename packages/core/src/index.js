@@ -70,8 +70,9 @@ export class TouchSpinCore {
     /** @type {Map<string, Set<Function>>} */
     this._events = new Map();
 
-    // Initialize ARIA attributes immediately so init reflects state in DOM
+    // Initialize ARIA attributes and sanitize display immediately
     this._updateAriaAttributes();
+    this._checkValue(false);
   }
 
   /** Increment once according to step */
@@ -142,6 +143,7 @@ export class TouchSpinCore {
   updateSettings(opts) {
     this.settings = Object.assign({}, this.settings, opts || {});
     this._updateAriaAttributes();
+    this._checkValue(false);
   }
 
   /** @returns {number} */
