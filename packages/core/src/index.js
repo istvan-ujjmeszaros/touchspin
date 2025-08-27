@@ -7,11 +7,29 @@
  */
 
 /**
+ * @typedef {'none'|'floor'|'round'|'ceil'} ForceStepDivisibility
+ */
+
+/**
+ * @callback TouchSpinCalcCallback
+ * @param {string} value
+ * @returns {string}
+ */
+
+/**
  * @typedef {Object} TouchSpinCoreOptions
  * @property {number|null=} min
  * @property {number|null=} max
  * @property {number=} step
  * @property {number=} decimals
+ * @property {ForceStepDivisibility=} forcestepdivisibility
+ * @property {number=} stepinterval
+ * @property {number=} stepintervaldelay
+ * @property {boolean=} booster
+ * @property {number=} boostat
+ * @property {number|false=} maxboostedstep
+ * @property {TouchSpinCalcCallback=} callback_before_calculation
+ * @property {TouchSpinCalcCallback=} callback_after_calculation
  * @property {import('./renderer-interface.js').TSRenderer=} renderer  // future DOM renderer
  */
 
@@ -20,6 +38,14 @@ const DEFAULTS = {
   max: 100,
   step: 1,
   decimals: 0,
+  forcestepdivisibility: 'round',
+  stepinterval: 100,
+  stepintervaldelay: 500,
+  booster: true,
+  boostat: 10,
+  maxboostedstep: false,
+  callback_before_calculation: (v) => v,
+  callback_after_calculation: (v) => v,
 };
 
 export class TouchSpinCore {
@@ -37,37 +63,40 @@ export class TouchSpinCore {
     this.settings = Object.assign({}, DEFAULTS, opts);
     /** @type {boolean} */
     this.spinning = false;
+    /** @type {number} */
+    this.spincount = 0;
   }
 
   /** Increment once according to step */
   upOnce() {
     const v = this.getValue();
-    const step = this.settings.step || 1;
-    const next = (isFinite(v) ? v : 0) + step;
-    this.setValue(next);
+    const next = this._nextValue('up', v);
+    this._setDisplay(next, true);
   }
 
   /** Decrement once according to step */
   downOnce() {
     const v = this.getValue();
-    const step = this.settings.step || 1;
-    const next = (isFinite(v) ? v : 0) - step;
-    this.setValue(next);
+    const next = this._nextValue('down', v);
+    this._setDisplay(next, true);
   }
 
   /** Start increasing repeatedly (placeholder) */
   startUpSpin() {
     this.spinning = true;
+    this.spincount++;
   }
 
   /** Start decreasing repeatedly (placeholder) */
   startDownSpin() {
     this.spinning = true;
+    this.spincount++;
   }
 
   /** Stop spinning (placeholder) */
   stopSpin() {
     this.spinning = false;
+    this.spincount = 0;
   }
 
   /**
@@ -75,12 +104,15 @@ export class TouchSpinCore {
    */
   updateSettings(opts) {
     this.settings = Object.assign({}, this.settings, opts || {});
+    this._updateAriaAttributes();
   }
 
   /** @returns {number} */
   getValue() {
     const raw = this.input.value;
-    const num = parseFloat(raw);
+    if (raw === '') return NaN;
+    const before = this.settings.callback_before_calculation || ((v) => v);
+    const num = parseFloat(before(String(raw)));
     return isNaN(num) ? NaN : num;
   }
 
@@ -88,12 +120,140 @@ export class TouchSpinCore {
    * @param {number|string} v
    */
   setValue(v) {
-    this.input.value = String(v);
+    if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+    const parsed = Number(v);
+    if (!isFinite(parsed)) return;
+    const adjusted = this._applyConstraints(parsed);
+    this._setDisplay(adjusted, true);
   }
 
   /** Cleanup (placeholder) */
   destroy() {
     this.stopSpin();
+  }
+
+  /**
+   * Compute the next numeric value for a direction, respecting step, booster and bounds.
+   * @param {'up'|'down'} dir
+   * @param {number} current
+   */
+  _nextValue(dir, current) {
+    let v = current;
+    if (isNaN(v)) {
+      v = this._valueIfIsNaN();
+    } else {
+      const step = this._getBoostedStep();
+      v = dir === 'up' ? v + step : v - step;
+    }
+    return this._applyConstraints(v);
+  }
+
+  /** Returns a reasonable value to use when current is NaN. */
+  _valueIfIsNaN() {
+    if (this.settings.min != null) return this.settings.min;
+    if (this.settings.max != null) return this.settings.max;
+    return 0;
+  }
+
+  /** Apply step divisibility and clamp to min/max. */
+  _applyConstraints(v) {
+    const aligned = this._forcestepdivisibility(v);
+    const min = this.settings.min;
+    const max = this.settings.max;
+    let clamped = aligned;
+    if (min != null && clamped < min) clamped = min;
+    if (max != null && clamped > max) clamped = max;
+    return clamped;
+  }
+
+  /** Determine the effective step with booster if enabled. */
+  _getBoostedStep() {
+    const step = this.settings.step || 1;
+    if (!this.settings.booster) return step;
+    const boostat = this.settings.boostat || 0;
+    if (this.spincount < boostat) return step;
+    const mbs = this.settings.maxboostedstep;
+    // Simplified booster: double step every 10 spins until maxboostedstep
+    const factor = Math.max(1, Math.floor(this.spincount / 10));
+    let boosted = step * Math.pow(2, factor - 1);
+    if (mbs && isFinite(mbs)) boosted = Math.min(boosted, Number(mbs));
+    return boosted;
+  }
+
+  /** Aligns value to step per forcestepdivisibility. */
+  _forcestepdivisibility(val) {
+    const mode = this.settings.forcestepdivisibility || 'round';
+    const step = this.settings.step || 1;
+    switch (mode) {
+      case 'none':
+        return val;
+      case 'floor':
+        return this._alignToStep(val, step, 'down');
+      case 'ceil':
+        return this._alignToStep(val, step, 'up');
+      case 'round':
+      default:
+        // choose closest step; ties round up
+        const down = this._alignToStep(val, step, 'down');
+        const up = this._alignToStep(val, step, 'up');
+        return (Math.abs(val - down) <= Math.abs(up - val)) ? down : up;
+    }
+  }
+
+  /** Aligns a value to nearest step boundary using integer arithmetic. */
+  _alignToStep(val, step, dir) {
+    if (step === 0) return val;
+    let k = 1, s = step;
+    while (((s * k) % 1) !== 0 && k < 1e6) k *= 10;
+    const V = Math.round(val * k);
+    const S = Math.round(step * k);
+    const r = V % S;
+    if (r === 0) return val;
+    return (dir === 'down' ? (V - r) : (V + (S - r))) / k;
+  }
+
+  /** Format and write to input, optionally emit change if different. */
+  _setDisplay(num, mayTriggerChange) {
+    const prev = String(this.input.value ?? '');
+    const next = this._formatDisplay(num);
+    this.input.value = next;
+    this._updateAriaAttributes();
+    if (mayTriggerChange && prev !== next) {
+      // mirror plugin behavior: trigger a native change event
+      this.input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    return next;
+  }
+
+  _formatDisplay(num) {
+    const dec = this.settings.decimals || 0;
+    const after = this.settings.callback_after_calculation || ((v) => v);
+    const s = Number(num).toFixed(dec);
+    return after(s);
+  }
+
+  /** Sanitize current input value and update display; optionally emits change. */
+  _checkValue(mayTriggerChange) {
+    const v = this.getValue();
+    if (!isFinite(v)) return;
+    const adjusted = this._applyConstraints(v);
+    this._setDisplay(adjusted, !!mayTriggerChange);
+  }
+
+  _updateAriaAttributes() {
+    const el = this.input;
+    if (el.getAttribute('role') !== 'spinbutton') {
+      el.setAttribute('role', 'spinbutton');
+    }
+    const min = this.settings.min;
+    const max = this.settings.max;
+    if (min != null) el.setAttribute('aria-valuemin', String(min)); else el.removeAttribute('aria-valuemin');
+    if (max != null) el.setAttribute('aria-valuemax', String(max)); else el.removeAttribute('aria-valuemax');
+    const raw = el.value;
+    const before = this.settings.callback_before_calculation || ((v) => v);
+    const num = parseFloat(before(String(raw)));
+    if (isFinite(num)) el.setAttribute('aria-valuenow', String(num)); else el.removeAttribute('aria-valuenow');
+    el.setAttribute('aria-valuetext', String(raw));
   }
 }
 
