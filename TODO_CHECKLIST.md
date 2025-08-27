@@ -29,11 +29,11 @@ Phase B — Extract Renderers (packages/renderers)
   - [x] `@touchspin/renderer-bootstrap4`
   - [x] `@touchspin/renderer-bootstrap3`
   - [x] `@touchspin/renderer-tailwind`
-- [~] B2: Move `src/renderers/*` code into packages, preserving markup/classes and behavior.
+ - [x] B2: Move `src/renderers/*` code into packages, preserving markup/classes and behavior.
   - [x] B2.1: Bootstrap 5 renderer migrated (transitional copy).
-  - [ ] B2.2: Bootstrap 4 renderer migrated.
-  - [ ] B2.3: Bootstrap 3 renderer migrated.
-  - [ ] B2.4: Tailwind renderer migrated.
+  - [x] B2.2: Bootstrap 4 renderer migrated.
+  - [x] B2.3: Bootstrap 3 renderer migrated.
+  - [x] B2.4: Tailwind renderer migrated.
 - [x] B3: Expose a consistent factory or named export; document `getFrameworkId()`.
 - [ ] B4: Update the build to consume renderer packages when producing UMD variants.
 
