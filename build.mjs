@@ -126,6 +126,35 @@ async function buildAll() {
 
   // Process each built file
   const processedFiles = [];
+  // Optional: which wrappers to append after bundle (disabled by default)
+  // e.g., APPEND_WRAPPERS=modern-facade or APPEND_WRAPPERS=jquery-bridge,modern-facade
+  const appendWrappersEnv = (process.env.APPEND_WRAPPERS || '').trim();
+  const wrappersToAppend = appendWrappersEnv
+    ? appendWrappersEnv.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+    : [];
+
+  function readWrapperSource(kind) {
+    const map = {
+      'modern': 'src/wrappers/modern-facade.js',
+      'modern-facade': 'src/wrappers/modern-facade.js',
+      'jquery-bridge': 'src/wrappers/jquery-bridge.js',
+      'bridge': 'src/wrappers/jquery-bridge.js',
+    };
+    const p = map[kind];
+    if (!p || !fs.existsSync(p)) return '';
+    let code = fs.readFileSync(p, 'utf-8');
+    // Convert simple ESM exports to plain script for UMD footer use
+    code = code.replace(/\bexport\s+default\b[\s\S]*?;\s*$/m, (m) => {
+      // Drop default export line entirely
+      return '';
+    });
+    code = code.replace(/\bexport\s+function\s+/g, 'function ');
+    code = code.replace(/\bexport\s+\{[\s\S]*?\};?/g, '');
+    code = code.replace(/\bimport\s+[^;]+;\s*/g, '');
+    const header = `\n/* Appended wrapper: ${p} (via APPEND_WRAPPERS) */\n`;
+    return header + code + '\n/* End appended wrapper */\n';
+  }
+
   for (const fileName of builtFiles) {
     const jsContent = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
 
@@ -144,7 +173,17 @@ async function buildAll() {
       ]
     });
 
-    const transpiledWithBanner = `${banner}\n${transpiled.code}`;
+    let transpiledWithBanner = `${banner}\n${transpiled.code}`;
+
+    if (wrappersToAppend.length) {
+      let footer = '';
+      for (const kind of wrappersToAppend) {
+        footer += readWrapperSource(kind);
+      }
+      if (footer.trim()) {
+        transpiledWithBanner += `\n${footer}`;
+      }
+    }
     fs.writeFileSync(`./${outputDir}/${fileName}`, transpiledWithBanner);
     processedFiles.push(fileName);
   }
