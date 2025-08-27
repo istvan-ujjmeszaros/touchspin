@@ -61,10 +61,10 @@
     };
   </script>
 
-  <!-- Install the jQuery plugin wrapper from source -->
+  <!-- Install the jQuery plugin wrapper from source (new core) -->
   <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    installJqueryTouchSpin(window.jQuery);
+    import { installJqueryTouchSpinNewCore } from '../../packages/jquery-plugin/src/index.newcore.js';
+    installJqueryTouchSpinNewCore(window.jQuery);
 
     const $ = window.jQuery;
     const $jq = $('#jq-input');
@@ -108,4 +108,3 @@
   </script>
 </body>
 </html>
-
