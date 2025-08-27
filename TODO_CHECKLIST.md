@@ -21,7 +21,7 @@ Phase A — Extract Core (packages/core)
 - [x] A5: Replace residual jQuery usages in core with native APIs (renderers remain jQuery‑based for now).
 - [x] A6: Provide a minimal internal emitter that wrappers can bridge to jQuery events.
 - [x] A7: Build ESM for core (dist/esm) and export public API with method parity (`upOnce`, `downOnce`, `startUpSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
-- [ ] A8: Smoke test core via a tiny harness; wire temporary adapter so current UMD plugin can delegate for verification.
+- [x] A8: Smoke test core via a tiny harness; wire temporary adapter so current UMD plugin can delegate for verification.
 
 Phase B — Extract Renderers (packages/renderers)
 - [ ] B1: Create packages:
