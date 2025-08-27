@@ -11,6 +11,7 @@ export function installJqueryTouchSpin($) {
   const DEFAULTS = {
     min: 0,
     max: 100,
+    firstclickvalueifempty: null,
     step: 1,
     decimals: 0,
     forcestepdivisibility: 'round',

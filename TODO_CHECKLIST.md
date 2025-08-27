@@ -44,6 +44,40 @@ Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
 - [x] C4: Update build pipeline to bundle wrapper + selected renderer into UMD outputs (guarded by `USE_JQUERY_WRAPPER=true`).
 - [ ] C5: Verify all non-visual tests pass; ensure manual pages remain unchanged.
 
+Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js)
+
+Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source of truth. All current and upcoming implementations must mirror its semantics unless an intentional deviation is documented and justified.
+
+- [ ] P0: Add policy note to PRs: link to src lines when porting behavior.
+
+- Initialization & Destroy
+- [ ] P1: Init parity: event order, ARIA init, initial display, renderer defaults.
+- [ ] P2: Destroy parity: timers cleared, DOM restored, data/events removed.
+
+- Method Parity (Core behaviors)
+- [ ] P3: upOnce — clamp, min/max events, change event, boundary auto-stop.
+- [ ] P4: downOnce — clamp, min/max events, change event, boundary auto-stop.
+- [ ] P5: startUpSpin — immediate step, delay/interval, spincount, event order.
+- [ ] P6: startDownSpin — immediate step, delay/interval, spincount, event order.
+- [ ] P7: stopSpin — stopup/stopdown then stopspin, reset state.
+- [ ] P8: updateSettings — align min/max to step, ARIA sync, display sanitize.
+- [ ] P9: getValue/setValue — callbacks pre/post, disabled/readonly guards, change event.
+- [ ] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
+- [ ] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
+- [ ] P12: Boundary — auto-stop on reaching min/max during spin.
+
+- Wrapper Interaction Parity
+- [ ] P13: Hold-to-spin — mousedown/touchstart start; mouseup/touchend/mouseleave stop.
+- [ ] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
+- [ ] P15: Mousewheel — increment/decrement semantics; disabled/readonly guard.
+- [ ] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
+- [ ] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
+- [ ] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
+
+- Verification
+- [ ] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
+- [ ] P20: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
+
 Phase D — Framework Wrappers (optional deliverables after core split)
 - [ ] D1: Web Component (`@touchspin/webcomponent`): custom element; attributes map to options; emit DOM `CustomEvent`s.
 - [ ] D2: React (`@touchspin/react`): functional component; props map to options; effects manage lifecycle; expose ref methods.

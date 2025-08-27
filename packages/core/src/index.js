@@ -20,6 +20,7 @@
  * @typedef {Object} TouchSpinCoreOptions
  * @property {number|null=} min
  * @property {number|null=} max
+ * @property {number|null=} firstclickvalueifempty
  * @property {number=} step
  * @property {number=} decimals
  * @property {ForceStepDivisibility=} forcestepdivisibility
@@ -36,6 +37,7 @@
 const DEFAULTS = {
   min: 0,
   max: 100,
+  firstclickvalueifempty: null,
   step: 1,
   decimals: 0,
   forcestepdivisibility: 'round',
@@ -90,6 +92,10 @@ export class TouchSpinCore {
       if (this.settings.max != null && next === this.settings.max) this.emit('max');
       if (this.settings.min != null && next === this.settings.min) this.emit('min');
     }
+    // If we hit the max while spinning upward, stop the spin to release lock
+    if (this.spinning && this.direction === 'up' && this.settings.max != null && next === this.settings.max) {
+      this.stopSpin();
+    }
   }
 
   /** Decrement once according to step */
@@ -101,6 +107,10 @@ export class TouchSpinCore {
     if (isFinite(prevNum) && next !== prevNum) {
       if (this.settings.max != null && next === this.settings.max) this.emit('max');
       if (this.settings.min != null && next === this.settings.min) this.emit('min');
+    }
+    // If we hit the min while spinning downward, stop the spin to release lock
+    if (this.spinning && this.direction === 'down' && this.settings.min != null && next === this.settings.min) {
+      this.stopSpin();
     }
   }
 
@@ -132,6 +142,17 @@ export class TouchSpinCore {
    */
   updateSettings(opts) {
     this.settings = Object.assign({}, this.settings, opts || {});
+    // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
+    const ns = opts || {};
+    const step = Number(this.settings.step || 1);
+    if ((ns.step !== undefined || ns.min !== undefined || ns.max !== undefined) && step !== 1) {
+      if (this.settings.max != null) {
+        this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
+      }
+      if (this.settings.min != null) {
+        this.settings.min = this._alignToStep(Number(this.settings.min), step, 'up');
+      }
+    }
     this._updateAriaAttributes();
     this._checkValue(false);
   }
@@ -236,8 +257,9 @@ export class TouchSpinCore {
       this.spinning = true;
       this.direction = dir;
       this.spincount = 0;
-      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
+      // Match jQuery plugin event order: startspin then direction-specific
       this.emit('startspin');
+      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
     }
 
     // Clear previous timers
@@ -275,7 +297,17 @@ export class TouchSpinCore {
     if (isNaN(v)) {
       v = this._valueIfIsNaN();
     } else {
-      const step = this._getBoostedStep();
+      const base = this.settings.step || 1;
+      const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
+      const stepUnclamped = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+      const mbs = this.settings.maxboostedstep;
+      let step = stepUnclamped;
+      if (mbs && isFinite(mbs) && stepUnclamped > Number(mbs)) {
+        step = Number(mbs);
+        // Align current value to the boosted step grid when clamped (parity with jQuery plugin)
+        v = Math.round(v / step) * step;
+      }
+      step = Math.max(base, step);
       v = dir === 'up' ? v + step : v - step;
     }
     return this._applyConstraints(v);
@@ -283,9 +315,12 @@ export class TouchSpinCore {
 
   /** Returns a reasonable value to use when current is NaN. */
   _valueIfIsNaN() {
-    if (this.settings.min != null) return this.settings.min;
-    if (this.settings.max != null) return this.settings.max;
-    return 0;
+    if (typeof this.settings.firstclickvalueifempty === 'number') {
+      return this.settings.firstclickvalueifempty;
+    }
+    const min = (typeof this.settings.min === 'number') ? this.settings.min : 0;
+    const max = (typeof this.settings.max === 'number') ? this.settings.max : min;
+    return (min + max) / 2;
   }
 
   /** Apply step divisibility and clamp to min/max. */
@@ -301,36 +336,37 @@ export class TouchSpinCore {
 
   /** Determine the effective step with booster if enabled. */
   _getBoostedStep() {
-    const step = this.settings.step || 1;
-    if (!this.settings.booster) return step;
-    const boostat = this.settings.boostat || 0;
-    if (this.spincount < boostat) return step;
+    const base = this.settings.step || 1;
+    if (!this.settings.booster) return base;
+    const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
+    let boosted = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
     const mbs = this.settings.maxboostedstep;
-    // Booster: once above boostat, double step every 10 additional spins
-    const exp = Math.floor((this.spincount - boostat) / 10) + 1; // 1,2,3,...
-    let boosted = step * Math.pow(2, Math.max(0, exp));
-    if (mbs && isFinite(mbs)) boosted = Math.min(boosted, Number(mbs));
-    return boosted;
+    if (mbs && isFinite(mbs)) {
+      const cap = Number(mbs);
+      if (boosted > cap) boosted = cap;
+    }
+    return Math.max(base, boosted);
   }
 
   /** Aligns value to step per forcestepdivisibility. */
   _forcestepdivisibility(val) {
     const mode = this.settings.forcestepdivisibility || 'round';
     const step = this.settings.step || 1;
+    const dec = this.settings.decimals || 0;
+    let out;
     switch (mode) {
-      case 'none':
-        return val;
       case 'floor':
-        return this._alignToStep(val, step, 'down');
+        out = Math.floor(val / step) * step; break;
       case 'ceil':
-        return this._alignToStep(val, step, 'up');
+        out = Math.ceil(val / step) * step; break;
+      case 'none':
+        out = val; break;
       case 'round':
       default:
-        // choose closest step; ties round up
-        const down = this._alignToStep(val, step, 'down');
-        const up = this._alignToStep(val, step, 'up');
-        return (Math.abs(val - down) <= Math.abs(up - val)) ? down : up;
+        out = Math.round(val / step) * step; break;
     }
+    // Normalize to configured decimals without string pipeline; formatting applies later
+    return Number(out.toFixed(dec));
   }
 
   /** Aligns a value to nearest step boundary using integer arithmetic. */
