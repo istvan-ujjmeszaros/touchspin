@@ -1,0 +1,9 @@
+{
+  "name": "@touchspin/renderer-bootstrap3",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bootstrap 3 renderer for TouchSpin",
+  "license": "MIT"
+}
+

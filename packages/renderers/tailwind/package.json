@@ -1,0 +1,9 @@
+{
+  "name": "@touchspin/renderer-tailwind",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tailwind renderer for TouchSpin",
+  "license": "MIT"
+}
+

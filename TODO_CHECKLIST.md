@@ -24,13 +24,17 @@ Phase A — Extract Core (packages/core)
 - [x] A8: Smoke test core via a tiny harness; wire temporary adapter so current UMD plugin can delegate for verification.
 
 Phase B — Extract Renderers (packages/renderers)
-- [ ] B1: Create packages:
-  - [ ] `@touchspin/renderer-bootstrap5`
-  - [ ] `@touchspin/renderer-bootstrap4`
-  - [ ] `@touchspin/renderer-bootstrap3`
-  - [ ] `@touchspin/renderer-tailwind`
-- [ ] B2: Move `src/renderers/*` code into packages, preserving markup/classes and behavior.
-- [ ] B3: Expose a consistent factory or named export; document `getFrameworkId()`.
+- [x] B1: Create packages:
+  - [x] `@touchspin/renderer-bootstrap5`
+  - [x] `@touchspin/renderer-bootstrap4`
+  - [x] `@touchspin/renderer-bootstrap3`
+  - [x] `@touchspin/renderer-tailwind`
+- [~] B2: Move `src/renderers/*` code into packages, preserving markup/classes and behavior.
+  - [x] B2.1: Bootstrap 5 renderer migrated (transitional copy).
+  - [ ] B2.2: Bootstrap 4 renderer migrated.
+  - [ ] B2.3: Bootstrap 3 renderer migrated.
+  - [ ] B2.4: Tailwind renderer migrated.
+- [x] B3: Expose a consistent factory or named export; document `getFrameworkId()`.
 - [ ] B4: Update the build to consume renderer packages when producing UMD variants.
 
 Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
