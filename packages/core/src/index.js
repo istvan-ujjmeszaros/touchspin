@@ -243,8 +243,8 @@ export class TouchSpinCore {
     // Clear previous timers
     this._clearSpinTimers();
 
-    // Immediate one step
-    if (dir === 'up') this.upOnce(); else this.downOnce();
+    // Immediate one step with booster tracking
+    this._spinStep(dir);
 
     // Schedule repeat after delay, then at interval
     const delay = this.settings.stepintervaldelay || 500;
@@ -253,7 +253,7 @@ export class TouchSpinCore {
       this._spinDelayTimeout = null;
       this._spinIntervalTimer = setInterval(() => {
         if (!this.spinning || this.direction !== dir) return; // safety
-        if (dir === 'up') this.upOnce(); else this.downOnce();
+        this._spinStep(dir);
       }, interval);
     }, delay);
   }
@@ -306,9 +306,9 @@ export class TouchSpinCore {
     const boostat = this.settings.boostat || 0;
     if (this.spincount < boostat) return step;
     const mbs = this.settings.maxboostedstep;
-    // Simplified booster: double step every 10 spins until maxboostedstep
-    const factor = Math.max(1, Math.floor(this.spincount / 10));
-    let boosted = step * Math.pow(2, factor - 1);
+    // Booster: once above boostat, double step every 10 additional spins
+    const exp = Math.floor((this.spincount - boostat) / 10) + 1; // 1,2,3,...
+    let boosted = step * Math.pow(2, Math.max(0, exp));
     if (mbs && isFinite(mbs)) boosted = Math.min(boosted, Number(mbs));
     return boosted;
   }
@@ -363,6 +363,15 @@ export class TouchSpinCore {
     const after = this.settings.callback_after_calculation || ((v) => v);
     const s = Number(num).toFixed(dec);
     return after(s);
+  }
+
+  /**
+   * Perform one spin step in a direction while tracking spincount for booster.
+   * @param {'up'|'down'} dir
+   */
+  _spinStep(dir) {
+    this.spincount++;
+    if (dir === 'up') this.upOnce(); else this.downOnce();
   }
 
   /** Sanitize current input value and update display; optionally emits change. */
