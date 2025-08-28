@@ -150,6 +150,7 @@ export function installJqueryTouchSpin($) {
       $input.on('touchspin.startdownspin', () => inst.startDownSpin());
       $input.on('touchspin.stopspin', () => inst.stopSpin());
       $input.on('touchspin.updatesettings', (e, o) => inst.updateSettings(o || {}));
+      $input.on('touchspin.destroy', () => teardown($input));
 
       // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes) — requires focus
       let __dir = false;
