@@ -30,7 +30,7 @@ npm test
 ### Primary Commands
 - `npm test` - Run Playwright tests (browser-based)
 - `npm run build` - Rollup build (UMD per renderer + ESM core)
-- `npm run check-build-integrity` - **CRITICAL**: Run before commits to verify dist sync
+- `npm run check-build-integrity` - Used by a GitHub workflow, no need to run it manually
 - `npm run dev` - Local static server for manual pages/tests (no HMR)
 
 ### Testing Commands

@@ -12,7 +12,7 @@ The project uses **Rollup** as its build system:
 
 ### Primary Build Commands (Rollup-based)
 - `npm run build` - Rollup build: Rollup → Babel transpilation → Terser minification → CSS processing
-- `npm run check-build-integrity` - Verifies dist folder is properly rebuilt (required before commits)
+- `npm run check-build-integrity` - Used by a GitHub workflow, no need to run it manually
 - `npm run dev` - Local static server for manual pages/tests (no HMR)
 
 ### Legacy Build Commands (Grunt-based)
