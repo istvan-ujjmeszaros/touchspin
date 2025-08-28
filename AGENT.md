@@ -80,11 +80,13 @@ Tip (Windows/PowerShell): use `$env:PWDEBUG=1; npx playwright test` to set env v
 - **Renderers**: `src/renderers/` - Bootstrap version-specific HTML generation
 
 ### Key Files
-- `src/jquery.bootstrap-touchspin.js` - Main plugin implementation
+- **`src/jquery.bootstrap-touchspin.js`** - ⭐ **BEHAVIORAL SOURCE OF TRUTH** - Original plugin that all modern packages must replicate exactly
 - `src/jquery.bootstrap-touchspin.css` - Component styles
 - `src/renderers/AbstractRenderer.js` - Base renderer class
 - `src/renderers/Bootstrap[3|4|5]Renderer.js` - Version-specific implementations
 - `__tests__/html/index-bs[3|4|5].html` - Test fixtures for different Bootstrap versions
+
+**Critical**: The modernization goal is to extract the exact logic from `src/jquery.bootstrap-touchspin.js` into modular packages (`packages/core/`, `packages/jquery-plugin/`, etc.) while preserving identical behavior. Always reference the original source when implementing new features or fixing issues.
 
 ## Current Implementation Status
 
@@ -93,7 +95,16 @@ Tip (Windows/PowerShell): use `$env:PWDEBUG=1; npx playwright test` to set env v
 - **Memory Leak Prevention**: Container-scoped focusout handlers (eliminated 44 leaked handlers)
 - **ARIA Accessibility**: Enhanced screen reader support with aria-valuetext and proper attribute management
 - **Tab vs Enter Behavior**: Tab navigation doesn't sanitize, Enter commits and sanitizes
-- **Test Suite**: 99/104 tests passing with comprehensive coverage
+- **Test Suite**: 241/242 tests passing with comprehensive coverage
+
+### 🚨 **CRITICAL STATUS CLARIFICATION**
+**The 241/242 passing tests are testing the ORIGINAL `src/jquery.bootstrap-touchspin.js` file, NOT the modernized packages.**
+
+**Current Reality:**
+- ✅ Original plugin (`src/`) is stable and well-tested (241/242 tests pass)
+- 🚧 Modern packages (`packages/`) are in development with only manual smoke testing
+- ❌ **C5b is incomplete** - modernized packages need full test suite integration
+- 🎯 **Major work remains** to migrate test fixtures to use modern packages
 
 ### Change Event Behavior (New Implementation)
 **Fire change events for**:
@@ -163,7 +174,13 @@ container.on('focusout.touchspin', function (e) {
 - **Multiple HTML fixtures** test Bootstrap 3/4/5 compatibility
 - **Coverage collection** tracks code usage across tests
  
-Note: Existing Playwright tests and Bootstrap HTML fixtures exercise the original jQuery plugin in `src/`. New wrapper/core behavior is covered by dedicated wrapper/core tests and manual pages. Do not expect the legacy tests to reflect wrapper/core changes until we migrate fixtures to consume the new packages.
+🚨 **CRITICAL**: Existing Playwright tests (241/242) and Bootstrap HTML fixtures exercise the ORIGINAL jQuery plugin in `src/`, NOT the modernized packages. 
+
+The modernized packages (`packages/core`, `packages/jquery-plugin`, etc.) currently have only:
+- Manual smoke testing via `__tests__/html-package/` pages
+- A few wrapper-specific tests (`wrapper*.test.ts`)
+
+**MAJOR WORK REMAINING**: Migrate the full 241-test suite to also test modernized packages to ensure complete behavioral parity before the modernized version can be considered production-ready.
 
 ### Manual Pages & Harnesses
 - Legacy plugin demos (original source)
