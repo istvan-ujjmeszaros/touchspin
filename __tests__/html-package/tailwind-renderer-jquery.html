@@ -73,8 +73,7 @@
       const log = document.getElementById('log');
       function addLog(msg) {
         const ts = new Date().toISOString().split('T')[1].replace('Z','');
-        log.textContent += `[${ts}] ${msg}
-`;
+        log.textContent += `[${ts}] ${msg}\n`;
         log.scrollTop = log.scrollHeight;
       }
 

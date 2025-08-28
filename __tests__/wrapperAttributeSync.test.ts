@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Wrapper parity: attribute sync', () => {
   test('disabled/readonly stop spin and prevent changes', async ({ page }) => {
-    await page.goto('/__tests__/html/tailwind-renderer-jquery.html');
+    await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
     await page.click('#btn-init');
     await page.focus('#jq-input');
 
@@ -25,7 +25,7 @@ test.describe('Wrapper parity: attribute sync', () => {
   });
 
   test('min/max/step sync via native attrs', async ({ page }) => {
-    await page.goto('/__tests__/html/tailwind-renderer-jquery.html');
+    await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
     await page.click('#btn-init');
     await page.focus('#jq-input');
 
@@ -42,4 +42,3 @@ test.describe('Wrapper parity: attribute sync', () => {
     expect(Number(after)).toBe(Number(before) + 2);
   });
 });
-

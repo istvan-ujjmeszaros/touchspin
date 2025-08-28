@@ -142,17 +142,20 @@ container.on('focusout.touchspin', function (e) {
 Note: Existing Playwright tests and Bootstrap HTML fixtures exercise the original jQuery plugin in `src/`. New wrapper/core behavior is covered by dedicated wrapper/core tests and manual pages. Do not expect the legacy tests to reflect wrapper/core changes until we migrate fixtures to consume the new packages.
 
 ### Manual Pages & Harnesses
-- Core smoke: `__tests__/html/core-smoke.html` (ESM core only; no jQuery)
+- Legacy plugin demos (original source)
+  - Bootstrap demos: `__tests__/html/index-bs3.html`, `index-bs4.html`, `index-bs5.html` (do not modify)
+- New wrapper/core harnesses (separate folder to avoid mixing with legacy)
+  - Core smoke: `__tests__/html-package/core-smoke.html` (ESM core only; no jQuery)
   - Imports `createPublicApi` + `CORE_EVENTS` from `packages/core/src/index.js`.
   - Buttons: `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
   - Logs `CORE_EVENTS` and native `change` for clarity.
-- jQuery wrapper smoke: `__tests__/html/jquery-plugin-smoke.html` (new core-backed wrapper; no renderer)
+- jQuery wrapper smoke: `__tests__/html-package/jquery-plugin-smoke.html` (new core-backed wrapper; no renderer)
   - Installs wrapper from `packages/jquery-plugin/src/index.js`.
   - Mirrors legacy command API and logs `touchspin.on.*` (parsed from jQuery namespaces) and `change`.
-- Tailwind renderer + Core: `__tests__/html/tailwind-renderer-core.html`
+- Tailwind renderer + Core: `__tests__/html-package/tailwind-renderer-core.html`
   - Uses Tailwind renderer to build UI, then wires to core API (no jQuery plugin).
   - Logs `CORE_EVENTS` and native `change`. Includes Disabled/Readonly toggles.
-- Tailwind renderer + jQuery wrapper: `__tests__/html/tailwind-renderer-jquery.html`
+- Tailwind renderer + jQuery wrapper: `__tests__/html-package/tailwind-renderer-jquery.html`
   - Uses Tailwind renderer UI with the new core-backed jQuery wrapper.
   - Logs `touchspin.on.*` (parsed namespaces) and native `change`. Includes Disabled/Readonly toggles.
 

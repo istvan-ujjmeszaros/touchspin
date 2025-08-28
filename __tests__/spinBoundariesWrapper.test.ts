@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Wrapper: spin stops at bounds', () => {
   test('stops at max and allows downOnce', async ({ page }) => {
-    await page.goto('/__tests__/html/tailwind-renderer-jquery.html');
+    await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
 
     // Initialize with tight bounds and fast spin timings
     await page.evaluate(() => {
@@ -39,7 +39,7 @@ test.describe('Wrapper: spin stops at bounds', () => {
   });
 
   test('stops at min and allows upOnce', async ({ page }) => {
-    await page.goto('/__tests__/html/tailwind-renderer-jquery.html');
+    await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
 
     // Initialize with tight bounds and fast spin timings
     await page.evaluate(() => {
@@ -76,4 +76,3 @@ test.describe('Wrapper: spin stops at bounds', () => {
     expect(await page.inputValue('#jq-input')).toBe('1');
   });
 });
-

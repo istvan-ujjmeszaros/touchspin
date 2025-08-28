@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('A/B parity: original src vs wrapper', () => {
   test('ArrowUp once produces same events pattern and value step', async ({ page }) => {
-    await page.goto('/__tests__/html/ab-compare.html');
+    await page.goto('/__tests__/html/ab-compare.html'); // remains in legacy html for now
 
     // Init both sides
     await page.click('#orig-init');
@@ -39,4 +39,3 @@ test.describe('A/B parity: original src vs wrapper', () => {
     });
   });
 });
-

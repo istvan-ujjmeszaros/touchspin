@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Wrapper parity: keyboard and mouse wheel', () => {
   test('ArrowUp emits change and spin start/stop; wheel emits change only', async ({ page }) => {
-    await page.goto('/__tests__/html/tailwind-renderer-jquery.html');
+    await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
 
     // Init
     await page.click('#btn-init');
@@ -35,4 +35,3 @@ test.describe('Wrapper parity: keyboard and mouse wheel', () => {
     expect(Number(after)).toBeGreaterThan(Number(before));
   });
 });
-
