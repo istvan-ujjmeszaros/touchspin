@@ -110,6 +110,8 @@
       const elements = buildRenderer(opts);
       inst = createPublicApi(input, opts);
       subscribeCore(inst);
+      // Log native change like other demos
+      $input.on('change', function(){ addLog('change[' + this.value + ']'); });
       // Wire buttons once to call core
       if (elements && !wiredButtons) {
         wiredButtons = true;

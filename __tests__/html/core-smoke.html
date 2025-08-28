@@ -79,6 +79,8 @@
       api = createPublicApi(input, { min: 0, max: 100, step: 1 });
       subEvents(api);
       status.textContent = 'Initialized (min 0, max 100, step 1)';
+      // Log native change events explicitly
+      input.addEventListener('change', () => addLog('change[' + input.value + ']'));
     }
 
     function destroy() {
