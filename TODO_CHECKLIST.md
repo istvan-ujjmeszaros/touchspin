@@ -89,7 +89,7 @@ Phase D — Framework Wrappers (optional deliverables after core split)
 - [ ] D4: Examples and usage snippets for each wrapper.
 
 Phase E — Workspaces, CI, Build, Release
-- [ ] E1: Enable npm workspaces in root `package.json`; wire scripts for per‑package builds.
+- [x] E1: Enable npm workspaces in root `package.json`; wire scripts for per‑package builds.
 - [ ] E2: Refactor `build.mjs` or add per‑package builds (Vite/Rollup) for core + wrappers.
 - [ ] E3: Extend `check-build-integrity.mjs` for new aliases/package outputs.
 - [ ] E4: Versioning and publishing strategy (scoped packages), dry‑run publish, access tokens.
