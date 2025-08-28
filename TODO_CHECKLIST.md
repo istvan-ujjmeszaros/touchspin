@@ -90,10 +90,12 @@ Phase D — Framework Wrappers (optional deliverables after core split)
 
 Phase E — Workspaces, CI, Build, Release
 - [x] E1: Enable npm workspaces in root `package.json`; wire scripts for per‑package builds.
-- [ ] E2: Refactor `build.mjs` or add per‑package builds (Vite/Rollup) for core + wrappers.
-- [ ] E3: Extend `check-build-integrity.mjs` for new aliases/package outputs.
+- [ ] E2: Replace Vite with Rollup in `build.mjs` (use Rollup JS API for UMD + ESM builds; keep Babel/Terser/CSS steps).
+- [ ] E3: Extend `check-build-integrity.mjs` for Rollup outputs and new aliases/package outputs.
 - [ ] E4: Versioning and publishing strategy (scoped packages), dry‑run publish, access tokens.
 - [ ] E5: GitHub Actions: matrix build/test/publish per package.
+- [ ] E6: Remove Vite dependencies and scripts (`dev`/`preview`), delete `vite.config.js`.
+- [ ] E7: Update docs (README/CHANGELOG/AGENT.md/CLAUDE.md) to describe Rollup‑based build and remove Vite references.
 
 Phase F — Docs and Migration
 - [ ] F1: Package READMEs with install/usage/migration notes.
