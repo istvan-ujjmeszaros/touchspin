@@ -66,9 +66,12 @@
       // Normalize jQuery plugin events to core-like labels for parity
       const evs = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
       $input.on(evs, function(e){
-        const name = String(e.type).replace('touchspin.on.','');
-        addLog('core:' + name);
+        const ns = (e.namespace || '');
+        const sub = ns.replace(/^on\./, '') || e.type;
+        addLog('core:' + sub);
       });
+      // Also log change for parity with core-tailwind page
+      $input.on('change', function(){ addLog('change[' + this.value + ']'); });
 
       function init() {
         // Always fresh init like core page
@@ -101,4 +104,3 @@
   </script>
 </body>
 </html>
-
