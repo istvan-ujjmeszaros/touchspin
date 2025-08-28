@@ -1,93 +1,253 @@
-# Repository Guidelines
+# AGENT.md - Bootstrap TouchSpin Development Guide
 
-## Project Structure & Module Organization
+## Environment Setup
 
-- `src/`: Core plugin and styles
-  - `jquery.bootstrap-touchspin.js`: jQuery plugin logic (UMD, script mode)
-  - `jquery.bootstrap-touchspin.css`: Base styles
-  - `renderers/`: Adapters for UI stacks (`Bootstrap3/4/5Renderer.js`, `TailwindRenderer.js`, `RendererFactory.js`)
-- `__tests__/`: Playwright tests and fixtures
-  - `html/`: Minimal pages used by tests
-  - `visual/`: Visual regression tests + snapshots
-- `dist/`: Built artifacts (do not edit)
-- `build.mjs`, `check-build-integrity.mjs`: Build and verification scripts
+Based on the CI workflow, set up your development environment:
 
-## Build, Test, and Development Commands
+```bash
+# 1. Clone and setup
+git clone <repository-url>
+cd bootstrap-touchspin-new
 
-- Setup: `corepack enable && npm ci` and `npx playwright install --with-deps chromium`
-- Build: `npm run build` (writes to `dist/`)
-- Dev: `npm run dev` (serve) | Preview: `npm run preview`
-- Lint: `npm run lint` (ESLint over `src/` + scripts)
-- Tests (non-visual): `npm test` | headed: `npm run test:headed` | UI: `npm run test:ui` | report: `npm run test:report`
-- Coverage: `npm run test:coverage` | open report: `npm run coverage:open`
-- Visual: `npm run test:visual` | update: `npm run test:visual:update` | UI: `npm run test:visual:ui` | headed: `npm run test:visual:headed` | report: `npm run test:visual:report`
+# 2. Install Node.js 18+ (required)
+# Use nvm, fnm, or download from nodejs.org
 
-Note: Playwright tests load source files from `src/` directly (not `dist/`), except select visual pages that intentionally exercise built variants. Building is not required to run the non-visual suite. During local iteration, do NOT rebuild `dist/` after every change; only rebuild at phase checkpoints or right before publishing/pushing. Always commit `dist/` before push (CI integrity checks rely on it). Do not run `npm run check-build-integrity` locally — it is CI‑only and used to verify that the PR includes up‑to‑date `dist/` files.
-Tests automatically start their own local server; you do not need to run a server manually to execute `npm test`.
+# 3. Install dependencies
+npm ci
 
-## Usage: APIs
+# 4. Install Playwright browsers (required for tests)
+npx playwright install --with-deps chromium
 
-- jQuery (legacy, full back-compat):
-  - Initialize: `$("#input").TouchSpin({ min: 0, max: 100 })`
-  - Callable events: `trigger('touchspin.uponce')`, `('...downonce')`, `('...startupspin')`, `('...startdownspin')`, `('...stopspin')`, `('...updatesettings', [opts])`, `('...destroy')`
-  - Command API: `$("#input").TouchSpin('get') | ('set', 42) | ('uponce') | ('updatesettings', { step: 10 })`
-  - Facade: `$("#input").data('touchspin')` exposes methods (`upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `updateSettings`, `getValue`, `setValue`, `destroy`).
+# 5. Verify build integrity (critical before any commits)
+npm run check-build-integrity
 
-- Modern facade (no jQuery in user code, uses internals under the hood):
-  - Attach: `const inst = window.TouchSpin.attach(inputEl, opts)`
-  - Element convenience: `const inst = document.querySelector('#input').TouchSpin(opts)`
-  - Methods: `inst.upOnce()`, `inst.downOnce()`, `inst.startUpSpin()`, `inst.startDownSpin()`, `inst.stopSpin()`, `inst.updateSettings(opts)`, `inst.getValue()`, `inst.setValue(v)`, `inst.destroy()`
+# 6. Run tests to verify setup
+npm test
+```
 
-## Manual Pages
+## Build/Test Commands
 
-- Bridge page: `__tests__/html/destroy-test-bridge.html`
-  - Buttons for legacy callable events and the jQuery facade methods side by side.
+### Primary Commands
+- `npm test` - Run Playwright tests (browser-based)
+- `npm run build` - Rollup build (UMD per renderer + ESM core)
+- `npm run check-build-integrity` - Used by a GitHub workflow, no need to run it manually
+- `npm run dev` - Local static server for manual pages/tests (no HMR)
 
-- ESM page: `__tests__/html/destroy-test-esm.html`
-  - Loads renderers + plugin via ESM twin and exercises init/destroy/reinit.
-  - Includes a “Modern API” section that uses `Element.prototype.TouchSpin` without writing jQuery.
-  - Open manual pages using your IDE/editor’s built‑in server (e.g., PhpStorm) or any preferred local server. No manual use of `scripts/serve.mjs` is required.
+### Testing Commands
+- `npm run test:headed` - Run tests with visible browser
+- `npm run test:ui` - Run tests with Playwright UI
+- `npm run test:playwright` - Run Playwright browser tests specifically
+- `npm run test:json` - Run tests with JSON reporter to `reports/json/last.json`
+- `npm run test:json:tailwind` - Tailwind-only tests to `reports/json/tailwind.json`
+- `npm run test:debug` - Open Playwright Inspector (step-by-step) for any tests (pass patterns after `--`)
+- `npm run test:debug:tailwind` - Inspector for Tailwind tests only
+- JSON report: `npm run test:json` (saves to `reports/json/last.json`)
+- Tailwind JSON: `npm run test:json:tailwind`
 
-## Behavior Notes
+#### Debug failures with JSON output
+To capture machine-readable results and a quick failure summary:
 
-- Focusout/Enter sanitation: Leaving the widget (container `focusout.touchspin`) or pressing Enter commits and sanitizes via `_checkValue(true)`, which applies `_forcestepdivisibility`, clamps to min/max, updates display through `_setDisplay`, and emits a single `change` only if the display value actually changes.
-- Where to verify: Use both manual pages to test typing arbitrary values, tabbing out, and pressing Enter. Confirm that spinners stop, values sanitize once, and no duplicate `change` events fire.
+```
+# All tests → JSON
+npm run test:json
 
-Accessibility specifics
-- `aria-valuetext` reflects the formatted display string, including formatting from `callback_after_calculation` (e.g., currency symbols and thousand separators).
-- ARIA min/max reflect the effective, step‑aligned bounds when alignment applies. This can differ from raw `min`/`max` if the current `step` enforces alignment. Tests assert against these effective values.
+# Specific test file → JSON
+npm run test:json -- __tests__/file.test.ts
 
-## Coding Style & Naming Conventions
+# Tailwind renderer only
+npm run test:json:tailwind
 
-- Indentation: 2 spaces; LF; UTF‑8 (`.editorconfig`)
-- Quotes: single; trim trailing spaces; final newline
-- Plugin code allows legacy jQuery style (`var`, function scoping); build scripts prefer modern JS
-- Filenames: renderers end with `Renderer.js`; tests end with `.test.ts`
-- Lint config: `eslint.config.mjs` (flat config; browser + Node globals)
+# The JSON report is written to reports/json/*.json and parsed for a summary.
+```
 
-## Testing Guidelines
+#### Step-by-step debugging
+- Inspector: `npm run test:debug -- __tests__/some.test.ts` (or run with `PWDEBUG=1`). You can pause, step, and view locators.
+- Pause anywhere: add `await page.pause()` inside a test to break into the Inspector at that line.
 
-- Framework: Playwright; tests in `__tests__/` (TypeScript)
-- Visual snapshots: `__tests__/visual/*-snapshots/`; update intentionally with `test:visual:update`
-- Add HTML fixtures under `__tests__/html/` for new scenarios
-- Keep tests deterministic and focused; include renderer coverage when relevant
+Tip (Windows/PowerShell): use `$env:PWDEBUG=1; npx playwright test` to set env vars; on Bash/WSL use `PWDEBUG=1 npx playwright test`.
 
-## Commit & Pull Request Guidelines
+### Legacy Commands (fallback)
+- `npm run build:legacy` - Original Grunt build pipeline
+- `npm run check-build-integrity:legacy` - Legacy integrity check
 
-- Use Conventional-style commits where possible (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`) with clear scope
-- PRs include: description, linked issue (if any), tests, visual diffs/screenshots for UI changes, and renderer impact notes (BS3/4/5/Tailwind)
-- Run `npm run lint` and `npm test` locally before opening a PR
+## Architecture
 
-## Notes
+### Core Structure
+- **jQuery plugin** for Bootstrap 3/4/5 input spinners with UMD pattern
+- **Source**: `src/` (edit here) → **Built**: `dist/` (never edit directly)  
+- **Tests**: `__tests__/` with Playwright, helpers in `__tests__/helpers/`
+- **Build**: Rollup bundling → Babel ES5 transpilation → Terser minification
+- **Renderers**: `src/renderers/` - Bootstrap version-specific HTML generation
 
-- Active working branch: `openai/refactor`
-- Always run `npm run build` before pushing, and commit the updated `dist/` outputs. A CI workflow verifies build integrity against the committed `dist/`.
-- Do not edit `dist/` directly; all changes originate in `src/` and are built.
-- When adding a renderer, follow `src/renderers/RendererFactory.js` and include focused tests plus an HTML fixture.
+### Key Files
+- `src/jquery.bootstrap-touchspin.js` - Main plugin implementation
+- `src/jquery.bootstrap-touchspin.css` - Component styles
+- `src/renderers/AbstractRenderer.js` - Base renderer class
+- `src/renderers/Bootstrap[3|4|5]Renderer.js` - Version-specific implementations
+- `__tests__/html/index-bs[3|4|5].html` - Test fixtures for different Bootstrap versions
 
-## Fast Resume
+## Current Implementation Status
 
-- Start by reading `WORKLOG.md` (Resume Block) to see the current checkpoint and next focus.
-- Use `TODO_CHECKLIST.md` to execute the concrete verification steps.
-- High-level rationale and multi-phase plan live in `TODO_HIGHLEVEL.md`.
-- CI-only reminder: The integrity check script is not for local use; CI ensures that PRs include up-to-date `dist/` files.
+### ✅ Recently Completed (ChatGPT Review Implementation)
+- **Change Event Semantics**: Complete rework distinguishing user actions from programmatic updates
+- **Memory Leak Prevention**: Container-scoped focusout handlers (eliminated 44 leaked handlers)
+- **ARIA Accessibility**: Enhanced screen reader support with aria-valuetext and proper attribute management
+- **Tab vs Enter Behavior**: Tab navigation doesn't sanitize, Enter commits and sanitizes
+- **Test Suite**: 99/104 tests passing with comprehensive coverage
+
+### Change Event Behavior (New Implementation)
+**Fire change events for**:
+- Button spins (up/down clicks)
+- Mouse wheel interactions (when focused)
+- Enter key press (sanitizes and fires change)
+- Focusout from external actions (leaving widget completely)
+
+**Do NOT fire change for**:
+- `touchspin.updatesettings` calls (programmatic updates)
+- Tab key press (Tab navigation only, no sanitization)
+- Internal ARIA updates
+- MutationObserver syncs
+
+## Code Style & Patterns
+
+### General Guidelines
+- Follow jQuery Core Style Guide and existing patterns
+- TypeScript for tests, ES6+ in source (transpiled to ES5 for compatibility)
+- Use existing libraries - check package.json before adding dependencies
+- **Never edit dist/**, always run integrity check before commits
+- **No comments** unless explicitly requested by user
+
+### Types & JSDoc
+- Enable `@ts-check` at the top of new/edited JS files when practical.
+- Add JSDoc type definitions for public APIs, options objects, renderer interfaces, and non-trivial helpers. Keep them concise and accurate.
+- Prefer `@typedef` blocks for shared shapes (e.g., `TouchSpinOptions`, renderer interfaces) and `@returns`/`@param` on functions and methods.
+- Avoid noisy prose comments; focus on type information and brief intent. Update JSDoc alongside code changes.
+ - Core package uses TypeScript for static checking via `checkJs` (see `packages/core/tsconfig.json`). We remain JavaScript-first during Phase A–C to avoid build churn; revisit full `.ts` migration once the core stabilizes.
+
+### Test Patterns
+- Import: `import touchspinHelpers from './helpers/touchspinHelpers'` (default export)
+- Async/await for Playwright test helpers
+- Use `await expect.poll()` for async assertions with timing
+- Clear events log before tests: `await page.evaluate(() => { document.getElementById('events_log').textContent = ''; });`
+- Set values without change events: `$input.val('value')` not `fillWithValue()`
+
+### Container Focusout Architecture
+```javascript
+// New pattern - container scoped with deferred execution
+container.on('focusout.touchspin', function (e) {
+  var next = e.relatedTarget;
+  if (!leavingWidget(next)) return;
+  
+  setTimeout(function () {
+    var ae = document.activeElement;
+    if (leavingWidget(ae)) {
+      stopSpin();
+      _checkValue(true); // mayTriggerChange = true
+    }
+  }, 0);
+});
+```
+
+## Critical Development Notes
+
+### Build System
+- **Rollup** is the primary build system
+- **Babel** transpiles to ES5 targeting `> 1%, last 2 versions, ie >= 9`
+- **Terser** minifies with banner preservation
+- **Source maps** generated for both JS and CSS files
+- **Build integrity enforced** - MD5 checksums verify dist matches source
+
+- ### Testing Environment
+- **Playwright** for modern, fast browser-based testing
+- **60-second timeout** per test for stability
+- **Multiple HTML fixtures** test Bootstrap 3/4/5 compatibility
+- **Coverage collection** tracks code usage across tests
+ 
+Note: Existing Playwright tests and Bootstrap HTML fixtures exercise the original jQuery plugin in `src/`. New wrapper/core behavior is covered by dedicated wrapper/core tests and manual pages. Do not expect the legacy tests to reflect wrapper/core changes until we migrate fixtures to consume the new packages.
+
+### Manual Pages & Harnesses
+- Legacy plugin demos (original source)
+  - Bootstrap demos: `__tests__/html/index-bs3.html`, `index-bs4.html`, `index-bs5.html` (do not modify)
+- New wrapper/core harnesses (separate folder to avoid mixing with legacy)
+  - Core smoke: `__tests__/html-package/core-smoke.html` (ESM core only; no jQuery)
+  - Imports `createPublicApi` + `CORE_EVENTS` from `packages/core/src/index.js`.
+  - Buttons: `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
+  - Logs `CORE_EVENTS` and native `change` for clarity.
+- jQuery wrapper smoke: `__tests__/html-package/jquery-plugin-smoke.html` (new core-backed wrapper; no renderer)
+  - Installs wrapper from `packages/jquery-plugin/src/index.js`.
+  - Mirrors legacy command API and logs `touchspin.on.*` (parsed from jQuery namespaces) and `change`.
+- Tailwind renderer + Core: `__tests__/html-package/tailwind-renderer-core.html`
+  - Uses Tailwind renderer to build UI, then wires to core API (no jQuery plugin).
+  - Logs `CORE_EVENTS` and native `change`. Includes Disabled/Readonly toggles.
+- Tailwind renderer + jQuery wrapper: `__tests__/html-package/tailwind-renderer-jquery.html`
+  - Uses Tailwind renderer UI with the new core-backed jQuery wrapper.
+  - Logs `touchspin.on.*` (parsed namespaces) and native `change`. Includes Disabled/Readonly toggles.
+
+Note: The Bootstrap demo pages (`__tests__/html/index-bs3.html`, `index-bs4.html`, `index-bs5.html`) use the original plugin from `src/jquery.bootstrap-touchspin.js`. Do not modify these pages while extracting core/wrapper; they serve as the behavioral source-of-truth demos.
+
+### Memory Management
+- **No document-level event handlers** (all container-scoped)
+- **Proper cleanup** on `touchspin.destroy` removes all listeners
+- **MutationObserver** handles attribute changes without global listeners
+- **Event namespacing** uses `.touchspin` for easy cleanup
+
+## Common Issues & Solutions
+
+### Test Issues
+- **"Protocol error"** → Fixed with proper page lifecycle in Playwright
+- **Flaky change events** → Use `expect.poll()` for timing-dependent assertions
+- **Event contamination** → Clear events log before tests
+- **Value setting issues** → Use `$input.val()` directly, not `fillWithValue()`
+
+### Build Issues
+- **File lock errors** → Stop and manually remove locked files, don't retry
+- **Dist mismatch** → Always run `npm run check-build-integrity` before commits
+- **ES5 compatibility** → Babel handles transpilation automatically
+
+### Runtime Issues
+- **Tab vs Enter confusion** → Tab navigates only, Enter commits/sanitizes
+- **Double change events** → Check for `mayTriggerChange` parameter usage
+- **ARIA issues** → Don't force aria-valuenow=0 on empty inputs
+
+## Development Workflow
+
+1. **Before coding**: Run `npm run check-build-integrity`
+2. **Make changes**: Edit files in `src/` only, never `dist/`
+3. **Test changes**: Run `npm test` (or specific tests)
+4. **Build verification**: Run `npm run check-build-integrity`
+5. **Commit**: Git commit with proper message
+6. **Push**: Git push to feature branch
+
+### File Organization
+- **Temporary files**: Use `tmp/` folder (gitignored) for debugging
+- **Never commit**: Temporary debug files, dist modifications, or test artifacts
+- **Source of truth**: `src/` directory and test files only
+
+## Performance & Compatibility
+
+### Browser Support
+- **ES5 compatibility** via Babel transpilation
+- **Bootstrap 3, 4, 5** support via renderer system
+- **Modern browsers** + IE9+ support
+- **Touch-friendly** mobile spinner controls
+
+### Performance Features
+- **Fast builds** with Vite (HMR in development)
+- **Optimized bundles** with Rollup tree-shaking
+- **Efficient event handling** with container scoping
+- **Parallel testing** with 8 workers (can be tuned)
+
+---
+
+**Last Updated**: Based on comprehensive ChatGPT review implementation achieving 99/104 tests passing with modern change event semantics, memory leak prevention, and enhanced accessibility.
+## Progress & Resume Protocol (Agent discipline)
+
+Always keep these files up to date so any new session can resume without prior chat history:
+
+- `WORKLOG.md` (Resume Block): single source of truth for current checkpoint tag, current focus, completed summary, next checkpoint. Update this after each meaningful step and at every checkpoint.
+- `TODO_HIGHLEVEL.md`: strategy and themes. Adjust the "Current Sprint" to reflect the immediate next focus.
+- `TODO_CHECKLIST.md`: concrete, verifiable items. Maintain checkboxes after each small step — update `[ ]/[~]/[x]` immediately as work progresses; do not batch these updates. Add/adjust items as work unfolds.
+- Checkpoints: for every checkpoint (e.g., `LGTM-4`, `LGTM-5`), tag in git, run `npm run build`, and commit `dist/` along with source changes (CI integrity depends on committed `dist/`).
+- Tests: prefer running Playwright with the JSON reporter and write results to `reports/playwright/results.json`. Summarize failures to `reports/playwright/failures.json` to make machine‑readable triage easy.
+
+This protocol is mandatory for handoffs and for safe, traceable increments.
