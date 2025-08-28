@@ -70,5 +70,9 @@
     "test:visual:ui": "playwright test --project=visual-tests --ui",
     "test:visual:headed": "playwright test --project=visual-tests --headed",
     "test:visual:report": "playwright show-report reports/playwright"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "packages/renderers/*"
+  ]
 }
