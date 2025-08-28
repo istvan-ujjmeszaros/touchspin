@@ -67,12 +67,26 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
 - [ ] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
 - [ ] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
 - [ ] P12: Boundary — auto-stop on reaching min/max during spin.
+ - [x] P3: upOnce — clamp, min/max events, change event, boundary auto-stop.
+ - [x] P4: downOnce — clamp, min/max events, change event, boundary auto-stop.
+ - [x] P5: startUpSpin — event order; first step triggered by handler; timers.
+ - [x] P6: startDownSpin — event order; first step triggered by handler; timers.
+ - [x] P7: stopSpin — stopup/stopdown then stopspin; reset state.
+ - [x] P8: updateSettings — align min/max to step; ARIA sync; immediate sanitize.
+ - [x] P9: getValue/setValue — callbacks pre/post; disabled/readonly guards; change event.
+ - [x] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
+ - [x] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
+ - [x] P12: Boundary — auto-stop on reaching min/max during spin.
 
 - Wrapper Interaction Parity
 - [ ] P13: Hold-to-spin — mousedown/touchstart start; mouseup/touchend/mouseleave stop.
 - [ ] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
 - [ ] P15: Mousewheel — increment/decrement semantics; disabled/readonly guard.
 - [ ] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
+ - [x] P13: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
+ - [x] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
+ - [x] P15: Mousewheel — single step on focus; change event only.
+ - [x] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
 - [ ] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
 - [ ] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
 
