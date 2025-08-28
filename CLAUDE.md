@@ -8,13 +8,12 @@ Bootstrap TouchSpin is a jQuery plugin that provides a mobile and touch-friendly
 
 ## Build System & Development Commands
 
-The project uses **Vite** as its modern build system (with Grunt legacy support):
+The project uses **Rollup** as its build system:
 
-### Primary Build Commands (Vite-based)
-- `npm run build` - Modern Vite build: Vite → Babel transpilation → Terser minification → CSS processing
+### Primary Build Commands (Rollup-based)
+- `npm run build` - Rollup build: Rollup → Babel transpilation → Terser minification → CSS processing
 - `npm run check-build-integrity` - Verifies dist folder is properly rebuilt (required before commits)
-- `npm run dev` - Development server with hot reload
-- `npm run preview` - Preview built files locally
+- `npm run dev` - Local static server for manual pages/tests (no HMR)
 
 ### Legacy Build Commands (Grunt-based)
 - `npm run build:legacy` or `grunt default` - Original Grunt build pipeline
@@ -65,7 +64,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 ### Build Requirements
 - **Critical**: Always run `npm run check-build-integrity` before committing - this ensures dist files are properly synchronized with source changes
 - Source changes must be made in `src/`, never in `dist/`
-- The Vite build process includes ES5 transpilation via Babel for broad browser compatibility
+- The Rollup build process includes ES5 transpilation via Babel for broad browser compatibility
 - Build outputs are deterministic and checked for integrity via MD5 checksums
 - **Source Maps**: All `.map` files in `dist/` must be committed to git (use `git add -f dist/*.map` if needed to override global gitignore rules)
 - Legacy Grunt build available as fallback (`build:legacy` commands)
@@ -85,7 +84,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - Follows jQuery Core Style Guide
 - JSHint configuration in `.jshintrc` (used by legacy Grunt build)
 - ES6+ code is transpiled via Babel for ES5 compatibility
-- Development workflow with Vite provides fast builds and hot reload
+- Development workflow uses a static server (`scripts/serve.mjs`) for local testing
 
 ### Refactoring Guidelines
 - **IMPORTANT**: When refactoring involves renaming classes, methods, or files, ALWAYS ask the user to decide on the new name instead of choosing it yourself
@@ -94,8 +93,7 @@ The project uses **Vite** as its modern build system (with Grunt legacy support)
 - This ensures naming consistency with project conventions and user preferences
 
 ### Modern Build System Details
-- **Vite** for fast development and production builds
-- **Rollup** (via Vite) for efficient library bundling with tree-shaking
+- **Rollup** for library bundling with tree-shaking
 - **Babel** for ES5 transpilation targeting `> 1%, last 2 versions, ie >= 9`
 - **Terser** for JavaScript minification with banner preservation
 - **CleanCSS** for CSS minification

@@ -28,10 +28,10 @@ npm test
 ## Build/Test Commands
 
 ### Primary Commands
-- `npm test` - Run Vitest + Playwright tests (fast parallel execution)
-- `npm run build` - Modern Vite build (use this, not legacy Grunt)
+- `npm test` - Run Playwright tests (browser-based)
+- `npm run build` - Rollup build (UMD per renderer + ESM core)
 - `npm run check-build-integrity` - **CRITICAL**: Run before commits to verify dist sync
-- `npm run dev` - Development server with hot reload
+- `npm run dev` - Local static server for manual pages/tests (no HMR)
 
 ### Testing Commands
 - `npm run test:watch` - Run tests in watch mode
@@ -49,8 +49,8 @@ npm test
 ### Core Structure
 - **jQuery plugin** for Bootstrap 3/4/5 input spinners with UMD pattern
 - **Source**: `src/` (edit here) → **Built**: `dist/` (never edit directly)  
-- **Tests**: `__tests__/` with Vitest + Playwright, helpers in `__tests__/helpers/`
-- **Build**: Vite → Rollup bundling → Babel ES5 transpilation → Terser minification
+- **Tests**: `__tests__/` with Playwright, helpers in `__tests__/helpers/`
+- **Build**: Rollup bundling → Babel ES5 transpilation → Terser minification
 - **Renderers**: `src/renderers/` - Bootstrap version-specific HTML generation
 
 ### Key Files
@@ -125,16 +125,14 @@ container.on('focusout.touchspin', function (e) {
 ## Critical Development Notes
 
 ### Build System
-- **Vite** is the primary build system (fast, modern)
-- **Rollup** (via Vite) handles library bundling with tree-shaking
+- **Rollup** is the primary build system
 - **Babel** transpiles to ES5 targeting `> 1%, last 2 versions, ie >= 9`
 - **Terser** minifies with banner preservation
 - **Source maps** generated for both JS and CSS files
 - **Build integrity enforced** - MD5 checksums verify dist matches source
 
-### Testing Environment
-- **Vitest + Playwright** for modern, fast browser-based testing
-- Tests run with **8 workers** by default (parallel execution)
+- ### Testing Environment
+- **Playwright** for modern, fast browser-based testing
 - **60-second timeout** per test for stability
 - **Multiple HTML fixtures** test Bootstrap 3/4/5 compatibility
 - **Coverage collection** tracks code usage across tests

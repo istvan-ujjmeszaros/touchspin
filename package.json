@@ -36,7 +36,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@types/express": "^5.0.0",
     "@types/node": "^24.3.0",
-    "@vitejs/plugin-legacy": "^5.4.3",
+    "rollup": "^4.46.2",
     "autoprefixer": "^10.4.21",
     "c8": "^8.0.1",
     "clean-css": "^5.3.3",
@@ -50,8 +50,7 @@
     "postcss": "^8.5.6",
     "terser": "^5.43.1",
     "typescript": "^5.7.2",
-    "v8-to-istanbul": "^9.2.0",
-    "vite": "^5.4.19"
+    "v8-to-istanbul": "^9.2.0"
   },
   "scripts": {
     "test": "playwright test --project=chromium",
@@ -63,8 +62,8 @@
     "lint": "eslint src/ build.mjs check-build-integrity.mjs",
     "build": "node build.mjs",
     "check-build-integrity": "node check-build-integrity.mjs",
-    "dev": "vite",
-    "preview": "vite preview",
+    "dev": "node scripts/serve.mjs",
+    "preview": "node scripts/serve.mjs",
     "test:visual": "playwright test --project=visual-tests",
     "test:visual:update": "playwright test --project=visual-tests --update-snapshots",
     "test:visual:ui": "playwright test --project=visual-tests --ui",

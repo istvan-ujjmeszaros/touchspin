@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 Major Features
 
 #### Modern Build System
-- **Migrated from Grunt to Vite** for faster builds and modern development workflow
+- **Migrated from Grunt to Vite**, then standardized on **Rollup** for library builds (kept Babel/Terser/CSS pipeline)
 - **ES5 Transpilation**: Source code uses modern JavaScript (ES11) but distributes as ES5-compatible code
 - **Version-Specific Builds**: Generate Bootstrap 3, 4, and 5 specific builds instead of universal build
 - **Source Maps**: Complete source map support for debugging minified code

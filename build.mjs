@@ -1,4 +1,4 @@
-import { build } from 'vite';
+import { rollup } from 'rollup';
 import { resolve } from 'path';
 import fs from 'fs';
 import { minify } from 'terser';
@@ -98,28 +98,20 @@ async function buildVersionSpecific(version, outputDir) {
     wrapperPrelude = `\n// Wrapper-based plugin registration (core initializer + wrapper)\n(function(){\n'use strict';\n${coreInit}\n${wrapperInstall}\nif (typeof window !== 'undefined' && window.jQuery) { installJqueryTouchSpin(window.jQuery); }\n})();\n`;
   }
 
-  // Build with version-specific renderer (packages/renderers/*)
-  await build({
-    build: {
-      lib: {
-        entry: resolve(useWrapper ? 'src/entry-wrapper.js' : 'src/jquery.bootstrap-touchspin.js'),
-        formats: ['umd'],
-        name: 'TouchSpin',
-        fileName: () => fileName
-      },
-      rollupOptions: {
-        external: ['jquery'],
-        output: {
-          globals: { jquery: 'jQuery' },
-          banner: banner + '\n' + rendererCode + (useWrapper ? wrapperPrelude : '')
-        }
-      },
-      outDir: outputDir,
-      emptyOutDir: false,
-      sourcemap: true,
-      minify: false
-    }
+  // Build with Rollup (UMD) and inject renderer + optional wrapper prelude
+  const bundle = await rollup({
+    input: resolve(useWrapper ? 'src/entry-wrapper.js' : 'src/jquery.bootstrap-touchspin.js'),
+    external: ['jquery']
   });
+  await bundle.write({
+    file: `${outputDir}/${fileName}`,
+    format: 'umd',
+    name: 'TouchSpin',
+    sourcemap: true,
+    globals: { jquery: 'jQuery' },
+    banner: `${rendererCode}${useWrapper ? wrapperPrelude : ''}`
+  });
+  await bundle.close();
 
   return fileName;
 }
@@ -201,7 +193,7 @@ async function buildAll() {
   for (const fileName of builtFiles) {
     const jsContent = fs.readFileSync(`./${outputDir}/${fileName}`, 'utf-8');
 
-    // Remove Vite's banner temporarily
+  // Remove leading banner comment temporarily (we will re-apply our header)
     const jsWithoutBanner = jsContent.replace(/^\/\*[\s\S]*?\*\/\n?/, '');
 
     const transpiled = transformSync(jsWithoutBanner, {
@@ -317,22 +309,12 @@ buildAll().catch(console.error);
 async function buildEsmCore(outputDir) {
   const esmOut = `${outputDir}/esm`;
   if (!fs.existsSync(esmOut)) fs.mkdirSync(esmOut, { recursive: true });
-  await build({
-    build: {
-      lib: {
-        entry: resolve('src/core/TouchSpinCore.js'),
-        formats: ['es'],
-        fileName: () => 'touchspin.js',
-      },
-      rollupOptions: {
-        output: {
-          banner
-        }
-      },
-      outDir: esmOut,
-      emptyOutDir: false,
-      sourcemap: true,
-      minify: false
-    }
+  const bundle = await rollup({ input: resolve('src/core/TouchSpinCore.js') });
+  await bundle.write({
+    file: `${esmOut}/touchspin.js`,
+    format: 'es',
+    sourcemap: true,
+    banner
   });
+  await bundle.close();
 }

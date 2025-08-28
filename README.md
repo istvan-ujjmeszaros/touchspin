@@ -474,14 +474,11 @@ For specialized accessibility needs, you can add additional attributes:
 
 ### Build Process
 
-TouchSpin uses a fast Vite-based build system:
+TouchSpin uses a Rollup-based build system:
 
 ```bash
 # Install dependencies
 npm install
-
-# Development server with hot reload
-npm run dev
 
 # Production build
 npm run build
@@ -698,7 +695,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Version History
 
-**Latest: v4.7.3** - Vite build system, version-specific builds, accessibility updates
+**Latest: v4.7.3** - Rollup build system, version-specific builds, accessibility updates
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
