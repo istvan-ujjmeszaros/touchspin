@@ -140,14 +140,21 @@ container.on('focusout.touchspin', function (e) {
 - **Coverage collection** tracks code usage across tests
 
 ### Manual Pages & Harnesses
-- Core smoke: `__tests__/html/core-smoke.html` (ESM core only, Tailwind page, no jQuery)
+- Core smoke: `__tests__/html/core-smoke.html` (ESM core only; no jQuery)
   - Imports `createPublicApi` + `CORE_EVENTS` from `packages/core/src/index.js`.
   - Buttons: `upOnce`, `downOnce`, `startUpSpin`, `startDownSpin`, `stopSpin`, `getValue`, `setValue`, `updateSettings`.
-  - Logs core events. Note: start/stop spin emit events only; no auto-repeat yet.
-- jQuery plugin smoke: `__tests__/html/jquery-plugin-smoke.html` (source-based wrapper)
-  - Loads renderer from `packages/renderers/bootstrap4/src/*`, defines `window.RendererFactory`.
-  - Installs wrapper from `packages/jquery-plugin/src/index.js` and exercises the same callable events and command API as legacy plugin.
-  - Event log shows `touchspin.on.*` events; markup/classes come from the selected renderer.
+  - Logs `CORE_EVENTS` and native `change` for clarity.
+- jQuery wrapper smoke: `__tests__/html/jquery-plugin-smoke.html` (new core-backed wrapper; no renderer)
+  - Installs wrapper from `packages/jquery-plugin/src/index.js`.
+  - Mirrors legacy command API and logs `touchspin.on.*` (parsed from jQuery namespaces) and `change`.
+- Tailwind renderer + Core: `__tests__/html/tailwind-renderer-core.html`
+  - Uses Tailwind renderer to build UI, then wires to core API (no jQuery plugin).
+  - Logs `CORE_EVENTS` and native `change`. Includes Disabled/Readonly toggles.
+- Tailwind renderer + jQuery wrapper: `__tests__/html/tailwind-renderer-jquery.html`
+  - Uses Tailwind renderer UI with the new core-backed jQuery wrapper.
+  - Logs `touchspin.on.*` (parsed namespaces) and native `change`. Includes Disabled/Readonly toggles.
+
+Note: The Bootstrap demo pages (`__tests__/html/index-bs3.html`, `index-bs4.html`, `index-bs5.html`) use the original plugin from `src/jquery.bootstrap-touchspin.js`. Do not modify these pages while extracting core/wrapper; they serve as the behavioral source-of-truth demos.
 
 ### Memory Management
 - **No document-level event handlers** (all container-scoped)
