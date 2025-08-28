@@ -47,6 +47,10 @@
         <button id="btn-set" class="px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded">setValue(64)</button>
         <button id="btn-update" class="px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded">updateSettings({ step: 10 })</button>
       </div>
+      <div class="control-buttons">
+        <button id="btn-toggle-disabled" class="px-3 py-2 border border-amber-300 text-amber-800 bg-white hover:bg-amber-50 rounded">Toggle Disabled</button>
+        <button id="btn-toggle-readonly" class="px-3 py-2 border border-amber-300 text-amber-800 bg-white hover:bg-amber-50 rounded">Toggle Readonly</button>
+      </div>
       <div class="mt-2"><strong>Status:</strong> <span id="status">Not initialized</span></div>
       <h5 class="mt-3 font-medium">Events</h5>
       <pre id="log"></pre>
@@ -133,6 +137,16 @@
     document.getElementById('btn-get').addEventListener('click', () => inst && addLog('getValue()=' + inst.getValue()));
     document.getElementById('btn-set').addEventListener('click', () => inst && inst.setValue(64));
     document.getElementById('btn-update').addEventListener('click', () => inst && inst.updateSettings({ step: 10 }));
+
+    // Disable/Readonly toggles on the original input
+    document.getElementById('btn-toggle-disabled').addEventListener('click', () => {
+      const isDisabled = $input.is(':disabled');
+      $input.prop('disabled', !isDisabled);
+    });
+    document.getElementById('btn-toggle-readonly').addEventListener('click', () => {
+      const isReadonly = $input.is('[readonly]');
+      $input.prop('readonly', !isReadonly);
+    });
   </script>
 </body>
 </html>
