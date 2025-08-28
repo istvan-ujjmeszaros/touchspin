@@ -50,51 +50,37 @@ Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js
 
 Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source of truth. All current and upcoming implementations must mirror its semantics unless an intentional deviation is documented and justified.
 
-- [ ] P0: Add policy note to PRs: link to src lines when porting behavior.
+- [x] P0: Add policy note to PRs: link to src lines when porting behavior.
 
 - Initialization & Destroy
-- [ ] P1: Init parity: event order, ARIA init, initial display, renderer defaults.
-- [ ] P2: Destroy parity: timers cleared, DOM restored, data/events removed.
+- [x] P1: Init parity: event order, ARIA init, initial display, renderer defaults.
+- [x] P2: Destroy parity: timers cleared, DOM restored, data/events removed.
 
 - Method Parity (Core behaviors)
-- [ ] P3: upOnce — clamp, min/max events, change event, boundary auto-stop.
-- [ ] P4: downOnce — clamp, min/max events, change event, boundary auto-stop.
-- [ ] P5: startUpSpin — immediate step, delay/interval, spincount, event order.
-- [ ] P6: startDownSpin — immediate step, delay/interval, spincount, event order.
-- [ ] P7: stopSpin — stopup/stopdown then stopspin, reset state.
-- [ ] P8: updateSettings — align min/max to step, ARIA sync, display sanitize.
-- [ ] P9: getValue/setValue — callbacks pre/post, disabled/readonly guards, change event.
-- [ ] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
-- [ ] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
-- [ ] P12: Boundary — auto-stop on reaching min/max during spin.
- - [x] P3: upOnce — clamp, min/max events, change event, boundary auto-stop.
- - [x] P4: downOnce — clamp, min/max events, change event, boundary auto-stop.
- - [x] P5: startUpSpin — event order; first step triggered by handler; timers.
- - [x] P6: startDownSpin — event order; first step triggered by handler; timers.
- - [x] P7: stopSpin — stopup/stopdown then stopspin; reset state.
- - [x] P8: updateSettings — align min/max to step; ARIA sync; immediate sanitize.
- - [x] P9: getValue/setValue — callbacks pre/post; disabled/readonly guards; change event.
- - [x] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
- - [x] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
- - [x] P12: Boundary — auto-stop on reaching min/max during spin.
+- [x] P3: upOnce — clamp, min/max events, change event, boundary auto-stop.
+- [x] P4: downOnce — clamp, min/max events, change event, boundary auto-stop.
+- [x] P5: startUpSpin — immediate step, delay/interval, spincount, event order.
+- [x] P6: startDownSpin — immediate step, delay/interval, spincount, event order.
+- [x] P7: stopSpin — stopup/stopdown then stopspin, reset state.
+- [x] P8: updateSettings — align min/max to step, ARIA sync, display sanitize.
+- [x] P9: getValue/setValue — callbacks pre/post, disabled/readonly guards, change event.
+- [x] P10: Value pipeline — forcestepdivisibility (round/floor/ceil/none), alignToStep, decimals.
+- [x] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
+- [x] P12: Boundary — auto-stop on reaching min/max during spin.
 
 - Wrapper Interaction Parity
-- [ ] P13: Hold-to-spin — mousedown/touchstart start; mouseup/touchend/mouseleave stop.
-- [ ] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
-- [ ] P15: Mousewheel — increment/decrement semantics; disabled/readonly guard.
-- [ ] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
- - [x] P13: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
- - [x] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
- - [x] P15: Mousewheel — single step on focus; change event only.
- - [x] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
-- [ ] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
+- [x] P13: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
+- [x] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
+- [x] P15: Mousewheel — single step on focus; change event only.
+- [x] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
+- [x] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
 - [ ] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
 
 - Verification
-- [ ] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
-  - [x] P19a: Manual A/B compare page added (`__tests__/html/ab-compare.html`).
-  - [ ] P19b: Automated A/B parity test (Playwright) for key sequences.
-- [ ] P20: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
+- [x] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
+  - [x] P19a: Manual A/B compare page added (`__tests__/html-package/ab-compare.html`).
+  - [x] P19b: Automated A/B parity tests (`abCompare.test.ts`, `abParitySequences.test.ts`).
+- [x] P20: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
 
 Phase D — Framework Wrappers (optional deliverables after core split)
 - [ ] D1: Web Component (`@touchspin/webcomponent`): custom element; attributes map to options; emit DOM `CustomEvent`s.

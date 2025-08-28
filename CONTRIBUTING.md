@@ -8,3 +8,10 @@ Before sending a pull request remember to follow [jQuery Core Style Guide](http:
 4. Commit your changes: `git commit -m 'Add some feature'`
 5. Push to the branch: `git push origin my-new-feature`
 6. Submit a pull request :D
+
+## Porting Policy (Parity with Source)
+
+When porting behavior between the legacy jQuery plugin (`src/jquery.bootstrap-touchspin.js`) and the new core/wrapper packages:
+- In PR descriptions, include links or references to the exact source lines that the change mirrors.
+- Call out any intentional deviations in behavior and justify them.
+- Prefer moving code and preserving semantics over rewrites to minimize drift.

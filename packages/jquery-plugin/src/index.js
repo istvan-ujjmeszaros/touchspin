@@ -66,6 +66,8 @@ export function installJqueryTouchSpin($) {
       /* global RendererFactory */
       let elements = { up: null, down: null, input: $input };
       let $container = null;
+      let renderer = null;
+      let __detached = null;
       if (typeof window !== 'undefined' && window.RendererFactory) {
         // Fill renderer-specific defaults for null placeholders (parity with original plugin)
         try {
@@ -76,11 +78,11 @@ export function installJqueryTouchSpin($) {
           }
         } catch {}
 
-        const renderer = window.RendererFactory.createRenderer($, opts, $input);
+        renderer = window.RendererFactory.createRenderer($, opts, $input);
         const container = renderer.buildInputGroup();
         $container = container;
         elements = renderer.initElements(container);
-        try { renderer.hideEmptyPrefixPostfix(); } catch {}
+        try { __detached = renderer.hideEmptyPrefixPostfix(); } catch {}
       }
 
       // Create core API
@@ -163,7 +165,38 @@ export function installJqueryTouchSpin($) {
       $input.on('touchspin.startupspin', () => inst.startUpSpin());
       $input.on('touchspin.startdownspin', () => inst.startDownSpin());
       $input.on('touchspin.stopspin', () => inst.stopSpin());
-      $input.on('touchspin.updatesettings', (e, o) => inst.updateSettings(o || {}));
+      $input.on('touchspin.updatesettings', (e, o) => {
+        const newOpts = o || {};
+        // Update core first (sanitizes and ARIA sync inside)
+        inst.updateSettings(newOpts);
+        // Merge for local defaults continuity
+        Object.assign(opts, newOpts);
+        // Update renderer-controlled UI bits (prefix/postfix text and classes)
+        try {
+          if (renderer && typeof renderer.updatePrefixPostfix === 'function') {
+            renderer.updatePrefixPostfix(newOpts, __detached || {});
+          }
+          // Handle extra classes on prefix/postfix when provided
+          if ($container && $container.length) {
+            if (Object.prototype.hasOwnProperty.call(newOpts, 'prefix_extraclass')) {
+              const prev = $input.data('__ts_prefix_extra');
+              const next = newOpts.prefix_extraclass;
+              const $el = $container.find('[data-touchspin-injected="prefix"]');
+              if (prev) $el.removeClass(prev);
+              if (next) $el.addClass(next);
+              $input.data('__ts_prefix_extra', next || '');
+            }
+            if (Object.prototype.hasOwnProperty.call(newOpts, 'postfix_extraclass')) {
+              const prev = $input.data('__ts_postfix_extra');
+              const next = newOpts.postfix_extraclass;
+              const $el = $container.find('[data-touchspin-injected="postfix"]');
+              if (prev) $el.removeClass(prev);
+              if (next) $el.addClass(next);
+              $input.data('__ts_postfix_extra', next || '');
+            }
+          }
+        } catch {}
+      });
       $input.on('touchspin.destroy', () => teardown($input));
 
       // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes) — requires focus
@@ -242,6 +275,8 @@ export function installJqueryTouchSpin($) {
       // record cleanup hooks
       $input.data('__ts_unsubs', unsubs);
       if (__observer) $input.data('__ts_observer', __observer);
+      if (renderer) $input.data('__ts_renderer', renderer);
+      if (__detached) $input.data('__ts_detached', __detached);
     });
 
     function teardown($input) {
@@ -254,6 +289,8 @@ export function installJqueryTouchSpin($) {
         unsubs.forEach((u) => { try { u(); } catch {} });
       } catch {}
       try { const obs = $input.data('__ts_observer'); if (obs && obs.disconnect) obs.disconnect(); } catch {}
+      try { $input.removeData('__ts_renderer'); } catch {}
+      try { $input.removeData('__ts_detached'); } catch {}
       // Remove container wrapper if present and restore input
       const $wrap = $input.closest('[data-touchspin-injected="wrapper"]');
       if ($wrap.length) {
