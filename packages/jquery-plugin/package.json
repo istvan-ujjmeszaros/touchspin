@@ -6,6 +6,6 @@
   "description": "jQuery wrapper for TouchSpin core (delegates to core, preserves API/events)",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "0.0.0"
+    "@touchspin/core": "file:../core"
   }
 }

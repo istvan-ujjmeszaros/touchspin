@@ -3,6 +3,7 @@
   "version": "4.8.0",
   "title": "Bootstrap Touchspin",
   "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.",
+  "private": true,
   "keywords": [
     "input",
     "bootstrap",
@@ -73,5 +74,6 @@
   "workspaces": [
     "packages/*",
     "packages/renderers/*"
-  ]
+  ],
+  "packageManager": "npm@10.9.3"
 }

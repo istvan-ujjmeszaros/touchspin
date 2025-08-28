@@ -21,9 +21,13 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+// tailwind specific build - BEFORE main plugin
 (function () {
-  "use strict";
+  'use strict';
 
+  /**
+  * Migrated copy from src/renderers/AbstractRenderer.js (transitional)
+  */
   var AbstractRenderer = /*#__PURE__*/function () {
     function AbstractRenderer($, settings, originalinput) {
       _classCallCheck(this, AbstractRenderer);
@@ -33,137 +37,89 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.container = null;
       this.elements = null;
     }
-    /**
-     * Get framework identifier this renderer supports
-     * @returns {string} Framework identifier (e.g., "bootstrap3", "bootstrap4", "bootstrap5", "tailwind")
-     */
     return _createClass(AbstractRenderer, [{
       key: "getFrameworkId",
       value: function getFrameworkId() {
-        throw new Error("getFrameworkId() must be implemented by subclasses");
+        throw new Error('getFrameworkId() must be implemented by subclasses');
       }
-      /**
-       * Get framework-specific default settings
-       * Override this method in subclasses to provide appropriate defaults for each framework
-       * @returns {object} Default settings object
-       */
     }, {
       key: "getDefaultSettings",
       value: function getDefaultSettings() {
         return {};
       }
-      /**
-       * Build HTML structure when parent already has input-group class
-       * @param {jQuery} parentelement Parent element with input-group class
-       */
     }, {
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
-        throw new Error("buildAdvancedInputGroup() must be implemented by subclasses");
+        throw new Error('buildAdvancedInputGroup() must be implemented by subclasses');
       }
-      /**
-       * Build complete input group from scratch
-       * @returns {jQuery} Created input group container
-       */
     }, {
       key: "buildInputGroup",
       value: function buildInputGroup() {
-        throw new Error("buildInputGroup() must be implemented by subclasses");
+        throw new Error('buildInputGroup() must be implemented by subclasses');
       }
-      /**
-       * Generate vertical buttons HTML
-       * @returns {string} Vertical buttons HTML
-       */
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        throw new Error("buildVerticalButtons() must be implemented by subclasses");
+        throw new Error('buildVerticalButtons() must be implemented by subclasses');
       }
-      /**
-       * Initialize element references after HTML is built
-       * @param {jQuery} container The container element
-       */
     }, {
       key: "initElements",
       value: function initElements(container) {
         this.container = container;
-        var downButtons = this._findElements(container, "down");
-        var upButtons = this._findElements(container, "up");
+        var downButtons = this._findElements(container, 'down');
+        var upButtons = this._findElements(container, 'up');
         if (downButtons.length === 0 || upButtons.length === 0) {
-          var verticalContainer = this._findElements(container.parent(), "vertical-wrapper");
+          var verticalContainer = this._findElements(container.parent(), 'vertical-wrapper');
           if (verticalContainer.length > 0) {
-            downButtons = this._findElements(verticalContainer, "down");
-            upButtons = this._findElements(verticalContainer, "up");
+            downButtons = this._findElements(verticalContainer, 'down');
+            upButtons = this._findElements(verticalContainer, 'up');
           }
         }
         this.elements = {
           down: downButtons,
           up: upButtons,
-          input: this.$("input", container),
-          prefix: this._findElements(container, "prefix").addClass(this.settings.prefix_extraclass),
-          postfix: this._findElements(container, "postfix").addClass(this.settings.postfix_extraclass)
+          input: this.$('input', container),
+          prefix: this._findElements(container, 'prefix').addClass(this.settings.prefix_extraclass),
+          postfix: this._findElements(container, 'postfix').addClass(this.settings.postfix_extraclass)
         };
         return this.elements;
       }
-      /**
-       * Find elements using data attributes
-       * @private
-       * @param {jQuery} container Container to search within
-       * @param {string} role Element role - must be one of: "wrapper", "up", "down", "prefix", "postfix", "vertical-wrapper"
-       * @returns {jQuery} Found elements with data-touchspin-injected attribute matching the role
-       */
     }, {
       key: "_findElements",
       value: function _findElements(container, role) {
         return this.$("[data-touchspin-injected=\"".concat(role, "\"]"), container);
       }
-      /**
-       * Hide empty prefix/postfix elements
-       * @returns {object} Object with detached prefix/postfix elements
-       */
     }, {
       key: "hideEmptyPrefixPostfix",
       value: function hideEmptyPrefixPostfix() {
         var detached = {};
-        if (this.settings.prefix === "") {
-          detached._detached_prefix = this.elements.prefix.detach();
-        }
-        if (this.settings.postfix === "") {
-          detached._detached_postfix = this.elements.postfix.detach();
-        }
+        if (this.settings.prefix === '') detached._detached_prefix = this.elements.prefix.detach();
+        if (this.settings.postfix === '') detached._detached_postfix = this.elements.postfix.detach();
         return detached;
       }
-      /**
-       * Update prefix/postfix content - to be implemented by subclasses
-       * @param {object} newsettings New settings object
-       * @param {object} detached Detached elements object
-       */
     }, {
       key: "updatePrefixPostfix",
       value: function updatePrefixPostfix(newsettings, detached) {
-        throw new Error("updatePrefixPostfix() must be implemented by subclasses");
+        throw new Error('updatePrefixPostfix() must be implemented by subclasses');
       }
-      /**
-       * Get wrapper testid attribute based on input's data-testid
-       * If input has data-testid="example", returns ' data-testid="example-wrapper"'
-       * @returns {string} Testid attribute string or empty string
-       */
     }, {
       key: "getWrapperTestId",
       value: function getWrapperTestId() {
-        var inputTestId = this.originalinput.attr("data-testid");
-        if (inputTestId) {
-          return " data-testid=\"".concat(inputTestId, "-wrapper\"");
-        }
-        return "";
+        var inputTestId = this.originalinput.attr('data-testid');
+        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-wrapper\"");
+        return '';
       }
     }]);
   }();
-  if (typeof module !== "undefined" && module.exports) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = AbstractRenderer;
-  } else if (typeof window !== "undefined") {
+  } else if (typeof window !== 'undefined') {
     window.AbstractRenderer = AbstractRenderer;
   }
+
+  /**
+   * Migrated copy from src/renderers/TailwindRenderer.js (transitional)
+   */
   var TailwindRenderer = /*#__PURE__*/function (_AbstractRenderer) {
     function TailwindRenderer() {
       _classCallCheck(this, TailwindRenderer);
@@ -173,93 +129,54 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     return _createClass(TailwindRenderer, [{
       key: "getFrameworkId",
       value: function getFrameworkId() {
-        return "tailwind";
+        return 'tailwind';
       }
-      /**
-       * Get Tailwind CSS framework-specific default settings
-       * Overrides Bootstrap classes with empty strings for CSS independence
-       * @returns {object} Tailwind-specific default settings
-       */
     }, {
       key: "getDefaultSettings",
       value: function getDefaultSettings() {
         return {
-          buttonup_class: "",
-          // Remove Bootstrap button classes
-          buttondown_class: "",
-          // Remove Bootstrap button classes
-          verticalupclass: "",
-          // Remove Bootstrap button classes for vertical
-          verticaldownclass: "",
-          // Remove Bootstrap button classes for vertical
-          input_class: ""
-          // Remove Bootstrap form-control class
+          buttonup_class: 'px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+          buttondown_class: 'px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+          verticalupclass: 'px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+          verticaldownclass: 'px-3 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+          input_class: 'px-2 py-2 border border-gray-300 rounded'
         };
       }
-      /**
-       * Detect input size from Tailwind size classes
-       * @private
-       * @returns {string} Size classes for container elements
-       */
-    }, {
-      key: "_detectInputSize",
-      value: function _detectInputSize() {
-        if (this.originalinput.hasClass("text-sm") || this.originalinput.hasClass("py-1")) {
-          return "text-sm py-1 px-2";
-        } else if (this.originalinput.hasClass("text-lg") || this.originalinput.hasClass("py-3")) {
-          return "text-lg py-3 px-4";
-        }
-        return "text-base py-2 px-3";
-      }
-      /**
-       * Apply size classes to container and elements (Tailwind specific)
-       * @private
-       */
     }, {
       key: "_applySizeClasses",
       value: function _applySizeClasses() {
-        var sizeClasses = this._detectInputSize();
-        if (sizeClasses.includes("text-sm")) {
-          this.container.addClass("text-sm");
-          this.container.find(".tailwind-btn").addClass("py-1 px-2 text-sm");
-          this.container.find(".tailwind-addon").addClass("py-1 px-2 text-sm");
-        } else if (sizeClasses.includes("text-lg")) {
-          this.container.addClass("text-lg");
-          this.container.find(".tailwind-btn").addClass("py-3 px-4 text-lg");
-          this.container.find(".tailwind-addon").addClass("py-3 px-4 text-lg");
-        }
+        // Tailwind renderer does not automatically apply input-group sizing classes
       }
     }, {
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
-        parentelement.addClass("flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50");
-        parentelement.attr("data-touchspin-injected", "enhanced-wrapper");
+        parentelement.addClass('bootstrap-touchspin');
+        parentelement.attr('data-touchspin-injected', 'enhanced-wrapper');
         var testidAttr = this.getWrapperTestId();
         if (testidAttr) {
-          var testidValue = testidAttr.match(/data-testid="([^"]+)"/);
+          var testidValue = testidAttr.match(/data-testid=\"([^\"]+)\"/);
           if (testidValue) {
-            parentelement.attr("data-testid", testidValue[1]);
+            parentelement.attr('data-testid', testidValue[1]);
           }
         }
-        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n        ".concat(this.settings.prefix, "\n      </span>\n    ");
-        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n        ".concat(this.settings.postfix, "\n      </span>\n    ");
         if (this.settings.verticalbuttons) {
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
-          var downhtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ".concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">\n          ").concat(this.settings.buttondown_txt, "\n        </button>\n      ");
-          var uphtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ".concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">\n          ").concat(this.settings.buttonup_txt, "\n        </button>\n      ");
+          var downhtml = "\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n      ");
+          var uphtml = "\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n      ");
           this.$(downhtml).insertBefore(this.originalinput);
           this.$(uphtml).insertAfter(this.originalinput);
         }
-        if (this.settings.prefix !== "") {
-          this.$(prefixhtml).insertBefore(this.originalinput);
+        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-r-0 border-gray-300 rounded-l\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix, "</span>\n    ");
+        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-l-0 border-gray-300 rounded-r\" data-touchspin-injected=\"postfix\">".concat(this.settings.postfix, "</span>\n    ");
+        this.$(prefixhtml).insertBefore(this.originalinput);
+        this.$(postfixhtml).insertAfter(this.originalinput);
+
+        // Apply input class if provided
+        if (this.settings.input_class) {
+          this.originalinput.addClass(this.settings.input_class);
         }
-        if (this.settings.postfix !== "") {
-          this.$(postfixhtml).insertAfter(this.originalinput);
-        }
-        this.originalinput.removeClass("form-control");
-        this.originalinput.addClass("flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed");
         this.container = parentelement;
         return parentelement;
       }
@@ -269,21 +186,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">\n              ").concat(this.settings.verticalup, "\n            </button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">\n              ").concat(this.settings.verticaldown, "\n            </button>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"inline-flex items-stretch bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-r-0 border-gray-300\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-l-0 border-gray-300\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix, "</span>\n          <span class=\"bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n            </span>\n          </span>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">\n            ").concat(this.settings.buttondown_txt, "\n          </button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">\n            ").concat(this.settings.prefix, "\n          </span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">\n            ").concat(this.settings.postfix, "\n          </span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">\n            ").concat(this.settings.buttonup_txt, "\n          </button>\n        </div>\n      ");
+          html = "\n        <div class=\"inline-flex items-stretch bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-r-0 border-gray-300\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"inline-flex items-center px-3 text-gray-700 bg-gray-100 border border-l-0 border-gray-300\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix, "</span>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>\n      ");
         }
         this.container = this.$(html).insertBefore(this.originalinput);
         this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
-        this.originalinput.removeClass("form-control");
-        this.originalinput.addClass("flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed");
-        this._applySizeClasses();
+        if (this.settings.input_class) this.originalinput.addClass(this.settings.input_class);
         return this.container;
       }
     }, {
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
-        return "\n      <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ".concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">\n          ").concat(this.settings.verticalup, "\n        </button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">\n          ").concat(this.settings.verticaldown, "\n        </button>\n      </div>\n    ");
+        return "\n      <span class=\"inline-flex items-center bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup, "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n        </span>\n      </span>\n    ");
       }
     }, {
       key: "updatePrefixPostfix",
@@ -305,11 +220,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
     }]);
   }(AbstractRenderer);
-  if (typeof module !== "undefined" && module.exports) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = TailwindRenderer;
-  } else if (typeof window !== "undefined") {
+  } else if (typeof window !== 'undefined') {
     window.TailwindRenderer = TailwindRenderer;
   }
+
+  // Simple factory for single version - no auto-detection needed
   var RendererFactory = /*#__PURE__*/function () {
     function RendererFactory() {
       _classCallCheck(this, RendererFactory);
@@ -322,67 +239,214 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }, {
       key: "getFrameworkId",
       value: function getFrameworkId() {
-        return "tailwind";
+        return 'tailwind';
       }
     }]);
   }();
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     window.AbstractRenderer = AbstractRenderer;
     window.TailwindRenderer = TailwindRenderer;
     window.RendererFactory = RendererFactory;
   }
 })();
 (function (factory) {
-  typeof define === "function" && define.amd ? define(factory) : factory();
+  typeof define === 'function' && define.amd ? define(factory) : factory();
 })(function () {
-  "use strict";
+  'use strict';
 
+  // @ts-check
   (function (factory) {
-    if (typeof define === "function" && define.amd) {
-      define(["jquery"], factory);
-    } else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
-      module.exports = function (root, jQuery2) {
-        if (jQuery2 === void 0) {
-          if (typeof window !== "undefined") {
-            jQuery2 = require("jquery");
+    if (typeof define === 'function' && define.amd) {
+      define(['jquery'], factory);
+    } else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object' && module.exports) {
+      module.exports = function (root, jQuery) {
+        if (jQuery === undefined) {
+          if (typeof window !== 'undefined') {
+            jQuery = require('jquery');
           } else {
-            jQuery2 = require("jquery")(root);
+            jQuery = require('jquery')(root);
           }
         }
-        factory(jQuery2);
-        return jQuery2;
+        factory(jQuery);
+        return jQuery;
       };
     } else {
       factory(jQuery);
     }
   })(function ($) {
-    var __touchspinInternalStore = typeof WeakMap !== "undefined" ? /* @__PURE__ */new WeakMap() : null;
+    // Internal instance store to support future wrapper/core decoupling
+    // Mirrors jQuery .data('touchspinInternal') without changing behavior
+    var __touchspinInternalStore = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+
+    /**
+     * @fileoverview Bootstrap TouchSpin — mobile-friendly numeric input spinner.
+     * @typedef {import('jquery').JQuery} JQuery
+     * @typedef {import('jquery').JQueryStatic} JQueryStatic
+     * @requires jQuery
+     */
+
+    // Include renderer classes
+    // These will be included during build process or loaded separately
+
+    /**
+     * How to handle step divisibility.
+     * @typedef {'none'|'floor'|'round'|'ceil'} ForceStepDivisibility
+     */
+
+    /**
+     * TouchSpin calculation callback.
+     * @callback TouchSpinCalcCallback
+     * @param {string} value Raw input value (string from the <input>).
+     * @returns {string} Processed value to use/display.
+     */
+
+    /**
+     * Renderer instance interface (built for the active Bootstrap flavor).
+     * @typedef {Object} TouchSpinRenderer
+     * @property {function(): JQuery} buildInputGroup
+     * @property {function(JQuery): JQuery} buildAdvancedInputGroup
+     * @property {function(JQuery): TouchSpinElements} initElements
+     * @property {function(): { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }} hideEmptyPrefixPostfix
+     * @property {function(Partial<TouchSpinOptions>, { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }): void} updatePrefixPostfix
+     */
+
+    /**
+     * Renderer factory (global).
+     * @typedef {Object} RendererFactoryType
+     * @property {function(JQueryStatic, TouchSpinOptions, JQuery): TouchSpinRenderer} createRenderer
+     */
+
+    /**
+     * Elements returned by renderer.initElements(container)
+     * @typedef {Object} TouchSpinElements
+     * @property {JQuery<HTMLInputElement>} input
+     * @property {JQuery<HTMLButtonElement>} up
+     * @property {JQuery<HTMLButtonElement>} down
+     */
+
+    /**
+     * @typedef TouchSpinOptions
+     * @property {number|null} [min=0] - Minimum allowed value (null for no minimum)
+     * @property {number|null} [max=100] - Maximum allowed value (null for no maximum)
+     * @property {string} [initval=''] - Initial value if input is empty
+     * @property {string} [replacementval=''] - Value to show when input is empty
+     * @property {number|null} [firstclickvalueifempty=null] - Value to set on first click if input is empty
+     * @property {number} [step=1] - Step increment/decrement amount
+     * @property {number} [decimals=0] - Number of decimal places to display
+     * @property {number} [stepinterval=100] - Milliseconds between steps when holding button
+     * @property {ForceStepDivisibility} [forcestepdivisibility='round'] - How to handle step divisibility
+     * @property {number} [stepintervaldelay=500] - Delay in milliseconds before step interval begins
+     * @property {boolean} [verticalbuttons=false] - Whether to display buttons vertically
+     * @property {string} [verticalup='&plus;'] - HTML content for vertical up button
+     * @property {string} [verticaldown='&minus;'] - HTML content for vertical down button
+     * @property {string} [verticalupclass=null] - CSS classes for vertical up button (framework-specific, provided by renderer)
+     * @property {string} [verticaldownclass=null] - CSS classes for vertical down button (framework-specific, provided by renderer)
+     * @property {string} [prefix=''] - Text or HTML to display before the input
+     * @property {string} [postfix=''] - Text or HTML to display after the input
+     * @property {string} [prefix_extraclass=''] - Additional CSS classes for prefix element
+     * @property {string} [postfix_extraclass=''] - Additional CSS classes for postfix element
+     * @property {boolean} [booster=true] - Enable accelerated value changes for rapid input
+     * @property {number} [boostat=10] - Number of steps before booster mode activates
+     * @property {number|false} [maxboostedstep=false] - Maximum step size during boost mode
+     * @property {boolean} [mousewheel=true] - Enable mouse wheel support for value changes
+     * @property {string} [buttondown_class=null] - CSS classes for decrement button (framework-specific, provided by renderer)
+     * @property {string} [buttonup_class=null] - CSS classes for increment button (framework-specific, provided by renderer)
+     * @property {string} [buttondown_txt='&minus;'] - HTML content for decrement button
+     * @property {string} [buttonup_txt='&plus;'] - HTML content for increment button
+     * @property {TouchSpinRenderer|null} [renderer=null] - Custom renderer instance for Bootstrap version compatibility
+     * @property {TouchSpinCalcCallback} [callback_before_calculation] - Function called before value calculation
+     * @property {TouchSpinCalcCallback} [callback_after_calculation] - Function called after value calculation
+     */
+
+    /**
+     * Fired when minimum value is reached.
+     * @event touchspin.on.min
+     */
+
+    /**
+     * Fired when maximum value is reached.
+     * @event touchspin.on.max
+     */
+
+    /**
+     * Fired when spinning starts (any direction).
+     * @event touchspin.on.startspin
+     */
+
+    /**
+     * Fired when spinning stops (any direction).
+     * @event touchspin.on.stopspin
+     */
+
+    /** @event touchspin.on.startupspin */
+    /** @event touchspin.on.startdownspin */
+    /** @event touchspin.on.stopupspin */
+    /** @event touchspin.on.stopdownspin */
+
+    /**
+     * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners.
+     * @function TouchSpin
+     * @memberof jQuery.fn
+     * @this {JQuery<HTMLInputElement>} jQuery collection of <input> elements
+     * @param {TouchSpinOptions=} options
+     * @returns {JQuery<HTMLInputElement>} The original jQuery collection (chainable).
+     * @fires touchspin.on.min
+     * @fires touchspin.on.max
+     * @fires touchspin.on.startspin
+     * @fires touchspin.on.stopspin
+     * @fires touchspin.on.startupspin
+     * @fires touchspin.on.startdownspin
+     * @fires touchspin.on.stopupspin
+     * @fires touchspin.on.stopdownspin
+     * @throws {Error} If a renderer factory cannot be found or a renderer cannot be created.
+     * @example
+     * // Basic usage
+     * $('#myinput').TouchSpin();
+     *
+     * @example
+     * // With configuration
+     * $('#myinput').TouchSpin({
+     *   min: 0,
+     *   max: 100,
+     *   step: 5,
+     *   prefix: '$',
+     *   postfix: '.00'
+     * });
+     *
+     * @example
+     * // Event handling
+     * $('#myinput').on('touchspin.on.min', function() {
+     *   console.log('Minimum value reached');
+     * });
+     *
+     */
     $.fn.TouchSpin = function (options, arg) {
+      /** @type {TouchSpinOptions} */
       var defaults = {
         min: 0,
         // If null, there is no minimum enforced
         max: 100,
         // If null, there is no maximum enforced
-        initval: "",
-        replacementval: "",
+        initval: '',
+        replacementval: '',
         firstclickvalueifempty: null,
         step: 1,
         decimals: 0,
         stepinterval: 100,
-        forcestepdivisibility: "round",
+        forcestepdivisibility: 'round',
         // none | floor | round | ceil
         stepintervaldelay: 500,
         verticalbuttons: false,
-        verticalup: "&plus;",
-        verticaldown: "&minus;",
+        verticalup: '&plus;',
+        verticaldown: '&minus;',
         verticalupclass: null,
         // Framework-specific, will be provided by renderer
         verticaldownclass: null,
         // Framework-specific, will be provided by renderer
-        prefix: "",
-        postfix: "",
-        prefix_extraclass: "",
-        postfix_extraclass: "",
+        prefix: '',
+        postfix: '',
+        prefix_extraclass: '',
+        postfix_extraclass: '',
         booster: true,
         boostat: 10,
         maxboostedstep: false,
@@ -391,8 +455,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         // Framework-specific, will be provided by renderer
         buttonup_class: null,
         // Framework-specific, will be provided by renderer
-        buttondown_txt: "&minus;",
-        buttonup_txt: "&plus;",
+        buttondown_txt: '&minus;',
+        buttonup_txt: '&plus;',
         // Renderer system options
         renderer: null,
         // Custom renderer instance
@@ -405,106 +469,138 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           return value;
         }
       };
+
+      /**
+       * Maps TouchSpin option names to data attribute names.
+       * Example: data-bts-step-interval="100" → stepinterval: 100
+       * @type {Record<string,string>}
+       * @private
+       */
       var attributeMap = {
-        min: "min",
-        max: "max",
-        initval: "init-val",
-        replacementval: "replacement-val",
-        firstclickvalueifempty: "first-click-value-if-empty",
-        step: "step",
-        decimals: "decimals",
-        stepinterval: "step-interval",
-        verticalbuttons: "vertical-buttons",
-        verticalupclass: "vertical-up-class",
-        verticaldownclass: "vertical-down-class",
-        forcestepdivisibility: "force-step-divisibility",
-        stepintervaldelay: "step-interval-delay",
-        prefix: "prefix",
-        postfix: "postfix",
-        prefix_extraclass: "prefix-extra-class",
-        postfix_extraclass: "postfix-extra-class",
-        booster: "booster",
-        boostat: "boostat",
-        maxboostedstep: "max-boosted-step",
-        mousewheel: "mouse-wheel",
-        buttondown_class: "button-down-class",
-        buttonup_class: "button-up-class",
-        buttondown_txt: "button-down-txt",
-        buttonup_txt: "button-up-txt"
+        min: 'min',
+        max: 'max',
+        initval: 'init-val',
+        replacementval: 'replacement-val',
+        firstclickvalueifempty: 'first-click-value-if-empty',
+        step: 'step',
+        decimals: 'decimals',
+        stepinterval: 'step-interval',
+        verticalbuttons: 'vertical-buttons',
+        verticalupclass: 'vertical-up-class',
+        verticaldownclass: 'vertical-down-class',
+        forcestepdivisibility: 'force-step-divisibility',
+        stepintervaldelay: 'step-interval-delay',
+        prefix: 'prefix',
+        postfix: 'postfix',
+        prefix_extraclass: 'prefix-extra-class',
+        postfix_extraclass: 'postfix-extra-class',
+        booster: 'booster',
+        boostat: 'boostat',
+        maxboostedstep: 'max-boosted-step',
+        mousewheel: 'mouse-wheel',
+        buttondown_class: 'button-down-class',
+        buttonup_class: 'button-up-class',
+        buttondown_txt: 'button-down-txt',
+        buttonup_txt: 'button-up-txt'
       };
-      if (typeof options === "string") {
+
+      // Command API: allow calling internal methods directly
+      if (typeof options === 'string') {
         var cmd = String(options).toLowerCase();
         var ret;
         this.each(function () {
           var $el = $(this);
-          var api = $el.data("touchspinInternal");
-          if (!api) return;
+          var api = $el.data('touchspinInternal');
+          if (!api) return; // not initialized
           switch (cmd) {
-            case "destroy":
+            case 'destroy':
               api.destroy();
               break;
-            case "uponce":
+            case 'uponce':
               api.upOnce();
               break;
-            case "downonce":
+            case 'downonce':
               api.downOnce();
               break;
-            case "startupspin":
+            case 'startupspin':
               api.startUpSpin();
               break;
-            case "startdownspin":
+            case 'startdownspin':
               api.startDownSpin();
               break;
-            case "stopspin":
+            case 'stopspin':
               api.stopSpin();
               break;
-            case "updatesettings":
+            case 'updatesettings':
               api.updateSettings(arg || {});
               break;
-            case "getvalue":
-            case "get":
-              if (ret === void 0) ret = api.getValue();
+            case 'getvalue':
+            case 'get':
+              if (ret === undefined) ret = api.getValue();
               break;
-            case "setvalue":
-            case "set":
+            case 'setvalue':
+            case 'set':
               api.setValue(arg);
               break;
           }
         });
-        return ret === void 0 ? this : ret;
+        return ret === undefined ? this : ret;
       }
       return this.each(function () {
+        /** @type {TouchSpinOptions} Final merged settings */
         var settings,
+          /** @type {JQuery<HTMLInputElement>} Original input element */
           originalinput = $(this),
+          /** @type {Record<string, any>} Data attributes from original input */
           originalinput_data = originalinput.data(),
+          /** @type {JQuery|null} Detached prefix element */
           _detached_prefix,
+          /** @type {JQuery|null} Detached postfix element */
           _detached_postfix,
+          /** @type {JQuery} TouchSpin container element */
           container,
+          /** @type {TouchSpinElements} TouchSpin DOM elements */
           elements,
+          /** @type {TouchSpinRenderer|undefined} Bootstrap version-specific renderer */
           renderer,
+          /** @type {number} Current numeric value */
           value,
-          downSpinTimer,
-          upSpinTimer,
-          downDelayTimeout,
-          upDelayTimeout,
+          /** @type {ReturnType<typeof setInterval>|undefined} */downSpinTimer,
+          /** @type {ReturnType<typeof setInterval>|undefined} */upSpinTimer,
+          /** @type {ReturnType<typeof setTimeout>|undefined} */downDelayTimeout,
+          /** @type {ReturnType<typeof setTimeout>|undefined} */upDelayTimeout,
+          /** @type {number} Current spin count for booster calculation */
           spincount = 0,
+          /** @type {false|'up'|'down'} Current spinning direction */
           spinning = false,
+          /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
           mutationObserver,
+          /** @type {Array<[Element,string,EventListenerOrEventListenerObject,any]>} */
           _nativeListeners = [],
+          /** @type {HTMLInputElement} */
           inputEl,
+          /** @type {HTMLElement|undefined} */
           containerEl;
         init();
+
+        /**
+         * Initializes the TouchSpin plugin for a single input element.
+         * @private
+         */
         function init() {
-          if (originalinput.data("alreadyinitialized")) {
-            originalinput.trigger("touchspin.destroy");
+          if (originalinput.data('alreadyinitialized')) {
+            // If already initialized, destroy current instance and reinitialize with new settings
+            originalinput.trigger('touchspin.destroy');
+            // Continue with normal initialization after destroy
           }
-          originalinput.data("alreadyinitialized", true);
-          if (!originalinput.is("input")) {
-            console.log("Must be an input.");
+          originalinput.data('alreadyinitialized', true);
+          if (!originalinput.is('input')) {
+            console.log('Must be an input.');
             return;
           }
-          inputEl = /** @type {HTMLInputElement} */
-          originalinput[0];
+
+          // Cache DOM element reference
+          inputEl = /** @type {HTMLInputElement} */originalinput[0];
           _initSettings();
           _initRenderer();
           _setInitval();
@@ -518,7 +614,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _setupMutationObservers();
           _bindEvents();
           _bindEventsInterface();
-          originalinput.data("touchspinInternal", {
+
+          // Expose internal instance methods for facades/wrappers
+          originalinput.data('touchspinInternal', {
             upOnce: upOnce,
             downOnce: downOnce,
             startUpSpin: startUpSpin,
@@ -529,18 +627,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               _destroy();
             },
             getValue: function getValue() {
-              var _a;
-              var raw = String((_a = inputEl.value) != null ? _a : "");
-              if (raw === "") return NaN;
+              var _inputEl$value;
+              var raw = String((_inputEl$value = inputEl.value) !== null && _inputEl$value !== void 0 ? _inputEl$value : '');
+              if (raw === '') return NaN;
               var num = parseFloat(settings.callback_before_calculation(raw));
               return isFinite(num) ? num : NaN;
             },
             setValue: function setValue(v) {
-              var _a;
-              if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
+              var _inputEl$value2;
+              if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
               stopSpin();
               var parsed = Number(v);
               if (!isFinite(parsed)) return;
+              // Apply step divisibility first, then clamp to bounds (mirrors _checkValue)
               var adjusted = parseFloat(_forcestepdivisibility(parsed));
               if (settings.min !== null && adjusted < settings.min) {
                 adjusted = settings.min;
@@ -548,43 +647,65 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               if (settings.max !== null && adjusted > settings.max) {
                 adjusted = settings.max;
               }
-              var prev = String((_a = inputEl.value) != null ? _a : "");
+              var prev = String((_inputEl$value2 = inputEl.value) !== null && _inputEl$value2 !== void 0 ? _inputEl$value2 : '');
               var next = _setDisplay(adjusted);
               if (prev !== next) {
-                originalinput.trigger("change");
+                originalinput.trigger('change');
               }
             }
           });
           if (__touchspinInternalStore) {
             try {
-              __touchspinInternalStore.set(originalinput[0], originalinput.data("touchspinInternal"));
+              __touchspinInternalStore.set(originalinput[0], originalinput.data('touchspinInternal'));
             } catch (e) {}
           }
         }
+
+        /**
+         * Sets the initial value from settings if input is empty.
+         * @private
+         */
         function _setInitval() {
-          if (settings.initval !== "" && inputEl.value === "") {
+          if (settings.initval !== '' && inputEl.value === '') {
             inputEl.value = settings.initval;
           }
         }
+
+        /**
+         * Updates TouchSpin settings and applies changes.
+         * @private
+         * @param {Partial<TouchSpinOptions>} newsettings - New settings to apply
+         */
         function changeSettings(newsettings) {
-          var _a;
+          var _inputEl$value3;
           _updateSettings(newsettings);
           _checkValue(true);
-          var raw = String((_a = inputEl.value) != null ? _a : "");
-          if (raw !== "") {
+
+          /** @type {string} */
+          var raw = String((_inputEl$value3 = inputEl.value) !== null && _inputEl$value3 !== void 0 ? _inputEl$value3 : '');
+          if (raw !== '') {
             var num = parseFloat(settings.callback_before_calculation(raw));
             if (isFinite(num)) {
               _setDisplay(num);
             }
           }
         }
+
+        /**
+         * Computes the next numeric value in a given direction without touching the DOM.
+         * Pure calculation using current settings and spin state.
+         * @private
+         * @param {'up'|'down'} dir
+         * @param {number} current
+         * @returns {number} next numeric value (clamped to min/max)
+         */
         function _nextValue(dir, current) {
           var v = current;
           if (isNaN(v)) {
             v = valueIfIsNaN();
           } else {
             var step = _getBoostedStep();
-            v = dir === "up" ? v + step : v - step;
+            v = dir === 'up' ? v + step : v - step;
           }
           if (settings.max !== null && v >= settings.max) {
             v = settings.max;
@@ -594,9 +715,24 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           return v;
         }
+
+        /**
+         * Formats a numeric value for display using decimals and callbacks.
+         * @private
+         * @param {number} num
+         * @returns {string}
+         */
         function _formatDisplay(num) {
           return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
         }
+
+        /**
+         * Applies a numeric value to the input's display and updates ARIA.
+         * Caller remains responsible for emitting change events if needed.
+         * @private
+         * @param {number} num
+         * @returns {string} the display string written to the input
+         */
         function _setDisplay(num) {
           var next = _formatDisplay(num);
           if (inputEl) {
@@ -607,8 +743,18 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           _updateAriaAttributes();
           return next;
         }
+
+        /**
+         * Aligns a value to step boundaries using integer arithmetic to avoid float issues.
+         * @private
+         * @param {number|null} val - Value to align
+         * @param {number} step - Step size
+         * @param {string} dir - Direction: 'up' or 'down'
+         * @returns {number|null} Aligned value
+         */
         function _alignToStep(val, step, dir) {
           if (val == null) return val;
+          // scale to integers to avoid float mod issues
           var k = 1,
             s = step;
           while (s * k % 1 !== 0 && k < 1e6) k *= 10;
@@ -617,12 +763,21 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (S === 0) return val;
           var r = V % S;
           if (r === 0) return val;
-          return (dir === "down" ? V - r : V + (S - r)) / k;
+          return (dir === 'down' ? V - r : V + (S - r)) / k;
         }
+
+        /**
+         * Initializes settings by merging defaults, data attributes, and options.
+         * @private
+         */
         function _initSettings() {
           settings = Object.assign({}, defaults, originalinput_data, _parseAttributes(), options);
+
+          // Normalize step (guard against "any", 0, negatives, NaN)
           var stepNum = Number(settings.step);
           if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
+
+          // Normalize min/max to numbers for consistency (null/undefined preserved)
           if (settings.min != null) {
             var minNum = Number(settings.min);
             settings.min = isFinite(minNum) ? minNum : null;
@@ -631,8 +786,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             var maxNum = Number(settings.max);
             settings.max = isFinite(maxNum) ? maxNum : null;
           }
+
+          // Normalize decimals (ensure non-negative integer)
           var dec = parseInt(String(settings.decimals), 10);
           settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
+
+          // Normalize timing and boost options
           settings.stepinterval = Math.max(0, parseInt(String(settings.stepinterval), 10) || 0);
           settings.stepintervaldelay = Math.max(0, parseInt(String(settings.stepintervaldelay), 10) || 0);
           settings.boostat = Math.max(1, parseInt(String(settings.boostat), 10) || 10);
@@ -641,21 +800,31 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
           }
           if (parseFloat(settings.step) !== 1) {
-            settings.max = _alignToStep(settings.max, settings.step, "down");
-            settings.min = _alignToStep(settings.min, settings.step, "up");
+            settings.max = _alignToStep(settings.max, settings.step, 'down');
+            settings.min = _alignToStep(settings.min, settings.step, 'up');
           }
         }
+
+        /**
+         * Parses data attributes and native input attributes into settings.
+         * @private
+         * @returns {Partial<TouchSpinOptions>} Parsed attribute values
+         */
         function _parseAttributes() {
           var data = {};
-          $.each(attributeMap, function (key, value2) {
-            var attrName = "bts-" + value2;
-            if (originalinput.is("[data-" + attrName + "]")) {
+
+          // Setting up based on data attributes
+          $.each(attributeMap, function (key, value) {
+            var attrName = 'bts-' + value;
+            if (originalinput.is('[data-' + attrName + ']')) {
               data[key] = originalinput.data(attrName);
             }
           });
-          $.each(["min", "max", "step"], function (i, key) {
-            if (originalinput.is("[" + key + "]")) {
-              if (data[key] !== void 0) {
+
+          // Setting up based on input attributes if specified (input attributes have precedence)
+          $.each(['min', 'max', 'step'], function (i, key) {
+            if (originalinput.is('[' + key + ']')) {
+              if (data[key] !== undefined) {
                 console.warn('Both the "data-bts-' + key + '" data attribute and the "' + key + '" individual attribute were specified, the individual attribute will take precedence on: ', originalinput);
               }
               data[key] = originalinput.attr(key);
@@ -663,203 +832,294 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           });
           return data;
         }
+
+        /**
+         * Initializes the Bootstrap version-specific renderer.
+         * @private
+         * @throws {Error} If renderer factory is unavailable or renderer creation fails
+         */
         function _initRenderer() {
+          // Initialize the Bootstrap version-specific renderer
           if (settings.renderer) {
+            // Use custom renderer if provided
             renderer = settings.renderer;
             return;
           }
-          var rf = /** @type {any} */
-          typeof globalThis !== "undefined" ? globalThis : {};
-          var factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === "function" ? rf.RendererFactory : void 0;
+
+          // Check for RendererFactory availability
+          var rf = /** @type {any} */typeof globalThis !== 'undefined' ? globalThis : {};
+          /** @type {RendererFactoryType|undefined} */
+          var factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function' ? rf.RendererFactory : undefined;
           if (!factory || !factory.createRenderer) {
-            throw new Error("Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.");
+            throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
           }
+
+          // Create temporary renderer to get framework-specific defaults
           var tempRenderer = factory.createRenderer($, {}, originalinput);
-          if (tempRenderer && typeof tempRenderer.getDefaultSettings === "function") {
+          if (tempRenderer && typeof tempRenderer.getDefaultSettings === 'function') {
             var rendererDefaults = tempRenderer.getDefaultSettings();
+
+            // Only apply renderer defaults for null values (framework-agnostic placeholders)
+            // This preserves user customizations while filling in framework-specific defaults
             Object.keys(rendererDefaults).forEach(function (key) {
               if (settings[key] === null) {
+                // Fill in framework-specific default for null placeholder
                 settings[key] = rendererDefaults[key];
               }
             });
           }
           renderer = factory.createRenderer($, settings, originalinput);
           if (!renderer) {
-            throw new Error("Bootstrap TouchSpin: Failed to create renderer");
+            throw new Error('Bootstrap TouchSpin: Failed to create renderer');
           }
         }
+
+        /**
+         * Destroys the TouchSpin instance and restores original input.
+         * @private
+         */
         function _destroy() {
           var $parent = originalinput.parent();
           stopSpin();
-          originalinput.off("keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings");
+
+          // Remove all plugin handlers bound on the input
+          originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
+
+          // Clean up container event handlers
           if (container) {
-            container.off(".touchspin");
+            container.off('.touchspin');
           }
+
+          // Remove native listeners bound by this instance
           _offAllNative();
+
+          // Disconnect MutationObserver
           if (mutationObserver) {
             mutationObserver.disconnect();
-            mutationObserver = void 0;
+            mutationObserver = undefined;
           }
-          var injectedMarker = $parent.attr("data-touchspin-injected");
-          if (injectedMarker === "wrapper") {
-            originalinput.siblings("[data-touchspin-injected]").remove();
+
+          // Teardown logic differs for injected vs existing wrappers
+          var injectedMarker = $parent.attr('data-touchspin-injected');
+          if (injectedMarker === 'wrapper') {
+            // Injected wrapper: remove only plugin-injected siblings, then unwrap
+            originalinput.siblings('[data-touchspin-injected]').remove();
             originalinput.unwrap();
           } else {
-            $("[data-touchspin-injected]", $parent).remove();
-            $parent.removeClass("bootstrap-touchspin");
-            $parent.removeAttr("data-touchspin-injected");
+            // Existing container or non-wrapper: remove injected elements, keep container
+            $('[data-touchspin-injected]', $parent).remove();
+            $parent.removeClass('bootstrap-touchspin');
+            $parent.removeAttr('data-touchspin-injected');
           }
-          originalinput.data("alreadyinitialized", false);
-          originalinput.removeData("touchspinInternal");
+          originalinput.data('alreadyinitialized', false);
+          // Cleanup internal facade reference
+          originalinput.removeData('touchspinInternal');
           if (__touchspinInternalStore) {
             try {
               __touchspinInternalStore.delete(originalinput[0]);
             } catch (e) {}
           }
         }
+
+        /**
+         * Updates internal settings and synchronizes with DOM.
+         * @private
+         * @param {Partial<TouchSpinOptions>} newsettings - Settings to update
+         */
         function _updateSettings(newsettings) {
           settings = Object.assign({}, settings, newsettings);
-          if ((newsettings.step !== void 0 || newsettings.min !== void 0 || newsettings.max !== void 0) && parseFloat(settings.step) !== 1) {
-            settings.max = _alignToStep(settings.max, settings.step, "down");
-            settings.min = _alignToStep(settings.min, settings.step, "up");
+
+          // Re-align bounds to step if any of these changed
+          if ((newsettings.step !== undefined || newsettings.min !== undefined || newsettings.max !== undefined) && parseFloat(settings.step) !== 1) {
+            settings.max = _alignToStep(settings.max, settings.step, 'down');
+            settings.min = _alignToStep(settings.min, settings.step, 'up');
           }
-          if ("postfix" in newsettings || "prefix" in newsettings) {
+
+          // Update postfix and prefix texts if those settings were changed.
+          if ('postfix' in newsettings || 'prefix' in newsettings) {
             if (!renderer) {
-              throw new Error("Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.");
+              throw new Error('Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.');
             }
             renderer.updatePrefixPostfix(newsettings, {
               _detached_prefix: _detached_prefix,
               _detached_postfix: _detached_postfix
             });
           }
-          if ("buttonup_txt" in newsettings || "buttondown_txt" in newsettings || "verticalup" in newsettings || "verticaldown" in newsettings) {
-            if (newsettings.buttonup_txt !== void 0 && elements.up) {
+
+          // Update button text if those settings were changed
+          if ('buttonup_txt' in newsettings || 'buttondown_txt' in newsettings || 'verticalup' in newsettings || 'verticaldown' in newsettings) {
+            if (newsettings.buttonup_txt !== undefined && elements.up) {
               elements.up.html(newsettings.buttonup_txt);
             }
-            if (newsettings.buttondown_txt !== void 0 && elements.down) {
+            if (newsettings.buttondown_txt !== undefined && elements.down) {
               elements.down.html(newsettings.buttondown_txt);
             }
-            if (newsettings.verticalup !== void 0 && elements.up) {
+            if (newsettings.verticalup !== undefined && elements.up) {
               elements.up.html(newsettings.verticalup);
             }
-            if (newsettings.verticaldown !== void 0 && elements.down) {
+            if (newsettings.verticaldown !== undefined && elements.down) {
               elements.down.html(newsettings.verticaldown);
             }
           }
-          if (newsettings.min !== void 0 || newsettings.max !== void 0 || newsettings.step !== void 0) {
+
+          // Sync native attributes when TouchSpin settings change
+          if (newsettings.min !== undefined || newsettings.max !== undefined || newsettings.step !== undefined) {
             _syncNativeAttributes();
             _updateAriaAttributes();
           }
           _hideEmptyPrefixPostfix();
         }
+
+        /**
+         * Builds the HTML structure for TouchSpin using the renderer system.
+         * @private
+         */
         function _buildHtml() {
           var initval = inputEl.value,
             parentelement = originalinput.parent();
-          if (initval !== "") {
+          if (initval !== '') {
             var raw = settings.callback_before_calculation(initval);
             var num = parseFloat(raw);
             initval = isFinite(num) ? settings.callback_after_calculation(num.toFixed(settings.decimals)) : settings.callback_after_calculation(raw);
           }
-          originalinput.data("initvalue", initval).val(initval);
-          originalinput.addClass("form-control");
+          originalinput.data('initvalue', initval).val(initval);
+          originalinput.addClass('form-control');
+
+          // Use the renderer system - should always be available
           if (!renderer) {
-            throw new Error("Bootstrap TouchSpin: Renderer not initialized. This indicates an initialization error.");
+            throw new Error('Bootstrap TouchSpin: Renderer not initialized. This indicates an initialization error.');
           }
-          if (parentelement.hasClass("input-group")) {
+          if (parentelement.hasClass('input-group')) {
             container = renderer.buildAdvancedInputGroup(parentelement);
           } else {
             container = renderer.buildInputGroup();
           }
         }
+
+        /**
+         * Initializes TouchSpin DOM elements using the renderer.
+         * @private
+         */
         function _initElements() {
           if (!renderer) {
-            throw new Error("Bootstrap TouchSpin: Renderer not available for element initialization.");
+            throw new Error('Bootstrap TouchSpin: Renderer not available for element initialization.');
           }
           elements = renderer.initElements(container);
+          // Cache element handles
           containerEl = container && container[0];
           elements && elements.up && elements.up[0];
           elements && elements.down && elements.down[0];
         }
+
+        /**
+         * Initializes ARIA attributes for accessibility.
+         * @private
+         */
         function _initAriaAttributes() {
-          if (!inputEl.getAttribute("role")) {
-            inputEl.setAttribute("role", "spinbutton");
+          // Set ARIA attributes on the input for screen readers
+          if (!inputEl.getAttribute('role')) {
+            inputEl.setAttribute('role', 'spinbutton');
           }
-          if (settings.min !== null && settings.min !== void 0) {
-            inputEl.setAttribute("aria-valuemin", String(settings.min));
+
+          // Set aria-valuemin and aria-valuemax if they exist
+          if (settings.min !== null && settings.min !== undefined) {
+            inputEl.setAttribute('aria-valuemin', String(settings.min));
           }
-          if (settings.max !== null && settings.max !== void 0) {
-            inputEl.setAttribute("aria-valuemax", String(settings.max));
+          if (settings.max !== null && settings.max !== undefined) {
+            inputEl.setAttribute('aria-valuemax', String(settings.max));
           }
+
+          // Set current value (don't force 0 on empty input)
           var rawInit = inputEl.value;
-          var nInit = rawInit !== "" ? parseFloat(String(rawInit)) : NaN;
+          var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
           if (!isNaN(nInit)) {
-            inputEl.setAttribute("aria-valuenow", String(nInit));
+            inputEl.setAttribute('aria-valuenow', String(nInit));
           } else {
-            inputEl.removeAttribute("aria-valuenow");
+            inputEl.removeAttribute('aria-valuenow');
           }
+
+          // Add descriptive labels to buttons for screen readers
           if (elements && elements.up && elements.down) {
-            elements.up.attr("aria-label", "Increase value");
-            elements.down.attr("aria-label", "Decrease value");
+            elements.up.attr('aria-label', 'Increase value');
+            elements.down.attr('aria-label', 'Decrease value');
           }
         }
+
+        /**
+         * Updates ARIA attributes when value changes.
+         * @private
+         */
         function _updateAriaAttributes() {
-          var _a;
-          var raw = String((_a = inputEl.value) != null ? _a : "");
-          if (raw === "") {
-            inputEl.removeAttribute("aria-valuenow");
-            inputEl.removeAttribute("aria-valuetext");
+          var _inputEl$value4;
+          var raw = String((_inputEl$value4 = inputEl.value) !== null && _inputEl$value4 !== void 0 ? _inputEl$value4 : '');
+          if (raw === '') {
+            inputEl.removeAttribute('aria-valuenow');
+            inputEl.removeAttribute('aria-valuetext');
           } else {
             var n = parseFloat(raw);
             if (!isNaN(n)) {
-              inputEl.setAttribute("aria-valuenow", String(n));
+              inputEl.setAttribute('aria-valuenow', String(n));
             } else {
-              inputEl.removeAttribute("aria-valuenow");
+              inputEl.removeAttribute('aria-valuenow');
             }
-            inputEl.setAttribute("aria-valuetext", raw);
+            inputEl.setAttribute('aria-valuetext', raw);
           }
-          if (settings.min !== null && settings.min !== void 0) {
-            inputEl.setAttribute("aria-valuemin", String(settings.min));
+
+          // Update min/max if they've changed
+          if (settings.min !== null && settings.min !== undefined) {
+            inputEl.setAttribute('aria-valuemin', String(settings.min));
           } else {
-            inputEl.removeAttribute("aria-valuemin");
+            inputEl.removeAttribute('aria-valuemin');
           }
-          if (settings.max !== null && settings.max !== void 0) {
-            inputEl.setAttribute("aria-valuemax", String(settings.max));
+          if (settings.max !== null && settings.max !== undefined) {
+            inputEl.setAttribute('aria-valuemax', String(settings.max));
           } else {
-            inputEl.removeAttribute("aria-valuemax");
+            inputEl.removeAttribute('aria-valuemax');
           }
         }
+
+        /**
+         * Hides empty prefix/postfix elements and stores detached elements.
+         * @private
+         */
         function _hideEmptyPrefixPostfix() {
           if (!renderer) {
-            throw new Error("Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.");
+            throw new Error('Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.');
           }
           var detached = renderer.hideEmptyPrefixPostfix();
           _detached_prefix = detached._detached_prefix;
           _detached_postfix = detached._detached_postfix;
         }
+
+        /**
+         * Binds all TouchSpin interaction events (keyboard, mouse, touch).
+         * @private
+         */
         function _bindEvents() {
-          inputEl = /** @type {HTMLInputElement} */
-          originalinput[0];
-          containerEl = /** @type {HTMLElement} */
-          container && container[0];
+          inputEl = /** @type {HTMLInputElement} */originalinput[0];
+          containerEl = /** @type {HTMLElement} */container && container[0];
+          /** @type {HTMLElement} */
           elements.up && elements.up[0];
+          /** @type {HTMLElement} */
           elements.down && elements.down[0];
-          function _onNative(el, type, handler, options2) {
+          function _onNative(el, type, handler, options) {
             if (!el) return;
-            el.addEventListener(type, handler, options2);
-            _nativeListeners.push([el, type, handler, options2]);
+            el.addEventListener(type, handler, options);
+            _nativeListeners.push([el, type, handler, options]);
           }
-          _onNative(inputEl, "keydown", function (ev) {
-            var e = /** @type {KeyboardEvent} */
-            ev;
+
+          // Keyboard on input
+          _onNative(inputEl, 'keydown', function (ev) {
+            var e = /** @type {KeyboardEvent} */ev;
             var code = e.keyCode || e.which || 0;
             if (code === 38) {
-              if (spinning !== "up") {
+              if (spinning !== 'up') {
                 upOnce();
                 startUpSpin();
               }
               e.preventDefault();
             } else if (code === 40) {
-              if (spinning !== "down") {
+              if (spinning !== 'down') {
                 downOnce();
                 startDownSpin();
               }
@@ -868,122 +1128,127 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               _checkValue(true);
             }
           });
-          _onNative(inputEl, "keyup", function (ev) {
-            var e = /** @type {KeyboardEvent} */
-            ev;
+          _onNative(inputEl, 'keyup', function (ev) {
+            var e = /** @type {KeyboardEvent} */ev;
             var code = e.keyCode || e.which || 0;
             if (code === 38 || code === 40) {
               stopSpin();
             }
           });
-          originalinput.on("blur.touchspin", function () {
+
+          // Back-compat: handle jQuery-triggered blur to sanitize immediately
+          originalinput.on('blur.touchspin', function () {
             _checkValue(true);
           });
+
+          // Container focusout handler - sanitizes when leaving the entire widget
           function leavingWidget(nextEl) {
             return !nextEl || (containerEl ? !containerEl.contains(nextEl) : true);
           }
-          _onNative(containerEl, "focusout", function (e) {
-            var next = /** @type {HTMLElement|null|undefined} */
-            /** @type {FocusEvent} */
-            e.relatedTarget;
+          _onNative(containerEl, 'focusout', function (e) {
+            var next = /** @type {HTMLElement|null|undefined} */(/** @type {FocusEvent} */e).relatedTarget;
             if (!leavingWidget(next)) return;
             setTimeout(function () {
-              var ae = /** @type {HTMLElement|null} */
-              document.activeElement;
+              var ae = /** @type {HTMLElement|null} */document.activeElement;
               if (leavingWidget(ae)) {
                 stopSpin();
                 _checkValue(true);
               }
             }, 0);
           });
-          elements.down.on("keydown.touchspin", function (ev) {
+
+          // Buttons: keyboard (keep jQuery bindings to support namespaced triggers)
+          elements.down.on('keydown.touchspin', function (ev) {
             var code = ev.keyCode || ev.which;
             if (code === 32 || code === 13) {
-              if (spinning !== "down") {
+              if (spinning !== 'down') {
                 downOnce();
                 startDownSpin();
               }
               ev.preventDefault();
             }
           });
-          elements.down.on("keyup.touchspin", function (ev) {
+          elements.down.on('keyup.touchspin', function (ev) {
             var code = ev.keyCode || ev.which;
             if (code === 32 || code === 13) {
               stopSpin();
             }
           });
-          elements.up.on("keydown.touchspin", function (ev) {
+          elements.up.on('keydown.touchspin', function (ev) {
             var code = ev.keyCode || ev.which;
             if (code === 32 || code === 13) {
-              if (spinning !== "up") {
+              if (spinning !== 'up') {
                 upOnce();
                 startUpSpin();
               }
               ev.preventDefault();
             }
           });
-          elements.up.on("keyup.touchspin", function (ev) {
+          elements.up.on('keyup.touchspin', function (ev) {
             var code = ev.keyCode || ev.which;
             if (code === 32 || code === 13) {
               stopSpin();
             }
           });
-          elements.down.on("mousedown.touchspin", function (ev) {
-            elements.down.off("touchstart.touchspin");
-            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
+
+          // Buttons: pointer (jQuery to support tests using namespaced triggers)
+          elements.down.on('mousedown.touchspin', function (ev) {
+            elements.down.off('touchstart.touchspin');
+            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
             ev.stopPropagation();
           });
-          elements.down.on("touchstart.touchspin", function (ev) {
-            elements.down.off("mousedown.touchspin");
-            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
+          elements.down.on('touchstart.touchspin', function (ev) {
+            elements.down.off('mousedown.touchspin');
+            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             downOnce();
             startDownSpin();
             ev.preventDefault();
             ev.stopPropagation();
           });
-          elements.up.on("mousedown.touchspin", function (ev) {
-            elements.up.off("touchstart.touchspin");
-            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
+          elements.up.on('mousedown.touchspin', function (ev) {
+            elements.up.off('touchstart.touchspin');
+            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
             ev.stopPropagation();
           });
-          elements.up.on("touchstart.touchspin", function (ev) {
-            elements.up.off("mousedown.touchspin");
-            if (inputEl.disabled || inputEl.hasAttribute("readonly")) return;
+          elements.up.on('touchstart.touchspin', function (ev) {
+            elements.up.off('mousedown.touchspin');
+            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             upOnce();
             startUpSpin();
             ev.preventDefault();
             ev.stopPropagation();
           });
-          elements.up.on("mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin", function (ev) {
+          elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
             if (!spinning) return;
             ev.stopPropagation();
             stopSpin();
           });
-          elements.down.on("mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin", function (ev) {
+          elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
             if (!spinning) return;
             ev.stopPropagation();
             stopSpin();
           });
-          elements.down.on("mousemove.touchspin touchmove.touchspin", function (ev) {
+          elements.down.on('mousemove.touchspin touchmove.touchspin', function (ev) {
             if (!spinning) return;
             ev.stopPropagation();
             ev.preventDefault();
           });
-          elements.up.on("mousemove.touchspin touchmove.touchspin", function (ev) {
+          elements.up.on('mousemove.touchspin touchmove.touchspin', function (ev) {
             if (!spinning) return;
             ev.stopPropagation();
             ev.preventDefault();
           });
-          _onNative(inputEl, "wheel", function (ev) {
+
+          // Mouse wheel on input (native)
+          _onNative(inputEl, 'wheel', function (ev) {
             if (!settings.mousewheel || document.activeElement !== inputEl) return;
-            var oe = /** @type {any} */
-            ev;
+            var oe = /** @type {any} */ev;
             var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
             ev.stopPropagation();
             ev.preventDefault();
@@ -994,31 +1259,41 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             }
           });
         }
+
+        /**
+         * Binds TouchSpin API events for external control.
+         * @private
+         */
         function _bindEventsInterface() {
-          originalinput.on("touchspin.destroy", function () {
+          originalinput.on('touchspin.destroy', function () {
             _destroy();
           });
-          originalinput.on("touchspin.uponce", function () {
+          originalinput.on('touchspin.uponce', function () {
             stopSpin();
             upOnce();
           });
-          originalinput.on("touchspin.downonce", function () {
+          originalinput.on('touchspin.downonce', function () {
             stopSpin();
             downOnce();
           });
-          originalinput.on("touchspin.startupspin", function () {
+          originalinput.on('touchspin.startupspin', function () {
             startUpSpin();
           });
-          originalinput.on("touchspin.startdownspin", function () {
+          originalinput.on('touchspin.startdownspin', function () {
             startDownSpin();
           });
-          originalinput.on("touchspin.stopspin", function () {
+          originalinput.on('touchspin.stopspin', function () {
             stopSpin();
           });
-          originalinput.on("touchspin.updatesettings", function (e, newsettings) {
+          originalinput.on('touchspin.updatesettings', function (e, newsettings) {
             changeSettings(newsettings);
           });
         }
+
+        /**
+         * Remove all native listeners registered by this instance.
+         * @private
+         */
         function _offAllNative() {
           for (var i = 0; i < _nativeListeners.length; i++) {
             var rec = _nativeListeners[i];
@@ -1026,14 +1301,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           }
           _nativeListeners = [];
         }
+
+        /**
+         * Sets up MutationObserver to watch for attribute changes.
+         * @private
+         */
         function _setupMutationObservers() {
-          if (typeof MutationObserver !== "undefined") {
+          if (typeof MutationObserver !== 'undefined') {
+            // MutationObserver is available
             mutationObserver = new MutationObserver(function (mutations) {
               mutations.forEach(function (mutation) {
-                if (mutation.type === "attributes") {
-                  if (mutation.attributeName === "disabled" || mutation.attributeName === "readonly") {
+                if (mutation.type === 'attributes') {
+                  if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
                     _updateButtonDisabledState();
-                  } else if (mutation.attributeName === "min" || mutation.attributeName === "max" || mutation.attributeName === "step") {
+                  } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
                     _syncSettingsFromNativeAttributes();
                   }
                 }
@@ -1041,48 +1322,65 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             });
             mutationObserver.observe(originalinput[0], {
               attributes: true,
-              attributeFilter: ["disabled", "readonly", "min", "max", "step"]
+              attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step']
             });
           }
         }
-        function _forcestepdivisibility(value2) {
+
+        /**
+         * Applies step divisibility rules to a value.
+         * @private
+         * @param {number} value - Value to apply divisibility to
+         * @returns {string} Value adjusted for step divisibility
+         */
+        function _forcestepdivisibility(value) {
           switch (settings.forcestepdivisibility) {
-            case "round":
-              return (Math.round(value2 / settings.step) * settings.step).toFixed(settings.decimals);
-            case "floor":
-              return (Math.floor(value2 / settings.step) * settings.step).toFixed(settings.decimals);
-            case "ceil":
-              return (Math.ceil(value2 / settings.step) * settings.step).toFixed(settings.decimals);
+            case 'round':
+              return (Math.round(value / settings.step) * settings.step).toFixed(settings.decimals);
+            case 'floor':
+              return (Math.floor(value / settings.step) * settings.step).toFixed(settings.decimals);
+            case 'ceil':
+              return (Math.ceil(value / settings.step) * settings.step).toFixed(settings.decimals);
             default:
-              return value2.toFixed(settings.decimals);
+              return value.toFixed(settings.decimals);
           }
         }
+
+        /**
+         * Validates and corrects the input value according to constraints.
+         * @private
+         * @param {boolean} [mayTriggerChange=false] - Whether to fire change event if display value changes
+         * @fires touchspin.on.min
+         * @fires touchspin.on.max
+         */
         function _checkValue(mayTriggerChange) {
-          var _a, _b, _c, _d;
+          var _inputEl$value5, _inputEl$value7;
           var val, parsedval, returnval;
-          var prevDisplay = String((_a = inputEl.value) != null ? _a : "");
+          var prevDisplay = String((_inputEl$value5 = inputEl.value) !== null && _inputEl$value5 !== void 0 ? _inputEl$value5 : '');
           val = settings.callback_before_calculation(inputEl.value);
-          if (val === "") {
-            if (settings.replacementval !== "") {
+          if (val === '') {
+            if (settings.replacementval !== '') {
               inputEl.value = String(settings.replacementval);
               _updateAriaAttributes();
             } else {
-              inputEl.removeAttribute("aria-valuenow");
+              inputEl.removeAttribute('aria-valuenow');
             }
+            // For empty values, compare final result with initial value
             if (mayTriggerChange) {
-              var finalDisplay = String((_b = inputEl.value) != null ? _b : "");
+              var _inputEl$value6;
+              var finalDisplay = String((_inputEl$value6 = inputEl.value) !== null && _inputEl$value6 !== void 0 ? _inputEl$value6 : '');
               if (finalDisplay !== prevDisplay) {
-                originalinput.trigger("change");
+                originalinput.trigger('change');
               }
             }
             return;
           }
-          if (settings.decimals > 0 && val === ".") {
+          if (settings.decimals > 0 && val === '.') {
             return;
           }
           parsedval = parseFloat(val);
           if (isNaN(parsedval)) {
-            if (settings.replacementval !== "") {
+            if (settings.replacementval !== '') {
               var rv = parseFloat(String(settings.replacementval));
               parsedval = isNaN(rv) ? 0 : rv;
             } else {
@@ -1097,42 +1395,58 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
           if (settings.max !== null && parsedval > settings.max) {
             returnval = settings.max;
           }
-          String((_c = inputEl.value) != null ? _c : "");
+          String((_inputEl$value7 = inputEl.value) !== null && _inputEl$value7 !== void 0 ? _inputEl$value7 : '');
           _setDisplay(parseFloat(returnval));
           if (mayTriggerChange) {
-            var nextDisplay = String((_d = inputEl.value) != null ? _d : "");
+            var _inputEl$value8;
+            var nextDisplay = String((_inputEl$value8 = inputEl.value) !== null && _inputEl$value8 !== void 0 ? _inputEl$value8 : '');
             if (nextDisplay !== prevDisplay) {
-              originalinput.trigger("change");
+              originalinput.trigger('change');
             }
           }
         }
+
+        /**
+         * Synchronizes TouchSpin settings with native input attributes.
+         * @private
+         */
         function _syncNativeAttributes() {
-          if (inputEl.getAttribute("type") === "number") {
-            if (settings.min !== null && settings.min !== void 0) {
-              inputEl.setAttribute("min", String(settings.min));
+          // Always set native attributes when input type is number to ensure consistency
+          if (inputEl.getAttribute('type') === 'number') {
+            if (settings.min !== null && settings.min !== undefined) {
+              inputEl.setAttribute('min', String(settings.min));
             } else {
-              inputEl.removeAttribute("min");
+              inputEl.removeAttribute('min');
             }
-            if (settings.max !== null && settings.max !== void 0) {
-              inputEl.setAttribute("max", String(settings.max));
+            if (settings.max !== null && settings.max !== undefined) {
+              inputEl.setAttribute('max', String(settings.max));
             } else {
-              inputEl.removeAttribute("max");
+              inputEl.removeAttribute('max');
             }
-            if (settings.step !== null && settings.step !== void 0) {
-              inputEl.setAttribute("step", String(settings.step));
+            if (settings.step !== null && settings.step !== undefined) {
+              inputEl.setAttribute('step', String(settings.step));
             } else {
-              inputEl.removeAttribute("step");
+              inputEl.removeAttribute('step');
             }
           }
         }
+
+        /**
+         * Updates TouchSpin settings when native attributes change externally.
+         * @private
+         */
         function _syncSettingsFromNativeAttributes() {
-          var nativeMin = inputEl.getAttribute("min");
-          var nativeMax = inputEl.getAttribute("max");
-          var nativeStep = inputEl.getAttribute("step");
+          // Update TouchSpin settings when native attributes change externally
+          var nativeMin = inputEl.getAttribute('min');
+          var nativeMax = inputEl.getAttribute('max');
+          var nativeStep = inputEl.getAttribute('step');
           var needsUpdate = false;
           var newSettings = {};
+
+          // Check min attribute
           if (nativeMin != null) {
-            var parsedMin = nativeMin === "" ? null : parseFloat(nativeMin);
+            var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+            // Normalize min to number for consistency (same as _initSettings)
             if (parsedMin != null) {
               var minNum = Number(parsedMin);
               parsedMin = isFinite(minNum) ? minNum : null;
@@ -1142,11 +1456,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               needsUpdate = true;
             }
           } else if (settings.min !== null) {
+            // Attribute was removed
             newSettings.min = null;
             needsUpdate = true;
           }
+
+          // Check max attribute
           if (nativeMax != null) {
-            var parsedMax = nativeMax === "" ? null : parseFloat(nativeMax);
+            var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+            // Normalize max to number for consistency (same as _initSettings)
             if (parsedMax != null) {
               var maxNum = Number(parsedMax);
               parsedMax = isFinite(maxNum) ? maxNum : null;
@@ -1156,30 +1474,45 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               needsUpdate = true;
             }
           } else if (settings.max !== null) {
+            // Attribute was removed
             newSettings.max = null;
             needsUpdate = true;
           }
+
+          // Check step attribute
           if (nativeStep != null) {
-            var parsedStep = nativeStep === "" || nativeStep === "any" ? 1 : parseFloat(nativeStep);
+            var parsedStep = nativeStep === '' || nativeStep === 'any' ? 1 : parseFloat(nativeStep);
             if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
             if (parsedStep !== settings.step) {
               newSettings.step = parsedStep;
               needsUpdate = true;
             }
           } else if (settings.step !== 1) {
+            // Attribute was removed, default to 1
             newSettings.step = 1;
             needsUpdate = true;
           }
           if (needsUpdate) {
+            // Update settings without triggering another sync to avoid infinite loop
             settings = Object.assign({}, settings, newSettings);
-            if ((newSettings.step !== void 0 || newSettings.min !== void 0 || newSettings.max !== void 0) && parseFloat(settings.step) !== 1) {
-              settings.max = _alignToStep(settings.max, settings.step, "down");
-              settings.min = _alignToStep(settings.min, settings.step, "up");
+
+            // Re-process step divisibility rules if step, min, or max changed
+            if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && parseFloat(settings.step) !== 1) {
+              settings.max = _alignToStep(settings.max, settings.step, 'down');
+              settings.min = _alignToStep(settings.min, settings.step, 'up');
             }
+
+            // Update ARIA attributes when min/max settings change
             _updateAriaAttributes();
             _checkValue(true);
           }
         }
+
+        /**
+         * Calculates the boosted step value based on spin count.
+         * @private
+         * @returns {number} Current step value (potentially boosted)
+         */
         function _getBoostedStep() {
           if (!settings.booster) {
             return settings.step;
@@ -1194,22 +1527,38 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             return Math.max(settings.step, boosted);
           }
         }
+
+        /**
+         * Clears spin timers (delay + interval) without triggering events.
+         * @private
+         */
         function _clearSpinTimers() {
           clearTimeout(downDelayTimeout);
           clearTimeout(upDelayTimeout);
           clearInterval(downSpinTimer);
           clearInterval(upSpinTimer);
         }
+
+        /**
+         * Starts continuous spinning in the specified direction using shared helpers.
+         * Preserves original event order and semantics.
+         * @private
+         * @param {'up'|'down'} dir
+         */
         function _startSpin(dir) {
-          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
             return;
           }
+
+          // stop any previous spin and reset state
           _clearSpinTimers();
           spincount = 0;
           spinning = dir;
-          originalinput.trigger("touchspin.on.startspin");
-          if (dir === "up") {
-            originalinput.trigger("touchspin.on.startupspin");
+
+          // fire start events
+          originalinput.trigger('touchspin.on.startspin');
+          if (dir === 'up') {
+            originalinput.trigger('touchspin.on.startupspin');
             upDelayTimeout = setTimeout(function () {
               upSpinTimer = setInterval(function () {
                 spincount++;
@@ -1217,7 +1566,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
               }, settings.stepinterval);
             }, settings.stepintervaldelay);
           } else {
-            originalinput.trigger("touchspin.on.startdownspin");
+            originalinput.trigger('touchspin.on.startdownspin');
             downDelayTimeout = setTimeout(function () {
               downSpinTimer = setInterval(function () {
                 spincount++;
@@ -1226,71 +1575,116 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             }, settings.stepintervaldelay);
           }
         }
+
+        /**
+         * Returns a fallback value when input is NaN.
+         * @private
+         * @returns {number} Fallback value (firstclickvalueifempty or midpoint)
+         */
         function valueIfIsNaN() {
-          if (typeof settings.firstclickvalueifempty === "number") {
+          if (typeof settings.firstclickvalueifempty === 'number') {
             return settings.firstclickvalueifempty;
           } else {
-            var min = typeof settings.min === "number" ? settings.min : 0;
-            var max = typeof settings.max === "number" ? settings.max : min;
+            var min = typeof settings.min === 'number' ? settings.min : 0;
+            var max = typeof settings.max === 'number' ? settings.max : min;
             return (min + max) / 2;
           }
         }
+
+        /**
+         * Updates TouchSpin button disabled state based on input state.
+         * @private
+         */
         function _updateButtonDisabledState() {
-          var isDisabled = inputEl.disabled || inputEl.hasAttribute("readonly");
-          elements.up.prop("disabled", isDisabled);
-          elements.down.prop("disabled", isDisabled);
+          var isDisabled = inputEl.disabled || inputEl.hasAttribute('readonly');
+          elements.up.prop('disabled', isDisabled);
+          elements.down.prop('disabled', isDisabled);
           if (isDisabled) {
             stopSpin();
           }
         }
+
+        /**
+         * Increments the value by one step.
+         * @private
+         * @fires touchspin.on.max
+         */
         function upOnce() {
-          var _a;
-          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
+          var _inputEl$value9;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
             return;
           }
           _checkValue();
-          var prevDisplay = String((_a = inputEl.value) != null ? _a : "");
+          var prevDisplay = String((_inputEl$value9 = inputEl.value) !== null && _inputEl$value9 !== void 0 ? _inputEl$value9 : '');
           value = parseFloat(settings.callback_before_calculation(inputEl.value));
-          value = _nextValue("up", value);
+          value = _nextValue('up', value);
           if (settings.max !== null && value === settings.max) {
-            originalinput.trigger("touchspin.on.max");
+            originalinput.trigger('touchspin.on.max');
             stopSpin();
           }
           var nextDisplay = _setDisplay(value);
-          if (prevDisplay !== nextDisplay) originalinput.trigger("change");
+          if (prevDisplay !== nextDisplay) originalinput.trigger('change');
         }
+
+        /**
+         * Decrements the value by one step.
+         * @private
+         * @fires touchspin.on.min
+         */
         function downOnce() {
-          var _a;
-          if (inputEl.disabled || inputEl.hasAttribute("readonly")) {
+          var _inputEl$value10;
+          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
             return;
           }
           _checkValue();
-          var prevDisplay = String((_a = inputEl.value) != null ? _a : "");
+          var prevDisplay = String((_inputEl$value10 = inputEl.value) !== null && _inputEl$value10 !== void 0 ? _inputEl$value10 : '');
           value = parseFloat(settings.callback_before_calculation(inputEl.value));
-          value = _nextValue("down", value);
+          value = _nextValue('down', value);
           if (settings.min !== null && value === settings.min) {
-            originalinput.trigger("touchspin.on.min");
+            originalinput.trigger('touchspin.on.min');
             stopSpin();
           }
           var nextDisplay = _setDisplay(value);
-          if (prevDisplay !== nextDisplay) originalinput.trigger("change");
+          if (prevDisplay !== nextDisplay) originalinput.trigger('change');
         }
+
+        /**
+         * Starts continuous downward spinning.
+         * @private
+         * @fires touchspin.on.startspin
+         * @fires touchspin.on.startdownspin
+         */
         function startDownSpin() {
-          _startSpin("down");
+          _startSpin('down');
         }
+
+        /**
+         * Starts continuous upward spinning.
+         * @private
+         * @fires touchspin.on.startspin
+         * @fires touchspin.on.startupspin
+         */
         function startUpSpin() {
-          _startSpin("up");
+          _startSpin('up');
         }
+
+        /**
+         * Stops all spinning and clears timers.
+         * @private
+         * @fires touchspin.on.stopupspin
+         * @fires touchspin.on.stopdownspin
+         * @fires touchspin.on.stopspin
+         */
         function stopSpin() {
           _clearSpinTimers();
           switch (spinning) {
-            case "up":
-              originalinput.trigger("touchspin.on.stopupspin");
-              originalinput.trigger("touchspin.on.stopspin");
+            case 'up':
+              originalinput.trigger('touchspin.on.stopupspin');
+              originalinput.trigger('touchspin.on.stopspin');
               break;
-            case "down":
-              originalinput.trigger("touchspin.on.stopdownspin");
-              originalinput.trigger("touchspin.on.stopspin");
+            case 'down':
+              originalinput.trigger('touchspin.on.stopdownspin');
+              originalinput.trigger('touchspin.on.stopspin');
               break;
           }
           spincount = 0;
@@ -1299,6 +1693,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     };
   });
+
+  // Renderer classes are included before this file during the build process
+  // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
+  // and RendererFactory should be available
+
+  // Modern facade moved to wrapper (src/wrappers/modern-facade.js) in LGTM-7a/8.
 });
 
 /* Appended wrapper: src/wrappers/modern-facade.js (via APPEND_WRAPPERS) */
