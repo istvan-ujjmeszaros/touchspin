@@ -74,7 +74,7 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
 - [x] P15: Mousewheel — single step on focus; change event only.
 - [x] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
 - [x] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
-- [ ] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
+- [x] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
 
 - Verification
 - [x] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
