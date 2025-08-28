@@ -1641,12 +1641,12 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
          * @fires touchspin.on.min
          */
         function downOnce() {
-          var _inputEl$value10;
+          var _inputEl$value0;
           if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
             return;
           }
           _checkValue();
-          var prevDisplay = String((_inputEl$value10 = inputEl.value) !== null && _inputEl$value10 !== void 0 ? _inputEl$value10 : '');
+          var prevDisplay = String((_inputEl$value0 = inputEl.value) !== null && _inputEl$value0 !== void 0 ? _inputEl$value0 : '');
           value = parseFloat(settings.callback_before_calculation(inputEl.value));
           value = _nextValue('down', value);
           if (settings.min !== null && value === settings.min) {
