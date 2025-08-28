@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin A/B Compare (Original vs Wrapper)</title>
+  <link rel="stylesheet" href="assets/bootstrap/bootstrap-5.3.2.min.css">
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <style>
+    .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    pre { background:#f8f9fa; padding:10px; height: 180px; overflow:auto; }
+  </style>
+
+  <!-- Original renderer classes (Bootstrap 5) for the source plugin -->
+  <script src="../../src/renderers/AbstractRenderer.js"></script>
+  <script src="../../src/renderers/Bootstrap5Renderer.js"></script>
+  <script>
+    // RendererFactory used by both original and wrapper (Bootstrap 5 UI)
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) { return new Bootstrap5Renderer($, settings, originalinput); }
+      static getVersion() { return 5; }
+      static getFrameworkId() { return 'bootstrap5'; }
+    };
+  </script>
+
+  <!-- Original jQuery plugin (source of truth) -->
+  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+</head>
+<body class="container py-4">
+  <h1 class="h4">A/B Compare: Original Plugin vs Wrapper (Core)</h1>
+  <p class="text-muted">Original plugin (left) uses src/jquery.bootstrap-touchspin.js; Wrapper (right) uses @touchspin/core + @touchspin/jquery-plugin.</p>
+
+  <div class="grid">
+    <div class="test-section">
+      <h2 class="h6">Original (src)</h2>
+      <input id="orig-input" type="text" value="10" class="form-control" data-testid="ab-orig">
+      <div class="mt-2">
+        <button id="orig-init" class="btn btn-primary btn-sm">Init</button>
+        <button id="orig-destroy" class="btn btn-outline-danger btn-sm">Destroy</button>
+        <button id="orig-up" class="btn btn-outline-secondary btn-sm">Up Once</button>
+        <button id="orig-down" class="btn btn-outline-secondary btn-sm">Down Once</button>
+      </div>
+      <h6 class="mt-3">Events</h6>
+      <pre id="orig-log"></pre>
+    </div>
+
+    <div class="test-section">
+      <h2 class="h6">Wrapper (core)</h2>
+      <input id="wrap-input" type="text" value="10" class="form-control" data-testid="ab-wrap">
+      <div class="mt-2">
+        <button id="wrap-init" class="btn btn-primary btn-sm">Init</button>
+        <button id="wrap-destroy" class="btn btn-outline-danger btn-sm">Destroy</button>
+        <button id="wrap-up" class="btn btn-outline-secondary btn-sm">Up Once</button>
+        <button id="wrap-down" class="btn btn-outline-secondary btn-sm">Down Once</button>
+      </div>
+      <h6 class="mt-3">Events</h6>
+      <pre id="wrap-log"></pre>
+    </div>
+  </div>
+
+  <!-- Install the wrapper after original is loaded, so both can coexist -->
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    installJqueryTouchSpin(window.jQuery);
+  </script>
+
+  <script>
+    (function(){
+      const $ = window.jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      const origLog = document.getElementById('orig-log');
+      const wrapLog = document.getElementById('wrap-log');
+
+      function bindLog($input, logEl) {
+        function add(msg){ const ts = new Date().toISOString().split('T')[1].replace('Z',''); logEl.textContent += `[${ts}] ${msg}\n`; logEl.scrollTop = logEl.scrollHeight; }
+        const evs = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
+        $input.on(evs, function(e){ const ns=(e.namespace||''); const sub = ns.replace(/^on\./,'')||e.type; add(sub); });
+        $input.on('change', function(){ add('change[' + this.value + ']'); });
+      }
+
+      bindLog($orig, origLog);
+      bindLog($wrap, wrapLog);
+
+      document.getElementById('orig-init').addEventListener('click', () => $orig.TouchSpin({ min:0, max:100, step:1 }));
+      document.getElementById('orig-destroy').addEventListener('click', () => $orig.trigger('touchspin.destroy'));
+      document.getElementById('orig-up').addEventListener('click', () => $orig.TouchSpin('uponce'));
+      document.getElementById('orig-down').addEventListener('click', () => $orig.TouchSpin('downonce'));
+
+      document.getElementById('wrap-init').addEventListener('click', () => $wrap.TouchSpin({ min:0, max:100, step:1 }));
+      document.getElementById('wrap-destroy').addEventListener('click', () => $wrap.trigger('touchspin.destroy'));
+      document.getElementById('wrap-up').addEventListener('click', () => $wrap.TouchSpin('uponce'));
+      document.getElementById('wrap-down').addEventListener('click', () => $wrap.TouchSpin('downonce'));
+    })();
+  </script>
+</body>
+</html>
+

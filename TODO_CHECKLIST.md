@@ -92,6 +92,8 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
 
 - Verification
 - [ ] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
+  - [x] P19a: Manual A/B compare page added (`__tests__/html/ab-compare.html`).
+  - [ ] P19b: Automated A/B parity test (Playwright) for key sequences.
 - [ ] P20: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
 
 Phase D — Framework Wrappers (optional deliverables after core split)

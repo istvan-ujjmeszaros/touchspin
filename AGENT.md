@@ -138,6 +138,8 @@ container.on('focusout.touchspin', function (e) {
 - **60-second timeout** per test for stability
 - **Multiple HTML fixtures** test Bootstrap 3/4/5 compatibility
 - **Coverage collection** tracks code usage across tests
+ 
+Note: Existing Playwright tests and Bootstrap HTML fixtures exercise the original jQuery plugin in `src/`. New wrapper/core behavior is covered by dedicated wrapper/core tests and manual pages. Do not expect the legacy tests to reflect wrapper/core changes until we migrate fixtures to consume the new packages.
 
 ### Manual Pages & Harnesses
 - Core smoke: `__tests__/html/core-smoke.html` (ESM core only; no jQuery)
