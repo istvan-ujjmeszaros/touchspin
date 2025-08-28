@@ -18,7 +18,7 @@
     <h1 class="text-2xl font-semibold">Tailwind Renderer + jQuery Plugin</h1>
     <p class="text-gray-700">Uses Tailwind renderer UI with the new core-powered jQuery wrapper.</p>
 
-    <div class="test-section">
+  <div class="test-section">
       <div class="mb-2">
         <label for="jq-input" class="block mb-1 font-medium">Numeric input:</label>
         <input id="jq-input" type="text" value="10" class="w-full border rounded px-2 py-2" />
@@ -45,6 +45,19 @@
       <div class="mt-2"><strong>Status:</strong> <span id="status">Not initialized</span></div>
       <h5 class="mt-3 font-medium">Events</h5>
       <pre id="log"></pre>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h3 class="text-xl font-medium mb-2">Advanced Container (Tailwind)</h3>
+    <div class="mb-2">
+      <div data-touchspin-advanced id="tw-adv-container" class="border border-gray-300 rounded p-2">
+        <input id="tw-adv-input" type="text" value="8" class="w-64" />
+      </div>
+    </div>
+    <div class="control-buttons">
+      <button id="btn-adv-init" class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Init (advanced)</button>
+      <button id="btn-adv-destroy" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">Destroy (advanced)</button>
     </div>
   </div>
 
@@ -120,6 +133,14 @@
         const isReadonly = $input.is('[readonly]');
         $input.prop('readonly', !isReadonly);
       });
+
+      // Advanced init/destroy using data-touchspin-advanced container
+      const $adv = $('#tw-adv-input');
+      document.getElementById('btn-adv-init').addEventListener('click', () => {
+        try { $adv.trigger('touchspin.destroy'); } catch {}
+        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: 'TW', postfix: 'x' });
+      });
+      document.getElementById('btn-adv-destroy').addEventListener('click', () => { $adv.trigger('touchspin.destroy'); });
     })();
   </script>
 </body>

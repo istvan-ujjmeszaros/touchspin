@@ -55,6 +55,19 @@
     <pre id="log"></pre>
   </div>
 
+  <div class="test-section">
+    <h6>Advanced Input Group (Bootstrap 5)</h6>
+    <div class="mb-2">
+      <div class="input-group" id="bs5-adv-group">
+        <input id="bs5-adv-input" type="text" value="7" class="form-control" />
+      </div>
+    </div>
+    <div class="mb-2">
+      <button id="btn-adv-init" class="btn btn-primary btn-sm">Init (advanced)</button>
+      <button id="btn-adv-destroy" class="btn btn-outline-danger btn-sm">Destroy (advanced)</button>
+    </div>
+  </div>
+
   <script>
     (function(){
       const $ = window.jQuery;
@@ -80,6 +93,14 @@
       document.getElementById('btn-stop').addEventListener('click', () => $input.TouchSpin('stopspin'));
       document.getElementById('btn-toggle-disabled').addEventListener('click', () => { const d=$input.is(':disabled'); $input.prop('disabled', !d); });
       document.getElementById('btn-toggle-readonly').addEventListener('click', () => { const r=$input.is('[readonly]'); $input.prop('readonly', !r); });
+
+      // Advanced init/destroy (parent has .input-group)
+      const $adv = $('#bs5-adv-input');
+      document.getElementById('btn-adv-init').addEventListener('click', () => {
+        try { $adv.trigger('touchspin.destroy'); } catch {}
+        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
+      });
+      document.getElementById('btn-adv-destroy').addEventListener('click', () => { $adv.trigger('touchspin.destroy'); });
     })();
   </script>
 </body>

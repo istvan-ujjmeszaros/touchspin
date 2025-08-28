@@ -71,7 +71,9 @@
     "test:visual:headed": "playwright test --project=visual-tests --headed",
     "test:visual:report": "playwright show-report reports/playwright",
     "test:json": "node scripts/test-json.mjs --project=chromium",
-    "test:json:tailwind": "node scripts/test-json.mjs __tests__/tailwindRenderer.test.ts --project=chromium --output reports/json/tailwind.json"
+    "test:json:tailwind": "node scripts/test-json.mjs __tests__/tailwindRenderer.test.ts --project=chromium --output reports/json/tailwind.json",
+    "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed",
+    "test:debug:tailwind": "PWDEBUG=1 playwright test __tests__/tailwindRenderer.test.ts --project=chromium"
   },
   "workspaces": [
     "packages/*",

@@ -37,6 +37,10 @@ npm test
 - `npm run test:headed` - Run tests with visible browser
 - `npm run test:ui` - Run tests with Playwright UI
 - `npm run test:playwright` - Run Playwright browser tests specifically
+- `npm run test:json` - Run tests with JSON reporter to `reports/json/last.json`
+- `npm run test:json:tailwind` - Tailwind-only tests to `reports/json/tailwind.json`
+- `npm run test:debug` - Open Playwright Inspector (step-by-step) for any tests (pass patterns after `--`)
+- `npm run test:debug:tailwind` - Inspector for Tailwind tests only
 - JSON report: `npm run test:json` (saves to `reports/json/last.json`)
 - Tailwind JSON: `npm run test:json:tailwind`
 
@@ -55,6 +59,12 @@ npm run test:json:tailwind
 
 # The JSON report is written to reports/json/*.json and parsed for a summary.
 ```
+
+#### Step-by-step debugging
+- Inspector: `npm run test:debug -- __tests__/some.test.ts` (or run with `PWDEBUG=1`). You can pause, step, and view locators.
+- Pause anywhere: add `await page.pause()` inside a test to break into the Inspector at that line.
+
+Tip (Windows/PowerShell): use `$env:PWDEBUG=1; npx playwright test` to set env vars; on Bash/WSL use `PWDEBUG=1 npx playwright test`.
 
 ### Legacy Commands (fallback)
 - `npm run build:legacy` - Original Grunt build pipeline

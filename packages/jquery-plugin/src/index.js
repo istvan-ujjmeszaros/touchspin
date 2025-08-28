@@ -79,7 +79,19 @@ export function installJqueryTouchSpin($) {
         } catch {}
 
         renderer = window.RendererFactory.createRenderer($, opts, $input);
-        const container = renderer.buildInputGroup();
+        // Detect advanced input-group (Bootstrap) or a custom advanced container
+        let advancedContainer = null;
+        try {
+          const $parent = $input.parent();
+          if ($parent && $parent.hasClass('input-group')) advancedContainer = $parent;
+          if (!advancedContainer) {
+            const $adv = $input.closest('[data-touchspin-advanced]');
+            if ($adv && $adv.length) advancedContainer = $adv;
+          }
+        } catch {}
+        const container = advancedContainer
+          ? renderer.buildAdvancedInputGroup(advancedContainer)
+          : renderer.buildInputGroup();
         $container = container;
         elements = renderer.initElements(container);
         try { __detached = renderer.hideEmptyPrefixPostfix(); } catch {}
@@ -296,6 +308,21 @@ export function installJqueryTouchSpin($) {
       if ($wrap.length) {
         $wrap.before($input);
         $wrap.remove();
+      } else {
+        // Advanced enhancement cleanup: keep parent container (.input-group or [data-touchspin-advanced])
+        let $adv = null;
+        try {
+          $adv = $input.closest('.input-group');
+          if (!$adv || !$adv.length) $adv = $input.closest('[data-touchspin-advanced]');
+          if (!$adv || !$adv.length) $adv = $input.closest('[data-touchspin-injected="enhanced-wrapper"]');
+        } catch {}
+        const $scope = ($adv && $adv.length) ? $adv : $input.parent();
+        try { $scope.find('[data-touchspin-injected="down"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="up"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="prefix"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="postfix"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="vertical-wrapper"]').remove(); } catch {}
+        try { if ($adv && $adv.length) { $adv.removeAttr('data-touchspin-injected'); $adv.removeClass('bootstrap-touchspin'); } } catch {}
       }
       $input.off('.touchspin');
       $input.removeData('touchspin');
