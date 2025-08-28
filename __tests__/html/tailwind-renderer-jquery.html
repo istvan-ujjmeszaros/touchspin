@@ -80,6 +80,8 @@
         const name = String(e.type).replace('touchspin.on.','');
         addLog('core:' + name);
       });
+      // Also show native change events so mouse wheel behavior is visible
+      $input.on('change', function(){ addLog('change[' + this.value + ']'); });
 
       function init(opts) {
         try { destroy(); } catch {}
