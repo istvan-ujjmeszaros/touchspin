@@ -20,6 +20,11 @@ export function installJqueryTouchSpin($) {
     booster: true,
     boostat: 10,
     maxboostedstep: false,
+    // Framework-specific classes are provided by the active renderer; leave placeholders as null
+    buttondown_class: null,
+    buttonup_class: null,
+    verticalupclass: null,
+    verticaldownclass: null,
     buttondown_txt: '&minus;',
     buttonup_txt: '&plus;',
     prefix: '',
@@ -62,6 +67,15 @@ export function installJqueryTouchSpin($) {
       let elements = { up: null, down: null, input: $input };
       let $container = null;
       if (typeof window !== 'undefined' && window.RendererFactory) {
+        // Fill renderer-specific defaults for null placeholders (parity with original plugin)
+        try {
+          const temp = window.RendererFactory.createRenderer($, {}, $input);
+          if (temp && typeof temp.getDefaultSettings === 'function') {
+            const rd = temp.getDefaultSettings();
+            Object.keys(rd).forEach((k) => { if (opts[k] === null) opts[k] = rd[k]; });
+          }
+        } catch {}
+
         const renderer = window.RendererFactory.createRenderer($, opts, $input);
         const container = renderer.buildInputGroup();
         $container = container;
