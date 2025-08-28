@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin Wrapper Demo — Bootstrap 5</title>
+  <link rel="stylesheet" href="../html/assets/bootstrap/bootstrap-5.3.2.min.css">
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
+  <script src="../html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <style>
+    .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+    pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
+  </style>
+
+  <!-- Renderer (Bootstrap 5) from packages -->
+  <script src="../../packages/renderers/bootstrap5/src/AbstractRenderer.js"></script>
+  <script src="../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js"></script>
+  <script>
+    window.RendererFactory = class {
+      static createRenderer($, settings, originalinput) { return new Bootstrap5Renderer($, settings, originalinput); }
+      static getFrameworkId() { return 'bootstrap5'; }
+    };
+  </script>
+
+  <!-- Install the core-backed jQuery wrapper -->
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    installJqueryTouchSpin(window.jQuery);
+  </script>
+</head>
+<body class="container py-4">
+  <h1 class="h5">TouchSpin Wrapper (Core) — Bootstrap 5</h1>
+  <div class="test-section">
+    <div class="mb-2">
+      <label for="bs5-input" class="form-label">Numeric input:</label>
+      <input id="bs5-input" type="text" value="10" class="form-control" />
+    </div>
+    <div class="mb-2">
+      <button id="btn-init" class="btn btn-primary btn-sm">Init</button>
+      <button id="btn-destroy" class="btn btn-outline-danger btn-sm">Destroy</button>
+      <button id="btn-reinit" class="btn btn-outline-success btn-sm">Reinit (different)</button>
+      <button id="btn-toggle-disabled" class="btn btn-outline-warning btn-sm">Toggle Disabled</button>
+      <button id="btn-toggle-readonly" class="btn btn-outline-warning btn-sm">Toggle Readonly</button>
+    </div>
+    <div class="mb-2">
+      <button id="btn-uponce" class="btn btn-outline-secondary btn-sm">upOnce()</button>
+      <button id="btn-downonce" class="btn btn-outline-secondary btn-sm">downOnce()</button>
+      <button id="btn-startup" class="btn btn-outline-secondary btn-sm">startUpSpin()</button>
+      <button id="btn-startdown" class="btn btn-outline-secondary btn-sm">startDownSpin()</button>
+      <button id="btn-stop" class="btn btn-outline-secondary btn-sm">stopSpin()</button>
+    </div>
+    <div><strong>Status:</strong> <span id="status">Not initialized</span></div>
+    <h6 class="mt-3">Events</h6>
+    <pre id="log"></pre>
+  </div>
+
+  <script>
+    (function(){
+      const $ = window.jQuery;
+      const $input = $('#bs5-input');
+      const status = document.getElementById('status');
+      const log = document.getElementById('log');
+      function addLog(msg){ const ts = new Date().toISOString().split('T')[1].replace('Z',''); log.textContent += `[${ts}] ${msg}\n`; log.scrollTop = log.scrollHeight; }
+
+      const evs = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
+      $input.on(evs, function(e){ const ns=(e.namespace||''); const sub = ns.replace(/^on\./,'')||e.type; addLog('core:' + sub); });
+      $input.on('change', function(){ addLog('change[' + this.value + ']'); });
+
+      function init(opts){ try { destroy(); } catch {} $input.TouchSpin(opts); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
+      function destroy(){ $input.trigger('touchspin.destroy'); status.textContent = 'Destroyed'; }
+
+      document.getElementById('btn-init').addEventListener('click', () => init({ min:0, max:100, step:1 }));
+      document.getElementById('btn-destroy').addEventListener('click', destroy);
+      document.getElementById('btn-reinit').addEventListener('click', () => init({ min:5, max:50, step:5 }));
+      document.getElementById('btn-uponce').addEventListener('click', () => $input.TouchSpin('uponce'));
+      document.getElementById('btn-downonce').addEventListener('click', () => $input.TouchSpin('downonce'));
+      document.getElementById('btn-startup').addEventListener('click', () => $input.TouchSpin('startupspin'));
+      document.getElementById('btn-startdown').addEventListener('click', () => $input.TouchSpin('startdownspin'));
+      document.getElementById('btn-stop').addEventListener('click', () => $input.TouchSpin('stopspin'));
+      document.getElementById('btn-toggle-disabled').addEventListener('click', () => { const d=$input.is(':disabled'); $input.prop('disabled', !d); });
+      document.getElementById('btn-toggle-readonly').addEventListener('click', () => { const r=$input.is('[readonly]'); $input.prop('readonly', !r); });
+    })();
+  </script>
+</body>
+</html>
