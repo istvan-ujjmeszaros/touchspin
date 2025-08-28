@@ -34,11 +34,27 @@ npm test
 - `npm run dev` - Local static server for manual pages/tests (no HMR)
 
 ### Testing Commands
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:ui` - Run tests with Vitest UI
+- `npm run test:headed` - Run tests with visible browser
+- `npm run test:ui` - Run tests with Playwright UI
 - `npm run test:playwright` - Run Playwright browser tests specifically
-- Run specific test: `npm test -- --grep "test name"`
-- Debug test: `npm test -- --grep "test name" --headed` (shows browser)
+- JSON report: `npm run test:json` (saves to `reports/json/last.json`)
+- Tailwind JSON: `npm run test:json:tailwind`
+
+#### Debug failures with JSON output
+To capture machine-readable results and a quick failure summary:
+
+```
+# All tests → JSON
+npm run test:json
+
+# Specific test file → JSON
+npm run test:json -- __tests__/file.test.ts
+
+# Tailwind renderer only
+npm run test:json:tailwind
+
+# The JSON report is written to reports/json/*.json and parsed for a summary.
+```
 
 ### Legacy Commands (fallback)
 - `npm run build:legacy` - Original Grunt build pipeline

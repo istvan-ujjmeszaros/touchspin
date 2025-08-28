@@ -69,7 +69,9 @@
     "test:visual:update": "playwright test --project=visual-tests --update-snapshots",
     "test:visual:ui": "playwright test --project=visual-tests --ui",
     "test:visual:headed": "playwright test --project=visual-tests --headed",
-    "test:visual:report": "playwright show-report reports/playwright"
+    "test:visual:report": "playwright show-report reports/playwright",
+    "test:json": "node scripts/test-json.mjs --project=chromium",
+    "test:json:tailwind": "node scripts/test-json.mjs __tests__/tailwindRenderer.test.ts --project=chromium --output reports/json/tailwind.json"
   },
   "workspaces": [
     "packages/*",
