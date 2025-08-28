@@ -193,26 +193,43 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
 
         // Bootstrap 4 structure uses input-group-prepend and input-group-append wrappers
-
+        var prev = this.originalinput.prev();
+        var next = this.originalinput.next();
         if (this.settings.verticalbuttons) {
           // Use the buildVerticalButtons method for consistency
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
           // BS4 standard horizontal buttons
-          var downhtml = "\n        <div class=\"input-group-prepend\" data-touchspin-injected=\"down\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n        </div>\n      ");
-          var uphtml = "\n        <div class=\"input-group-append\" data-touchspin-injected=\"up\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>\n      ");
-
-          // Insert buttons using BS4 wrappers
-          this.$(downhtml).insertBefore(this.originalinput);
-          this.$(uphtml).insertAfter(this.originalinput);
+          if (prev.hasClass('input-group-prepend') || prev.hasClass('input-group-btn')) {
+            var downhtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n        ");
+            prev.append(downhtml);
+          } else {
+            var _downhtml = "\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          </div>\n        ");
+            this.$(_downhtml).insertBefore(this.originalinput);
+          }
+          if (next.hasClass('input-group-append') || next.hasClass('input-group-btn')) {
+            var uphtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        ");
+            next.prepend(uphtml);
+          } else {
+            var _uphtml = "\n          <div class=\"input-group-append\" data-touchspin-injected=\"\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n          </div>\n        ");
+            this.$(_uphtml).insertAfter(this.originalinput);
+          }
         }
 
         // Prefix and postfix
         var prefixhtml = "\n      <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n        <span class=\"input-group-text\">".concat(this.settings.prefix, "</span>\n      </div>\n    ");
         var postfixhtml = "\n      <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n        <span class=\"input-group-text\">".concat(this.settings.postfix, "</span>\n      </div>\n    ");
-        this.$(prefixhtml).insertBefore(this.originalinput);
-        this.$(postfixhtml).insertAfter(this.originalinput);
+        if (prev.hasClass('input-group-prepend') && prev.find('.input-group-text').length) {
+          // Reuse existing prefix wrapper
+        } else {
+          this.$(prefixhtml).insertBefore(this.originalinput);
+        }
+        if (next.hasClass('input-group-append') && next.find('.input-group-text').length) {
+          // Reuse existing postfix wrapper
+        } else {
+          this.$(postfixhtml).insertAfter(this.originalinput);
+        }
         this.container = parentelement;
         return parentelement;
       }

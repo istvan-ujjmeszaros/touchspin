@@ -45,24 +45,40 @@ class Bootstrap3Renderer extends AbstractRenderer {
       }
     }
 
+    const prev = this.originalinput.prev();
+    const next = this.originalinput.next();
+
     if (this.settings.verticalbuttons) {
       const verticalHtml = this.buildVerticalButtons();
       this.$(verticalHtml).insertAfter(this.originalinput);
     } else {
-      const downhtml = `
-        <span class="input-group-btn" data-touchspin-injected="down">
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" type="button">${this.settings.buttondown_txt}</button>
-        </span>
-      `;
+      if (prev.hasClass('input-group-btn')) {
+        const downhtml = `
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
+        `;
+        prev.append(downhtml);
+      } else {
+        const downhtml = `
+          <span class="input-group-btn" data-touchspin-injected="down-wrapper">
+            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
+          </span>
+        `;
+        this.$(downhtml).insertBefore(this.originalinput);
+      }
 
-      const uphtml = `
-        <span class="input-group-btn" data-touchspin-injected="up">
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" type="button">${this.settings.buttonup_txt}</button>
-        </span>
-      `;
-
-      this.$(downhtml).insertBefore(this.originalinput);
-      this.$(uphtml).insertAfter(this.originalinput);
+      if (next.hasClass('input-group-btn')) {
+        const uphtml = `
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
+        `;
+        next.prepend(uphtml);
+      } else {
+        const uphtml = `
+          <span class="input-group-btn" data-touchspin-injected="up-wrapper">
+            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
+          </span>
+        `;
+        this.$(uphtml).insertAfter(this.originalinput);
+      }
     }
 
     const prefixhtml = `
@@ -73,8 +89,16 @@ class Bootstrap3Renderer extends AbstractRenderer {
       <span class="input-group-addon" data-touchspin-injected="postfix">${this.settings.postfix}</span>
     `;
 
-    this.$(prefixhtml).insertBefore(this.originalinput);
-    this.$(postfixhtml).insertAfter(this.originalinput);
+    if (prev.hasClass('input-group-addon')) {
+      // Reuse existing prefix addon; do not modify attributes
+    } else {
+      this.$(prefixhtml).insertBefore(this.originalinput);
+    }
+    if (next.hasClass('input-group-addon')) {
+      // Reuse existing postfix addon; do not modify attributes
+    } else {
+      this.$(postfixhtml).insertAfter(this.originalinput);
+    }
 
     this.container = parentelement;
     return parentelement;
@@ -154,4 +178,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
   window.Bootstrap3Renderer = Bootstrap3Renderer;
 }
-

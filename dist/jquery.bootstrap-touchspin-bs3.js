@@ -172,19 +172,39 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             parentelement.attr('data-testid', testidValue[1]);
           }
         }
+        var prev = this.originalinput.prev();
+        var next = this.originalinput.next();
         if (this.settings.verticalbuttons) {
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
         } else {
-          var downhtml = "\n        <span class=\"input-group-btn\" data-touchspin-injected=\"down\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n        </span>\n      ");
-          var uphtml = "\n        <span class=\"input-group-btn\" data-touchspin-injected=\"up\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </span>\n      ");
-          this.$(downhtml).insertBefore(this.originalinput);
-          this.$(uphtml).insertAfter(this.originalinput);
+          if (prev.hasClass('input-group-btn')) {
+            var downhtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n        ");
+            prev.append(downhtml);
+          } else {
+            var _downhtml = "\n          <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          </span>\n        ");
+            this.$(_downhtml).insertBefore(this.originalinput);
+          }
+          if (next.hasClass('input-group-btn')) {
+            var uphtml = "\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        ");
+            next.prepend(uphtml);
+          } else {
+            var _uphtml = "\n          <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n            <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n          </span>\n        ");
+            this.$(_uphtml).insertAfter(this.originalinput);
+          }
         }
         var prefixhtml = "\n      <span class=\"input-group-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix, "</span>\n    ");
         var postfixhtml = "\n      <span class=\"input-group-addon\" data-touchspin-injected=\"postfix\">".concat(this.settings.postfix, "</span>\n    ");
-        this.$(prefixhtml).insertBefore(this.originalinput);
-        this.$(postfixhtml).insertAfter(this.originalinput);
+        if (prev.hasClass('input-group-addon')) {
+          // Reuse existing prefix addon; do not modify attributes
+        } else {
+          this.$(prefixhtml).insertBefore(this.originalinput);
+        }
+        if (next.hasClass('input-group-addon')) {
+          // Reuse existing postfix addon; do not modify attributes
+        } else {
+          this.$(postfixhtml).insertAfter(this.originalinput);
+        }
         this.container = parentelement;
         return parentelement;
       }

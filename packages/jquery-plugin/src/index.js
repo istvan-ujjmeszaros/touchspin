@@ -317,8 +317,8 @@ export function installJqueryTouchSpin($) {
           if (!$adv || !$adv.length) $adv = $input.closest('[data-touchspin-injected="enhanced-wrapper"]');
         } catch {}
         const $scope = ($adv && $adv.length) ? $adv : $input.parent();
-        try { $scope.find('[data-touchspin-injected="down"]').remove(); } catch {}
-        try { $scope.find('[data-touchspin-injected="up"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="down"],[data-touchspin-injected="down-wrapper"]').remove(); } catch {}
+        try { $scope.find('[data-touchspin-injected="up"],[data-touchspin-injected="up-wrapper"]').remove(); } catch {}
         try { $scope.find('[data-touchspin-injected="prefix"]').remove(); } catch {}
         try { $scope.find('[data-touchspin-injected="postfix"]').remove(); } catch {}
         try { $scope.find('[data-touchspin-injected="vertical-wrapper"]').remove(); } catch {}

@@ -172,6 +172,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             parentelement.attr('data-testid', testidValue[1]);
           }
         }
+        var prev = this.originalinput.prev();
+        var next = this.originalinput.next();
         if (this.settings.verticalbuttons) {
           var verticalHtml = this.buildVerticalButtons();
           this.$(verticalHtml).insertAfter(this.originalinput);
@@ -183,8 +185,16 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         }
         var prefixhtml = "\n      <span class=\"input-group-text\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix, "</span>\n    ");
         var postfixhtml = "\n      <span class=\"input-group-text\" data-touchspin-injected=\"postfix\">".concat(this.settings.postfix, "</span>\n    ");
-        this.$(prefixhtml).insertBefore(this.originalinput);
-        this.$(postfixhtml).insertAfter(this.originalinput);
+        if (prev.hasClass('input-group-text')) {
+          // Reuse existing prefix text element
+        } else {
+          this.$(prefixhtml).insertBefore(this.originalinput);
+        }
+        if (next.hasClass('input-group-text')) {
+          // Reuse existing postfix text element
+        } else {
+          this.$(postfixhtml).insertAfter(this.originalinput);
+        }
         this.container = parentelement;
         return parentelement;
       }

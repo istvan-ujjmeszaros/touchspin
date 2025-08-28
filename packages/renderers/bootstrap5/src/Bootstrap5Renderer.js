@@ -45,6 +45,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
       }
     }
 
+    const prev = this.originalinput.prev();
+    const next = this.originalinput.next();
+
     if (this.settings.verticalbuttons) {
       const verticalHtml = this.buildVerticalButtons();
       this.$(verticalHtml).insertAfter(this.originalinput);
@@ -69,8 +72,16 @@ class Bootstrap5Renderer extends AbstractRenderer {
       <span class="input-group-text" data-touchspin-injected="postfix">${this.settings.postfix}</span>
     `;
 
-    this.$(prefixhtml).insertBefore(this.originalinput);
-    this.$(postfixhtml).insertAfter(this.originalinput);
+    if (prev.hasClass('input-group-text')) {
+      // Reuse existing prefix text element
+    } else {
+      this.$(prefixhtml).insertBefore(this.originalinput);
+    }
+    if (next.hasClass('input-group-text')) {
+      // Reuse existing postfix text element
+    } else {
+      this.$(postfixhtml).insertAfter(this.originalinput);
+    }
 
     this.container = parentelement;
     return parentelement;
@@ -146,4 +157,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
   window.Bootstrap5Renderer = Bootstrap5Renderer;
 }
-

@@ -60,7 +60,9 @@ class Bootstrap4Renderer extends AbstractRenderer {
       }
     }
 
-    // Bootstrap 4 structure uses input-group-prepend and input-group-append wrappers
+  // Bootstrap 4 structure uses input-group-prepend and input-group-append wrappers
+    const prev = this.originalinput.prev();
+    const next = this.originalinput.next();
 
     if (this.settings.verticalbuttons) {
       // Use the buildVerticalButtons method for consistency
@@ -68,21 +70,33 @@ class Bootstrap4Renderer extends AbstractRenderer {
       this.$(verticalHtml).insertAfter(this.originalinput);
     } else {
       // BS4 standard horizontal buttons
-      const downhtml = `
-        <div class="input-group-prepend" data-touchspin-injected="down">
-          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" type="button">${this.settings.buttondown_txt}</button>
-        </div>
-      `;
+      if (prev.hasClass('input-group-prepend') || prev.hasClass('input-group-btn')) {
+        const downhtml = `
+          <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
+        `;
+        prev.append(downhtml);
+      } else {
+        const downhtml = `
+          <div class="input-group-prepend" data-touchspin-injected="">
+            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
+          </div>
+        `;
+        this.$(downhtml).insertBefore(this.originalinput);
+      }
 
-      const uphtml = `
-        <div class="input-group-append" data-touchspin-injected="up">
-          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" type="button">${this.settings.buttonup_txt}</button>
-        </div>
-      `;
-
-      // Insert buttons using BS4 wrappers
-      this.$(downhtml).insertBefore(this.originalinput);
-      this.$(uphtml).insertAfter(this.originalinput);
+      if (next.hasClass('input-group-append') || next.hasClass('input-group-btn')) {
+        const uphtml = `
+          <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
+        `;
+        next.prepend(uphtml);
+      } else {
+        const uphtml = `
+          <div class="input-group-append" data-touchspin-injected="">
+            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
+          </div>
+        `;
+        this.$(uphtml).insertAfter(this.originalinput);
+      }
     }
 
     // Prefix and postfix
@@ -98,8 +112,16 @@ class Bootstrap4Renderer extends AbstractRenderer {
       </div>
     `;
 
-    this.$(prefixhtml).insertBefore(this.originalinput);
-    this.$(postfixhtml).insertAfter(this.originalinput);
+    if (prev.hasClass('input-group-prepend') && prev.find('.input-group-text').length) {
+      // Reuse existing prefix wrapper
+    } else {
+      this.$(prefixhtml).insertBefore(this.originalinput);
+    }
+    if (next.hasClass('input-group-append') && next.find('.input-group-text').length) {
+      // Reuse existing postfix wrapper
+    } else {
+      this.$(postfixhtml).insertAfter(this.originalinput);
+    }
 
     this.container = parentelement;
     return parentelement;
@@ -179,4 +201,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
   window.Bootstrap4Renderer = Bootstrap4Renderer;
 }
-
