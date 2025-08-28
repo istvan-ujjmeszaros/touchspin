@@ -27,6 +27,14 @@
 
   <!-- Original jQuery plugin (source of truth) -->
   <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+  <!-- Preserve original plugin under a different name before installing wrapper -->
+  <script>
+    (function($){
+      if ($ && $.fn && $.fn.TouchSpin && !$.fn.TouchSpin_original) {
+        $.fn.TouchSpin_original = $.fn.TouchSpin;
+      }
+    })(window.jQuery);
+  </script>
 </head>
 <body class="container py-4">
   <h1 class="h4">A/B Compare: Original Plugin vs Wrapper (Core)</h1>
@@ -84,10 +92,10 @@
       bindLog($orig, origLog);
       bindLog($wrap, wrapLog);
 
-      document.getElementById('orig-init').addEventListener('click', () => $orig.TouchSpin({ min:0, max:100, step:1 }));
+      document.getElementById('orig-init').addEventListener('click', () => $orig.TouchSpin_original({ min:0, max:100, step:1 }));
       document.getElementById('orig-destroy').addEventListener('click', () => $orig.trigger('touchspin.destroy'));
-      document.getElementById('orig-up').addEventListener('click', () => $orig.TouchSpin('uponce'));
-      document.getElementById('orig-down').addEventListener('click', () => $orig.TouchSpin('downonce'));
+      document.getElementById('orig-up').addEventListener('click', () => $orig.TouchSpin_original('uponce'));
+      document.getElementById('orig-down').addEventListener('click', () => $orig.TouchSpin_original('downonce'));
 
       document.getElementById('wrap-init').addEventListener('click', () => $wrap.TouchSpin({ min:0, max:100, step:1 }));
       document.getElementById('wrap-destroy').addEventListener('click', () => $wrap.trigger('touchspin.destroy'));
@@ -97,4 +105,3 @@
   </script>
 </body>
 </html>
-
