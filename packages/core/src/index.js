@@ -50,6 +50,8 @@ const DEFAULTS = {
   callback_after_calculation: (v) => v,
 };
 
+const INSTANCE_KEY = '_touchSpinCore';
+
 export class TouchSpinCore {
   /**
    * @param {HTMLInputElement} inputEl
@@ -87,8 +89,6 @@ export class TouchSpinCore {
     this._downButton = null;
     /** @type {HTMLElement|null} */
     this._wrapper = null;
-    /** @type {boolean} */
-    this._initialized = false;
 
     // DOM event handlers (bound methods)
     this._handleUpMouseDown = this._handleUpMouseDown.bind(this);
@@ -102,14 +102,12 @@ export class TouchSpinCore {
 
   /** Increment once according to step */
   upOnce() {
-    console.log('upOnce called, initialized:', this._initialized, 'disabled:', this.input.disabled, 'readonly:', this.input.hasAttribute('readonly'));
-    if (!this._initialized || this.input.disabled || this.input.hasAttribute('readonly')) {
+    if (this.input.disabled || this.input.hasAttribute('readonly')) {
       return;
     }
 
     const v = this.getValue();
     const next = this._nextValue('up', v);
-    console.log('upOnce: current value:', v, 'next value:', next);
     const prevNum = v;
     this._setDisplay(next, true);
     if (isFinite(prevNum) && next !== prevNum) {
@@ -124,7 +122,7 @@ export class TouchSpinCore {
 
   /** Decrement once according to step */
   downOnce() {
-    if (!this._initialized || this.input.disabled || this.input.hasAttribute('readonly')) {
+    if (this.input.disabled || this.input.hasAttribute('readonly')) {
       return;
     }
 
@@ -198,7 +196,7 @@ export class TouchSpinCore {
    * @param {number|string} v
    */
   setValue(v) {
-    if (!this._initialized || this.input.disabled || this.input.hasAttribute('readonly')) return;
+    if (this.input.disabled || this.input.hasAttribute('readonly')) return;
     const parsed = Number(v);
     if (!isFinite(parsed)) return;
     const adjusted = this._applyConstraints(parsed);
@@ -210,21 +208,13 @@ export class TouchSpinCore {
    * Must be called after the renderer has created the DOM structure.
    */
   initDOMEventHandling() {
-    // Clean up any existing event listeners first (but don't remove DOM elements)
-    if (this._initialized) {
-      this._detachDOMEventListeners();
-    }
-
     // Find DOM elements and attach listeners
     this._findDOMElements();
     this._attachDOMEventListeners();
-    this._initialized = true;
   }
 
   /** Cleanup and destroy the TouchSpin instance */
   destroy() {
-    if (!this._initialized) return; // Already destroyed or never initialized
-
     this.stopSpin();
     this._detachDOMEventListeners();
 
@@ -232,8 +222,10 @@ export class TouchSpinCore {
     const injectedElements = document.querySelectorAll('[data-touchspin-injected]');
     injectedElements.forEach(el => el.remove());
 
-    // Mark as no longer initialized
-    this._initialized = false;
+    // Remove instance from element
+    if (this.input[INSTANCE_KEY] === this) {
+      delete this.input[INSTANCE_KEY];
+    }
   }
 
   /**
@@ -305,7 +297,7 @@ export class TouchSpinCore {
    * @param {'up'|'down'} dir
    */
   _startSpin(dir) {
-    if (!this._initialized || this.input.disabled || this.input.hasAttribute('readonly')) return;
+    if (this.input.disabled || this.input.hasAttribute('readonly')) return;
     // If changing direction, reset counters
     const changed = (!this.spinning || this.direction !== dir);
     if (changed) {
@@ -605,22 +597,18 @@ export class TouchSpinCore {
    * @private
    */
   _handleKeyDown(e) {
-    console.log('Core _handleKeyDown called:', e.key);
     switch (e.key) {
       case 'ArrowUp':
         e.preventDefault();
-        console.log('Core handling ArrowUp');
         this.upOnce();
         this.startUpSpin();
         break;
       case 'ArrowDown':
         e.preventDefault();
-        console.log('Core handling ArrowDown');
         this.downOnce();
         this.startDownSpin();
         break;
       case 'Enter':
-        console.log('Core handling Enter');
         this._checkValue(true);
         break;
     }
@@ -641,14 +629,11 @@ export class TouchSpinCore {
    * @private
    */
   _handleWheel(e) {
-    console.log('Core _handleWheel called, focused:', document.activeElement === this.input, 'deltaY:', e.deltaY);
     if (document.activeElement === this.input) {
       e.preventDefault();
       if (e.deltaY < 0) {
-        console.log('Core handling wheel up');
         this.upOnce();
       } else if (e.deltaY > 0) {
-        console.log('Core handling wheel down');
         this.downOnce();
       }
     }
@@ -671,8 +656,6 @@ export class TouchSpinCore {
  * @property {() => void} initDOMEventHandling
  */
 
-const INSTANCE_KEY = '_touchSpinCore';
-
 /**
  * Initialize TouchSpin on an input element or get existing instance.
  * @param {HTMLInputElement} inputEl
@@ -682,7 +665,7 @@ const INSTANCE_KEY = '_touchSpinCore';
 export function TouchSpin(inputEl, opts) {
   // If options provided, initialize/reinitialize
   if (opts !== undefined) {
-    // Destroy existing instance if it exists
+    // Destroy existing instance if it exists (destroy() removes itself from element)
     if (inputEl[INSTANCE_KEY]) {
       inputEl[INSTANCE_KEY].destroy();
     }
