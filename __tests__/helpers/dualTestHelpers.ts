@@ -60,14 +60,32 @@ export class DualTestHelpers {
     // Test getValue
     const getValue = await this.page.evaluate((selector) => {
       const input = document.querySelector(selector);
-      const api = jQuery(input).data('touchspin');
-      return api ? api.getValue() : null;
+      if (!input) return { error: 'Input not found' };
+      
+      const $ = window.jQuery || window.$;
+      if (!$) return { error: 'jQuery not found' };
+      
+      const $input = $(input);
+      // Try both 'touchspin' (modern) and 'touchspinInternal' (original) 
+      let api = $input.data('touchspin');
+      if (!api) api = $input.data('touchspinInternal');
+      if (!api) return { error: 'TouchSpin API not found', hasData: !!$input.data() };
+      
+      try {
+        return api.getValue();
+      } catch (e) {
+        return { error: 'getValue failed', message: e.message };
+      }
     }, inputSelector);
     
     // Test setValue
     await this.page.evaluate((selector) => {
       const input = document.querySelector(selector);
-      const api = jQuery(input).data('touchspin');
+      const $ = window.jQuery || window.$;
+      if (!$ || !input) return;
+      const $input = $(input);
+      let api = $input.data('touchspin');
+      if (!api) api = $input.data('touchspinInternal');
       if (api) api.setValue(99);
     }, inputSelector);
     
@@ -76,7 +94,11 @@ export class DualTestHelpers {
     // Test upOnce
     await this.page.evaluate((selector) => {
       const input = document.querySelector(selector);
-      const api = jQuery(input).data('touchspin');
+      const $ = window.jQuery || window.$;
+      if (!$ || !input) return;
+      const $input = $(input);
+      let api = $input.data('touchspin');
+      if (!api) api = $input.data('touchspinInternal');
       if (api) api.upOnce();
     }, inputSelector);
     
@@ -119,11 +141,15 @@ export class DualTestHelpers {
     const inputSelector = `input[data-testid="${testid}"]`;
     
     // Set to near max
-    await this.page.evaluate((selector, value) => {
+    await this.page.evaluate(({selector, value}) => {
       const input = document.querySelector(selector);
-      const api = jQuery(input).data('touchspin');
+      const $ = window.jQuery || window.$;
+      if (!$ || !input) return;
+      const $input = $(input);
+      let api = $input.data('touchspin');
+      if (!api) api = $input.data('touchspinInternal');
       if (api) api.setValue(value);
-    }, inputSelector, max - 1);
+    }, {selector: inputSelector, value: max - 1});
     
     const nearMax = await touchspinHelpers.readInputValue(this.page, testid);
     
@@ -135,11 +161,15 @@ export class DualTestHelpers {
     const beyondMax = await touchspinHelpers.readInputValue(this.page, testid);
     
     // Set to near min
-    await this.page.evaluate((selector, value) => {
+    await this.page.evaluate(({selector, value}) => {
       const input = document.querySelector(selector);
-      const api = jQuery(input).data('touchspin');
+      const $ = window.jQuery || window.$;
+      if (!$ || !input) return;
+      const $input = $(input);
+      let api = $input.data('touchspin');
+      if (!api) api = $input.data('touchspinInternal');
       if (api) api.setValue(value);
-    }, inputSelector, min + 1);
+    }, {selector: inputSelector, value: min + 1});
     
     const nearMin = await touchspinHelpers.readInputValue(this.page, testid);
     

@@ -4,12 +4,12 @@ Purpose
 - Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_HIGHLEVEL.md` (high-level goals) and `TODO_CHECKLIST.md` (current detailed roadmap).
 
 Resume Block (single source of truth)
-- Current checkpoint tag: TDD-1 (branch: claude/tdd-modern-core-fixes)
-- Current focus: Test-Driven Development approach to fix modern core behavioral parity with original plugin
-- Progress: Created TDD infrastructure; 7/10 comparison tests passing (improved from 3/10)
-- Fixed: Modern core disabled/readonly logic, boundary events, HTML fixture inconsistencies
-- Remaining: 3 failing tests related to callback formatting and jQuery wrapper integration  
-- Next checkpoint: Complete callback formatting investigation and achieve full TDD test parity
+- Current checkpoint tag: TDD-COMPLETE (branch: claude/tdd-modern-core-fixes)
+- Current focus: ✅ TDD approach COMPLETED - achieved full behavioral parity between original and modern implementations
+- Progress: 10/10 comparison tests passing (improved from 3/10 → 7/10 → 10/10)
+- Fixed: Modern core disabled/readonly logic, boundary events, HTML fixture inconsistencies, callback formatting, programmatic API compatibility, Playwright API usage
+- All Issues Resolved: ✅ Programmatic API (touchspinInternal compatibility), ✅ Callback formatting (config alignment), ✅ Boundary behavior (API fixes)
+- Next checkpoint: Ready for production integration and broader testing
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
@@ -30,6 +30,7 @@ Verification Targets
 - Destroy/Reinit: Works for default, vertical, and input-group reuse scenarios; callbacks fire in expected order.
 
 Recent Checkpoints (most recent first)
+- TDD-COMPLETE: Full behavioral parity achieved (10/10 tests). Fixed: programmatic API compatibility (touchspinInternal), callback formatting (config alignment), boundary behavior (Playwright API), disabled/readonly logic.
 - LGTM-4: Core DOM/attrs partial migration; unified change emission for up/down; tests green; dist updated.
 - LGTM-2: Focusout/Enter sanitation verified; modern facade stable. Docs updated to clarify CI-only integrity check.
 - LGTM-1: Init/keyboard/mousewheel fixed (previous session).

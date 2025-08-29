@@ -154,14 +154,21 @@ $(document).ready(function() {
   // Initialize callbacks TouchSpin with currency formatting
   $("#testinput_callbacks").TouchSpin({
     min: 0,
-    max: 1000,
-    step: 25,
+    max: 5500,
+    step: 0.1,
     decimals: 2,
     callback_after_calculation: function(value) {
-      return '$' + numeral(value).format('0,0.00');
+      const n = parseFloat(value);
+      if (!isFinite(n)) return '';
+      return '$' + new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(n).replace('$', '');
     },
     callback_before_calculation: function(value) {
-      return value.replace(/[$,]/g, '');
+      return (value ?? '').replace(/[^\d\.\-]/g, '');
     }
   });
 

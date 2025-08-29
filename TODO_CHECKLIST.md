@@ -42,9 +42,9 @@ Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
 - [x] C2: Preserve Command API and callable event emissions (leverages migrated initializer triggering semantics).
 - [x] C3: Keep modern facade appended (build default still appends `modern-facade`).
 - [x] C4: Update build pipeline to bundle wrapper + selected renderer into UMD outputs (guarded by `USE_JQUERY_WRAPPER=true`).
- - [ ] C5: Verification
+ - [x] C5: Verification
    - [x] C5a: Manual pages parity verified (core + jQuery smoke pages)
-   - [~] C5b: All non-visual tests pass across builds (TDD Progress: 7/10 tests passing)
+   - [x] C5b: All non-visual tests pass across builds (TDD Complete: 10/10 tests passing)
 
 Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js)
 
