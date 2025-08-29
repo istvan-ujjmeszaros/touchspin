@@ -80,6 +80,22 @@ export class TouchSpinCore {
     this._spinDelayTimeout = null;
     /** @type {ReturnType<typeof setInterval>|null} */
     this._spinIntervalTimer = null;
+    
+    /** @type {HTMLElement|null} */
+    this._upButton = null;
+    /** @type {HTMLElement|null} */
+    this._downButton = null;
+    /** @type {HTMLElement|null} */
+    this._wrapper = null;
+    
+    // DOM event handlers (bound methods)
+    this._handleUpMouseDown = this._handleUpMouseDown.bind(this);
+    this._handleDownMouseDown = this._handleDownMouseDown.bind(this);
+    this._handleMouseUp = this._handleMouseUp.bind(this);
+    this._handleInputChange = this._handleInputChange.bind(this);
+    this._handleKeyDown = this._handleKeyDown.bind(this);
+    this._handleKeyUp = this._handleKeyUp.bind(this);
+    this._handleWheel = this._handleWheel.bind(this);
   }
 
   /** Increment once according to step */
@@ -185,9 +201,19 @@ export class TouchSpinCore {
     this._setDisplay(adjusted, true);
   }
 
+  /**
+   * Initialize DOM event handling by finding elements and attaching listeners.
+   * Must be called after the renderer has created the DOM structure.
+   */
+  initDOMEventHandling() {
+    this._findDOMElements();
+    this._attachDOMEventListeners();
+  }
+
   /** Cleanup (placeholder) */
   destroy() {
     this.stopSpin();
+    this._detachDOMEventListeners();
   }
 
   /**
@@ -207,6 +233,7 @@ export class TouchSpinCore {
       destroy: this.destroy.bind(this),
       on: this.on.bind(this),
       off: this.off.bind(this),
+      initDOMEventHandling: this.initDOMEventHandling.bind(this),
     };
   }
 
@@ -437,6 +464,170 @@ export class TouchSpinCore {
     if (isFinite(num)) el.setAttribute('aria-valuenow', String(num)); else el.removeAttribute('aria-valuenow');
     el.setAttribute('aria-valuetext', String(raw));
   }
+
+  // --- DOM Event Handling Methods ---
+  
+  /**
+   * Find and store references to DOM elements using data-touchspin-injected attributes.
+   * @private
+   */
+  _findDOMElements() {
+    // Find wrapper/container element (search up from input)
+    let wrapper = this.input.parentElement;
+    while (wrapper && !wrapper.hasAttribute('data-touchspin-injected')) {
+      wrapper = wrapper.parentElement;
+    }
+    this._wrapper = wrapper;
+
+    if (this._wrapper) {
+      // Find buttons within the wrapper
+      this._upButton = this._wrapper.querySelector('[data-touchspin-injected="up"]');
+      this._downButton = this._wrapper.querySelector('[data-touchspin-injected="down"]');
+    }
+  }
+
+  /**
+   * Attach DOM event listeners to elements.
+   * @private
+   */
+  _attachDOMEventListeners() {
+    if (!this._wrapper) return;
+
+    // Button events
+    if (this._upButton) {
+      this._upButton.addEventListener('mousedown', this._handleUpMouseDown);
+      this._upButton.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
+    }
+    if (this._downButton) {
+      this._downButton.addEventListener('mousedown', this._handleDownMouseDown);
+      this._downButton.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+    }
+
+    // Global mouseup/touchend to stop spinning
+    document.addEventListener('mouseup', this._handleMouseUp);
+    document.addEventListener('mouseleave', this._handleMouseUp);
+    document.addEventListener('touchend', this._handleMouseUp);
+
+    // Input events
+    this.input.addEventListener('input', this._handleInputChange);
+    this.input.addEventListener('change', this._handleInputChange);
+    this.input.addEventListener('keydown', this._handleKeyDown);
+    this.input.addEventListener('keyup', this._handleKeyUp);
+    this.input.addEventListener('wheel', this._handleWheel);
+  }
+
+  /**
+   * Remove DOM event listeners.
+   * @private
+   */
+  _detachDOMEventListeners() {
+    // Button events
+    if (this._upButton) {
+      this._upButton.removeEventListener('mousedown', this._handleUpMouseDown);
+      this._upButton.removeEventListener('touchstart', this._handleUpMouseDown);
+    }
+    if (this._downButton) {
+      this._downButton.removeEventListener('mousedown', this._handleDownMouseDown);
+      this._downButton.removeEventListener('touchstart', this._handleDownMouseDown);
+    }
+
+    // Global events
+    document.removeEventListener('mouseup', this._handleMouseUp);
+    document.removeEventListener('mouseleave', this._handleMouseUp);
+    document.removeEventListener('touchend', this._handleMouseUp);
+
+    // Input events
+    this.input.removeEventListener('input', this._handleInputChange);
+    this.input.removeEventListener('change', this._handleInputChange);
+    this.input.removeEventListener('keydown', this._handleKeyDown);
+    this.input.removeEventListener('keyup', this._handleKeyUp);
+    this.input.removeEventListener('wheel', this._handleWheel);
+  }
+
+  // --- DOM Event Handlers ---
+
+  /**
+   * Handle mousedown/touchstart on up button.
+   * @private
+   */
+  _handleUpMouseDown(e) {
+    e.preventDefault();
+    this.upOnce();
+    this.startUpSpin();
+  }
+
+  /**
+   * Handle mousedown/touchstart on down button.
+   * @private
+   */
+  _handleDownMouseDown(e) {
+    e.preventDefault();
+    this.downOnce();
+    this.startDownSpin();
+  }
+
+  /**
+   * Handle mouseup/touchend/mouseleave to stop spinning.
+   * @private
+   */
+  _handleMouseUp(e) {
+    this.stopSpin();
+  }
+
+  /**
+   * Handle input/change events on the input element.
+   * @private
+   */
+  _handleInputChange(e) {
+    this._checkValue(true);
+  }
+
+  /**
+   * Handle keydown events on the input element.
+   * @private
+   */
+  _handleKeyDown(e) {
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        this.upOnce();
+        this.startUpSpin();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        this.downOnce();
+        this.startDownSpin();
+        break;
+      case 'Enter':
+        this._checkValue(true);
+        break;
+    }
+  }
+
+  /**
+   * Handle keyup events on the input element.
+   * @private
+   */
+  _handleKeyUp(e) {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      this.stopSpin();
+    }
+  }
+
+  /**
+   * Handle wheel events on the input element.
+   * @private
+   */
+  _handleWheel(e) {
+    if (document.activeElement === this.input) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        this.upOnce();
+      } else if (e.deltaY > 0) {
+        this.downOnce();
+      }
+    }
+  }
 }
 
 /**
@@ -452,6 +643,7 @@ export class TouchSpinCore {
  * @property {() => void} destroy
  * @property {(event: string, handler: (detail?: any) => void) => () => void} on
  * @property {(event: string, handler?: (detail?: any) => void) => void} off
+ * @property {() => void} initDOMEventHandling
  */
 
 /**

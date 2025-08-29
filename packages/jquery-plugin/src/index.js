@@ -119,57 +119,8 @@ export function installJqueryTouchSpin($) {
         unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
       });
 
-      // Wire buttons if present (match src: immediate once, then start spin)
-      if (elements && elements.up && elements.up.length) {
-        elements.up.on('mousedown.touchspin', (e) => {
-          if ($input.is(':disabled') || $input.is('[readonly]')) return;
-          inst.upOnce();
-          inst.startUpSpin();
-          e.preventDefault();
-          e.stopPropagation();
-        });
-        elements.up.on('touchstart.touchspin', (e) => {
-          if ($input.is(':disabled') || $input.is('[readonly]')) return;
-          inst.upOnce();
-          inst.startUpSpin();
-          e.preventDefault();
-          e.stopPropagation();
-        });
-        elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', (e) => {
-          inst.stopSpin();
-          e.stopPropagation();
-        });
-        elements.up.on('mousemove.touchspin touchmove.touchspin', (e) => {
-          if (!$input.data('touchspinInternal')) return;
-          e.stopPropagation();
-          e.preventDefault();
-        });
-      }
-      if (elements && elements.down && elements.down.length) {
-        elements.down.on('mousedown.touchspin', (e) => {
-          if ($input.is(':disabled') || $input.is('[readonly]')) return;
-          inst.downOnce();
-          inst.startDownSpin();
-          e.preventDefault();
-          e.stopPropagation();
-        });
-        elements.down.on('touchstart.touchspin', (e) => {
-          if ($input.is(':disabled') || $input.is('[readonly]')) return;
-          inst.downOnce();
-          inst.startDownSpin();
-          e.preventDefault();
-          e.stopPropagation();
-        });
-        elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', (e) => {
-          inst.stopSpin();
-          e.stopPropagation();
-        });
-        elements.down.on('mousemove.touchspin touchmove.touchspin', (e) => {
-          if (!$input.data('touchspinInternal')) return;
-          e.stopPropagation();
-          e.preventDefault();
-        });
-      }
+      // Initialize core DOM event handling (replaces jQuery wrapper DOM logic)
+      inst.initDOMEventHandling();
 
       // Callable events
       $input.on('touchspin.uponce', () => inst.upOnce());
@@ -210,56 +161,6 @@ export function installJqueryTouchSpin($) {
         } catch {}
       });
       $input.on('touchspin.destroy', () => teardown($input));
-
-      // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes) — requires focus
-      let __dir = false;
-      $input.on('keydown.touchspin', (ev) => {
-        const e = ev.originalEvent || ev;
-        const code = e.keyCode || e.which || 0;
-        if (code === 38) { // ArrowUp
-          if (__dir !== 'up') { inst.upOnce(); inst.startUpSpin(); __dir = 'up'; }
-          ev.preventDefault();
-        } else if (code === 40) { // ArrowDown
-          if (__dir !== 'down') { inst.downOnce(); inst.startDownSpin(); __dir = 'down'; }
-          ev.preventDefault();
-        } else if (code === 13) { // Enter: sanitize
-          try { const v = inst.getValue(); if (isFinite(v)) inst.setValue(v); } catch {}
-        }
-      });
-      $input.on('keyup.touchspin', (ev) => {
-        const e = ev.originalEvent || ev;
-        const code = e.keyCode || e.which || 0;
-        if (code === 38 || code === 40) { inst.stopSpin(); __dir = false; }
-      });
-
-      // Mouse wheel interaction (requires focus, like the original src)
-      $input.on('wheel.touchspin', (ev) => {
-        const e = ev.originalEvent || ev;
-        // Support legacy wheelDelta (positive up) and deltaY (negative up)
-        const wheelDelta = typeof e.wheelDelta === 'number' ? e.wheelDelta : 0;
-        const deltaY = typeof e.deltaY === 'number' ? e.deltaY : 0;
-        const up = wheelDelta > 0 || deltaY < 0;
-        // Only act if the input is focused to match source-of-truth behavior
-        if (document.activeElement === $input[0]) {
-          if (up) inst.upOnce(); else inst.downOnce();
-          ev.preventDefault();
-        }
-      });
-
-      // Container focusout: stop spin and sanitize when leaving the widget
-      if ($container && $container.length) {
-        $container.on('focusout.touchspin', (evt) => {
-          const next = /** @type {HTMLElement|null} */(evt.relatedTarget);
-          const contains = next ? $container[0].contains(next) : false;
-          if (contains) return;
-          setTimeout(() => {
-            const ae = /** @type {HTMLElement|null} */ (document.activeElement);
-            if (!ae || !$container[0].contains(ae)) {
-              try { inst.stopSpin(); const v = inst.getValue(); if (isFinite(v)) inst.setValue(v); } catch {}
-            }
-          }, 0);
-        });
-      }
 
       // Attribute sync via MutationObserver
       let __observer = null;

@@ -58,6 +58,9 @@
  * - `data-touchspin-injected="input"` on the input element
  * - `data-touchspin-injected="wrapper"` on wrapper element (buildInputGroup)
  * - `data-touchspin-injected="enhanced-wrapper"` on enhanced parent element (buildAdvancedInputGroup)
+ * - `data-touchspin-injected="prefix"` on prefix text elements
+ * - `data-touchspin-injected="postfix"` on postfix text elements
+ * - `data-touchspin-injected="vertical-wrapper"` on vertical button wrapper elements
  *
  * Event Targeting Strategy:
  * - Core uses data-touchspin-injected attributes with role values for event targeting
