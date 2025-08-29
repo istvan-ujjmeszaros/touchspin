@@ -73,6 +73,8 @@ export class TouchSpinCore {
     this.direction = false;
     /** @type {Map<string, Set<Function>>} */
     this._events = new Map();
+    /** @type {Array<Function>} */
+    this._teardownCallbacks = [];
 
     // Initialize ARIA attributes and sanitize display immediately
     this._updateAriaAttributes();
@@ -213,10 +215,41 @@ export class TouchSpinCore {
     this._attachDOMEventListeners();
   }
 
+  /**
+   * Register a teardown callback that will be called when the instance is destroyed.
+   * This allows wrapper libraries to register cleanup logic.
+   * @param {Function} callback - Function to call on destroy
+   * @returns {Function} - Unregister function
+   */
+  registerTeardown(callback) {
+    if (typeof callback !== 'function') {
+      throw new Error('Teardown callback must be a function');
+    }
+    this._teardownCallbacks.push(callback);
+    
+    // Return unregister function
+    return () => {
+      const index = this._teardownCallbacks.indexOf(callback);
+      if (index > -1) {
+        this._teardownCallbacks.splice(index, 1);
+      }
+    };
+  }
+
   /** Cleanup and destroy the TouchSpin instance */
   destroy() {
     this.stopSpin();
     this._detachDOMEventListeners();
+
+    // Call all registered teardown callbacks (for wrapper cleanup)
+    this._teardownCallbacks.forEach(callback => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('TouchSpin teardown callback error:', error);
+      }
+    });
+    this._teardownCallbacks.length = 0; // Clear the array
 
     // Remove all elements with our data attributes
     const injectedElements = document.querySelectorAll('[data-touchspin-injected]');
@@ -246,6 +279,7 @@ export class TouchSpinCore {
       on: this.on.bind(this),
       off: this.off.bind(this),
       initDOMEventHandling: this.initDOMEventHandling.bind(this),
+      registerTeardown: this.registerTeardown.bind(this),
     };
   }
 
@@ -654,6 +688,7 @@ export class TouchSpinCore {
  * @property {(event: string, handler: (detail?: any) => void) => () => void} on
  * @property {(event: string, handler?: (detail?: any) => void) => void} off
  * @property {() => void} initDOMEventHandling
+ * @property {(callback: Function) => () => void} registerTeardown
  */
 
 /**

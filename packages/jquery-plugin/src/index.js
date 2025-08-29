@@ -59,6 +59,19 @@ export function installJqueryTouchSpin($) {
         unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
       });
 
+      // Define jQuery teardown function that cleans up jQuery-specific resources
+      const jqueryTeardown = () => {
+        // Clean up event subscriptions to core
+        unsubs.forEach(unsub => {
+          try { unsub(); } catch {} 
+        });
+        // Clean up jQuery events
+        $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');
+      };
+
+      // Register teardown with core so it's called on core destroy too
+      inst.registerTeardown(jqueryTeardown);
+
       // Callable events - forward to core (core manages lifecycle)
       $input.on('touchspin.uponce', () => {
         const api = getTouchSpin(inputEl);
@@ -85,15 +98,11 @@ export function installJqueryTouchSpin($) {
         if (api) api.updateSettings(o || {});
       });
       $input.on('touchspin.destroy', () => {
-        // Clean up event subscriptions
-        unsubs.forEach(unsub => {
-          try { unsub(); } catch {} 
-        });
+        // Use the same teardown function as registered with core
+        jqueryTeardown();
         // Forward destroy to core (core removes instance from element)
         const api = getTouchSpin(inputEl);
         if (api) api.destroy();
-        // Clean up jQuery events
-        $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');
       });
     });
   };
