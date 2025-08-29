@@ -4,11 +4,12 @@ Purpose
 - Persistent, human-readable state so any contributor (or the agent) can resume work without prior chat history. Use alongside `TODO_HIGHLEVEL.md` (high-level goals) and `TODO_CHECKLIST.md` (current detailed roadmap).
 
 Resume Block (single source of truth)
-- Current checkpoint tag: LGTM-8
-- Current focus: Wrapper-first extraction flipped. Modern facade code removed from the plugin and appended by default in UMD builds via APPEND_WRAPPERS (defaults to modern-facade). Manual pages still load wrappers explicitly from src. UMD remains the single source.
-- Completed verification summary: Theme 1/1.5/2/3/4 complete per scope; modern facade available; command API maps to internals; WeakMap mirror added; tests green; dist updated at each checkpoint.
-- Next manual verification: Optional spot check of bridge + ESM pages; no regressions expected.
-- Next checkpoint: Optional docs sweep and stabilization. Future steps would tackle renderer de-jQuery and core extraction rename.
+- Current checkpoint tag: TDD-1 (branch: claude/tdd-modern-core-fixes)
+- Current focus: Test-Driven Development approach to fix modern core behavioral parity with original plugin
+- Progress: Created TDD infrastructure; 7/10 comparison tests passing (improved from 3/10)
+- Fixed: Modern core disabled/readonly logic, boundary events, HTML fixture inconsistencies
+- Remaining: 3 failing tests related to callback formatting and jQuery wrapper integration  
+- Next checkpoint: Complete callback formatting investigation and achieve full TDD test parity
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
