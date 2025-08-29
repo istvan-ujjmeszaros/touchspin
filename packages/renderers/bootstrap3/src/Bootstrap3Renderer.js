@@ -1,6 +1,8 @@
 /**
  * Migrated copy from src/renderers/Bootstrap3Renderer.js (transitional)
  */
+import AbstractRenderer from '@touchspin/core/AbstractRenderer';
+
 class Bootstrap3Renderer extends AbstractRenderer {
 
   getFrameworkId() {

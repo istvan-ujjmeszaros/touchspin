@@ -46,6 +46,9 @@ Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
    - [x] C5a: Manual pages parity verified (core + jQuery smoke pages)
    - [x] C5b: All non-visual tests pass across builds (TDD Complete: 10/10 tests passing)
    - [ ] C5c: Full existing test suite (242 tests) passes against modern packages
+  - [ ] C5c.1: Core DOM event handling implementation (data attribute targeting)
+  - [ ] C5c.2: jQuery wrapper callable event forwarding only (no DOM logic)
+  - [ ] C5c.3: Renderer data attribute requirements (data-touchspin-role)
 
 Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js)
 
@@ -69,19 +72,25 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
 - [x] P11: Booster — boostat growth, maxboostedstep clamp + grid alignment.
 - [x] P12: Boundary — auto-stop on reaching min/max during spin.
 
-- Wrapper Interaction Parity
-- [x] P13: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
-- [x] P14: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
-- [x] P15: Mousewheel — single step on focus; change event only.
-- [x] P16: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
-- [x] P17: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
-- [x] P18: Renderer updates — prefix/postfix text and classes update on settings changes.
+- Modern Architecture Event Handling
+- [ ] P13: Core DOM event targeting — attach listeners via data-touchspin-role attributes only.
+- [ ] P14: Renderer data attributes — all renderers add required data-touchspin-role markup.
+- [ ] P15: jQuery wrapper isolation — forwards only callable events, no DOM event logic.
+- [ ] P16: Data attribute strategy — no class name dependencies for event targeting.
+
+- Legacy Wrapper Interaction Parity  
+- [x] P17: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
+- [x] P18: Keyboard — ArrowUp/Down once+auto; Enter sanitizes; stop on keyup.
+- [x] P19: Mousewheel — single step on focus; change event only.
+- [x] P20: Attribute sync — observe disabled/readonly/min/max/step; stop spin and update settings; default step=1 if removed.
+- [x] P21: Callable events — touchspin.uponce/downonce/startupspin/startdownspin/stopspin map correctly.
+- [x] P22: Renderer updates — prefix/postfix text and classes update on settings changes.
 
 - Verification
-- [x] P19: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
-  - [x] P19a: Manual A/B compare page added (`__tests__/html-package/ab-compare.html`).
-  - [x] P19b: Automated A/B parity tests (`abCompare.test.ts`, `abParitySequences.test.ts`).
-- [x] P20: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
+- [x] P23: A/B harness — scripted sequences comparing src vs wrapper/core for values and event order.
+  - [x] P23a: Manual A/B compare page added (`__tests__/html-package/ab-compare.html`).
+  - [x] P23b: Automated A/B parity tests (`abCompare.test.ts`, `abParitySequences.test.ts`).
+- [x] P24: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
 
 Phase D — Framework Wrappers (optional deliverables after core split)
 - [ ] D1: Web Component (`@touchspin/webcomponent`): custom element; attributes map to options; emit DOM `CustomEvent`s.

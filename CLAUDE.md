@@ -29,7 +29,12 @@ The project uses **Rollup** as its build system:
 
 ## Architecture
 
-### Source Structure
+### Modern Architecture (Multi-Package)
+- **`packages/core/`** - Framework-agnostic core logic
+- **`packages/jquery-plugin/`** - jQuery wrapper that bridges to core
+- **`packages/bootstrap-renderer/`** - Bootstrap-specific DOM rendering
+
+### Legacy Architecture
 - **`src/`** - Source files (never edit `dist/` directly)
   - `jquery.bootstrap-touchspin.js` - Main jQuery plugin implementation 
   - `jquery.bootstrap-touchspin.css` - Component styles
@@ -55,11 +60,37 @@ The project uses **Rollup** as its build system:
 
 ## Key Development Notes
 
-### Plugin Architecture
+### Modern Plugin Architecture Requirements
+
+#### Core Event Handling
+- **Core must handle ALL DOM events** (up/down buttons, input events, etc.) via data attributes
+- Core attaches event listeners to elements with `data-touchspin-role` attributes
+- Event targeting uses **data attributes only** - NO class name dependencies
+- Required data attributes: `data-touchspin-role="up"`, `data-touchspin-role="down"`, `data-touchspin-role="input"`
+
+#### jQuery Wrapper Responsibilities  
+- **Only forwards callable events to core API** - contains NO DOM event logic
+- Must forward these callable events:
+  - `touchspin.updatesettings` → `core.updateSettings()`
+  - `touchspin.uponce` → `core.upOnce()`
+  - `touchspin.downonce` → `core.downOnce()`
+  - `touchspin.startupspin` → `core.startUpSpin()`
+  - `touchspin.startdownspin` → `core.startDownSpin()`
+  - `touchspin.stopspin` → `core.stopSpin()`
+
+#### Renderer Requirements
+- **Must add data attributes to markup** for core event targeting
+- All renderer implementations must include appropriate `data-touchspin-role` attributes
+- Renderers handle presentation only - NO event logic
+
+#### Modern Initialization
+- Pages using modern core with renderer should initialize: `myinput.TouchSpin()`
+
+### Legacy Plugin Architecture
 - UMD pattern supporting AMD, CommonJS, and global jQuery
 - jQuery plugin extending `$.fn.TouchSpin`
 - Maintains internal spinner ID counter (`_currentSpinnerId`)
-- Extensive configuration options for styling, behavior, and validation
+- Configuration options for styling, behavior, and validation
 
 ### Build Requirements
 - **Critical**: Always run `npm run check-build-integrity` before committing - this ensures dist files are properly synchronized with source changes

@@ -1,5 +1,6 @@
 /**
- * Migrated copy from src/renderers/AbstractRenderer.js (transitional)
+ * AbstractRenderer - Base class for TouchSpin renderers
+ * Part of @touchspin/core package to avoid duplication across renderer packages
  */
 class AbstractRenderer {
   constructor($, settings, originalinput) {
@@ -27,6 +28,10 @@ class AbstractRenderer {
         upButtons = this._findElements(verticalContainer, 'up');
       }
     }
+    
+    // Ensure input element has data-touchspin-injected="input" for core event targeting
+    this.originalinput.attr('data-touchspin-injected', 'input');
+    
     this.elements = {
       down: downButtons,
       up: upButtons,
@@ -37,7 +42,7 @@ class AbstractRenderer {
     return this.elements;
   }
 
-  _findElements(container, role) { return this.$(`[data-touchspin-injected=\"${role}\"]`, container); }
+  _findElements(container, role) { return this.$(`[data-touchspin-injected="${role}"]`, container); }
 
   hideEmptyPrefixPostfix() {
     const detached = {};
@@ -50,14 +55,16 @@ class AbstractRenderer {
 
   getWrapperTestId() {
     const inputTestId = this.originalinput.attr('data-testid');
-    if (inputTestId) return ` data-testid=\"${inputTestId}-wrapper\"`;
+    if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
     return '';
   }
 }
 
+// UMD-style export retained for now (transitional)
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = AbstractRenderer;
 } else if (typeof window !== 'undefined') {
   window.AbstractRenderer = AbstractRenderer;
 }
 
+export default AbstractRenderer;

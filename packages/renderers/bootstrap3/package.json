@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Bootstrap 3 renderer for TouchSpin",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "workspace:*"
+  }
 }
 

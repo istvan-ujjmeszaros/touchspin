@@ -2,6 +2,8 @@
  * Tailwind CSS Renderer (aligned with src/renderers/TailwindRenderer.js)
  * Uses Tailwind utility classes only; no Bootstrap CSS dependency.
  */
+import AbstractRenderer from '@touchspin/core/AbstractRenderer';
+
 class TailwindRenderer extends AbstractRenderer {
 
   getFrameworkId() { return 'tailwind'; }

@@ -1,6 +1,8 @@
 /**
  * Migrated copy from src/renderers/Bootstrap4Renderer.js (transitional)
  */
+import AbstractRenderer from '@touchspin/core/AbstractRenderer';
+
 class Bootstrap4Renderer extends AbstractRenderer {
 
   getFrameworkId() {
@@ -149,12 +151,12 @@ class Bootstrap4Renderer extends AbstractRenderer {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
           <div class="input-group-prepend" data-touchspin-injected="down">
-            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" type="button">${this.settings.buttondown_txt}</button>
+            <button tabindex="-1" class="${this.settings.buttondown_class} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt}</button>
           </div>
           <div class="input-group-prepend" data-touchspin-injected="prefix"><span class="input-group-text">${this.settings.prefix}</span></div>
           <div class="input-group-append" data-touchspin-injected="postfix"><span class="input-group-text">${this.settings.postfix}</span></div>
           <div class="input-group-append" data-touchspin-injected="up">
-            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" type="button">${this.settings.buttonup_txt}</button>
+            <button tabindex="-1" class="${this.settings.buttonup_class} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt}</button>
           </div>
         </div>
       `;

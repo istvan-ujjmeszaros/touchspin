@@ -50,6 +50,19 @@
  * - Return stable references to `input`, `up`, `down`, and `container`.
  * - Handle prefix/postfix visibility and updates.
  * - Do not attach global/document listeners; core will bind events.
+ * - **CRITICAL**: Add data-touchspin-role attributes for core event targeting.
+ *
+ * Required Data Attributes (for core DOM event handling):
+ * - `data-touchspin-injected="up"` on increment buttons
+ * - `data-touchspin-injected="down"` on decrement buttons  
+ * - `data-touchspin-injected="input"` on the input element
+ * - `data-touchspin-injected="wrapper"` on wrapper element (buildInputGroup)
+ * - `data-touchspin-injected="enhanced-wrapper"` on enhanced parent element (buildAdvancedInputGroup)
+ *
+ * Event Targeting Strategy:
+ * - Core uses data-touchspin-injected attributes with role values for event targeting
+ * - NO dependency on CSS class names for event binding
+ * - All renderers MUST add these role-based data-touchspin-injected attributes
  *
  * @typedef {Object} TSRenderer
  * @property {(inputEl: HTMLInputElement) => HTMLElement} buildInputGroup
