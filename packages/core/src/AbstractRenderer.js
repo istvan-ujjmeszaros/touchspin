@@ -3,14 +3,72 @@
  * Part of @touchspin/core package to avoid duplication across renderer packages
  */
 class AbstractRenderer {
-  constructor($, settings, originalinput) {
-    this.$ = $;
-    this.settings = settings;
-    this.originalinput = originalinput;
+  constructor(inputEl, settings, core) {
+    // New renderer architecture
+    this.input = inputEl;
+    this.settings = settings; // Read-only access to settings
+    this.core = core; // Reference to core for calling attachment methods
+    this.wrapper = null; // Set by subclasses during init()
+    
+    // Legacy compatibility (transitional)
+    this.$ = typeof $ !== 'undefined' ? $ : null;
+    this.originalinput = this.$ ? this.$(inputEl) : null;
     this.container = null;
     this.elements = null;
   }
 
+  // New required abstract methods
+  init() { 
+    throw new Error('init() must be implemented by renderer'); 
+  }
+  
+  teardown() {
+    // Default implementation - remove all injected elements
+    this.removeInjectedElements();
+    // Subclasses can override for custom teardown
+  }
+  
+  // Utility method for all renderers
+  removeInjectedElements() {
+    // Find and remove all elements with data-touchspin-injected attribute
+    if (this.wrapper) {
+      const injected = this.wrapper.querySelectorAll('[data-touchspin-injected]');
+      injected.forEach(el => el.remove());
+      
+      // If wrapper itself was injected and is not the original parent
+      if (this.wrapper.hasAttribute('data-touchspin-injected') && this.wrapper.parentElement) {
+        const injectedType = this.wrapper.getAttribute('data-touchspin-injected');
+        
+        if (injectedType === 'wrapper-advanced') {
+          // For advanced input groups, just remove the TouchSpin classes and attribute
+          // but keep the original input-group structure intact
+          this.wrapper.classList.remove('bootstrap-touchspin');
+          this.wrapper.removeAttribute('data-touchspin-injected');
+        } else {
+          // For regular wrappers, unwrap the input element
+          const parent = this.wrapper.parentElement;
+          parent.insertBefore(this.input, this.wrapper);
+          this.wrapper.remove();
+        }
+      }
+    }
+    
+    // Also find any injected elements that might be siblings or elsewhere
+    const allInjected = document.querySelectorAll('[data-touchspin-injected]');
+    allInjected.forEach(el => {
+      // Only remove if it's related to this input (check if input is descendant or sibling)
+      if (el.contains(this.input) || 
+          (el.parentElement && el.parentElement.contains(this.input)) ||
+          this.input.parentElement?.contains(el)) {
+        // Don't remove the input itself
+        if (el !== this.input) {
+          el.remove();
+        }
+      }
+    });
+  }
+
+  // Legacy methods (transitional - for backward compatibility)
   getFrameworkId() { throw new Error('getFrameworkId() must be implemented by subclasses'); }
   getDefaultSettings() { return {}; }
   buildAdvancedInputGroup(parentelement) { throw new Error('buildAdvancedInputGroup() must be implemented by subclasses'); }
@@ -58,13 +116,6 @@ class AbstractRenderer {
     if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
     return '';
   }
-}
-
-// UMD-style export retained for now (transitional)
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = AbstractRenderer;
-} else if (typeof window !== 'undefined') {
-  window.AbstractRenderer = AbstractRenderer;
 }
 
 export default AbstractRenderer;

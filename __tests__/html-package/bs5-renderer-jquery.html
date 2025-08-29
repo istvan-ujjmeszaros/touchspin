@@ -8,6 +8,8 @@
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../packages/core/src/AbstractRenderer.js"></script>
+  <script src="../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js" type="module"></script>
 </head>
 <body>
   <div class="container mt-5">
@@ -17,7 +19,6 @@
 
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
 
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
@@ -33,7 +34,10 @@
       }, $input);
       
       // Build the DOM structure
-      renderer.build();
+      const container = renderer.buildInputGroup();
+      
+      // Initialize elements
+      renderer.initElements(container);
       
       // Initialize TouchSpin via jQuery wrapper
       $input.TouchSpin({

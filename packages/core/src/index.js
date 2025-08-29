@@ -61,10 +61,17 @@ export class TouchSpinCore {
     if (!inputEl || inputEl.nodeName !== 'INPUT') {
       throw new Error('TouchSpinCore requires an <input> element');
     }
+    
     /** @type {HTMLInputElement} */
     this.input = inputEl;
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, opts);
+    
+    // Renderer is required
+    if (!this.settings.renderer) {
+      throw new Error('TouchSpin requires a renderer. Use RawRenderer for no additional UI.');
+    }
+    
     /** @type {boolean} */
     this.spinning = false;
     /** @type {number} */
@@ -75,10 +82,8 @@ export class TouchSpinCore {
     this._events = new Map();
     /** @type {Array<Function>} */
     this._teardownCallbacks = [];
-
-    // Initialize ARIA attributes and sanitize display immediately
-    this._updateAriaAttributes();
-    this._checkValue(false);
+    /** @type {Map<string, Set<Function>>} */
+    this._settingObservers = new Map(); // For observer pattern
 
     /** @type {ReturnType<typeof setTimeout>|null} */
     this._spinDelayTimeout = null;
@@ -100,6 +105,23 @@ export class TouchSpinCore {
     this._handleKeyDown = this._handleKeyDown.bind(this);
     this._handleKeyUp = this._handleKeyUp.bind(this);
     this._handleWheel = this._handleWheel.bind(this);
+    
+    // Core always manages the input element
+    this._initializeInput();
+    
+    // Initialize renderer with reference to core
+    this.renderer = new this.settings.renderer(inputEl, this.settings, this);
+    this.renderer.init();
+  }
+  
+  /**
+   * Initialize input element (core always handles this)
+   * @private
+   */
+  _initializeInput() {
+    // Core always handles these for the input
+    this._updateAriaAttributes();
+    this._checkValue(false);
   }
 
   /** Increment once according to step */
@@ -169,11 +191,14 @@ export class TouchSpinCore {
    * @param {Partial<TouchSpinCoreOptions>} opts
    */
   updateSettings(opts) {
-    this.settings = Object.assign({}, this.settings, opts || {});
+    const oldSettings = { ...this.settings };
+    const newSettings = opts || {};
+    
+    this.settings = Object.assign({}, this.settings, newSettings);
+    
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
-    const ns = opts || {};
     const step = Number(this.settings.step || 1);
-    if ((ns.step !== undefined || ns.min !== undefined || ns.max !== undefined) && step !== 1) {
+    if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && step !== 1) {
       if (this.settings.max != null) {
         this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
       }
@@ -181,6 +206,24 @@ export class TouchSpinCore {
         this.settings.min = this._alignToStep(Number(this.settings.min), step, 'up');
       }
     }
+
+    // Notify observers of changed settings
+    Object.keys(newSettings).forEach(key => {
+      if (oldSettings[key] !== newSettings[key]) {
+        const observers = this._settingObservers.get(key);
+        if (observers) {
+          observers.forEach(callback => {
+            try {
+              callback(newSettings[key], oldSettings[key]);
+            } catch (error) {
+              console.error('TouchSpin: Error in setting observer callback:', error);
+            }
+          });
+        }
+      }
+    });
+
+    // Core handles its own setting changes
     this._updateAriaAttributes();
     this._checkValue(false);
   }
@@ -239,6 +282,13 @@ export class TouchSpinCore {
   /** Cleanup and destroy the TouchSpin instance */
   destroy() {
     this.stopSpin();
+    
+    // Renderer cleans up its added elements
+    if (this.renderer && this.renderer.teardown) {
+      this.renderer.teardown();
+    }
+    
+    // Core cleans up input events only
     this._detachDOMEventListeners();
 
     // Call all registered teardown callbacks (for wrapper cleanup)
@@ -251,9 +301,8 @@ export class TouchSpinCore {
     });
     this._teardownCallbacks.length = 0; // Clear the array
 
-    // Remove all elements with our data attributes
-    const injectedElements = document.querySelectorAll('[data-touchspin-injected]');
-    injectedElements.forEach(el => el.remove());
+    // Clear setting observers
+    this._settingObservers.clear();
 
     // Remove instance from element
     if (this.input[INSTANCE_KEY] === this) {
@@ -280,7 +329,60 @@ export class TouchSpinCore {
       off: this.off.bind(this),
       initDOMEventHandling: this.initDOMEventHandling.bind(this),
       registerTeardown: this.registerTeardown.bind(this),
+      attachUpEvents: this.attachUpEvents.bind(this),
+      attachDownEvents: this.attachDownEvents.bind(this),
+      observeSetting: this.observeSetting.bind(this),
     };
+  }
+
+  // --- Renderer Event Attachment Methods ---
+  /**
+   * Attach up button events to an element
+   * Called by renderers after creating up button
+   * @param {HTMLElement|null} element - The element to attach events to
+   */
+  attachUpEvents(element) {
+    if (!element) {
+      console.warn('TouchSpin: attachUpEvents called with null element');
+      return;
+    }
+    
+    element.addEventListener('mousedown', this._handleUpMouseDown);
+    element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
+  }
+
+  /**
+   * Attach down button events to an element  
+   * Called by renderers after creating down button
+   * @param {HTMLElement|null} element - The element to attach events to
+   */
+  attachDownEvents(element) {
+    if (!element) {
+      console.warn('TouchSpin: attachDownEvents called with null element');
+      return;
+    }
+    
+    element.addEventListener('mousedown', this._handleDownMouseDown);
+    element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+  }
+
+  // --- Settings Observer Pattern ---
+  /**
+   * Allow renderers to observe setting changes
+   * @param {string} settingName - Name of setting to observe
+   * @param {Function} callback - Function to call when setting changes (newValue, oldValue)
+   * @returns {Function} Unsubscribe function
+   */
+  observeSetting(settingName, callback) {
+    if (!this._settingObservers.has(settingName)) {
+      this._settingObservers.set(settingName, new Set());
+    }
+    
+    const observers = this._settingObservers.get(settingName);
+    observers.add(callback);
+    
+    // Return unsubscribe function
+    return () => observers.delete(callback);
   }
 
   // --- Minimal internal emitter API ---
@@ -769,3 +871,7 @@ export function attach(inputEl, opts) {
 }
 
 export default TouchSpinCore;
+
+// Export renderers
+export { default as RawRenderer } from './RawRenderer.js';
+export { default as AbstractRenderer } from './AbstractRenderer.js';

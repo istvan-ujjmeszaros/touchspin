@@ -20,18 +20,9 @@
     document.addEventListener('DOMContentLoaded', function() {
       const input = document.getElementById('test-input');
       
-      // Create renderer instance
-      const renderer = new Bootstrap5Renderer(null, {
-        min: 0,
-        max: 200,
-        step: 1
-      }, { 0: input }); // Mock jQuery object
-      
-      // Build the DOM structure
-      renderer.build();
-      
-      // Initialize TouchSpin core with the rendered DOM
+      // Initialize TouchSpin with Bootstrap 5 renderer
       const touchspin = TouchSpin(input, {
+        renderer: Bootstrap5Renderer,
         min: 0,
         max: 200,
         step: 1
