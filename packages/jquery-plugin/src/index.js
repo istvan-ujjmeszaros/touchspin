@@ -14,8 +14,21 @@ export function installJqueryTouchSpin($) {
       const cmd = String(options).toLowerCase();
       let ret;
       this.each(function() {
-        const api = getTouchSpin(/** @type {HTMLInputElement} */ (this));
-        if (!api) return; // No instance exists - command ignored
+        const inputEl = /** @type {HTMLInputElement} */ (this);
+        const api = getTouchSpin(inputEl);
+        
+        // Handle get/getvalue specially - fall back to raw input value if no instance
+        if ((cmd === 'getvalue' || cmd === 'get') && ret === undefined) {
+          if (api) {
+            ret = api.getValue();
+          } else {
+            // No TouchSpin instance - return raw input value
+            ret = inputEl.value;
+          }
+          return; // Skip other commands if no instance
+        }
+        
+        if (!api) return; // No instance exists - other commands ignored
         
         switch (cmd) {
           case 'destroy': api.destroy(); break; // Core removes instance from element
@@ -25,7 +38,6 @@ export function installJqueryTouchSpin($) {
           case 'startdownspin': api.startDownSpin(); break;
           case 'stopspin': api.stopSpin(); break;
           case 'updatesettings': api.updateSettings(arg || {}); break;
-          case 'getvalue': case 'get': if (ret === undefined) ret = api.getValue(); break;
           case 'setvalue': case 'set': api.setValue(arg); break;
         }
       });
