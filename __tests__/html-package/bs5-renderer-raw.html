@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BS5 Renderer Raw Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>BS5 Renderer Raw Test</h1>
+    <input id="test-input" type="number" value="50" class="form-control" style="width: 200px;">
+  </div>
+
+  <script type="module">
+    import { TouchSpin } from '../../packages/core/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('test-input');
+      
+      // Create renderer instance
+      const renderer = new Bootstrap5Renderer(null, {
+        min: 0,
+        max: 200,
+        step: 1
+      }, { 0: input }); // Mock jQuery object
+      
+      // Build the DOM structure
+      renderer.build();
+      
+      // Initialize TouchSpin core with the rendered DOM
+      const touchspin = TouchSpin(input, {
+        min: 0,
+        max: 200,
+        step: 1
+      });
+    });
+  </script>
+</body>
+</html>

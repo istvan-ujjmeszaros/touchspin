@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BS5 Renderer jQuery Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>BS5 Renderer jQuery Test</h1>
+    <input id="test-input" type="number" value="50" class="form-control" style="width: 200px;">
+  </div>
+
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
+    // Install jQuery plugin
+    installJqueryTouchSpin(window.jQuery);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const $input = $('#test-input');
+      
+      // Create renderer instance and build DOM first
+      const renderer = new Bootstrap5Renderer(window.jQuery, {
+        min: 0,
+        max: 200,
+        step: 1
+      }, $input);
+      
+      // Build the DOM structure
+      renderer.build();
+      
+      // Initialize TouchSpin via jQuery wrapper
+      $input.TouchSpin({
+        min: 0,
+        max: 200,
+        step: 1
+      });
+    });
+  </script>
+</body>
+</html>
