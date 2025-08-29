@@ -11,8 +11,12 @@
     <!-- jQuery -->
     <script src="assets/jquery/jquery-3.7.1.min.js"></script>
     
-    <!-- TouchSpin Tailwind Build (CSS-independent) -->
-    <script src="../../dist/jquery.bootstrap-touchspin-tailwind.js"></script>
+    <!-- Load modern TouchSpin packages directly -->
+    <script type="module">
+        import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+        installJqueryTouchSpin(window.jQuery);
+        window.modernTouchSpinInstalled = true;
+    </script>
     
     <!-- Test-specific inline styling -->
     <style>

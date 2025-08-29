@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TouchSpin Destroy/Reinitialize Test (ESM)</title>
+  <title>TouchSpin Destroy/Reinitialize Test (Modern)</title>
 
   <!-- Bootstrap 4 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,8 +20,8 @@
 </head>
 <body>
   <div class="container mt-4">
-    <h1>TouchSpin Destroy/Reinitialize Test (ESM)</h1>
-    <p>Using the ESM twin loader to register the classic plugin.</p>
+    <h1>TouchSpin Destroy/Reinitialize Test (Modern)</h1>
+    <p>Using the modern source packages with the jQuery wrapper.</p>
 
     <!-- Test 1: New Container Creation -->
     <div class="test-section">
@@ -78,9 +78,9 @@
       <div class="status" id="status-vertical">Status: Not initialized</div>
     </div>
     
-    <!-- Test 4: Modern API (Element.prototype.TouchSpin) -->
+    <!-- Test 4: Modern Packages API -->
     <div class="test-section">
-      <h3>Test 4: Modern API (no jQuery in user code)</h3>
+      <h3>Test 4: Modern Packages API</h3>
       <div class="form-group">
         <label for="test-input-modern">Test Input (Modern API):</label>
         <input id="test-input-modern" type="text" value="25" class="form-control">
@@ -125,10 +125,12 @@
     };
   </script>
 
-  <!-- Load ESM twin that registers the classic plugin -->
-  <script type="module" src="../../src/jquery.bootstrap-touchspin.esm.js"></script>
-  <!-- Install modern facade wrapper (LGTM-7a, manual pages only) -->
-  <script type="module" src="../../src/wrappers/modern-facade.js"></script>
+  <!-- Load modern TouchSpin packages directly -->
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    installJqueryTouchSpin(window.jQuery);
+    window.modernTouchSpinInstalled = true;
+  </script>
 
   <script>
     $(function() {
@@ -176,29 +178,37 @@
         updateStatus('#status-vertical', 'Reinitialized (vertical ↑/↓, step 5)');
       });
 
-      // Test 4: Modern API (no jQuery in user code)
-      let modernInst;
-      const modernEl = document.getElementById('test-input-modern');
+      // Test 4: Modern API (using jQuery but with modern packages)
+      const $modernInput = $('#test-input-modern');
       document.getElementById('init-modern-btn').addEventListener('click', function() {
-        modernInst = modernEl.TouchSpin({ min: 0, max: 100, step: 1 });
-        updateStatus('#status-modern', 'Initialized (modern facade)');
+        $modernInput.TouchSpin({ min: 0, max: 100, step: 1 });
+        updateStatus('#status-modern', 'Initialized (modern packages)');
       });
       document.getElementById('destroy-modern-btn').addEventListener('click', function() {
-        if (modernInst) modernInst.destroy();
-        updateStatus('#status-modern', 'Destroyed (modern facade)');
+        $modernInput.trigger('touchspin.destroy');
+        updateStatus('#status-modern', 'Destroyed (modern packages)');
       });
       document.getElementById('reinit-modern-btn').addEventListener('click', function() {
-        modernInst = modernEl.TouchSpin({ min: 10, max: 90, step: 5 });
-        updateStatus('#status-modern', 'Reinitialized (modern facade, step 5)');
+        $modernInput.TouchSpin({ min: 10, max: 90, step: 5 });
+        updateStatus('#status-modern', 'Reinitialized (modern packages, step 5)');
       });
-      document.getElementById('modern-uponce').addEventListener('click', function(){ if (modernInst) modernInst.upOnce(); });
-      document.getElementById('modern-downonce').addEventListener('click', function(){ if (modernInst) modernInst.downOnce(); });
-      document.getElementById('modern-startup').addEventListener('click', function(){ if (modernInst) modernInst.startUpSpin(); });
-      document.getElementById('modern-startdown').addEventListener('click', function(){ if (modernInst) modernInst.startDownSpin(); });
-      document.getElementById('modern-stop').addEventListener('click', function(){ if (modernInst) modernInst.stopSpin(); });
-      document.getElementById('modern-get').addEventListener('click', function(){ if (modernInst) alert('getValue() = ' + modernInst.getValue()); });
-      document.getElementById('modern-set').addEventListener('click', function(){ if (modernInst) modernInst.setValue(64); });
-      document.getElementById('modern-update').addEventListener('click', function(){ if (modernInst) modernInst.updateSettings({ step: 10 }); });
+      document.getElementById('modern-uponce').addEventListener('click', function(){ $modernInput.trigger('touchspin.uponce'); });
+      document.getElementById('modern-downonce').addEventListener('click', function(){ $modernInput.trigger('touchspin.downonce'); });
+      document.getElementById('modern-startup').addEventListener('click', function(){ $modernInput.trigger('touchspin.startupspin'); });
+      document.getElementById('modern-startdown').addEventListener('click', function(){ $modernInput.trigger('touchspin.startdownspin'); });
+      document.getElementById('modern-stop').addEventListener('click', function(){ $modernInput.trigger('touchspin.stopspin'); });
+      document.getElementById('modern-get').addEventListener('click', function(){ 
+        const api = $modernInput.data('touchspinInternal');
+        if (api) alert('getValue() = ' + api.getValue());
+      });
+      document.getElementById('modern-set').addEventListener('click', function(){ 
+        const api = $modernInput.data('touchspinInternal');
+        if (api) api.setValue(64);
+      });
+      document.getElementById('modern-update').addEventListener('click', function(){ 
+        const api = $modernInput.data('touchspinInternal');
+        if (api) api.updateSettings({ step: 10 });
+      });
     });
   </script>
 </body>
