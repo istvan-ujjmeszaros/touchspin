@@ -98,9 +98,7 @@ export function installJqueryTouchSpin($) {
         if (api) api.updateSettings(o || {});
       });
       $input.on('touchspin.destroy', () => {
-        // Use the same teardown function as registered with core
-        jqueryTeardown();
-        // Forward destroy to core (core removes instance from element)
+        // Forward destroy to core (core will call registered teardown callbacks)
         const api = getTouchSpin(inputEl);
         if (api) api.destroy();
       });
