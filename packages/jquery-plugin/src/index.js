@@ -1,5 +1,5 @@
 // @ts-check
-import { createPublicApi, CORE_EVENTS } from '../../core/src/index.js';
+import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../core/src/index.js';
 
 /**
  * Install a jQuery plugin wrapper powered by the new core.
@@ -40,10 +40,10 @@ export function installJqueryTouchSpin($) {
       let ret;
       this.each(function() {
         const $el = $(this);
-        const api = $el.data('touchspinInternal');
+        const api = getTouchSpin(/** @type {HTMLInputElement} */ (this));
         if (!api) return;
         switch (cmd) {
-          case 'destroy': api.destroy(); teardown($el); break;
+          case 'destroy': api.destroy(); break;
           case 'uponce': api.upOnce(); break;
           case 'downonce': api.downOnce(); break;
           case 'startupspin': api.startUpSpin(); break;
@@ -59,7 +59,14 @@ export function installJqueryTouchSpin($) {
 
     return this.each(function() {
       const $input = $(this);
-      try { if ($input.data('touchspinInternal')) teardown($input); } catch {}
+      const inputEl = /** @type {HTMLInputElement} */ (this);
+      
+      // Clean up existing instance (TouchSpin destroy() handles everything)
+      const existingApi = getTouchSpin(inputEl);
+      if (existingApi) {
+        existingApi.destroy();
+      }
+      
       const opts = $.extend({}, DEFAULTS, options || {});
 
       // Optional UI via RendererFactory; if absent, run core-only with no wrapper UI
@@ -97,10 +104,8 @@ export function installJqueryTouchSpin($) {
         try { __detached = renderer.hideEmptyPrefixPostfix(); } catch {}
       }
 
-      // Create core API
-      const inst = createPublicApi(/** @type {HTMLInputElement} */ ($input[0]), opts);
-      $input.data('touchspin', inst);
-      $input.data('touchspinInternal', inst);
+      // Create core API - TouchSpin handles everything including storage on element
+      const inst = TouchSpin(inputEl, opts);
 
       // Bridge core events to jQuery events
       const evMap = {

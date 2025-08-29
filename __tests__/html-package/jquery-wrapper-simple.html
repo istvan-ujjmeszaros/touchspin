@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simple TouchSpin jQuery Wrapper Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container { max-width: 600px; margin-top: 50px; }
+    .btn { margin: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simple TouchSpin jQuery Wrapper Test</h1>
+    <p>Testing the updated jQuery wrapper with new TouchSpin core.</p>
+
+    <!-- Simple TouchSpin input with Bootstrap styling -->
+    <div class="mb-4">
+      <label for="simple-input" class="form-label">Number Input:</label>
+      <input id="simple-input" type="text" value="50" class="form-control" style="width: 200px;">
+    </div>
+
+    <!-- jQuery API Test Buttons -->
+    <div class="mb-3">
+      <button class="btn btn-primary" onclick="$('#simple-input').TouchSpin('uponce')">Up Once</button>
+      <button class="btn btn-primary" onclick="$('#simple-input').TouchSpin('downonce')">Down Once</button>
+      <button class="btn btn-secondary" onclick="$('#simple-input').TouchSpin('startupspin')">Start Up Spin</button>
+      <button class="btn btn-secondary" onclick="$('#simple-input').TouchSpin('startdownspin')">Start Down Spin</button>
+      <button class="btn btn-danger" onclick="$('#simple-input').TouchSpin('stopspin')">Stop Spin</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-info" onclick="alert('Value: ' + $('#simple-input').TouchSpin('get'))">Get Value</button>
+      <button class="btn btn-info" onclick="$('#simple-input').TouchSpin('set', 100)">Set to 100</button>
+      <button class="btn btn-warning" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{step: 10}])">Set Step=10</button>
+      <button class="btn btn-warning" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{step: 1}])">Set Step=1</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="initTouchSpin()">Initialize</button>
+      <button class="btn btn-outline-danger" onclick="$('#simple-input').TouchSpin('destroy')">Destroy</button>
+    </div>
+
+    <!-- Direct API Access via Core -->
+    <div class="mb-3">
+      <h6>Direct Core Access (for comparison):</h6>
+      <button class="btn btn-outline-primary btn-sm" onclick="getDirectApi()?.upOnce()">Direct Up Once</button>
+      <button class="btn btn-outline-info btn-sm" onclick="alert('Direct Value: ' + (getDirectApi()?.getValue() ?? 'Not initialized'))">Direct Get Value</button>
+    </div>
+
+    <div class="mt-4">
+      <p><strong>Instructions:</strong></p>
+      <ul>
+        <li>Click "Initialize" to set up TouchSpin via jQuery</li>
+        <li><strong>Focus the input and use arrow keys (↑↓)</strong></li>
+        <li><strong>Focus the input and use mouse wheel</strong></li>
+        <li>Test all jQuery API methods with buttons above</li>
+        <li>Compare with direct core API access</li>
+      </ul>
+      
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- Install the jQuery plugin wrapper (core-based) -->
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import { getTouchSpin } from '../../packages/core/src/index.js';
+    
+    // Install jQuery plugin
+    installJqueryTouchSpin(window.jQuery);
+
+    // Helper to get direct core API instance from the input (for comparison)
+    window.getDirectApi = function() {
+      const input = document.getElementById('simple-input');
+      return getTouchSpin(input);
+    };
+
+    // One-line jQuery initialization
+    window.initTouchSpin = function() {
+      const $input = $('#simple-input');
+      
+      // Initialize via jQuery wrapper
+      $input.TouchSpin({ 
+        min: 0, 
+        max: 200, 
+        step: 1 
+      });
+    };
+
+    // Auto-initialize on page load
+    document.addEventListener('DOMContentLoaded', initTouchSpin);
+  </script>
+</body>
+</html>

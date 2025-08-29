@@ -51,10 +51,6 @@
         <li>Test all API methods with buttons above</li>
       </ul>
       
-      <div class="alert alert-info mt-3">
-        <strong>Debug Info:</strong>
-        <div id="debug-info">Events not initialized yet</div>
-      </div>
     </div>
   </div>
 
@@ -75,17 +71,6 @@
         max: 200, 
         step: 1 
       });
-      
-      // Add some debug event listeners to see if keyboard/wheel work
-      input.addEventListener('keydown', (e) => {
-        document.getElementById('debug-info').textContent = `Last event: keydown ${e.key}`;
-      });
-      input.addEventListener('wheel', (e) => {
-        document.getElementById('debug-info').textContent = `Last event: wheel deltaY=${e.deltaY}`;
-      });
-      
-      document.getElementById('debug-info').textContent = 'TouchSpin initialized! Try arrow keys or mouse wheel on input.';
-      console.log('TouchSpin initialized!');
     };
 
     // Auto-initialize on page load
