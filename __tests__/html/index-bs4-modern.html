@@ -73,7 +73,7 @@
     <div class="col-md-4">
       <div class="wrapper">
         <label for="testinput_disabled">#testinput_disabled:</label>
-        <input id="testinput_disabled" type="text" value="22" disabled name="testinput_disabled" data-testid="touchspin-disabled">
+        <input id="testinput_disabled" type="text" value="0" disabled name="testinput_disabled" data-testid="touchspin-disabled">
         <small class="text-muted">Input disabled.</small>
       </div>
     </div>
@@ -83,7 +83,7 @@
     <div class="col-md-4">
       <div class="wrapper">
         <label for="testinput_readonly">#testinput_readonly:</label>
-        <input id="testinput_readonly" type="text" value="22" readonly name="testinput_readonly" data-testid="touchspin-readonly">
+        <input id="testinput_readonly" type="text" value="0" readonly name="testinput_readonly" data-testid="touchspin-readonly">
         <small class="text-muted">Input readonly.</small>
       </div>
     </div>
@@ -93,7 +93,7 @@
     <div class="col-md-4">
       <div class="wrapper">
         <label for="testinput_callbacks">#testinput_callbacks:</label>
-        <input id="testinput_callbacks" type="text" value="750" name="testinput_callbacks" data-testid="touchspin-callbacks">
+        <input id="testinput_callbacks" type="text" value="5000" name="testinput_callbacks" data-testid="touchspin-callbacks">
         <small class="text-muted">With callback formatting.</small>
       </div>
     </div>
@@ -117,8 +117,8 @@ $(document).ready(function() {
   function logEvent(type, target, data) {
     const log = document.getElementById('events_log');
     const timestamp = new Date().toLocaleTimeString();
-    const entry = `[${timestamp}] ${type} on ${target}: ${JSON.stringify(data || {})}\n`;
-    log.textContent += entry;
+    const entry = `[${timestamp}] ${type} on ${target}: ${JSON.stringify(data || {})}`;
+    log.textContent += entry + '\n';
     log.scrollTop = log.scrollHeight;
   }
 

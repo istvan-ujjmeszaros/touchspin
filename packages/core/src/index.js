@@ -84,6 +84,10 @@ export class TouchSpinCore {
 
   /** Increment once according to step */
   upOnce() {
+    if (this.input.disabled || this.input.hasAttribute('readonly')) {
+      return;
+    }
+    
     const v = this.getValue();
     const next = this._nextValue('up', v);
     const prevNum = v;
@@ -100,6 +104,10 @@ export class TouchSpinCore {
 
   /** Decrement once according to step */
   downOnce() {
+    if (this.input.disabled || this.input.hasAttribute('readonly')) {
+      return;
+    }
+    
     const v = this.getValue();
     const next = this._nextValue('down', v);
     const prevNum = v;

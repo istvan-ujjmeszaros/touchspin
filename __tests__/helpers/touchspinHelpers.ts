@@ -111,7 +111,7 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
     // If button is not clickable (disabled), that's expected for some tests
     if (clickResult.error === 'Button not clickable') {
       console.warn('Button not clickable - this may be expected for disabled/readonly inputs');
-      return;
+      return; // Exit early - don't wait for value change
     }
     throw new Error(`TouchSpin up button click failed: ${clickResult.error}`);
   }

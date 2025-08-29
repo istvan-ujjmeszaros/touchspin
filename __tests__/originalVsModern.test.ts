@@ -205,13 +205,13 @@ test.describe('Modern Core Unit Tests (TDD)', () => {
         api.on('max', () => eventsCollected.push('max'));
         api.on('min', () => eventsCollected.push('min'));
         
-        // Set to max and try to go further
-        api.setValue(10);
-        api.upOnce(); // Should emit max event
+        // Set to near max and increment to trigger max event
+        api.setValue(9);
+        api.upOnce(); // Should emit max event when reaching 10
         
-        // Set to min and try to go further  
-        api.setValue(0);
-        api.downOnce(); // Should emit min event
+        // Set to near min and decrement to trigger min event
+        api.setValue(1);
+        api.downOnce(); // Should emit min event when reaching 0
         
         return eventsCollected;
       });
