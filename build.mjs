@@ -82,13 +82,21 @@ async function buildVersionSpecific(version, outputDir) {
     // Read core migrated initializer and wrapper installer, strip ESM exports/imports
     function readAsScript(p) {
       let code = fs.readFileSync(p, 'utf-8');
-      code = code.replace(/\bexport\s+function\s+/g, 'function ');
-      code = code.replace(/\bexport\s+default\b[\s\S]*?;\s*$/m, '');
-      code = code.replace(/\bexport\s+\{[\s\S]*?\};?/g, '');
+      // Strip all import statements
       code = code.replace(/\bimport\s+[^;]+;\s*/g, '');
+      // Strip export function declarations
+      code = code.replace(/\bexport\s+function\s+/g, 'function ');
+      // Strip export class declarations  
+      code = code.replace(/\bexport\s+class\s+/g, 'class ');
+      // Strip export const/let/var declarations
+      code = code.replace(/\bexport\s+(const|let|var)\s+/g, '$1 ');
+      // Strip export default statements
+      code = code.replace(/\bexport\s+default\b[\s\S]*?;\s*$/m, '');
+      // Strip export { ... } blocks
+      code = code.replace(/\bexport\s+\{[\s\S]*?\};?/g, '');
       return code;
     }
-    const coreInitPath = './packages/core/src/TouchSpinCore.migrated.js';
+    const coreInitPath = './packages/core/src/index.js';
     const wrapperPath = './packages/jquery-plugin/src/index.js';
     if (!fs.existsSync(coreInitPath) || !fs.existsSync(wrapperPath)) {
       throw new Error('Wrapper build requested but required sources are missing');
@@ -309,7 +317,7 @@ buildAll().catch(console.error);
 async function buildEsmCore(outputDir) {
   const esmOut = `${outputDir}/esm`;
   if (!fs.existsSync(esmOut)) fs.mkdirSync(esmOut, { recursive: true });
-  const bundle = await rollup({ input: resolve('src/core/TouchSpinCore.js') });
+  const bundle = await rollup({ input: resolve('packages/core/src/index.js') });
   await bundle.write({
     file: `${esmOut}/touchspin.js`,
     format: 'es',

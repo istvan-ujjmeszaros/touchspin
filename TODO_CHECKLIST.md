@@ -45,6 +45,7 @@ Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
  - [x] C5: Verification
    - [x] C5a: Manual pages parity verified (core + jQuery smoke pages)
    - [x] C5b: All non-visual tests pass across builds (TDD Complete: 10/10 tests passing)
+   - [ ] C5c: Full existing test suite (242 tests) passes against modern packages
 
 Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js)
 
@@ -91,7 +92,7 @@ Phase D — Framework Wrappers (optional deliverables after core split)
 Phase E — Workspaces, CI, Build, Release
 - [x] E1: Enable npm workspaces in root `package.json`; wire scripts for per‑package builds.
 - [x] E2: Replace Vite with Rollup in `build.mjs` (use Rollup JS API for UMD + ESM builds; keep Babel/Terser/CSS steps).
-- [ ] E3: Extend `check-build-integrity.mjs` for Rollup outputs and new aliases/package outputs.
+- [~] E3: Update `build.mjs` to integrate modern packages (build system should work for both original and modern approaches). `check-build-integrity.mjs` will automatically work once build.mjs is updated since it just runs the same build process.
 - [ ] E4: Versioning and publishing strategy (scoped packages), dry‑run publish, access tokens.
 - [ ] E5: GitHub Actions: matrix build/test/publish per package.
 - [x] E6: Remove Vite dependencies and scripts (`dev`/`preview`), delete `vite.config.js`.

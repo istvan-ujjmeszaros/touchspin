@@ -9,6 +9,13 @@
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -259,272 +266,627 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     window.RendererFactory = RendererFactory;
   }
 })();
-(function (factory) {
-  typeof define === 'function' && define.amd ? define(factory) : factory();
-})(function () {
+
+// Wrapper-based plugin registration (core initializer + wrapper)
+(function () {
   'use strict';
 
   // @ts-check
-  (function (factory) {
-    if (typeof define === 'function' && define.amd) {
-      define(['jquery'], factory);
-    } else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === 'object' && module.exports) {
-      module.exports = function (root, jQuery) {
-        if (jQuery === undefined) {
-          if (typeof window !== 'undefined') {
-            jQuery = require('jquery');
-          } else {
-            jQuery = require('jquery')(root);
+
+  /**
+   * @fileoverview Framework-agnostic core scaffold for TouchSpin.
+   * Phase A (A1): minimal public API surface to enable incremental extraction.
+   * This is a placeholder; logic will be ported from TouchSpinCore.migrated.js in A2–A7.
+   */
+
+  /**
+   * @typedef {'none'|'floor'|'round'|'ceil'} ForceStepDivisibility
+   */
+
+  /**
+   * @callback TouchSpinCalcCallback
+   * @param {string} value
+   * @returns {string}
+   */
+
+  /**
+   * @typedef {Object} TouchSpinCoreOptions
+   * @property {number|null=} min
+   * @property {number|null=} max
+   * @property {number|null=} firstclickvalueifempty
+   * @property {number=} step
+   * @property {number=} decimals
+   * @property {ForceStepDivisibility=} forcestepdivisibility
+   * @property {number=} stepinterval
+   * @property {number=} stepintervaldelay
+   * @property {boolean=} booster
+   * @property {number=} boostat
+   * @property {number|false=} maxboostedstep
+   * @property {TouchSpinCalcCallback=} callback_before_calculation
+   * @property {TouchSpinCalcCallback=} callback_after_calculation
+   * @property {import('./renderer-interface.js').TSRenderer=} renderer  // future DOM renderer
+   */
+  var DEFAULTS = {
+    min: 0,
+    max: 100,
+    firstclickvalueifempty: null,
+    step: 1,
+    decimals: 0,
+    forcestepdivisibility: 'round',
+    stepinterval: 100,
+    stepintervaldelay: 500,
+    booster: true,
+    boostat: 10,
+    maxboostedstep: false,
+    callback_before_calculation: function callback_before_calculation(v) {
+      return v;
+    },
+    callback_after_calculation: function callback_after_calculation(v) {
+      return v;
+    }
+  };
+  var TouchSpinCore = /*#__PURE__*/function () {
+    /**
+     * @param {HTMLInputElement} inputEl
+     * @param {Partial<TouchSpinCoreOptions>=} opts
+     */
+    function TouchSpinCore(inputEl) {
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      _classCallCheck(this, TouchSpinCore);
+      if (!inputEl || inputEl.nodeName !== 'INPUT') {
+        throw new Error('TouchSpinCore requires an <input> element');
+      }
+      /** @type {HTMLInputElement} */
+      this.input = inputEl;
+      /** @type {TouchSpinCoreOptions} */
+      this.settings = Object.assign({}, DEFAULTS, opts);
+      /** @type {boolean} */
+      this.spinning = false;
+      /** @type {number} */
+      this.spincount = 0;
+      /** @type {false|'up'|'down'} */
+      this.direction = false;
+      /** @type {Map<string, Set<Function>>} */
+      this._events = new Map();
+
+      // Initialize ARIA attributes and sanitize display immediately
+      this._updateAriaAttributes();
+      this._checkValue(false);
+
+      /** @type {ReturnType<typeof setTimeout>|null} */
+      this._spinDelayTimeout = null;
+      /** @type {ReturnType<typeof setInterval>|null} */
+      this._spinIntervalTimer = null;
+    }
+
+    /** Increment once according to step */
+    return _createClass(TouchSpinCore, [{
+      key: "upOnce",
+      value: function upOnce() {
+        if (this.input.disabled || this.input.hasAttribute('readonly')) {
+          return;
+        }
+        var v = this.getValue();
+        var next = this._nextValue('up', v);
+        var prevNum = v;
+        this._setDisplay(next, true);
+        if (isFinite(prevNum) && next !== prevNum) {
+          if (this.settings.max != null && next === this.settings.max) this.emit('max');
+          if (this.settings.min != null && next === this.settings.min) this.emit('min');
+        }
+        // If we hit the max while spinning upward, stop the spin to release lock
+        if (this.spinning && this.direction === 'up' && this.settings.max != null && next === this.settings.max) {
+          this.stopSpin();
+        }
+      }
+
+      /** Decrement once according to step */
+    }, {
+      key: "downOnce",
+      value: function downOnce() {
+        if (this.input.disabled || this.input.hasAttribute('readonly')) {
+          return;
+        }
+        var v = this.getValue();
+        var next = this._nextValue('down', v);
+        var prevNum = v;
+        this._setDisplay(next, true);
+        if (isFinite(prevNum) && next !== prevNum) {
+          if (this.settings.max != null && next === this.settings.max) this.emit('max');
+          if (this.settings.min != null && next === this.settings.min) this.emit('min');
+        }
+        // If we hit the min while spinning downward, stop the spin to release lock
+        if (this.spinning && this.direction === 'down' && this.settings.min != null && next === this.settings.min) {
+          this.stopSpin();
+        }
+      }
+
+      /** Start increasing repeatedly (placeholder) */
+    }, {
+      key: "startUpSpin",
+      value: function startUpSpin() {
+        this._startSpin('up');
+      }
+
+      /** Start decreasing repeatedly (placeholder) */
+    }, {
+      key: "startDownSpin",
+      value: function startDownSpin() {
+        this._startSpin('down');
+      }
+
+      /** Stop spinning (placeholder) */
+    }, {
+      key: "stopSpin",
+      value: function stopSpin() {
+        this._clearSpinTimers();
+        if (this.spinning) {
+          if (this.direction === 'up') {
+            this.emit('stopupspin');
+            this.emit('stopspin');
+          } else if (this.direction === 'down') {
+            this.emit('stopdownspin');
+            this.emit('stopspin');
           }
         }
-        factory(jQuery);
-        return jQuery;
-      };
-    } else {
-      factory(jQuery);
-    }
-  })(function ($) {
-    // Internal instance store to support future wrapper/core decoupling
-    // Mirrors jQuery .data('touchspinInternal') without changing behavior
-    var __touchspinInternalStore = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
-
-    /**
-     * @fileoverview Bootstrap TouchSpin — mobile-friendly numeric input spinner.
-     * @typedef {import('jquery').JQuery} JQuery
-     * @typedef {import('jquery').JQueryStatic} JQueryStatic
-     * @requires jQuery
-     */
-
-    // Include renderer classes
-    // These will be included during build process or loaded separately
-
-    /**
-     * How to handle step divisibility.
-     * @typedef {'none'|'floor'|'round'|'ceil'} ForceStepDivisibility
-     */
-
-    /**
-     * TouchSpin calculation callback.
-     * @callback TouchSpinCalcCallback
-     * @param {string} value Raw input value (string from the <input>).
-     * @returns {string} Processed value to use/display.
-     */
-
-    /**
-     * Renderer instance interface (built for the active Bootstrap flavor).
-     * @typedef {Object} TouchSpinRenderer
-     * @property {function(): JQuery} buildInputGroup
-     * @property {function(JQuery): JQuery} buildAdvancedInputGroup
-     * @property {function(JQuery): TouchSpinElements} initElements
-     * @property {function(): { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }} hideEmptyPrefixPostfix
-     * @property {function(Partial<TouchSpinOptions>, { _detached_prefix: JQuery|null, _detached_postfix: JQuery|null }): void} updatePrefixPostfix
-     */
-
-    /**
-     * Renderer factory (global).
-     * @typedef {Object} RendererFactoryType
-     * @property {function(JQueryStatic, TouchSpinOptions, JQuery): TouchSpinRenderer} createRenderer
-     */
-
-    /**
-     * Elements returned by renderer.initElements(container)
-     * @typedef {Object} TouchSpinElements
-     * @property {JQuery<HTMLInputElement>} input
-     * @property {JQuery<HTMLButtonElement>} up
-     * @property {JQuery<HTMLButtonElement>} down
-     */
-
-    /**
-     * @typedef TouchSpinOptions
-     * @property {number|null} [min=0] - Minimum allowed value (null for no minimum)
-     * @property {number|null} [max=100] - Maximum allowed value (null for no maximum)
-     * @property {string} [initval=''] - Initial value if input is empty
-     * @property {string} [replacementval=''] - Value to show when input is empty
-     * @property {number|null} [firstclickvalueifempty=null] - Value to set on first click if input is empty
-     * @property {number} [step=1] - Step increment/decrement amount
-     * @property {number} [decimals=0] - Number of decimal places to display
-     * @property {number} [stepinterval=100] - Milliseconds between steps when holding button
-     * @property {ForceStepDivisibility} [forcestepdivisibility='round'] - How to handle step divisibility
-     * @property {number} [stepintervaldelay=500] - Delay in milliseconds before step interval begins
-     * @property {boolean} [verticalbuttons=false] - Whether to display buttons vertically
-     * @property {string} [verticalup='&plus;'] - HTML content for vertical up button
-     * @property {string} [verticaldown='&minus;'] - HTML content for vertical down button
-     * @property {string} [verticalupclass=null] - CSS classes for vertical up button (framework-specific, provided by renderer)
-     * @property {string} [verticaldownclass=null] - CSS classes for vertical down button (framework-specific, provided by renderer)
-     * @property {string} [prefix=''] - Text or HTML to display before the input
-     * @property {string} [postfix=''] - Text or HTML to display after the input
-     * @property {string} [prefix_extraclass=''] - Additional CSS classes for prefix element
-     * @property {string} [postfix_extraclass=''] - Additional CSS classes for postfix element
-     * @property {boolean} [booster=true] - Enable accelerated value changes for rapid input
-     * @property {number} [boostat=10] - Number of steps before booster mode activates
-     * @property {number|false} [maxboostedstep=false] - Maximum step size during boost mode
-     * @property {boolean} [mousewheel=true] - Enable mouse wheel support for value changes
-     * @property {string} [buttondown_class=null] - CSS classes for decrement button (framework-specific, provided by renderer)
-     * @property {string} [buttonup_class=null] - CSS classes for increment button (framework-specific, provided by renderer)
-     * @property {string} [buttondown_txt='&minus;'] - HTML content for decrement button
-     * @property {string} [buttonup_txt='&plus;'] - HTML content for increment button
-     * @property {TouchSpinRenderer|null} [renderer=null] - Custom renderer instance for Bootstrap version compatibility
-     * @property {TouchSpinCalcCallback} [callback_before_calculation] - Function called before value calculation
-     * @property {TouchSpinCalcCallback} [callback_after_calculation] - Function called after value calculation
-     */
-
-    /**
-     * Fired when minimum value is reached.
-     * @event touchspin.on.min
-     */
-
-    /**
-     * Fired when maximum value is reached.
-     * @event touchspin.on.max
-     */
-
-    /**
-     * Fired when spinning starts (any direction).
-     * @event touchspin.on.startspin
-     */
-
-    /**
-     * Fired when spinning stops (any direction).
-     * @event touchspin.on.stopspin
-     */
-
-    /** @event touchspin.on.startupspin */
-    /** @event touchspin.on.startdownspin */
-    /** @event touchspin.on.stopupspin */
-    /** @event touchspin.on.stopdownspin */
-
-    /**
-     * jQuery TouchSpin plugin for creating mobile-friendly numeric input spinners.
-     * @function TouchSpin
-     * @memberof jQuery.fn
-     * @this {JQuery<HTMLInputElement>} jQuery collection of <input> elements
-     * @param {TouchSpinOptions=} options
-     * @returns {JQuery<HTMLInputElement>} The original jQuery collection (chainable).
-     * @fires touchspin.on.min
-     * @fires touchspin.on.max
-     * @fires touchspin.on.startspin
-     * @fires touchspin.on.stopspin
-     * @fires touchspin.on.startupspin
-     * @fires touchspin.on.startdownspin
-     * @fires touchspin.on.stopupspin
-     * @fires touchspin.on.stopdownspin
-     * @throws {Error} If a renderer factory cannot be found or a renderer cannot be created.
-     * @example
-     * // Basic usage
-     * $('#myinput').TouchSpin();
-     *
-     * @example
-     * // With configuration
-     * $('#myinput').TouchSpin({
-     *   min: 0,
-     *   max: 100,
-     *   step: 5,
-     *   prefix: '$',
-     *   postfix: '.00'
-     * });
-     *
-     * @example
-     * // Event handling
-     * $('#myinput').on('touchspin.on.min', function() {
-     *   console.log('Minimum value reached');
-     * });
-     *
-     */
-    $.fn.TouchSpin = function (options, arg) {
-      /** @type {TouchSpinOptions} */
-      var defaults = {
-        min: 0,
-        // If null, there is no minimum enforced
-        max: 100,
-        // If null, there is no maximum enforced
-        initval: '',
-        replacementval: '',
-        firstclickvalueifempty: null,
-        step: 1,
-        decimals: 0,
-        stepinterval: 100,
-        forcestepdivisibility: 'round',
-        // none | floor | round | ceil
-        stepintervaldelay: 500,
-        verticalbuttons: false,
-        verticalup: '&plus;',
-        verticaldown: '&minus;',
-        verticalupclass: null,
-        // Framework-specific, will be provided by renderer
-        verticaldownclass: null,
-        // Framework-specific, will be provided by renderer
-        prefix: '',
-        postfix: '',
-        prefix_extraclass: '',
-        postfix_extraclass: '',
-        booster: true,
-        boostat: 10,
-        maxboostedstep: false,
-        mousewheel: true,
-        buttondown_class: null,
-        // Framework-specific, will be provided by renderer
-        buttonup_class: null,
-        // Framework-specific, will be provided by renderer
-        buttondown_txt: '&minus;',
-        buttonup_txt: '&plus;',
-        // Renderer system options
-        renderer: null,
-        // Custom renderer instance
-        /** @type {TouchSpinCalcCallback} */
-        callback_before_calculation: function callback_before_calculation(value) {
-          return value;
-        },
-        /** @type {TouchSpinCalcCallback} */
-        callback_after_calculation: function callback_after_calculation(value) {
-          return value;
-        }
-      };
+        this.spinning = false;
+        this.direction = false;
+        this.spincount = 0;
+      }
 
       /**
-       * Maps TouchSpin option names to data attribute names.
-       * Example: data-bts-step-interval="100" → stepinterval: 100
-       * @type {Record<string,string>}
-       * @private
+       * @param {Partial<TouchSpinCoreOptions>} opts
        */
-      var attributeMap = {
-        min: 'min',
-        max: 'max',
-        initval: 'init-val',
-        replacementval: 'replacement-val',
-        firstclickvalueifempty: 'first-click-value-if-empty',
-        step: 'step',
-        decimals: 'decimals',
-        stepinterval: 'step-interval',
-        verticalbuttons: 'vertical-buttons',
-        verticalupclass: 'vertical-up-class',
-        verticaldownclass: 'vertical-down-class',
-        forcestepdivisibility: 'force-step-divisibility',
-        stepintervaldelay: 'step-interval-delay',
-        prefix: 'prefix',
-        postfix: 'postfix',
-        prefix_extraclass: 'prefix-extra-class',
-        postfix_extraclass: 'postfix-extra-class',
-        booster: 'booster',
-        boostat: 'boostat',
-        maxboostedstep: 'max-boosted-step',
-        mousewheel: 'mouse-wheel',
-        buttondown_class: 'button-down-class',
-        buttonup_class: 'button-up-class',
-        buttondown_txt: 'button-down-txt',
-        buttonup_txt: 'button-up-txt'
-      };
+    }, {
+      key: "updateSettings",
+      value: function updateSettings(opts) {
+        this.settings = Object.assign({}, this.settings, opts || {});
+        // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
+        var ns = opts || {};
+        var step = Number(this.settings.step || 1);
+        if ((ns.step !== undefined || ns.min !== undefined || ns.max !== undefined) && step !== 1) {
+          if (this.settings.max != null) {
+            this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
+          }
+          if (this.settings.min != null) {
+            this.settings.min = this._alignToStep(Number(this.settings.min), step, 'up');
+          }
+        }
+        this._updateAriaAttributes();
+        this._checkValue(false);
+      }
 
-      // Command API: allow calling internal methods directly
+      /** @returns {number} */
+    }, {
+      key: "getValue",
+      value: function getValue() {
+        var raw = this.input.value;
+        if (raw === '') return NaN;
+        var before = this.settings.callback_before_calculation || function (v) {
+          return v;
+        };
+        var num = parseFloat(before(String(raw)));
+        return isNaN(num) ? NaN : num;
+      }
+
+      /**
+       * @param {number|string} v
+       */
+    }, {
+      key: "setValue",
+      value: function setValue(v) {
+        if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+        var parsed = Number(v);
+        if (!isFinite(parsed)) return;
+        var adjusted = this._applyConstraints(parsed);
+        this._setDisplay(adjusted, true);
+      }
+
+      /** Cleanup (placeholder) */
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.stopSpin();
+      }
+
+      /**
+       * Create a plain public API object with bound methods for wrappers.
+       * @returns {TouchSpinCorePublicAPI}
+       */
+    }, {
+      key: "toPublicApi",
+      value: function toPublicApi() {
+        return {
+          upOnce: this.upOnce.bind(this),
+          downOnce: this.downOnce.bind(this),
+          startUpSpin: this.startUpSpin.bind(this),
+          startDownSpin: this.startDownSpin.bind(this),
+          stopSpin: this.stopSpin.bind(this),
+          updateSettings: this.updateSettings.bind(this),
+          getValue: this.getValue.bind(this),
+          setValue: this.setValue.bind(this),
+          destroy: this.destroy.bind(this),
+          on: this.on.bind(this),
+          off: this.off.bind(this)
+        };
+      }
+
+      // --- Minimal internal emitter API ---
+      /**
+       * Subscribe to a core event.
+       * Events: 'min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'
+       * @param {string} event
+       * @param {(detail?: any) => void} handler
+       */
+    }, {
+      key: "on",
+      value: function on(event, handler) {
+        var _this = this;
+        var set = this._events.get(event) || new Set();
+        set.add(handler);
+        this._events.set(event, set);
+        return function () {
+          return _this.off(event, handler);
+        };
+      }
+
+      /**
+       * Unsubscribe from a core event.
+       * @param {string} event
+       * @param {(detail?: any) => void=} handler
+       */
+    }, {
+      key: "off",
+      value: function off(event, handler) {
+        var set = this._events.get(event);
+        if (!set) return;
+        if (!handler) {
+          this._events.delete(event);
+          return;
+        }
+        set.delete(handler);
+        if (set.size === 0) this._events.delete(event);
+      }
+
+      /**
+       * Emit a core event to subscribers.
+       * @param {string} event
+       * @param {any=} detail
+       */
+    }, {
+      key: "emit",
+      value: function emit(event, detail) {
+        var set = this._events.get(event);
+        if (!set || set.size === 0) return;
+        for (var _i = 0, _arr = _toConsumableArray(set); _i < _arr.length; _i++) {
+          var fn = _arr[_i];
+          try {
+            fn(detail);
+          } catch (_) {}
+        }
+      }
+
+      /**
+       * Internal: start timed spin in a direction with initial step, delay, then interval.
+       * @param {'up'|'down'} dir
+       */
+    }, {
+      key: "_startSpin",
+      value: function _startSpin(dir) {
+        var _this2 = this;
+        if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+        // If changing direction, reset counters
+        var changed = !this.spinning || this.direction !== dir;
+        if (changed) {
+          this.spinning = true;
+          this.direction = dir;
+          this.spincount = 0;
+          // Match jQuery plugin event order: startspin then direction-specific
+          this.emit('startspin');
+          if (dir === 'up') this.emit('startupspin');else this.emit('startdownspin');
+        }
+
+        // Clear previous timers
+        this._clearSpinTimers();
+        // Schedule repeat after delay, then at interval (no immediate step; wrapper triggers first step)
+        var delay = this.settings.stepintervaldelay || 500;
+        var interval = this.settings.stepinterval || 100;
+        this._spinDelayTimeout = setTimeout(function () {
+          _this2._spinDelayTimeout = null;
+          _this2._spinIntervalTimer = setInterval(function () {
+            if (!_this2.spinning || _this2.direction !== dir) return; // safety
+            _this2._spinStep(dir);
+          }, interval);
+        }, delay);
+      }
+    }, {
+      key: "_clearSpinTimers",
+      value: function _clearSpinTimers() {
+        try {
+          if (this._spinDelayTimeout) {
+            clearTimeout(this._spinDelayTimeout);
+          }
+        } catch (_unused) {}
+        try {
+          if (this._spinIntervalTimer) {
+            clearInterval(this._spinIntervalTimer);
+          }
+        } catch (_unused2) {}
+        this._spinDelayTimeout = null;
+        this._spinIntervalTimer = null;
+      }
+
+      /**
+       * Compute the next numeric value for a direction, respecting step, booster and bounds.
+       * @param {'up'|'down'} dir
+       * @param {number} current
+       */
+    }, {
+      key: "_nextValue",
+      value: function _nextValue(dir, current) {
+        var v = current;
+        if (isNaN(v)) {
+          v = this._valueIfIsNaN();
+        } else {
+          var base = this.settings.step || 1;
+          var boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
+          var stepUnclamped = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+          var mbs = this.settings.maxboostedstep;
+          var step = stepUnclamped;
+          if (mbs && isFinite(mbs) && stepUnclamped > Number(mbs)) {
+            step = Number(mbs);
+            // Align current value to the boosted step grid when clamped (parity with jQuery plugin)
+            v = Math.round(v / step) * step;
+          }
+          step = Math.max(base, step);
+          v = dir === 'up' ? v + step : v - step;
+        }
+        return this._applyConstraints(v);
+      }
+
+      /** Returns a reasonable value to use when current is NaN. */
+    }, {
+      key: "_valueIfIsNaN",
+      value: function _valueIfIsNaN() {
+        if (typeof this.settings.firstclickvalueifempty === 'number') {
+          return this.settings.firstclickvalueifempty;
+        }
+        var min = typeof this.settings.min === 'number' ? this.settings.min : 0;
+        var max = typeof this.settings.max === 'number' ? this.settings.max : min;
+        return (min + max) / 2;
+      }
+
+      /** Apply step divisibility and clamp to min/max. */
+    }, {
+      key: "_applyConstraints",
+      value: function _applyConstraints(v) {
+        var aligned = this._forcestepdivisibility(v);
+        var min = this.settings.min;
+        var max = this.settings.max;
+        var clamped = aligned;
+        if (min != null && clamped < min) clamped = min;
+        if (max != null && clamped > max) clamped = max;
+        return clamped;
+      }
+
+      /** Determine the effective step with booster if enabled. */
+    }, {
+      key: "_getBoostedStep",
+      value: function _getBoostedStep() {
+        var base = this.settings.step || 1;
+        if (!this.settings.booster) return base;
+        var boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
+        var boosted = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+        var mbs = this.settings.maxboostedstep;
+        if (mbs && isFinite(mbs)) {
+          var cap = Number(mbs);
+          if (boosted > cap) boosted = cap;
+        }
+        return Math.max(base, boosted);
+      }
+
+      /** Aligns value to step per forcestepdivisibility. */
+    }, {
+      key: "_forcestepdivisibility",
+      value: function _forcestepdivisibility(val) {
+        var mode = this.settings.forcestepdivisibility || 'round';
+        var step = this.settings.step || 1;
+        var dec = this.settings.decimals || 0;
+        var out;
+        switch (mode) {
+          case 'floor':
+            out = Math.floor(val / step) * step;
+            break;
+          case 'ceil':
+            out = Math.ceil(val / step) * step;
+            break;
+          case 'none':
+            out = val;
+            break;
+          case 'round':
+          default:
+            out = Math.round(val / step) * step;
+            break;
+        }
+        // Normalize to configured decimals without string pipeline; formatting applies later
+        return Number(out.toFixed(dec));
+      }
+
+      /** Aligns a value to nearest step boundary using integer arithmetic. */
+    }, {
+      key: "_alignToStep",
+      value: function _alignToStep(val, step, dir) {
+        if (step === 0) return val;
+        var k = 1,
+          s = step;
+        while (s * k % 1 !== 0 && k < 1e6) k *= 10;
+        var V = Math.round(val * k);
+        var S = Math.round(step * k);
+        var r = V % S;
+        if (r === 0) return val;
+        return (dir === 'down' ? V - r : V + (S - r)) / k;
+      }
+
+      /** Format and write to input, optionally emit change if different. */
+    }, {
+      key: "_setDisplay",
+      value: function _setDisplay(num, mayTriggerChange) {
+        var _this$input$value;
+        var prev = String((_this$input$value = this.input.value) !== null && _this$input$value !== void 0 ? _this$input$value : '');
+        var next = this._formatDisplay(num);
+        this.input.value = next;
+        this._updateAriaAttributes();
+        if (mayTriggerChange && prev !== next) {
+          // mirror plugin behavior: trigger a native change event
+          this.input.dispatchEvent(new Event('change', {
+            bubbles: true
+          }));
+        }
+        return next;
+      }
+    }, {
+      key: "_formatDisplay",
+      value: function _formatDisplay(num) {
+        var dec = this.settings.decimals || 0;
+        var after = this.settings.callback_after_calculation || function (v) {
+          return v;
+        };
+        var s = Number(num).toFixed(dec);
+        return after(s);
+      }
+
+      /**
+       * Perform one spin step in a direction while tracking spincount for booster.
+       * @param {'up'|'down'} dir
+       */
+    }, {
+      key: "_spinStep",
+      value: function _spinStep(dir) {
+        this.spincount++;
+        if (dir === 'up') this.upOnce();else this.downOnce();
+      }
+
+      /** Sanitize current input value and update display; optionally emits change. */
+    }, {
+      key: "_checkValue",
+      value: function _checkValue(mayTriggerChange) {
+        var v = this.getValue();
+        if (!isFinite(v)) return;
+        var adjusted = this._applyConstraints(v);
+        this._setDisplay(adjusted, !!mayTriggerChange);
+      }
+    }, {
+      key: "_updateAriaAttributes",
+      value: function _updateAriaAttributes() {
+        var el = this.input;
+        if (el.getAttribute('role') !== 'spinbutton') {
+          el.setAttribute('role', 'spinbutton');
+        }
+        var min = this.settings.min;
+        var max = this.settings.max;
+        if (min != null) el.setAttribute('aria-valuemin', String(min));else el.removeAttribute('aria-valuemin');
+        if (max != null) el.setAttribute('aria-valuemax', String(max));else el.removeAttribute('aria-valuemax');
+        var raw = el.value;
+        var before = this.settings.callback_before_calculation || function (v) {
+          return v;
+        };
+        var num = parseFloat(before(String(raw)));
+        if (isFinite(num)) el.setAttribute('aria-valuenow', String(num));else el.removeAttribute('aria-valuenow');
+        el.setAttribute('aria-valuetext', String(raw));
+      }
+    }]);
+  }();
+  /**
+   * @typedef {Object} TouchSpinCorePublicAPI
+   * @property {() => void} upOnce
+   * @property {() => void} downOnce
+   * @property {() => void} startUpSpin
+   * @property {() => void} startDownSpin
+   * @property {() => void} stopSpin
+   * @property {(opts: Partial<TouchSpinCoreOptions>) => void} updateSettings
+   * @property {() => number} getValue
+   * @property {(v: number|string) => void} setValue
+   * @property {() => void} destroy
+   * @property {(event: string, handler: (detail?: any) => void) => () => void} on
+   * @property {(event: string, handler?: (detail?: any) => void) => void} off
+   */
+  /**
+   * Create and return a plain public API bound to a new core instance.
+   * @param {HTMLInputElement} inputEl
+   * @param {Partial<TouchSpinCoreOptions>=} opts
+   * @returns {TouchSpinCorePublicAPI}
+   */
+  function createPublicApi(inputEl, opts) {
+    return new TouchSpinCore(inputEl, opts).toPublicApi();
+  }
+
+  /** Event name constants for wrappers to map/bridge. */
+  var CORE_EVENTS = Object.freeze({
+    MIN: 'min',
+    MAX: 'max',
+    START_SPIN: 'startspin',
+    START_UP: 'startupspin',
+    START_DOWN: 'startdownspin',
+    STOP_SPIN: 'stopspin',
+    STOP_UP: 'stopupspin',
+    STOP_DOWN: 'stopdownspin'
+  });
+
+  /**
+   * Convenience helper to attach core to an input element.
+   * @param {HTMLInputElement} inputEl
+   * @param {Partial<TouchSpinCoreOptions>=} opts
+   * @returns {TouchSpinCore}
+   */
+  function attach(inputEl, opts) {
+    return new TouchSpinCore(inputEl, opts);
+  }
+
+  // @ts-check
+  /**
+   * Install a jQuery plugin wrapper powered by the new core.
+   * Preserves Command API and callable event emissions.
+   * @param {import('jquery').JQueryStatic} $
+   */
+  function installJqueryTouchSpin($) {
+    /** Basic defaults mirroring core */
+    var DEFAULTS = {
+      min: 0,
+      max: 100,
+      firstclickvalueifempty: null,
+      step: 1,
+      decimals: 0,
+      forcestepdivisibility: 'round',
+      stepinterval: 100,
+      stepintervaldelay: 500,
+      booster: true,
+      boostat: 10,
+      maxboostedstep: false,
+      // Framework-specific classes are provided by the active renderer; leave placeholders as null
+      buttondown_class: null,
+      buttonup_class: null,
+      verticalupclass: null,
+      verticaldownclass: null,
+      buttondown_txt: '&minus;',
+      buttonup_txt: '&plus;',
+      prefix: '',
+      postfix: '',
+      verticalbuttons: false,
+      verticalup: '▲',
+      verticaldown: '▼'
+    };
+    $.fn.TouchSpin = function (options, arg) {
       if (typeof options === 'string') {
         var cmd = String(options).toLowerCase();
         var ret;
         this.each(function () {
           var $el = $(this);
           var api = $el.data('touchspinInternal');
-          if (!api) return; // not initialized
+          if (!api) return;
           switch (cmd) {
             case 'destroy':
               api.destroy();
+              teardown($el);
               break;
             case 'uponce':
               api.upOnce();
@@ -557,1266 +919,350 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return ret === undefined ? this : ret;
       }
       return this.each(function () {
-        /** @type {TouchSpinOptions} Final merged settings */
-        var settings,
-          /** @type {JQuery<HTMLInputElement>} Original input element */
-          originalinput = $(this),
-          /** @type {Record<string, any>} Data attributes from original input */
-          originalinput_data = originalinput.data(),
-          /** @type {JQuery|null} Detached prefix element */
-          _detached_prefix,
-          /** @type {JQuery|null} Detached postfix element */
-          _detached_postfix,
-          /** @type {JQuery} TouchSpin container element */
-          container,
-          /** @type {TouchSpinElements} TouchSpin DOM elements */
-          elements,
-          /** @type {TouchSpinRenderer|undefined} Bootstrap version-specific renderer */
-          renderer,
-          /** @type {number} Current numeric value */
-          value,
-          /** @type {ReturnType<typeof setInterval>|undefined} */downSpinTimer,
-          /** @type {ReturnType<typeof setInterval>|undefined} */upSpinTimer,
-          /** @type {ReturnType<typeof setTimeout>|undefined} */downDelayTimeout,
-          /** @type {ReturnType<typeof setTimeout>|undefined} */upDelayTimeout,
-          /** @type {number} Current spin count for booster calculation */
-          spincount = 0,
-          /** @type {false|'up'|'down'} Current spinning direction */
-          spinning = false,
-          /** @type {MutationObserver|undefined} MutationObserver for attribute changes */
-          mutationObserver,
-          /** @type {Array<[Element,string,EventListenerOrEventListenerObject,any]>} */
-          _nativeListeners = [],
-          /** @type {HTMLInputElement} */
-          inputEl,
-          /** @type {HTMLElement|undefined} */
-          containerEl;
-        init();
+        var $input = $(this);
+        try {
+          if ($input.data('touchspinInternal')) teardown($input);
+        } catch (_unused3) {}
+        var opts = $.extend({}, DEFAULTS, options || {});
 
-        /**
-         * Initializes the TouchSpin plugin for a single input element.
-         * @private
-         */
-        function init() {
-          if (originalinput.data('alreadyinitialized')) {
-            // If already initialized, destroy current instance and reinitialize with new settings
-            originalinput.trigger('touchspin.destroy');
-            // Continue with normal initialization after destroy
-          }
-          originalinput.data('alreadyinitialized', true);
-          if (!originalinput.is('input')) {
-            console.log('Must be an input.');
-            return;
-          }
-
-          // Cache DOM element reference
-          inputEl = /** @type {HTMLInputElement} */originalinput[0];
-          _initSettings();
-          _initRenderer();
-          _setInitval();
-          _checkValue();
-          _buildHtml();
-          _initElements();
-          _initAriaAttributes();
-          _updateButtonDisabledState();
-          _hideEmptyPrefixPostfix();
-          _syncNativeAttributes();
-          _setupMutationObservers();
-          _bindEvents();
-          _bindEventsInterface();
-
-          // Expose internal instance methods for facades/wrappers
-          originalinput.data('touchspinInternal', {
-            upOnce: upOnce,
-            downOnce: downOnce,
-            startUpSpin: startUpSpin,
-            startDownSpin: startDownSpin,
-            stopSpin: stopSpin,
-            updateSettings: changeSettings,
-            destroy: function destroy() {
-              _destroy();
-            },
-            getValue: function getValue() {
-              var _inputEl$value;
-              var raw = String((_inputEl$value = inputEl.value) !== null && _inputEl$value !== void 0 ? _inputEl$value : '');
-              if (raw === '') return NaN;
-              var num = parseFloat(settings.callback_before_calculation(raw));
-              return isFinite(num) ? num : NaN;
-            },
-            setValue: function setValue(v) {
-              var _inputEl$value2;
-              if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
-              stopSpin();
-              var parsed = Number(v);
-              if (!isFinite(parsed)) return;
-              // Apply step divisibility first, then clamp to bounds (mirrors _checkValue)
-              var adjusted = parseFloat(_forcestepdivisibility(parsed));
-              if (settings.min !== null && adjusted < settings.min) {
-                adjusted = settings.min;
-              }
-              if (settings.max !== null && adjusted > settings.max) {
-                adjusted = settings.max;
-              }
-              var prev = String((_inputEl$value2 = inputEl.value) !== null && _inputEl$value2 !== void 0 ? _inputEl$value2 : '');
-              var next = _setDisplay(adjusted);
-              if (prev !== next) {
-                originalinput.trigger('change');
-              }
+        // Optional UI via RendererFactory; if absent, run core-only with no wrapper UI
+        /* global RendererFactory */
+        var elements = {
+          up: null,
+          down: null,
+          input: $input
+        };
+        var $container = null;
+        var renderer = null;
+        var __detached = null;
+        if (typeof window !== 'undefined' && window.RendererFactory) {
+          // Fill renderer-specific defaults for null placeholders (parity with original plugin)
+          try {
+            var temp = window.RendererFactory.createRenderer($, {}, $input);
+            if (temp && typeof temp.getDefaultSettings === 'function') {
+              var rd = temp.getDefaultSettings();
+              Object.keys(rd).forEach(function (k) {
+                if (opts[k] === null) opts[k] = rd[k];
+              });
             }
-          });
-          if (__touchspinInternalStore) {
-            try {
-              __touchspinInternalStore.set(originalinput[0], originalinput.data('touchspinInternal'));
-            } catch (e) {}
-          }
-        }
-
-        /**
-         * Sets the initial value from settings if input is empty.
-         * @private
-         */
-        function _setInitval() {
-          if (settings.initval !== '' && inputEl.value === '') {
-            inputEl.value = settings.initval;
-          }
-        }
-
-        /**
-         * Updates TouchSpin settings and applies changes.
-         * @private
-         * @param {Partial<TouchSpinOptions>} newsettings - New settings to apply
-         */
-        function changeSettings(newsettings) {
-          var _inputEl$value3;
-          _updateSettings(newsettings);
-          _checkValue(true);
-
-          /** @type {string} */
-          var raw = String((_inputEl$value3 = inputEl.value) !== null && _inputEl$value3 !== void 0 ? _inputEl$value3 : '');
-          if (raw !== '') {
-            var num = parseFloat(settings.callback_before_calculation(raw));
-            if (isFinite(num)) {
-              _setDisplay(num);
+          } catch (_unused4) {}
+          renderer = window.RendererFactory.createRenderer($, opts, $input);
+          // Detect advanced input-group (Bootstrap) or a custom advanced container
+          var advancedContainer = null;
+          try {
+            var $parent = $input.parent();
+            if ($parent && $parent.hasClass('input-group')) advancedContainer = $parent;
+            if (!advancedContainer) {
+              var $adv = $input.closest('[data-touchspin-advanced]');
+              if ($adv && $adv.length) advancedContainer = $adv;
             }
-          }
-        }
-
-        /**
-         * Computes the next numeric value in a given direction without touching the DOM.
-         * Pure calculation using current settings and spin state.
-         * @private
-         * @param {'up'|'down'} dir
-         * @param {number} current
-         * @returns {number} next numeric value (clamped to min/max)
-         */
-        function _nextValue(dir, current) {
-          var v = current;
-          if (isNaN(v)) {
-            v = valueIfIsNaN();
-          } else {
-            var step = _getBoostedStep();
-            v = dir === 'up' ? v + step : v - step;
-          }
-          if (settings.max !== null && v >= settings.max) {
-            v = settings.max;
-          }
-          if (settings.min !== null && v <= settings.min) {
-            v = settings.min;
-          }
-          return v;
-        }
-
-        /**
-         * Formats a numeric value for display using decimals and callbacks.
-         * @private
-         * @param {number} num
-         * @returns {string}
-         */
-        function _formatDisplay(num) {
-          return settings.callback_after_calculation(parseFloat(num).toFixed(settings.decimals));
-        }
-
-        /**
-         * Applies a numeric value to the input's display and updates ARIA.
-         * Caller remains responsible for emitting change events if needed.
-         * @private
-         * @param {number} num
-         * @returns {string} the display string written to the input
-         */
-        function _setDisplay(num) {
-          var next = _formatDisplay(num);
-          if (inputEl) {
-            inputEl.value = next;
-          } else {
-            originalinput.val(next);
-          }
-          _updateAriaAttributes();
-          return next;
-        }
-
-        /**
-         * Aligns a value to step boundaries using integer arithmetic to avoid float issues.
-         * @private
-         * @param {number|null} val - Value to align
-         * @param {number} step - Step size
-         * @param {string} dir - Direction: 'up' or 'down'
-         * @returns {number|null} Aligned value
-         */
-        function _alignToStep(val, step, dir) {
-          if (val == null) return val;
-          // scale to integers to avoid float mod issues
-          var k = 1,
-            s = step;
-          while (s * k % 1 !== 0 && k < 1e6) k *= 10;
-          var V = Math.round(val * k),
-            S = Math.round(step * k);
-          if (S === 0) return val;
-          var r = V % S;
-          if (r === 0) return val;
-          return (dir === 'down' ? V - r : V + (S - r)) / k;
-        }
-
-        /**
-         * Initializes settings by merging defaults, data attributes, and options.
-         * @private
-         */
-        function _initSettings() {
-          settings = Object.assign({}, defaults, originalinput_data, _parseAttributes(), options);
-
-          // Normalize step (guard against "any", 0, negatives, NaN)
-          var stepNum = Number(settings.step);
-          if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
-
-          // Normalize min/max to numbers for consistency (null/undefined preserved)
-          if (settings.min != null) {
-            var minNum = Number(settings.min);
-            settings.min = isFinite(minNum) ? minNum : null;
-          }
-          if (settings.max != null) {
-            var maxNum = Number(settings.max);
-            settings.max = isFinite(maxNum) ? maxNum : null;
-          }
-
-          // Normalize decimals (ensure non-negative integer)
-          var dec = parseInt(String(settings.decimals), 10);
-          settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
-
-          // Normalize timing and boost options
-          settings.stepinterval = Math.max(0, parseInt(String(settings.stepinterval), 10) || 0);
-          settings.stepintervaldelay = Math.max(0, parseInt(String(settings.stepintervaldelay), 10) || 0);
-          settings.boostat = Math.max(1, parseInt(String(settings.boostat), 10) || 10);
-          if (settings.maxboostedstep !== false) {
-            var mbs = Number(settings.maxboostedstep);
-            settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
-          }
-          if (parseFloat(settings.step) !== 1) {
-            settings.max = _alignToStep(settings.max, settings.step, 'down');
-            settings.min = _alignToStep(settings.min, settings.step, 'up');
-          }
-        }
-
-        /**
-         * Parses data attributes and native input attributes into settings.
-         * @private
-         * @returns {Partial<TouchSpinOptions>} Parsed attribute values
-         */
-        function _parseAttributes() {
-          var data = {};
-
-          // Setting up based on data attributes
-          $.each(attributeMap, function (key, value) {
-            var attrName = 'bts-' + value;
-            if (originalinput.is('[data-' + attrName + ']')) {
-              data[key] = originalinput.data(attrName);
-            }
-          });
-
-          // Setting up based on input attributes if specified (input attributes have precedence)
-          $.each(['min', 'max', 'step'], function (i, key) {
-            if (originalinput.is('[' + key + ']')) {
-              if (data[key] !== undefined) {
-                console.warn('Both the "data-bts-' + key + '" data attribute and the "' + key + '" individual attribute were specified, the individual attribute will take precedence on: ', originalinput);
-              }
-              data[key] = originalinput.attr(key);
-            }
-          });
-          return data;
-        }
-
-        /**
-         * Initializes the Bootstrap version-specific renderer.
-         * @private
-         * @throws {Error} If renderer factory is unavailable or renderer creation fails
-         */
-        function _initRenderer() {
-          // Initialize the Bootstrap version-specific renderer
-          if (settings.renderer) {
-            // Use custom renderer if provided
-            renderer = settings.renderer;
-            return;
-          }
-
-          // Check for RendererFactory availability
-          var rf = /** @type {any} */typeof globalThis !== 'undefined' ? globalThis : {};
-          /** @type {RendererFactoryType|undefined} */
-          var factory = rf && rf.RendererFactory && typeof rf.RendererFactory.createRenderer === 'function' ? rf.RendererFactory : undefined;
-          if (!factory || !factory.createRenderer) {
-            throw new Error('Bootstrap TouchSpin: RendererFactory not available. This indicates a build system error. Please ensure the renderer files are properly built and included.');
-          }
-
-          // Create temporary renderer to get framework-specific defaults
-          var tempRenderer = factory.createRenderer($, {}, originalinput);
-          if (tempRenderer && typeof tempRenderer.getDefaultSettings === 'function') {
-            var rendererDefaults = tempRenderer.getDefaultSettings();
-
-            // Only apply renderer defaults for null values (framework-agnostic placeholders)
-            // This preserves user customizations while filling in framework-specific defaults
-            Object.keys(rendererDefaults).forEach(function (key) {
-              if (settings[key] === null) {
-                // Fill in framework-specific default for null placeholder
-                settings[key] = rendererDefaults[key];
-              }
-            });
-          }
-          renderer = factory.createRenderer($, settings, originalinput);
-          if (!renderer) {
-            throw new Error('Bootstrap TouchSpin: Failed to create renderer');
-          }
-        }
-
-        /**
-         * Destroys the TouchSpin instance and restores original input.
-         * @private
-         */
-        function _destroy() {
-          var $parent = originalinput.parent();
-          stopSpin();
-
-          // Remove all plugin handlers bound on the input
-          originalinput.off('keydown.touchspin keyup.touchspin mousewheel.touchspin DOMMouseScroll.touchspin wheel.touchspin touchspin.destroy touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings');
-
-          // Clean up container event handlers
-          if (container) {
-            container.off('.touchspin');
-          }
-
-          // Remove native listeners bound by this instance
-          _offAllNative();
-
-          // Disconnect MutationObserver
-          if (mutationObserver) {
-            mutationObserver.disconnect();
-            mutationObserver = undefined;
-          }
-
-          // Teardown logic differs for injected vs existing wrappers
-          var injectedMarker = $parent.attr('data-touchspin-injected');
-          if (injectedMarker === 'wrapper') {
-            // Injected wrapper: remove only plugin-injected siblings, then unwrap
-            originalinput.siblings('[data-touchspin-injected]').remove();
-            originalinput.unwrap();
-          } else {
-            // Existing container or non-wrapper: remove injected elements, keep container
-            $('[data-touchspin-injected]', $parent).remove();
-            $parent.removeClass('bootstrap-touchspin');
-            $parent.removeAttr('data-touchspin-injected');
-          }
-          originalinput.data('alreadyinitialized', false);
-          // Cleanup internal facade reference
-          originalinput.removeData('touchspinInternal');
-          if (__touchspinInternalStore) {
-            try {
-              __touchspinInternalStore.delete(originalinput[0]);
-            } catch (e) {}
-          }
-        }
-
-        /**
-         * Updates internal settings and synchronizes with DOM.
-         * @private
-         * @param {Partial<TouchSpinOptions>} newsettings - Settings to update
-         */
-        function _updateSettings(newsettings) {
-          settings = Object.assign({}, settings, newsettings);
-
-          // Re-align bounds to step if any of these changed
-          if ((newsettings.step !== undefined || newsettings.min !== undefined || newsettings.max !== undefined) && parseFloat(settings.step) !== 1) {
-            settings.max = _alignToStep(settings.max, settings.step, 'down');
-            settings.min = _alignToStep(settings.min, settings.step, 'up');
-          }
-
-          // Update postfix and prefix texts if those settings were changed.
-          if ('postfix' in newsettings || 'prefix' in newsettings) {
-            if (!renderer) {
-              throw new Error('Bootstrap TouchSpin: Renderer not available for updating prefix/postfix.');
-            }
-            renderer.updatePrefixPostfix(newsettings, {
-              _detached_prefix: _detached_prefix,
-              _detached_postfix: _detached_postfix
-            });
-          }
-
-          // Update button text if those settings were changed
-          if ('buttonup_txt' in newsettings || 'buttondown_txt' in newsettings || 'verticalup' in newsettings || 'verticaldown' in newsettings) {
-            if (newsettings.buttonup_txt !== undefined && elements.up) {
-              elements.up.html(newsettings.buttonup_txt);
-            }
-            if (newsettings.buttondown_txt !== undefined && elements.down) {
-              elements.down.html(newsettings.buttondown_txt);
-            }
-            if (newsettings.verticalup !== undefined && elements.up) {
-              elements.up.html(newsettings.verticalup);
-            }
-            if (newsettings.verticaldown !== undefined && elements.down) {
-              elements.down.html(newsettings.verticaldown);
-            }
-          }
-
-          // Sync native attributes when TouchSpin settings change
-          if (newsettings.min !== undefined || newsettings.max !== undefined || newsettings.step !== undefined) {
-            _syncNativeAttributes();
-            _updateAriaAttributes();
-          }
-          _hideEmptyPrefixPostfix();
-        }
-
-        /**
-         * Builds the HTML structure for TouchSpin using the renderer system.
-         * @private
-         */
-        function _buildHtml() {
-          var initval = inputEl.value,
-            parentelement = originalinput.parent();
-          if (initval !== '') {
-            var raw = settings.callback_before_calculation(initval);
-            var num = parseFloat(raw);
-            initval = isFinite(num) ? settings.callback_after_calculation(num.toFixed(settings.decimals)) : settings.callback_after_calculation(raw);
-          }
-          originalinput.data('initvalue', initval).val(initval);
-          originalinput.addClass('form-control');
-
-          // Use the renderer system - should always be available
-          if (!renderer) {
-            throw new Error('Bootstrap TouchSpin: Renderer not initialized. This indicates an initialization error.');
-          }
-          if (parentelement.hasClass('input-group')) {
-            container = renderer.buildAdvancedInputGroup(parentelement);
-          } else {
-            container = renderer.buildInputGroup();
-          }
-        }
-
-        /**
-         * Initializes TouchSpin DOM elements using the renderer.
-         * @private
-         */
-        function _initElements() {
-          if (!renderer) {
-            throw new Error('Bootstrap TouchSpin: Renderer not available for element initialization.');
-          }
+          } catch (_unused5) {}
+          var container = advancedContainer ? renderer.buildAdvancedInputGroup(advancedContainer) : renderer.buildInputGroup();
+          $container = container;
           elements = renderer.initElements(container);
-          // Cache element handles
-          containerEl = container && container[0];
-          elements && elements.up && elements.up[0];
-          elements && elements.down && elements.down[0];
+          try {
+            __detached = renderer.hideEmptyPrefixPostfix();
+          } catch (_unused6) {}
         }
 
-        /**
-         * Initializes ARIA attributes for accessibility.
-         * @private
-         */
-        function _initAriaAttributes() {
-          // Set ARIA attributes on the input for screen readers
-          if (!inputEl.getAttribute('role')) {
-            inputEl.setAttribute('role', 'spinbutton');
-          }
+        // Create core API
+        var inst = createPublicApi(/** @type {HTMLInputElement} */$input[0], opts);
+        $input.data('touchspin', inst);
+        $input.data('touchspinInternal', inst);
 
-          // Set aria-valuemin and aria-valuemax if they exist
-          if (settings.min !== null && settings.min !== undefined) {
-            inputEl.setAttribute('aria-valuemin', String(settings.min));
-          }
-          if (settings.max !== null && settings.max !== undefined) {
-            inputEl.setAttribute('aria-valuemax', String(settings.max));
-          }
+        // Bridge core events to jQuery events
+        var evMap = _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, CORE_EVENTS.MIN, 'touchspin.on.min'), CORE_EVENTS.MAX, 'touchspin.on.max'), CORE_EVENTS.START_SPIN, 'touchspin.on.startspin'), CORE_EVENTS.START_UP, 'touchspin.on.startupspin'), CORE_EVENTS.START_DOWN, 'touchspin.on.startdownspin'), CORE_EVENTS.STOP_SPIN, 'touchspin.on.stopspin'), CORE_EVENTS.STOP_UP, 'touchspin.on.stopupspin'), CORE_EVENTS.STOP_DOWN, 'touchspin.on.stopdownspin');
+        var unsubs = [];
+        Object.keys(evMap).forEach(function (k) {
+          // @ts-ignore
+          unsubs.push(inst.on(k, function () {
+            return $input.trigger(evMap[k]);
+          }));
+        });
 
-          // Set current value (don't force 0 on empty input)
-          var rawInit = inputEl.value;
-          var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
-          if (!isNaN(nInit)) {
-            inputEl.setAttribute('aria-valuenow', String(nInit));
-          } else {
-            inputEl.removeAttribute('aria-valuenow');
-          }
-
-          // Add descriptive labels to buttons for screen readers
-          if (elements && elements.up && elements.down) {
-            elements.up.attr('aria-label', 'Increase value');
-            elements.down.attr('aria-label', 'Decrease value');
-          }
+        // Wire buttons if present (match src: immediate once, then start spin)
+        if (elements && elements.up && elements.up.length) {
+          elements.up.on('mousedown.touchspin', function (e) {
+            if ($input.is(':disabled') || $input.is('[readonly]')) return;
+            inst.upOnce();
+            inst.startUpSpin();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+          elements.up.on('touchstart.touchspin', function (e) {
+            if ($input.is(':disabled') || $input.is('[readonly]')) return;
+            inst.upOnce();
+            inst.startUpSpin();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+          elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (e) {
+            inst.stopSpin();
+            e.stopPropagation();
+          });
+          elements.up.on('mousemove.touchspin touchmove.touchspin', function (e) {
+            if (!$input.data('touchspinInternal')) return;
+            e.stopPropagation();
+            e.preventDefault();
+          });
+        }
+        if (elements && elements.down && elements.down.length) {
+          elements.down.on('mousedown.touchspin', function (e) {
+            if ($input.is(':disabled') || $input.is('[readonly]')) return;
+            inst.downOnce();
+            inst.startDownSpin();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+          elements.down.on('touchstart.touchspin', function (e) {
+            if ($input.is(':disabled') || $input.is('[readonly]')) return;
+            inst.downOnce();
+            inst.startDownSpin();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+          elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (e) {
+            inst.stopSpin();
+            e.stopPropagation();
+          });
+          elements.down.on('mousemove.touchspin touchmove.touchspin', function (e) {
+            if (!$input.data('touchspinInternal')) return;
+            e.stopPropagation();
+            e.preventDefault();
+          });
         }
 
-        /**
-         * Updates ARIA attributes when value changes.
-         * @private
-         */
-        function _updateAriaAttributes() {
-          var _inputEl$value4;
-          var raw = String((_inputEl$value4 = inputEl.value) !== null && _inputEl$value4 !== void 0 ? _inputEl$value4 : '');
-          if (raw === '') {
-            inputEl.removeAttribute('aria-valuenow');
-            inputEl.removeAttribute('aria-valuetext');
-          } else {
-            var n = parseFloat(raw);
-            if (!isNaN(n)) {
-              inputEl.setAttribute('aria-valuenow', String(n));
-            } else {
-              inputEl.removeAttribute('aria-valuenow');
+        // Callable events
+        $input.on('touchspin.uponce', function () {
+          return inst.upOnce();
+        });
+        $input.on('touchspin.downonce', function () {
+          return inst.downOnce();
+        });
+        $input.on('touchspin.startupspin', function () {
+          return inst.startUpSpin();
+        });
+        $input.on('touchspin.startdownspin', function () {
+          return inst.startDownSpin();
+        });
+        $input.on('touchspin.stopspin', function () {
+          return inst.stopSpin();
+        });
+        $input.on('touchspin.updatesettings', function (e, o) {
+          var newOpts = o || {};
+          // Update core first (sanitizes and ARIA sync inside)
+          inst.updateSettings(newOpts);
+          // Merge for local defaults continuity
+          Object.assign(opts, newOpts);
+          // Update renderer-controlled UI bits (prefix/postfix text and classes)
+          try {
+            if (renderer && typeof renderer.updatePrefixPostfix === 'function') {
+              renderer.updatePrefixPostfix(newOpts, __detached || {});
             }
-            inputEl.setAttribute('aria-valuetext', raw);
-          }
-
-          // Update min/max if they've changed
-          if (settings.min !== null && settings.min !== undefined) {
-            inputEl.setAttribute('aria-valuemin', String(settings.min));
-          } else {
-            inputEl.removeAttribute('aria-valuemin');
-          }
-          if (settings.max !== null && settings.max !== undefined) {
-            inputEl.setAttribute('aria-valuemax', String(settings.max));
-          } else {
-            inputEl.removeAttribute('aria-valuemax');
-          }
-        }
-
-        /**
-         * Hides empty prefix/postfix elements and stores detached elements.
-         * @private
-         */
-        function _hideEmptyPrefixPostfix() {
-          if (!renderer) {
-            throw new Error('Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.');
-          }
-          var detached = renderer.hideEmptyPrefixPostfix();
-          _detached_prefix = detached._detached_prefix;
-          _detached_postfix = detached._detached_postfix;
-        }
-
-        /**
-         * Binds all TouchSpin interaction events (keyboard, mouse, touch).
-         * @private
-         */
-        function _bindEvents() {
-          inputEl = /** @type {HTMLInputElement} */originalinput[0];
-          containerEl = /** @type {HTMLElement} */container && container[0];
-          /** @type {HTMLElement} */
-          elements.up && elements.up[0];
-          /** @type {HTMLElement} */
-          elements.down && elements.down[0];
-          function _onNative(el, type, handler, options) {
-            if (!el) return;
-            el.addEventListener(type, handler, options);
-            _nativeListeners.push([el, type, handler, options]);
-          }
-
-          // Keyboard on input
-          _onNative(inputEl, 'keydown', function (ev) {
-            var e = /** @type {KeyboardEvent} */ev;
-            var code = e.keyCode || e.which || 0;
-            if (code === 38) {
-              if (spinning !== 'up') {
-                upOnce();
-                startUpSpin();
+            // Handle extra classes on prefix/postfix when provided
+            if ($container && $container.length) {
+              if (Object.prototype.hasOwnProperty.call(newOpts, 'prefix_extraclass')) {
+                var prev = $input.data('__ts_prefix_extra');
+                var next = newOpts.prefix_extraclass;
+                var $el = $container.find('[data-touchspin-injected="prefix"]');
+                if (prev) $el.removeClass(prev);
+                if (next) $el.addClass(next);
+                $input.data('__ts_prefix_extra', next || '');
               }
-              e.preventDefault();
-            } else if (code === 40) {
-              if (spinning !== 'down') {
-                downOnce();
-                startDownSpin();
+              if (Object.prototype.hasOwnProperty.call(newOpts, 'postfix_extraclass')) {
+                var _prev = $input.data('__ts_postfix_extra');
+                var _next = newOpts.postfix_extraclass;
+                var _$el = $container.find('[data-touchspin-injected="postfix"]');
+                if (_prev) _$el.removeClass(_prev);
+                if (_next) _$el.addClass(_next);
+                $input.data('__ts_postfix_extra', _next || '');
               }
-              e.preventDefault();
-            } else if (code === 13) {
-              _checkValue(true);
             }
-          });
-          _onNative(inputEl, 'keyup', function (ev) {
-            var e = /** @type {KeyboardEvent} */ev;
-            var code = e.keyCode || e.which || 0;
-            if (code === 38 || code === 40) {
-              stopSpin();
+          } catch (_unused7) {}
+        });
+        $input.on('touchspin.destroy', function () {
+          return teardown($input);
+        });
+
+        // Keyboard interactions (ArrowUp/Down once+auto; Enter sanitizes) — requires focus
+        var __dir = false;
+        $input.on('keydown.touchspin', function (ev) {
+          var e = ev.originalEvent || ev;
+          var code = e.keyCode || e.which || 0;
+          if (code === 38) {
+            // ArrowUp
+            if (__dir !== 'up') {
+              inst.upOnce();
+              inst.startUpSpin();
+              __dir = 'up';
             }
-          });
-
-          // Back-compat: handle jQuery-triggered blur to sanitize immediately
-          originalinput.on('blur.touchspin', function () {
-            _checkValue(true);
-          });
-
-          // Container focusout handler - sanitizes when leaving the entire widget
-          function leavingWidget(nextEl) {
-            return !nextEl || (containerEl ? !containerEl.contains(nextEl) : true);
+            ev.preventDefault();
+          } else if (code === 40) {
+            // ArrowDown
+            if (__dir !== 'down') {
+              inst.downOnce();
+              inst.startDownSpin();
+              __dir = 'down';
+            }
+            ev.preventDefault();
+          } else if (code === 13) {
+            // Enter: sanitize
+            try {
+              var v = inst.getValue();
+              if (isFinite(v)) inst.setValue(v);
+            } catch (_unused8) {}
           }
-          _onNative(containerEl, 'focusout', function (e) {
-            var next = /** @type {HTMLElement|null|undefined} */(/** @type {FocusEvent} */e).relatedTarget;
-            if (!leavingWidget(next)) return;
+        });
+        $input.on('keyup.touchspin', function (ev) {
+          var e = ev.originalEvent || ev;
+          var code = e.keyCode || e.which || 0;
+          if (code === 38 || code === 40) {
+            inst.stopSpin();
+            __dir = false;
+          }
+        });
+
+        // Mouse wheel interaction (requires focus, like the original src)
+        $input.on('wheel.touchspin', function (ev) {
+          var e = ev.originalEvent || ev;
+          // Support legacy wheelDelta (positive up) and deltaY (negative up)
+          var wheelDelta = typeof e.wheelDelta === 'number' ? e.wheelDelta : 0;
+          var deltaY = typeof e.deltaY === 'number' ? e.deltaY : 0;
+          var up = wheelDelta > 0 || deltaY < 0;
+          // Only act if the input is focused to match source-of-truth behavior
+          if (document.activeElement === $input[0]) {
+            if (up) inst.upOnce();else inst.downOnce();
+            ev.preventDefault();
+          }
+        });
+
+        // Container focusout: stop spin and sanitize when leaving the widget
+        if ($container && $container.length) {
+          $container.on('focusout.touchspin', function (evt) {
+            var next = /** @type {HTMLElement|null} */evt.relatedTarget;
+            var contains = next ? $container[0].contains(next) : false;
+            if (contains) return;
             setTimeout(function () {
               var ae = /** @type {HTMLElement|null} */document.activeElement;
-              if (leavingWidget(ae)) {
-                stopSpin();
-                _checkValue(true);
+              if (!ae || !$container[0].contains(ae)) {
+                try {
+                  inst.stopSpin();
+                  var v = inst.getValue();
+                  if (isFinite(v)) inst.setValue(v);
+                } catch (_unused9) {}
               }
             }, 0);
           });
-
-          // Buttons: keyboard (keep jQuery bindings to support namespaced triggers)
-          elements.down.on('keydown.touchspin', function (ev) {
-            var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
-              if (spinning !== 'down') {
-                downOnce();
-                startDownSpin();
-              }
-              ev.preventDefault();
-            }
-          });
-          elements.down.on('keyup.touchspin', function (ev) {
-            var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
-              stopSpin();
-            }
-          });
-          elements.up.on('keydown.touchspin', function (ev) {
-            var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
-              if (spinning !== 'up') {
-                upOnce();
-                startUpSpin();
-              }
-              ev.preventDefault();
-            }
-          });
-          elements.up.on('keyup.touchspin', function (ev) {
-            var code = ev.keyCode || ev.which;
-            if (code === 32 || code === 13) {
-              stopSpin();
-            }
-          });
-
-          // Buttons: pointer (jQuery to support tests using namespaced triggers)
-          elements.down.on('mousedown.touchspin', function (ev) {
-            elements.down.off('touchstart.touchspin');
-            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
-            downOnce();
-            startDownSpin();
-            ev.preventDefault();
-            ev.stopPropagation();
-          });
-          elements.down.on('touchstart.touchspin', function (ev) {
-            elements.down.off('mousedown.touchspin');
-            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
-            downOnce();
-            startDownSpin();
-            ev.preventDefault();
-            ev.stopPropagation();
-          });
-          elements.up.on('mousedown.touchspin', function (ev) {
-            elements.up.off('touchstart.touchspin');
-            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
-            upOnce();
-            startUpSpin();
-            ev.preventDefault();
-            ev.stopPropagation();
-          });
-          elements.up.on('touchstart.touchspin', function (ev) {
-            elements.up.off('mousedown.touchspin');
-            if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
-            upOnce();
-            startUpSpin();
-            ev.preventDefault();
-            ev.stopPropagation();
-          });
-          elements.up.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
-            if (!spinning) return;
-            ev.stopPropagation();
-            stopSpin();
-          });
-          elements.down.on('mouseup.touchspin mouseout.touchspin touchleave.touchspin touchend.touchspin touchcancel.touchspin', function (ev) {
-            if (!spinning) return;
-            ev.stopPropagation();
-            stopSpin();
-          });
-          elements.down.on('mousemove.touchspin touchmove.touchspin', function (ev) {
-            if (!spinning) return;
-            ev.stopPropagation();
-            ev.preventDefault();
-          });
-          elements.up.on('mousemove.touchspin touchmove.touchspin', function (ev) {
-            if (!spinning) return;
-            ev.stopPropagation();
-            ev.preventDefault();
-          });
-
-          // Mouse wheel on input (native)
-          _onNative(inputEl, 'wheel', function (ev) {
-            if (!settings.mousewheel || document.activeElement !== inputEl) return;
-            var oe = /** @type {any} */ev;
-            var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
-            ev.stopPropagation();
-            ev.preventDefault();
-            if (delta < 0) {
-              downOnce();
-            } else {
-              upOnce();
-            }
-          });
         }
 
-        /**
-         * Binds TouchSpin API events for external control.
-         * @private
-         */
-        function _bindEventsInterface() {
-          originalinput.on('touchspin.destroy', function () {
-            _destroy();
-          });
-          originalinput.on('touchspin.uponce', function () {
-            stopSpin();
-            upOnce();
-          });
-          originalinput.on('touchspin.downonce', function () {
-            stopSpin();
-            downOnce();
-          });
-          originalinput.on('touchspin.startupspin', function () {
-            startUpSpin();
-          });
-          originalinput.on('touchspin.startdownspin', function () {
-            startDownSpin();
-          });
-          originalinput.on('touchspin.stopspin', function () {
-            stopSpin();
-          });
-          originalinput.on('touchspin.updatesettings', function (e, newsettings) {
-            changeSettings(newsettings);
-          });
-        }
-
-        /**
-         * Remove all native listeners registered by this instance.
-         * @private
-         */
-        function _offAllNative() {
-          for (var i = 0; i < _nativeListeners.length; i++) {
-            var rec = _nativeListeners[i];
-            rec[0].removeEventListener(rec[1], rec[2], rec[3]);
-          }
-          _nativeListeners = [];
-        }
-
-        /**
-         * Sets up MutationObserver to watch for attribute changes.
-         * @private
-         */
-        function _setupMutationObservers() {
-          if (typeof MutationObserver !== 'undefined') {
-            // MutationObserver is available
-            mutationObserver = new MutationObserver(function (mutations) {
-              mutations.forEach(function (mutation) {
-                if (mutation.type === 'attributes') {
-                  if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
-                    _updateButtonDisabledState();
-                  } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
-                    _syncSettingsFromNativeAttributes();
-                  }
-                }
-              });
+        // Attribute sync via MutationObserver
+        var __observer = null;
+        try {
+          var el = /** @type {HTMLElement} */$input[0];
+          if ('MutationObserver' in window) {
+            __observer = new MutationObserver(function () {
+              var disabled = $input.is(':disabled');
+              var readonly = $input.is('[readonly]');
+              if (disabled || readonly) inst.stopSpin();
+              /** @type {any} */
+              var ns = {};
+              var attrMin = $input.attr('min');
+              var attrMax = $input.attr('max');
+              var attrStep = $input.attr('step');
+              ns.min = attrMin !== undefined ? Number(attrMin) : null;
+              ns.max = attrMax !== undefined ? Number(attrMax) : null;
+              ns.step = attrStep !== undefined ? Number(attrStep) : 1;
+              inst.updateSettings(ns);
             });
-            mutationObserver.observe(originalinput[0], {
+            __observer.observe(el, {
               attributes: true,
               attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step']
             });
           }
-        }
+        } catch (_unused0) {}
 
-        /**
-         * Applies step divisibility rules to a value.
-         * @private
-         * @param {number} value - Value to apply divisibility to
-         * @returns {string} Value adjusted for step divisibility
-         */
-        function _forcestepdivisibility(value) {
-          switch (settings.forcestepdivisibility) {
-            case 'round':
-              return (Math.round(value / settings.step) * settings.step).toFixed(settings.decimals);
-            case 'floor':
-              return (Math.floor(value / settings.step) * settings.step).toFixed(settings.decimals);
-            case 'ceil':
-              return (Math.ceil(value / settings.step) * settings.step).toFixed(settings.decimals);
-            default:
-              return value.toFixed(settings.decimals);
-          }
-        }
-
-        /**
-         * Validates and corrects the input value according to constraints.
-         * @private
-         * @param {boolean} [mayTriggerChange=false] - Whether to fire change event if display value changes
-         * @fires touchspin.on.min
-         * @fires touchspin.on.max
-         */
-        function _checkValue(mayTriggerChange) {
-          var _inputEl$value5, _inputEl$value7;
-          var val, parsedval, returnval;
-          var prevDisplay = String((_inputEl$value5 = inputEl.value) !== null && _inputEl$value5 !== void 0 ? _inputEl$value5 : '');
-          val = settings.callback_before_calculation(inputEl.value);
-          if (val === '') {
-            if (settings.replacementval !== '') {
-              inputEl.value = String(settings.replacementval);
-              _updateAriaAttributes();
-            } else {
-              inputEl.removeAttribute('aria-valuenow');
-            }
-            // For empty values, compare final result with initial value
-            if (mayTriggerChange) {
-              var _inputEl$value6;
-              var finalDisplay = String((_inputEl$value6 = inputEl.value) !== null && _inputEl$value6 !== void 0 ? _inputEl$value6 : '');
-              if (finalDisplay !== prevDisplay) {
-                originalinput.trigger('change');
-              }
-            }
-            return;
-          }
-          if (settings.decimals > 0 && val === '.') {
-            return;
-          }
-          parsedval = parseFloat(val);
-          if (isNaN(parsedval)) {
-            if (settings.replacementval !== '') {
-              var rv = parseFloat(String(settings.replacementval));
-              parsedval = isNaN(rv) ? 0 : rv;
-            } else {
-              parsedval = 0;
-            }
-          }
-          returnval = parsedval;
-          returnval = _forcestepdivisibility(parsedval);
-          if (settings.min !== null && parsedval < settings.min) {
-            returnval = settings.min;
-          }
-          if (settings.max !== null && parsedval > settings.max) {
-            returnval = settings.max;
-          }
-          String((_inputEl$value7 = inputEl.value) !== null && _inputEl$value7 !== void 0 ? _inputEl$value7 : '');
-          _setDisplay(parseFloat(returnval));
-          if (mayTriggerChange) {
-            var _inputEl$value8;
-            var nextDisplay = String((_inputEl$value8 = inputEl.value) !== null && _inputEl$value8 !== void 0 ? _inputEl$value8 : '');
-            if (nextDisplay !== prevDisplay) {
-              originalinput.trigger('change');
-            }
-          }
-        }
-
-        /**
-         * Synchronizes TouchSpin settings with native input attributes.
-         * @private
-         */
-        function _syncNativeAttributes() {
-          // Always set native attributes when input type is number to ensure consistency
-          if (inputEl.getAttribute('type') === 'number') {
-            if (settings.min !== null && settings.min !== undefined) {
-              inputEl.setAttribute('min', String(settings.min));
-            } else {
-              inputEl.removeAttribute('min');
-            }
-            if (settings.max !== null && settings.max !== undefined) {
-              inputEl.setAttribute('max', String(settings.max));
-            } else {
-              inputEl.removeAttribute('max');
-            }
-            if (settings.step !== null && settings.step !== undefined) {
-              inputEl.setAttribute('step', String(settings.step));
-            } else {
-              inputEl.removeAttribute('step');
-            }
-          }
-        }
-
-        /**
-         * Updates TouchSpin settings when native attributes change externally.
-         * @private
-         */
-        function _syncSettingsFromNativeAttributes() {
-          // Update TouchSpin settings when native attributes change externally
-          var nativeMin = inputEl.getAttribute('min');
-          var nativeMax = inputEl.getAttribute('max');
-          var nativeStep = inputEl.getAttribute('step');
-          var needsUpdate = false;
-          var newSettings = {};
-
-          // Check min attribute
-          if (nativeMin != null) {
-            var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
-            // Normalize min to number for consistency (same as _initSettings)
-            if (parsedMin != null) {
-              var minNum = Number(parsedMin);
-              parsedMin = isFinite(minNum) ? minNum : null;
-            }
-            if (parsedMin !== settings.min) {
-              newSettings.min = parsedMin;
-              needsUpdate = true;
-            }
-          } else if (settings.min !== null) {
-            // Attribute was removed
-            newSettings.min = null;
-            needsUpdate = true;
-          }
-
-          // Check max attribute
-          if (nativeMax != null) {
-            var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
-            // Normalize max to number for consistency (same as _initSettings)
-            if (parsedMax != null) {
-              var maxNum = Number(parsedMax);
-              parsedMax = isFinite(maxNum) ? maxNum : null;
-            }
-            if (parsedMax !== settings.max) {
-              newSettings.max = parsedMax;
-              needsUpdate = true;
-            }
-          } else if (settings.max !== null) {
-            // Attribute was removed
-            newSettings.max = null;
-            needsUpdate = true;
-          }
-
-          // Check step attribute
-          if (nativeStep != null) {
-            var parsedStep = nativeStep === '' || nativeStep === 'any' ? 1 : parseFloat(nativeStep);
-            if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
-            if (parsedStep !== settings.step) {
-              newSettings.step = parsedStep;
-              needsUpdate = true;
-            }
-          } else if (settings.step !== 1) {
-            // Attribute was removed, default to 1
-            newSettings.step = 1;
-            needsUpdate = true;
-          }
-          if (needsUpdate) {
-            // Update settings without triggering another sync to avoid infinite loop
-            settings = Object.assign({}, settings, newSettings);
-
-            // Re-process step divisibility rules if step, min, or max changed
-            if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && parseFloat(settings.step) !== 1) {
-              settings.max = _alignToStep(settings.max, settings.step, 'down');
-              settings.min = _alignToStep(settings.min, settings.step, 'up');
-            }
-
-            // Update ARIA attributes when min/max settings change
-            _updateAriaAttributes();
-            _checkValue(true);
-          }
-        }
-
-        /**
-         * Calculates the boosted step value based on spin count.
-         * @private
-         * @returns {number} Current step value (potentially boosted)
-         */
-        function _getBoostedStep() {
-          if (!settings.booster) {
-            return settings.step;
-          } else {
-            var boosted = Math.pow(2, Math.floor(spincount / settings.boostat)) * settings.step;
-            if (settings.maxboostedstep) {
-              if (boosted > settings.maxboostedstep) {
-                boosted = settings.maxboostedstep;
-                value = Math.round(value / boosted) * boosted;
-              }
-            }
-            return Math.max(settings.step, boosted);
-          }
-        }
-
-        /**
-         * Clears spin timers (delay + interval) without triggering events.
-         * @private
-         */
-        function _clearSpinTimers() {
-          clearTimeout(downDelayTimeout);
-          clearTimeout(upDelayTimeout);
-          clearInterval(downSpinTimer);
-          clearInterval(upSpinTimer);
-        }
-
-        /**
-         * Starts continuous spinning in the specified direction using shared helpers.
-         * Preserves original event order and semantics.
-         * @private
-         * @param {'up'|'down'} dir
-         */
-        function _startSpin(dir) {
-          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
-            return;
-          }
-
-          // stop any previous spin and reset state
-          _clearSpinTimers();
-          spincount = 0;
-          spinning = dir;
-
-          // fire start events
-          originalinput.trigger('touchspin.on.startspin');
-          if (dir === 'up') {
-            originalinput.trigger('touchspin.on.startupspin');
-            upDelayTimeout = setTimeout(function () {
-              upSpinTimer = setInterval(function () {
-                spincount++;
-                upOnce();
-              }, settings.stepinterval);
-            }, settings.stepintervaldelay);
-          } else {
-            originalinput.trigger('touchspin.on.startdownspin');
-            downDelayTimeout = setTimeout(function () {
-              downSpinTimer = setInterval(function () {
-                spincount++;
-                downOnce();
-              }, settings.stepinterval);
-            }, settings.stepintervaldelay);
-          }
-        }
-
-        /**
-         * Returns a fallback value when input is NaN.
-         * @private
-         * @returns {number} Fallback value (firstclickvalueifempty or midpoint)
-         */
-        function valueIfIsNaN() {
-          if (typeof settings.firstclickvalueifempty === 'number') {
-            return settings.firstclickvalueifempty;
-          } else {
-            var min = typeof settings.min === 'number' ? settings.min : 0;
-            var max = typeof settings.max === 'number' ? settings.max : min;
-            return (min + max) / 2;
-          }
-        }
-
-        /**
-         * Updates TouchSpin button disabled state based on input state.
-         * @private
-         */
-        function _updateButtonDisabledState() {
-          var isDisabled = inputEl.disabled || inputEl.hasAttribute('readonly');
-          elements.up.prop('disabled', isDisabled);
-          elements.down.prop('disabled', isDisabled);
-          if (isDisabled) {
-            stopSpin();
-          }
-        }
-
-        /**
-         * Increments the value by one step.
-         * @private
-         * @fires touchspin.on.max
-         */
-        function upOnce() {
-          var _inputEl$value9;
-          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
-            return;
-          }
-          _checkValue();
-          var prevDisplay = String((_inputEl$value9 = inputEl.value) !== null && _inputEl$value9 !== void 0 ? _inputEl$value9 : '');
-          value = parseFloat(settings.callback_before_calculation(inputEl.value));
-          value = _nextValue('up', value);
-          if (settings.max !== null && value === settings.max) {
-            originalinput.trigger('touchspin.on.max');
-            stopSpin();
-          }
-          var nextDisplay = _setDisplay(value);
-          if (prevDisplay !== nextDisplay) originalinput.trigger('change');
-        }
-
-        /**
-         * Decrements the value by one step.
-         * @private
-         * @fires touchspin.on.min
-         */
-        function downOnce() {
-          var _inputEl$value0;
-          if (inputEl.disabled || inputEl.hasAttribute('readonly')) {
-            return;
-          }
-          _checkValue();
-          var prevDisplay = String((_inputEl$value0 = inputEl.value) !== null && _inputEl$value0 !== void 0 ? _inputEl$value0 : '');
-          value = parseFloat(settings.callback_before_calculation(inputEl.value));
-          value = _nextValue('down', value);
-          if (settings.min !== null && value === settings.min) {
-            originalinput.trigger('touchspin.on.min');
-            stopSpin();
-          }
-          var nextDisplay = _setDisplay(value);
-          if (prevDisplay !== nextDisplay) originalinput.trigger('change');
-        }
-
-        /**
-         * Starts continuous downward spinning.
-         * @private
-         * @fires touchspin.on.startspin
-         * @fires touchspin.on.startdownspin
-         */
-        function startDownSpin() {
-          _startSpin('down');
-        }
-
-        /**
-         * Starts continuous upward spinning.
-         * @private
-         * @fires touchspin.on.startspin
-         * @fires touchspin.on.startupspin
-         */
-        function startUpSpin() {
-          _startSpin('up');
-        }
-
-        /**
-         * Stops all spinning and clears timers.
-         * @private
-         * @fires touchspin.on.stopupspin
-         * @fires touchspin.on.stopdownspin
-         * @fires touchspin.on.stopspin
-         */
-        function stopSpin() {
-          _clearSpinTimers();
-          switch (spinning) {
-            case 'up':
-              originalinput.trigger('touchspin.on.stopupspin');
-              originalinput.trigger('touchspin.on.stopspin');
-              break;
-            case 'down':
-              originalinput.trigger('touchspin.on.stopdownspin');
-              originalinput.trigger('touchspin.on.stopspin');
-              break;
-          }
-          spincount = 0;
-          spinning = false;
-        }
+        // record cleanup hooks
+        $input.data('__ts_unsubs', unsubs);
+        if (__observer) $input.data('__ts_observer', __observer);
+        if (renderer) $input.data('__ts_renderer', renderer);
+        if (__detached) $input.data('__ts_detached', __detached);
       });
+      function teardown($input) {
+        try {
+          var inst = $input.data('touchspinInternal');
+          if (inst) {
+            try {
+              inst.destroy();
+            } catch (_unused1) {}
+          }
+        } catch (_unused10) {}
+        try {
+          var unsubs = $input.data('__ts_unsubs') || [];
+          unsubs.forEach(function (u) {
+            try {
+              u();
+            } catch (_unused11) {}
+          });
+        } catch (_unused12) {}
+        try {
+          var obs = $input.data('__ts_observer');
+          if (obs && obs.disconnect) obs.disconnect();
+        } catch (_unused13) {}
+        try {
+          $input.removeData('__ts_renderer');
+        } catch (_unused14) {}
+        try {
+          $input.removeData('__ts_detached');
+        } catch (_unused15) {}
+        // Remove container wrapper if present and restore input
+        var $wrap = $input.closest('[data-touchspin-injected="wrapper"]');
+        if ($wrap.length) {
+          $wrap.before($input);
+          $wrap.remove();
+        } else {
+          // Advanced enhancement cleanup: keep parent container (.input-group or [data-touchspin-advanced])
+          var $adv = null;
+          try {
+            $adv = $input.closest('.input-group');
+            if (!$adv || !$adv.length) $adv = $input.closest('[data-touchspin-advanced]');
+            if (!$adv || !$adv.length) $adv = $input.closest('[data-touchspin-injected="enhanced-wrapper"]');
+          } catch (_unused16) {}
+          var $scope = $adv && $adv.length ? $adv : $input.parent();
+          try {
+            $scope.find('[data-touchspin-injected="down"],[data-touchspin-injected="down-wrapper"]').remove();
+          } catch (_unused17) {}
+          try {
+            $scope.find('[data-touchspin-injected="up"],[data-touchspin-injected="up-wrapper"]').remove();
+          } catch (_unused18) {}
+          try {
+            $scope.find('[data-touchspin-injected="prefix"]').remove();
+          } catch (_unused19) {}
+          try {
+            $scope.find('[data-touchspin-injected="postfix"]').remove();
+          } catch (_unused20) {}
+          try {
+            $scope.find('[data-touchspin-injected="vertical-wrapper"]').remove();
+          } catch (_unused21) {}
+          try {
+            if ($adv && $adv.length) {
+              $adv.removeAttr('data-touchspin-injected');
+              $adv.removeClass('bootstrap-touchspin');
+            }
+          } catch (_unused22) {}
+        }
+        $input.off('.touchspin');
+        $input.removeData('touchspin');
+        $input.removeData('touchspinInternal');
+        $input.removeData('__ts_unsubs');
+      }
     };
-  });
-
-  // Renderer classes are included before this file during the build process
-  // They should be available as global classes: BootstrapRenderer, Bootstrap3Renderer, etc.
-  // and RendererFactory should be available
-
-  // Modern facade moved to wrapper (src/wrappers/modern-facade.js) in LGTM-7a/8.
+  }
+  if (typeof window !== 'undefined' && window.jQuery) {
+    installJqueryTouchSpin(window.jQuery);
+  }
+})();
+(function (factory) {
+  typeof define === 'function' && define.amd ? define(factory) : factory();
+})(function () {
+  'use strict';
 });
-
-/* Appended wrapper: src/wrappers/modern-facade.js (via APPEND_WRAPPERS) */
-// Modern facade wrapper for Bootstrap TouchSpin.
-//
-// Purpose: Provide a method-only API without requiring callers to use jQuery
-// directly. This wrapper installs on top of the classic jQuery plugin without
-// changing its internals or behavior. It mirrors the inline facade currently
-// present in the UMD plugin so we can later move/trim that inline code.
-//
-// Usage in dev/manual pages only (LGTM-7a):
-//   1) Load the classic plugin first (src/jquery.bootstrap-touchspin.js or dist/*)
-//   2) Then load this file (as a module or classic script).
-//
-// Notes:
-// - Idempotent: If the facade is already installed (by the plugin), this is a no-op.
-// - No behavior change: Methods delegate to the plugin’s internal API exposed
-//   via $(el).data('touchspinInternal').
-
-/* global window */
-
-function installModernFacade($) {
-  try {
-    if (typeof window === 'undefined') return;
-    // Require jQuery + plugin present
-    if (!$ || !$.fn || typeof $.fn.TouchSpin !== 'function') return;
-
-    // If already installed by the plugin or a previous load, skip.
-    const _Element = (typeof globalThis !== 'undefined' && /** @type {any} */ (globalThis).Element) || undefined;
-    const hasElementProto = !!(_Element && _Element.prototype && _Element.prototype.TouchSpin);
-    const hasGlobal = !!(window.TouchSpin && typeof window.TouchSpin.attach === 'function');
-    if (hasElementProto && hasGlobal) return;
-
-    // Install global facade
-    window.TouchSpin = window.TouchSpin || {};
-    window.TouchSpin.attach = function (input, opts) {
-      const el = (input && input.nodeType === 1) ? input : document.querySelector(input);
-      if (!el) throw new Error('TouchSpin.attach: invalid element');
-      const $el = $(el);
-      $el.TouchSpin(opts);
-      const api = $el.data('touchspinInternal');
-      if (!api) throw new Error('TouchSpin failed to initialize');
-      return {
-        upOnce: api.upOnce,
-        downOnce: api.downOnce,
-        startUpSpin: api.startUpSpin,
-        startDownSpin: api.startDownSpin,
-        stopSpin: api.stopSpin,
-        updateSettings: api.updateSettings,
-        getValue: api.getValue,
-        setValue: api.setValue,
-        destroy: api.destroy
-      };
-    };
-
-    // Add convenience on Element.prototype
-    if (_Element && _Element.prototype && !_Element.prototype.TouchSpin) {
-      Object.defineProperty(_Element.prototype, 'TouchSpin', {
-        configurable: true,
-        writable: true,
-        value: function (opts) { return window.TouchSpin.attach(this, opts); }
-      });
-    }
-  } catch (e) {
-    // Silently ignore to avoid breaking manual pages
-  }
-}
-
-// Auto-install if jQuery is on window, with a short retry loop in case the
-// plugin registers asynchronously (ESM twin scenario in manual pages).
-let __tsModernFacadeAutoTimer = null;
-let __tsModernFacadeInstalled = false;
-function tryAutoInstall() {
-  try {
-    if (typeof window === 'undefined') return done();
-    const $ = window.jQuery;
-    if (!$) return schedule();
-    if ($.fn && typeof $.fn.TouchSpin === 'function') {
-      installModernFacade($);
-      // Check whether Element.prototype.TouchSpin is now present
-      const _Element = (typeof globalThis !== 'undefined' && /** @type {any} */ (globalThis).Element) || undefined;
-      if (_Element && _Element.prototype && _Element.prototype.TouchSpin) return done();
-    }
-    schedule();
-  } catch {
-    schedule();
-  }
-}
-
-let __tries = 0;
-const __maxTries = 60; // ~3s at 50ms per try
-function schedule() {
-  if (__tries++ > __maxTries) return done();
-  __tsModernFacadeAutoTimer = setTimeout(tryAutoInstall, 50);
-}
-function done() {
-  if (__tsModernFacadeAutoTimer) {
-    clearTimeout(__tsModernFacadeAutoTimer);
-    __tsModernFacadeAutoTimer = null;
-  }
-  __tsModernFacadeInstalled = true;
-}
-
-try {
-  if (typeof window !== 'undefined') {
-    tryAutoInstall();
-  }
-} catch {}
-
-
-/* End appended wrapper */
