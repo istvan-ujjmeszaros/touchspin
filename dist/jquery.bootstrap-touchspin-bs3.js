@@ -26,7 +26,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   'use strict';
 
   /**
-  * Migrated copy from src/renderers/AbstractRenderer.js (transitional)
+  * AbstractRenderer - Base class for TouchSpin renderers
+  * Part of @touchspin/core package to avoid duplication across renderer packages
   */
   var AbstractRenderer = /*#__PURE__*/function () {
     function AbstractRenderer($, settings, originalinput) {
@@ -75,6 +76,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             upButtons = this._findElements(verticalContainer, 'up');
           }
         }
+
+        // Ensure input element has data-touchspin-injected="input" for core event targeting
+        this.originalinput.attr('data-touchspin-injected', 'input');
         this.elements = {
           down: downButtons,
           up: upButtons,
@@ -110,7 +114,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return '';
       }
     }]);
-  }();
+  }(); // UMD-style export retained for now (transitional)
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = AbstractRenderer;
   } else if (typeof window !== 'undefined') {

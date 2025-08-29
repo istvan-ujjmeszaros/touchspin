@@ -34,19 +34,28 @@ async function buildVersionSpecific(version, outputDir) {
     ? `./packages/renderers/bootstrap${version}/src`
     : `./packages/renderers/${version}/src`;
 
-  // Always include base renderer from package
-  const abstractPath = `${pkgBase}/AbstractRenderer.js`;
+  // Always include base renderer from core package
+  const abstractPath = `./packages/core/src/AbstractRenderer.js`;
   if (!fs.existsSync(abstractPath)) {
     throw new Error(`Missing AbstractRenderer at ${abstractPath} for ${frameworkName}`);
   }
-  rendererIncludes += fs.readFileSync(abstractPath, 'utf-8') + '\n';
+  // Strip ES6 module syntax for UMD build
+  let abstractContent = fs.readFileSync(abstractPath, 'utf-8');
+  abstractContent = abstractContent
+    .replace(/export\s+default\s+\w+;?\s*$/m, '')
+    .replace(/import[^;]+;?\s*/g, '');
+  rendererIncludes += abstractContent + '\n';
 
   // Include the target renderer from package
   const rendererPath = `${pkgBase}/${rendererFile}`;
   if (!fs.existsSync(rendererPath)) {
     throw new Error(`Missing ${rendererFile} at ${rendererPath} for ${frameworkName}`);
   }
-  rendererIncludes += fs.readFileSync(rendererPath, 'utf-8') + '\n';
+  let rendererContent = fs.readFileSync(rendererPath, 'utf-8');
+  rendererContent = rendererContent
+    .replace(/export\s+default\s+\w+;?\s*$/m, '')
+    .replace(/import[^;]+;?\s*/g, '');
+  rendererIncludes += rendererContent + '\n';
 
   const frameworkId = isNumeric ? `bootstrap${version}` : version;
   const rendererCode = `

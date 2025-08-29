@@ -26,7 +26,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   'use strict';
 
   /**
-  * Migrated copy from src/renderers/AbstractRenderer.js (transitional)
+  * AbstractRenderer - Base class for TouchSpin renderers
+  * Part of @touchspin/core package to avoid duplication across renderer packages
   */
   var AbstractRenderer = /*#__PURE__*/function () {
     function AbstractRenderer($, settings, originalinput) {
@@ -75,6 +76,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
             upButtons = this._findElements(verticalContainer, 'up');
           }
         }
+
+        // Ensure input element has data-touchspin-injected="input" for core event targeting
+        this.originalinput.attr('data-touchspin-injected', 'input');
         this.elements = {
           down: downButtons,
           up: upButtons,
@@ -242,7 +246,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         if (this.settings.verticalbuttons) {
           html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\"><span class=\"input-group-text\">").concat(this.settings.prefix, "</span></div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"postfix\"><span class=\"input-group-text\">").concat(this.settings.postfix, "</span></div>\n          <span class=\"bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <span class=\"input-group-btn-vertical\">\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup, "</button>\n              <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n            </span>\n          </span>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"down\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          </div>\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\"><span class=\"input-group-text\">").concat(this.settings.prefix, "</span></div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"postfix\"><span class=\"input-group-text\">").concat(this.settings.postfix, "</span></div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"up\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"down\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class, " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          </div>\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\"><span class=\"input-group-text\">").concat(this.settings.prefix, "</span></div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"postfix\"><span class=\"input-group-text\">").concat(this.settings.postfix, "</span></div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"up\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class, " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n          </div>\n        </div>\n      ");
         }
         this.container = this.$(html).insertBefore(this.originalinput);
         this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
