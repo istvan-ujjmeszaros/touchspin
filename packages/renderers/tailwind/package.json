@@ -6,7 +6,7 @@
   "description": "Tailwind renderer for TouchSpin",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "workspace:*"
+    "@touchspin/core": "file:../../core"
   }
 }
 

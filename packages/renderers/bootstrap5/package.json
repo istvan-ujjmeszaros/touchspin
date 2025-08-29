@@ -6,7 +6,7 @@
   "description": "Bootstrap 5 renderer for TouchSpin",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "workspace:*"
+    "@touchspin/core": "file:../../core"
   }
 }
 
