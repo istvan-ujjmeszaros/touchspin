@@ -42,6 +42,16 @@
       <button class="btn btn-outline-danger" onclick="$('#simple-input').TouchSpin('destroy')">Destroy</button>
     </div>
 
+    <!-- Callable Events (triggered with .trigger()) -->
+    <div class="mb-3">
+      <h6>Callable Events (via .trigger()):</h6>
+      <button class="btn btn-outline-primary btn-sm" onclick="$('#simple-input').trigger('touchspin.uponce')">trigger('touchspin.uponce')</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="$('#simple-input').trigger('touchspin.downonce')">trigger('touchspin.downonce')</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="$('#simple-input').trigger('touchspin.startupspin')">trigger('touchspin.startupspin')</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="$('#simple-input').trigger('touchspin.startdownspin')">trigger('touchspin.startdownspin')</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#simple-input').trigger('touchspin.stopspin')">trigger('touchspin.stopspin')</button>
+    </div>
+
     <!-- Direct API Access via Core -->
     <div class="mb-3">
       <h6>Direct Core Access (for comparison):</h6>
@@ -55,7 +65,8 @@
         <li>Click "Initialize" to set up TouchSpin via jQuery</li>
         <li><strong>Focus the input and use arrow keys (↑↓)</strong></li>
         <li><strong>Focus the input and use mouse wheel</strong></li>
-        <li>Test all jQuery API methods with buttons above</li>
+        <li>Test jQuery Command API (TouchSpin('command')) with first set of buttons</li>
+        <li>Test jQuery Callable Events (trigger('touchspin.event')) with second set of buttons</li>
         <li>Compare with direct core API access</li>
       </ul>
       

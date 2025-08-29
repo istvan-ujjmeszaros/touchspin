@@ -1,9 +1,81 @@
-@touchspin/jquery-plugin (Placeholder)
-=====================================
+@touchspin/jquery-plugin
+=======================
 
-Status: scaffold only. Thin adapter exposing the historical jQuery plugin surface on top of `@touchspin/core`.
+**jQuery plugin wrapper that preserves the original TouchSpin API while using the modern core.**
 
-Goals:
-- Preserve callable events and Command API.
-- Minimal wrapper logic; delegate behavior to the core.
+## Status: ✅ IMPLEMENTED
+
+Complete jQuery plugin wrapper with full backward compatibility.
+
+## Features
+
+- **Full API Compatibility**: Preserves all original jQuery TouchSpin methods
+- **Callable Events**: All touchspin.* events supported
+- **Command API**: All TouchSpin('command') methods work
+- **Element-Attached**: Uses modern core with element-attached instances
+- **Event Bridging**: Forwards core events to jQuery events
+- **Clean Integration**: No DOM event logic - delegates everything to core
+
+## Installation
+
+```javascript
+import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
+installJqueryTouchSpin(window.jQuery);
+```
+
+## Usage
+
+### Initialization
+```javascript
+$('#myinput').TouchSpin({
+  min: 0,
+  max: 100,
+  step: 1
+});
+```
+
+### Command API
+```javascript
+$('#myinput').TouchSpin('uponce');           // Increment once
+$('#myinput').TouchSpin('downonce');         // Decrement once
+$('#myinput').TouchSpin('get');              // Get value
+$('#myinput').TouchSpin('set', 50);          // Set value
+$('#myinput').TouchSpin('destroy');          // Destroy
+```
+
+### Callable Events
+```javascript
+$('#myinput').trigger('touchspin.uponce');
+$('#myinput').trigger('touchspin.updatesettings', [{step: 5}]);
+```
+
+### jQuery Events
+```javascript
+$('#myinput').on('touchspin.on.min', function() {
+  console.log('Hit minimum value');
+});
+```
+
+## Architecture
+
+The jQuery wrapper is a thin bridge that:
+
+1. **Forwards to Core**: All methods delegate to `@touchspin/core`
+2. **Element Storage**: Uses `getTouchSpin()` instead of jQuery data
+3. **Event Bridge**: Converts core events to jQuery events
+4. **No DOM Logic**: Core handles all DOM event management
+
+## Supported Methods
+
+### Command API
+- `destroy`, `uponce`, `downonce`, `startupspin`, `startdownspin`, `stopspin`
+- `updatesettings`, `getvalue`/`get`, `setvalue`/`set`
+
+### Callable Events
+- `touchspin.uponce`, `touchspin.downonce`, `touchspin.startupspin`
+- `touchspin.startdownspin`, `touchspin.stopspin`, `touchspin.updatesettings`
+
+### jQuery Events (Emitted)
+- `touchspin.on.min`, `touchspin.on.max`, `touchspin.on.startspin`
+- `touchspin.on.stopspin`, `touchspin.on.startupspin`, `touchspin.on.startdownspin`
 

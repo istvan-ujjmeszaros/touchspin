@@ -30,9 +30,17 @@ The project uses **Rollup** as its build system:
 ## Architecture
 
 ### Modern Architecture (Multi-Package)
-- **`packages/core/`** - Framework-agnostic core logic
-- **`packages/jquery-plugin/`** - jQuery wrapper that bridges to core
-- **`packages/bootstrap-renderer/`** - Bootstrap-specific DOM rendering
+- **`packages/core/`** - Framework-agnostic core logic with element-attached instances
+- **`packages/jquery-plugin/`** - jQuery wrapper that bridges to core (callable events only)
+- **`packages/renderers/`** - Framework-specific DOM rendering (Bootstrap 3/4/5, Tailwind)
+
+### Core Architecture (Element-Attached)
+The modern core uses an **element-attached architecture**:
+- `TouchSpin(inputElement, options)` - Creates/updates instance attached to DOM element
+- `getTouchSpin(inputElement)` - Retrieves existing instance from element  
+- `destroy()` - Removes instance from element and cleans up DOM/events
+- No separate API instances - the core attaches directly to input elements
+- State is tracked by instance existence on element, no separate `_initialized` flags
 
 ### Legacy Architecture
 - **`src/`** - Source files (never edit `dist/` directly)
@@ -60,17 +68,27 @@ The project uses **Rollup** as its build system:
 
 ## Key Development Notes
 
-### Modern Plugin Architecture Requirements
+### Modern Plugin Architecture (✅ IMPLEMENTED)
 
-#### Core Event Handling
-- **Core must handle ALL DOM events** (up/down buttons, input events, etc.) via data attributes
-- Core attaches event listeners to elements with `data-touchspin-role` attributes
+#### Element-Attached Core Architecture
+- **TouchSpin() function** creates/updates instances attached directly to DOM elements  
+- **getTouchSpin() function** retrieves existing instances from elements
+- **No separate API instances** - core attaches to input elements using `_touchSpinCore` property
+- **Clean lifecycle management** - destroy() removes instance from element and cleans up everything
+- **Simplified state tracking** - instance existence on element = active, no `_initialized` flags
+
+#### Core Event Handling (✅ IMPLEMENTED)
+- **Core handles ALL DOM events** (up/down buttons, input events, etc.) via data attributes
+- Core attaches event listeners to elements with `data-touchspin-injected` attributes
 - Event targeting uses **data attributes only** - NO class name dependencies
-- Required data attributes: `data-touchspin-role="up"`, `data-touchspin-role="down"`, `data-touchspin-role="input"`
+- Required data attributes: `data-touchspin-injected="up"`, `data-touchspin-injected="down"`, `data-touchspin-injected="wrapper"`
+- Events handled: mousedown/mouseup on buttons, input/change/keydown/keyup/wheel on input element
 
-#### jQuery Wrapper Responsibilities  
+#### jQuery Wrapper Responsibilities (✅ IMPLEMENTED)  
 - **Only forwards callable events to core API** - contains NO DOM event logic
-- Must forward these callable events:
+- Uses `getTouchSpin()` to retrieve core instances instead of jQuery data storage
+- Simplified destroy logic - core `destroy()` handles everything including element cleanup
+- Callable events forwarded:
   - `touchspin.updatesettings` → `core.updateSettings()`
   - `touchspin.uponce` → `core.upOnce()`
   - `touchspin.downonce` → `core.downOnce()`
@@ -78,13 +96,16 @@ The project uses **Rollup** as its build system:
   - `touchspin.startdownspin` → `core.startDownSpin()`
   - `touchspin.stopspin` → `core.stopSpin()`
 
-#### Renderer Requirements
+#### Renderer Requirements (✅ IMPLEMENTED)
 - **Must add data attributes to markup** for core event targeting
-- All renderer implementations must include appropriate `data-touchspin-role` attributes
+- All renderer implementations include `data-touchspin-injected` attributes with role values
+- AbstractRenderer moved to core package for consistency across all renderers
 - Renderers handle presentation only - NO event logic
 
-#### Modern Initialization
-- Pages using modern core with renderer should initialize: `myinput.TouchSpin()`
+#### Modern Initialization (✅ IMPLEMENTED)
+- Direct core: `TouchSpin(inputElement, options)` 
+- Via jQuery: `$input.TouchSpin(options)`
+- Both approaches use element-attached instances
 
 ### Legacy Plugin Architecture
 - UMD pattern supporting AMD, CommonJS, and global jQuery
@@ -110,6 +131,13 @@ The project uses **Rollup** as its build system:
 - **IDE Integration**: LCOV reports generated at `reports/coverage/lcov.info` for PHPStorm
 - **Visual Reports**: HTML coverage reports at `reports/coverage/html/index.html`
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
+
+### Clean Test Files (Modern Architecture Testing)
+- **`__tests__/html-package/core-smoke-simple.html`** - Direct core API testing with TouchSpin() function
+- **`__tests__/html-package/jquery-wrapper-simple.html`** - jQuery wrapper testing with comprehensive callable event coverage
+- **Clean, minimal code** - no debug logging or complex initialization logic
+- **Comprehensive API coverage** - tests all Command API and Callable Event methods
+- **Element-attached validation** - demonstrates proper instance lifecycle management
 
 ### Code Standards
 - Follows jQuery Core Style Guide

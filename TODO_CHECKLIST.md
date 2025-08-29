@@ -45,10 +45,14 @@ Phase C — jQuery Plugin Wrapper (packages/jquery-plugin)
  - [x] C5: Verification
    - [x] C5a: Manual pages parity verified (core + jQuery smoke pages)
    - [x] C5b: All non-visual tests pass across builds (TDD Complete: 10/10 tests passing)
-   - [ ] C5c: Full existing test suite (242 tests) passes against modern packages
-  - [ ] C5c.1: Core DOM event handling implementation (data attribute targeting)
-  - [ ] C5c.2: jQuery wrapper callable event forwarding only (no DOM logic)
-  - [ ] C5c.3: Renderer data attribute requirements (data-touchspin-role)
+     - [x] C5c: Core modernization implementation completed
+    - [x] C5c.1: Core DOM event handling implementation (data attribute targeting)
+    - [x] C5c.2: jQuery wrapper callable event forwarding only (no DOM logic)  
+    - [x] C5c.3: Renderer data attribute requirements (data-touchspin-injected)
+    - [x] C5c.4: Element-attached architecture (TouchSpin() stores instances on DOM elements)
+    - [x] C5c.5: Simplified lifecycle management (destroy() removes instance from element)
+    - [x] C5c.6: Clean test files created (core-smoke-simple.html, jquery-wrapper-simple.html)
+  - [ ] C5d: Full existing test suite (242 tests) passes against modern packages
 
 Parity Audit — Match Core/Wrapper to Source (src/jquery.bootstrap-touchspin.js)
 
@@ -73,10 +77,10 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
 - [x] P12: Boundary — auto-stop on reaching min/max during spin.
 
 - Modern Architecture Event Handling
-- [ ] P13: Core DOM event targeting — attach listeners via data-touchspin-role attributes only.
-- [ ] P14: Renderer data attributes — all renderers add required data-touchspin-role markup.
-- [ ] P15: jQuery wrapper isolation — forwards only callable events, no DOM event logic.
-- [ ] P16: Data attribute strategy — no class name dependencies for event targeting.
+- [x] P13: Core DOM event targeting — attach listeners via data-touchspin-injected attributes only.
+- [x] P14: Renderer data attributes — all renderers add required data-touchspin-injected markup.
+- [x] P15: jQuery wrapper isolation — forwards only callable events, no DOM event logic.
+- [x] P16: Data attribute strategy — no class name dependencies for event targeting.
 
 - Legacy Wrapper Interaction Parity  
 - [x] P17: Hold-to-spin — mousedown/touchstart once+start; mouseup/touchend/mouseleave stop.
