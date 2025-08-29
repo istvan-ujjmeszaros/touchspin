@@ -281,12 +281,7 @@ async function buildAll() {
   console.log('📦 Building ESM core bundle...');
   await buildEsmCore(outputDir);
   console.log('✅ ESM core built at', `${outputDir}/esm/touchspin.js`);
-  // Alias ESM core for future naming (touchspin-core.js)
-  try {
-    const src = `${outputDir}/esm/touchspin.js`;
-    const dst = `${outputDir}/esm/touchspin-core.js`;
-    if (fs.existsSync(src)) fs.copyFileSync(src, dst);
-  } catch {}
+  // ESM core alias removed - was just experimental preview
 
   console.log('✅ Build completed successfully!');
   console.log('📦 Generated files:');
