@@ -80,6 +80,7 @@
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import { getTouchSpin } from '../../packages/core/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
     
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
@@ -94,8 +95,9 @@
     window.initTouchSpin = function() {
       const $input = $('#simple-input');
       
-      // Initialize via jQuery wrapper
+      // Initialize via jQuery wrapper with renderer
       $input.TouchSpin({ 
+        renderer: Bootstrap5Renderer, // Required: specify renderer
         min: 0, 
         max: 200, 
         step: 1 
