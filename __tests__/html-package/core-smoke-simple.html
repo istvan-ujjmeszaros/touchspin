@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simple TouchSpin Core Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container { max-width: 600px; margin-top: 50px; }
+    .btn { margin: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simple TouchSpin Core Test</h1>
+    <p>Clean, minimal test with actual Bootstrap UI.</p>
+
+    <!-- Simple TouchSpin input with Bootstrap styling -->
+    <div class="mb-4">
+      <label for="simple-input" class="form-label">Number Input:</label>
+      <input id="simple-input" type="text" value="50" class="form-control" style="width: 200px;">
+    </div>
+
+    <!-- API Test Buttons -->
+    <div class="mb-3">
+      <button class="btn btn-primary" onclick="getApi()?.upOnce()">Up Once</button>
+      <button class="btn btn-primary" onclick="getApi()?.downOnce()">Down Once</button>
+      <button class="btn btn-secondary" onclick="getApi()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-secondary" onclick="getApi()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-danger" onclick="getApi()?.stopSpin()">Stop Spin</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-info" onclick="alert('Value: ' + (getApi()?.getValue() ?? 'Not initialized'))">Get Value</button>
+      <button class="btn btn-info" onclick="getApi()?.setValue(100)">Set to 100</button>
+      <button class="btn btn-warning" onclick="getApi()?.updateSettings({step: 10})">Set Step=10</button>
+      <button class="btn btn-warning" onclick="getApi()?.updateSettings({step: 1})">Set Step=1</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="initTouchSpin()">Initialize</button>
+      <button class="btn btn-outline-danger" onclick="getApi()?.destroy()">Destroy</button>
+    </div>
+
+    <div class="mt-4">
+      <p><strong>Instructions:</strong></p>
+      <ul>
+        <li>Click "Initialize" to set up TouchSpin</li>
+        <li><strong>Focus the input and use arrow keys (↑↓)</strong></li>
+        <li><strong>Focus the input and use mouse wheel</strong></li>
+        <li>Test all API methods with buttons above</li>
+      </ul>
+      
+      <div class="alert alert-info mt-3">
+        <strong>Debug Info:</strong>
+        <div id="debug-info">Events not initialized yet</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { TouchSpin, getTouchSpin } from '../../packages/core/src/index.js';
+
+    // Helper to get current API instance from the input
+    window.getApi = function() {
+      const input = document.getElementById('simple-input');
+      return getTouchSpin(input);
+    };
+
+    // One-line initialization - TouchSpin attaches directly to the input element
+    window.initTouchSpin = function() {
+      const input = document.getElementById('simple-input');
+      TouchSpin(input, { 
+        min: 0, 
+        max: 200, 
+        step: 1 
+      });
+      
+      // Add some debug event listeners to see if keyboard/wheel work
+      input.addEventListener('keydown', (e) => {
+        document.getElementById('debug-info').textContent = `Last event: keydown ${e.key}`;
+      });
+      input.addEventListener('wheel', (e) => {
+        document.getElementById('debug-info').textContent = `Last event: wheel deltaY=${e.deltaY}`;
+      });
+      
+      document.getElementById('debug-info').textContent = 'TouchSpin initialized! Try arrow keys or mouse wheel on input.';
+      console.log('TouchSpin initialized!');
+    };
+
+    // Auto-initialize on page load
+    document.addEventListener('DOMContentLoaded', initTouchSpin);
+  </script>
+</body>
+</html>
