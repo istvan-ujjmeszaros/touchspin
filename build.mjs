@@ -256,20 +256,7 @@ async function buildAll() {
       fs.writeFileSync(`./${outputDir}/${baseName}.min.js.map`, minified.map);
     }
 
-    // Write alias filenames with the future naming scheme
-    // Example: jquery.bootstrap-touchspin-bs5.js -> touchspin.jquery.bs5.js
-    try {
-      const m = /jquery\.bootstrap-touchspin-(bs\d+|tailwind)$/i.exec(baseName);
-      if (m) {
-        const suffix = m[1];
-        const aliasBase = `touchspin.jquery.${suffix}`;
-        fs.writeFileSync(`./${outputDir}/${aliasBase}.js`, content);
-        fs.writeFileSync(`./${outputDir}/${aliasBase}.min.js`, minified.code);
-        if (minified.map) {
-          fs.writeFileSync(`./${outputDir}/${aliasBase}.min.js.map`, minified.map);
-        }
-      }
-    } catch {}
+    // Alias filenames removed - they were just preview/experimental
   }
 
   console.log('🎨 Processing CSS...');
