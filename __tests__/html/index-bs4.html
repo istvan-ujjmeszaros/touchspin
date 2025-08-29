@@ -35,7 +35,11 @@
   </script>
 
   <!-- Load original TouchSpin source file (for comparison tests) -->
-  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    installJqueryTouchSpin(window.jQuery);
+    window.modernTouchSpinInstalled = true;
+  </script>
 
 
 </head>

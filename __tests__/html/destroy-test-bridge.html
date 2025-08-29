@@ -193,7 +193,11 @@
   </script>
 
   <!-- Load main TouchSpin source file (classic) -->
-  <script src="../../src/jquery.bootstrap-touchspin.js"></script>
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    installJqueryTouchSpin(window.jQuery);
+    window.modernTouchSpinInstalled = true;
+  </script>
 
   <!-- Install bridge as a module (after plugin is loaded) -->
   <script type="module" src="../../src/wrappers/jquery-bridge.js"></script>
