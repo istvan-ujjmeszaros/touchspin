@@ -4,19 +4,21 @@ import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../core/src/index.js';
 /**
  * Install a minimal jQuery plugin wrapper that just forwards everything to core.
  * Contains NO logic - only forwards commands and events.
+ * Core manages its own instance lifecycle on the input element.
  * @param {import('jquery').JQueryStatic} $
  */
 export function installJqueryTouchSpin($) {
   $.fn.TouchSpin = function(options, arg) {
-    // Command API - just forward to core
+    // Command API - forward to core (core manages instance lifecycle)
     if (typeof options === 'string') {
       const cmd = String(options).toLowerCase();
       let ret;
       this.each(function() {
         const api = getTouchSpin(/** @type {HTMLInputElement} */ (this));
-        if (!api) return;
+        if (!api) return; // No instance exists - command ignored
+        
         switch (cmd) {
-          case 'destroy': api.destroy(); break;
+          case 'destroy': api.destroy(); break; // Core removes instance from element
           case 'uponce': api.upOnce(); break;
           case 'downonce': api.downOnce(); break;
           case 'startupspin': api.startUpSpin(); break;
@@ -30,12 +32,12 @@ export function installJqueryTouchSpin($) {
       return ret === undefined ? this : ret;
     }
 
-    // Initialize - just forward to core
+    // Initialize - forward to core
     return this.each(function() {
       const $input = $(this);
       const inputEl = /** @type {HTMLInputElement} */ (this);
       
-      // Create TouchSpin instance (core handles everything)
+      // Create TouchSpin instance (core handles everything including storage on element)
       const inst = TouchSpin(inputEl, options || {});
 
       // Bridge core events to jQuery events (minimal event forwarding only)
@@ -57,26 +59,42 @@ export function installJqueryTouchSpin($) {
         unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
       });
 
-      // Callable events - forward to core
-      $input.on('touchspin.uponce', () => inst.upOnce());
-      $input.on('touchspin.downonce', () => inst.downOnce());
-      $input.on('touchspin.startupspin', () => inst.startUpSpin());
-      $input.on('touchspin.startdownspin', () => inst.startDownSpin());
-      $input.on('touchspin.stopspin', () => inst.stopSpin());
-      $input.on('touchspin.updatesettings', (e, o) => inst.updateSettings(o || {}));
+      // Callable events - forward to core (core manages lifecycle)
+      $input.on('touchspin.uponce', () => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.upOnce();
+      });
+      $input.on('touchspin.downonce', () => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.downOnce();
+      });
+      $input.on('touchspin.startupspin', () => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.startUpSpin();
+      });
+      $input.on('touchspin.startdownspin', () => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.startDownSpin();
+      });
+      $input.on('touchspin.stopspin', () => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.stopSpin();
+      });
+      $input.on('touchspin.updatesettings', (e, o) => {
+        const api = getTouchSpin(inputEl);
+        if (api) api.updateSettings(o || {});
+      });
       $input.on('touchspin.destroy', () => {
         // Clean up event subscriptions
         unsubs.forEach(unsub => {
           try { unsub(); } catch {} 
         });
-        // Forward destroy to core
-        inst.destroy();
-        // Clean up jQuery events by specific names
+        // Forward destroy to core (core removes instance from element)
+        const api = getTouchSpin(inputEl);
+        if (api) api.destroy();
+        // Clean up jQuery events
         $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');
       });
-
-      // Store cleanup for manual access
-      $input.data('__ts_unsubs', unsubs);
     });
   };
 }
