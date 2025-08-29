@@ -1,13 +1,34 @@
 /**
  * AbstractRenderer - Base class for TouchSpin renderers
  * Part of @touchspin/core package to avoid duplication across renderer packages
+ * 
+ * @example
+ * class CustomRenderer extends AbstractRenderer {
+ *   init() {
+ *     this.wrapper = this.buildUI();
+ *     const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+ *     const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+ *     this.core.attachUpEvents(upBtn);
+ *     this.core.attachDownEvents(downBtn);
+ *     this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+ *   }
+ * }
  */
 class AbstractRenderer {
+  /**
+   * @param {HTMLInputElement} inputEl - The input element to render around
+   * @param {Object} settings - TouchSpin settings (read-only)
+   * @param {Object} core - TouchSpin core instance for event delegation
+   */
   constructor(inputEl, settings, core) {
     // New renderer architecture
+    /** @type {HTMLInputElement} */
     this.input = inputEl;
+    /** @type {Object} */
     this.settings = settings; // Read-only access to settings
+    /** @type {Object} */
     this.core = core; // Reference to core for calling attachment methods
+    /** @type {HTMLElement|null} */
     this.wrapper = null; // Set by subclasses during init()
     
     // Legacy compatibility (transitional)
@@ -17,18 +38,31 @@ class AbstractRenderer {
     this.elements = null;
   }
 
-  // New required abstract methods
+  /**
+   * Initialize the renderer - build DOM structure and attach events
+   * Must be implemented by subclasses
+   * @abstract
+   */
   init() { 
     throw new Error('init() must be implemented by renderer'); 
   }
   
+  /**
+   * Cleanup renderer - remove injected elements and restore original state
+   * Default implementation removes all injected elements
+   * Subclasses can override for custom teardown
+   */
   teardown() {
     // Default implementation - remove all injected elements
     this.removeInjectedElements();
     // Subclasses can override for custom teardown
   }
   
-  // Utility method for all renderers
+  /**
+   * Utility method to remove all injected TouchSpin elements
+   * Handles both regular wrappers and advanced input groups
+   * Called automatically by teardown()
+   */
   removeInjectedElements() {
     // Find and remove all elements with data-touchspin-injected attribute
     if (this.wrapper) {

@@ -8,7 +8,7 @@
 
 **A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.**
 
-TouchSpin is a mobile-first jQuery plugin that transforms number inputs into spinner controls with increment/decrement buttons for touch interfaces and desktop environments.
+TouchSpin is a mobile-first JavaScript library with a modern renderer-based architecture that transforms number inputs into spinner controls with increment/decrement buttons for touch interfaces and desktop environments. Available as both a framework-agnostic core and a jQuery plugin wrapper that is fully compatible with the original Bootstrap TouchSpin library.
 
 **[Live Demo & Documentation](https://www.virtuosoft.eu/code/bootstrap-touchspin/)**
 
@@ -16,12 +16,14 @@ TouchSpin is a mobile-first jQuery plugin that transforms number inputs into spi
 
 ## Key Features
 
+- **Modern Renderer Architecture** - Modular, framework-agnostic core with pluggable renderers
 - **Mobile-First Design** - Designed for touch interfaces and mobile devices
-- **Bootstrap 3/4/5 Support** - Version-specific builds for compatibility
+- **Bootstrap 3/4/5 Support** - Dedicated renderers for each Bootstrap version
+- **Framework Agnostic** - Works with or without jQuery, ready for React/Vue/Angular
 - **Standard HTML Controls** - Uses semantic button and input elements
 - **RTL Language Support** - Full right-to-left language compatibility
 - **Lightweight & Fast** - Minimal footprint with targeted builds
-- **Customizable** - Multiple configuration options
+- **Customizable** - Multiple configuration options and renderer flexibility
 - **Decimal Precision** - Support for floating-point numbers
 - **Booster Mode** - Accelerated value changes for large ranges
 - **Event System** - Programmatic event handling with blur-based sanitization
@@ -146,22 +148,152 @@ bower install bootstrap-touchspin
 </script>
 ```
 
-### Modern API (no jQuery in user code)
+### Modern Core API (framework-agnostic)
 
 ```html
 <input type="number" id="modern-input" value="5">
 
 <script type="module">
-  import './dist/jquery.bootstrap-touchspin.min.js';
-  // After loading, a convenience is available on elements
+  import { TouchSpin } from './packages/core/src/index.js';
+  import Bootstrap5Renderer from './packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+  
   const input = document.getElementById('modern-input');
-  const inst = input.TouchSpin({ min: 0, max: 100, step: 1 });
-  // Or: const inst = window.TouchSpin.attach(input, { step: 1 });
-  inst.upOnce();
-  inst.updateSettings({ step: 10 });
-  inst.destroy();
-  // Methods: upOnce, downOnce, startUpSpin, startDownSpin, stopSpin,
-  //          updateSettings, getValue, setValue, destroy
+  const instance = TouchSpin(input, {
+    renderer: Bootstrap5Renderer, // Required: specify renderer
+    min: 0,
+    max: 100,
+    step: 1
+  });
+  
+  // API methods available
+  instance.upOnce();
+  instance.downOnce();
+  instance.startUpSpin();
+  instance.stopSpin();
+  instance.updateSettings({ step: 10 });
+  instance.destroy();
+</script>
+```
+
+### jQuery Wrapper (backward compatible)
+
+```html
+<input type="number" id="jquery-input" value="5">
+
+<script type="module">
+  import { installJqueryTouchSpin } from './packages/jquery-plugin/src/index.js';
+  import Bootstrap5Renderer from './packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+  
+  // Install jQuery plugin
+  installJqueryTouchSpin(window.jQuery);
+  
+  // Use familiar jQuery API
+  $('#jquery-input').TouchSpin({
+    renderer: Bootstrap5Renderer, // Required: specify renderer
+    min: 0,
+    max: 100,
+    step: 1
+  });
+</script>
+```
+
+---
+
+## Renderer Architecture
+
+TouchSpin now uses a modern renderer-based architecture that separates core functionality from UI presentation. This enables framework-agnostic usage and easy customization.
+
+### Available Renderers
+
+| Renderer | Purpose | Import Path |
+|----------|---------|-------------|
+| **Bootstrap5Renderer** | Bootstrap 5 input groups | `packages/renderers/bootstrap5/src/Bootstrap5Renderer.js` |
+| **RawRenderer** | No UI elements (keyboard/wheel only) | `packages/core/src/RawRenderer.js` |
+
+### Renderer Requirements
+
+**All TouchSpin instances require a renderer:**
+
+```javascript
+// ✅ Correct - renderer specified
+TouchSpin(input, { renderer: Bootstrap5Renderer, min: 0, max: 100 });
+
+// ❌ Error - no renderer specified  
+TouchSpin(input, { min: 0, max: 100 }); // Throws: "TouchSpin requires a renderer"
+```
+
+### RawRenderer for Minimal UI
+
+Use `RawRenderer` when you only need core functionality without additional UI elements:
+
+```javascript
+import { TouchSpin, RawRenderer } from './packages/core/src/index.js';
+
+TouchSpin(input, {
+  renderer: RawRenderer, // No buttons added to DOM
+  min: 0,
+  max: 100,
+  step: 1
+});
+
+// Keyboard arrows, mouse wheel, and API methods still work
+// Perfect for custom implementations or programmatic-only usage
+```
+
+### Advanced Input Groups
+
+Bootstrap renderers automatically detect existing input groups and integrate seamlessly:
+
+```html
+<!-- Existing input group -->
+<div class="input-group">
+  <span class="input-group-text">€</span>
+  <input id="advanced-input" type="number" value="50" class="form-control">
+  <span class="input-group-text">per item</span>
+</div>
+
+<script type="module">
+  // TouchSpin integrates without nesting input-group elements
+  TouchSpin(document.getElementById('advanced-input'), {
+    renderer: Bootstrap5Renderer,
+    prefix: '$',        // Adds TouchSpin prefix
+    postfix: 'USD',     // Adds TouchSpin postfix
+    min: 1,
+    max: 999
+  });
+  // Result: € [prefix] [-] [input] [+] [postfix] per item
+</script>
+```
+
+### Custom Renderers
+
+Create custom renderers by extending `AbstractRenderer`:
+
+```javascript
+import AbstractRenderer from './packages/core/src/AbstractRenderer.js';
+
+class CustomRenderer extends AbstractRenderer {
+  init() {
+    // 1. Build your UI around this.input
+    this.wrapper = this.createCustomUI();
+    
+    // 2. Find your up/down buttons
+    const upBtn = this.wrapper.querySelector('.my-up-button');
+    const downBtn = this.wrapper.querySelector('.my-down-button');
+    
+    // 3. Tell core to attach event handlers
+    this.core.attachUpEvents(upBtn);
+    this.core.attachDownEvents(downBtn);
+    
+    // 4. Observe setting changes (optional)
+    this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+  }
+  
+  createCustomUI() {
+    // Return your custom wrapper element
+    // Must include data-touchspin-injected attributes for cleanup
+  }
+}
 ```
 
 ---
@@ -497,14 +629,24 @@ npm run coverage:open
 ### Project Structure
 
 ```
-├── src/                          # Source files
-│   ├── jquery.bootstrap-touchspin.js    # Main plugin
-│   ├── jquery.bootstrap-touchspin.css   # Styles
-│   └── renderers/               # Bootstrap version renderers
-├── dist/                        # Built files (generated)
-├── demo/                        # Live demos and examples
-├── __tests__/                   # Playwright browser tests
-└── tmp/                         # Temporary development files
+├── packages/                    # Modern multi-package architecture
+│   ├── core/                   # Framework-agnostic TouchSpin core
+│   │   └── src/
+│   │       ├── index.js        # Main TouchSpin core
+│   │       ├── AbstractRenderer.js  # Renderer base class
+│   │       └── RawRenderer.js  # Minimal renderer
+│   ├── jquery-plugin/          # jQuery wrapper
+│   │   └── src/index.js
+│   └── renderers/              # Framework-specific renderers
+│       └── bootstrap5/
+│           └── src/Bootstrap5Renderer.js
+├── src/                        # Legacy source files (maintained)
+│   ├── jquery.bootstrap-touchspin.js
+│   └── jquery.bootstrap-touchspin.css
+├── dist/                       # Built files (generated)
+├── demo/                       # Live demos and examples
+├── __tests__/                  # Playwright browser tests
+└── tmp/                        # Temporary development files
 ```
 
 ### Testing

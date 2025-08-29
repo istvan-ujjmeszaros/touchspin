@@ -31,7 +31,13 @@
  * @property {number|false=} maxboostedstep
  * @property {TouchSpinCalcCallback=} callback_before_calculation
  * @property {TouchSpinCalcCallback=} callback_after_calculation
- * @property {import('./renderer-interface.js').TSRenderer=} renderer  // future DOM renderer
+ * @property {Function} renderer - Required renderer class (e.g., Bootstrap5Renderer, RawRenderer)
+ * @property {string=} prefix - Text/HTML before input (handled by renderer)
+ * @property {string=} postfix - Text/HTML after input (handled by renderer)
+ * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
+ * @property {string=} buttondown_class - CSS classes for down button (handled by renderer)
+ * @property {string=} buttonup_txt - Content for up button (handled by renderer)
+ * @property {string=} buttondown_txt - Content for down button (handled by renderer)
  */
 
 const DEFAULTS = {

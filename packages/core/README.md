@@ -11,6 +11,9 @@ The core is fully implemented with modern element-attached architecture.
 
 - **Element-Attached Instances**: TouchSpin() stores instances directly on DOM elements
 - **No jQuery Dependency**: Pure JavaScript with ESM exports
+- **Mandatory Renderer Architecture**: All instances require a renderer class
+- **Observer Pattern**: Renderers can observe setting changes via `observeSetting()`
+- **Event Delegation**: Core provides `attachUpEvents()` and `attachDownEvents()` for renderers
 - **Clean Lifecycle**: Simple init/destroy with automatic cleanup
 - **Data Attribute Event Handling**: DOM events via data-touchspin-injected attributes only
 - **Complete API**: All original TouchSpin functionality preserved
@@ -20,10 +23,15 @@ The core is fully implemented with modern element-attached architecture.
 ### Core Functions
 
 ```javascript
-import { TouchSpin, getTouchSpin } from '@touchspin/core';
+import { TouchSpin, getTouchSpin, RawRenderer } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
-// Create/update instance attached to element
-const api = TouchSpin(inputElement, options);
+// Create/update instance attached to element (renderer required)
+const api = TouchSpin(inputElement, {
+  renderer: Bootstrap5Renderer, // or RawRenderer for minimal UI
+  min: 0,
+  max: 100
+});
 
 // Get existing instance from element
 const api = getTouchSpin(inputElement);
@@ -61,12 +69,36 @@ The core attaches event listeners to elements with `data-touchspin-injected` att
 
 ## Renderer Integration
 
-Works with renderer packages that provide `data-touchspin-injected` markup:
+### For Renderer Developers
+
+Renderers must extend `AbstractRenderer` and implement `init()`:
 
 ```javascript
-import { TouchSpin } from '@touchspin/core';
-// Renderer creates DOM structure with proper data attributes
-const api = TouchSpin(input, options);
-api.initDOMEventHandling(); // Attach to rendered elements
+import AbstractRenderer from '@touchspin/core/AbstractRenderer';
+
+class CustomRenderer extends AbstractRenderer {
+  init() {
+    // 1. Build DOM structure around this.input
+    this.wrapper = this.createUI();
+    
+    // 2. Find button elements
+    const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+    
+    // 3. Tell core to attach event handlers
+    this.core.attachUpEvents(upBtn);
+    this.core.attachDownEvents(downBtn);
+    
+    // 4. Observe setting changes (optional)
+    this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+  }
+}
 ```
+
+### Available Renderers
+
+- **RawRenderer**: No additional UI elements (imported from core)
+- **Bootstrap5Renderer**: Full Bootstrap 5 input group support
+- **Bootstrap4Renderer**: Bootstrap 4 input group support (planned)
+- **Bootstrap3Renderer**: Bootstrap 3 input group support (planned)
 

@@ -5,6 +5,13 @@
   "type": "module",
   "description": "Bootstrap 5 renderer for TouchSpin",
   "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./src/Bootstrap5Renderer.js",
+      "require": "./src/Bootstrap5Renderer.js"
+    }
+  },
   "dependencies": {
     "@touchspin/core": "file:../../core"
   }
