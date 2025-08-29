@@ -48,7 +48,12 @@
   <!-- Install the jQuery plugin wrapper (core-based) -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import { getTouchSpin, TouchSpin } from '../../packages/core/src/index.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    
+    // Expose core API for cross-API testing
+    window.TouchSpinExports = { getTouchSpin, TouchSpin };
   </script>
 
   <script>
