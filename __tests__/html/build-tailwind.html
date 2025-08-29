@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TouchSpin Build Validation - Tailwind CSS</title>
+
+  <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  
+  <!-- Tailwind CSS ONLY - no Bootstrap -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Load built TouchSpin Tailwind file -->
+  <script src="../../dist/jquery.bootstrap-touchspin-tailwind.min.js"></script>
+</head>
+
+<body class="p-8 bg-gray-50 font-sans">
+<div class="container mx-auto">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">TouchSpin Build Validation - Tailwind CSS</h3>
+  <div class="mb-4">
+    <label for="build_test" class="block text-sm font-medium text-gray-700 mb-2">Build Test Input:</label>
+    <input id="build_test" data-testid="build-test" type="text" value="50" class="w-64 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  $("#build_test").TouchSpin({
+    min: 0,
+    max: 100,
+    step: 1
+  });
+});
+</script>
+</body>
+</html>
