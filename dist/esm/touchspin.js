@@ -6,6 +6,178 @@
  *  Made by István Ujj-Mészáros
  *  Under MIT License
  */
+/**
+ * AbstractRenderer - Base class for TouchSpin renderers
+ * Part of @touchspin/core package to avoid duplication across renderer packages
+ * 
+ * @example
+ * class CustomRenderer extends AbstractRenderer {
+ *   init() {
+ *     this.wrapper = this.buildUI();
+ *     const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+ *     const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+ *     this.core.attachUpEvents(upBtn);
+ *     this.core.attachDownEvents(downBtn);
+ *     this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+ *   }
+ * }
+ */
+class AbstractRenderer {
+  /**
+   * @param {HTMLInputElement} inputEl - The input element to render around
+   * @param {Object} settings - TouchSpin settings (read-only)
+   * @param {Object} core - TouchSpin core instance for event delegation
+   */
+  constructor(inputEl, settings, core) {
+    // New renderer architecture
+    /** @type {HTMLInputElement} */
+    this.input = inputEl;
+    /** @type {Object} */
+    this.settings = settings; // Read-only access to settings
+    /** @type {Object} */
+    this.core = core; // Reference to core for calling attachment methods
+    /** @type {HTMLElement|null} */
+    this.wrapper = null; // Set by subclasses during init()
+    
+    // Legacy compatibility (transitional)
+    this.$ = typeof $ !== 'undefined' ? $ : null;
+    this.originalinput = this.$ ? this.$(inputEl) : null;
+    this.container = null;
+    this.elements = null;
+  }
+
+  /**
+   * Initialize the renderer - build DOM structure and attach events
+   * Must be implemented by subclasses
+   * @abstract
+   */
+  init() { 
+    throw new Error('init() must be implemented by renderer'); 
+  }
+  
+  /**
+   * Cleanup renderer - remove injected elements and restore original state
+   * Default implementation removes all injected elements
+   * Subclasses can override for custom teardown
+   */
+  teardown() {
+    // Default implementation - remove all injected elements
+    this.removeInjectedElements();
+    // Subclasses can override for custom teardown
+  }
+  
+  /**
+   * Utility method to remove all injected TouchSpin elements
+   * Handles both regular wrappers and advanced input groups
+   * Called automatically by teardown()
+   */
+  removeInjectedElements() {
+    // Find and remove all elements with data-touchspin-injected attribute
+    if (this.wrapper) {
+      const injected = this.wrapper.querySelectorAll('[data-touchspin-injected]');
+      injected.forEach(el => el.remove());
+      
+      // If wrapper itself was injected and is not the original parent
+      if (this.wrapper.hasAttribute('data-touchspin-injected') && this.wrapper.parentElement) {
+        const injectedType = this.wrapper.getAttribute('data-touchspin-injected');
+        
+        if (injectedType === 'wrapper-advanced') {
+          // For advanced input groups, just remove the TouchSpin classes and attribute
+          // but keep the original input-group structure intact
+          this.wrapper.classList.remove('bootstrap-touchspin');
+          this.wrapper.removeAttribute('data-touchspin-injected');
+        } else {
+          // For regular wrappers, unwrap the input element
+          const parent = this.wrapper.parentElement;
+          parent.insertBefore(this.input, this.wrapper);
+          this.wrapper.remove();
+        }
+      }
+    }
+    
+    // Also find any injected elements that might be siblings or elsewhere
+    const allInjected = document.querySelectorAll('[data-touchspin-injected]');
+    allInjected.forEach(el => {
+      // Only remove if it's related to this input (check if input is descendant or sibling)
+      if (el.contains(this.input) || 
+          (el.parentElement && el.parentElement.contains(this.input)) ||
+          this.input.parentElement?.contains(el)) {
+        // Don't remove the input itself
+        if (el !== this.input) {
+          el.remove();
+        }
+      }
+    });
+  }
+
+  // Legacy methods (transitional - for backward compatibility)
+  getFrameworkId() { throw new Error('getFrameworkId() must be implemented by subclasses'); }
+  getDefaultSettings() { return {}; }
+  buildAdvancedInputGroup(parentelement) { throw new Error('buildAdvancedInputGroup() must be implemented by subclasses'); }
+  buildInputGroup() { throw new Error('buildInputGroup() must be implemented by subclasses'); }
+  buildVerticalButtons() { throw new Error('buildVerticalButtons() must be implemented by subclasses'); }
+
+  initElements(container) {
+    this.container = container;
+    let downButtons = this._findElements(container, 'down');
+    let upButtons = this._findElements(container, 'up');
+    if (downButtons.length === 0 || upButtons.length === 0) {
+      const verticalContainer = this._findElements(container.parent(), 'vertical-wrapper');
+      if (verticalContainer.length > 0) {
+        downButtons = this._findElements(verticalContainer, 'down');
+        upButtons = this._findElements(verticalContainer, 'up');
+      }
+    }
+    
+    // Ensure input element has data-touchspin-injected="input" for core event targeting
+    this.originalinput.attr('data-touchspin-injected', 'input');
+    
+    this.elements = {
+      down: downButtons,
+      up: upButtons,
+      input: this.$('input', container),
+      prefix: this._findElements(container, 'prefix').addClass(this.settings.prefix_extraclass),
+      postfix: this._findElements(container, 'postfix').addClass(this.settings.postfix_extraclass)
+    };
+    return this.elements;
+  }
+
+  _findElements(container, role) { return this.$(`[data-touchspin-injected="${role}"]`, container); }
+
+  hideEmptyPrefixPostfix() {
+    const detached = {};
+    if (this.settings.prefix === '') detached._detached_prefix = this.elements.prefix.detach();
+    if (this.settings.postfix === '') detached._detached_postfix = this.elements.postfix.detach();
+    return detached;
+  }
+
+  updatePrefixPostfix(newsettings, detached) { throw new Error('updatePrefixPostfix() must be implemented by subclasses'); }
+
+  getWrapperTestId() {
+    const inputTestId = this.originalinput.attr('data-testid');
+    if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
+    return '';
+  }
+}
+
+/**
+ * RawRenderer - Minimal renderer that adds no UI elements
+ * Allows TouchSpin to work with just the input element (keyboard, wheel, events still work)
+ * Perfect for custom implementations or when only programmatic API is needed
+ */
+class RawRenderer extends AbstractRenderer {
+  init() {
+    // Does nothing - no additional UI elements
+    // Core still handles the input element directly
+    // Keyboard, wheel, ARIA, and programmatic methods still work via core
+  }
+  
+  teardown() {
+    // Nothing to clean up - no UI was added
+    // Core will handle input element cleanup
+  }
+}
+
 // @ts-check
 
 /**
@@ -39,7 +211,13 @@
  * @property {number|false=} maxboostedstep
  * @property {TouchSpinCalcCallback=} callback_before_calculation
  * @property {TouchSpinCalcCallback=} callback_after_calculation
- * @property {import('./renderer-interface.js').TSRenderer=} renderer  // future DOM renderer
+ * @property {Function} renderer - Required renderer class (e.g., Bootstrap5Renderer, RawRenderer)
+ * @property {string=} prefix - Text/HTML before input (handled by renderer)
+ * @property {string=} postfix - Text/HTML after input (handled by renderer)
+ * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
+ * @property {string=} buttondown_class - CSS classes for down button (handled by renderer)
+ * @property {string=} buttonup_txt - Content for up button (handled by renderer)
+ * @property {string=} buttondown_txt - Content for down button (handled by renderer)
  */
 
 const DEFAULTS = {
@@ -69,10 +247,17 @@ class TouchSpinCore {
     if (!inputEl || inputEl.nodeName !== 'INPUT') {
       throw new Error('TouchSpinCore requires an <input> element');
     }
+    
     /** @type {HTMLInputElement} */
     this.input = inputEl;
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, opts);
+    
+    // Renderer is required
+    if (!this.settings.renderer) {
+      throw new Error('TouchSpin requires a renderer. Use RawRenderer for no additional UI.');
+    }
+    
     /** @type {boolean} */
     this.spinning = false;
     /** @type {number} */
@@ -81,10 +266,10 @@ class TouchSpinCore {
     this.direction = false;
     /** @type {Map<string, Set<Function>>} */
     this._events = new Map();
-
-    // Initialize ARIA attributes and sanitize display immediately
-    this._updateAriaAttributes();
-    this._checkValue(false);
+    /** @type {Array<Function>} */
+    this._teardownCallbacks = [];
+    /** @type {Map<string, Set<Function>>} */
+    this._settingObservers = new Map(); // For observer pattern
 
     /** @type {ReturnType<typeof setTimeout>|null} */
     this._spinDelayTimeout = null;
@@ -106,6 +291,23 @@ class TouchSpinCore {
     this._handleKeyDown = this._handleKeyDown.bind(this);
     this._handleKeyUp = this._handleKeyUp.bind(this);
     this._handleWheel = this._handleWheel.bind(this);
+    
+    // Core always manages the input element
+    this._initializeInput();
+    
+    // Initialize renderer with reference to core
+    this.renderer = new this.settings.renderer(inputEl, this.settings, this);
+    this.renderer.init();
+  }
+  
+  /**
+   * Initialize input element (core always handles this)
+   * @private
+   */
+  _initializeInput() {
+    // Core always handles these for the input
+    this._updateAriaAttributes();
+    this._checkValue(false);
   }
 
   /** Increment once according to step */
@@ -175,11 +377,14 @@ class TouchSpinCore {
    * @param {Partial<TouchSpinCoreOptions>} opts
    */
   updateSettings(opts) {
-    this.settings = Object.assign({}, this.settings, opts || {});
+    const oldSettings = { ...this.settings };
+    const newSettings = opts || {};
+    
+    this.settings = Object.assign({}, this.settings, newSettings);
+    
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
-    const ns = opts || {};
     const step = Number(this.settings.step || 1);
-    if ((ns.step !== undefined || ns.min !== undefined || ns.max !== undefined) && step !== 1) {
+    if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && step !== 1) {
       if (this.settings.max != null) {
         this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
       }
@@ -187,6 +392,24 @@ class TouchSpinCore {
         this.settings.min = this._alignToStep(Number(this.settings.min), step, 'up');
       }
     }
+
+    // Notify observers of changed settings
+    Object.keys(newSettings).forEach(key => {
+      if (oldSettings[key] !== newSettings[key]) {
+        const observers = this._settingObservers.get(key);
+        if (observers) {
+          observers.forEach(callback => {
+            try {
+              callback(newSettings[key], oldSettings[key]);
+            } catch (error) {
+              console.error('TouchSpin: Error in setting observer callback:', error);
+            }
+          });
+        }
+      }
+    });
+
+    // Core handles its own setting changes
     this._updateAriaAttributes();
     this._checkValue(false);
   }
@@ -221,14 +444,51 @@ class TouchSpinCore {
     this._attachDOMEventListeners();
   }
 
+  /**
+   * Register a teardown callback that will be called when the instance is destroyed.
+   * This allows wrapper libraries to register cleanup logic.
+   * @param {Function} callback - Function to call on destroy
+   * @returns {Function} - Unregister function
+   */
+  registerTeardown(callback) {
+    if (typeof callback !== 'function') {
+      throw new Error('Teardown callback must be a function');
+    }
+    this._teardownCallbacks.push(callback);
+    
+    // Return unregister function
+    return () => {
+      const index = this._teardownCallbacks.indexOf(callback);
+      if (index > -1) {
+        this._teardownCallbacks.splice(index, 1);
+      }
+    };
+  }
+
   /** Cleanup and destroy the TouchSpin instance */
   destroy() {
     this.stopSpin();
+    
+    // Renderer cleans up its added elements
+    if (this.renderer && this.renderer.teardown) {
+      this.renderer.teardown();
+    }
+    
+    // Core cleans up input events only
     this._detachDOMEventListeners();
 
-    // Remove all elements with our data attributes
-    const injectedElements = document.querySelectorAll('[data-touchspin-injected]');
-    injectedElements.forEach(el => el.remove());
+    // Call all registered teardown callbacks (for wrapper cleanup)
+    this._teardownCallbacks.forEach(callback => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('TouchSpin teardown callback error:', error);
+      }
+    });
+    this._teardownCallbacks.length = 0; // Clear the array
+
+    // Clear setting observers
+    this._settingObservers.clear();
 
     // Remove instance from element
     if (this.input[INSTANCE_KEY] === this) {
@@ -254,7 +514,61 @@ class TouchSpinCore {
       on: this.on.bind(this),
       off: this.off.bind(this),
       initDOMEventHandling: this.initDOMEventHandling.bind(this),
+      registerTeardown: this.registerTeardown.bind(this),
+      attachUpEvents: this.attachUpEvents.bind(this),
+      attachDownEvents: this.attachDownEvents.bind(this),
+      observeSetting: this.observeSetting.bind(this),
     };
+  }
+
+  // --- Renderer Event Attachment Methods ---
+  /**
+   * Attach up button events to an element
+   * Called by renderers after creating up button
+   * @param {HTMLElement|null} element - The element to attach events to
+   */
+  attachUpEvents(element) {
+    if (!element) {
+      console.warn('TouchSpin: attachUpEvents called with null element');
+      return;
+    }
+    
+    element.addEventListener('mousedown', this._handleUpMouseDown);
+    element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
+  }
+
+  /**
+   * Attach down button events to an element  
+   * Called by renderers after creating down button
+   * @param {HTMLElement|null} element - The element to attach events to
+   */
+  attachDownEvents(element) {
+    if (!element) {
+      console.warn('TouchSpin: attachDownEvents called with null element');
+      return;
+    }
+    
+    element.addEventListener('mousedown', this._handleDownMouseDown);
+    element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+  }
+
+  // --- Settings Observer Pattern ---
+  /**
+   * Allow renderers to observe setting changes
+   * @param {string} settingName - Name of setting to observe
+   * @param {Function} callback - Function to call when setting changes (newValue, oldValue)
+   * @returns {Function} Unsubscribe function
+   */
+  observeSetting(settingName, callback) {
+    if (!this._settingObservers.has(settingName)) {
+      this._settingObservers.set(settingName, new Set());
+    }
+    
+    const observers = this._settingObservers.get(settingName);
+    observers.add(callback);
+    
+    // Return unsubscribe function
+    return () => observers.delete(callback);
   }
 
   // --- Minimal internal emitter API ---
@@ -662,6 +976,7 @@ class TouchSpinCore {
  * @property {(event: string, handler: (detail?: any) => void) => () => void} on
  * @property {(event: string, handler?: (detail?: any) => void) => void} off
  * @property {() => void} initDOMEventHandling
+ * @property {(callback: Function) => () => void} registerTeardown
  */
 
 /**
@@ -741,5 +1056,5 @@ function attach(inputEl, opts) {
   return new TouchSpinCore(inputEl, opts);
 }
 
-export { CORE_EVENTS, TouchSpin, TouchSpinCore, attach, createPublicApi, TouchSpinCore as default, getTouchSpin };
+export { AbstractRenderer, CORE_EVENTS, RawRenderer, TouchSpin, TouchSpinCore, attach, createPublicApi, TouchSpinCore as default, getTouchSpin };
 //# sourceMappingURL=touchspin.js.map

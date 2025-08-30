@@ -28,17 +28,117 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   /**
   * AbstractRenderer - Base class for TouchSpin renderers
   * Part of @touchspin/core package to avoid duplication across renderer packages
+  * 
+  * @example
+  * class CustomRenderer extends AbstractRenderer {
+  *   init() {
+  *     this.wrapper = this.buildUI();
+  *     const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+  *     const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+  *     this.core.attachUpEvents(upBtn);
+  *     this.core.attachDownEvents(downBtn);
+  *     this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+  *   }
+  * }
   */
   var AbstractRenderer = /*#__PURE__*/function () {
-    function AbstractRenderer($, settings, originalinput) {
+    /**
+     * @param {HTMLInputElement} inputEl - The input element to render around
+     * @param {Object} settings - TouchSpin settings (read-only)
+     * @param {Object} core - TouchSpin core instance for event delegation
+     */
+    function AbstractRenderer(inputEl, settings, core) {
       _classCallCheck(this, AbstractRenderer);
-      this.$ = $;
-      this.settings = settings;
-      this.originalinput = originalinput;
+      // New renderer architecture
+      /** @type {HTMLInputElement} */
+      this.input = inputEl;
+      /** @type {Object} */
+      this.settings = settings; // Read-only access to settings
+      /** @type {Object} */
+      this.core = core; // Reference to core for calling attachment methods
+      /** @type {HTMLElement|null} */
+      this.wrapper = null; // Set by subclasses during init()
+
+      // Legacy compatibility (transitional)
+      this.$ = typeof $ !== 'undefined' ? $ : null;
+      this.originalinput = this.$ ? this.$(inputEl) : null;
       this.container = null;
       this.elements = null;
     }
+
+    /**
+     * Initialize the renderer - build DOM structure and attach events
+     * Must be implemented by subclasses
+     * @abstract
+     */
     return _createClass(AbstractRenderer, [{
+      key: "init",
+      value: function init() {
+        throw new Error('init() must be implemented by renderer');
+      }
+
+      /**
+       * Cleanup renderer - remove injected elements and restore original state
+       * Default implementation removes all injected elements
+       * Subclasses can override for custom teardown
+       */
+    }, {
+      key: "teardown",
+      value: function teardown() {
+        // Default implementation - remove all injected elements
+        this.removeInjectedElements();
+        // Subclasses can override for custom teardown
+      }
+
+      /**
+       * Utility method to remove all injected TouchSpin elements
+       * Handles both regular wrappers and advanced input groups
+       * Called automatically by teardown()
+       */
+    }, {
+      key: "removeInjectedElements",
+      value: function removeInjectedElements() {
+        var _this = this;
+        // Find and remove all elements with data-touchspin-injected attribute
+        if (this.wrapper) {
+          var injected = this.wrapper.querySelectorAll('[data-touchspin-injected]');
+          injected.forEach(function (el) {
+            return el.remove();
+          });
+
+          // If wrapper itself was injected and is not the original parent
+          if (this.wrapper.hasAttribute('data-touchspin-injected') && this.wrapper.parentElement) {
+            var injectedType = this.wrapper.getAttribute('data-touchspin-injected');
+            if (injectedType === 'wrapper-advanced') {
+              // For advanced input groups, just remove the TouchSpin classes and attribute
+              // but keep the original input-group structure intact
+              this.wrapper.classList.remove('bootstrap-touchspin');
+              this.wrapper.removeAttribute('data-touchspin-injected');
+            } else {
+              // For regular wrappers, unwrap the input element
+              var parent = this.wrapper.parentElement;
+              parent.insertBefore(this.input, this.wrapper);
+              this.wrapper.remove();
+            }
+          }
+        }
+
+        // Also find any injected elements that might be siblings or elsewhere
+        var allInjected = document.querySelectorAll('[data-touchspin-injected]');
+        allInjected.forEach(function (el) {
+          var _this$input$parentEle;
+          // Only remove if it's related to this input (check if input is descendant or sibling)
+          if (el.contains(_this.input) || el.parentElement && el.parentElement.contains(_this.input) || (_this$input$parentEle = _this.input.parentElement) !== null && _this$input$parentEle !== void 0 && _this$input$parentEle.contains(el)) {
+            // Don't remove the input itself
+            if (el !== _this.input) {
+              el.remove();
+            }
+          }
+        });
+      }
+
+      // Legacy methods (transitional - for backward compatibility)
+    }, {
       key: "getFrameworkId",
       value: function getFrameworkId() {
         throw new Error('getFrameworkId() must be implemented by subclasses');
@@ -114,15 +214,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         return '';
       }
     }]);
-  }(); // UMD-style export retained for now (transitional)
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AbstractRenderer;
-  } else if (typeof window !== 'undefined') {
-    window.AbstractRenderer = AbstractRenderer;
-  }
-
+  }();
   /**
-   * Tailwind CSS Renderer (aligned with src/renderers/TailwindRenderer.js)
+   * Tailwind CSS Renderer - New Architecture
    * Uses Tailwind utility classes only; no Bootstrap CSS dependency.
    */
   var TailwindRenderer = /*#__PURE__*/function (_AbstractRenderer) {
@@ -132,115 +226,239 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }
     _inherits(TailwindRenderer, _AbstractRenderer);
     return _createClass(TailwindRenderer, [{
-      key: "getFrameworkId",
-      value: function getFrameworkId() {
-        return 'tailwind';
+      key: "init",
+      value: function init() {
+        var _this2 = this;
+        // 1. Build and inject DOM structure around input
+        this.wrapper = this.buildInputGroup();
+
+        // 2. Find created buttons
+        var upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+        var downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+
+        // 3. Tell core to attach its event handlers
+        this.core.attachUpEvents(upButton);
+        this.core.attachDownEvents(downButton);
+
+        // 4. Register for setting changes we care about
+        this.core.observeSetting('prefix', function (newValue) {
+          return _this2.updatePrefix(newValue);
+        });
+        this.core.observeSetting('postfix', function (newValue) {
+          return _this2.updatePostfix(newValue);
+        });
+        this.core.observeSetting('buttonup_class', function (newValue) {
+          return _this2.updateButtonClass('up', newValue);
+        });
+        this.core.observeSetting('buttondown_class', function (newValue) {
+          return _this2.updateButtonClass('down', newValue);
+        });
+      }
+
+      // teardown() uses inherited removeInjectedElements() - no override needed
+    }, {
+      key: "buildInputGroup",
+      value: function buildInputGroup() {
+        // Check if input is already inside a flex container
+        var existingContainer = this.input.closest('.flex');
+        if (existingContainer && existingContainer.classList.contains('rounded-md')) {
+          return this.buildAdvancedInputGroup(existingContainer);
+        } else {
+          return this.buildBasicInputGroup();
+        }
       }
     }, {
-      key: "getDefaultSettings",
-      value: function getDefaultSettings() {
-        return {
-          buttonup_class: '',
-          buttondown_class: '',
-          verticalupclass: '',
-          verticaldownclass: '',
-          input_class: ''
-        };
+      key: "buildBasicInputGroup",
+      value: function buildBasicInputGroup() {
+        var inputSize = this._detectInputSize();
+        var isVertical = this.settings.verticalbuttons;
+        var html;
+        if (isVertical) {
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class || '', "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class || '', "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n          </div>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+        } else {
+          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ".concat(this.settings.buttondown_class || '', "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix || '', "</span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class || '', "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n      ");
+        }
+
+        // Create wrapper and wrap the input
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html.trim();
+        var wrapper = tempDiv.firstChild;
+
+        // Insert wrapper and move input into it
+        this.input.parentElement.insertBefore(wrapper, this.input);
+
+        // Find the position to insert input (after prefix, before postfix)
+        var prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        if (prefixEl) {
+          wrapper.insertBefore(this.input, prefixEl.nextSibling);
+        } else {
+          var postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+          wrapper.insertBefore(this.input, postfixEl);
+        }
+
+        // Apply input styling
+        this.input.className = this.input.className.replace('form-control', '');
+        this.input.classList.add('flex-1', 'px-3', 'py-2', 'border-0', 'bg-transparent', 'focus:outline-none', 'text-gray-900', 'placeholder-gray-500');
+
+        // Apply size classes
+        this._applySizeClasses(wrapper);
+
+        // Hide empty prefix/postfix
+        this.hideEmptyPrefixPostfix(wrapper);
+        return wrapper;
+      }
+    }, {
+      key: "buildAdvancedInputGroup",
+      value: function buildAdvancedInputGroup(existingContainer) {
+        // Add bootstrap-touchspin class to existing container
+        existingContainer.classList.add('bootstrap-touchspin');
+        existingContainer.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+        var isVertical = this.settings.verticalbuttons;
+
+        // Create elements HTML
+        var elementsHtml;
+        if (isVertical) {
+          elementsHtml = "\n        <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class || '', "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class || '', "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n      ");
+        } else {
+          elementsHtml = "\n        <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class || '', "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class || '', "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n      ");
+        }
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = elementsHtml;
+
+        // Insert prefix before the input
+        var prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+        existingContainer.insertBefore(prefixEl, this.input);
+        if (isVertical) {
+          // Insert vertical button wrapper after the input
+          var verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+          existingContainer.insertBefore(verticalWrapper, this.input.nextSibling);
+        } else {
+          // Insert down button before the input
+          var downButton = tempDiv.querySelector('[data-touchspin-injected="down"]');
+          existingContainer.insertBefore(downButton, this.input);
+
+          // Insert up button after the input
+          var upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
+          existingContainer.insertBefore(upButton, this.input.nextSibling);
+        }
+
+        // Insert postfix after everything
+        var postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+        existingContainer.appendChild(postfixEl);
+
+        // Apply input styling
+        this.input.className = this.input.className.replace('form-control', '');
+        this.input.classList.add('flex-1', 'px-3', 'py-2', 'border-0', 'bg-transparent', 'focus:outline-none', 'text-gray-900', 'placeholder-gray-500');
+
+        // Apply size classes
+        this._applySizeClasses(existingContainer);
+
+        // Hide empty prefix/postfix
+        this.hideEmptyPrefixPostfix(existingContainer);
+        return existingContainer;
       }
     }, {
       key: "_detectInputSize",
       value: function _detectInputSize() {
-        if (this.originalinput.hasClass('text-sm') || this.originalinput.hasClass('py-1')) return 'text-sm py-1 px-2';
-        if (this.originalinput.hasClass('text-lg') || this.originalinput.hasClass('py-3')) return 'text-lg py-3 px-4';
+        var classList = this.input.className;
+        if (classList.includes('text-sm') || classList.includes('py-1')) {
+          return 'text-sm py-1 px-2';
+        } else if (classList.includes('text-lg') || classList.includes('py-3')) {
+          return 'text-lg py-3 px-4';
+        }
         return 'text-base py-2 px-3';
       }
     }, {
       key: "_applySizeClasses",
       value: function _applySizeClasses() {
+        var wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.wrapper;
         var s = this._detectInputSize();
         if (s.includes('text-sm')) {
-          this.container.addClass('text-sm');
-          this.container.find('.tailwind-btn').addClass('py-1 px-2 text-sm');
-          this.container.find('.tailwind-addon').addClass('py-1 px-2 text-sm');
+          wrapper.classList.add('text-sm');
+          wrapper.querySelectorAll('.tailwind-btn').forEach(function (btn) {
+            btn.classList.add('py-1', 'px-2', 'text-sm');
+          });
+          wrapper.querySelectorAll('.tailwind-addon').forEach(function (addon) {
+            addon.classList.add('py-1', 'px-2', 'text-sm');
+          });
         } else if (s.includes('text-lg')) {
-          this.container.addClass('text-lg');
-          this.container.find('.tailwind-btn').addClass('py-3 px-4 text-lg');
-          this.container.find('.tailwind-addon').addClass('py-3 px-4 text-lg');
+          wrapper.classList.add('text-lg');
+          wrapper.querySelectorAll('.tailwind-btn').forEach(function (btn) {
+            btn.classList.add('py-3', 'px-4', 'text-lg');
+          });
+          wrapper.querySelectorAll('.tailwind-addon').forEach(function (addon) {
+            addon.classList.add('py-3', 'px-4', 'text-lg');
+          });
         }
       }
     }, {
-      key: "buildAdvancedInputGroup",
-      value: function buildAdvancedInputGroup(parentelement) {
-        parentelement.addClass('flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50');
-        parentelement.attr('data-touchspin-injected', 'enhanced-wrapper');
-        var testidAttr = this.getWrapperTestId();
-        if (testidAttr) {
-          var m = testidAttr.match(/data-testid=\"([^\"]+)\"/);
-          if (m) parentelement.attr('data-testid', m[1]);
+      key: "hideEmptyPrefixPostfix",
+      value: function hideEmptyPrefixPostfix() {
+        var wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.wrapper;
+        var prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        var postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+        if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
+          prefixEl.remove();
         }
-        var prefixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix, "</span>");
-        var postfixhtml = "\n      <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">".concat(this.settings.postfix, "</span>");
-        if (this.settings.verticalbuttons) {
-          var verticalHtml = this.buildVerticalButtons();
-          this.$(verticalHtml).insertAfter(this.originalinput);
-        } else {
-          var downhtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-down ".concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>");
-          var uphtml = "\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn bootstrap-touchspin-up ".concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>");
-          this.$(downhtml).insertBefore(this.originalinput);
-          this.$(uphtml).insertAfter(this.originalinput);
+        if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
+          postfixEl.remove();
         }
-        if (this.settings.prefix !== '') this.$(prefixhtml).insertBefore(this.originalinput);
-        if (this.settings.postfix !== '') this.$(postfixhtml).insertAfter(this.originalinput);
-        this.originalinput.removeClass('form-control');
-        this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed');
-        this.container = parentelement;
-        return parentelement;
       }
     }, {
-      key: "buildInputGroup",
-      value: function buildInputGroup() {
-        var testidAttr = this.getWrapperTestId();
-        var html;
-        if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix, "</span>\n          <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ").concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup, "</button>\n            <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n          </div>\n        </div>");
-        } else {
-          html = "\n        <div class=\"flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50\" data-touchspin-injected=\"wrapper\"".concat(testidAttr, ">\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ").concat(this.settings.buttondown_class, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt, "</button>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix, "</span>\n          <span class=\"inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix, "</span>\n          <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn bootstrap-touchspin-up ").concat(this.settings.buttonup_class, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt, "</button>\n        </div>");
+      key: "updatePrefix",
+      value: function updatePrefix(value) {
+        var prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        if (value && value !== '') {
+          if (!prefixEl) {
+            // Re-create prefix element if it was removed
+            prefixEl = document.createElement('span');
+            prefixEl.className = 'inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon';
+            prefixEl.setAttribute('data-touchspin-injected', 'prefix');
+            prefixEl.textContent = value;
+            // Insert at the beginning of the wrapper
+            this.wrapper.insertBefore(prefixEl, this.wrapper.firstChild);
+          } else {
+            prefixEl.textContent = value;
+          }
+        } else if (prefixEl) {
+          // Remove element if value is empty
+          prefixEl.remove();
         }
-        this.container = this.$(html).insertBefore(this.originalinput);
-        this.$('[data-touchspin-injected="prefix"]', this.container).after(this.originalinput);
-        this.originalinput.removeClass('form-control');
-        this.originalinput.addClass('flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 read-only:bg-gray-50 disabled:cursor-not-allowed');
-        this._applySizeClasses();
-        return this.container;
       }
     }, {
-      key: "buildVerticalButtons",
-      value: function buildVerticalButtons() {
-        return "\n      <div class=\"flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ".concat(this.settings.verticalupclass, "\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup, "</button>\n        <button tabindex=\"-1\" class=\"inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn bootstrap-touchspin-down ").concat(this.settings.verticaldownclass, "\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown, "</button>\n      </div>");
+      key: "updatePostfix",
+      value: function updatePostfix(value) {
+        var postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+        if (value && value !== '') {
+          if (!postfixEl) {
+            // Re-create postfix element if it was removed
+            postfixEl = document.createElement('span');
+            postfixEl.className = 'inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon';
+            postfixEl.setAttribute('data-touchspin-injected', 'postfix');
+            postfixEl.textContent = value;
+            // Insert at the end of the wrapper
+            this.wrapper.appendChild(postfixEl);
+          } else {
+            postfixEl.textContent = value;
+          }
+        } else if (postfixEl) {
+          // Remove element if value is empty
+          postfixEl.remove();
+        }
       }
     }, {
-      key: "updatePrefixPostfix",
-      value: function updatePrefixPostfix(newsettings, detached) {
-        if (newsettings.postfix) {
-          var $postfix = this.originalinput.parent().find('[data-touchspin-injected="postfix"]');
-          if ($postfix.length === 0 && detached._detached_postfix) detached._detached_postfix.insertAfter(this.originalinput);
-          this.originalinput.parent().find('[data-touchspin-injected="postfix"]').text(newsettings.postfix);
-        }
-        if (newsettings.prefix) {
-          var $prefix = this.originalinput.parent().find('[data-touchspin-injected="prefix"]');
-          if ($prefix.length === 0 && detached._detached_prefix) detached._detached_prefix.insertBefore(this.originalinput);
-          this.originalinput.parent().find('[data-touchspin-injected="prefix"]').text(newsettings.prefix);
+      key: "updateButtonClass",
+      value: function updateButtonClass(type, className) {
+        var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+        if (button) {
+          // Remove old custom classes and add new ones
+          var baseClasses = 'inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn';
+          var directionalClass = type === 'up' ? 'bootstrap-touchspin-up' : 'bootstrap-touchspin-down';
+          button.className = "".concat(baseClasses, " ").concat(directionalClass, " ").concat(className || '');
         }
       }
     }]);
-  }(AbstractRenderer);
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = TailwindRenderer;
-  } else if (typeof window !== 'undefined') {
-    window.TailwindRenderer = TailwindRenderer;
-  }
-
-  // Simple factory for single version - no auto-detection needed
+  }(AbstractRenderer); // Simple factory for single version - no auto-detection needed
   var RendererFactory = /*#__PURE__*/function () {
     function RendererFactory() {
       _classCallCheck(this, RendererFactory);
