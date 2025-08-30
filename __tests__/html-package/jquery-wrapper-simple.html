@@ -6,8 +6,8 @@
   <title>Simple TouchSpin jQuery Wrapper Test</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .container { max-width: 600px; margin-top: 50px; }
-    .btn { margin: 2px; }
+    .container { max-width: 1000px; margin-top: 50px; }
+    .btn:not(.input-group .btn) { margin: 2px; }
   </style>
 </head>
 <body>
@@ -37,14 +37,25 @@
       <button class="btn btn-warning" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{step: 1}])">Set Step=1</button>
     </div>
 
+    <!-- Prefix/Postfix Test Buttons -->
+    <div class="mb-3">
+      <h6>Prefix/Postfix Tests:</h6>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{prefix: '$'}])">Add Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{postfix: 'USD'}])">Add Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{prefix: '€', postfix: 'EUR'}])">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{prefix: ''}])">Clear Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{postfix: ''}])">Clear Postfix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#simple-input').trigger('touchspin.updatesettings', [{prefix: '', postfix: ''}])">Clear Both</button>
+    </div>
+
     <div class="mb-3">
       <button class="btn btn-success" onclick="initTouchSpin()">Initialize</button>
       <button class="btn btn-outline-danger" onclick="$('#simple-input').TouchSpin('destroy')">Destroy</button>
     </div>
 
-    <!-- Callable Events (triggered with .trigger()) -->
+    <!-- Simple Input Callable Events -->
     <div class="mb-3">
-      <h6>Callable Events (via .trigger()):</h6>
+      <h6>Simple Input - Callable Events (via .trigger()):</h6>
       <button class="btn btn-outline-primary btn-sm" onclick="$('#simple-input').trigger('touchspin.uponce')">trigger('touchspin.uponce')</button>
       <button class="btn btn-outline-primary btn-sm" onclick="$('#simple-input').trigger('touchspin.downonce')">trigger('touchspin.downonce')</button>
       <button class="btn btn-outline-secondary btn-sm" onclick="$('#simple-input').trigger('touchspin.startupspin')">trigger('touchspin.startupspin')</button>
@@ -54,10 +65,50 @@
 
     <!-- Direct API Access via Core -->
     <div class="mb-3">
-      <h6>Direct Core Access (for comparison):</h6>
+      <h6>Simple Input - Direct Core Access (for comparison):</h6>
       <button class="btn btn-outline-primary btn-sm" onclick="getDirectApi()?.upOnce()">Direct Up Once</button>
       <button class="btn btn-outline-info btn-sm" onclick="alert('Direct Value: ' + (getDirectApi()?.getValue() ?? 'Not initialized'))">Direct Get Value</button>
     </div>
+
+    <!-- Advanced Input Group Test -->
+    <hr>
+    <div class="mb-4">
+      <h5>Advanced Input Group Test</h5>
+      <p>This input is already wrapped in an input-group with existing prefix and postfix elements.</p>
+      
+      <div class="input-group" style="max-width: 300px;">
+        <span class="input-group-text">🌍</span>
+        <input id="advanced-input" type="number" value="25" class="form-control">
+        <span class="input-group-text">km</span>
+      </div>
+    </div>
+
+    <!-- Advanced Input Group Controls -->
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="initAdvancedTouchSpin()">Initialize Advanced</button>
+      <button class="btn btn-outline-danger" onclick="$('#advanced-input').TouchSpin('destroy')">Destroy Advanced</button>
+    </div>
+
+    <!-- Advanced Prefix/Postfix Test Buttons -->
+    <div class="mb-3">
+      <h6>Advanced Prefix/Postfix Tests:</h6>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#advanced-input').trigger('touchspin.updatesettings', [{prefix: '$'}])">Add TouchSpin Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#advanced-input').trigger('touchspin.updatesettings', [{postfix: 'USD'}])">Add TouchSpin Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="$('#advanced-input').trigger('touchspin.updatesettings', [{prefix: '€', postfix: 'EUR'}])">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#advanced-input').trigger('touchspin.updatesettings', [{prefix: ''}])">Clear TouchSpin Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#advanced-input').trigger('touchspin.updatesettings', [{postfix: ''}])">Clear TouchSpin Postfix</button>
+    </div>
+
+    <!-- Advanced Input Callable Events -->
+    <div class="mb-3">
+      <h6>Advanced Input - Callable Events (via .trigger()):</h6>
+      <button class="btn btn-outline-primary btn-sm" onclick="$('#advanced-input').trigger('touchspin.uponce')">trigger('touchspin.uponce')</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="$('#advanced-input').trigger('touchspin.downonce')">trigger('touchspin.downonce')</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="$('#advanced-input').trigger('touchspin.startupspin')">trigger('touchspin.startupspin')</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="$('#advanced-input').trigger('touchspin.startdownspin')">trigger('touchspin.startdownspin')</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="$('#advanced-input').trigger('touchspin.stopspin')">trigger('touchspin.stopspin')</button>
+    </div>
+
 
     <div class="mt-4">
       <p><strong>Instructions:</strong></p>
@@ -104,8 +155,26 @@
       });
     };
 
-    // Auto-initialize on page load
-    document.addEventListener('DOMContentLoaded', initTouchSpin);
+    // Advanced input group initialization
+    window.initAdvancedTouchSpin = function() {
+      const $input = $('#advanced-input');
+      
+      // Initialize TouchSpin on input that's already in an input-group
+      $input.TouchSpin({
+        renderer: Bootstrap5Renderer, // Required: specify renderer
+        min: 0,
+        max: 500,
+        step: 5,
+        prefix: '', // Start with no TouchSpin prefix
+        postfix: ''  // Start with no TouchSpin postfix  
+      });
+    };
+
+    // Auto-initialize both inputs on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initTouchSpin();
+      initAdvancedTouchSpin();
+    });
   </script>
 </body>
 </html>

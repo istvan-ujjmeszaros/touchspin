@@ -121,26 +121,48 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
     
     if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-      prefixEl.style.display = 'none';
+      prefixEl.remove();
     }
     if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-      postfixEl.style.display = 'none';
+      postfixEl.remove();
     }
   }
 
   updatePrefix(value) {
-    const prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    if (prefixEl) {
-      prefixEl.textContent = value || '';
-      prefixEl.style.display = value ? '' : 'none';
+    let prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    
+    if (value && value !== '') {
+      if (!prefixEl) {
+        // Re-create prefix element if it was removed
+        prefixEl = document.createElement('span');
+        prefixEl.className = 'input-group-text';
+        prefixEl.setAttribute('data-touchspin-injected', 'prefix');
+        // Insert at the beginning of the wrapper
+        this.wrapper.insertBefore(prefixEl, this.wrapper.firstChild);
+      }
+      prefixEl.textContent = value;
+    } else if (prefixEl) {
+      // Remove element if value is empty
+      prefixEl.remove();
     }
   }
   
   updatePostfix(value) {
-    const postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
-    if (postfixEl) {
-      postfixEl.textContent = value || '';
-      postfixEl.style.display = value ? '' : 'none';
+    let postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    
+    if (value && value !== '') {
+      if (!postfixEl) {
+        // Re-create postfix element if it was removed
+        postfixEl = document.createElement('span');
+        postfixEl.className = 'input-group-text';
+        postfixEl.setAttribute('data-touchspin-injected', 'postfix');
+        // Insert at the end of the wrapper
+        this.wrapper.appendChild(postfixEl);
+      }
+      postfixEl.textContent = value;
+    } else if (postfixEl) {
+      // Remove element if value is empty
+      postfixEl.remove();
     }
   }
   
