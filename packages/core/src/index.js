@@ -859,5 +859,5 @@ export function attach(inputEl, opts) {
 
 export default TouchSpinCore;
 
-// Export renderers
-export { default as AbstractRenderer } from './AbstractRenderer.js';
+// Note: AbstractRenderer is not exported as it's only needed by renderer implementations
+// Renderers should import it directly: import AbstractRenderer from '../../../core/src/AbstractRenderer.js';

@@ -74,7 +74,8 @@ The core attaches event listeners to elements with `data-touchspin-injected` att
 Renderers must extend `AbstractRenderer` and implement `init()`:
 
 ```javascript
-import AbstractRenderer from '@touchspin/core/AbstractRenderer';
+// Import AbstractRenderer directly from file path
+import AbstractRenderer from '../core/src/AbstractRenderer.js';
 
 class CustomRenderer extends AbstractRenderer {
   init() {

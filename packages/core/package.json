@@ -10,10 +10,6 @@
     ".": {
       "import": "./src/index.js",
       "require": "./src/index.js"
-    },
-    "./AbstractRenderer": {
-      "import": "./src/AbstractRenderer.js",
-      "require": "./src/AbstractRenderer.js"
     }
   }
 }
