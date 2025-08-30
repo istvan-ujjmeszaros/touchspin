@@ -1,0 +1,42 @@
+// jQuery Bootstrap 5 build entry point
+import { TouchSpinCore, getTouchSpin } from '../../packages/core/src/index.js';
+import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+
+// Wrapper function for standalone use (when jQuery is not available)
+function TouchSpin(element, options = {}) {
+  if (!(element instanceof Element)) {
+    throw new TypeError('TouchSpin expects an HTMLElement');
+  }
+  
+  // Set the baked-in renderer for this build
+  options.renderer = options.renderer || Bootstrap5Renderer;
+  
+  // Use core directly
+  if (element._touchSpinCore) {
+    element._touchSpinCore.destroy();
+  }
+  
+  const core = new TouchSpinCore(element, options);
+  element._touchSpinCore = core;
+  core.initDOMEventHandling();
+  
+  return core.toPublicApi();
+}
+
+// Install jQuery plugin if jQuery is available
+if (typeof window !== 'undefined' && window.jQuery) {
+  installJqueryTouchSpin(window.jQuery);
+}
+
+// For jQuery builds, ensure globals are properly exposed for direct access
+if (typeof window !== 'undefined') {
+  window.TouchSpin = TouchSpin;
+  window.TouchSpinCore = TouchSpinCore;
+  window.getTouchSpin = getTouchSpin;
+  window.Bootstrap5Renderer = Bootstrap5Renderer;
+  window.installJqueryTouchSpin = installJqueryTouchSpin;
+}
+
+// Export for module systems only (no default export)
+export { TouchSpin, TouchSpinCore, getTouchSpin, Bootstrap5Renderer, installJqueryTouchSpin };
