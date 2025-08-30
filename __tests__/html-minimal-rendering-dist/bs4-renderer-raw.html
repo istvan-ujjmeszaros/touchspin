@@ -4,31 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bootstrap 4 Renderer - Raw Core</title>
-  
+
   <!-- Bootstrap 4 CSS -->
   <link href="../html/assets/bootstrap/bootstrap-4.6.2.min.css" rel="stylesheet">
-  
+
   <!-- TouchSpin CSS -->
   <link href="../../dist/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1>Bootstrap 4 Renderer - Raw Core Test (Dist)</h1>
-    
+
     <div class="form-group">
       <label for="test-input">Test Input:</label>
       <input id="test-input" type="number" value="50" class="form-control">
     </div>
   </div>
 
-  <script type="module">
-    import { TouchSpin, Bootstrap4Renderer } from '../../dist/esm/touchspin.js';
-    
-    const input = document.getElementById('test-input');
-    TouchSpin(input, { 
-      renderer: Bootstrap4Renderer,
-      min: 0,
-      max: 100 
+  <script src="../../dist/touchspin-bs4.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('test-input');
+      TouchSpin(input, {
+        min: 0,
+        max: 100
+      });
     });
   </script>
 </body>

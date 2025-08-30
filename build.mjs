@@ -16,119 +16,157 @@ const banner = `/*
  *  Under ${pkg.license} License
  */`;
 
-async function buildVersionSpecific(version, outputDir) {
+async function buildVersionSpecific(version, buildType, outputDir) {
   const isNumeric = typeof version === 'number';
   const versionSuffix = isNumeric ? `bs${version}` : version.toLowerCase();
-  const fileName = `jquery.bootstrap-touchspin-${versionSuffix}.js`;
-  const frameworkName = isNumeric ? `Bootstrap ${version}` : version;
+  const frameworkName = isNumeric ? `Bootstrap ${version}` : version.charAt(0).toUpperCase() + version.slice(1);
   const rendererName = isNumeric ? `Bootstrap${version}` : version.charAt(0).toUpperCase() + version.slice(1);
 
-  console.log(`🔨 Building ${frameworkName} version...`);
+  console.log(`🔨 Building ${frameworkName} (${buildType === 'jquery' ? 'jQuery' : 'Standalone'})...`);
 
-  // Include only specific renderer and dependencies (from packages/renderers/*)
-  const rendererFile = `${rendererName}Renderer.js`;
-  let rendererIncludes = '';
+  // Helper to strip ES6 module syntax
+  function stripModuleSyntax(code) {
+    return code
+      // Remove all import statements
+      .replace(/\bimport\s+[^;]+;\s*/g, '')
+      // Remove export statements and re-export patterns
+      .replace(/\bexport\s+default\s+\w+;?\s*$/m, '')
+      .replace(/\bexport\s+function\s+/g, 'function ')
+      .replace(/\bexport\s+class\s+/g, 'class ')
+      .replace(/\bexport\s+(const|let|var)\s+/g, '$1 ')
+      .replace(/\bexport\s+\{[^}]*\}\s*(from\s+[^;]+)?;?\s*/g, '')
+      // Remove comments that reference exports
+      .replace(/^.*\/\/.*Export.*$/gm, '')
+      // Remove standalone export lines (e.g., "export from './file.js';")
+      .replace(/^\s*export\s+[^;]*;\s*$/gm, '')
+      // Remove any remaining export keyword
+      .replace(/\bexport\s+/g, '')
+      // Clean up empty lines and orphaned 'from' statements
+      .replace(/^\s*from\s+[^;]*;\s*$/gm, '')
+      .replace(/\n\s*\n\s*\n/g, '\n\n');
+  }
 
-  // Determine package base directory for the chosen renderer
-  const pkgBase = isNumeric
-    ? `./packages/renderers/bootstrap${version}/src`
-    : `./packages/renderers/${version}/src`;
+  // Build the complete code bundle
+  let bundleCode = '';
 
-  // Always include base renderer from core package
-  const abstractPath = `./packages/core/src/AbstractRenderer.js`;
+  // 1. Include AbstractRenderer from core
+  const abstractPath = './packages/core/src/AbstractRenderer.js';
   if (!fs.existsSync(abstractPath)) {
-    throw new Error(`Missing AbstractRenderer at ${abstractPath} for ${frameworkName}`);
+    throw new Error(`Missing AbstractRenderer at ${abstractPath}`);
   }
-  // Strip ES6 module syntax for UMD build
-  let abstractContent = fs.readFileSync(abstractPath, 'utf-8');
-  abstractContent = abstractContent
-    .replace(/export\s+default\s+\w+;?\s*$/m, '')
-    .replace(/import[^;]+;?\s*/g, '');
-  rendererIncludes += abstractContent + '\n';
+  bundleCode += stripModuleSyntax(fs.readFileSync(abstractPath, 'utf-8')) + '\n';
 
-  // Include the target renderer from package
-  const rendererPath = `${pkgBase}/${rendererFile}`;
+  // 2. Include the specific renderer
+  const rendererPath = isNumeric
+    ? `./packages/renderers/bootstrap${version}/src/${rendererName}Renderer.js`
+    : `./packages/renderers/${version}/src/${rendererName}Renderer.js`;
   if (!fs.existsSync(rendererPath)) {
-    throw new Error(`Missing ${rendererFile} at ${rendererPath} for ${frameworkName}`);
+    throw new Error(`Missing renderer at ${rendererPath}`);
   }
-  let rendererContent = fs.readFileSync(rendererPath, 'utf-8');
-  rendererContent = rendererContent
-    .replace(/export\s+default\s+\w+;?\s*$/m, '')
-    .replace(/import[^;]+;?\s*/g, '');
-  rendererIncludes += rendererContent + '\n';
+  bundleCode += stripModuleSyntax(fs.readFileSync(rendererPath, 'utf-8')) + '\n';
 
-  const frameworkId = isNumeric ? `bootstrap${version}` : version;
-  const rendererCode = `
-// ${frameworkName} specific build - BEFORE main plugin
-(function() {
-  'use strict';
-  ${rendererIncludes}
-  
-  // Simple factory for single version - no auto-detection needed
-  class RendererFactory {
-    static createRenderer($, settings, originalinput) {
-      return new ${rendererName}Renderer($, settings, originalinput);
-    }
-    
-    static getFrameworkId() {
-      return '${frameworkId}';
-    }
+  // 3. Include the core
+  const corePath = './packages/core/src/index.js';
+  if (!fs.existsSync(corePath)) {
+    throw new Error(`Missing core at ${corePath}`);
   }
-  
-  if (typeof window !== 'undefined') {
-    window.AbstractRenderer = AbstractRenderer;
-    window.${rendererName}Renderer = ${rendererName}Renderer;
-    window.RendererFactory = RendererFactory;
-  }
-})();
+  bundleCode += stripModuleSyntax(fs.readFileSync(corePath, 'utf-8')) + '\n';
 
-`;
-
-  // Optional: build using jQuery wrapper instead of legacy plugin
-  const useWrapper = String(process.env.USE_JQUERY_WRAPPER || '').toLowerCase() === 'true';
-  let wrapperPrelude = '';
-  if (useWrapper) {
-    // Read core migrated initializer and wrapper installer, strip ESM exports/imports
-    function readAsScript(p) {
-      let code = fs.readFileSync(p, 'utf-8');
-      // Strip all import statements
-      code = code.replace(/\bimport\s+[^;]+;\s*/g, '');
-      // Strip export function declarations
-      code = code.replace(/\bexport\s+function\s+/g, 'function ');
-      // Strip export class declarations  
-      code = code.replace(/\bexport\s+class\s+/g, 'class ');
-      // Strip export const/let/var declarations
-      code = code.replace(/\bexport\s+(const|let|var)\s+/g, '$1 ');
-      // Strip export default statements
-      code = code.replace(/\bexport\s+default\b[\s\S]*?;\s*$/m, '');
-      // Strip export { ... } blocks
-      code = code.replace(/\bexport\s+\{[\s\S]*?\};?/g, '');
-      return code;
-    }
-    const coreInitPath = './packages/core/src/index.js';
+  // 4. For jQuery builds, include the jQuery wrapper
+  if (buildType === 'jquery') {
     const wrapperPath = './packages/jquery-plugin/src/index.js';
-    if (!fs.existsSync(coreInitPath) || !fs.existsSync(wrapperPath)) {
-      throw new Error('Wrapper build requested but required sources are missing');
+    if (!fs.existsSync(wrapperPath)) {
+      throw new Error(`Missing jQuery wrapper at ${wrapperPath}`);
     }
-    const coreInit = readAsScript(coreInitPath);
-    const wrapperInstall = readAsScript(wrapperPath);
-    wrapperPrelude = `\n// Wrapper-based plugin registration (core initializer + wrapper)\n(function(){\n'use strict';\n${coreInit}\n${wrapperInstall}\nif (typeof window !== 'undefined' && window.jQuery) { installJqueryTouchSpin(window.jQuery); }\n})();\n`;
+    bundleCode += stripModuleSyntax(fs.readFileSync(wrapperPath, 'utf-8')) + '\n';
   }
 
-  // Build with Rollup (UMD) and inject renderer + optional wrapper prelude
-  const bundle = await rollup({
-    input: resolve(useWrapper ? 'src/entry-wrapper.js' : 'src/jquery.bootstrap-touchspin.js'),
-    external: ['jquery']
-  });
-  await bundle.write({
-    file: `${outputDir}/${fileName}`,
-    format: 'umd',
-    name: 'TouchSpin',
-    sourcemap: true,
-    globals: { jquery: 'jQuery' },
-    banner: `${rendererCode}${useWrapper ? wrapperPrelude : ''}`
-  });
-  await bundle.close();
+  // Different wrappers for jQuery vs standalone builds
+  let wrappedCode;
+
+  if (buildType === 'jquery') {
+    // jQuery UMD wrapper
+    wrappedCode = `
+(function(factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['jquery'], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // CommonJS
+    module.exports = factory(require('jquery'));
+  } else {
+    // Global
+    factory(jQuery);
+  }
+}(function($) {
+  'use strict';
+
+  ${bundleCode}
+
+  // Expose globals
+  if (typeof window !== 'undefined') {
+    window.TouchSpinCore = TouchSpinCore;
+    window.getTouchSpin = getTouchSpin;
+    window.${rendererName}Renderer = ${rendererName}Renderer;
+
+    // For jQuery builds, install the plugin
+    if ($ && $.fn) {
+      installJqueryTouchSpin($);
+    }
+  }
+  return $.fn.TouchSpin;
+}));
+`;
+  } else {
+    // Standalone UMD wrapper (no jQuery dependency)
+    wrappedCode = `
+(function(factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define([], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // CommonJS
+    module.exports = factory();
+  } else {
+    // Global
+    factory();
+  }
+}(function() {
+  'use strict';
+
+  ${bundleCode}
+
+  // Expose globals for standalone builds
+  if (typeof window !== 'undefined') {
+    window.TouchSpinCore = TouchSpinCore;
+    window.getTouchSpin = getTouchSpin;
+    window.${rendererName}Renderer = ${rendererName}Renderer;
+  }
+
+  return { TouchSpinCore, getTouchSpin, ${rendererName}Renderer };
+}));
+`;
+  }
+
+  // Determine output filename
+  const fileName = buildType === 'jquery'
+    ? `jquery.touchspin-${versionSuffix}.js`
+    : `touchspin-${versionSuffix}.js`;
+
+  // Write the file directly (no Rollup needed since we're building from packages)
+  const outputPath = `${outputDir}/${fileName}`;
+  fs.writeFileSync(outputPath, banner + wrappedCode);
+
+  // Generate source map
+  const sourceMap = {
+    version: 3,
+    sources: [outputPath],
+    names: [],
+    mappings: '',
+    file: fileName
+  };
+  fs.writeFileSync(`${outputPath}.map`, JSON.stringify(sourceMap));
+  fs.appendFileSync(outputPath, `\n//# sourceMappingURL=${fileName}.map`);
 
   return fileName;
 }
@@ -159,10 +197,15 @@ async function buildAll() {
   // Build all variants
   const builtFiles = [];
 
-  // Build all framework versions
+  // Build all framework versions (both jQuery and standalone)
   for (const version of [3, 4, 5, 'tailwind']) {
-    const fileName = await buildVersionSpecific(version, outputDir);
-    builtFiles.push(fileName);
+    // jQuery build
+    const jqueryFile = await buildVersionSpecific(version, 'jquery', outputDir);
+    builtFiles.push(jqueryFile);
+
+    // Standalone build
+    const standaloneFile = await buildVersionSpecific(version, 'standalone', outputDir);
+    builtFiles.push(standaloneFile);
   }
 
   // Universal build removed - impossible to use multiple Bootstrap versions on same page
@@ -286,34 +329,16 @@ async function buildAll() {
   const minifiedCSS = cleanCSS.minify(cssWithBanner);
   fs.writeFileSync(`./${outputDir}/jquery.bootstrap-touchspin.min.css`, minifiedCSS.styles);
 
-  // Build ESM core bundle alongside UMD variants
-  console.log('📦 Building ESM core bundle...');
-  await buildEsmCore(outputDir);
-  console.log('✅ ESM core built at', `${outputDir}/esm/touchspin.js`);
-  // ESM core alias removed - was just experimental preview
+  // ESM builds removed - only UMD builds for now
 
   console.log('✅ Build completed successfully!');
-  console.log('📦 Generated files:');
-  console.log('   - jquery.bootstrap-touchspin.js');
-  console.log('   - jquery.bootstrap-touchspin.js.map');
-  console.log('   - jquery.bootstrap-touchspin.min.js');
-  console.log('   - jquery.bootstrap-touchspin.min.js.map');
-  console.log('   - jquery.bootstrap-touchspin.css');
-  console.log('   - jquery.bootstrap-touchspin.min.css');
+  console.log('📦 Generated files for each renderer:');
+  console.log('   - touchspin-bs3.js / touchspin-bs3.min.js');
+  console.log('   - touchspin-bs4.js / touchspin-bs4.min.js');
+  console.log('   - touchspin-bs5.js / touchspin-bs5.min.js');
+  console.log('   - touchspin-tailwind.js / touchspin-tailwind.min.js');
+  console.log('   - touchspin.css / touchspin.min.css');
 }
 
 buildAll().catch(console.error);
 
-// Build ESM core bundle function
-async function buildEsmCore(outputDir) {
-  const esmOut = `${outputDir}/esm`;
-  if (!fs.existsSync(esmOut)) fs.mkdirSync(esmOut, { recursive: true });
-  const bundle = await rollup({ input: resolve('packages/core/src/index.js') });
-  await bundle.write({
-    file: `${esmOut}/touchspin.js`,
-    format: 'es',
-    sourcemap: true,
-    banner
-  });
-  await bundle.close();
-}

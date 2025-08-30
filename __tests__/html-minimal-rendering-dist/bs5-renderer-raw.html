@@ -13,15 +13,13 @@
     <input id="test-input" type="number" value="50" class="form-control" style="width: 200px;">
   </div>
 
-  <script type="module">
-    import { TouchSpin, Bootstrap5Renderer } from '../../dist/esm/touchspin.js';
-
+  <script src="../../dist/touchspin-bs5.js"></script>
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
       const input = document.getElementById('test-input');
-      
-      // Initialize TouchSpin with Bootstrap 5 renderer
+
+      // Initialize TouchSpin with Bootstrap 5 renderer (renderer is baked into build)
       const touchspin = TouchSpin(input, {
-        renderer: Bootstrap5Renderer,
         min: 0,
         max: 200,
         step: 1
