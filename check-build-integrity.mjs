@@ -95,7 +95,7 @@ function checkBuildIntegrity() {
   try {
     // Build fresh dist files into temp folder using integrity check mode
     console.log(`🔨 Building fresh dist files into ${tempDistFolder} for comparison...`);
-    execSync('node build.mjs', {
+    execSync('npm run build', {
       stdio: 'inherit',
       env: { ...process.env, BUILD_INTEGRITY_CHECK: 'true' }
     });

@@ -31,9 +31,10 @@ const variants = [
 function createConfig(variant, minified = false) {
   const isJQuery = variant.name.startsWith('jquery.');
   const isStandalone = !isJQuery;
+  const distFolder = process.env.BUILD_INTEGRITY_CHECK === 'true' ? 'tmp-dist-integrity-check' : 'dist';
   const outputFile = minified 
-    ? `dist/${variant.name}.min.js`
-    : `dist/${variant.name}.js`;
+    ? `${distFolder}/${variant.name}.min.js`
+    : `${distFolder}/${variant.name}.js`;
   
   return {
     input: variant.entry,
