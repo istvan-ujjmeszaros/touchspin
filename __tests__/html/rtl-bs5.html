@@ -15,27 +15,14 @@
 
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap5Renderer.js"></script>
-  
-  <!-- Create Bootstrap 5 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap5Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 5;
-      }
-    };
-  </script>
   
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 
@@ -53,7 +40,7 @@
         <input id="testinput_default" data-testid="touchspin-rtl-default" type="text" value="50" name="testinput_default" class="form-control">
 
         <script>
-          $("#testinput_default").TouchSpin();
+          $("#testinput_default").TouchSpin({ renderer: Bootstrap5Renderer });
         </script>
       </div>
 
@@ -63,6 +50,7 @@
 
         <script>
           $("#testinput_decimals").TouchSpin({
+            renderer: Bootstrap5Renderer,
             decimals: 2,
             step: 0.01
           });
@@ -75,6 +63,7 @@
 
         <script>
           $("#input_group_sm").TouchSpin({
+            renderer: Bootstrap5Renderer,
             prefix: "$",
             postfix: "/qty"
           });
@@ -87,6 +76,7 @@
 
         <script>
           $("#input_vertical").TouchSpin({
+            renderer: Bootstrap5Renderer,
             verticalbuttons: true
           });
         </script>
@@ -98,6 +88,7 @@
 
         <script>
           $("#input_group_vertical").TouchSpin({
+            renderer: Bootstrap5Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true
@@ -115,7 +106,7 @@
         </div>
 
         <script>
-          $("#input_group_from_dom_prefix_postfix").TouchSpin();
+          $("#input_group_from_dom_prefix_postfix").TouchSpin({ renderer: Bootstrap5Renderer });
         </script>
       </div>
 
@@ -130,6 +121,7 @@
 
         <script>
           $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
+            renderer: Bootstrap5Renderer,
             verticalbuttons: true,
             verticalup: '<i class="bi bi-chevron-up"></i>',
             verticaldown: '<i class="bi bi-chevron-down"></i>'

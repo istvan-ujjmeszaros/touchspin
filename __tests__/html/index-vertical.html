@@ -16,27 +16,14 @@
 
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
-  
-  <!-- Create Bootstrap 4 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap4Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 4;
-      }
-    };
-  </script>
   
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 
@@ -54,6 +41,7 @@
 
         <script>
           $("#testinput_vertical").TouchSpin({
+            renderer: Bootstrap4Renderer,
             verticalbuttons: true,
           });
         </script>
@@ -65,6 +53,7 @@
 
         <script>
           $("#testinput_vertical_lg").TouchSpin({
+            renderer: Bootstrap4Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true,
@@ -78,6 +67,7 @@
 
         <script>
           $("#rtl_testinput_vertical").TouchSpin({
+            renderer: Bootstrap4Renderer,
             verticalbuttons: true,
           });
         </script>
@@ -89,6 +79,7 @@
 
         <script>
           $("#rtl_testinput_vertical_lg").TouchSpin({
+            renderer: Bootstrap4Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true,

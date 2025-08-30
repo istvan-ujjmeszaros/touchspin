@@ -61,21 +61,13 @@
     </div>
   </div>
 
-  <!-- jQuery and Tailwind renderer -->
+  <!-- jQuery and Install the jQuery plugin wrapper with Tailwind renderer -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../packages/renderers/tailwind/src/AbstractRenderer.js"></script>
-  <script src="../../packages/renderers/tailwind/src/TailwindRenderer.js"></script>
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) { return new TailwindRenderer($, settings, originalinput); }
-      static getFrameworkId() { return 'tailwind'; }
-    };
-  </script>
-
-  <!-- Install the jQuery plugin wrapper (new core) -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    installJqueryTouchSpin(window.jQuery);
+    import { TailwindRenderer } from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+    
+    installJqueryTouchSpin(window.jQuery, { renderer: TailwindRenderer });
   </script>
 
   <script>

@@ -11,16 +11,8 @@
     .control-buttons button { margin: 4px; }
     pre { background:#f8f9fa; padding:10px; }
   </style>
-  <!-- Renderer (Tailwind) requires jQuery internally -->
+  <!-- jQuery required for Tailwind renderer -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../packages/renderers/tailwind/src/AbstractRenderer.js"></script>
-  <script src="../../packages/renderers/tailwind/src/TailwindRenderer.js"></script>
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) { return new TailwindRenderer($, settings, originalinput); }
-      static getFrameworkId() { return 'tailwind'; }
-    };
-  </script>
 </head>
 <body>
   <div class="max-w-3xl mx-auto mt-6">
@@ -58,16 +50,13 @@
   </div>
 
   <script type="module">
-    import { createPublicApi, CORE_EVENTS } from '../../packages/core/src/index.js';
+    import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../packages/core/src/index.js';
+    import { TailwindRenderer } from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
 
-    const $ = window.jQuery;
     const input = document.getElementById('tw-input');
-    const $input = $(input);
     const status = document.getElementById('status');
     const log = document.getElementById('log');
-    let inst = null;
     let unsubs = [];
-    let wiredButtons = false;
 
     function addLog(msg) {
       const ts = new Date().toISOString().split('T')[1].replace('Z','');
@@ -89,39 +78,20 @@
       for (const ev of events) unsubs.push(api.on(ev, () => addLog(`core:${ev}`)));
     }
 
-    function buildRenderer(opts) {
-      // Build Tailwind UI around the input
-      const renderer = window.RendererFactory.createRenderer($, opts, $input);
-      const container = renderer.buildInputGroup();
-      const elements = renderer.initElements(container);
-      try { renderer.hideEmptyPrefixPostfix(); } catch {}
-      return elements;
-    }
-
     function destroy() {
+      const inst = getTouchSpin(input);
       if (!inst) return;
       for (const u of unsubs.splice(0)) try { u(); } catch {}
-      try { inst.destroy(); } catch {}
-      inst = null;
-      // unwrap input if wrapped by renderer
-      const $wrap = $input.closest('[data-touchspin-injected="wrapper"]');
-      if ($wrap.length) { $wrap.before($input); $wrap.remove(); }
+      inst.destroy();
       status.textContent = 'Destroyed';
     }
 
     function init(opts) {
       destroy();
-      const elements = buildRenderer(opts);
-      inst = createPublicApi(input, opts);
+      const inst = TouchSpin(input, opts, { renderer: TailwindRenderer });
       subscribeCore(inst);
       // Log native change like other demos
-      $input.on('change', function(){ addLog('change[' + this.value + ']'); });
-      // Wire buttons once to call core
-      if (elements && !wiredButtons) {
-        wiredButtons = true;
-        if (elements.up && elements.up[0]) elements.up[0].addEventListener('click', () => inst.upOnce());
-        if (elements.down && elements.down[0]) elements.down[0].addEventListener('click', () => inst.downOnce());
-      }
+      input.addEventListener('change', () => addLog('change[' + input.value + ']'));
       status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`;
     }
 
@@ -129,23 +99,23 @@
     document.getElementById('btn-destroy').addEventListener('click', destroy);
     document.getElementById('btn-reinit').addEventListener('click', () => init({ min: 5, max: 50, step: 5, buttondown_txt: '\u2212', buttonup_txt: '+', prefix: '', postfix: '' }));
 
-    document.getElementById('btn-uponce').addEventListener('click', () => inst && inst.upOnce());
-    document.getElementById('btn-downonce').addEventListener('click', () => inst && inst.downOnce());
-    document.getElementById('btn-startup').addEventListener('click', () => inst && inst.startUpSpin());
-    document.getElementById('btn-startdown').addEventListener('click', () => inst && inst.startDownSpin());
-    document.getElementById('btn-stop').addEventListener('click', () => inst && inst.stopSpin());
-    document.getElementById('btn-get').addEventListener('click', () => inst && addLog('getValue()=' + inst.getValue()));
-    document.getElementById('btn-set').addEventListener('click', () => inst && inst.setValue(64));
-    document.getElementById('btn-update').addEventListener('click', () => inst && inst.updateSettings({ step: 10 }));
+    document.getElementById('btn-uponce').addEventListener('click', () => getTouchSpin(input)?.upOnce());
+    document.getElementById('btn-downonce').addEventListener('click', () => getTouchSpin(input)?.downOnce());
+    document.getElementById('btn-startup').addEventListener('click', () => getTouchSpin(input)?.startUpSpin());
+    document.getElementById('btn-startdown').addEventListener('click', () => getTouchSpin(input)?.startDownSpin());
+    document.getElementById('btn-stop').addEventListener('click', () => getTouchSpin(input)?.stopSpin());
+    document.getElementById('btn-get').addEventListener('click', () => { const inst = getTouchSpin(input); inst && addLog('getValue()=' + inst.getValue()); });
+    document.getElementById('btn-set').addEventListener('click', () => getTouchSpin(input)?.setValue(64));
+    document.getElementById('btn-update').addEventListener('click', () => getTouchSpin(input)?.updateSettings({ step: 10 }));
 
     // Disable/Readonly toggles on the original input
     document.getElementById('btn-toggle-disabled').addEventListener('click', () => {
-      const isDisabled = $input.is(':disabled');
-      $input.prop('disabled', !isDisabled);
+      const isDisabled = input.disabled;
+      input.disabled = !isDisabled;
     });
     document.getElementById('btn-toggle-readonly').addEventListener('click', () => {
-      const isReadonly = $input.is('[readonly]');
-      $input.prop('readonly', !isReadonly);
+      const isReadonly = input.readOnly;
+      input.readOnly = !isReadonly;
     });
   </script>
 </body>

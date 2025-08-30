@@ -16,27 +16,14 @@
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
   
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap3Renderer.js"></script>
-  
-  <!-- Create Bootstrap 3 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap3Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 3;
-      }
-    };
-  </script>
   
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap3Renderer = Bootstrap3Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 
@@ -52,7 +39,7 @@
         <input id="testinput_default" type="text" value="50" name="testinput_default" data-testid="touchspin-default">
 
         <script>
-          $("#testinput_default").TouchSpin();
+          $("#testinput_default").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -61,7 +48,7 @@
         <input id="testinput_number" type="number" value="50" name="testinput_number" data-testid="touchspin-number">
 
         <script>
-          $("#testinput_number").TouchSpin();
+          $("#testinput_number").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -71,6 +58,7 @@
 
         <script>
           $("#testinput_decimals").TouchSpin({
+            renderer: Bootstrap3Renderer,
             decimals: 2,
             step: 0.01
           });
@@ -83,6 +71,7 @@
 
         <script>
           $("#testinput_step10_min").TouchSpin({
+            renderer: Bootstrap3Renderer,
             step: 10,
           });
         </script>
@@ -94,6 +83,7 @@
 
         <script>
           $("#testinput_step10_max").TouchSpin({
+            renderer: Bootstrap3Renderer,
             step: 10,
           });
         </script>
@@ -104,7 +94,7 @@
         <input id="testinput_disabled" type="text" value="0" name="testinput_disabled" disabled data-testid="touchspin-disabled">
 
         <script>
-          $("#testinput_disabled").TouchSpin();
+          $("#testinput_disabled").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -113,7 +103,7 @@
         <input id="testinput_readonly" type="text" value="0" name="testinput_readonly" readonly data-testid="touchspin-readonly">
 
         <script>
-          $("#testinput_readonly").TouchSpin();
+          $("#testinput_readonly").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -127,7 +117,7 @@
         >
 
         <script>
-          $("#testinput_data_attributes").TouchSpin();
+          $("#testinput_data_attributes").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -144,7 +134,7 @@
         >
 
         <script>
-          $("#testinput_individual_min_max_step_properties").TouchSpin();
+          $("#testinput_individual_min_max_step_properties").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -154,6 +144,7 @@
 
         <script>
           $("#input_group_sm").TouchSpin({
+            renderer: Bootstrap3Renderer,
             prefix: "$",
             postfix: "/qty"
           });
@@ -166,6 +157,7 @@
 
         <script>
           $("#input_group_lg").TouchSpin({
+            renderer: Bootstrap3Renderer,
             prefix: "$",
             postfix: "/qty"
           });
@@ -178,6 +170,7 @@
 
         <script>
           $("#input_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             verticalbuttons: true
           });
         </script>
@@ -189,6 +182,7 @@
 
         <script>
           $("#input_sm_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             verticalbuttons: true
           });
         </script>
@@ -200,6 +194,7 @@
 
         <script>
           $("#input_lg_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             verticalbuttons: true
           });
         </script>
@@ -211,6 +206,7 @@
 
         <script>
           $("#input_group_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true
@@ -224,6 +220,7 @@
 
         <script>
           $("#input_group_sm_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true
@@ -237,6 +234,7 @@
 
         <script>
           $("#input_group_lg_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             prefix: "$",
             postfix: "/qty",
             verticalbuttons: true
@@ -254,6 +252,7 @@
 
         <script>
           $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             verticalbuttons: true
           });
         </script>
@@ -268,6 +267,7 @@
 
         <script>
           $("#input_group_from_dom_prefix_vertical").TouchSpin({
+            renderer: Bootstrap3Renderer,
             verticalbuttons: true
           });
         </script>
@@ -282,7 +282,7 @@
         </div>
 
         <script>
-          $("#input_group_from_dom_prefix_postfix").TouchSpin();
+          $("#input_group_from_dom_prefix_postfix").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
@@ -294,7 +294,7 @@
         </div>
 
         <script>
-          $("#input_group_from_dom_prefix").TouchSpin();
+          $("#input_group_from_dom_prefix").TouchSpin({ renderer: Bootstrap3Renderer });
         </script>
       </div>
 
