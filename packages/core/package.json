@@ -14,10 +14,6 @@
     "./AbstractRenderer": {
       "import": "./src/AbstractRenderer.js",
       "require": "./src/AbstractRenderer.js"
-    },
-    "./RawRenderer": {
-      "import": "./src/RawRenderer.js",
-      "require": "./src/RawRenderer.js"
     }
   }
 }

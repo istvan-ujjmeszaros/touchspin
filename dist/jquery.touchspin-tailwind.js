@@ -327,32 +327,7 @@
     }]);
   }();
 
-  /**
-   * RawRenderer - Minimal renderer that adds no UI elements
-   * Allows TouchSpin to work with just the input element (keyboard, wheel, events still work)
-   * Perfect for custom implementations or when only programmatic API is needed
-   */
-  var RawRenderer = /*#__PURE__*/function (_AbstractRenderer) {
-    function RawRenderer() {
-      _classCallCheck(this, RawRenderer);
-      return _callSuper(this, RawRenderer, arguments);
-    }
-    _inherits(RawRenderer, _AbstractRenderer);
-    return _createClass(RawRenderer, [{
-      key: "init",
-      value: function init() {
-        // Does nothing - no additional UI elements
-        // Core still handles the input element directly
-        // Keyboard, wheel, ARIA, and programmatic methods still work via core
-      }
-    }, {
-      key: "teardown",
-      value: function teardown() {
-        // Nothing to clean up - no UI was added
-        // Core will handle input element cleanup
-      }
-    }]);
-  }(AbstractRenderer);
+  // @ts-check
 
   /**
    * @fileoverview Framework-agnostic core scaffold for TouchSpin.
@@ -385,7 +360,7 @@
    * @property {number|false=} maxboostedstep
    * @property {TouchSpinCalcCallback=} callback_before_calculation
    * @property {TouchSpinCalcCallback=} callback_after_calculation
-   * @property {Function} renderer - Required renderer class (e.g., Bootstrap5Renderer, RawRenderer)
+   * @property {Function} renderer - Renderer class (e.g., Bootstrap5Renderer) or null for no UI
    * @property {string=} prefix - Text/HTML before input (handled by renderer)
    * @property {string=} postfix - Text/HTML after input (handled by renderer)
    * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
@@ -431,10 +406,9 @@
       /** @type {TouchSpinCoreOptions} */
       this.settings = Object.assign({}, DEFAULTS, opts);
 
-      // Use RawRenderer as fallback if no renderer specified
+      // Allow no renderer for keyboard/wheel-only functionality
       if (!this.settings.renderer) {
-        console.warn('TouchSpin: No renderer specified. Using RawRenderer (no UI). Consider using Bootstrap3/4/5Renderer or TailwindRenderer.');
-        this.settings.renderer = RawRenderer;
+        console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
       }
 
       /** @type {boolean} */

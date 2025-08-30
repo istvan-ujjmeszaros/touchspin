@@ -1,5 +1,4 @@
 // @ts-check
-import RawRenderer from './RawRenderer.js';
 
 /**
  * @fileoverview Framework-agnostic core scaffold for TouchSpin.
@@ -32,7 +31,7 @@ import RawRenderer from './RawRenderer.js';
  * @property {number|false=} maxboostedstep
  * @property {TouchSpinCalcCallback=} callback_before_calculation
  * @property {TouchSpinCalcCallback=} callback_after_calculation
- * @property {Function} renderer - Required renderer class (e.g., Bootstrap5Renderer, RawRenderer)
+ * @property {Function} renderer - Renderer class (e.g., Bootstrap5Renderer) or null for no UI
  * @property {string=} prefix - Text/HTML before input (handled by renderer)
  * @property {string=} postfix - Text/HTML after input (handled by renderer)
  * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
@@ -74,10 +73,9 @@ export class TouchSpinCore {
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, opts);
 
-    // Use RawRenderer as fallback if no renderer specified
+    // Allow no renderer for keyboard/wheel-only functionality
     if (!this.settings.renderer) {
-      console.warn('TouchSpin: No renderer specified. Using RawRenderer (no UI). Consider using Bootstrap3/4/5Renderer or TailwindRenderer.');
-      this.settings.renderer = RawRenderer;
+      console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
     }
 
     /** @type {boolean} */
@@ -862,5 +860,4 @@ export function attach(inputEl, opts) {
 export default TouchSpinCore;
 
 // Export renderers
-export { default as RawRenderer } from './RawRenderer.js';
 export { default as AbstractRenderer } from './AbstractRenderer.js';
