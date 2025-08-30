@@ -324,7 +324,32 @@
     }]);
   }();
 
-  // @ts-check
+  /**
+   * RawRenderer - Minimal renderer that adds no UI elements
+   * Allows TouchSpin to work with just the input element (keyboard, wheel, events still work)
+   * Perfect for custom implementations or when only programmatic API is needed
+   */
+  var RawRenderer = /*#__PURE__*/function (_AbstractRenderer) {
+    function RawRenderer() {
+      _classCallCheck(this, RawRenderer);
+      return _callSuper(this, RawRenderer, arguments);
+    }
+    _inherits(RawRenderer, _AbstractRenderer);
+    return _createClass(RawRenderer, [{
+      key: "init",
+      value: function init() {
+        // Does nothing - no additional UI elements
+        // Core still handles the input element directly
+        // Keyboard, wheel, ARIA, and programmatic methods still work via core
+      }
+    }, {
+      key: "teardown",
+      value: function teardown() {
+        // Nothing to clean up - no UI was added
+        // Core will handle input element cleanup
+      }
+    }]);
+  }(AbstractRenderer);
 
   /**
    * @fileoverview Framework-agnostic core scaffold for TouchSpin.
@@ -403,9 +428,10 @@
       /** @type {TouchSpinCoreOptions} */
       this.settings = Object.assign({}, DEFAULTS, opts);
 
-      // Renderer is required
+      // Use RawRenderer as fallback if no renderer specified
       if (!this.settings.renderer) {
-        throw new Error('TouchSpin requires a renderer. Use RawRenderer for no additional UI.');
+        console.warn('TouchSpin: No renderer specified. Using RawRenderer (no UI). Consider using Bootstrap3/4/5Renderer or TailwindRenderer.');
+        this.settings.renderer = RawRenderer;
       }
 
       /** @type {boolean} */
@@ -446,8 +472,10 @@
       this._initializeInput();
 
       // Initialize renderer with reference to core
-      this.renderer = new this.settings.renderer(inputEl, this.settings, this);
-      this.renderer.init();
+      if (this.settings.renderer) {
+        this.renderer = new this.settings.renderer(inputEl, this.settings, this);
+        this.renderer.init();
+      }
     }
 
     /**

@@ -1,4 +1,5 @@
 // @ts-check
+import RawRenderer from './RawRenderer.js';
 
 /**
  * @fileoverview Framework-agnostic core scaffold for TouchSpin.
@@ -73,9 +74,10 @@ export class TouchSpinCore {
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, opts);
 
-    // Renderer is required
+    // Use RawRenderer as fallback if no renderer specified
     if (!this.settings.renderer) {
-      throw new Error('TouchSpin requires a renderer. Use RawRenderer for no additional UI.');
+      console.warn('TouchSpin: No renderer specified. Using RawRenderer (no UI). Consider using Bootstrap3/4/5Renderer or TailwindRenderer.');
+      this.settings.renderer = RawRenderer;
     }
 
     /** @type {boolean} */
@@ -116,8 +118,10 @@ export class TouchSpinCore {
     this._initializeInput();
 
     // Initialize renderer with reference to core
-    this.renderer = new this.settings.renderer(inputEl, this.settings, this);
-    this.renderer.init();
+    if (this.settings.renderer) {
+      this.renderer = new this.settings.renderer(inputEl, this.settings, this);
+      this.renderer.init();
+    }
   }
 
   /**
