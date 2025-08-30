@@ -1551,12 +1551,21 @@
     }]);
   }(AbstractRenderer);
 
-  /**
-   * Install a minimal jQuery plugin wrapper that just forwards everything to core.
-   * Contains NO logic - only forwards commands and events.
-   * Core manages its own instance lifecycle on the input element.
-   * @param {import('jquery').JQueryStatic} $
-   */
+  // Wrapper function for standalone use (when jQuery is not available)
+  function TouchSpin(element) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    if (!(element instanceof Element)) {
+      throw new TypeError('TouchSpin expects an HTMLElement');
+    }
+
+    // Set the baked-in renderer for this build
+    options.renderer = options.renderer || TailwindRenderer;
+
+    // Use the core TouchSpin function which properly handles initDOMEventHandling
+    return TouchSpin$1(element, options);
+  }
+
+  // Custom jQuery plugin installer with baked-in TailwindRenderer
   function installJqueryTouchSpin($) {
     $.fn.TouchSpin = function (options, arg) {
       // Command API - forward to core (core manages instance lifecycle)
@@ -1611,13 +1620,15 @@
         return ret === undefined ? this : ret;
       }
 
-      // Initialize - forward to core
+      // Initialize - use TouchSpin wrapper with baked-in renderer
       return this.each(function () {
         var $input = $(this);
         var inputEl = /** @type {HTMLInputElement} */this;
 
-        // Create TouchSpin instance (core handles everything including storage on element)
-        var inst = TouchSpin$1(inputEl, options || {});
+        // Create TouchSpin instance with baked-in TailwindRenderer
+        var opts = options || {};
+        opts.renderer = opts.renderer || TailwindRenderer;
+        var inst = TouchSpin$1(inputEl, opts);
 
         // Bridge core events to jQuery events (minimal event forwarding only)
         var evMap = _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({}, CORE_EVENTS.MIN, 'touchspin.on.min'), CORE_EVENTS.MAX, 'touchspin.on.max'), CORE_EVENTS.START_SPIN, 'touchspin.on.startspin'), CORE_EVENTS.START_UP, 'touchspin.on.startupspin'), CORE_EVENTS.START_DOWN, 'touchspin.on.startdownspin'), CORE_EVENTS.STOP_SPIN, 'touchspin.on.stopspin'), CORE_EVENTS.STOP_UP, 'touchspin.on.stopupspin'), CORE_EVENTS.STOP_DOWN, 'touchspin.on.stopdownspin');
@@ -1625,7 +1636,6 @@
         // Store unsubscribe functions for cleanup
         var unsubs = [];
         Object.keys(evMap).forEach(function (k) {
-          // @ts-ignore
           unsubs.push(inst.on(k, function () {
             return $input.trigger(evMap[k]);
           }));
@@ -1678,28 +1688,6 @@
         });
       });
     };
-  }
-
-  // jQuery Tailwind build entry point
-
-  // Wrapper function for standalone use (when jQuery is not available)
-  function TouchSpin(element) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    if (!(element instanceof Element)) {
-      throw new TypeError('TouchSpin expects an HTMLElement');
-    }
-
-    // Set the baked-in renderer for this build
-    options.renderer = options.renderer || TailwindRenderer;
-
-    // Use core directly
-    if (element._touchSpinCore) {
-      element._touchSpinCore.destroy();
-    }
-    var core = new TouchSpinCore(element, options);
-    element._touchSpinCore = core;
-    core.initDOMEventHandling();
-    return core.toPublicApi();
   }
 
   // Install jQuery plugin if jQuery is available
