@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin Core API Test (No jQuery)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container { max-width: 1000px; margin-top: 50px; }
+    .btn:not(.input-group .btn) { margin: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TouchSpin Core API Test (No jQuery)</h1>
+    <p>Testing the modern TouchSpin core API directly without jQuery dependency.</p>
+
+    <!-- Simple TouchSpin input with Bootstrap styling -->
+    <div class="mb-4">
+      <label for="simple-input" class="form-label">Number Input:</label>
+      <input id="simple-input" type="text" value="50" class="form-control" style="width: 200px;">
+    </div>
+
+    <!-- Core API Test Buttons -->
+    <div class="mb-3">
+      <button class="btn btn-primary" onclick="getSimpleApi()?.upOnce()">Up Once</button>
+      <button class="btn btn-primary" onclick="getSimpleApi()?.downOnce()">Down Once</button>
+      <button class="btn btn-secondary" onclick="getSimpleApi()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-secondary" onclick="getSimpleApi()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-danger" onclick="getSimpleApi()?.stopSpin()">Stop Spin</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-info" onclick="alert('Value: ' + (getSimpleApi()?.getValue() ?? 'Not initialized'))">Get Value</button>
+      <button class="btn btn-info" onclick="getSimpleApi()?.setValue(100)">Set to 100</button>
+      <button class="btn btn-warning" onclick="getSimpleApi()?.updateSettings({step: 10})">Set Step=10</button>
+      <button class="btn btn-warning" onclick="getSimpleApi()?.updateSettings({step: 1})">Set Step=1</button>
+    </div>
+
+    <!-- Prefix/Postfix Test Buttons -->
+    <div class="mb-3">
+      <h6>Prefix/Postfix Tests:</h6>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '$'})">Add Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({postfix: 'USD'})">Add Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: ''})">Clear Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({postfix: ''})">Clear Postfix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '', postfix: ''})">Clear Both</button>
+    </div>
+
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="initSimpleTouchSpin()">Initialize</button>
+      <button class="btn btn-outline-danger" onclick="getSimpleApi()?.destroy()">Destroy</button>
+    </div>
+
+    <!-- Event Listener Test -->
+    <div class="mb-3">
+      <h6>Core Event Listeners:</h6>
+      <button class="btn btn-outline-info btn-sm" onclick="subscribeToEvents()">Subscribe to Events</button>
+      <button class="btn btn-outline-warning btn-sm" onclick="unsubscribeFromEvents()">Unsubscribe from Events</button>
+      <div id="event-log" class="mt-2 p-2 bg-light border rounded" style="height: 100px; overflow-y: auto; font-family: monospace; font-size: 0.8em;"></div>
+    </div>
+
+    <!-- Advanced Input Group Test -->
+    <hr>
+    <div class="mb-4">
+      <h5>Advanced Input Group Test</h5>
+      <p>This input is already wrapped in an input-group with existing prefix and postfix elements.</p>
+      
+      <div class="input-group" style="max-width: 300px;">
+        <span class="input-group-text">🌍</span>
+        <input id="advanced-input" type="number" value="25" class="form-control">
+        <span class="input-group-text">km</span>
+      </div>
+    </div>
+
+    <!-- Advanced Input Group Controls -->
+    <div class="mb-3">
+      <button class="btn btn-success" onclick="initAdvancedTouchSpin()">Initialize Advanced</button>
+      <button class="btn btn-outline-danger" onclick="getAdvancedApi()?.destroy()">Destroy Advanced</button>
+    </div>
+
+    <!-- Advanced Prefix/Postfix Test Buttons -->
+    <div class="mb-3">
+      <h6>Advanced Prefix/Postfix Tests:</h6>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: '$'})">Add TouchSpin Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({postfix: 'USD'})">Add TouchSpin Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: ''})">Clear TouchSpin Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.updateSettings({postfix: ''})">Clear TouchSpin Postfix</button>
+    </div>
+
+    <!-- Advanced Core API Test -->
+    <div class="mb-3">
+      <h6>Advanced Input - Core API:</h6>
+      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedApi()?.upOnce()">Up Once</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedApi()?.downOnce()">Down Once</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedApi()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedApi()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.stopSpin()">Stop Spin</button>
+    </div>
+
+    <div class="mt-4">
+      <p><strong>Instructions:</strong></p>
+      <ul>
+        <li>Click "Initialize" to set up TouchSpin via Core API</li>
+        <li><strong>Focus the input and use arrow keys (↑↓)</strong></li>
+        <li><strong>Focus the input and use mouse wheel</strong></li>
+        <li>Test Core API methods directly (no jQuery wrapper)</li>
+        <li>Test event subscriptions and observe event log</li>
+        <li>Compare with advanced input group integration</li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="module">
+    import { TouchSpin, getTouchSpin } from '../../packages/core/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
+    let eventUnsubscribers = [];
+
+    // Helper to get simple input core API instance
+    window.getSimpleApi = function() {
+      const input = document.getElementById('simple-input');
+      return getTouchSpin(input);
+    };
+
+    // Helper to get advanced input core API instance
+    window.getAdvancedApi = function() {
+      const input = document.getElementById('advanced-input');
+      return getTouchSpin(input);
+    };
+
+    // Simple input initialization
+    window.initSimpleTouchSpin = function() {
+      const input = document.getElementById('simple-input');
+      
+      // Initialize TouchSpin via Core API directly
+      TouchSpin(input, {
+        renderer: Bootstrap5Renderer, // Required: specify renderer
+        min: 0,
+        max: 200,
+        step: 1
+      });
+    };
+
+    // Advanced input group initialization
+    window.initAdvancedTouchSpin = function() {
+      const input = document.getElementById('advanced-input');
+      
+      // Initialize TouchSpin on input that's already in an input-group
+      TouchSpin(input, {
+        renderer: Bootstrap5Renderer, // Required: specify renderer
+        min: 0,
+        max: 500,
+        step: 5,
+        prefix: '', // Start with no TouchSpin prefix
+        postfix: ''  // Start with no TouchSpin postfix
+      });
+    };
+
+    // Event logging functionality
+    window.subscribeToEvents = function() {
+      const api = getSimpleApi();
+      if (!api) {
+        alert('Initialize TouchSpin first!');
+        return;
+      }
+
+      const eventLog = document.getElementById('event-log');
+      const logEvent = (eventName) => (detail) => {
+        const timestamp = new Date().toLocaleTimeString();
+        eventLog.innerHTML += `[${timestamp}] ${eventName}: ${JSON.stringify(detail) || 'triggered'}\n`;
+        eventLog.scrollTop = eventLog.scrollHeight;
+      };
+
+      // Subscribe to core events
+      eventUnsubscribers.push(api.on('min', logEvent('min')));
+      eventUnsubscribers.push(api.on('max', logEvent('max')));
+      eventUnsubscribers.push(api.on('startspin', logEvent('startspin')));
+      eventUnsubscribers.push(api.on('startupspin', logEvent('startupspin')));
+      eventUnsubscribers.push(api.on('startdownspin', logEvent('startdownspin')));
+      eventUnsubscribers.push(api.on('stopspin', logEvent('stopspin')));
+      eventUnsubscribers.push(api.on('stopupspin', logEvent('stopupspin')));
+      eventUnsubscribers.push(api.on('stopdownspin', logEvent('stopdownspin')));
+
+      logEvent('system')('Event listeners subscribed');
+    };
+
+    window.unsubscribeFromEvents = function() {
+      eventUnsubscribers.forEach(unsub => {
+        try { unsub(); } catch {}
+      });
+      eventUnsubscribers = [];
+      
+      const eventLog = document.getElementById('event-log');
+      const timestamp = new Date().toLocaleTimeString();
+      eventLog.innerHTML += `[${timestamp}] system: Event listeners unsubscribed\n`;
+      eventLog.scrollTop = eventLog.scrollHeight;
+    };
+
+    // Auto-initialize both inputs on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initSimpleTouchSpin();
+      initAdvancedTouchSpin();
+    });
+  </script>
+</body>
+</html>
