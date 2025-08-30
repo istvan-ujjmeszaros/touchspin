@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap 4 Renderer - jQuery Wrapper</title>
+  
+  <!-- jQuery -->
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
+  
+  <!-- Bootstrap 4 CSS & JS -->
+  <link href="../html/assets/bootstrap/bootstrap-4.6.2.min.css" rel="stylesheet">
+  <script src="../html/assets/bootstrap/bootstrap-4.6.2.bundle.min.js"></script>
+  
+  <!-- TouchSpin CSS -->
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Bootstrap 4 Renderer - jQuery Wrapper Test</h1>
+    
+    <div class="form-group">
+      <label for="test-input">Test Input:</label>
+      <input id="test-input" type="number" value="50" class="form-control">
+    </div>
+  </div>
+
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+    
+    installJqueryTouchSpin(window.jQuery);
+    
+    $(document).ready(function() {
+      $('#test-input').TouchSpin({
+        renderer: Bootstrap4Renderer,
+        min: 0,
+        max: 100
+      });
+    });
+  </script>
+</body>
+</html>
