@@ -49,6 +49,15 @@
       writable: true
     }) : e[r] = t, e;
   }
+  function _get() {
+    return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) {
+      var p = _superPropBase(e, t);
+      if (p) {
+        var n = Object.getOwnPropertyDescriptor(p, t);
+        return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value;
+      }
+    }, _get.apply(null, arguments);
+  }
   function _getPrototypeOf(t) {
     return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) {
       return t.__proto__ || Object.getPrototypeOf(t);
@@ -110,6 +119,16 @@
     return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) {
       return t.__proto__ = e, t;
     }, _setPrototypeOf(t, e);
+  }
+  function _superPropBase(t, o) {
+    for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t)););
+    return t;
+  }
+  function _superPropGet(t, o, e, r) {
+    var p = _get(_getPrototypeOf(t.prototype ), o, e);
+    return "function" == typeof p ? function (t) {
+      return p.apply(e, t);
+    } : p;
   }
   function _toConsumableArray(r) {
     return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
@@ -215,9 +234,15 @@
       /** @type {TouchSpinCoreOptions} */
       this.settings = Object.assign({}, DEFAULTS, opts);
 
-      // Allow no renderer for keyboard/wheel-only functionality
+      // Check for renderer: explicit option > global default > none
       if (!this.settings.renderer) {
-        console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
+        // Check for global default renderer
+        if (typeof globalThis !== 'undefined' && globalThis.TouchSpinDefaultRenderer) {
+          this.settings.renderer = globalThis.TouchSpinDefaultRenderer;
+        } else {
+          // Allow no renderer for keyboard/wheel-only functionality
+          console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
+        }
       }
 
       /** @type {boolean} */
@@ -1297,6 +1322,12 @@
       key: "init",
       value: function init() {
         var _this = this;
+        // Add form-control class if not present (Bootstrap requirement)
+        if (!this.input.classList.contains('form-control')) {
+          this.input.classList.add('form-control');
+          this._formControlAdded = true; // Track if we added it
+        }
+
         // 1. Build and inject DOM structure around input
         this.wrapper = this.buildInputGroup();
 
@@ -1322,8 +1353,18 @@
           return _this.updateButtonClass('down', newValue);
         });
       }
+    }, {
+      key: "teardown",
+      value: function teardown() {
+        // Remove form-control class only if we added it
+        if (this._formControlAdded) {
+          this.input.classList.remove('form-control');
+          this._formControlAdded = false;
+        }
 
-      // teardown() uses inherited removeInjectedElements() - no override needed
+        // Call parent teardown to handle DOM cleanup
+        _superPropGet(Bootstrap4Renderer, "teardown", this)([]);
+      }
     }, {
       key: "buildInputGroup",
       value: function buildInputGroup() {

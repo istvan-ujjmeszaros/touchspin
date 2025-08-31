@@ -215,9 +215,15 @@
       /** @type {TouchSpinCoreOptions} */
       this.settings = Object.assign({}, DEFAULTS, opts);
 
-      // Allow no renderer for keyboard/wheel-only functionality
+      // Check for renderer: explicit option > global default > none
       if (!this.settings.renderer) {
-        console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
+        // Check for global default renderer
+        if (typeof globalThis !== 'undefined' && globalThis.TouchSpinDefaultRenderer) {
+          this.settings.renderer = globalThis.TouchSpinDefaultRenderer;
+        } else {
+          // Allow no renderer for keyboard/wheel-only functionality
+          console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
+        }
       }
 
       /** @type {boolean} */

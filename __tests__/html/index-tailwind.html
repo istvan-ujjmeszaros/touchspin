@@ -14,11 +14,16 @@
     <!-- Load modern TouchSpin packages directly -->
     <script type="module">
         import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+        import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
         
         // Install jQuery plugin
         installJqueryTouchSpin(window.jQuery);
         
-        // No global default renderer - this file tests CSS-independent functionality without renderer
+        // Set TailwindRenderer as the global default
+        globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
+        
+        // Keep for backwards compatibility with tests
+        window.TailwindRenderer = TailwindRenderer;
         window.modernTouchSpinInstalled = true;
 
         // Initialize all TouchSpin instances after plugin is loaded

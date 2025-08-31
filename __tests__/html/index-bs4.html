@@ -145,8 +145,12 @@
         step: 10
       });
       
-      // Test invalid element
-      $('#not-an-input').TouchSpin();
+      // Test invalid element (expected to fail)
+      try {
+        $('#not-an-input').TouchSpin();
+      } catch (e) {
+        console.log('Expected error caught:', e.message);
+      }
     });
   </script>
 

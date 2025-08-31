@@ -51,7 +51,10 @@
 
   <script type="module">
     import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../packages/core/src/index.js';
-    import { TailwindRenderer } from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+    import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+
+    // Set global default renderer
+    globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
 
     const input = document.getElementById('tw-input');
     const status = document.getElementById('status');
@@ -88,7 +91,7 @@
 
     function init(opts) {
       destroy();
-      const inst = TouchSpin(input, opts, { renderer: TailwindRenderer });
+      const inst = TouchSpin(input, opts);
       subscribeCore(inst);
       // Log native change like other demos
       input.addEventListener('change', () => addLog('change[' + input.value + ']'));

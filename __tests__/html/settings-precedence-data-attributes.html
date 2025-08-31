@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <title>Settings Precedence: Data Attributes</title>
   <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+  
+  <!-- BOOTSTRAP 5 -->
+  <link href="assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+  
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
 </head>
 
@@ -34,19 +39,16 @@
   <!-- Load TouchSpin modern packages -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    
-    // Load TestRenderer
-    const TestRendererModule = await import('./TestRenderer.js');
-    const TestRenderer = TestRendererModule.default || TestRendererModule.TestRenderer;
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
     
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
     
     // Set global default renderer - no need to specify on each TouchSpin call
-    globalThis.TouchSpinDefaultRenderer = TestRenderer;
+    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
     
     // Keep for backwards compatibility with tests
-    window.TestRenderer = TestRenderer;
+    window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
 
     // Initialize inputs to test data attribute precedence
