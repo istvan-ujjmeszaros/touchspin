@@ -472,6 +472,28 @@ $('#spinner').on('change', function() {
 
 ---
 
+## RTL Support
+
+TouchSpin includes built-in support for right-to-left (RTL) languages. The plugin automatically detects RTL context and adjusts button positions accordingly.
+
+### Border Radius Rendering
+
+When using TouchSpin with RTL layouts, proper border-radius rendering requires Bootstrap's RTL CSS file. Without it, rounded corners may appear on the wrong sides of buttons.
+
+**Bootstrap 3:**
+```html
+<link rel="stylesheet" href="path/to/bootstrap-rtl.css">
+```
+
+**Bootstrap 4/5:**
+```html
+<link rel="stylesheet" href="path/to/bootstrap.rtl.css">
+```
+
+**Note:** This is a visual-only limitation that does not affect functionality. The TouchSpin controls will work correctly in RTL mode regardless of whether the RTL CSS file is included.
+
+---
+
 ## Bootstrap Version Support
 
 TouchSpin provides separate builds for each Bootstrap version:
