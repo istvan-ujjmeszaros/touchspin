@@ -111,24 +111,13 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Load source renderer files (classic) -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
-
-  <!-- Create Bootstrap 4 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap4Renderer($, settings, originalinput);
-      }
-      static getVersion() { return 4; }
-    };
-  </script>
-
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 
@@ -138,7 +127,7 @@
 
       // Test 1
       $('#init-new-btn').click(function(){
-        $('#test-input-new').TouchSpin({ min:0, max:100, prefix:'$', postfix:'.00' });
+        $('#test-input-new').TouchSpin({ renderer: Bootstrap4Renderer, min:0, max:100, prefix:'$', postfix:'.00' });
         updateStatus('#status-new', 'Initialized ($ prefix, .00 postfix)');
       });
       $('#destroy-new-btn').click(function(){
@@ -146,13 +135,13 @@
         updateStatus('#status-new', 'Destroyed');
       });
       $('#reinit-new-btn').click(function(){
-        $('#test-input-new').TouchSpin({ min:5, max:50, step:5, prefix:'€', postfix:' EUR' });
+        $('#test-input-new').TouchSpin({ renderer: Bootstrap4Renderer, min:5, max:50, step:5, prefix:'€', postfix:' EUR' });
         updateStatus('#status-new', 'Reinitialized (€ prefix, EUR postfix, step 5)');
       });
 
       // Test 2
       $('#init-existing-btn').click(function(){
-        $('#test-input-existing').TouchSpin({ min:0, max:100, prefix:'$', postfix:'.00' });
+        $('#test-input-existing').TouchSpin({ renderer: Bootstrap4Renderer, min:0, max:100, prefix:'$', postfix:'.00' });
         updateStatus('#status-existing', 'Enhanced existing input-group ($ prefix, .00 postfix)');
       });
       $('#destroy-existing-btn').click(function(){
@@ -160,13 +149,13 @@
         updateStatus('#status-existing', 'Destroyed (restored original)');
       });
       $('#reinit-existing-btn').click(function(){
-        $('#test-input-existing').TouchSpin({ min:10, max:200, step:10, prefix:'€', postfix:' EUR' });
+        $('#test-input-existing').TouchSpin({ renderer: Bootstrap4Renderer, min:10, max:200, step:10, prefix:'€', postfix:' EUR' });
         updateStatus('#status-existing', 'Reinitialized (€ prefix, EUR postfix, step 10)');
       });
 
       // Test 3
       $('#init-vertical-btn').click(function(){
-        $('#test-input-vertical').TouchSpin({ min:0, max:100, verticalbuttons:true, verticalup:'▲', verticaldown:'▼' });
+        $('#test-input-vertical').TouchSpin({ renderer: Bootstrap4Renderer, min:0, max:100, verticalbuttons:true, verticalup:'▲', verticaldown:'▼' });
         updateStatus('#status-vertical', 'Initialized (vertical ▲/▼)');
       });
       $('#destroy-vertical-btn').click(function(){
@@ -174,14 +163,14 @@
         updateStatus('#status-vertical', 'Destroyed');
       });
       $('#reinit-vertical-btn').click(function(){
-        $('#test-input-vertical').TouchSpin({ min:0, max:50, step:5, verticalbuttons:true, verticalup:'↑', verticaldown:'↓' });
+        $('#test-input-vertical').TouchSpin({ renderer: Bootstrap4Renderer, min:0, max:50, step:5, verticalbuttons:true, verticalup:'↑', verticaldown:'↓' });
         updateStatus('#status-vertical', 'Reinitialized (vertical ↑/↓, step 5)');
       });
 
       // Test 4: Modern API (using jQuery but with modern packages)
       const $modernInput = $('#test-input-modern');
       document.getElementById('init-modern-btn').addEventListener('click', function() {
-        $modernInput.TouchSpin({ min: 0, max: 100, step: 1 });
+        $modernInput.TouchSpin({ renderer: Bootstrap4Renderer, min: 0, max: 100, step: 1 });
         updateStatus('#status-modern', 'Initialized (modern packages)');
       });
       document.getElementById('destroy-modern-btn').addEventListener('click', function() {
@@ -189,7 +178,7 @@
         updateStatus('#status-modern', 'Destroyed (modern packages)');
       });
       document.getElementById('reinit-modern-btn').addEventListener('click', function() {
-        $modernInput.TouchSpin({ min: 10, max: 90, step: 5 });
+        $modernInput.TouchSpin({ renderer: Bootstrap4Renderer, min: 10, max: 90, step: 5 });
         updateStatus('#status-modern', 'Reinitialized (modern packages, step 5)');
       });
       document.getElementById('modern-uponce').addEventListener('click', function(){ $modernInput.trigger('touchspin.uponce'); });

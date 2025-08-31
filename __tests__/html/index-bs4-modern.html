@@ -16,30 +16,15 @@
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
 
-  <!-- Load renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
-
-  <!-- Create Bootstrap 4 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap4Renderer($, settings, originalinput);
-      }
-
-      static getVersion() {
-        return 4;
-      }
-    };
-  </script>
-
   <!-- Load modern packages as ES modules -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    
+    import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+
     // Install the modern jQuery wrapper
     installJqueryTouchSpin(window.jQuery);
-    
+    window.Bootstrap4Renderer = Bootstrap4Renderer;
+
     // Make it available for tests
     window.modernTouchSpinInstalled = true;
   </script>
@@ -101,9 +86,9 @@
 
 </div>
 
-<div id="events_log" style="width: 100%; height: 200px; margin-top: 20px; padding: 10px; border: 1px solid #ccc; overflow-y: auto; font-family: monospace; font-size: 12px; background-color: #f8f9fa;">
+<pre id="events_log" style="width: 100%; height: 200px; margin-top: 20px; padding: 10px; border: 1px solid #ccc; overflow-y: auto; font-family: monospace; font-size: 12px; background-color: #f8f9fa;">
   <!-- Event log will be populated here -->
-</div>
+</pre>
 
 <script>
 $(document).ready(function() {
@@ -124,6 +109,7 @@ $(document).ready(function() {
 
   // Initialize default TouchSpin
   $("#testinput_default").TouchSpin({
+    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -131,6 +117,7 @@ $(document).ready(function() {
 
   // Initialize vertical TouchSpin
   $("#testinput_vertical").TouchSpin({
+    renderer: Bootstrap4Renderer,
     verticalbuttons: true,
     min: 0,
     max: 100,
@@ -139,6 +126,7 @@ $(document).ready(function() {
 
   // Initialize disabled TouchSpin
   $("#testinput_disabled").TouchSpin({
+    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -146,6 +134,7 @@ $(document).ready(function() {
 
   // Initialize readonly TouchSpin
   $("#testinput_readonly").TouchSpin({
+    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -153,6 +142,7 @@ $(document).ready(function() {
 
   // Initialize callbacks TouchSpin with currency formatting
   $("#testinput_callbacks").TouchSpin({
+    renderer: Bootstrap4Renderer,
     min: 0,
     max: 5500,
     step: 0.1,

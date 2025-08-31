@@ -18,10 +18,13 @@
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
     
-    // Make renderer available globally for the jQuery wrapper to use
-    window.Bootstrap5Renderer = Bootstrap5Renderer;
-    
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+    
+    // Keep for backwards compatibility with tests
+    window.Bootstrap5Renderer = Bootstrap5Renderer;
   </script>
 </head>
 <body class="container py-4">
@@ -77,7 +80,7 @@
       $input.on(evs, function(e){ const ns=(e.namespace||''); const sub = ns.replace(/^on\./,'')||e.type; addLog('core:' + sub); });
       $input.on('change', function(){ addLog('change[' + this.value + ']'); });
 
-      function init(opts){ try { destroy(); } catch {} $input.TouchSpin({ ...opts, renderer: window.Bootstrap5Renderer }); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
+      function init(opts){ try { destroy(); } catch {} $input.TouchSpin(opts); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
       function destroy(){ $input.trigger('touchspin.destroy'); status.textContent = 'Destroyed'; }
 
       document.getElementById('btn-init').addEventListener('click', () => init({ min:0, max:100, step:1 }));
@@ -95,7 +98,7 @@
       const $adv = $('#bs5-adv-input');
       document.getElementById('btn-adv-init').addEventListener('click', () => {
         try { $adv.trigger('touchspin.destroy'); } catch {}
-        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs', renderer: window.Bootstrap5Renderer });
+        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
       });
       document.getElementById('btn-adv-destroy').addEventListener('click', () => { $adv.trigger('touchspin.destroy'); });
     })();

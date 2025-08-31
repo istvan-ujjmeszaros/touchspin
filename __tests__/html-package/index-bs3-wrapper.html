@@ -13,20 +13,13 @@
     pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
   </style>
 
-  <!-- Renderer (Bootstrap 3) from packages -->
-  <script src="../../packages/renderers/bootstrap3/src/AbstractRenderer.js"></script>
-  <script src="../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js"></script>
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) { return new Bootstrap3Renderer($, settings, originalinput); }
-      static getFrameworkId() { return 'bootstrap3'; }
-    };
-  </script>
-
   <!-- Install the core-backed jQuery wrapper -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap3Renderer = Bootstrap3Renderer;
   </script>
 </head>
 <body class="container">
@@ -82,7 +75,7 @@
       $input.on(evs, function(e){ const ns=(e.namespace||''); const sub = ns.replace(/^on\./,'')||e.type; addLog('core:' + sub); });
       $input.on('change', function(){ addLog('change[' + this.value + ']'); });
 
-      function init(opts){ try { destroy(); } catch {} $input.TouchSpin(opts); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
+      function init(opts){ try { destroy(); } catch {} $input.TouchSpin({renderer: Bootstrap3Renderer, ...opts}); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
       function destroy(){ $input.trigger('touchspin.destroy'); status.textContent = 'Destroyed'; }
 
       document.getElementById('btn-init').addEventListener('click', () => init({ min:0, max:100, step:1 }));
@@ -100,7 +93,7 @@
       const $adv = $('#bs3-adv-input');
       document.getElementById('btn-adv-init').addEventListener('click', () => {
         try { $adv.trigger('touchspin.destroy'); } catch {}
-        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
+        $adv.TouchSpin({ renderer: Bootstrap3Renderer, min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
       });
       document.getElementById('btn-adv-destroy').addEventListener('click', () => { $adv.trigger('touchspin.destroy'); });
     })();

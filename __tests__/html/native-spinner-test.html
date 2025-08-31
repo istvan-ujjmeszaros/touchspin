@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/bootstrap/bootstrap-4.6.2.min.css">
 
     <!-- TouchSpin CSS -->
-    <link rel="stylesheet" href="../../dist/jquery.bootstrap-touchspin.css">
+    <link rel="stylesheet" href="../../src/jquery.bootstrap-touchspin.css">
 
     <!-- jQuery -->
     <script src="assets/jquery/jquery-3.7.1.min.js"></script>
@@ -18,29 +18,14 @@
     <script src="assets/bootstrap/bootstrap-4.6.2.bundle.min.js"></script>
 
     <!-- TouchSpin JS -->
-    <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap4Renderer.js"></script>
-  
-  <!-- Create Bootstrap 4 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap4Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 4;
-      }
-    };
-  </script>
-  
-  <!-- Load main TouchSpin source file -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    installJqueryTouchSpin(window.jQuery);
-    window.modernTouchSpinInstalled = true;
-  </script>
+    <script type="module">
+        import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+        import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+        
+        installJqueryTouchSpin(window.jQuery);
+        window.Bootstrap4Renderer = Bootstrap4Renderer;
+        window.modernTouchSpinInstalled = true;
+    </script>
 
     <style>
         .test-section {
@@ -147,6 +132,7 @@
             <script>
                 $(document).ready(function() {
                     $('#native-with-attrs').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 3,        // Should override native min="5"
                         max: 20,       // Should override native max="15"
                         step: 1        // Should override native step="2"
@@ -193,6 +179,7 @@
             <script>
                 $(document).ready(function() {
                     $('#native-without-attrs').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 3,
                         max: 20,
                         step: 1
@@ -250,7 +237,8 @@
             <script>
                 $(document).ready(function() {
                     $('#native-vs-databts').TouchSpin({
-                        // No TouchSpin settings - should use native attributes
+                        renderer: Bootstrap4Renderer
+                        // No other TouchSpin settings - should use native attributes
                     });
                 });
             </script>
@@ -305,6 +293,7 @@
             <script>
                 $(document).ready(function() {
                     $('#full-precedence').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 1,        // Should override native min="10" and data-bts-min="2"
                         max: 40,       // Should override native max="50" and data-bts-max="60"
                         step: 3        // Should override native step="5" and data-bts-step="4"
@@ -355,7 +344,8 @@
             <script>
                 $(document).ready(function() {
                     $('#databts-only').TouchSpin({
-                        // No TouchSpin settings - should use data-bts-* attributes
+                        renderer: Bootstrap4Renderer
+                        // No other TouchSpin settings - should use data-bts-* attributes
                     });
                 });
             </script>
@@ -408,7 +398,8 @@
             <script>
                 $(document).ready(function() {
                     $('#partial-override').TouchSpin({
-                        min: 2,        // TouchSpin setting (highest precedence)
+                        renderer: Bootstrap4Renderer,
+                        min: 2        // TouchSpin setting (highest precedence)
                         // max and step not specified - should use native values
                     });
                 });
@@ -450,6 +441,7 @@
             <script>
                 $(document).ready(function() {
                     $('#text-input').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 3,
                         max: 20,
                         step: 1
@@ -503,6 +495,7 @@
             <script>
                 $(document).ready(function() {
                     $('#decimal-native-with-attrs').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 0,        // Should override native min="0.5"
                         max: 15,       // Should override native max="10.5"
                         step: 0.5,     // Should override native step="0.25"
@@ -556,6 +549,7 @@
             <script>
                 $(document).ready(function() {
                     $('#native-only-attrs').TouchSpin({
+                        renderer: Bootstrap4Renderer
                         // NO min, max, or step specified
                         // TouchSpin should use native attributes
                     });
@@ -610,6 +604,7 @@ $disabledTest.prop('disabled', true);</code></pre>
             <script>
                 $(document).ready(function() {
                     const $disabledTest = $('#disabled-test').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 1,
                         max: 10,
                         step: 1
@@ -665,6 +660,7 @@ $disabledTest.prop('disabled', true);</code></pre>
             <script>
                 $(document).ready(function() {
                     $('#large-step-native').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 0,
                         max: 100,
                         step: 5       // Should override native step="10"
@@ -716,6 +712,7 @@ $disabledTest.prop('disabled', true);</code></pre>
             <script>
                 $(document).ready(function() {
                     $('#booster-test').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 0,
                         max: 1000,
                         step: 1,
@@ -786,6 +783,7 @@ $disabledTest.prop('disabled', true);</code></pre>
             <script>
                 $(document).ready(function() {
                     $('#decimal-step-update').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 3,
                         max: 20,
                         step: 1,        // Integer step initially
@@ -962,24 +960,28 @@ $('#step-div-ceil').TouchSpin({
                 $(document).ready(function() {
                     // forcestepdivisibility: 'none'
                     $('#step-div-none').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 2, max: 33, step: 5,
                         forcestepdivisibility: 'none'
                     });
 
                     // forcestepdivisibility: 'round' (default)
                     $('#step-div-round').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 2, max: 33, step: 5,
                         forcestepdivisibility: 'round'
                     });
 
                     // forcestepdivisibility: 'floor'
                     $('#step-div-floor').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 2, max: 33, step: 5,
                         forcestepdivisibility: 'floor'
                     });
 
                     // forcestepdivisibility: 'ceil'
                     $('#step-div-ceil').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 2, max: 33, step: 5,
                         forcestepdivisibility: 'ceil'
                     });
@@ -1152,6 +1154,7 @@ $('#touchspin-step-test').TouchSpin({
                 $(document).ready(function() {
                     // Only initialize TouchSpin on the second input
                     $('#touchspin-step-test').TouchSpin({
+                        renderer: Bootstrap4Renderer,
                         min: 2, max: 33, step: 5
                     });
                 });

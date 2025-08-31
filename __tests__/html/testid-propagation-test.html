@@ -12,27 +12,13 @@
 
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap5Renderer.js"></script>
-  
-  <!-- Create Bootstrap 5 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap5Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 5;
-      }
-    };
-  </script>
-  
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+    
     installJqueryTouchSpin(window.jQuery);
+    window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 </head>
@@ -74,18 +60,25 @@
       console.log('Initializing TouchSpin instances...');
       
       // Test case 1: Regular TouchSpin (should create new wrapper with testid)
-      $('#test-input-1').TouchSpin();
+      $('#test-input-1').TouchSpin({
+        renderer: Bootstrap5Renderer
+      });
       
       // Test case 2: Existing input-group (should add testid to existing wrapper)
-      $('#test-input-2').TouchSpin();
+      $('#test-input-2').TouchSpin({
+        renderer: Bootstrap5Renderer
+      });
       
       // Test case 3: Vertical buttons (should create wrapper with testid)
       $('#test-input-3').TouchSpin({
+        renderer: Bootstrap5Renderer,
         verticalbuttons: true
       });
       
       // Test case 4: No testid (should not create wrapper testid)
-      $('#test-input-4').TouchSpin();
+      $('#test-input-4').TouchSpin({
+        renderer: Bootstrap5Renderer
+      });
       
       console.log('TouchSpin initialization complete');
     });
