@@ -132,6 +132,7 @@ The modern core uses an **element-attached architecture**:
 - **Visual Reports**: HTML coverage reports at `reports/coverage/html/index.html`
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
 - **CRITICAL**: NEVER run tests autonomously - only run tests when explicitly requested by the user
+- **Test Debugging**: For systematic test failure investigation, see `TEST_DEBUGGING_GUIDE.md` - it contains the complete methodology for comparing behavior against the original v4.7.3 plugin
 
 ### Clean Test Files (Modern Architecture Testing)
 - **`__tests__/html-package/core-smoke-simple.html`** - Direct core API testing with TouchSpin() function
