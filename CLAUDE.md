@@ -131,6 +131,7 @@ The modern core uses an **element-attached architecture**:
 - **IDE Integration**: LCOV reports generated at `reports/coverage/lcov.info` for PHPStorm
 - **Visual Reports**: HTML coverage reports at `reports/coverage/html/index.html`
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
+- **CRITICAL**: NEVER run tests autonomously - only run tests when explicitly requested by the user
 
 ### Clean Test Files (Modern Architecture Testing)
 - **`__tests__/html-package/core-smoke-simple.html`** - Direct core API testing with TouchSpin() function

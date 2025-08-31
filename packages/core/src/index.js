@@ -139,7 +139,7 @@ export class TouchSpinCore {
     this._handleUpMouseDown = this._handleUpMouseDown.bind(this);
     this._handleDownMouseDown = this._handleDownMouseDown.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
-    this._handleInputChange = this._handleInputChange.bind(this);
+    this._handleInputBlur = this._handleInputBlur.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this);
     this._handleKeyUp = this._handleKeyUp.bind(this);
     this._handleWheel = this._handleWheel.bind(this);
@@ -711,8 +711,7 @@ export class TouchSpinCore {
     document.addEventListener('touchend', this._handleMouseUp);
 
     // Input events (always attach these - they work without renderer UI)
-    this.input.addEventListener('input', this._handleInputChange);
-    this.input.addEventListener('change', this._handleInputChange);
+    this.input.addEventListener('blur', this._handleInputBlur);
     this.input.addEventListener('keydown', this._handleKeyDown);
     this.input.addEventListener('keyup', this._handleKeyUp);
     this.input.addEventListener('wheel', this._handleWheel);
@@ -731,8 +730,7 @@ export class TouchSpinCore {
     document.removeEventListener('touchend', this._handleMouseUp);
 
     // Input events
-    this.input.removeEventListener('input', this._handleInputChange);
-    this.input.removeEventListener('change', this._handleInputChange);
+    this.input.removeEventListener('blur', this._handleInputBlur);
     this.input.removeEventListener('keydown', this._handleKeyDown);
     this.input.removeEventListener('keyup', this._handleKeyUp);
     this.input.removeEventListener('wheel', this._handleWheel);
@@ -769,10 +767,10 @@ export class TouchSpinCore {
   }
 
   /**
-   * Handle input/change events on the input element.
+   * Handle blur events on the input element for sanitization.
    * @private
    */
-  _handleInputChange(e) {
+  _handleInputBlur(e) {
     this._checkValue(true);
   }
 
