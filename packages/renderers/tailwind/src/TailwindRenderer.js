@@ -41,11 +41,12 @@ class TailwindRenderer extends AbstractRenderer {
   buildBasicInputGroup() {
     const inputSize = this._detectInputSize();
     const isVertical = this.settings.verticalbuttons;
+    const testidAttr = this.getWrapperTestId();
     
     let html;
     if (isVertical) {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper">
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
           <div class="flex flex-col ml-1 bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
             <button tabindex="-1" class="inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border border-gray-300 rounded-t tailwind-btn bootstrap-touchspin-up ${this.settings.buttonup_class || ''}" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
@@ -56,7 +57,7 @@ class TailwindRenderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper">
+        <div class="flex rounded-md shadow-sm border border-gray-300 bootstrap-touchspin focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <button tabindex="-1" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn bootstrap-touchspin-down ${this.settings.buttondown_class || ''}" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
@@ -99,6 +100,12 @@ class TailwindRenderer extends AbstractRenderer {
     // Add bootstrap-touchspin class to existing container
     existingContainer.classList.add('bootstrap-touchspin');
     existingContainer.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+    
+    // Add testid if input has one
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) {
+      existingContainer.setAttribute('data-testid', `${inputTestId}-wrapper`);
+    }
     
     const isVertical = this.settings.verticalbuttons;
     

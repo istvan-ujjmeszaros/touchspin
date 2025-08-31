@@ -146,7 +146,8 @@ class AbstractRenderer {
   updatePrefixPostfix(newsettings, detached) { throw new Error('updatePrefixPostfix() must be implemented by subclasses'); }
 
   getWrapperTestId() {
-    const inputTestId = this.originalinput.attr('data-testid');
+    // Modern vanilla JS version
+    const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
     return '';
   }

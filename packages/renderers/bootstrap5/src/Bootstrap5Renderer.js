@@ -55,9 +55,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
   
   buildBasicInputGroup() {
     const inputGroupSize = this._detectInputGroupSize();
+    const testidAttr = this.getWrapperTestId();
     
     const html = `
-      <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+      <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
         <span class="input-group-text" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
         <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
         <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
@@ -87,6 +88,12 @@ class Bootstrap5Renderer extends AbstractRenderer {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
     existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+    
+    // Add testid if input has one
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) {
+      existingInputGroup.setAttribute('data-testid', `${inputTestId}-wrapper`);
+    }
     
     // Create buttons and prefix/postfix elements
     const elementsHtml = `

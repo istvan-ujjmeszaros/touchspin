@@ -56,9 +56,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
   
   buildBasicInputGroup() {
     const inputGroupSize = this._detectInputGroupSize();
+    const testidAttr = this.getWrapperTestId();
     
     const html = `
-      <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+      <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
         <div class="input-group-prepend" data-touchspin-injected="prefix">
           <span class="input-group-text">${this.settings.prefix || ''}</span>
         </div>
@@ -96,6 +97,12 @@ class Bootstrap4Renderer extends AbstractRenderer {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
     existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+    
+    // Add testid if input has one
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) {
+      existingInputGroup.setAttribute('data-testid', `${inputTestId}-wrapper`);
+    }
     
     // Create buttons and prefix/postfix elements with Bootstrap 4 structure
     const elementsHtml = `
