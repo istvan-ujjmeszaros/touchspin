@@ -810,7 +810,7 @@ export class TouchSpinCore {
         this.startDownSpin();
         break;
       case 'Enter':
-        this._checkValue(true);
+        this._checkValue(false);
         break;
     }
   }
