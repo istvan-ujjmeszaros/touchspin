@@ -157,4 +157,62 @@ test.describe('A/B parity: original src vs wrapper', () => {
     expect(origChangeCount).toBe(1);
     expect(wrapChangeCount).toBe(1);
   });
+
+  test('Typing 77 after initial 40 creates 4077, Enter should sanitize to 100 with single change event', async ({ page }) => {
+    await page.goto('/__tests__/html-package/ab-compare.html');
+
+    // Init both sides using test IDs (42 will be corrected to 40 due to step:5)
+    await page.click('[data-testid="orig-init"]');
+    await page.click('[data-testid="wrap-init"]');
+
+    // Verify both inputs were corrected to 40 after initialization
+    const leftAfterInit = await page.inputValue('#orig-input');
+    const rightAfterInit = await page.inputValue('#wrap-input');
+    expect(leftAfterInit).toBe('40'); // 42 corrected to nearest step boundary
+    expect(rightAfterInit).toBe('40'); // 42 corrected to nearest step boundary
+
+    // Clear logs after initialization
+    await page.evaluate(() => {
+      const origLog = document.getElementById('orig-log');
+      const wrapLog = document.getElementById('wrap-log');
+      if (origLog) origLog.textContent = '';
+      if (wrapLog) wrapLog.textContent = '';
+    });
+
+    // Test left input: Click, type "77", press Enter without blurring
+    await page.click('#orig-input');
+    await page.keyboard.type('77');
+    const leftBeforeEnter = await page.inputValue('#orig-input');
+    expect(leftBeforeEnter).toBe('4077'); // Should show 4077 after typing
+    
+    await page.keyboard.press('Enter');
+    const leftAfterEnter = await page.inputValue('#orig-input');
+    expect(leftAfterEnter).toBe('100'); // Should clamp to max 100
+
+    // Test right input: Click, type "77", press Enter without blurring  
+    await page.click('#wrap-input');
+    await page.keyboard.type('77');
+    const rightBeforeEnter = await page.inputValue('#wrap-input');
+    expect(rightBeforeEnter).toBe('4077'); // Should show 4077 after typing
+    
+    await page.keyboard.press('Enter');
+    const rightAfterEnter = await page.inputValue('#wrap-input');
+    expect(rightAfterEnter).toBe('100'); // Should clamp to max 100
+
+    // Check event logs - both should have exactly one change event with value 100
+    const getLog = (sel: string) => page.locator(sel).textContent();
+    const origLog = await getLog('#orig-log') || '';
+    const wrapLog = await getLog('#wrap-log') || '';
+
+    // Both logs should contain exactly one change event showing the max value
+    expect(origLog).toContain('change[100]');
+    expect(wrapLog).toContain('change[100]');
+
+    // Should not contain multiple change events (count occurrences of 'change[')
+    const origChangeCount = (origLog.match(/change\[/g) || []).length;
+    const wrapChangeCount = (wrapLog.match(/change\[/g) || []).length;
+    
+    expect(origChangeCount).toBe(1);
+    expect(wrapChangeCount).toBe(1);
+  });
 });
