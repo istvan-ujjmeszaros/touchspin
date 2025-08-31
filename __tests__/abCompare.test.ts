@@ -4,9 +4,9 @@ test.describe('A/B parity: original src vs wrapper', () => {
   test('ArrowUp once produces same events pattern and value step', async ({ page }) => {
     await page.goto('/__tests__/html-package/ab-compare.html');
 
-    // Init both sides
-    await page.click('#orig-init');
-    await page.click('#wrap-init');
+    // Init both sides using test IDs
+    await page.click('[data-testid="orig-init"]');
+    await page.click('[data-testid="wrap-init"]');
 
     const getVal = (sel: string) => page.inputValue(sel);
     const getLog = (sel: string) => page.locator(sel).textContent();
@@ -23,8 +23,8 @@ test.describe('A/B parity: original src vs wrapper', () => {
     const origAfter = Number(await getVal('#orig-input'));
     const wrapAfter = Number(await getVal('#wrap-input'));
 
-    expect(origAfter - origBefore).toBe(1);
-    expect(wrapAfter - wrapBefore).toBe(1);
+    expect(origAfter - origBefore).toBe(5); // step:5 configured
+    expect(wrapAfter - wrapBefore).toBe(5); // step:5 configured
 
     const origLog = await getLog('#orig-log') || '';
     const wrapLog = await getLog('#wrap-log') || '';
