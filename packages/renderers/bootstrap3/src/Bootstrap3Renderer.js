@@ -60,10 +60,10 @@ class Bootstrap3Renderer extends AbstractRenderer {
     const html = `
       <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
         <span class="input-group-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
-        <span class="input-group-btn">
+        <span class="input-group-btn" data-touchspin-injected="down-wrapper">
           <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
         </span>
-        <span class="input-group-btn">
+        <span class="input-group-btn" data-touchspin-injected="up-wrapper">
           <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
         </span>
         <span class="input-group-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
@@ -96,10 +96,10 @@ class Bootstrap3Renderer extends AbstractRenderer {
     // Create buttons and prefix/postfix elements with Bootstrap 3 structure
     const elementsHtml = `
       <span class="input-group-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
-      <span class="input-group-btn">
+      <span class="input-group-btn" data-touchspin-injected="down-wrapper">
         <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
       </span>
-      <span class="input-group-btn">
+      <span class="input-group-btn" data-touchspin-injected="up-wrapper">
         <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
       </span>
       <span class="input-group-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
