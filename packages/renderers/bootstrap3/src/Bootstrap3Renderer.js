@@ -68,7 +68,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
           <span class="input-group-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
           <span class="input-group-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
-          <span class="input-group-btn" data-touchspin-injected="vertical-btn-wrapper">
+          <span class="input-group-btn bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
             ${this.buildVerticalButtons()}
           </span>
         </div>
@@ -130,7 +130,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       elementsHtml = `
         <span class="input-group-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
         <span class="input-group-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
-        <span class="input-group-btn" data-touchspin-injected="vertical-btn-wrapper">
+        <span class="input-group-btn bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
           ${this.buildVerticalButtons()}
         </span>
       `;
@@ -156,7 +156,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
     
     if (this.settings.verticalbuttons) {
       // For vertical buttons, insert vertical wrapper after input
-      const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-btn-wrapper"]');
+      const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
       existingInputGroup.insertBefore(verticalWrapper, this.input.nextSibling);
       
       // Insert postfix after vertical wrapper
@@ -253,13 +253,12 @@ class Bootstrap3Renderer extends AbstractRenderer {
   }
 
   buildVerticalButtons() {
-    // Bootstrap 3 uses input-group-btn-vertical for vertical button styling
+    // Bootstrap 3: Return content for input-group-btn wrapper
+    // The outer wrapper is handled by the calling code
     return `
-      <span class="bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
-        <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} ${this.settings.verticalupclass || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.verticalup || '+'}</button>
-          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} ${this.settings.verticaldownclass || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.verticaldown || '-'}</button>
-        </span>
+      <span class="input-group-btn-vertical">
+        <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} ${this.settings.verticalupclass || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.verticalup || '+'}</button>
+        <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} ${this.settings.verticaldownclass || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.verticaldown || '-'}</button>
       </span>
     `;
   }

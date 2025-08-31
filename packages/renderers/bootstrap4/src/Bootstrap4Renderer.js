@@ -72,9 +72,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
           <div class="input-group-append" data-touchspin-injected="postfix">
             <span class="input-group-text">${this.settings.postfix || ''}</span>
           </div>
-          <div class="input-group-append">
-            ${this.buildVerticalButtons()}
-          </div>
+          ${this.buildVerticalButtons()}
         </div>
       `;
     } else {
@@ -142,9 +140,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
         <div class="input-group-append" data-touchspin-injected="postfix">
           <span class="input-group-text">${this.settings.postfix || ''}</span>
         </div>
-        <div class="input-group-append">
-          ${this.buildVerticalButtons()}
-        </div>
+        ${this.buildVerticalButtons()}
       `;
     } else {
       elementsHtml = `
@@ -172,7 +168,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     
     if (this.settings.verticalbuttons) {
       // For vertical buttons, insert vertical wrapper after input
-      const verticalButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
+      const verticalButtonWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
       existingInputGroup.insertBefore(verticalButtonWrapper, this.input.nextSibling);
       
       // Insert postfix after vertical wrapper
@@ -269,6 +265,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
   }
 
   buildVerticalButtons() {
+    // Bootstrap 4: Return complete structure with input-group-text wrapper (matches original)
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
