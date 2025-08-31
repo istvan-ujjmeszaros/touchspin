@@ -83,19 +83,25 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
 
     if (!isClickable) return { success: false, error: 'Button not clickable' };
 
-    // Trigger mousedown and mouseup events (what TouchSpin expects)
-    const $ = (window as any).$;
-    if ($) {
-      const $btn = $(button);
-      $btn.trigger('mousedown.touchspin');
-      // Immediately trigger mouseup to prevent spinning
-      setTimeout(() => {
-        $btn.trigger('mouseup.touchspin');
-      }, 10);
-    } else {
-      // Fallback to click if jQuery not available
-      button.click();
-    }
+    // Trigger plain DOM mousedown and mouseup events (what TouchSpin core expects)
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    });
+    
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    });
+    
+    button.dispatchEvent(mouseDownEvent);
+    
+    // Immediately trigger mouseup to prevent spinning
+    setTimeout(() => {
+      button.dispatchEvent(mouseUpEvent);
+    }, 10);
 
     return {
       success: true,
@@ -159,19 +165,25 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
 
     if (!isClickable) return { success: false, error: 'Button not clickable' };
 
-    // Trigger mousedown and mouseup events (what TouchSpin expects)
-    const $ = (window as any).$;
-    if ($) {
-      const $btn = $(button);
-      $btn.trigger('mousedown.touchspin');
-      // Immediately trigger mouseup to prevent spinning
-      setTimeout(() => {
-        $btn.trigger('mouseup.touchspin');
-      }, 10);
-    } else {
-      // Fallback to click if jQuery not available
-      button.click();
-    }
+    // Trigger plain DOM mousedown and mouseup events (what TouchSpin core expects)
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    });
+    
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    });
+    
+    button.dispatchEvent(mouseDownEvent);
+    
+    // Immediately trigger mouseup to prevent spinning
+    setTimeout(() => {
+      button.dispatchEvent(mouseUpEvent);
+    }, 10);
 
     return {
       success: true,

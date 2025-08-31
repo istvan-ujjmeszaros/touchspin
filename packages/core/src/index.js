@@ -32,8 +32,18 @@
  * @property {TouchSpinCalcCallback=} callback_before_calculation
  * @property {TouchSpinCalcCallback=} callback_after_calculation
  * @property {Function} renderer - Renderer class (e.g., Bootstrap5Renderer) or null for no UI
+ * @property {string=} initval - Initial value for the input
+ * @property {string=} replacementval - Value to use when input is empty
+ * @property {boolean=} mousewheel - Enable/disable mousewheel support
+ * @property {boolean=} verticalbuttons - Enable vertical button layout
+ * @property {string=} verticalup - Text for vertical up button
+ * @property {string=} verticaldown - Text for vertical down button
+ * @property {string=} verticalupclass - CSS classes for vertical up button (handled by renderer)
+ * @property {string=} verticaldownclass - CSS classes for vertical down button (handled by renderer)
  * @property {string=} prefix - Text/HTML before input (handled by renderer)
  * @property {string=} postfix - Text/HTML after input (handled by renderer)
+ * @property {string=} prefix_extraclass - Extra CSS classes for prefix element (handled by renderer)
+ * @property {string=} postfix_extraclass - Extra CSS classes for postfix element (handled by renderer)
  * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
  * @property {string=} buttondown_class - CSS classes for down button (handled by renderer)
  * @property {string=} buttonup_txt - Content for up button (handled by renderer)
@@ -43,15 +53,31 @@
 const DEFAULTS = {
   min: 0,
   max: 100,
+  initval: '',
+  replacementval: '',
   firstclickvalueifempty: null,
   step: 1,
   decimals: 0,
   forcestepdivisibility: 'round',
   stepinterval: 100,
   stepintervaldelay: 500,
+  verticalbuttons: false,
+  verticalup: '+',
+  verticaldown: '-',
+  verticalupclass: null,
+  verticaldownclass: null,
+  prefix: '',
+  postfix: '',
+  prefix_extraclass: '',
+  postfix_extraclass: '',
   booster: true,
   boostat: 10,
   maxboostedstep: false,
+  mousewheel: true,
+  buttonup_class: null,
+  buttondown_class: null,
+  buttonup_txt: '+',
+  buttondown_txt: '-',
   callback_before_calculation: (v) => v,
   callback_after_calculation: (v) => v,
 };
@@ -126,6 +152,9 @@ export class TouchSpinCore {
       this.renderer = new this.settings.renderer(inputEl, this.settings, this);
       this.renderer.init();
     }
+
+    // Set up mutation observer to watch for disabled/readonly changes
+    this._setupMutationObserver();
   }
 
   /**
@@ -133,6 +162,11 @@ export class TouchSpinCore {
    * @private
    */
   _initializeInput() {
+    // Set initial value if specified and input is empty
+    if (this.settings.initval !== '' && this.input.value === '') {
+      this.input.value = this.settings.initval;
+    }
+    
     // Core always handles these for the input
     this._updateAriaAttributes();
     this._checkValue(false);
@@ -244,7 +278,10 @@ export class TouchSpinCore {
 
   /** @returns {number} */
   getValue() {
-    const raw = this.input.value;
+    let raw = this.input.value;
+    if (raw === '' && this.settings.replacementval !== '') {
+      raw = this.settings.replacementval;
+    }
     if (raw === '') return NaN;
     const before = this.settings.callback_before_calculation || ((v) => v);
     const num = parseFloat(before(String(raw)));
@@ -318,6 +355,16 @@ export class TouchSpinCore {
     // Clear setting observers
     this._settingObservers.clear();
 
+    // Clean up mutation observer
+    if (this._mutationObserver) {
+      this._mutationObserver.disconnect();
+      this._mutationObserver = null;
+    }
+
+    // Clear button references
+    this._upButton = null;
+    this._downButton = null;
+
     // Remove instance from element
     if (this.input[INSTANCE_KEY] === this) {
       delete this.input[INSTANCE_KEY];
@@ -361,8 +408,12 @@ export class TouchSpinCore {
       return;
     }
 
+    this._upButton = element;
     element.addEventListener('mousedown', this._handleUpMouseDown);
     element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
+    
+    // Update disabled state immediately after attaching
+    this._updateButtonDisabledState();
   }
 
   /**
@@ -376,8 +427,12 @@ export class TouchSpinCore {
       return;
     }
 
+    this._downButton = element;
     element.addEventListener('mousedown', this._handleDownMouseDown);
     element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+    
+    // Update disabled state immediately after attaching
+    this._updateButtonDisabledState();
   }
 
   // --- Settings Observer Pattern ---
@@ -758,6 +813,10 @@ export class TouchSpinCore {
    * @private
    */
   _handleWheel(e) {
+    if (!this.settings.mousewheel) {
+      return;
+    }
+    
     if (document.activeElement === this.input) {
       e.preventDefault();
       if (e.deltaY < 0) {
@@ -765,6 +824,48 @@ export class TouchSpinCore {
       } else if (e.deltaY > 0) {
         this.downOnce();
       }
+    }
+  }
+
+  /**
+   * Set up mutation observer to watch for disabled/readonly attribute changes
+   * @private
+   */
+  _setupMutationObserver() {
+    if (typeof MutationObserver !== 'undefined') {
+      this._mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes') {
+            if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
+              this._updateButtonDisabledState();
+            }
+          }
+        });
+      });
+
+      this._mutationObserver.observe(this.input, {
+        attributes: true,
+        attributeFilter: ['disabled', 'readonly']
+      });
+    }
+  }
+
+  /**
+   * Update button disabled state based on input disabled/readonly state
+   * @private
+   */
+  _updateButtonDisabledState() {
+    const isDisabled = this.input.disabled || this.input.hasAttribute('readonly');
+    
+    if (this._upButton) {
+      this._upButton.disabled = isDisabled;
+    }
+    if (this._downButton) {
+      this._downButton.disabled = isDisabled;
+    }
+
+    if (isDisabled) {
+      this.stopSpin();
     }
   }
 }

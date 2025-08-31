@@ -104,7 +104,6 @@ class AbstractRenderer {
 
   // Legacy methods (transitional - for backward compatibility)
   getFrameworkId() { throw new Error('getFrameworkId() must be implemented by subclasses'); }
-  getDefaultSettings() { return {}; }
   buildAdvancedInputGroup(parentelement) { throw new Error('buildAdvancedInputGroup() must be implemented by subclasses'); }
   buildInputGroup() { throw new Error('buildInputGroup() must be implemented by subclasses'); }
   buildVerticalButtons() { throw new Error('buildVerticalButtons() must be implemented by subclasses'); }

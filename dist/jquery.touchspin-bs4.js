@@ -189,8 +189,18 @@
    * @property {TouchSpinCalcCallback=} callback_before_calculation
    * @property {TouchSpinCalcCallback=} callback_after_calculation
    * @property {Function} renderer - Renderer class (e.g., Bootstrap5Renderer) or null for no UI
+   * @property {string=} initval - Initial value for the input
+   * @property {string=} replacementval - Value to use when input is empty
+   * @property {boolean=} mousewheel - Enable/disable mousewheel support
+   * @property {boolean=} verticalbuttons - Enable vertical button layout
+   * @property {string=} verticalup - Text for vertical up button
+   * @property {string=} verticaldown - Text for vertical down button
+   * @property {string=} verticalupclass - CSS classes for vertical up button (handled by renderer)
+   * @property {string=} verticaldownclass - CSS classes for vertical down button (handled by renderer)
    * @property {string=} prefix - Text/HTML before input (handled by renderer)
    * @property {string=} postfix - Text/HTML after input (handled by renderer)
+   * @property {string=} prefix_extraclass - Extra CSS classes for prefix element (handled by renderer)
+   * @property {string=} postfix_extraclass - Extra CSS classes for postfix element (handled by renderer)
    * @property {string=} buttonup_class - CSS classes for up button (handled by renderer)
    * @property {string=} buttondown_class - CSS classes for down button (handled by renderer)
    * @property {string=} buttonup_txt - Content for up button (handled by renderer)
@@ -200,15 +210,31 @@
   var DEFAULTS = {
     min: 0,
     max: 100,
+    initval: '',
+    replacementval: '',
     firstclickvalueifempty: null,
     step: 1,
     decimals: 0,
     forcestepdivisibility: 'round',
     stepinterval: 100,
     stepintervaldelay: 500,
+    verticalbuttons: false,
+    verticalup: '+',
+    verticaldown: '-',
+    verticalupclass: null,
+    verticaldownclass: null,
+    prefix: '',
+    postfix: '',
+    prefix_extraclass: '',
+    postfix_extraclass: '',
     booster: true,
     boostat: 10,
     maxboostedstep: false,
+    mousewheel: true,
+    buttonup_class: null,
+    buttondown_class: null,
+    buttonup_txt: '+',
+    buttondown_txt: '-',
     callback_before_calculation: function callback_before_calculation(v) {
       return v;
     },
@@ -287,6 +313,9 @@
         this.renderer = new this.settings.renderer(inputEl, this.settings, this);
         this.renderer.init();
       }
+
+      // Set up mutation observer to watch for disabled/readonly changes
+      this._setupMutationObserver();
     }
 
     /**
@@ -296,6 +325,11 @@
     return _createClass(TouchSpinCore, [{
       key: "_initializeInput",
       value: function _initializeInput() {
+        // Set initial value if specified and input is empty
+        if (this.settings.initval !== '' && this.input.value === '') {
+          this.input.value = this.settings.initval;
+        }
+
         // Core always handles these for the input
         this._updateAriaAttributes();
         this._checkValue(false);
@@ -424,6 +458,9 @@
       key: "getValue",
       value: function getValue() {
         var raw = this.input.value;
+        if (raw === '' && this.settings.replacementval !== '') {
+          raw = this.settings.replacementval;
+        }
         if (raw === '') return NaN;
         var before = this.settings.callback_before_calculation || function (v) {
           return v;
@@ -508,6 +545,16 @@
         // Clear setting observers
         this._settingObservers.clear();
 
+        // Clean up mutation observer
+        if (this._mutationObserver) {
+          this._mutationObserver.disconnect();
+          this._mutationObserver = null;
+        }
+
+        // Clear button references
+        this._upButton = null;
+        this._downButton = null;
+
         // Remove instance from element
         if (this.input[INSTANCE_KEY] === this) {
           delete this.input[INSTANCE_KEY];
@@ -554,10 +601,14 @@
           console.warn('TouchSpin: attachUpEvents called with null element');
           return;
         }
+        this._upButton = element;
         element.addEventListener('mousedown', this._handleUpMouseDown);
         element.addEventListener('touchstart', this._handleUpMouseDown, {
           passive: false
         });
+
+        // Update disabled state immediately after attaching
+        this._updateButtonDisabledState();
       }
 
       /**
@@ -572,10 +623,14 @@
           console.warn('TouchSpin: attachDownEvents called with null element');
           return;
         }
+        this._downButton = element;
         element.addEventListener('mousedown', this._handleDownMouseDown);
         element.addEventListener('touchstart', this._handleDownMouseDown, {
           passive: false
         });
+
+        // Update disabled state immediately after attaching
+        this._updateButtonDisabledState();
       }
 
       // --- Settings Observer Pattern ---
@@ -1035,6 +1090,9 @@
     }, {
       key: "_handleWheel",
       value: function _handleWheel(e) {
+        if (!this.settings.mousewheel) {
+          return;
+        }
         if (document.activeElement === this.input) {
           e.preventDefault();
           if (e.deltaY < 0) {
@@ -1042,6 +1100,50 @@
           } else if (e.deltaY > 0) {
             this.downOnce();
           }
+        }
+      }
+
+      /**
+       * Set up mutation observer to watch for disabled/readonly attribute changes
+       * @private
+       */
+    }, {
+      key: "_setupMutationObserver",
+      value: function _setupMutationObserver() {
+        var _this5 = this;
+        if (typeof MutationObserver !== 'undefined') {
+          this._mutationObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              if (mutation.type === 'attributes') {
+                if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
+                  _this5._updateButtonDisabledState();
+                }
+              }
+            });
+          });
+          this._mutationObserver.observe(this.input, {
+            attributes: true,
+            attributeFilter: ['disabled', 'readonly']
+          });
+        }
+      }
+
+      /**
+       * Update button disabled state based on input disabled/readonly state
+       * @private
+       */
+    }, {
+      key: "_updateButtonDisabledState",
+      value: function _updateButtonDisabledState() {
+        var isDisabled = this.input.disabled || this.input.hasAttribute('readonly');
+        if (this._upButton) {
+          this._upButton.disabled = isDisabled;
+        }
+        if (this._downButton) {
+          this._downButton.disabled = isDisabled;
+        }
+        if (isDisabled) {
+          this.stopSpin();
         }
       }
     }]);
@@ -1240,11 +1342,6 @@
         throw new Error('getFrameworkId() must be implemented by subclasses');
       }
     }, {
-      key: "getDefaultSettings",
-      value: function getDefaultSettings() {
-        return {};
-      }
-    }, {
       key: "buildAdvancedInputGroup",
       value: function buildAdvancedInputGroup(parentelement) {
         throw new Error('buildAdvancedInputGroup() must be implemented by subclasses');
@@ -1305,7 +1402,8 @@
     }, {
       key: "getWrapperTestId",
       value: function getWrapperTestId() {
-        var inputTestId = this.originalinput.attr('data-testid');
+        // Modern vanilla JS version
+        var inputTestId = this.input.getAttribute('data-testid');
         if (inputTestId) return " data-testid=\"".concat(inputTestId, "-wrapper\"");
         return '';
       }
@@ -1352,6 +1450,18 @@
         this.core.observeSetting('buttondown_class', function (newValue) {
           return _this.updateButtonClass('down', newValue);
         });
+        this.core.observeSetting('verticalupclass', function (newValue) {
+          return _this.updateVerticalButtonClass('up', newValue);
+        });
+        this.core.observeSetting('verticaldownclass', function (newValue) {
+          return _this.updateVerticalButtonClass('down', newValue);
+        });
+        this.core.observeSetting('verticalup', function (newValue) {
+          return _this.updateVerticalButtonText('up', newValue);
+        });
+        this.core.observeSetting('verticaldown', function (newValue) {
+          return _this.updateVerticalButtonText('down', newValue);
+        });
       }
     }, {
       key: "teardown",
@@ -1380,7 +1490,13 @@
       key: "buildBasicInputGroup",
       value: function buildBasicInputGroup() {
         var inputGroupSize = this._detectInputGroupSize();
-        var html = "\n      <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\">\n        <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      </div>\n    ");
+        var testidAttr = this.getWrapperTestId();
+        var html;
+        if (this.settings.verticalbuttons) {
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n            <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n            <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n          </div>\n          <div class=\"input-group-append\">\n            ").concat(this.buildVerticalButtons(), "\n          </div>\n        </div>\n      ");
+        } else {
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n            <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n          </div>\n          <div class=\"input-group-append\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n            <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n          </div>\n        </div>\n      ");
+        }
 
         // Create wrapper and wrap the input
         var tempDiv = document.createElement('div');
@@ -1390,9 +1506,16 @@
         // Insert wrapper and move input into it
         this.input.parentElement.insertBefore(wrapper, this.input);
 
-        // Find the position to insert input (after down button, before up button)
-        var upButtonWrapper = wrapper.querySelector('.input-group-append');
-        wrapper.insertBefore(this.input, upButtonWrapper);
+        // Find the position to insert input
+        if (this.settings.verticalbuttons) {
+          // For vertical buttons, insert after prefix
+          var prefixWrapper = wrapper.querySelector('[data-touchspin-injected="prefix"]');
+          wrapper.insertBefore(this.input, prefixWrapper.nextSibling);
+        } else {
+          // For horizontal buttons, insert after down button, before up button
+          var upButtonWrapper = wrapper.querySelector('.input-group-append');
+          wrapper.insertBefore(this.input, upButtonWrapper);
+        }
 
         // Hide empty prefix/postfix
         this.hideEmptyPrefixPostfix(wrapper);
@@ -1405,26 +1528,44 @@
         existingInputGroup.classList.add('bootstrap-touchspin');
         existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
 
-        // Create buttons and prefix/postfix elements with Bootstrap 4 structure
-        var elementsHtml = "\n      <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n        <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n      </div>\n      <div class=\"input-group-prepend\">\n        <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n      </div>\n      <div class=\"input-group-append\">\n        <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n      </div>\n      <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n        <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n      </div>\n    ");
+        // Add testid if input has one
+        var inputTestId = this.input.getAttribute('data-testid');
+        if (inputTestId) {
+          existingInputGroup.setAttribute('data-testid', "".concat(inputTestId, "-wrapper"));
+        }
+
+        // Create elements based on vertical or horizontal layout
+        var elementsHtml;
+        if (this.settings.verticalbuttons) {
+          elementsHtml = "\n        <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n        <div class=\"input-group-append\">\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
+        } else {
+          elementsHtml = "\n        <div class=\"input-group-prepend\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        <div class=\"input-group-append\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+        }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
 
         // Insert prefix before the input
         var prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
         existingInputGroup.insertBefore(prefixEl, this.input);
+        if (this.settings.verticalbuttons) {
+          // For vertical buttons, insert vertical wrapper after input
+          var verticalButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
+          existingInputGroup.insertBefore(verticalButtonWrapper, this.input.nextSibling);
 
-        // Insert down button before the input
-        var downButtonWrapper = tempDiv.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])');
-        existingInputGroup.insertBefore(downButtonWrapper, this.input);
+          // Insert postfix after vertical wrapper
+          var postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          existingInputGroup.insertBefore(postfixEl, verticalButtonWrapper.nextSibling);
+        } else {
+          // For horizontal buttons, insert them around the input
+          var downButtonWrapper = tempDiv.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])');
+          existingInputGroup.insertBefore(downButtonWrapper, this.input);
+          var upButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
+          existingInputGroup.insertBefore(upButtonWrapper, this.input.nextSibling);
 
-        // Insert up button after the input
-        var upButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
-        existingInputGroup.insertBefore(upButtonWrapper, this.input.nextSibling);
-
-        // Insert postfix after the up button
-        var postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-        existingInputGroup.insertBefore(postfixEl, upButtonWrapper.nextSibling);
+          // Insert postfix after up button
+          var _postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          existingInputGroup.insertBefore(_postfixEl, upButtonWrapper.nextSibling);
+        }
 
         // Hide empty prefix/postfix
         this.hideEmptyPrefixPostfix(existingInputGroup);
@@ -1502,6 +1643,35 @@
         var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
         if (button) {
           button.className = "".concat(className || 'btn btn-outline-secondary', " bootstrap-touchspin-").concat(type);
+        }
+      }
+    }, {
+      key: "buildVerticalButtons",
+      value: function buildVerticalButtons() {
+        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticalupclass || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup || '+', "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticaldownclass || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown || '-', "</button>\n        </span>\n      </span>\n    ");
+      }
+    }, {
+      key: "updateVerticalButtonClass",
+      value: function updateVerticalButtonClass(type, className) {
+        var verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+        if (verticalWrapper) {
+          var button = verticalWrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+          if (button) {
+            // Update the vertical-specific class while preserving base classes
+            var baseClasses = this.settings.buttonup_class || this.settings.buttondown_class || 'btn btn-outline-secondary';
+            button.className = "".concat(baseClasses, " ").concat(className || 'btn btn-outline-secondary', " bootstrap-touchspin-").concat(type);
+          }
+        }
+      }
+    }, {
+      key: "updateVerticalButtonText",
+      value: function updateVerticalButtonText(type, text) {
+        var verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+        if (verticalWrapper) {
+          var button = verticalWrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+          if (button) {
+            button.textContent = text || (type === 'up' ? '+' : '-');
+          }
         }
       }
     }]);
