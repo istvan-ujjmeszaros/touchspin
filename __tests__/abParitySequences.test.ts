@@ -16,8 +16,8 @@ async function initBoth(page, opts: any) {
     const $wrap = $('#wrap-input');
     try { $orig.trigger('touchspin.destroy'); } catch {}
     try { $wrap.trigger('touchspin.destroy'); } catch {}
-    $orig.TouchSpin_original(o);
-    $wrap.TouchSpin(o);
+    $orig.OriginalTouchSpin(o);
+    $wrap.TouchSpin(Object.assign({renderer: (window as any).Bootstrap4Renderer}, o));
   }, opts);
 }
 
@@ -54,7 +54,7 @@ test.describe('A/B parity sequences', () => {
     await initBoth(page, { min: 0, max: 100, step: 1, stepinterval: 30, stepintervaldelay: 30, booster: true });
     await page.evaluate(() => {
       const $ = (window as any).jQuery; const $o=$('#orig-input'); const $w=$('#wrap-input');
-      $o.TouchSpin_original('set', 95); $w.TouchSpin('set', 95);
+      $o.OriginalTouchSpin('set', 95); $w.TouchSpin('set', 95);
       $o.trigger('touchspin.startupspin'); $w.trigger('touchspin.startupspin');
     });
     await page.waitForFunction(() => {
