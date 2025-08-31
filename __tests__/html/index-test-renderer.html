@@ -13,28 +13,64 @@
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
   
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="TestRenderer.js"></script>
-  
-  <!-- Create Test RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new TestRenderer($, settings, originalinput);
-      }
-      
-      static getFrameworkId() {
-        return 'test'; // Custom identifier for test renderer
-      }
-    };
-  </script>
-  
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    
+    // Load TestRenderer
+    const TestRendererModule = await import('./TestRenderer.js');
+    const TestRenderer = TestRendererModule.default || TestRendererModule.TestRenderer;
+    
+    // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = TestRenderer;
+    
+    // Keep for backwards compatibility with tests
+    window.TestRenderer = TestRenderer;
     window.modernTouchSpinInstalled = true;
+
+    // Initialize all TouchSpin instances after plugin is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      $("#test_basic").TouchSpin({
+        min: 0,
+        max: 100,
+        step: 1
+      });
+
+      $("#test_prefix_postfix").TouchSpin({
+        min: 0,
+        max: 100,
+        step: 5,
+        prefix: '$',
+        postfix: '.00'
+      });
+
+      $("#test_target").TouchSpin({
+        min: 0,
+        max: 1000,
+        step: 1,
+        prefix: 'Test:',
+        postfix: 'pts'
+      });
+
+      $("#test_vertical").TouchSpin({
+        min: 0,
+        max: 50,
+        step: 2,
+        verticalbuttons: true,
+        verticalup: '▲',
+        verticaldown: '▼'
+      });
+
+      $("#test_decimals").TouchSpin({
+        min: 0,
+        max: 100,
+        step: 0.25,
+        decimals: 2
+      });
+    });
   </script>
 
 </head>
@@ -50,43 +86,18 @@
         <label for="test_basic" class="form-label">Basic Test Renderer:</label>
         <input id="test_basic" data-testid="test-basic" type="text" value="50" name="test_basic" class="form-control">
 
-        <script>
-          $("#test_basic").TouchSpin({
-            min: 0,
-            max: 100,
-            step: 1
-          });
-        </script>
       </div>
 
       <div class="wrapper mb-3">
         <label for="test_prefix_postfix" class="form-label">With Prefix/Postfix:</label>
         <input id="test_prefix_postfix" data-testid="test-prefix-postfix" type="text" value="25" name="test_prefix_postfix" class="form-control">
 
-        <script>
-          $("#test_prefix_postfix").TouchSpin({
-            min: 0,
-            max: 100,
-            step: 5,
-            prefix: '$',
-            postfix: '.00'
-          });
-        </script>
       </div>
 
       <div class="wrapper mb-3">
         <label for="test_target" class="form-label">Test Target (for automated tests):</label>
         <input id="test_target" data-testid="test-target" type="text" value="42" name="test_target" class="form-control">
 
-        <script>
-          $("#test_target").TouchSpin({
-            min: 0,
-            max: 1000,
-            step: 1,
-            prefix: 'Test:',
-            postfix: 'pts'
-          });
-        </script>
       </div>
     </div>
 
@@ -95,30 +106,12 @@
         <label for="test_vertical" class="form-label">Vertical Buttons:</label>
         <input id="test_vertical" data-testid="test-vertical" type="text" value="10" name="test_vertical" class="form-control">
 
-        <script>
-          $("#test_vertical").TouchSpin({
-            min: 0,
-            max: 50,
-            step: 2,
-            verticalbuttons: true,
-            verticalup: '▲',
-            verticaldown: '▼'
-          });
-        </script>
       </div>
 
       <div class="wrapper mb-3">
         <label for="test_decimals" class="form-label">With Decimals:</label>
         <input id="test_decimals" data-testid="test-decimals" type="text" value="12.50" name="test_decimals" class="form-control">
 
-        <script>
-          $("#test_decimals").TouchSpin({
-            min: 0,
-            max: 100,
-            step: 0.25,
-            decimals: 2
-          });
-        </script>
       </div>
     </div>
   </div>

@@ -30,26 +30,21 @@
     </div>
   </div>
 
-  <!-- Load TouchSpin source files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="TestRenderer.js"></script>
-
-  <!-- Create Test RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new TestRenderer($, settings, originalinput);
-      }
-      static getVersion() {
-        return 'test';
-      }
-    };
-  </script>
-
-  <!-- Load main TouchSpin source file -->
+  <!-- Load TouchSpin modern packages -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    
+    // Load TestRenderer (assuming it exists in html/TestRenderer.js)
+    const TestRendererModule = await import('./TestRenderer.js');
+    const TestRenderer = TestRendererModule.default || TestRendererModule.TestRenderer;
+    
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = TestRenderer;
+    
+    // Keep for backwards compatibility with tests
+    window.TestRenderer = TestRenderer;
     window.modernTouchSpinInstalled = true;
   </script>
 

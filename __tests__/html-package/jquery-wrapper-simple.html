@@ -136,6 +136,9 @@
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
 
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+
     // Helper to get direct core API instance from the input (for comparison)
     window.getDirectApi = function() {
       const input = document.getElementById('simple-input');
@@ -146,9 +149,8 @@
     window.initTouchSpin = function() {
       const $input = $('#simple-input');
       
-      // Initialize via jQuery wrapper with renderer
+      // Initialize via jQuery wrapper with global default renderer
       $input.TouchSpin({ 
-        renderer: Bootstrap5Renderer, // Required: specify renderer
         min: 0, 
         max: 200, 
         step: 1 
@@ -161,7 +163,6 @@
       
       // Initialize TouchSpin on input that's already in an input-group
       $input.TouchSpin({
-        renderer: Bootstrap5Renderer, // Required: specify renderer
         min: 0,
         max: 500,
         step: 5,

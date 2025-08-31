@@ -14,8 +14,89 @@
     <!-- Load modern TouchSpin packages directly -->
     <script type="module">
         import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+        
+        // Install jQuery plugin
         installJqueryTouchSpin(window.jQuery);
+        
+        // No global default renderer - this file tests CSS-independent functionality without renderer
         window.modernTouchSpinInstalled = true;
+
+        // Initialize all TouchSpin instances after plugin is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Basic functionality tests
+            $('#basic-test').TouchSpin({
+                min: 0,
+                max: 100,
+                step: 1
+            });
+            
+            $('#prefix-postfix-test').TouchSpin({
+                min: 0,
+                max: 1000,
+                step: 5,
+                prefix: '$',
+                postfix: '.00'
+            });
+            
+            $('#decimal-test').TouchSpin({
+                min: 0,
+                max: 999.99,
+                step: 0.25,
+                decimals: 2
+            });
+            
+            // Size detection tests
+            $('#small-size-test').TouchSpin({
+                min: 1,
+                max: 10,
+                step: 1
+            });
+            
+            $('#large-size-test').TouchSpin({
+                min: 10,
+                max: 1000,
+                step: 10
+            });
+            
+            // Vertical button tests
+            $('#vertical-basic-test').TouchSpin({
+                min: 0,
+                max: 50,
+                step: 1,
+                verticalbuttons: true
+            });
+            
+            $('#vertical-prefix-test').TouchSpin({
+                min: 0,
+                max: 200,
+                step: 5,
+                verticalbuttons: true,
+                prefix: '$',
+                postfix: '/hr'
+            });
+            
+            // Edge case tests
+            $('#boundary-test').TouchSpin({
+                min: -10,
+                max: 10,
+                step: 1
+            });
+            
+            $('#step-test').TouchSpin({
+                min: 0,
+                max: 100,
+                step: 10
+            });
+            
+            // CSS independence test
+            $('#independence-test').TouchSpin({
+                min: 1,
+                max: 999,
+                step: 1,
+                prefix: '🎯',
+                postfix: 'pts'
+            });
+        });
     </script>
     
     <!-- Test-specific inline styling -->
@@ -178,85 +259,6 @@
 
     </div>
 
-    <!-- Test Initialization JavaScript -->
-    <script>
-        $(document).ready(function() {
-            
-            // Basic functionality tests
-            $('#basic-test').TouchSpin({
-                min: 0,
-                max: 100,
-                step: 1
-            });
-            
-            $('#prefix-postfix-test').TouchSpin({
-                min: 0,
-                max: 1000,
-                step: 5,
-                prefix: '$',
-                postfix: '.00'
-            });
-            
-            $('#decimal-test').TouchSpin({
-                min: 0,
-                max: 999.99,
-                step: 0.25,
-                decimals: 2
-            });
-            
-            // Size detection tests
-            $('#small-size-test').TouchSpin({
-                min: 1,
-                max: 10,
-                step: 1
-            });
-            
-            $('#large-size-test').TouchSpin({
-                min: 1,
-                max: 20,
-                step: 1
-            });
-            
-            // Vertical button tests
-            $('#vertical-basic-test').TouchSpin({
-                min: 1,
-                max: 50,
-                step: 1,
-                verticalbuttons: true
-            });
-            
-            $('#vertical-prefix-test').TouchSpin({
-                min: 1,
-                max: 999,
-                step: 1,
-                verticalbuttons: true,
-                prefix: '#'
-            });
-            
-            // Boundary tests
-            $('#boundary-test').TouchSpin({
-                min: 1,
-                max: 10,
-                step: 1
-            });
-            
-            $('#step-test').TouchSpin({
-                min: 0,
-                max: 100,
-                step: 10
-            });
-            
-            // CSS independence test
-            $('#independence-test').TouchSpin({
-                min: 1,
-                max: 999,
-                step: 1,
-                prefix: '🎯',
-                postfix: 'pts'
-            });
-            
-        });
-    </script>
 
 </body>
 </html>

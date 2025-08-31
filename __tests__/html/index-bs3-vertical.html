@@ -15,28 +15,40 @@
 
   <!-- Load source CSS -->
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  <!-- Load source renderer files -->
-  <script src="../../src/renderers/AbstractRenderer.js"></script>
-  <script src="../../src/renderers/Bootstrap3Renderer.js"></script>
-  
-  <!-- Create Bootstrap 3 RendererFactory -->
-  <script>
-    window.RendererFactory = class {
-      static createRenderer($, settings, originalinput) {
-        return new Bootstrap3Renderer($, settings, originalinput);
-      }
-      
-      static getVersion() {
-        return 3;
-      }
-    };
-  </script>
-  
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
+    
+    // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
+    
+    // Keep for backwards compatibility with tests
+    window.Bootstrap3Renderer = Bootstrap3Renderer;
     window.modernTouchSpinInstalled = true;
+
+    // Initialize all TouchSpin instances after plugin is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      $("#testinput_vertical").TouchSpin({
+        verticalbuttons: true,
+      });
+      $("#testinput_vertical_lg").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true,
+      });
+      $("#rtl_testinput_vertical").TouchSpin({
+        verticalbuttons: true,
+      });
+      $("#rtl_testinput_vertical_lg").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true,
+      });
+    });
   </script>
 
 </head>
@@ -50,48 +62,24 @@
         <label for="testinput_vertical">#testinput_vertical:</label>
         <input id="testinput_vertical" type="text" value="50" name="testinput_vertical">
 
-        <script>
-          $("#testinput_vertical").TouchSpin({
-            verticalbuttons: true,
-          });
-        </script>
       </div>
 
       <div class="wrapper" data-testid="touchspin-vertical-lg">
         <label for="testinput_vertical_lg">#testinput_vertical_lg:</label>
         <input id="testinput_vertical_lg" type="text" class="form-control form-control-lg" value="50">
 
-        <script>
-          $("#testinput_vertical_lg").TouchSpin({
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true,
-          });
-        </script>
       </div>
 
       <div class="wrapper rtl" dir="rtl" data-testid="touchspin-rtl-vertical">
         <label for="rtl_testinput_vertical">#rtl_testinput_vertical:</label>
         <input id="rtl_testinput_vertical" type="text" value="50" name="rtl_testinput_vertical">
 
-        <script>
-          $("#rtl_testinput_vertical").TouchSpin({
-            verticalbuttons: true,
-          });
-        </script>
       </div>
 
       <div class="wrapper rtl" dir="rtl" data-testid="touchspin-rtl-vertical-lg">
         <label for="rtl_testinput_vertical_lg">#rtl_testinput_vertical_lg:</label>
         <input id="rtl_testinput_vertical_lg" type="text" class="form-control form-control-lg" value="50">
 
-        <script>
-          $("#rtl_testinput_vertical_lg").TouchSpin({
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true,
-          });
-        </script>
       </div>
 
     </div>
@@ -102,38 +90,6 @@
            style="height:200px;overflow:auto;outline:1px dotted gray;height:calc(100% - 50px);margin-top:15px;"></pre>
     </div>
 
-    <script>
-      var events_log = $("#events_log"),
-        text = "";
-
-      function writeLine(input, line) {
-        text += '#' + input.attr('id') + ': ' + line + "\n";
-        events_log.text(text);
-        events_log.scrollTop(
-          events_log[0].scrollHeight - events_log.height()
-        );
-      }
-
-      [
-        "change",
-        "touchspin.on.startspin",
-        "touchspin.on.startupspin",
-        "touchspin.on.startdownspin",
-        "touchspin.on.stopspin",
-        "touchspin.on.stopupspin",
-        "touchspin.on.stopdownspin",
-        "touchspin.on.min",
-        "touchspin.on.max"
-      ].forEach(function (eventName) {
-        $("input").on(eventName, function (e) {
-          var line = eventName;
-          if (eventName === "change") {
-            line += "[" + $(this).val() + "]";
-          }
-          writeLine($(this), line);
-        });
-      });
-    </script>
 
   </div>
 

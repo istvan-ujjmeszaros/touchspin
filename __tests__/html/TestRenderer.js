@@ -2,6 +2,8 @@
  * Test Renderer for Settings Precedence Testing
  * Provides predictable defaults to verify that user settings take precedence
  */
+import AbstractRenderer from '../../packages/core/src/AbstractRenderer.js';
+
 class TestRenderer extends AbstractRenderer {
 
   getFrameworkId() {
@@ -126,3 +128,5 @@ class TestRenderer extends AbstractRenderer {
     }
   }
 }
+
+export default TestRenderer;

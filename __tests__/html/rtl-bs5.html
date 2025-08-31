@@ -21,9 +21,64 @@
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
     
+    // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+    
+    // Keep for backwards compatibility with tests
     window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
+
+    // Initialize all TouchSpin instances after plugin is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      $("#testinput_default").TouchSpin();
+      $("#testinput_decimals").TouchSpin({
+        decimals: 2,
+        step: 0.01
+      });
+      $("#input_group_sm").TouchSpin({
+        prefix: "$",
+        postfix: "/qty"
+      });
+      $("#input_group_lg").TouchSpin({
+        prefix: "$",
+        postfix: "/qty"
+      });
+      $("#input_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_sm_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_lg_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_sm_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_lg_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_postfix").TouchSpin();
+      $("#input_group_from_dom_prefix").TouchSpin();
+    });
   </script>
 
 </head>
@@ -39,61 +94,30 @@
         <label for="testinput_default" class="form-label">#testinput_default:</label>
         <input id="testinput_default" data-testid="touchspin-rtl-default" type="text" value="50" name="testinput_default" class="form-control">
 
-        <script>
-          $("#testinput_default").TouchSpin({ renderer: Bootstrap5Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_decimals" class="form-label">#testinput_decimals:</label>
         <input id="testinput_decimals" data-testid="touchspin-rtl-decimals" type="number" value="50" name="testinput_decimals" class="form-control">
 
-        <script>
-          $("#testinput_decimals").TouchSpin({
-            renderer: Bootstrap5Renderer,
-            decimals: 2,
-            step: 0.01
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_sm" class="form-label">#input_group_sm:</label>
         <input id="input_group_sm" data-testid="touchspin-rtl-group-sm" type="text" class="form-control form-control-sm" value="50">
 
-        <script>
-          $("#input_group_sm").TouchSpin({
-            renderer: Bootstrap5Renderer,
-            prefix: "$",
-            postfix: "/qty"
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_vertical" class="form-label">#input_vertical:</label>
         <input id="input_vertical" data-testid="touchspin-rtl-vertical" type="text" class="form-control" value="50">
 
-        <script>
-          $("#input_vertical").TouchSpin({
-            renderer: Bootstrap5Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_vertical" class="form-label">#input_group_vertical:</label>
         <input id="input_group_vertical" data-testid="touchspin-rtl-group-vertical" type="text" class="form-control" value="50">
 
-        <script>
-          $("#input_group_vertical").TouchSpin({
-            renderer: Bootstrap5Renderer,
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <!-- Bootstrap 5 RTL no longer has input-group-prepend/append -->
@@ -105,9 +129,6 @@
           <span class="input-group-text">post</span>
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix_postfix").TouchSpin({ renderer: Bootstrap5Renderer });
-        </script>
       </div>
 
       <!-- Vertical buttons in input group (not last-child) -->
@@ -119,14 +140,6 @@
           <span class="input-group-text">post</span>
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
-            renderer: Bootstrap5Renderer,
-            verticalbuttons: true,
-            verticalup: '<i class="bi bi-chevron-up"></i>',
-            verticaldown: '<i class="bi bi-chevron-down"></i>'
-          });
-        </script>
       </div>
 
     </div>
@@ -137,38 +150,6 @@
            style="height:200px;overflow:auto;outline:1px dotted gray;height:calc(100% - 50px);margin-top:15px;"></pre>
     </div>
 
-    <script>
-      var events_log = $("#events_log"),
-        text = "";
-
-      function writeLine(input, line) {
-        text += '#' + input.attr('id') + ': ' + line + "\n";
-        events_log.text(text);
-        events_log.scrollTop(
-          events_log[0].scrollHeight - events_log.height()
-        );
-      }
-
-      [
-        "change",
-        "touchspin.on.startspin",
-        "touchspin.on.startupspin",
-        "touchspin.on.startdownspin",
-        "touchspin.on.stopspin",
-        "touchspin.on.stopupspin",
-        "touchspin.on.stopdownspin",
-        "touchspin.on.min",
-        "touchspin.on.max"
-      ].forEach(function (eventName) {
-        $("input").on(eventName, function (e) {
-          var line = eventName;
-          if (eventName === "change") {
-            line += "[" + $(this).val() + "]";
-          }
-          writeLine($(this), line);
-        });
-      });
-    </script>
 
   </div>
 

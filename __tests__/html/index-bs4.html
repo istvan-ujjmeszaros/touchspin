@@ -18,14 +18,136 @@
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
 
 
-  <!-- Load original TouchSpin source file (for comparison tests) -->
+  <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
     
     installJqueryTouchSpin(window.jQuery);
+    
+    // Set global default renderer - no need to specify on each TouchSpin call
+    globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
+    
+    // Keep for backwards compatibility with tests
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
+
+    // Initialize all TouchSpin instances after plugin is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      $("#testinput_default").TouchSpin();
+      $("#testinput_number").TouchSpin();
+      $("#testinput_decimals").TouchSpin({
+        decimals: 2,
+        step: 0.01
+      });
+      $("#testinput_step10_min").TouchSpin({
+        step: 10,
+      });
+      $("#testinput_step10_max").TouchSpin({
+        step: 10,
+      });
+      $("#testinput_disabled").TouchSpin();
+      $("#testinput_readonly").TouchSpin();
+      $("#testinput_data_attributes").TouchSpin();
+      $("#testinput_individual_min_max_step_properties").TouchSpin();
+      
+      // Callback example (currency)
+      (function() {
+        const before = (raw) => (raw ?? '').replace(/[^\d\.\-]/g, ''); // strip $, commas, spaces, etc.
+        const after = (numStr) => {
+          const n = parseFloat(numStr);
+          if (!isFinite(n)) return '';
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(n);
+        };
+
+        $("#testinput_callbacks").TouchSpin({
+          min: 0,
+          max: 5500,
+          step: 0.1,
+          decimals: 2,
+          callback_before_calculation: before,
+          callback_after_calculation: after
+        });
+      })();
+
+      $("#input_group_sm").TouchSpin({
+        prefix: "$",
+        postfix: "/qty"
+      });
+      $("#input_group_lg").TouchSpin({
+        prefix: "$",
+        postfix: "/qty"
+      });
+      
+      // Numeral.js callback example
+      $("#input_callbacks").TouchSpin({
+        min: 0,
+        max: 5500,
+        step: 0.1,
+        decimals: 2,
+        initval: '$5,000.00',
+        callback_before_calculation: (value) => {
+          return numeral(value).value();
+        },
+        callback_after_calculation: (value) => {
+          return numeral(value).format("$0,0.00");
+        }
+      });
+
+      $("#input_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_sm_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_lg_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_sm_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_lg_vertical").TouchSpin({
+        prefix: "$",
+        postfix: "/qty",
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_vertical").TouchSpin({
+        verticalbuttons: true
+      });
+      $("#input_group_from_dom_prefix_postfix").TouchSpin();
+      $("#input_group_from_dom_prefix").TouchSpin();
+      
+      // Double init test
+      $('#double-init-input').TouchSpin({
+        min: 0,
+        max: 200,
+        step: 5
+      });
+      // Second initialization - should be blocked by alreadyinitialized check
+      $('#double-init-input').TouchSpin({
+        min: 0,
+        max: 300,
+        step: 10
+      });
+      
+      // Test invalid element
+      $('#not-an-input').TouchSpin();
+    });
   </script>
 
 
@@ -40,73 +162,42 @@
         <label for="testinput_default">#testinput_default:</label>
         <input id="testinput_default" type="text" value="50" name="testinput_default" data-testid="touchspin-default">
 
-        <script>
-          $("#testinput_default").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_number">#testinput_number:</label>
         <input id="testinput_number" type="number" value="50" name="testinput_number" data-testid="touchspin-number">
 
-        <script>
-          $("#testinput_number").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_decimals">#testinput_decimals:</label>
         <input id="testinput_decimals" type="number" value="50" name="testinput_decimals" data-testid="touchspin-decimals">
 
-        <script>
-          $("#testinput_decimals").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            decimals: 2,
-            step: 0.01
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_step10_min">#testinput_step10_min:</label>
         <input id="testinput_step10_min" type="text" value="0" name="testinput_step10_min" data-testid="touchspin-step10-min">
 
-        <script>
-          $("#testinput_step10_min").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            step: 10,
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_step10_max">#testinput_step10_max:</label>
         <input id="testinput_step10_max" type="text" value="100" name="testinput_step10_max" data-testid="touchspin-step10-max">
 
-        <script>
-          $("#testinput_step10_max").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            step: 10,
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_disabled">#testinput_disabled:</label>
         <input id="testinput_disabled" type="text" value="0" name="testinput_disabled" disabled data-testid="touchspin-disabled">
 
-        <script>
-          $("#testinput_disabled").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="testinput_readonly">#testinput_readonly:</label>
         <input id="testinput_readonly" type="text" value="0" name="testinput_readonly" readonly data-testid="touchspin-readonly">
 
-        <script>
-          $("#testinput_readonly").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -118,9 +209,6 @@
                data-bts-step="2" data-testid="touchspin-data-attributes"
         >
 
-        <script>
-          $("#testinput_data_attributes").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -135,9 +223,6 @@
                data-bts-step="2" data-testid="touchspin-individual-props"
         >
 
-        <script>
-          $("#testinput_individual_min_max_step_properties").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -146,157 +231,60 @@
                value="5000" data-testid="touchspin-callbacks"
         >
 
-        <script>
-          (function() {
-            const before = (raw) => (raw ?? '').replace(/[^\d\.\-]/g, ''); // strip $, commas, spaces, etc.
-            const after = (numStr) => {
-              const n = parseFloat(numStr);
-              if (!isFinite(n)) return '';
-              return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }).format(n);
-            };
-
-            $("#testinput_callbacks").TouchSpin({
-              renderer: Bootstrap4Renderer,
-              min: 0,
-              max: 5500,
-              step: 0.1,
-              decimals: 2,
-              callback_before_calculation: before,
-              callback_after_calculation: after
-            });
-          })();
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_sm">#input_group_sm:</label>
         <input id="input_group_sm" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-group-sm">
 
-        <script>
-          $("#input_group_sm").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            prefix: "$",
-            postfix: "/qty"
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_lg">#input_group_lg:</label>
         <input id="input_group_lg" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-group-lg">
 
-        <script>
-          $("#input_group_lg").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            prefix: "$",
-            postfix: "/qty"
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_callbacks">#input_callbacks:</label>
         <input id="input_callbacks" type="text" class="form-control form-control-lg" value="" data-testid="touchspin-callbacks-numeral">
 
-        <script>
-          $("#input_callbacks").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            min: 0,
-            max: 5500,
-            step: 0.1,
-            decimals: 2,
-            initval: '$5,000.00',
-            callback_before_calculation: (value) => {
-              return numeral(value).value();
-            },
-            callback_after_calculation: (value) => {
-              return numeral(value).format("$0,0.00");
-            }
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_vertical">#input_vertical:</label>
         <input id="input_vertical" type="text" class="form-control" value="50" data-testid="touchspin-vertical">
 
-        <script>
-          $("#input_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_sm_vertical">#input_sm_vertical:</label>
         <input id="input_sm_vertical" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-sm-vertical">
 
-        <script>
-          $("#input_sm_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_lg_vertical">#input_lg_vertical:</label>
         <input id="input_lg_vertical" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-lg-vertical">
 
-        <script>
-          $("#input_lg_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_vertical">#input_group_vertical:</label>
         <input id="input_group_vertical" type="text" class="form-control" value="50" data-testid="touchspin-group-vertical">
 
-        <script>
-          $("#input_group_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_sm_vertical">#input_group_sm_vertical:</label>
         <input id="input_group_sm_vertical" type="text" class="form-control form-control-sm" value="50" data-testid="touchspin-group-sm-vertical">
 
-        <script>
-          $("#input_group_sm_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="input_group_lg_vertical">#input_group_lg_vertical:</label>
         <input id="input_group_lg_vertical" type="text" class="form-control form-control-lg" value="50" data-testid="touchspin-group-lg-vertical">
 
-        <script>
-          $("#input_group_lg_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            prefix: "$",
-            postfix: "/qty",
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -311,12 +299,6 @@
           </div>
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix_postfix_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -328,12 +310,6 @@
           <input id="input_group_from_dom_prefix_vertical" type="text" class="form-control" value="50" data-testid="touchspin-prefix-vertical">
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix_vertical").TouchSpin({
-            renderer: Bootstrap4Renderer,
-            verticalbuttons: true
-          });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -348,9 +324,6 @@
           </div>
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix_postfix").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
@@ -362,40 +335,17 @@
           <input id="input_group_from_dom_prefix" type="text" class="form-control" value="50" data-testid="touchspin-prefix">
         </div>
 
-        <script>
-          $("#input_group_from_dom_prefix").TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
       <div class="wrapper">
         <label for="double-init-input">#double-init-input:</label>
         <input id="double-init-input" type="text" value="100" data-testid="double-init-input">
 
-        <script>
-          // First initialization
-          $('#double-init-input').TouchSpin({
-            renderer: Bootstrap4Renderer,
-            min: 0,
-            max: 200,
-            step: 5
-          });
-
-          // Second initialization - should be blocked by alreadyinitialized check
-          $('#double-init-input').TouchSpin({
-            renderer: Bootstrap4Renderer,
-            min: 0,
-            max: 300,
-            step: 10
-          });
-        </script>
       </div>
 
       <div class="wrapper">
         <div id="not-an-input" data-testid="not-an-input">This is not an input element</div>
 
-        <script>
-          $('#not-an-input').TouchSpin({ renderer: Bootstrap4Renderer });
-        </script>
       </div>
 
     </div>
