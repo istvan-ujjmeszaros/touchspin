@@ -8,6 +8,12 @@ import AbstractRenderer from '../../../core/src/AbstractRenderer.js';
 class Bootstrap4Renderer extends AbstractRenderer {
 
   init() {
+    // Add form-control class if not present (Bootstrap requirement)
+    if (!this.input.classList.contains('form-control')) {
+      this.input.classList.add('form-control');
+      this._formControlAdded = true; // Track if we added it
+    }
+    
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
     
@@ -26,7 +32,16 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.core.observeSetting('buttondown_class', (newValue) => this.updateButtonClass('down', newValue));
   }
 
-  // teardown() uses inherited removeInjectedElements() - no override needed
+  teardown() {
+    // Remove form-control class only if we added it
+    if (this._formControlAdded) {
+      this.input.classList.remove('form-control');
+      this._formControlAdded = false;
+    }
+    
+    // Call parent teardown to handle DOM cleanup
+    super.teardown();
+  }
 
   buildInputGroup() {
     // Check if input is already inside an input-group
