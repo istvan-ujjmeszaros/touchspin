@@ -66,10 +66,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
     if (this.settings.verticalbuttons) {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
-          <div class="input-group-prepend" data-touchspin-injected="prefix">
+          <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix">
             <span class="input-group-text">${this.settings.prefix || ''}</span>
           </div>
-          <div class="input-group-append" data-touchspin-injected="postfix">
+          <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
             <span class="input-group-text">${this.settings.postfix || ''}</span>
           </div>
           ${this.buildVerticalButtons()}
@@ -78,16 +78,16 @@ class Bootstrap4Renderer extends AbstractRenderer {
     } else {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
-          <div class="input-group-prepend" data-touchspin-injected="prefix">
+          <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix">
             <span class="input-group-text">${this.settings.prefix || ''}</span>
           </div>
           <div class="input-group-prepend">
-            <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
+            <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           </div>
           <div class="input-group-append">
-            <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
+            <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
           </div>
-          <div class="input-group-append" data-touchspin-injected="postfix">
+          <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
             <span class="input-group-text">${this.settings.postfix || ''}</span>
           </div>
         </div>
@@ -134,17 +134,17 @@ class Bootstrap4Renderer extends AbstractRenderer {
     let elementsHtml;
     if (this.settings.verticalbuttons) {
       elementsHtml = `
-        <div class="input-group-prepend" data-touchspin-injected="prefix">
+        <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix">
           <span class="input-group-text">${this.settings.prefix || ''}</span>
         </div>
-        <div class="input-group-append" data-touchspin-injected="postfix">
+        <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
           <span class="input-group-text">${this.settings.postfix || ''}</span>
         </div>
         ${this.buildVerticalButtons()}
       `;
     } else {
       elementsHtml = `
-        <div class="input-group-prepend" data-touchspin-injected="prefix">
+        <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix">
           <span class="input-group-text">${this.settings.prefix || ''}</span>
         </div>
         <div class="input-group-prepend">
@@ -153,7 +153,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
         <div class="input-group-append">
           <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
         </div>
-        <div class="input-group-append" data-touchspin-injected="postfix">
+        <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
           <span class="input-group-text">${this.settings.postfix || ''}</span>
         </div>
       `;
@@ -222,7 +222,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       if (!prefixEl) {
         // Re-create prefix element if it was removed
         prefixEl = document.createElement('div');
-        prefixEl.className = 'input-group-prepend';
+        prefixEl.className = 'input-group-prepend bootstrap-touchspin-prefix';
         prefixEl.setAttribute('data-touchspin-injected', 'prefix');
         prefixEl.innerHTML = `<span class="input-group-text">${value}</span>`;
         // Insert at the beginning of the wrapper
@@ -243,7 +243,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       if (!postfixEl) {
         // Re-create postfix element if it was removed
         postfixEl = document.createElement('div');
-        postfixEl.className = 'input-group-append';
+        postfixEl.className = 'input-group-append bootstrap-touchspin-postfix';
         postfixEl.setAttribute('data-touchspin-injected', 'postfix');
         postfixEl.innerHTML = `<span class="input-group-text">${value}</span>`;
         // Insert at the end of the wrapper
@@ -269,8 +269,8 @@ class Bootstrap4Renderer extends AbstractRenderer {
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.verticalup || '+'}</button>
-          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.verticaldown || '-'}</button>
+          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
+          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
         </span>
       </span>
     `;
@@ -293,7 +293,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     if (verticalWrapper) {
       const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
       if (button) {
-        button.textContent = text || (type === 'up' ? '+' : '-');
+        button.textContent = text || (type === 'up' ? '+' : '−');
       }
     }
   }

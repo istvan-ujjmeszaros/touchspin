@@ -1478,9 +1478,9 @@
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n          <span class=\"input-group-btn bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            ").concat(this.buildVerticalButtons(), "\n          </span>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-addon bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n          <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            ").concat(this.buildVerticalButtons(), "\n          </span>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n          </span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </span>\n          <span class=\"input-group-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </span>\n          <span class=\"input-group-addon bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -1522,9 +1522,9 @@
         // Create elements based on vertical or horizontal layout
         var elementsHtml;
         if (this.settings.verticalbuttons) {
-          elementsHtml = "\n        <span class=\"input-group-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n        <span class=\"input-group-btn bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n          ").concat(this.buildVerticalButtons(), "\n        </span>\n      ");
+          elementsHtml = "\n        <span class=\"input-group-addon bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-addon bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n        <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n          ").concat(this.buildVerticalButtons(), "\n        </span>\n      ");
         } else {
-          elementsHtml = "\n        <span class=\"input-group-addon\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </span>\n        <span class=\"input-group-addon\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n      ");
+          elementsHtml = "\n        <span class=\"input-group-addon bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">".concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n        </span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </span>\n        <span class=\"input-group-addon bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">").concat(this.settings.postfix || '', "</span>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -1588,7 +1588,7 @@
           if (!prefixEl) {
             // Re-create prefix element if it was removed
             prefixEl = document.createElement('span');
-            prefixEl.className = 'input-group-addon';
+            prefixEl.className = 'input-group-addon bootstrap-touchspin-prefix';
             prefixEl.setAttribute('data-touchspin-injected', 'prefix');
             prefixEl.textContent = value;
             // Insert at the beginning of the wrapper
@@ -1609,7 +1609,7 @@
           if (!postfixEl) {
             // Re-create postfix element if it was removed
             postfixEl = document.createElement('span');
-            postfixEl.className = 'input-group-addon';
+            postfixEl.className = 'input-group-addon bootstrap-touchspin-postfix';
             postfixEl.setAttribute('data-touchspin-injected', 'postfix');
             postfixEl.textContent = value;
             // Insert at the end of the wrapper
@@ -1635,7 +1635,7 @@
       value: function buildVerticalButtons() {
         // Bootstrap 3: Return content for input-group-btn wrapper
         // The outer wrapper is handled by the calling code
-        return "\n      <span class=\"input-group-btn-vertical\">\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class || 'btn btn-default', " ").concat(this.settings.verticalupclass || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.verticalup || '+', "</button>\n        <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " ").concat(this.settings.verticaldownclass || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.verticaldown || '-', "</button>\n      </span>\n    ");
+        return "\n      <span class=\"input-group-btn-vertical\">\n        <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class || 'btn btn-default', " ").concat(this.settings.verticalupclass || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n        <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " ").concat(this.settings.verticaldownclass || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n      </span>\n    ");
       }
     }, {
       key: "updateVerticalButtonClass",
@@ -1657,7 +1657,7 @@
         if (verticalWrapper) {
           var button = verticalWrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
           if (button) {
-            button.textContent = text || (type === 'up' ? '+' : '-');
+            button.textContent = text || (type === 'up' ? '+' : '−');
           }
         }
       }
