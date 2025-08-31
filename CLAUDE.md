@@ -22,6 +22,7 @@ The project uses **Rollup** as its build system:
 
 ### Testing (Playwright + Coverage)
 - `npm test` - Run Playwright tests (browser-based tests)
+- `npm test -- --reporter=list` - Run tests without HTML report server (prevents hanging)
 - `npm run test:coverage` - Run tests with automatic coverage report generation
 - `npm run coverage:open` - Open HTML coverage reports in browser
 - `npm run test:headed` - Run tests with visible browser
@@ -132,6 +133,7 @@ The modern core uses an **element-attached architecture**:
 - **Visual Reports**: HTML coverage reports at `reports/coverage/html/index.html`
 - Demo HTML files in `demo/` folder work directly from the local file system with `file://` protocol
 - **CRITICAL**: NEVER run tests autonomously - only run tests when explicitly requested by the user
+- **CRITICAL**: Always use `--reporter=list` when running tests to prevent HTML report server from hanging (e.g., `npm test -- --reporter=list`)
 - **Test Debugging**: For systematic test failure investigation, see `TEST_DEBUGGING_GUIDE.md` - it contains the complete methodology for comparing behavior against the original v4.7.3 plugin
 
 ### Clean Test Files (Modern Architecture Testing)
