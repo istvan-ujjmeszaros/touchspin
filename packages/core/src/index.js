@@ -181,16 +181,25 @@ export class TouchSpinCore {
 
     const v = this.getValue();
     const next = this._nextValue('up', v);
-    const prevNum = v;
+    
+    // Check if already at max boundary before incrementing
+    if (this.settings.max != null && v === this.settings.max) {
+      this.emit('max');
+      if (this.spinning && this.direction === 'up') {
+        this.stopSpin();
+      }
+      return;
+    }
+    
+    // Fire max event BEFORE setting display if we're reaching max
+    if (this.settings.max != null && next === this.settings.max) {
+      this.emit('max');
+      if (this.spinning && this.direction === 'up') {
+        this.stopSpin();
+      }
+    }
+    
     this._setDisplay(next, true);
-    if (isFinite(prevNum) && next !== prevNum) {
-      if (this.settings.max != null && next === this.settings.max) this.emit('max');
-      if (this.settings.min != null && next === this.settings.min) this.emit('min');
-    }
-    // If we hit the max while spinning upward, stop the spin to release lock
-    if (this.spinning && this.direction === 'up' && this.settings.max != null && next === this.settings.max) {
-      this.stopSpin();
-    }
   }
 
   /** Decrement once according to step */
@@ -201,16 +210,25 @@ export class TouchSpinCore {
 
     const v = this.getValue();
     const next = this._nextValue('down', v);
-    const prevNum = v;
+    
+    // Check if already at min boundary before decrementing
+    if (this.settings.min != null && v === this.settings.min) {
+      this.emit('min');
+      if (this.spinning && this.direction === 'down') {
+        this.stopSpin();
+      }
+      return;
+    }
+    
+    // Fire min event BEFORE setting display if we're reaching min
+    if (this.settings.min != null && next === this.settings.min) {
+      this.emit('min');
+      if (this.spinning && this.direction === 'down') {
+        this.stopSpin();
+      }
+    }
+    
     this._setDisplay(next, true);
-    if (isFinite(prevNum) && next !== prevNum) {
-      if (this.settings.max != null && next === this.settings.max) this.emit('max');
-      if (this.settings.min != null && next === this.settings.min) this.emit('min');
-    }
-    // If we hit the min while spinning downward, stop the spin to release lock
-    if (this.spinning && this.direction === 'down' && this.settings.min != null && next === this.settings.min) {
-      this.stopSpin();
-    }
   }
 
   /** Start increasing repeatedly (placeholder) */
