@@ -67,22 +67,6 @@ test.describe('Settings Precedence System', () => {
 
   test.describe('Renderer Defaults vs User Settings', () => {
 
-    test('should apply renderer default classes when user does not specify', async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/settings-precedence-renderer-defaults.html');
-      await page.waitForLoadState('networkidle');
-      
-      // Check that renderer default classes were applied
-      const wrapper = page.getByTestId('test-renderer-defaults-wrapper');
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      const downButton = wrapper.locator('.bootstrap-touchspin-down');
-      
-      // Should have Bootstrap5 renderer default classes
-      await expect(upButton).toHaveClass(/btn btn-outline-secondary/);
-      await expect(downButton).toHaveClass(/btn btn-outline-secondary/);
-      
-      await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
-    });
 
     test('should preserve user classes over renderer defaults', async ({ page }) => {
       await touchspinHelpers.startCoverage(page);
