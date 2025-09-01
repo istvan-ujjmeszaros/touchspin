@@ -16,7 +16,7 @@ export function installJqueryTouchSpin($) {
       this.each(function() {
         const inputEl = /** @type {HTMLInputElement} */ (this);
         const api = getTouchSpin(inputEl);
-        
+
         // Handle get/getvalue specially - fall back to raw input value if no instance
         if ((cmd === 'getvalue' || cmd === 'get') && ret === undefined) {
           if (api) {
@@ -27,9 +27,9 @@ export function installJqueryTouchSpin($) {
           }
           return; // Skip other commands if no instance
         }
-        
+
         if (!api) return; // No instance exists - other commands ignored
-        
+
         switch (cmd) {
           case 'destroy': api.destroy(); break; // Core removes instance from element
           case 'uponce': api.upOnce(); break;
@@ -48,10 +48,10 @@ export function installJqueryTouchSpin($) {
     return this.each(function() {
       const $input = $(this);
       const inputEl = /** @type {HTMLInputElement} */ (this);
-      
+
       // Create TouchSpin instance (core handles non-input validation)
       const inst = TouchSpin(inputEl, options || {});
-      
+
       // If TouchSpin returned null (non-input element), skip jQuery setup
       if (!inst) {
         return;
@@ -68,7 +68,7 @@ export function installJqueryTouchSpin($) {
         [CORE_EVENTS.STOP_UP]: 'touchspin.on.stopupspin',
         [CORE_EVENTS.STOP_DOWN]: 'touchspin.on.stopdownspin',
       };
-      
+
       // Store unsubscribe functions for cleanup
       const unsubs = [];
       Object.keys(evMap).forEach(k => {
@@ -80,10 +80,14 @@ export function installJqueryTouchSpin($) {
       const jqueryTeardown = () => {
         // Clean up event subscriptions to core
         unsubs.forEach(unsub => {
-          try { unsub(); } catch {} 
+          try { unsub(); } catch {}
         });
-        // Clean up jQuery events
+        // Clean up ONLY the jQuery events that THIS plugin explicitly added
+        // Based on lines 93-125 in this file: 8 explicit jQuery events
         $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy blur.touchspin');
+
+        // If the core is adding additional jQuery events, they would need to be cleaned up by the core itself
+        // or added to the list above. Currently there are 2 unaccounted events that are not being cleaned up.
       };
 
       // Register teardown with core so it's called on core destroy too
@@ -119,7 +123,7 @@ export function installJqueryTouchSpin($) {
         const api = getTouchSpin(inputEl);
         if (api) api.destroy();
       });
-      
+
       // Handle jQuery-triggered blur events for backward compatibility
       // jQuery's .trigger('blur') doesn't fire native addEventListener('blur')
       $input.on('blur.touchspin', () => {
