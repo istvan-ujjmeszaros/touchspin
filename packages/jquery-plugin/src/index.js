@@ -49,8 +49,13 @@ export function installJqueryTouchSpin($) {
       const $input = $(this);
       const inputEl = /** @type {HTMLInputElement} */ (this);
       
-      // Create TouchSpin instance (core handles everything including storage on element)
+      // Create TouchSpin instance (core handles non-input validation)
       const inst = TouchSpin(inputEl, options || {});
+      
+      // If TouchSpin returned null (non-input element), skip jQuery setup
+      if (!inst) {
+        return;
+      }
 
       // Bridge core events to jQuery events (minimal event forwarding only)
       const evMap = {

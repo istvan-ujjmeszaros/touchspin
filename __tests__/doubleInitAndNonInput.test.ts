@@ -17,7 +17,7 @@ test.describe('Double Initialization and Non-Input Element Tests', () => {
     // Set up console listener before page load to capture HTML script messages
     const consoleMessages: string[] = [];
     page.on('console', msg => {
-      if (msg.type() === 'log') {
+      if (msg.type() === 'warning') {
         consoleMessages.push(msg.text());
       }
     });

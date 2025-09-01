@@ -1115,9 +1115,15 @@ export class TouchSpinCore {
  * Initialize TouchSpin on an input element or get existing instance.
  * @param {HTMLInputElement} inputEl
  * @param {Partial<TouchSpinCoreOptions>=} opts
- * @returns {TouchSpinCorePublicAPI}
+ * @returns {TouchSpinCorePublicAPI|null}
  */
 export function TouchSpin(inputEl, opts) {
+  // Check if element is an input (graceful handling for public API)
+  if (!inputEl || inputEl.nodeName !== 'INPUT') {
+    console.warn('Must be an input.');
+    return null;
+  }
+  
   // If options provided, initialize/reinitialize
   if (opts !== undefined) {
     // Destroy existing instance if it exists (destroy() removes itself from element)
