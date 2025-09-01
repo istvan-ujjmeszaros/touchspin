@@ -174,6 +174,7 @@ export class TouchSpinCore {
     
     // Core always handles these for the input
     this._updateAriaAttributes();
+    this._syncNativeAttributes();
     this._checkValue(false);
   }
 
@@ -386,6 +387,7 @@ export class TouchSpinCore {
 
     // Core handles its own setting changes
     this._updateAriaAttributes();
+    this._syncNativeAttributes();
     this._checkValue(false);
   }
 
@@ -795,6 +797,97 @@ export class TouchSpinCore {
     el.setAttribute('aria-valuetext', String(raw));
   }
 
+  /**
+   * Synchronize TouchSpin settings to native input attributes.
+   * Only applies to type="number" inputs to maintain browser consistency.
+   * @private
+   */
+  _syncNativeAttributes() {
+    // Only set native attributes on number inputs
+    if (this.input.getAttribute('type') === 'number') {
+      // Sync min attribute
+      if (this.settings.min != null && isFinite(this.settings.min)) {
+        this.input.setAttribute('min', String(this.settings.min));
+      } else {
+        this.input.removeAttribute('min');
+      }
+      
+      // Sync max attribute
+      if (this.settings.max != null && isFinite(this.settings.max)) {
+        this.input.setAttribute('max', String(this.settings.max));
+      } else {
+        this.input.removeAttribute('max');
+      }
+      
+      // Sync step attribute
+      if (this.settings.step != null && isFinite(this.settings.step) && this.settings.step > 0) {
+        this.input.setAttribute('step', String(this.settings.step));
+      } else {
+        this.input.removeAttribute('step');
+      }
+    }
+  }
+
+  /**
+   * Update TouchSpin settings from native attribute changes.
+   * Called by mutation observer when min/max/step attributes change.
+   * @private
+   */
+  _syncSettingsFromNativeAttributes() {
+    const nativeMin = this.input.getAttribute('min');
+    const nativeMax = this.input.getAttribute('max');
+    const nativeStep = this.input.getAttribute('step');
+    let needsUpdate = false;
+    const newSettings = {};
+
+    // Check min attribute
+    if (nativeMin != null) {
+      const parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+      const minNum = parsedMin != null && isFinite(parsedMin) ? parsedMin : null;
+      if (minNum !== this.settings.min) {
+        newSettings.min = minNum;
+        needsUpdate = true;
+      }
+    } else if (this.settings.min != null) {
+      // Attribute was removed
+      newSettings.min = null;
+      needsUpdate = true;
+    }
+
+    // Check max attribute
+    if (nativeMax != null) {
+      const parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+      const maxNum = parsedMax != null && isFinite(parsedMax) ? parsedMax : null;
+      if (maxNum !== this.settings.max) {
+        newSettings.max = maxNum;
+        needsUpdate = true;
+      }
+    } else if (this.settings.max != null) {
+      // Attribute was removed
+      newSettings.max = null;
+      needsUpdate = true;
+    }
+
+    // Check step attribute
+    if (nativeStep != null) {
+      const parsedStep = nativeStep === '' ? null : parseFloat(nativeStep);
+      const stepNum = parsedStep != null && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : null;
+      if (stepNum !== this.settings.step) {
+        newSettings.step = stepNum;
+        needsUpdate = true;
+      }
+    } else if (this.settings.step !== 1) {
+      // Attribute was removed, reset to default
+      newSettings.step = 1;
+      needsUpdate = true;
+    }
+
+    // Apply updates if needed
+    if (needsUpdate) {
+      this.updateSettings(newSettings);
+    }
+  }
+
   // --- DOM Event Handling Methods ---
 
   /**
@@ -967,6 +1060,8 @@ export class TouchSpinCore {
           if (mutation.type === 'attributes') {
             if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
               this._updateButtonDisabledState();
+            } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
+              this._syncSettingsFromNativeAttributes();
             }
           }
         });
@@ -974,7 +1069,7 @@ export class TouchSpinCore {
 
       this._mutationObserver.observe(this.input, {
         attributes: true,
-        attributeFilter: ['disabled', 'readonly']
+        attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step']
       });
     }
   }
