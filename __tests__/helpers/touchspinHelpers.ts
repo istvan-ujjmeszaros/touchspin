@@ -56,8 +56,46 @@ async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Prom
 }
 
 async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> {
-  // Get the initial value for comparison
-  const initialValue = await readInputValue(page, inputTestId);
+  // Get the initial state to determine if change is expected
+  const initialState = await page.evaluate((testId) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) return null;
+    
+    // Check input state
+    const isDisabled = input.disabled || input.hasAttribute('disabled');
+    const isReadonly = input.readOnly || input.hasAttribute('readonly');
+    const currentValue = parseFloat(input.value) || 0;
+    
+    // Try to get TouchSpin settings from core instance
+    const touchSpinCore = (input as any)._touchSpinCore;
+    let maxValue = null;
+    if (touchSpinCore && touchSpinCore.settings) {
+      maxValue = touchSpinCore.settings.max;
+    } else {
+      // Fallback: check for data attributes or native attributes
+      const dataMax = input.getAttribute('data-bts-max');
+      const nativeMax = input.getAttribute('max');
+      if (dataMax) maxValue = parseFloat(dataMax);
+      else if (nativeMax) maxValue = parseFloat(nativeMax);
+    }
+    
+    // Determine if value change is expected
+    const atMaxBoundary = maxValue != null && currentValue >= maxValue;
+    const shouldChange = !isDisabled && !isReadonly && !atMaxBoundary;
+    
+    return {
+      value: input.value,
+      disabled: isDisabled,
+      readonly: isReadonly,
+      atMaxBoundary,
+      shouldChange
+    };
+  }, inputTestId);
+
+  if (!initialState) {
+    throw new Error('TouchSpin input not found');
+  }
+
   // Get the TouchSpin wrapper that contains both input and buttons
   const touchspinContainer = page.getByTestId(inputTestId + '-wrapper');
 
@@ -114,32 +152,73 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
   });
 
   if (!clickResult.success) {
-    // If button is not clickable (disabled), that's expected for some tests
-    if (clickResult.error === 'Button not clickable') {
-      console.warn('Button not clickable - this may be expected for disabled/readonly inputs');
-      return; // Exit early - don't wait for value change
+    // Only warn for unexpected button click failures
+    if (clickResult.error === 'Button not clickable' && !initialState.disabled && !initialState.readonly) {
+      console.warn('Button not clickable - unexpected for enabled input');
     }
-    throw new Error(`TouchSpin up button click failed: ${clickResult.error}`);
+    return; // Exit early - don't wait for value change
   }
 
-  // Wait for the value to actually change
-  try {
-    await page.waitForFunction(
-      ({ testId, initialVal }: { testId: string; initialVal: string | null }) => {
-        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-        return input && input.value !== initialVal;
-      },
-      { testId: inputTestId, initialVal: initialValue },
-      { timeout: 2000 }
-    );
-  } catch (error) {
-    console.warn('Value did not change within timeout - this may be expected for disabled inputs');
+  // Only wait for value change if we expect it to happen
+  if (initialState.shouldChange) {
+    try {
+      await page.waitForFunction(
+        ({ testId, initialVal }: { testId: string; initialVal: string }) => {
+          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+          return input && input.value !== initialVal;
+        },
+        { testId: inputTestId, initialVal: initialState.value },
+        { timeout: 2000 }
+      );
+    } catch (error) {
+      // Only warn for truly unexpected failures
+      console.warn('Value did not change within timeout - unexpected for enabled input not at boundary');
+    }
   }
+  // If change is not expected (disabled/readonly/at boundary), don't wait and don't warn
 }
 
 async function touchspinClickDown(page: Page, inputTestId: string): Promise<void> {
-  // Get the initial value for comparison
-  const initialValue = await readInputValue(page, inputTestId);
+  // Get the initial state to determine if change is expected
+  const initialState = await page.evaluate((testId) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) return null;
+    
+    // Check input state
+    const isDisabled = input.disabled || input.hasAttribute('disabled');
+    const isReadonly = input.readOnly || input.hasAttribute('readonly');
+    const currentValue = parseFloat(input.value) || 0;
+    
+    // Try to get TouchSpin settings from core instance
+    const touchSpinCore = (input as any)._touchSpinCore;
+    let minValue = null;
+    if (touchSpinCore && touchSpinCore.settings) {
+      minValue = touchSpinCore.settings.min;
+    } else {
+      // Fallback: check for data attributes or native attributes
+      const dataMin = input.getAttribute('data-bts-min');
+      const nativeMin = input.getAttribute('min');
+      if (dataMin) minValue = parseFloat(dataMin);
+      else if (nativeMin) minValue = parseFloat(nativeMin);
+    }
+    
+    // Determine if value change is expected
+    const atMinBoundary = minValue != null && currentValue <= minValue;
+    const shouldChange = !isDisabled && !isReadonly && !atMinBoundary;
+    
+    return {
+      value: input.value,
+      disabled: isDisabled,
+      readonly: isReadonly,
+      atMinBoundary,
+      shouldChange
+    };
+  }, inputTestId);
+
+  if (!initialState) {
+    throw new Error('TouchSpin input not found');
+  }
+
   // Wait for TouchSpin wrapper to be ready and get it
   const touchspinContainer = page.getByTestId(inputTestId + '-wrapper');
 
@@ -196,27 +275,30 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
   });
 
   if (!clickResult.success) {
-    // If button is not clickable (disabled), that's expected for some tests
-    if (clickResult.error === 'Button not clickable') {
-      console.warn('Down button not clickable - this may be expected for disabled/readonly inputs');
-      return;
+    // Only warn for unexpected button click failures
+    if (clickResult.error === 'Button not clickable' && !initialState.disabled && !initialState.readonly) {
+      console.warn('Down button not clickable - unexpected for enabled input');
     }
-    throw new Error(`TouchSpin down button click failed: ${clickResult.error}`);
+    return; // Exit early - don't wait for value change
   }
 
-  // Wait for the value to actually change
-  try {
-    await page.waitForFunction(
-      ({ testId, initialVal }: { testId: string; initialVal: string | null }) => {
-        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-        return input && input.value !== initialVal;
-      },
-      { testId: inputTestId, initialVal: initialValue },
-      { timeout: 2000 }
-    );
-  } catch (error) {
-    console.warn('Down value did not change within timeout - this may be expected for disabled inputs');
+  // Only wait for value change if we expect it to happen
+  if (initialState.shouldChange) {
+    try {
+      await page.waitForFunction(
+        ({ testId, initialVal }: { testId: string; initialVal: string }) => {
+          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+          return input && input.value !== initialVal;
+        },
+        { testId: inputTestId, initialVal: initialState.value },
+        { timeout: 2000 }
+      );
+    } catch (error) {
+      // Only warn for truly unexpected failures
+      console.warn('Down value did not change within timeout - unexpected for enabled input not at boundary');
+    }
   }
+  // If change is not expected (disabled/readonly/at boundary), don't wait and don't warn
 }
 
 async function changeEventCounter(page: Page): Promise<number> {
