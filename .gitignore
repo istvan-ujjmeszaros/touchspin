@@ -22,6 +22,9 @@ reports/
 *history*
 bootstrap-touchspin-history*
 
+# Playwright test reports generated in wrong directory
+off/
+
 # Prevent Windows AppData paths from being tracked (malformed filenames)
 **/AppData/**
 C:/Users/*/AppData/*
