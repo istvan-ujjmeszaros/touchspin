@@ -78,7 +78,7 @@ export function installJqueryTouchSpin($) {
           try { unsub(); } catch {} 
         });
         // Clean up jQuery events
-        $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');
+        $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy blur.touchspin');
       };
 
       // Register teardown with core so it's called on core destroy too
@@ -113,6 +113,15 @@ export function installJqueryTouchSpin($) {
         // Forward destroy to core (core will call registered teardown callbacks)
         const api = getTouchSpin(inputEl);
         if (api) api.destroy();
+      });
+      
+      // Handle jQuery-triggered blur events for backward compatibility
+      // jQuery's .trigger('blur') doesn't fire native addEventListener('blur')
+      $input.on('blur.touchspin', () => {
+        const core = inputEl._touchSpinCore;
+        if (core && core._checkValue) {
+          core._checkValue(true);
+        }
       });
     });
   };
