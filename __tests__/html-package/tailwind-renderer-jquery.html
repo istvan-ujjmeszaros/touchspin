@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TouchSpin Tailwind Renderer + jQuery Wrapper Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <style>
+    .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+    .control-buttons button { margin: 4px; }
+    pre { background:#f8f9fa; padding:10px; }
+  </style>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="max-w-3xl mx-auto mt-6">
+    <h1 class="text-2xl font-semibold">Tailwind Renderer + jQuery Wrapper Test</h1>
+    <p class="text-gray-700">Uses jQuery wrapper with Tailwind renderer for comprehensive wrapper testing.</p>
+
+    <!-- Basic jQuery Wrapper Test Section -->
+    <div class="test-section">
+      <h3 class="text-lg font-medium mb-3">Basic jQuery Wrapper</h3>
+      <div class="mb-2">
+        <label for="jq-input" class="block mb-1 font-medium">Numeric input:</label>
+        <input data-testid="jq-input" id="jq-input" type="text" value="10" class="w-full border rounded px-2 py-2" />
+      </div>
+      <div class="control-buttons">
+        <button data-testid="btn-init" id="btn-init" class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Init</button>
+        <button data-testid="btn-destroy" id="btn-destroy" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">Destroy</button>
+      </div>
+      <div class="mt-2"><strong>Status:</strong> <span id="status">Not initialized</span></div>
+      <h5 class="mt-3 font-medium">Events</h5>
+      <pre data-testid="log" id="log"></pre>
+    </div>
+
+    <!-- Advanced Container Test Section -->
+    <div class="test-section">
+      <h3 class="text-lg font-medium mb-3">Advanced Container</h3>
+      <div data-testid="tw-adv-container" id="tw-adv-container" data-touchspin-advanced class="mb-4 p-4 border-2 border-dashed border-gray-300 rounded flex rounded-md">
+        <label for="tw-adv-input" class="block mb-1 font-medium">Advanced input:</label>
+        <input data-testid="tw-adv-input" id="tw-adv-input" type="text" value="25" class="w-full border rounded px-2 py-2" />
+      </div>
+      <div class="control-buttons">
+        <button data-testid="btn-adv-init" id="btn-adv-init" class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">Init Advanced</button>
+        <button data-testid="btn-adv-destroy" id="btn-adv-destroy" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">Destroy Advanced</button>
+      </div>
+      <div class="mt-2"><strong>Advanced Status:</strong> <span id="adv-status">Not initialized</span></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import { getTouchSpin } from '../../packages/core/src/index.js';
+    import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+    
+    // Install jQuery plugin
+    installJqueryTouchSpin(window.jQuery);
+
+    // Set global default renderer
+    globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
+
+    const $ = window.jQuery;
+    const $input = $('#jq-input');
+    const $advInput = $('#tw-adv-input');
+    const status = document.getElementById('status');
+    const advStatus = document.getElementById('adv-status');
+    const log = document.getElementById('log');
+
+    function addLog(msg) {
+      const ts = new Date().toISOString().split('T')[1].replace('Z','');
+      log.textContent += `[${ts}] ${msg}\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Event logging for basic input
+    const events = 'touchspin.on.min touchspin.on.max touchspin.on.startspin touchspin.on.stopspin touchspin.on.startupspin touchspin.on.startdownspin touchspin.on.stopupspin touchspin.on.stopdownspin';
+    $input.on(events, function(e){
+      const ns = (e.namespace || '');
+      const sub = ns.replace(/^on\./, '') || e.type;
+      addLog('core:' + sub);
+    });
+    $input.on('change', function(){ addLog('change[' + this.value + ']'); });
+
+    // Basic init/destroy functions
+    function init() {
+      try { destroy(); } catch {}
+      $input.TouchSpin({ 
+        min: 0, 
+        max: 100, 
+        step: 1,
+        renderer: TailwindRenderer
+      });
+      status.textContent = 'Initialized (min 0, max 100, step 1)';
+    }
+
+    function destroy() {
+      $input.TouchSpin('destroy');
+      status.textContent = 'Destroyed';
+    }
+
+    // Advanced init/destroy functions
+    function initAdvanced() {
+      try { destroyAdvanced(); } catch {}
+      // Initialize on the input within the advanced container
+      $advInput.TouchSpin({ 
+        min: 0, 
+        max: 200, 
+        step: 5,
+        renderer: TailwindRenderer,
+        prefix: '$',
+        postfix: 'USD'
+      });
+      advStatus.textContent = 'Advanced initialized';
+    }
+
+    function destroyAdvanced() {
+      $advInput.TouchSpin('destroy');
+      advStatus.textContent = 'Advanced destroyed';
+    }
+
+    // Bind event handlers
+    document.getElementById('btn-init').addEventListener('click', init);
+    document.getElementById('btn-destroy').addEventListener('click', destroy);
+    document.getElementById('btn-adv-init').addEventListener('click', initAdvanced);
+    document.getElementById('btn-adv-destroy').addEventListener('click', destroyAdvanced);
+  </script>
+</body>
+</html>

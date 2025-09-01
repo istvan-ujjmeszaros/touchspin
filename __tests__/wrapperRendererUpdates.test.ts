@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Wrapper renderer updates on settings change (P18)', () => {
   test('updates prefix/postfix text and extraclasses via updatesettings', async ({ page }) => {
     await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
-    await page.click('#btn-init');
+    await page.click('[data-testid="btn-init"]');
 
     // Apply updates: add prefix/postfix text and extra classes
     await page.evaluate(() => {
-      const $ = (window as any).jQuery; const $i = $('#jq-input');
+      const $ = (window as any).jQuery; const $i = $('[data-testid="jq-input"]');
       $i.trigger('touchspin.updatesettings', [{ prefix: 'USD', postfix: 'kg', prefix_extraclass: 'tw-prefix-x', postfix_extraclass: 'tw-postfix-y' }]);
     });
 
@@ -26,7 +26,7 @@ test.describe('Wrapper renderer updates on settings change (P18)', () => {
 
     // Change classes again to ensure removal then add works
     await page.evaluate(() => {
-      const $ = (window as any).jQuery; const $i = $('#jq-input');
+      const $ = (window as any).jQuery; const $i = $('[data-testid="jq-input"]');
       $i.trigger('touchspin.updatesettings', [{ prefix_extraclass: 'tw-prefix-z', postfix_extraclass: 'tw-postfix-q' }]);
     });
     const prefixClass2 = await prefix.evaluate(el => el.className);
