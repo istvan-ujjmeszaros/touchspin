@@ -148,6 +148,21 @@ bower install bootstrap-touchspin
 </script>
 ```
 
+### Keyboard Accessible Buttons
+
+```html
+<input type="number" id="accessible-spinner" value="5">
+
+<script>
+  $('#accessible-spinner').TouchSpin({
+    min: 0,
+    max: 100,
+    step: 1,
+    focusablebuttons: true  // Enable Tab navigation and Enter/Space activation
+  });
+</script>
+```
+
 ### Modern Core API (framework-agnostic)
 
 ```html
@@ -354,6 +369,7 @@ Publishing note: Tests load from `src/` during development. Rebuild `dist/` at c
 | `verticaldown` | string | `'&minus;'` | Content for vertical down button |
 | `verticalupclass` | string | `''` | CSS class for vertical up button |
 | `verticaldownclass` | string | `''` | CSS class for vertical down button |
+| `focusablebuttons` | boolean | `false` | Enable keyboard navigation for spinner buttons (Tab navigation + Enter/Space activation) |
 | `prefix` | string | `''` | Text/HTML before input |
 | `postfix` | string | `''` | Text/HTML after input |
 | `prefix_extraclass` | string | `''` | Additional CSS class for prefix |

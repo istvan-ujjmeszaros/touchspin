@@ -253,6 +253,7 @@
     verticaldown: '-',
     verticalupclass: null,
     verticaldownclass: null,
+    focusablebuttons: false,
     prefix: '',
     postfix: '',
     prefix_extraclass: '',
@@ -334,6 +335,10 @@
       this._handleUpMouseDown = this._handleUpMouseDown.bind(this);
       this._handleDownMouseDown = this._handleDownMouseDown.bind(this);
       this._handleMouseUp = this._handleMouseUp.bind(this);
+      this._handleUpKeyDown = this._handleUpKeyDown.bind(this);
+      this._handleUpKeyUp = this._handleUpKeyUp.bind(this);
+      this._handleDownKeyDown = this._handleDownKeyDown.bind(this);
+      this._handleDownKeyUp = this._handleDownKeyUp.bind(this);
       this._handleInputChange = this._handleInputChange.bind(this);
       this._handleInputBlur = this._handleInputBlur.bind(this);
       this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -367,6 +372,7 @@
 
         // Core always handles these for the input
         this._updateAriaAttributes();
+        this._syncNativeAttributes();
         this._checkValue(false);
       }
 
@@ -596,6 +602,7 @@
 
         // Core handles its own setting changes
         this._updateAriaAttributes();
+        this._syncNativeAttributes();
         this._checkValue(false);
       }
 
@@ -753,6 +760,12 @@
           passive: false
         });
 
+        // Add keyboard event listeners if focusable buttons are enabled
+        if (this.settings.focusablebuttons) {
+          element.addEventListener('keydown', this._handleUpKeyDown);
+          element.addEventListener('keyup', this._handleUpKeyUp);
+        }
+
         // Update disabled state immediately after attaching
         this._updateButtonDisabledState();
       }
@@ -774,6 +787,12 @@
         element.addEventListener('touchstart', this._handleDownMouseDown, {
           passive: false
         });
+
+        // Add keyboard event listeners if focusable buttons are enabled
+        if (this.settings.focusablebuttons) {
+          element.addEventListener('keydown', this._handleDownKeyDown);
+          element.addEventListener('keyup', this._handleDownKeyUp);
+        }
 
         // Update disabled state immediately after attaching
         this._updateButtonDisabledState();
@@ -1085,6 +1104,101 @@
         el.setAttribute('aria-valuetext', String(raw));
       }
 
+      /**
+       * Synchronize TouchSpin settings to native input attributes.
+       * Only applies to type="number" inputs to maintain browser consistency.
+       * @private
+       */
+    }, {
+      key: "_syncNativeAttributes",
+      value: function _syncNativeAttributes() {
+        // Only set native attributes on number inputs
+        if (this.input.getAttribute('type') === 'number') {
+          // Sync min attribute
+          if (this.settings.min != null && isFinite(this.settings.min)) {
+            this.input.setAttribute('min', String(this.settings.min));
+          } else {
+            this.input.removeAttribute('min');
+          }
+
+          // Sync max attribute
+          if (this.settings.max != null && isFinite(this.settings.max)) {
+            this.input.setAttribute('max', String(this.settings.max));
+          } else {
+            this.input.removeAttribute('max');
+          }
+
+          // Sync step attribute
+          if (this.settings.step != null && isFinite(this.settings.step) && this.settings.step > 0) {
+            this.input.setAttribute('step', String(this.settings.step));
+          } else {
+            this.input.removeAttribute('step');
+          }
+        }
+      }
+
+      /**
+       * Update TouchSpin settings from native attribute changes.
+       * Called by mutation observer when min/max/step attributes change.
+       * @private
+       */
+    }, {
+      key: "_syncSettingsFromNativeAttributes",
+      value: function _syncSettingsFromNativeAttributes() {
+        var nativeMin = this.input.getAttribute('min');
+        var nativeMax = this.input.getAttribute('max');
+        var nativeStep = this.input.getAttribute('step');
+        var needsUpdate = false;
+        var newSettings = {};
+
+        // Check min attribute
+        if (nativeMin != null) {
+          var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+          var minNum = parsedMin != null && isFinite(parsedMin) ? parsedMin : null;
+          if (minNum !== this.settings.min) {
+            newSettings.min = minNum;
+            needsUpdate = true;
+          }
+        } else if (this.settings.min != null) {
+          // Attribute was removed
+          newSettings.min = null;
+          needsUpdate = true;
+        }
+
+        // Check max attribute
+        if (nativeMax != null) {
+          var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+          var maxNum = parsedMax != null && isFinite(parsedMax) ? parsedMax : null;
+          if (maxNum !== this.settings.max) {
+            newSettings.max = maxNum;
+            needsUpdate = true;
+          }
+        } else if (this.settings.max != null) {
+          // Attribute was removed
+          newSettings.max = null;
+          needsUpdate = true;
+        }
+
+        // Check step attribute
+        if (nativeStep != null) {
+          var parsedStep = nativeStep === '' ? null : parseFloat(nativeStep);
+          var stepNum = parsedStep != null && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : null;
+          if (stepNum !== this.settings.step) {
+            newSettings.step = stepNum;
+            needsUpdate = true;
+          }
+        } else if (this.settings.step !== 1) {
+          // Attribute was removed, reset to default
+          newSettings.step = 1;
+          needsUpdate = true;
+        }
+
+        // Apply updates if needed
+        if (needsUpdate) {
+          this.updateSettings(newSettings);
+        }
+      }
+
       // --- DOM Event Handling Methods ---
 
       /**
@@ -1184,6 +1298,66 @@
       }
 
       /**
+       * Handle keydown events on up button.
+       * @private
+       */
+    }, {
+      key: "_handleUpKeyDown",
+      value: function _handleUpKeyDown(e) {
+        // Only handle Enter and Space keys
+        if (e.keyCode === 13 || e.keyCode === 32) {
+          // Enter or Space
+          e.preventDefault();
+          this.upOnce();
+          this.startUpSpin();
+        }
+      }
+
+      /**
+       * Handle keyup events on up button.
+       * @private
+       */
+    }, {
+      key: "_handleUpKeyUp",
+      value: function _handleUpKeyUp(e) {
+        // Only handle Enter and Space keys
+        if (e.keyCode === 13 || e.keyCode === 32) {
+          // Enter or Space
+          this.stopSpin();
+        }
+      }
+
+      /**
+       * Handle keydown events on down button.
+       * @private
+       */
+    }, {
+      key: "_handleDownKeyDown",
+      value: function _handleDownKeyDown(e) {
+        // Only handle Enter and Space keys
+        if (e.keyCode === 13 || e.keyCode === 32) {
+          // Enter or Space
+          e.preventDefault();
+          this.downOnce();
+          this.startDownSpin();
+        }
+      }
+
+      /**
+       * Handle keyup events on down button.
+       * @private
+       */
+    }, {
+      key: "_handleDownKeyUp",
+      value: function _handleDownKeyUp(e) {
+        // Only handle Enter and Space keys
+        if (e.keyCode === 13 || e.keyCode === 32) {
+          // Enter or Space
+          this.stopSpin();
+        }
+      }
+
+      /**
        * Intercept change events to prevent wrong values from propagating.
        * @private
        */
@@ -1280,13 +1454,15 @@
               if (mutation.type === 'attributes') {
                 if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
                   _this5._updateButtonDisabledState();
+                } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
+                  _this5._syncSettingsFromNativeAttributes();
                 }
               }
             });
           });
           this._mutationObserver.observe(this.input, {
             attributes: true,
-            attributeFilter: ['disabled', 'readonly']
+            attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step']
           });
         }
       }
@@ -1333,9 +1509,15 @@
    * Initialize TouchSpin on an input element or get existing instance.
    * @param {HTMLInputElement} inputEl
    * @param {Partial<TouchSpinCoreOptions>=} opts
-   * @returns {TouchSpinCorePublicAPI}
+   * @returns {TouchSpinCorePublicAPI|null}
    */
   function TouchSpin$1(inputEl, opts) {
+    // Check if element is an input (graceful handling for public API)
+    if (!inputEl || inputEl.nodeName !== 'INPUT') {
+      console.warn('Must be an input.');
+      return null;
+    }
+
     // If options provided, initialize/reinitialize
     if (opts !== undefined) {
       // Destroy existing instance if it exists (destroy() removes itself from element)
@@ -1646,7 +1828,7 @@
         if (this.settings.verticalbuttons) {
           html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n            <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n            <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n          </div>\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n            <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          <div class=\"input-group-append\">\n            <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n          <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n            <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n            <span class=\"input-group-text\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          <div class=\"input-group-append\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n          <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n            <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n          </div>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -1690,7 +1872,7 @@
         if (this.settings.verticalbuttons) {
           elementsHtml = "\n        <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n        ").concat(this.buildVerticalButtons(), "\n      ");
         } else {
-          elementsHtml = "\n        <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+          elementsHtml = "\n        <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\">\n          <span class=\"input-group-text\">".concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\">\n          <span class=\"input-group-text\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -1800,7 +1982,7 @@
       key: "buildVerticalButtons",
       value: function buildVerticalButtons() {
         // Bootstrap 4: Return complete structure with input-group-text wrapper (matches original)
-        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"-1\" class=\"".concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticalupclass || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n          <button tabindex=\"-1\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticaldownclass || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n        </span>\n      </span>\n    ");
+        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticalupclass || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\" type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticaldownclass || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\" type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n        </span>\n      </span>\n    ");
       }
     }, {
       key: "updateVerticalButtonClass",

@@ -78,10 +78,10 @@ class Bootstrap3Renderer extends AbstractRenderer {
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
           <span class="input-group-addon bootstrap-touchspin-prefix" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
           <span class="input-group-btn" data-touchspin-injected="down-wrapper">
-            <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
+            <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           </span>
           <span class="input-group-btn" data-touchspin-injected="up-wrapper">
-            <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+            <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
           </span>
           <span class="input-group-addon bootstrap-touchspin-postfix" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
         </div>
@@ -138,10 +138,10 @@ class Bootstrap3Renderer extends AbstractRenderer {
       elementsHtml = `
         <span class="input-group-addon bootstrap-touchspin-prefix" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
         <span class="input-group-btn" data-touchspin-injected="down-wrapper">
-          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
         </span>
         <span class="input-group-btn" data-touchspin-injected="up-wrapper">
-          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
         </span>
         <span class="input-group-addon bootstrap-touchspin-postfix" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
       `;
@@ -257,8 +257,8 @@ class Bootstrap3Renderer extends AbstractRenderer {
     // The outer wrapper is handled by the calling code
     return `
       <span class="input-group-btn-vertical">
-        <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-default'} ${this.settings.verticalupclass || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-        <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-default'} ${this.settings.verticaldownclass || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-default'} ${this.settings.verticalupclass || 'btn btn-default'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-default'} ${this.settings.verticaldownclass || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
       </span>
     `;
   }

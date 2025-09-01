@@ -34,7 +34,9 @@
 
     // Initialize all TouchSpin instances after plugin is loaded
     document.addEventListener('DOMContentLoaded', function() {
-      $("#testinput_default").TouchSpin();
+      $("#testinput_default").TouchSpin({
+        focusablebuttons: true
+      });
       $("#testinput_number").TouchSpin();
       $("#testinput_decimals").TouchSpin({
         decimals: 2,

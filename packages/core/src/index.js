@@ -66,6 +66,7 @@ const DEFAULTS = {
   verticaldown: '-',
   verticalupclass: null,
   verticaldownclass: null,
+  focusablebuttons: false,
   prefix: '',
   postfix: '',
   prefix_extraclass: '',
@@ -143,6 +144,10 @@ export class TouchSpinCore {
     this._handleUpMouseDown = this._handleUpMouseDown.bind(this);
     this._handleDownMouseDown = this._handleDownMouseDown.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
+    this._handleUpKeyDown = this._handleUpKeyDown.bind(this);
+    this._handleUpKeyUp = this._handleUpKeyUp.bind(this);
+    this._handleDownKeyDown = this._handleDownKeyDown.bind(this);
+    this._handleDownKeyUp = this._handleDownKeyUp.bind(this);
     this._handleInputChange = this._handleInputChange.bind(this);
     this._handleInputBlur = this._handleInputBlur.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this);
@@ -527,6 +532,12 @@ export class TouchSpinCore {
     element.addEventListener('mousedown', this._handleUpMouseDown);
     element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
     
+    // Add keyboard event listeners if focusable buttons are enabled
+    if (this.settings.focusablebuttons) {
+      element.addEventListener('keydown', this._handleUpKeyDown);
+      element.addEventListener('keyup', this._handleUpKeyUp);
+    }
+    
     // Update disabled state immediately after attaching
     this._updateButtonDisabledState();
   }
@@ -545,6 +556,12 @@ export class TouchSpinCore {
     this._downButton = element;
     element.addEventListener('mousedown', this._handleDownMouseDown);
     element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+    
+    // Add keyboard event listeners if focusable buttons are enabled
+    if (this.settings.focusablebuttons) {
+      element.addEventListener('keydown', this._handleDownKeyDown);
+      element.addEventListener('keyup', this._handleDownKeyUp);
+    }
     
     // Update disabled state immediately after attaching
     this._updateButtonDisabledState();
@@ -972,6 +989,54 @@ export class TouchSpinCore {
    */
   _handleMouseUp(e) {
     this.stopSpin();
+  }
+
+  /**
+   * Handle keydown events on up button.
+   * @private
+   */
+  _handleUpKeyDown(e) {
+    // Only handle Enter and Space keys
+    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+      e.preventDefault();
+      this.upOnce();
+      this.startUpSpin();
+    }
+  }
+
+  /**
+   * Handle keyup events on up button.
+   * @private
+   */
+  _handleUpKeyUp(e) {
+    // Only handle Enter and Space keys
+    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+      this.stopSpin();
+    }
+  }
+
+  /**
+   * Handle keydown events on down button.
+   * @private
+   */
+  _handleDownKeyDown(e) {
+    // Only handle Enter and Space keys
+    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+      e.preventDefault();
+      this.downOnce();
+      this.startDownSpin();
+    }
+  }
+
+  /**
+   * Handle keyup events on down button.
+   * @private
+   */
+  _handleDownKeyUp(e) {
+    // Only handle Enter and Space keys
+    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+      this.stopSpin();
+    }
   }
 
   /**

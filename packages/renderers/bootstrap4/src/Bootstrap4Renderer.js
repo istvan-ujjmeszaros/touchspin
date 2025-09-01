@@ -82,10 +82,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
             <span class="input-group-text">${this.settings.prefix || ''}</span>
           </div>
           <div class="input-group-prepend">
-            <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
+            <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           </div>
           <div class="input-group-append">
-            <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+            <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
           </div>
           <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
             <span class="input-group-text">${this.settings.postfix || ''}</span>
@@ -148,10 +148,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
           <span class="input-group-text">${this.settings.prefix || ''}</span>
         </div>
         <div class="input-group-prepend">
-          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button">${this.settings.buttondown_txt || '-'}</button>
         </div>
         <div class="input-group-append">
-          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button">${this.settings.buttonup_txt || '+'}</button>
         </div>
         <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix">
           <span class="input-group-text">${this.settings.postfix || ''}</span>
@@ -269,8 +269,8 @@ class Bootstrap4Renderer extends AbstractRenderer {
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="-1" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-          <button tabindex="-1" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
         </span>
       </span>
     `;
