@@ -66,7 +66,15 @@ test.describe('Cross-API Lifecycle Management', () => {
     await initButton.click();
     await expect(input).toHaveValue('10');
     
-    // Step 2: Destroy via core API (bypassing jQuery cleanup)
+    // Step 2: Use working jQuery events to increment value to 12
+    await page.evaluate(() => {
+      const $ = window.jQuery;
+      $('#jq-input').trigger('touchspin.uponce'); // 10 -> 11
+      $('#jq-input').trigger('touchspin.uponce'); // 11 -> 12
+    });
+    await expect(input).toHaveValue('12');
+    
+    // Step 3: Destroy via core API (bypassing jQuery cleanup)
     await page.evaluate(() => {
       const input = document.getElementById('jq-input');
       const { getTouchSpin } = window.TouchSpinExports || {};
@@ -78,7 +86,7 @@ test.describe('Cross-API Lifecycle Management', () => {
       }
     });
     
-    // Step 3: Check if jQuery event handlers still exist (they shouldn't be harmful)
+    // Step 4: Check if jQuery event handlers still exist (they shouldn't be harmful)
     const hasOrphanedEvents = await page.evaluate(() => {
       const input = document.getElementById('jq-input');
       if (window.jQuery && input) {
