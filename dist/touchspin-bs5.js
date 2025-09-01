@@ -1795,6 +1795,12 @@
         this.core.observeSetting('verticaldown', function (newValue) {
           return _this.updateVerticalButtonText('down', newValue);
         });
+        this.core.observeSetting('buttonup_txt', function (newValue) {
+          return _this.updateButtonText('up', newValue);
+        });
+        this.core.observeSetting('buttondown_txt', function (newValue) {
+          return _this.updateButtonText('down', newValue);
+        });
         this.core.observeSetting('prefix_extraclass', function (newValue) {
           return _this.updatePrefix(_this.settings.prefix);
         });
@@ -2012,6 +2018,14 @@
           if (button) {
             button.textContent = text || (type === 'up' ? '+' : '−');
           }
+        }
+      }
+    }, {
+      key: "updateButtonText",
+      value: function updateButtonText(type, text) {
+        var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+        if (button) {
+          button.textContent = text || (type === 'up' ? '+' : '−');
         }
       }
     }]);

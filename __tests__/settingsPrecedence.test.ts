@@ -77,9 +77,9 @@ test.describe('Settings Precedence System', () => {
       const upButton = wrapper.locator('.bootstrap-touchspin-up');
       const downButton = wrapper.locator('.bootstrap-touchspin-down');
       
-      // Should have test renderer default classes
-      await expect(upButton).toHaveClass(/test-btn test-btn-up/);
-      await expect(downButton).toHaveClass(/test-btn test-btn-down/);
+      // Should have Bootstrap5 renderer default classes
+      await expect(upButton).toHaveClass(/btn btn-outline-secondary/);
+      await expect(downButton).toHaveClass(/btn btn-outline-secondary/);
       
       await touchspinHelpers.collectCoverage(page, 'settingsPrecedence');
     });

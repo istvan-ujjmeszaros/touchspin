@@ -33,6 +33,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.core.observeSetting('verticaldownclass', (newValue) => this.updateVerticalButtonClass('down', newValue));
     this.core.observeSetting('verticalup', (newValue) => this.updateVerticalButtonText('up', newValue));
     this.core.observeSetting('verticaldown', (newValue) => this.updateVerticalButtonText('down', newValue));
+    this.core.observeSetting('buttonup_txt', (newValue) => this.updateButtonText('up', newValue));
+    this.core.observeSetting('buttondown_txt', (newValue) => this.updateButtonText('down', newValue));
     this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefix(this.settings.prefix));
     this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfix(this.settings.postfix));
   }
@@ -272,6 +274,13 @@ class Bootstrap5Renderer extends AbstractRenderer {
       if (button) {
         button.textContent = text || (type === 'up' ? '+' : '−');
       }
+    }
+  }
+
+  updateButtonText(type, text) {
+    const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+    if (button) {
+      button.textContent = text || (type === 'up' ? '+' : '−');
     }
   }
 }
