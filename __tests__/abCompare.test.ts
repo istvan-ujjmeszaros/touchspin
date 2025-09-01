@@ -215,4 +215,207 @@ test.describe('A/B parity: original src vs wrapper', () => {
     expect(origChangeCount).toBe(1);
     expect(wrapChangeCount).toBe(1);
   });
+
+  test('Min boundary events fire when clicking down to reach min and at min boundary', async ({ page }) => {
+    await page.goto('/__tests__/html-package/ab-compare.html');
+
+    // Init both sides with min:0, max:100, step:5 (42 will become 40)
+    await page.click('[data-testid="orig-init"]');
+    await page.click('[data-testid="wrap-init"]');
+
+    // Set up event tracking arrays
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+      
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      
+      // Track min/max and change events in order
+      $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
+      $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
+      $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
+      
+      $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
+      $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
+      $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
+    });
+
+    // Click down 8 times to reach min (40→35→30→25→20→15→10→5→0)
+    for (let i = 0; i < 8; i++) {
+      await page.click('[data-testid="orig-down"]');
+      await page.click('[data-testid="wrap-down"]');
+    }
+
+    // Get events after reaching min
+    let events = await page.evaluate(() => ({
+      orig: (window as any).origEvents,
+      wrap: (window as any).wrapEvents
+    }));
+
+    // Both should have fired min.on event when reaching min
+    expect(events.orig).toContain('min.on');
+    expect(events.wrap).toContain('min.on');
+
+    // Both should have change[0] event  
+    expect(events.orig).toContain('change[0]');
+    expect(events.wrap).toContain('change[0]');
+
+    // Clear events for boundary test
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+    });
+
+    // Click down once more at min boundary - should fire min.on again
+    await page.click('[data-testid="orig-down"]');
+    await page.click('[data-testid="wrap-down"]');
+
+    events = await page.evaluate(() => ({
+      orig: (window as any).origEvents,
+      wrap: (window as any).wrapEvents
+    }));
+
+    // Both should fire min.on event even when already at min boundary
+    expect(events.orig).toContain('min.on');
+    expect(events.wrap).toContain('min.on');
+
+    // Should NOT have change events (value didn't change)
+    expect(events.orig.filter(e => e.startsWith('change'))).toHaveLength(0);
+    expect(events.wrap.filter(e => e.startsWith('change'))).toHaveLength(0);
+  });
+
+  test('Max boundary events fire when clicking up to reach max and at max boundary', async ({ page }) => {
+    await page.goto('/__tests__/html-package/ab-compare.html');
+
+    // Init both sides with min:0, max:100, step:5 (42 will become 40)
+    await page.click('[data-testid="orig-init"]');
+    await page.click('[data-testid="wrap-init"]');
+
+    // Set up event tracking arrays
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+      
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      
+      // Track min/max and change events in order
+      $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
+      $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
+      $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
+      
+      $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
+      $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
+      $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
+    });
+
+    // Click up 12 times to reach max (40→45→50→55→60→65→70→75→80→85→90→95→100)
+    for (let i = 0; i < 12; i++) {
+      await page.click('[data-testid="orig-up"]');
+      await page.click('[data-testid="wrap-up"]');
+    }
+
+    // Get events after reaching max
+    let events = await page.evaluate(() => ({
+      orig: (window as any).origEvents,
+      wrap: (window as any).wrapEvents
+    }));
+
+    // Both should have fired max.on event when reaching max
+    expect(events.orig).toContain('max.on');
+    expect(events.wrap).toContain('max.on');
+
+    // Both should have change[100] event  
+    expect(events.orig).toContain('change[100]');
+    expect(events.wrap).toContain('change[100]');
+
+    // Clear events for boundary test
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+    });
+
+    // Click up once more at max boundary - should fire max.on again
+    await page.click('[data-testid="orig-up"]');
+    await page.click('[data-testid="wrap-up"]');
+
+    events = await page.evaluate(() => ({
+      orig: (window as any).origEvents,
+      wrap: (window as any).wrapEvents
+    }));
+
+    // Both should fire max.on event even when already at max boundary
+    expect(events.orig).toContain('max.on');
+    expect(events.wrap).toContain('max.on');
+
+    // Should NOT have change events (value didn't change)
+    expect(events.orig.filter(e => e.startsWith('change'))).toHaveLength(0);
+    expect(events.wrap.filter(e => e.startsWith('change'))).toHaveLength(0);
+  });
+
+  test('Min/Max events fire before change events (correct ordering)', async ({ page }) => {
+    await page.goto('/__tests__/html-package/ab-compare.html');
+
+    // Init both sides
+    await page.click('[data-testid="orig-init"]');
+    await page.click('[data-testid="wrap-init"]');
+
+    // Set up event tracking arrays
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+      
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      
+      // Track events in order they fire
+      $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
+      $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
+      $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
+      
+      $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
+      $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
+      $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
+    });
+
+    // Click down 7 times to reach near min (40→35→30→25→20→15→10→5)
+    for (let i = 0; i < 7; i++) {
+      await page.click('[data-testid="orig-down"]');
+      await page.click('[data-testid="wrap-down"]');
+    }
+
+    // Clear events, then click down once more to reach min and test ordering
+    await page.evaluate(() => {
+      (window as any).origEvents = [];
+      (window as any).wrapEvents = [];
+    });
+
+    // Click down once more to reach min (5→0) - should trigger min.on BEFORE change
+    await page.click('[data-testid="orig-down"]');
+    await page.click('[data-testid="wrap-down"]');
+
+    const events = await page.evaluate(() => ({
+      orig: (window as any).origEvents,
+      wrap: (window as any).wrapEvents
+    }));
+
+    // Both should have both min.on and change events
+    expect(events.orig).toContain('min.on');
+    expect(events.orig).toContain('change[0]');
+    expect(events.wrap).toContain('min.on');  
+    expect(events.wrap).toContain('change[0]');
+
+    // Check event ordering: min.on should come before change
+    const origMinIndex = events.orig.indexOf('min.on');
+    const origChangeIndex = events.orig.indexOf('change[0]');
+    const wrapMinIndex = events.wrap.indexOf('min.on');
+    const wrapChangeIndex = events.wrap.indexOf('change[0]');
+
+    expect(origMinIndex).toBeLessThan(origChangeIndex); // min.on before change for original
+    expect(wrapMinIndex).toBeLessThan(wrapChangeIndex); // min.on before change for wrapper
+  });
 });
