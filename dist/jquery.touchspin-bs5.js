@@ -17,6 +17,9 @@
     for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
     return n;
   }
+  function _arrayWithHoles(r) {
+    if (Array.isArray(r)) return r;
+  }
   function _arrayWithoutHoles(r) {
     if (Array.isArray(r)) return _arrayLikeToArray(r);
   }
@@ -86,6 +89,33 @@
   function _iterableToArray(r) {
     if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
   }
+  function _iterableToArrayLimit(r, l) {
+    var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+    if (null != t) {
+      var e,
+        n,
+        i,
+        u,
+        a = [],
+        f = true,
+        o = false;
+      try {
+        if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+      } catch (r) {
+        o = true, n = r;
+      } finally {
+        try {
+          if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
+        } finally {
+          if (o) throw n;
+        }
+      }
+      return a;
+    }
+  }
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
   function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
@@ -119,6 +149,9 @@
     return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) {
       return t.__proto__ = e, t;
     }, _setPrototypeOf(t, e);
+  }
+  function _slicedToArray(r, e) {
+    return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
   }
   function _superPropBase(t, o) {
     for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t)););
@@ -257,8 +290,12 @@
 
       /** @type {HTMLInputElement} */
       this.input = inputEl;
+
+      // Parse data-bts-* attributes
+      var dataAttrs = this._parseDataAttributes(inputEl);
+
       /** @type {TouchSpinCoreOptions} */
-      this.settings = Object.assign({}, DEFAULTS, opts);
+      this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
 
       // Check for renderer: explicit option > global default > none
       if (!this.settings.renderer) {
@@ -301,6 +338,7 @@
       this._handleDownMouseDown = this._handleDownMouseDown.bind(this);
       this._handleMouseUp = this._handleMouseUp.bind(this);
       this._handleInputChange = this._handleInputChange.bind(this);
+      this._handleInputBlur = this._handleInputBlur.bind(this);
       this._handleKeyDown = this._handleKeyDown.bind(this);
       this._handleKeyUp = this._handleKeyUp.bind(this);
       this._handleWheel = this._handleWheel.bind(this);
@@ -335,6 +373,101 @@
         this._checkValue(false);
       }
 
+      /**
+       * Parse data-bts-* attributes from the input element.
+       * @param {HTMLInputElement} inputEl
+       * @returns {Partial<TouchSpinCoreOptions>}
+       * @private
+       */
+    }, {
+      key: "_parseDataAttributes",
+      value: function _parseDataAttributes(inputEl) {
+        var attributeMap = {
+          min: 'min',
+          max: 'max',
+          initval: 'init-val',
+          replacementval: 'replacement-val',
+          firstclickvalueifempty: 'first-click-value-if-empty',
+          step: 'step',
+          decimals: 'decimals',
+          stepinterval: 'step-interval',
+          verticalbuttons: 'vertical-buttons',
+          verticalup: 'vertical-up',
+          verticaldown: 'vertical-down',
+          verticalupclass: 'vertical-up-class',
+          verticaldownclass: 'vertical-down-class',
+          forcestepdivisibility: 'force-step-divisibility',
+          stepintervaldelay: 'step-interval-delay',
+          prefix: 'prefix',
+          postfix: 'postfix',
+          prefix_extraclass: 'prefix-extra-class',
+          postfix_extraclass: 'postfix-extra-class',
+          booster: 'booster',
+          boostat: 'boostat',
+          maxboostedstep: 'max-boosted-step',
+          mousewheel: 'mouse-wheel',
+          buttondown_class: 'button-down-class',
+          buttonup_class: 'button-up-class',
+          buttondown_txt: 'button-down-txt',
+          buttonup_txt: 'button-up-txt'
+        };
+        var parsed = {};
+
+        // Parse data-bts-* attributes
+        for (var _i = 0, _Object$entries = Object.entries(attributeMap); _i < _Object$entries.length; _i++) {
+          var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+            optionName = _Object$entries$_i[0],
+            attrName = _Object$entries$_i[1];
+          var fullAttrName = "data-bts-".concat(attrName);
+          if (inputEl.hasAttribute(fullAttrName)) {
+            var rawValue = inputEl.getAttribute(fullAttrName);
+            parsed[optionName] = this._coerceAttributeValue(optionName, rawValue);
+          }
+        }
+
+        // Also handle native attributes with precedence (warn if both specified)
+        for (var _i2 = 0, _arr = ['min', 'max', 'step']; _i2 < _arr.length; _i2++) {
+          var nativeAttr = _arr[_i2];
+          if (inputEl.hasAttribute(nativeAttr)) {
+            var _rawValue = inputEl.getAttribute(nativeAttr);
+            if (parsed[nativeAttr] !== undefined) {
+              console.warn("Both \"data-bts-".concat(nativeAttr, "\" and \"").concat(nativeAttr, "\" attributes specified. Native attribute takes precedence."), inputEl);
+            }
+            parsed[nativeAttr] = this._coerceAttributeValue(nativeAttr, _rawValue);
+          }
+        }
+        return parsed;
+      }
+
+      /**
+       * Convert string attribute values to appropriate types.
+       * @param {string} optionName
+       * @param {string} rawValue
+       * @returns {any}
+       * @private
+       */
+    }, {
+      key: "_coerceAttributeValue",
+      value: function _coerceAttributeValue(optionName, rawValue) {
+        if (rawValue === null || rawValue === undefined) {
+          return rawValue;
+        }
+
+        // Boolean attributes
+        if (['booster', 'mousewheel', 'verticalbuttons'].includes(optionName)) {
+          return rawValue === 'true' || rawValue === '' || rawValue === optionName;
+        }
+
+        // Numeric attributes
+        if (['min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay', 'boostat', 'maxboostedstep', 'firstclickvalueifempty'].includes(optionName)) {
+          var num = parseFloat(rawValue);
+          return isNaN(num) ? rawValue : num;
+        }
+
+        // String attributes - return as-is
+        return rawValue;
+      }
+
       /** Increment once according to step */
     }, {
       key: "upOnce",
@@ -344,16 +477,24 @@
         }
         var v = this.getValue();
         var next = this._nextValue('up', v);
-        var prevNum = v;
+
+        // Check if already at max boundary before incrementing
+        if (this.settings.max != null && v === this.settings.max) {
+          this.emit('max');
+          if (this.spinning && this.direction === 'up') {
+            this.stopSpin();
+          }
+          return;
+        }
+
+        // Fire max event BEFORE setting display if we're reaching max
+        if (this.settings.max != null && next === this.settings.max) {
+          this.emit('max');
+          if (this.spinning && this.direction === 'up') {
+            this.stopSpin();
+          }
+        }
         this._setDisplay(next, true);
-        if (isFinite(prevNum) && next !== prevNum) {
-          if (this.settings.max != null && next === this.settings.max) this.emit('max');
-          if (this.settings.min != null && next === this.settings.min) this.emit('min');
-        }
-        // If we hit the max while spinning upward, stop the spin to release lock
-        if (this.spinning && this.direction === 'up' && this.settings.max != null && next === this.settings.max) {
-          this.stopSpin();
-        }
       }
 
       /** Decrement once according to step */
@@ -365,16 +506,24 @@
         }
         var v = this.getValue();
         var next = this._nextValue('down', v);
-        var prevNum = v;
+
+        // Check if already at min boundary before decrementing
+        if (this.settings.min != null && v === this.settings.min) {
+          this.emit('min');
+          if (this.spinning && this.direction === 'down') {
+            this.stopSpin();
+          }
+          return;
+        }
+
+        // Fire min event BEFORE setting display if we're reaching min
+        if (this.settings.min != null && next === this.settings.min) {
+          this.emit('min');
+          if (this.spinning && this.direction === 'down') {
+            this.stopSpin();
+          }
+        }
         this._setDisplay(next, true);
-        if (isFinite(prevNum) && next !== prevNum) {
-          if (this.settings.max != null && next === this.settings.max) this.emit('max');
-          if (this.settings.min != null && next === this.settings.min) this.emit('min');
-        }
-        // If we hit the min while spinning downward, stop the spin to release lock
-        if (this.spinning && this.direction === 'down' && this.settings.min != null && next === this.settings.min) {
-          this.stopSpin();
-        }
       }
 
       /** Start increasing repeatedly (placeholder) */
@@ -702,8 +851,8 @@
       value: function emit(event, detail) {
         var set = this._events.get(event);
         if (!set || set.size === 0) return;
-        for (var _i = 0, _arr = _toConsumableArray(set); _i < _arr.length; _i++) {
-          var fn = _arr[_i];
+        for (var _i3 = 0, _arr2 = _toConsumableArray(set); _i3 < _arr2.length; _i3++) {
+          var fn = _arr2[_i3];
           try {
             fn(detail);
           } catch (_) {}
@@ -972,8 +1121,8 @@
         document.addEventListener('touchend', this._handleMouseUp);
 
         // Input events (always attach these - they work without renderer UI)
-        this.input.addEventListener('input', this._handleInputChange);
-        this.input.addEventListener('change', this._handleInputChange);
+        this.input.addEventListener('change', this._handleInputChange, true); // Capture phase to intercept
+        this.input.addEventListener('blur', this._handleInputBlur);
         this.input.addEventListener('keydown', this._handleKeyDown);
         this.input.addEventListener('keyup', this._handleKeyUp);
         this.input.addEventListener('wheel', this._handleWheel);
@@ -994,8 +1143,8 @@
         document.removeEventListener('touchend', this._handleMouseUp);
 
         // Input events
-        this.input.removeEventListener('input', this._handleInputChange);
-        this.input.removeEventListener('change', this._handleInputChange);
+        this.input.removeEventListener('change', this._handleInputChange, true);
+        this.input.removeEventListener('blur', this._handleInputBlur);
         this.input.removeEventListener('keydown', this._handleKeyDown);
         this.input.removeEventListener('keyup', this._handleKeyUp);
         this.input.removeEventListener('wheel', this._handleWheel);
@@ -1038,12 +1187,29 @@
       }
 
       /**
-       * Handle input/change events on the input element.
+       * Intercept change events to prevent wrong values from propagating.
        * @private
        */
     }, {
       key: "_handleInputChange",
       value: function _handleInputChange(e) {
+        var currentValue = this.getValue();
+        var wouldBeSanitized = this._applyConstraints(currentValue);
+        if (isFinite(currentValue) && currentValue !== wouldBeSanitized) {
+          // This change event has wrong value - prevent it from propagating
+          e.stopImmediatePropagation();
+          // Don't sanitize here - blur handler will do it with correct change event
+        }
+        // If values match, let the change event through normally
+      }
+
+      /**
+       * Handle blur events on the input element for sanitization.
+       * @private
+       */
+    }, {
+      key: "_handleInputBlur",
+      value: function _handleInputBlur(e) {
         this._checkValue(true);
       }
 
@@ -1066,7 +1232,7 @@
             this.startDownSpin();
             break;
           case 'Enter':
-            this._checkValue(true);
+            this._checkValue(false);
             break;
         }
       }

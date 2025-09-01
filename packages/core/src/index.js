@@ -96,8 +96,12 @@ export class TouchSpinCore {
 
     /** @type {HTMLInputElement} */
     this.input = inputEl;
+    
+    // Parse data-bts-* attributes
+    const dataAttrs = this._parseDataAttributes(inputEl);
+    
     /** @type {TouchSpinCoreOptions} */
-    this.settings = Object.assign({}, DEFAULTS, opts);
+    this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
 
     // Check for renderer: explicit option > global default > none
     if (!this.settings.renderer) {
@@ -171,6 +175,96 @@ export class TouchSpinCore {
     // Core always handles these for the input
     this._updateAriaAttributes();
     this._checkValue(false);
+  }
+
+  /**
+   * Parse data-bts-* attributes from the input element.
+   * @param {HTMLInputElement} inputEl
+   * @returns {Partial<TouchSpinCoreOptions>}
+   * @private
+   */
+  _parseDataAttributes(inputEl) {
+    const attributeMap = {
+      min: 'min',
+      max: 'max',
+      initval: 'init-val',
+      replacementval: 'replacement-val',
+      firstclickvalueifempty: 'first-click-value-if-empty',
+      step: 'step',
+      decimals: 'decimals',
+      stepinterval: 'step-interval',
+      verticalbuttons: 'vertical-buttons',
+      verticalup: 'vertical-up',
+      verticaldown: 'vertical-down',
+      verticalupclass: 'vertical-up-class',
+      verticaldownclass: 'vertical-down-class',
+      forcestepdivisibility: 'force-step-divisibility',
+      stepintervaldelay: 'step-interval-delay',
+      prefix: 'prefix',
+      postfix: 'postfix',
+      prefix_extraclass: 'prefix-extra-class',
+      postfix_extraclass: 'postfix-extra-class',
+      booster: 'booster',
+      boostat: 'boostat',
+      maxboostedstep: 'max-boosted-step',
+      mousewheel: 'mouse-wheel',
+      buttondown_class: 'button-down-class',
+      buttonup_class: 'button-up-class',
+      buttondown_txt: 'button-down-txt',
+      buttonup_txt: 'button-up-txt'
+    };
+
+    const parsed = {};
+
+    // Parse data-bts-* attributes
+    for (const [optionName, attrName] of Object.entries(attributeMap)) {
+      const fullAttrName = `data-bts-${attrName}`;
+      if (inputEl.hasAttribute(fullAttrName)) {
+        const rawValue = inputEl.getAttribute(fullAttrName);
+        parsed[optionName] = this._coerceAttributeValue(optionName, rawValue);
+      }
+    }
+
+    // Also handle native attributes with precedence (warn if both specified)
+    for (const nativeAttr of ['min', 'max', 'step']) {
+      if (inputEl.hasAttribute(nativeAttr)) {
+        const rawValue = inputEl.getAttribute(nativeAttr);
+        if (parsed[nativeAttr] !== undefined) {
+          console.warn(`Both "data-bts-${nativeAttr}" and "${nativeAttr}" attributes specified. Native attribute takes precedence.`, inputEl);
+        }
+        parsed[nativeAttr] = this._coerceAttributeValue(nativeAttr, rawValue);
+      }
+    }
+
+    return parsed;
+  }
+
+  /**
+   * Convert string attribute values to appropriate types.
+   * @param {string} optionName
+   * @param {string} rawValue
+   * @returns {any}
+   * @private
+   */
+  _coerceAttributeValue(optionName, rawValue) {
+    if (rawValue === null || rawValue === undefined) {
+      return rawValue;
+    }
+
+    // Boolean attributes
+    if (['booster', 'mousewheel', 'verticalbuttons'].includes(optionName)) {
+      return rawValue === 'true' || rawValue === '' || rawValue === optionName;
+    }
+
+    // Numeric attributes
+    if (['min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay', 
+         'boostat', 'maxboostedstep', 'firstclickvalueifempty'].includes(optionName)) {
+      const num = parseFloat(rawValue);
+      return isNaN(num) ? rawValue : num;
+    }
+
+    // String attributes - return as-is
+    return rawValue;
   }
 
   /** Increment once according to step */
