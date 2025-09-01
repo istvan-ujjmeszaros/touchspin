@@ -56,11 +56,12 @@
     "v8-to-istanbul": "^9.2.0"
   },
   "scripts": {
-    "test": "playwright test --project=chromium",
+    "test": "playwright test --project=chromium --reporter=list",
     "test:headed": "playwright test --project=chromium --headed",
     "test:ui": "playwright test --project=chromium --ui",
     "test:coverage": "npm test && nyc report --reporter=text-summary --temp-dir=reports/coverage && nyc report --reporter=html --temp-dir=reports/coverage --report-dir=reports/coverage/html && nyc report --reporter=lcovonly --temp-dir=reports/coverage --report-dir=reports/coverage",
     "test:report": "playwright show-report reports/playwright --port 0",
+    "test:report:open": "open reports/playwright/index.html || start reports/playwright/index.html || xdg-open reports/playwright/index.html",
     "coverage:open": "open reports/coverage/html/index.html || start reports/coverage/html/index.html || xdg-open reports/coverage/html/index.html",
     "lint": "eslint src/ build.mjs check-build-integrity.mjs",
     "build": "rollup -c && node scripts/build-css.mjs",
