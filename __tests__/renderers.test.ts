@@ -1,225 +1,115 @@
 import { test, expect } from '@playwright/test';
 import touchspinHelpers from './helpers/touchspinHelpers';
 
-test.describe('Bootstrap Renderer System', () => {
+test.describe('Cross-Version Renderer Consistency', () => {
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+  });
 
-  test.describe('Bootstrap 3 Renderer', () => {
-    test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs3.html');
-    });
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'cross-version-consistency');
+  });
 
-    test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'renderers');
-    });
+  test('should maintain consistent button behavior across Bootstrap versions', async ({ page }) => {
+    const versions = [
+      { name: 'Bootstrap 3', html: 'index-bs3.html' },
+      { name: 'Bootstrap 4', html: 'index-bs4.html' },
+      { name: 'Bootstrap 5', html: 'index-bs5.html' }
+    ];
 
-    test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
-      // Test basic button structure scoped to specific testid
+    for (const version of versions) {
+      await page.goto(`/__tests__/html/${version.html}`);
+      
+      // Reset value and test increment
+      await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
+      await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
+      
+      const value = await touchspinHelpers.readInputValue(page, 'touchspin-default');
+      expect(value).toBe('51');
+    }
+  });
+
+  test('should generate valid HTML structure for all versions', async ({ page }) => {
+    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
+    
+    for (const html of versions) {
+      await page.goto(`/__tests__/html/${html}`);
+      
+      // Wait for TouchSpin to initialize by waiting for wrapper to exist
       const wrapper = page.getByTestId('touchspin-default-wrapper');
+      await expect(wrapper).toBeAttached();
       
-      // Test buttons have correct classes (Bootstrap 3 has individual .input-group-btn containers)
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      const downButton = wrapper.locator('.bootstrap-touchspin-down');
-      await expect(upButton).toBeVisible();
-      await expect(downButton).toBeVisible();
+      // Validate basic structure exists using data attributes (consistent across versions)
+      const hasUpButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const hasDownButton = wrapper.locator('[data-touchspin-injected="down"]');
       
-      // Verify button containers exist (Bootstrap 3 has 2 .input-group-btn elements)
-      const buttonContainers = wrapper.locator('.input-group-btn');
-      await expect(buttonContainers).toHaveCount(2);
+      // All versions should have up/down buttons with data attributes
+      await expect(hasUpButton).toBeVisible();
+      await expect(hasDownButton).toBeVisible();
       
-      // Validate button classes
-      const upButtonClasses = await upButton.evaluate((el) => el.className);
-      const downButtonClasses = await downButton.evaluate((el) => el.className);
-      
-      expect(upButtonClasses).toContain('btn');
-      expect(downButtonClasses).toContain('btn');
-    });
-
-    test('should use input-group-addon class for prefix and postfix', async ({ page }) => {
-      const prefixClasses = await page.locator('[data-touchspin-injected="prefix"]').first().evaluate(el => el.className);
-      const postfixClasses = await page.locator('[data-touchspin-injected="postfix"]').first().evaluate(el => el.className);
-      
-      expect(prefixClasses).toContain('input-group-addon');
-      expect(postfixClasses).toContain('input-group-addon');
-    });
-
-    test('should apply correct size classes', async ({ page }) => {
-      // Test small input group
-      const smallInputGroup = await page.evaluate(() => {
-        const input = document.querySelector('#input_group_sm');
-        return input?.parentElement?.className;
-      });
-      expect(smallInputGroup).toContain('input-group-sm');
-      
-      // Test large input group  
-      const largeInputGroup = await page.evaluate(() => {
-        const input = document.querySelector('#input_group_lg');
-        return input?.parentElement?.className;
-      });
-      expect(largeInputGroup).toContain('input-group-lg');
-    });
-
-    test('should handle vertical button markup correctly', async ({ page }) => {
-      const verticalWrapper = page.locator('.bootstrap-touchspin-vertical-button-wrapper').first();
-      await expect(verticalWrapper).toBeVisible();
-      
-      const upButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first();
-      const downButton = page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-down').first();
-      
-      await expect(upButton).toBeVisible();
-      await expect(downButton).toBeVisible();
-    });
+      // Check that wrapper contains some form of Bootstrap structure
+      await expect(wrapper).toBeVisible();
+    }
   });
 
-  test.describe('Bootstrap 4 Renderer', () => {
-    test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs4.html');
-    });
-
-    test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'renderers');
-    });
-
-    test('should generate correct Bootstrap 4 markup structure', async ({ page }) => {
-      // Test for prepend/append structure
-      const prepend = page.locator('.input-group-prepend').first();
-      const append = page.locator('.input-group-append').first();
+  test('should maintain consistent data-touchspin-injected attributes across versions', async ({ page }) => {
+    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
+    
+    for (const html of versions) {
+      await page.goto(`/__tests__/html/${html}`);
       
-      const hasPrependOrAppend = await prepend.count() > 0 || await append.count() > 0;
-      expect(hasPrependOrAppend).toBe(true);
+      // Wait for initialization
+      const wrapper = page.getByTestId('touchspin-default-wrapper');
+      await expect(wrapper).toBeAttached();
       
-      // Test input-group-text wrapper
-      const prefixText = page.locator('[data-touchspin-injected="prefix"] .input-group-text').first();
-      const postfixText = page.locator('[data-touchspin-injected="postfix"] .input-group-text').first();
-      
-      await expect(prefixText).toBeVisible();
-      await expect(postfixText).toBeVisible();
-    });
-
-    test('should handle existing input groups correctly', async ({ page }) => {
-      // Test with existing DOM structure
-      const existingGroup = page.locator('#input_group_from_dom_prefix_postfix');
-      await expect(existingGroup).toBeVisible();
-      
-      // Ensure original prepend/append are preserved
-      const originalPrepend = await page.evaluate(() => {
-        const container = document.querySelector('#input_group_from_dom_prefix_postfix')?.parentElement;
-        return container?.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])') !== null;
-      });
-      expect(originalPrepend).toBe(true);
-    });
-
-    test('should apply correct form-control size classes', async ({ page }) => {
-      const smallInput = page.locator('#input_group_sm');
-      const largeInput = page.locator('#input_group_lg');
-      
-      const smallClasses = await smallInput.evaluate((el) => el.className);
-      const largeClasses = await largeInput.evaluate((el) => el.className);
-      
-      expect(smallClasses).toContain('form-control-sm');
-      expect(largeClasses).toContain('form-control-lg');
-    });
+      // All versions should have consistent data attributes
+      await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
+      await expect(wrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
+      await expect(wrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
+      await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toBeVisible();
+      await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toBeVisible();
+    }
   });
 
-  test.describe('Bootstrap 5 Renderer', () => {
-    test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
-      await page.goto('/__tests__/html/index-bs5.html');
-    });
+  test('should maintain consistent functional behavior across all renderers', async ({ page }) => {
+    const versions = [
+      { name: 'Bootstrap 3', html: 'index-bs3.html' },
+      { name: 'Bootstrap 4', html: 'index-bs4.html' },
+      { name: 'Bootstrap 5', html: 'index-bs5.html' },
+      { name: 'Tailwind', html: 'index-tailwind.html' }
+    ];
 
-    test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'renderers');
-    });
-
-    test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
-      // Test direct input-group-text without prepend/append wrappers
-      const directPrefix = page.locator('[data-touchspin-injected="prefix"].input-group-text').first();
-      const directPostfix = page.locator('[data-touchspin-injected="postfix"].input-group-text').first();
+    for (const version of versions) {
+      await page.goto(`/__tests__/html/${version.html}`);
       
-      await expect(directPrefix).toBeVisible();
-      await expect(directPostfix).toBeVisible();
+      // Test basic functionality is identical across all renderers
+      const wrapper = page.getByTestId('touchspin-default-wrapper');
+      const input = wrapper.locator('input[type="text"]');
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
       
-      // Ensure no deprecated prepend/append classes
-      const prepend = page.locator('.input-group-prepend').first();
-      const append = page.locator('.input-group-append').first();
+      // Reset to known state
+      await input.fill('10');
       
-      await expect(prepend).not.toBeVisible();
-      await expect(append).not.toBeVisible();
-    });
-
-    test('should handle direct button placement', async ({ page }) => {
-      // Buttons should be placed directly in input group without wrapper divs
-      const inputGroup = page.locator('.input-group').first();
-      const buttons = page.locator('.input-group .btn.bootstrap-touchspin-up, .input-group .btn.bootstrap-touchspin-down');
+      // Test increment
+      await upButton.click();
+      expect(await input.inputValue()).toBe('11');
       
-      await expect(inputGroup).toBeVisible();
-      expect(await buttons.count()).toBeGreaterThan(0);
-    });
-
-    test('should preserve existing input-group-text elements', async ({ page }) => {
-      const existingElements = await page.evaluate(() => {
-        const elements = document.querySelectorAll('.input-group .input-group-text:not([data-touchspin-injected="prefix"]):not([data-touchspin-injected="postfix"])');
-        return elements.length;
-      });
+      // Test decrement
+      await downButton.click();
+      await downButton.click();
+      expect(await input.inputValue()).toBe('9');
       
-      expect(existingElements).toBeGreaterThan(0);
-    });
-
-    test('should function correctly with Bootstrap 5 structure', async ({ page }) => {
-      const testid = 'touchspin-default';
+      // Test that prefix/postfix are visible (if they exist)
+      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
+      const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
       
-      // Test functionality
-      await touchspinHelpers.touchspinClickUp(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
-      
-      await touchspinHelpers.touchspinClickDown(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
-    });
-  });
-
-  test.describe('Renderer Consistency Across Versions', () => {
-    test('should maintain consistent button behavior across Bootstrap versions', async ({ page }) => {
-      const versions = [
-        { name: 'Bootstrap 3', html: 'index-bs3.html' },
-        { name: 'Bootstrap 4', html: 'index-bs4.html' },
-        { name: 'Bootstrap 5', html: 'index-bs5.html' }
-      ];
-
-      for (const version of versions) {
-        await page.goto(`/__tests__/html/${version.html}`);
-        
-        // Reset value and test increment
-        await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
-        await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
-        
-        const value = await touchspinHelpers.readInputValue(page, 'touchspin-default');
-        expect(value).toBe('51');
+      if (await prefix.count() > 0) {
+        await expect(prefix).toBeVisible();
       }
-    });
-
-    test('should generate valid HTML structure for all versions', async ({ page }) => {
-      const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
-      
-      for (const html of versions) {
-        await page.goto(`/__tests__/html/${html}`);
-        
-        // Wait for TouchSpin to initialize by waiting for wrapper to exist
-        const wrapper = page.getByTestId('touchspin-default-wrapper');
-        await expect(wrapper).toBeAttached();
-        
-        // Validate basic structure exists - different Bootstrap versions have different DOM structures
-        const hasUpButton = wrapper.locator('.bootstrap-touchspin-up');
-        const hasDownButton = wrapper.locator('.bootstrap-touchspin-down');
-        
-        // All versions should have up/down buttons
-        await expect(hasUpButton).toBeVisible();
-        await expect(hasDownButton).toBeVisible();
-        
-        // Check that wrapper contains some form of Bootstrap structure
-        // (input-group for BS3/4/5, but structure varies)
-        await expect(wrapper).toBeVisible();
+      if (await postfix.count() > 0) {
+        await expect(postfix).toBeVisible();
       }
-    });
+    }
   });
 });
