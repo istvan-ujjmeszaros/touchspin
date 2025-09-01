@@ -186,34 +186,39 @@ test.describe('Edge Cases and Error Handling', () => {
   });
 
   test.describe('Error Handling Scenarios', () => {
-    test('should handle missing RendererFactory gracefully', async ({ page }) => {
-      // Test what happens when RendererFactory is not available
-      const errorMessage = await page.evaluate(() => {
-        try {
-          // Temporarily hide RendererFactory
-          const originalFactory = (window as any).RendererFactory;
-          delete (window as any).RendererFactory;
-          
-          const $ = (window as any).jQuery;
-          $('body').append('<input id="no-renderer-test" type="text" value="50" data-testid="no-renderer-test">');
-          $('#no-renderer-test').TouchSpin();
-          
-          // Restore RendererFactory
-          (window as any).RendererFactory = originalFactory;
-          return null;
-        } catch (error: any) {
-          return error.message;
+    test('should handle missing default renderer gracefully', async ({ page }) => {
+      // Test what happens when no default renderer is available (modern architecture)
+      const consoleMessages: string[] = [];
+      page.on('console', msg => {
+        if (msg.type() === 'warning') {
+          consoleMessages.push(msg.text());
         }
       });
 
-      expect(errorMessage).toContain('RendererFactory not available');
+      await page.evaluate(() => {
+        // Temporarily hide default renderer
+        const originalDefault = (globalThis as any).TouchSpinDefaultRenderer;
+        delete (globalThis as any).TouchSpinDefaultRenderer;
+        
+        const $ = (window as any).jQuery;
+        $('body').append('<input id="no-renderer-test" type="text" value="50" data-testid="no-renderer-test">');
+        $('#no-renderer-test').TouchSpin();
+        
+        // Restore default renderer
+        (globalThis as any).TouchSpinDefaultRenderer = originalDefault;
+      });
+
+      await touchspinHelpers.waitForTimeout(200);
+
+      // Should warn about no renderer
+      expect(consoleMessages.some(msg => msg.includes('No renderer specified'))).toBe(true);
     });
 
     test('should handle non-input elements appropriately', async ({ page }) => {
-      // Capture console logs
+      // Capture console warnings (non-input elements trigger console.warn)
       const consoleMessages: string[] = [];
       page.on('console', msg => {
-        if (msg.type() === 'log') {
+        if (msg.type() === 'warning') {
           consoleMessages.push(msg.text());
         }
       });
@@ -231,32 +236,29 @@ test.describe('Edge Cases and Error Handling', () => {
       expect(consoleMessages.some(msg => msg.includes('Must be an input'))).toBe(true);
     });
 
-    test('should handle renderer creation failure', async ({ page }) => {
+    test('should handle renderer constructor failure', async ({ page }) => {
       const errorMessage = await page.evaluate(() => {
-        // Store original factory outside try block so it's accessible in catch
-        const originalFactory = (window as any).RendererFactory;
         try {
-          // Mock a failing renderer factory
-          (window as any).RendererFactory = {
-            createRenderer: () => null, // Return null to simulate failure
-            getVersion: () => 4
-          };
+          // Create a renderer class that throws in constructor
+          class FailingRenderer {
+            constructor() {
+              throw new Error('Renderer constructor failed');
+            }
+          }
           
           const $ = (window as any).jQuery;
           $('body').append('<input id="renderer-fail-test" type="text" value="50" data-testid="renderer-fail-test">');
-          $('#renderer-fail-test').TouchSpin();
+          $('#renderer-fail-test').TouchSpin({
+            renderer: FailingRenderer
+          });
           
-          // Restore original factory
-          (window as any).RendererFactory = originalFactory;
           return null;
         } catch (error: any) {
-          // Restore original factory even if error occurs
-          (window as any).RendererFactory = originalFactory;
           return error.message;
         }
       });
 
-      expect(errorMessage).toContain('Failed to create renderer');
+      expect(errorMessage).toContain('Renderer constructor failed');
     });
   });
 
