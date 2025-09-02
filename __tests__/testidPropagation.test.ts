@@ -28,7 +28,7 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 test.describe('TestID Propagation Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await touchspinHelpers.startCoverage(page);
-    await page.goto('http://localhost:3000/__tests__/html/testid-propagation-test.html');
+    await page.goto('/__tests__/html/testid-propagation-test.html');
   });
 
   test.afterEach(async ({ page }) => {
