@@ -68,7 +68,7 @@ npm test
 
 ### Page Inspection Script
 
-Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics (automatically starts dev server if needed):
+Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics:
 
 **JSON output includes:**
 - Console messages (errors, warnings, logs)
@@ -96,7 +96,10 @@ When investigating test failures, use this simplified workflow:
 
 ### 1. Run the inspect script
 ```bash
-# Inspect the page - automatically starts dev server if needed
+# Start dev server (safe to run multiple times)
+npm run dev
+
+# In another terminal: inspect the page
 npm run inspect /__tests__/html/index-bs4.html text
 ```
 

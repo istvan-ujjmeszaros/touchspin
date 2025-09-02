@@ -648,7 +648,10 @@ For specialized accessibility needs, you can add additional attributes:
 # Install dependencies
 npm install
 
-# Inspect any page for issues (auto-starts dev server if needed)
+# Start dev server (safe to run multiple times)  
+npm run dev
+
+# Inspect any page for issues (in another terminal)
 npm run inspect /__tests__/html/index-bs4.html text
 
 # Run tests
