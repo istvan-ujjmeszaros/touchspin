@@ -5,8 +5,8 @@ const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
 
 if (!path) {
-  console.error('Usage: npm run check-console <path> [json|text]');
-  console.error('Example: npm run check-console /__tests__/html/index-bs4.html');
+  console.error('Usage: npm run inspect <path> [json|text]');
+  console.error('Example: npm run inspect /__tests__/html/index-bs4.html');
   process.exit(1);
 }
 

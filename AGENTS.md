@@ -64,11 +64,11 @@ npm test
 - `npm run test:ui` - Run tests with Playwright UI
 - `npm run test:coverage` - Run tests with automatic coverage report generation
 - `npm run coverage:open` - Open HTML coverage reports in browser
-- `npm run check-console <path> [json|text]` - Check page for errors and TouchSpin status
+- `npm run inspect <path> [json|text]` - Inspect page for errors and TouchSpin status
 
-### Console Checking Script
+### Page Inspection Script
 
-Use `npm run check-console <path> [json|text]` to get comprehensive page diagnostics:
+Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics:
 
 **JSON output includes:**
 - Console messages (errors, warnings, logs)
@@ -80,14 +80,14 @@ Use `npm run check-console <path> [json|text]` to get comprehensive page diagnos
 **Examples:**
 ```bash
 # Get JSON output (default) - path automatically uses localhost:8866
-npm run check-console /__tests__/html/index-bs4.html
+npm run inspect /__tests__/html/index-bs4.html
 
 # Get human-readable text output
-npm run check-console /__tests__/html/index-bs4.html text
+npm run inspect /__tests__/html/index-bs4.html text
 
 # Use with jq for specific data
-npm run check-console /__tests__/html/index-bs4.html | jq '.networkErrors'
-npm run check-console /__tests__/html/index-bs4.html | jq '.touchspinStatus'
+npm run inspect /__tests__/html/index-bs4.html | jq '.networkErrors'
+npm run inspect /__tests__/html/index-bs4.html | jq '.touchspinStatus'
 ```
 
 ## Test Debugging Workflow
@@ -105,14 +105,14 @@ When investigating test failures, follow these steps in order:
   # Start dev server (safe to run multiple times)
   npm run dev
   
-  # Check console and network errors (returns JSON)
-  npm run check-console /__tests__/html/index-bs4.html
+  # Inspect console and network errors (returns JSON)
+  npm run inspect /__tests__/html/index-bs4.html
   
   # For human-readable output
-  npm run check-console /__tests__/html/index-bs4.html text
+  npm run inspect /__tests__/html/index-bs4.html text
   
   # Parse JSON output in scripts
-  npm run check-console /__tests__/html/index-bs4.html | jq '.summary'
+  npm run inspect /__tests__/html/index-bs4.html | jq '.summary'
   ```
 - Only ask user to check browser console if automated debugging fails
 
