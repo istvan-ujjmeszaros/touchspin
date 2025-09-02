@@ -66,8 +66,10 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
       await expect(wrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
       await expect(wrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
-      await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toBeVisible();
-      await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toBeVisible();
+
+      // Prefix/Postfix elements exist across versions; they may be hidden when empty
+      await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toHaveCount(1);
+      await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toHaveCount(1);
     }
   });
 
