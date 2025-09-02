@@ -150,6 +150,46 @@ class AbstractRenderer {
     if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
     return '';
   }
+
+  /**
+   * Get testid attribute for up button
+   * @returns {string} Testid attribute or empty string
+   */
+  getUpButtonTestId() {
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) return ` data-testid="${inputTestId}-up"`;
+    return '';
+  }
+
+  /**
+   * Get testid attribute for down button
+   * @returns {string} Testid attribute or empty string
+   */
+  getDownButtonTestId() {
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) return ` data-testid="${inputTestId}-down"`;
+    return '';
+  }
+
+  /**
+   * Get testid attribute for prefix element
+   * @returns {string} Testid attribute or empty string
+   */
+  getPrefixTestId() {
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) return ` data-testid="${inputTestId}-prefix"`;
+    return '';
+  }
+
+  /**
+   * Get testid attribute for postfix element
+   * @returns {string} Testid attribute or empty string
+   */
+  getPostfixTestId() {
+    const inputTestId = this.input.getAttribute('data-testid');
+    if (inputTestId) return ` data-testid="${inputTestId}-postfix"`;
+    return '';
+  }
 }
 
 export default AbstractRenderer;
