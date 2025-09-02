@@ -84,8 +84,9 @@ test.describe('Cross-Version Renderer Consistency', () => {
     for (const version of versions) {
       await page.goto(`/__tests__/html/${version.html}`);
 
-      // Test basic functionality is identical across all renderers
-      const wrapper = page.getByTestId('touchspin-default-wrapper');
+      // Pick the first initialized wrapper on the page for each renderer
+      const wrapper = page.locator('[data-touchspin-injected="wrapper"]').first();
+      await expect(wrapper).toBeAttached();
       const input = wrapper.locator('input');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
