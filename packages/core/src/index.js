@@ -97,10 +97,10 @@ export class TouchSpinCore {
 
     /** @type {HTMLInputElement} */
     this.input = inputEl;
-    
+
     // Parse data-bts-* attributes
     const dataAttrs = this._parseDataAttributes(inputEl);
-    
+
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
 
@@ -176,7 +176,7 @@ export class TouchSpinCore {
     if (this.settings.initval !== '' && this.input.value === '') {
       this.input.value = this.settings.initval;
     }
-    
+
     // Core always handles these for the input
     this._updateAriaAttributes();
     this._syncNativeAttributes();
@@ -263,7 +263,7 @@ export class TouchSpinCore {
     }
 
     // Numeric attributes
-    if (['min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay', 
+    if (['min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay',
          'boostat', 'maxboostedstep', 'firstclickvalueifempty'].includes(optionName)) {
       const num = parseFloat(rawValue);
       return isNaN(num) ? rawValue : num;
@@ -281,7 +281,7 @@ export class TouchSpinCore {
 
     const v = this.getValue();
     const next = this._nextValue('up', v);
-    
+
     // Check if already at max boundary before incrementing
     if (this.settings.max != null && v === this.settings.max) {
       this.emit('max');
@@ -290,7 +290,7 @@ export class TouchSpinCore {
       }
       return;
     }
-    
+
     // Fire max event BEFORE setting display if we're reaching max
     if (this.settings.max != null && next === this.settings.max) {
       this.emit('max');
@@ -298,7 +298,7 @@ export class TouchSpinCore {
         this.stopSpin();
       }
     }
-    
+
     this._setDisplay(next, true);
   }
 
@@ -310,7 +310,7 @@ export class TouchSpinCore {
 
     const v = this.getValue();
     const next = this._nextValue('down', v);
-    
+
     // Check if already at min boundary before decrementing
     if (this.settings.min != null && v === this.settings.min) {
       this.emit('min');
@@ -319,7 +319,7 @@ export class TouchSpinCore {
       }
       return;
     }
-    
+
     // Fire min event BEFORE setting display if we're reaching min
     if (this.settings.min != null && next === this.settings.min) {
       this.emit('min');
@@ -327,7 +327,7 @@ export class TouchSpinCore {
         this.stopSpin();
       }
     }
-    
+
     this._setDisplay(next, true);
   }
 
@@ -531,13 +531,13 @@ export class TouchSpinCore {
     this._upButton = element;
     element.addEventListener('mousedown', this._handleUpMouseDown);
     element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
-    
+
     // Add keyboard event listeners if focusable buttons are enabled
     if (this.settings.focusablebuttons) {
       element.addEventListener('keydown', this._handleUpKeyDown);
       element.addEventListener('keyup', this._handleUpKeyUp);
     }
-    
+
     // Update disabled state immediately after attaching
     this._updateButtonDisabledState();
   }
@@ -556,13 +556,13 @@ export class TouchSpinCore {
     this._downButton = element;
     element.addEventListener('mousedown', this._handleDownMouseDown);
     element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
-    
+
     // Add keyboard event listeners if focusable buttons are enabled
     if (this.settings.focusablebuttons) {
       element.addEventListener('keydown', this._handleDownKeyDown);
       element.addEventListener('keyup', this._handleDownKeyUp);
     }
-    
+
     // Update disabled state immediately after attaching
     this._updateButtonDisabledState();
   }
@@ -635,9 +635,19 @@ export class TouchSpinCore {
    */
   _startSpin(dir) {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+    
+    // Check if already at boundary - don't start spin if so
+    const v = this.getValue();
+    if (dir === 'up' && this.settings.max != null && v === this.settings.max) {
+      return; // Already at max, don't start spin
+    }
+    if (dir === 'down' && this.settings.min != null && v === this.settings.min) {
+      return; // Already at min, don't start spin
+    }
+    
     // If changing direction, reset counters
-    const changed = (!this.spinning || this.direction !== dir);
-    if (changed) {
+    const direction_changed = (!this.spinning || this.direction !== dir);
+    if (direction_changed) {
       this.spinning = true;
       this.direction = dir;
       this.spincount = 0;
@@ -828,14 +838,14 @@ export class TouchSpinCore {
       } else {
         this.input.removeAttribute('min');
       }
-      
+
       // Sync max attribute
       if (this.settings.max != null && isFinite(this.settings.max)) {
         this.input.setAttribute('max', String(this.settings.max));
       } else {
         this.input.removeAttribute('max');
       }
-      
+
       // Sync step attribute
       if (this.settings.step != null && isFinite(this.settings.step) && this.settings.step > 0) {
         this.input.setAttribute('step', String(this.settings.step));
@@ -1046,7 +1056,7 @@ export class TouchSpinCore {
   _handleInputChange(e) {
     const currentValue = this.getValue();
     const wouldBeSanitized = this._applyConstraints(currentValue);
-    
+
     if (isFinite(currentValue) && currentValue !== wouldBeSanitized) {
       // This change event has wrong value - prevent it from propagating
       e.stopImmediatePropagation();
@@ -1103,7 +1113,7 @@ export class TouchSpinCore {
     if (!this.settings.mousewheel) {
       return;
     }
-    
+
     if (document.activeElement === this.input) {
       e.preventDefault();
       if (e.deltaY < 0) {
@@ -1145,7 +1155,7 @@ export class TouchSpinCore {
    */
   _updateButtonDisabledState() {
     const isDisabled = this.input.disabled || this.input.hasAttribute('readonly');
-    
+
     if (this._upButton) {
       this._upButton.disabled = isDisabled;
     }
@@ -1188,7 +1198,7 @@ export function TouchSpin(inputEl, opts) {
     console.warn('Must be an input.');
     return null;
   }
-  
+
   // If options provided, initialize/reinitialize
   if (opts !== undefined) {
     // Destroy existing instance if it exists (destroy() removes itself from element)
