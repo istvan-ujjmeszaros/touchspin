@@ -1193,6 +1193,7 @@ export function TouchSpin(inputEl, opts) {
   if (opts !== undefined) {
     // Destroy existing instance if it exists (destroy() removes itself from element)
     if (inputEl[INSTANCE_KEY]) {
+      console.warn('TouchSpin: Destroying existing instance and reinitializing. Consider using updateSettings() instead.');
       inputEl[INSTANCE_KEY].destroy();
     }
 

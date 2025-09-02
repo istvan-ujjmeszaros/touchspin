@@ -13,15 +13,20 @@ test.describe('Targeted Coverage Tests', () => {
   });
 
   test.describe('Double Initialization Detection', () => {
-    test('should handle double initialization gracefully (alreadyinitialized)', async ({ page }) => {
-      const result = await page.evaluate(() => {
+    test('should warn about double initialization and destroy/reinitialize', async ({ page }) => {
+      // Capture console warnings
+      const consoleWarnings: string[] = [];
+      page.on('console', msg => {
+        if (msg.type() === 'warning') {
+          consoleWarnings.push(msg.text());
+        }
+      });
+
+      await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="double-init-test" type="text" value="50" data-testid="double-init-test">');
         
         const $input = $('#double-init-test');
-        
-        // Check initial state
-        const initialData = $input.data('alreadyinitialized');
         
         // Initialize TouchSpin first time
         $input.TouchSpin({
@@ -29,31 +34,19 @@ test.describe('Targeted Coverage Tests', () => {
           max: 100
         });
         
-        // Check that alreadyinitialized is set
-        const afterFirstInit = $input.data('alreadyinitialized');
-        
-        // Try to initialize again - should be blocked by alreadyinitialized check
-        const touchspinDataBefore = $input.data('touchspin');
+        // Try to initialize again - should warn and destroy/reinitialize
         $input.TouchSpin({
           min: 0,
           max: 200
         });
-        const touchspinDataAfter = $input.data('touchspin');
-        
-        return {
-          initialData,
-          afterFirstInit,
-          settingsUnchanged: touchspinDataBefore === touchspinDataAfter
-        };
       });
 
-      // Should be marked as already initialized
-      expect(result.afterFirstInit).toBe(true);
+      await touchspinHelpers.waitForTimeout(100);
       
-      // Second initialization should not change the TouchSpin instance
-      expect(result.settingsUnchanged).toBe(true);
+      // Should warn about double initialization
+      expect(consoleWarnings.some(msg => msg.includes('Destroying existing instance and reinitializing'))).toBe(true);
 
-      // Should still work normally with original settings
+      // Should still work normally after reinitialization  
       await touchspinHelpers.touchspinClickUp(page, 'double-init-test');
       await touchspinHelpers.waitForTimeout(100);
       expect(await touchspinHelpers.readInputValue(page, 'double-init-test')).toBe('51');
@@ -61,12 +54,12 @@ test.describe('Targeted Coverage Tests', () => {
   });
 
   test.describe('Non-Input Element Detection', () => {
-    test('should detect non-input elements and log "Must be an input"', async ({ page }) => {
-      // Capture console logs
-      const consoleMessages: string[] = [];
+    test('should detect non-input elements and warn "Must be an input."', async ({ page }) => {
+      // Capture console warnings
+      const consoleWarnings: string[] = [];
       page.on('console', msg => {
-        if (msg.type() === 'log') {
-          consoleMessages.push(msg.text());
+        if (msg.type() === 'warning') {
+          consoleWarnings.push(msg.text());
         }
       });
 
@@ -80,8 +73,8 @@ test.describe('Targeted Coverage Tests', () => {
 
       await touchspinHelpers.waitForTimeout(200);
 
-      // Should log "Must be an input." message
-      expect(consoleMessages.some(msg => msg.includes('Must be an input'))).toBe(true);
+      // Should warn "Must be an input." message
+      expect(consoleWarnings.some(msg => msg.includes('Must be an input.'))).toBe(true);
     });
   });
 
