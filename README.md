@@ -642,26 +642,59 @@ For specialized accessibility needs, you can add additional attributes:
 
 ## Development
 
-### Build Process
-
-TouchSpin uses a Rollup-based build system:
+### Quick Start for Contributors
 
 ```bash
 # Install dependencies
 npm install
 
-# Production build
-npm run build
+# Inspect any page for issues (auto-starts dev server if needed)
+npm run inspect /__tests__/html/index-bs4.html text
 
 # Run tests
 npm test
+
+# Build the project
+npm run build
+```
+
+### Developer Tools
+
+**Page Inspection Script**  
+Use `npm run inspect <path> [json|text]` for comprehensive page diagnostics:
+
+```bash
+# Get detailed diagnostics in human-readable format
+npm run inspect /__tests__/html/index-bs5.html text
+
+# Get JSON output for automated processing
+npm run inspect /__tests__/html/index-bs5.html | jq '.summary'
+```
+
+The inspect script provides:
+- **Network diagnostics**: Failed requests, HTTP errors
+- **JavaScript diagnostics**: Console errors, warnings, page exceptions  
+- **TouchSpin status**: Initialization status for all instances
+- **Summary statistics**: Quick health overview
+
+**Development Server**  
+- Always uses port 8866 for consistency
+- Safe to run `npm run dev` multiple times (checks if already running)
+- Serves static files from project root with disabled caching
+
+### Build Process
+
+TouchSpin uses a Rollup-based build system:
+
+```bash
+# Production build
+npm run build
 
 # Run tests with automatic coverage report generation
 npm run test:coverage
 
 # Open coverage HTML report in browser
 npm run coverage:open
-
 ```
 
 ### Project Structure

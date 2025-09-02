@@ -68,7 +68,7 @@ npm test
 
 ### Page Inspection Script
 
-Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics:
+Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics (automatically starts dev server if needed):
 
 **JSON output includes:**
 - Console messages (errors, warnings, logs)
@@ -92,36 +92,31 @@ npm run inspect /__tests__/html/index-bs4.html | jq '.touchspinStatus'
 
 ## Test Debugging Workflow
 
-When investigating test failures, follow these steps in order:
+When investigating test failures, use this simplified workflow:
 
-### 1. Verify page loads
-- Check for network errors, 404s
-- Confirm resources loaded
+### 1. Run the inspect script
+```bash
+# Inspect the page - automatically starts dev server if needed
+npm run inspect /__tests__/html/index-bs4.html text
+```
 
-### 2. Verify TouchSpin initialization
-- Check instance exists: `getTouchSpin(element)`
-- If initialization fails, debug independently:
-  ```bash
-  # Start dev server (safe to run multiple times)
-  npm run dev
-  
-  # Inspect console and network errors (returns JSON)
-  npm run inspect /__tests__/html/index-bs4.html
-  
-  # For human-readable output
-  npm run inspect /__tests__/html/index-bs4.html text
-  
-  # Parse JSON output in scripts
-  npm run inspect /__tests__/html/index-bs4.html | jq '.summary'
-  ```
-- Only ask user to check browser console if automated debugging fails
+The inspect script provides comprehensive diagnostics:
+- ✅ **Page loading**: Network errors, 404s, resource failures
+- ✅ **TouchSpin status**: Initialization status for all instances  
+- ✅ **JavaScript errors**: Console errors, warnings, page errors
+- ✅ **Summary**: Quick overview of all issues found
 
-### 3. Validate selectors
-- Confirm selectors match DOM
-- Check for conflicts from multiple instances
+### 2. Analyze the output
+- **Network Errors: 0** = Page loads correctly
+- **TouchSpin Initialized: X/Y** = Instance status  
+- **Console Errors: 0** = No JavaScript issues
+- **Page Errors: 0** = No runtime exceptions
 
-### 4. Debug actual issue
-- Only after confirming above steps
+### 3. Debug specific issues
+Only after inspect script identifies the problem area:
+- Use browser DevTools for complex debugging
+- Validate selectors if DOM issues found
+- Check test logic if TouchSpin instances working correctly
 
 ## Architecture
 

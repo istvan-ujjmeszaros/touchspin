@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
+import { spawn } from 'node:child_process';
 
 const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
@@ -12,6 +13,43 @@ if (!path) {
 
 // Build full URL from path (always use localhost:8866 as per convention)
 const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://localhost:8866/${path}`;
+
+// Check if server is running, start it if needed
+const ensureServerRunning = async () => {
+  try {
+    const response = await fetch('http://localhost:8866');
+    return true; // Server is running
+  } catch (error) {
+    if (format === 'text') {
+      console.log('Dev server not running, starting it...');
+    }
+    
+    // Start dev server
+    const devServer = spawn('npm', ['run', 'dev'], {
+      stdio: 'pipe',
+      detached: true
+    });
+    
+    // Wait for server to start (poll until it responds)
+    let attempts = 0;
+    const maxAttempts = 30; // 15 seconds max
+    
+    while (attempts < maxAttempts) {
+      try {
+        await fetch('http://localhost:8866');
+        if (format === 'text') {
+          console.log('Dev server started successfully');
+        }
+        return true;
+      } catch {
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    throw new Error('Failed to start dev server after 15 seconds');
+  }
+};
 
 const result = {
   url,
@@ -98,6 +136,9 @@ page.on('response', response => {
 });
 
 try {
+  // Ensure server is running before trying to load page
+  await ensureServerRunning();
+  
   await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
   
   // Check TouchSpin initialization
