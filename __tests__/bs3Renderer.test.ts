@@ -205,6 +205,15 @@ test.describe('Bootstrap 3 Renderer', () => {
   });
 
   test.describe('Dynamic Settings Updates - Advanced Container', () => {
+    test('should not overwrite existing data-testid on advanced container', async ({ page }) => {
+      // The advanced container starts with data-testid="advanced-container".
+      // TouchSpin should enhance without changing this attribute.
+      const advanced = page.getByTestId('advanced-container');
+      await expect(advanced).toBeVisible();
+      await expect(advanced).toHaveAttribute('data-testid', 'advanced-container');
+      // Sanity: it should also be marked as an enhanced wrapper
+      await expect(advanced).toHaveAttribute('data-touchspin-injected', 'enhanced-wrapper');
+    });
     test('should update settings in advanced mode', async ({ page }) => {
       // Use the advanced container test controls
       await page.click('[data-testid="advanced-update-prefix"]');

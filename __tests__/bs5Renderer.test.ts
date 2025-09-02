@@ -216,6 +216,13 @@ test.describe('Bootstrap 5 Renderer', () => {
   });
 
   test.describe('Dynamic Settings Updates - Advanced Container', () => {
+    test('should not overwrite existing data-testid on advanced container', async ({ page }) => {
+      const advanced = page.getByTestId('advanced-container');
+      await expect(advanced).toBeVisible();
+      await expect(advanced).toHaveAttribute('data-testid', 'advanced-container');
+      await expect(advanced).toHaveAttribute('data-touchspin-injected', 'enhanced-wrapper');
+    });
+
     test('should update settings in advanced mode', async ({ page }) => {
       // Use the advanced container test controls
       await page.click('[data-testid="advanced-update-prefix"]');

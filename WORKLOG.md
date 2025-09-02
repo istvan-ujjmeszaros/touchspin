@@ -5,11 +5,10 @@ Purpose
 
 Resume Block (single source of truth)
 - Current checkpoint tag: TDD-COMPLETE (branch: claude/tdd-modern-core-fixes)
-- Current focus: ✅ TDD approach COMPLETED - achieved full behavioral parity between original and modern implementations
-- Progress: 10/10 comparison tests passing (improved from 3/10 → 7/10 → 10/10)
-- Fixed: Modern core disabled/readonly logic, boundary events, HTML fixture inconsistencies, callback formatting, programmatic API compatibility, Playwright API usage
-- All Issues Resolved: ✅ Programmatic API (touchspinInternal compatibility), ✅ Callback formatting (config alignment), ✅ Boundary behavior (API fixes)
-- Next checkpoint: Ready for production integration and broader testing
+- Current focus: TestID handling on advanced containers (preserve existing data-testid)
+- Progress: Added failing tests across BS3/BS4/BS5/Tailwind asserting no overwrite of existing data-testid on advanced wrapper
+- Fixed: —
+- Next checkpoint: TESTID-FIX — implement renderer change to skip overriding wrapper data-testid when present, then verify tests
 - CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands

@@ -96,6 +96,10 @@ Note: The original `src/jquery.bootstrap-touchspin.js` is the behavioral source 
   - [x] P23b: Automated A/B parity tests (`abCompare.test.ts`, `abParitySequences.test.ts`).
 - [x] P24: Extend Playwright — tests for start/stop sequencing, keyboard, wheel, attribute sync.
 
+TestIDs — Advanced Container Behavior
+- [~] TID1: Preserve existing wrapper `data-testid` on advanced containers during init
+- [ ] TID2: If wrapper lacks `data-testid` and input has one, set wrapper to `<input-testid>-wrapper`
+
 Phase D — Framework Wrappers (optional deliverables after core split)
 - [ ] D1: Web Component (`@touchspin/webcomponent`): custom element; attributes map to options; emit DOM `CustomEvent`s.
 - [ ] D2: React (`@touchspin/react`): functional component; props map to options; effects manage lifecycle; expose ref methods.

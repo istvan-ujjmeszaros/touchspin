@@ -110,9 +110,10 @@ class TailwindRenderer extends AbstractRenderer {
   buildAdvancedInputGroup(existingContainer) {
     existingContainer.setAttribute('data-touchspin-injected', 'wrapper-advanced');
 
-    // Add testid if input has one
+    // Add testid if wrapper doesn't already have one and input has one
     const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) {
+    const existingWrapperTestId = existingContainer.getAttribute('data-testid');
+    if (!existingWrapperTestId && inputTestId) {
       existingContainer.setAttribute('data-testid', `${inputTestId}-wrapper`);
     }
 

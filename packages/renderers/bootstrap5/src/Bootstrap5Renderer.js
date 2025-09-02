@@ -121,9 +121,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
     existingInputGroup.classList.add('bootstrap-touchspin');
     existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
     
-    // Add testid if input has one
+    // Add testid if wrapper doesn't already have one and input has one
     const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) {
+    const existingWrapperTestId = existingInputGroup.getAttribute('data-testid');
+    if (!existingWrapperTestId && inputTestId) {
       existingInputGroup.setAttribute('data-testid', `${inputTestId}-wrapper`);
     }
     
