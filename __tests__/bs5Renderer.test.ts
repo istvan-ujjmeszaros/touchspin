@@ -15,17 +15,17 @@ test.describe('Bootstrap 5 Renderer', () => {
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
       const wrapper = page.getByTestId('basic-container').locator('[data-touchspin-injected="wrapper"]');
-      
+
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
-      
+
       // Verify buttons have required data attributes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
-      
+
       await expect(upButton).toBeVisible();
       await expect(downButton).toBeVisible();
-      
+
       // Test functionality
       const input = wrapper.locator('input[type="text"]');
       const initialValue = await input.inputValue();
@@ -36,7 +36,7 @@ test.describe('Bootstrap 5 Renderer', () => {
     test('should use input-group-text class for prefix and postfix', async ({ page }) => {
       const prefixClasses = await page.getByTestId('prefixed-container').locator('[data-touchspin-injected="prefix"]').evaluate(el => el.className);
       const postfixClasses = await page.getByTestId('prefixed-container').locator('[data-touchspin-injected="postfix"]').evaluate(el => el.className);
-      
+
       expect(prefixClasses).toContain('input-group-text');
       expect(postfixClasses).toContain('input-group-text');
     });
@@ -63,7 +63,7 @@ test.describe('Bootstrap 5 Renderer', () => {
       // Look for inputs with prefix/postfix in the test page
       const prefix = page.getByTestId('prefixed-container').locator('[data-touchspin-injected="prefix"]');
       const postfix = page.getByTestId('prefixed-container').locator('[data-touchspin-injected="postfix"]');
-      
+
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
     });
@@ -72,13 +72,13 @@ test.describe('Bootstrap 5 Renderer', () => {
       // Test vertical button configuration if available in test page
       const verticalWrapper = page.getByTestId('vertical-container').locator('[data-touchspin-injected="vertical-wrapper"]');
       const count = await verticalWrapper.count();
-      
+
       if (count > 0) {
         await expect(verticalWrapper).toBeVisible();
-        
+
         const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
         const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
-        
+
         await expect(upButton).toBeVisible();
         await expect(downButton).toBeVisible();
       }
@@ -86,14 +86,14 @@ test.describe('Bootstrap 5 Renderer', () => {
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
       const wrapper = page.getByTestId('basic-container').locator('[data-touchspin-injected="wrapper"]');
-      
+
       // Test buttons have correct classes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
-      
+
       const upButtonClasses = await upButton.evaluate((el) => el.className);
       const downButtonClasses = await downButton.evaluate((el) => el.className);
-      
+
       expect(upButtonClasses).toContain('btn');
       expect(downButtonClasses).toContain('btn');
     });
@@ -111,11 +111,11 @@ test.describe('Bootstrap 5 Renderer', () => {
 
       await expect(prefix).toHaveText('$');
       await expect(postfix).toHaveText('.00');
-      
+
       // Test removing prefix/postfix
       await page.click('[data-testid="basic-clear-prefix"]');
       await page.click('[data-testid="basic-clear-postfix"]');
-      
+
       // Elements should be hidden when empty
       await expect(prefix).not.toBeVisible();
       await expect(postfix).not.toBeVisible();
@@ -148,7 +148,7 @@ test.describe('Bootstrap 5 Renderer', () => {
 
       const upButtonClasses = await upButton.evaluate(el => el.className);
       const downButtonClasses = await downButton.evaluate(el => el.className);
-      
+
       expect(upButtonClasses).toContain('custom-up-class');
       expect(downButtonClasses).toContain('custom-down-class');
     });
@@ -195,7 +195,7 @@ test.describe('Bootstrap 5 Renderer', () => {
 
       const upButtonClasses = await upButton.evaluate(el => el.className);
       const downButtonClasses = await downButton.evaluate(el => el.className);
-      
+
       expect(upButtonClasses).toContain('btn-success');
       expect(downButtonClasses).toContain('btn-danger');
     });
@@ -220,7 +220,7 @@ test.describe('Bootstrap 5 Renderer', () => {
       const advanced = page.getByTestId('advanced-container');
       await expect(advanced).toBeVisible();
       await expect(advanced).toHaveAttribute('data-testid', 'advanced-container');
-      await expect(advanced).toHaveAttribute('data-touchspin-injected', 'enhanced-wrapper');
+      await expect(advanced).toHaveAttribute('data-touchspin-injected', 'wrapper-advanced');
     });
 
     test('should update settings in advanced mode', async ({ page }) => {
@@ -239,7 +239,7 @@ test.describe('Bootstrap 5 Renderer', () => {
       // Verify original elements are still present in advanced container
       const originalElements = page.getByTestId('advanced-container').locator('.input-group-text');
       expect(await originalElements.count()).toBeGreaterThan(0);
-      
+
       // Verify TouchSpin buttons are also present
       await expect(page.getByTestId('advanced-container').locator('[data-touchspin-injected="up"]')).toBeVisible();
       await expect(page.getByTestId('advanced-container').locator('[data-touchspin-injected="down"]')).toBeVisible();
@@ -288,14 +288,14 @@ test.describe('Bootstrap 5 Renderer', () => {
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
       const wrapper = page.getByTestId('basic-container').locator('[data-touchspin-injected="wrapper"]');
-      
+
       // Test buttons have correct classes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
-      
+
       const upButtonClasses = await upButton.evaluate((el) => el.className);
       const downButtonClasses = await downButton.evaluate((el) => el.className);
-      
+
       expect(upButtonClasses).toContain('btn');
       expect(downButtonClasses).toContain('btn');
     });
