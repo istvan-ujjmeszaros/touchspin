@@ -209,23 +209,50 @@ await page.locator('[data-testid="my-spinner-up"]').click();
 await page.locator('[data-testid="my-spinner-prefix"]').textContent();
 ```
 
-### Test Checklist Maintenance (TEST_HTML_TODO.md)
+### Test Execution Checklist Maintenance (TEST_EXECUTION_CHECKLIST.md)
 
-The `TEST_HTML_TODO.md` file contains a comprehensive checklist of all tests in the project:
+The `TEST_EXECUTION_CHECKLIST.md` file contains a comprehensive checklist of all tests in the project:
 
 **File Purpose:**
 - Tracks execution status of all test files (42 files) and individual tests (375 tests)
 - Hierarchical structure: test files → individual tests
 - Pass/fail tracking for systematic test validation
 
+**How to Update Test Results:**
+1. **Run tests with JSON reporter**: `npx playwright test --reporter=json > tmp/test-results.json`
+2. **Use the parsing script**: `node scripts/parse-test-results.js tmp/test-results.json`
+3. **Update checkboxes manually** based on the parsed output (`[x]` pass, `[-]` fail, `[~]` flaky)
+4. **Update overview counters** to reflect current test status
+5. **Add history log entry** to track progress over time
+
+**Automated Result Parsing:**
+```bash
+# Method 1: Save results to file, then parse
+npx playwright test --reporter=json > tmp/test-results.json
+node scripts/parse-test-results.js tmp/test-results.json
+
+# Method 2: Pipe results directly (faster)
+npx playwright test --reporter=json | node scripts/parse-test-results.js
+
+# Method 3: Single file testing (recommended for development)
+npx playwright test __tests__/basicOperations.test.ts --reporter=json | node scripts/parse-test-results.js
+```
+
+**Script Output Includes:**
+- Overview counters for the summary section
+- File status markers with pass/fail/flaky counts
+- Individual test checkboxes with proper status notation
+- **Ready-to-paste history log entry** with timestamp and statistics
+
 **Maintenance Rules:**
 1. **When adding new tests**: Add the test name to the appropriate test file section
 2. **When removing tests**: Remove the test entry from the checklist
 3. **When renaming tests**: Update the test name in the checklist
 4. **When adding new test files**: Add a new section with all tests in that file
-5. **File status**: Mark test file as `[x]` only when ALL individual tests pass
-6. **Individual test status**: Mark `[x]` for passing tests, `[ ]` for failing tests
+5. **File status**: Mark test file as `[x]` only when ALL individual tests pass (no failures)
+6. **Individual test status**: Mark `[x]` for passing, `[-]` for failing, `[~]` for flaky tests
 7. **Counter updates**: Update the overview counters when file/test status changes
+8. **History tracking**: Add new entries to the Test Execution History section
 
 **Structure Pattern:**
 ```markdown
@@ -234,11 +261,12 @@ The `TEST_HTML_TODO.md` file contains a comprehensive checklist of all tests in 
 - [ ] test name 2
 ```
 
-**Usage:**
-- Run `npm test` to execute all tests
-- Run `npx playwright test <test-file>` for specific files
-- Update checkboxes based on test results
-- Use for tracking test completion during development
+**Quick Commands:**
+- `npx playwright test --reporter=list` - Run all tests with detailed output
+- `npx playwright test <test-file>` - Run specific test file
+- `npx playwright test --reporter=json > tmp/test-results.json` - Export results for parsing
+- `node scripts/parse-test-results.js tmp/test-results.json` - Parse and format test results
+- `npx playwright test <test-file> --reporter=json | node scripts/parse-test-results.js` - Single file test and parse
 
 ## Key Development Notes
 

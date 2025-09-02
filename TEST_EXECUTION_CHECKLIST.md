@@ -1,12 +1,65 @@
-# Bootstrap TouchSpin Test Checklist
+# Bootstrap TouchSpin Test Execution Checklist
 
 This document tracks the execution status of all tests in the Bootstrap TouchSpin test suite. Mark test files as passing when all individual tests within them pass, or failing if any test fails.
+
+## How to Update This Checklist
+
+### 1. Run All Tests
+```bash
+# Run tests with list reporter for detailed output
+npx playwright test --reporter=list
+
+# Or run with JSON reporter for programmatic parsing
+npx playwright test --reporter=json > tmp/test-results.json
+```
+
+### 2. Parse Test Results
+Use the dedicated parsing script to extract and format test results:
+
+```bash
+# Method 1: Save results to file, then parse
+npx playwright test --reporter=json > tmp/test-results.json
+node scripts/parse-test-results.js tmp/test-results.json
+
+# Method 2: Pipe results directly (faster)
+npx playwright test --reporter=json | node scripts/parse-test-results.js
+```
+
+The script will output:
+- **Overview counters** to update the summary section
+- **File status markers** showing which files pass/fail
+- **Individual test results** for detailed checkbox updates
+
+### 3. Update Checklist Manually
+- Mark test files as `[x]` if ALL tests in the file pass
+- Mark test files as `[ ]` if ANY test in the file fails  
+- Mark individual tests: `[x]` for pass, `[-]` for fail, `[~]` for flaky
+- Update the overview counters in the Test Suite Overview section
+- Add the generated history log entry to the Test Execution History section
+
+### 4. Single File Testing (Recommended for Development)
+For faster feedback cycles when fixing specific issues:
+
+```bash
+# Test a single file and parse results
+npx playwright test __tests__/basicOperations.test.ts --reporter=json > tmp/test-results.json
+node scripts/parse-test-results.js tmp/test-results.json
+
+# Or use the pipe method for single files
+npx playwright test __tests__/basicOperations.test.ts --reporter=json | node scripts/parse-test-results.js
+```
+
+This approach allows you to:
+- Quickly verify fixes without waiting for the full suite
+- Update specific sections of the checklist incrementally
+- Track progress on problematic test files
 
 ## Test Suite Overview
 - **Total Test Files**: 42
 - **Total Individual Tests**: 375
-- **Files Passing**: 0/42
-- **Tests Passing**: 0/375
+- **Files Passing**: 2/42
+- **Tests Passing**: 9/375
+- **Flaky Tests**: 1
 
 ## Test Files and Individual Tests
 
@@ -55,18 +108,18 @@ This document tracks the execution status of all tests in the Bootstrap TouchSpi
 - [ ] should handle missing jQuery gracefully
 
 ### __tests__/aria-sync.test.ts
-- [ ] aria attributes update on value change and settings updates
-- [ ] vertical buttons do not alter change emission semantics
+- [~] aria attributes update on value change and settings updates
+- [x] vertical buttons do not alter change emission semantics
 
 ### __tests__/basicOperations.test.ts
-- [ ] should render TouchSpin buttons and handle basic increment/decrement
-- [ ] should respect disabled and readonly states
-- [ ] should initialize with correct disabled state for pre-disabled inputs
-- [ ] should handle custom step values correctly
-- [ ] should handle min/max boundaries
-- [ ] should support keyboard navigation
-- [ ] should support mousewheel interaction
-- [ ] should handle decimal values correctly
+- [x] should render TouchSpin buttons and handle basic increment/decrement
+- [x] should respect disabled and readonly states
+- [x] should initialize with correct disabled state for pre-disabled inputs
+- [x] should handle custom step values correctly
+- [x] should handle min/max boundaries
+- [x] should support keyboard navigation
+- [x] should support mousewheel interaction
+- [x] should handle decimal values correctly
 
 ### __tests__/browserNativeSpinners.test.ts
 - [ ] should respect native min/max when no TouchSpin min/max provided
@@ -438,10 +491,11 @@ This document tracks the execution status of all tests in the Bootstrap TouchSpi
 ## Usage Instructions
 
 1. **For Test Files**: Mark `[x]` if ALL individual tests in the file pass, `[ ]` if ANY test fails
-2. **For Individual Tests**: Mark `[x]` if the test passes, `[ ]` if it fails
+2. **For Individual Tests**: Mark `[x]` if passes, `[-]` if fails, `[~]` if flaky
 3. **Update Counters**: Update the overview section with current pass/fail counts
-4. **Test Execution**: Run `npm test` or `npx playwright test` to execute all tests
-5. **Specific Tests**: Run `npx playwright test <test-file>` for individual test files
+4. **Update History Log**: Add new entries to the Test Execution History section
+5. **Test Execution**: Use `scripts/parse-test-results.js` to generate formatted updates
+6. **Single File Testing**: Test individual files for faster development cycles
 
 ## Notes
 
@@ -449,3 +503,14 @@ This document tracks the execution status of all tests in the Bootstrap TouchSpi
 - Tests should be run against the modern architecture implementation
 - Visual tests require screenshot comparison and may need baseline updates
 - Some tests may be environment-specific (browser, viewport, etc.)
+- Use `[x]` for passing tests, `[-]` for failing tests, `[~]` for flaky tests
+
+## Test Execution History
+
+Track test execution progress over time. Add new entries at the top.
+
+```
+Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-02 20:39:04 |     2 |       1 |       0 |     1 | aria-sync.test.ts run - 1 flaky test detected
+2025-09-02 20:31:43 |     8 |       8 |       0 |     0 | Initial basicOperations.test.ts run - all passing
+```
