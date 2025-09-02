@@ -70,6 +70,7 @@
     "check-build-integrity": "node check-build-integrity.mjs",
     "inspect": "node scripts/inspect.mjs",
     "dev": "node scripts/serve.mjs",
+    "kill-dev": "node scripts/kill-dev.mjs",
     "preview": "node scripts/serve.mjs",
     "test:visual": "playwright test --project=visual-tests",
     "test:visual:update": "playwright test --project=visual-tests --update-snapshots",

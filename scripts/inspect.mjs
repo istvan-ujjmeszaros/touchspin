@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
+import { spawn } from 'child_process';
+import { createServer } from 'http';
 
 const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
@@ -12,6 +14,56 @@ if (!path) {
 
 // Build full URL from path (always use localhost:8866 as per convention)
 const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://localhost:8866/${path}`;
+
+// Auto-start development server if needed
+// 
+// WHY THIS CODE EXISTS:
+// npm scripts with && operator don't work well with persistent servers.
+// Running "node serve.mjs && node inspect.mjs" causes the inspect script
+// to never execute because serve.mjs runs indefinitely.
+// 
+// Cross-platform background process spawning (&, start, etc.) is unreliable
+// in npm scripts, so we handle server startup directly in this script.
+// This makes the inspect command self-sufficient and always work regardless
+// of whether the dev server is already running.
+const ensureServerRunning = async () => {
+  const port = 8866;
+  
+  // Check if server is already running
+  const isPortInUse = await new Promise((resolve) => {
+    const tester = createServer()
+      .once('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          resolve(true); // Port is in use
+        } else {
+          resolve(false); // Other error, assume not running
+        }
+      })
+      .once('listening', () => {
+        tester.close();
+        resolve(false); // Port is available
+      })
+      .listen(port);
+  });
+  
+  if (isPortInUse) {
+    // Server already running, proceed with inspection
+    return;
+  }
+  
+  // Start the development server in detached mode
+  const serverProcess = spawn('node', ['scripts/serve.mjs'], {
+    detached: true,
+    stdio: 'ignore'
+  });
+  
+  serverProcess.unref(); // Allow parent process to exit independently
+  
+  // Wait for server to start (give it a moment to initialize)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+};
+
+await ensureServerRunning();
 
 const result = {
   url,

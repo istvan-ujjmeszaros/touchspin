@@ -20,6 +20,7 @@ These rules apply to ALL AI agents working on this codebase:
 - **Always use port 8866** for development servers
 - `npm run dev` is safe to run multiple times (checks if server already running)
 - If port 8866 is already in use, script exits gracefully with message
+- `npm run kill-dev` stops any processes using port 8866
 
 ### Code Management
 - **Never commit temporary files** to git
@@ -58,6 +59,7 @@ npm test
 - `npm test` - Run Playwright tests (browser-based)
 - `npm run build` - Rollup build (UMD per renderer + ESM core)
 - `npm run dev` - Local static server for manual pages/tests (no HMR)
+- `npm run kill-dev` - Stop the development server running on port 8866
 
 ### Testing Commands
 - `npm run test:headed` - Run tests with visible browser
@@ -69,6 +71,8 @@ npm test
 ### Page Inspection Script
 
 Use `npm run inspect <path> [json|text]` to get comprehensive page diagnostics:
+
+**Auto-starts development server:** The inspect script automatically starts the development server on port 8866 if it's not already running, making it completely self-sufficient.
 
 **JSON output includes:**
 - Console messages (errors, warnings, logs)
@@ -96,10 +100,7 @@ When investigating test failures, use this simplified workflow:
 
 ### 1. Run the inspect script
 ```bash
-# Start dev server (safe to run multiple times)
-npm run dev
-
-# In another terminal: inspect the page
+# Inspect the page (automatically starts dev server if needed)
 npm run inspect /__tests__/html/index-bs4.html text
 ```
 
