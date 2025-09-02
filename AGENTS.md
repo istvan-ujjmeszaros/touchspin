@@ -18,8 +18,8 @@ These rules apply to ALL AI agents working on this codebase:
 
 ### Development Server
 - **Always use port 8866** for development servers
-- If port 8866 is in use, assume it's our dev server and reuse it
-- Start with: `PORT=8866 npm run dev`
+- `npm run dev` is safe to run multiple times (checks if server already running)
+- If port 8866 is already in use, script exits gracefully with message
 
 ### Code Management
 - **Never commit temporary files** to git
@@ -64,11 +64,11 @@ npm test
 - `npm run test:ui` - Run tests with Playwright UI
 - `npm run test:coverage` - Run tests with automatic coverage report generation
 - `npm run coverage:open` - Open HTML coverage reports in browser
-- `npm run check-console <url> [json|text]` - Check page for errors and TouchSpin status
+- `npm run check-console <path> [json|text]` - Check page for errors and TouchSpin status
 
 ### Console Checking Script
 
-Use `npm run check-console <url> [json|text]` to get comprehensive page diagnostics:
+Use `npm run check-console <path> [json|text]` to get comprehensive page diagnostics:
 
 **JSON output includes:**
 - Console messages (errors, warnings, logs)
@@ -79,15 +79,15 @@ Use `npm run check-console <url> [json|text]` to get comprehensive page diagnost
 
 **Examples:**
 ```bash
-# Get JSON output (default)
-npm run check-console http://localhost:8866/__tests__/html/index-bs4.html
+# Get JSON output (default) - path automatically uses localhost:8866
+npm run check-console /__tests__/html/index-bs4.html
 
 # Get human-readable text output
-npm run check-console http://localhost:8866/__tests__/html/index-bs4.html text
+npm run check-console /__tests__/html/index-bs4.html text
 
 # Use with jq for specific data
-npm run check-console <url> | jq '.networkErrors'
-npm run check-console <url> | jq '.touchspinStatus'
+npm run check-console /__tests__/html/index-bs4.html | jq '.networkErrors'
+npm run check-console /__tests__/html/index-bs4.html | jq '.touchspinStatus'
 ```
 
 ## Test Debugging Workflow
@@ -102,17 +102,17 @@ When investigating test failures, follow these steps in order:
 - Check instance exists: `getTouchSpin(element)`
 - If initialization fails, debug independently:
   ```bash
-  # Check if dev server is running (if yes, it's ours)
-  curl -s http://localhost:8866 > /dev/null && echo "Using existing server" || PORT=8866 npm run dev
+  # Start dev server (safe to run multiple times)
+  npm run dev
   
   # Check console and network errors (returns JSON)
-  npm run check-console http://localhost:8866/__tests__/html/index-bs4.html
+  npm run check-console /__tests__/html/index-bs4.html
   
   # For human-readable output
-  npm run check-console http://localhost:8866/__tests__/html/index-bs4.html text
+  npm run check-console /__tests__/html/index-bs4.html text
   
   # Parse JSON output in scripts
-  npm run check-console <url> | jq '.summary'
+  npm run check-console /__tests__/html/index-bs4.html | jq '.summary'
   ```
 - Only ask user to check browser console if automated debugging fails
 

@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
 
-const url = process.argv[2];
+const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
 
-if (!url) {
-  console.error('Usage: npm run check-console <url> [json|text]');
-  console.error('Example: npm run check-console http://localhost:8866/__tests__/html/index-bs4.html');
+if (!path) {
+  console.error('Usage: npm run check-console <path> [json|text]');
+  console.error('Example: npm run check-console /__tests__/html/index-bs4.html');
   process.exit(1);
 }
+
+// Build full URL from path (always use localhost:8866 as per convention)
+const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://localhost:8866/${path}`;
 
 const result = {
   url,
