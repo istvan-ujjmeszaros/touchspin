@@ -122,6 +122,52 @@ Only after inspect script identifies the problem area:
 - Validate selectors if DOM issues found
 - Check test logic if TouchSpin instances working correctly
 
+### Systematic Debugging Process
+
+For deeper investigation of test failures:
+
+#### Step 1: Identify What's Different
+- Check test expectations vs actual results
+- Categorize the type of issue (functionality, timing, state management, etc.)
+
+#### Step 2: Investigation
+- Use grep commands to search codebase for relevant patterns
+- Compare implementations if needed
+- Focus on the specific area where the issue occurs
+
+#### Step 3: Apply and Verify Fix
+- Make targeted changes
+- Run specific tests to verify the fix
+- Ensure no regressions in related functionality
+
+### Key Investigation Commands
+
+Use these grep patterns for searching the codebase:
+
+```bash
+# Search for specific patterns in files
+grep -n "pattern" [file]
+
+# Find function definitions
+grep -n "function.*(" [file]
+
+# Find specific method calls or properties
+grep -n "methodName\|propertyName" [file]
+
+# Search across multiple files in a directory
+grep -r "pattern" [directory]
+```
+
+### Documentation Requirements for Fixes
+
+When documenting a fix, include:
+
+1. **Problem description**: What was failing and the symptoms observed
+2. **Investigation findings**: What analysis revealed about the issue
+3. **Root cause**: The specific code or logic causing the problem
+4. **Solution applied**: Exact changes made to resolve the issue
+5. **Verification method**: How the fix was confirmed to work (tests, manual testing, etc.)
+
 ## Architecture
 
 ### Modern Architecture (Multi-Package)
