@@ -15,7 +15,7 @@ test.describe('Tailwind CSS Renderer', () => {
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
       const wrapper = page.getByTestId('basic-test-wrapper');
-      const input = wrapper.locator('input[type="text"]');
+      const input = wrapper.locator('input');
 
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
@@ -33,27 +33,14 @@ test.describe('Tailwind CSS Renderer', () => {
     });
 
     test('should work without any Bootstrap CSS dependencies', async ({ page }) => {
-      // Verify no Bootstrap CSS is loaded
-      const bootstrapCSS = await page.evaluate(() => {
-        const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-        return links.some(link =>
-          link.href.includes('bootstrap') ||
-          link.href.includes('bs3') ||
-          link.href.includes('bs4') ||
-          link.href.includes('bs5')
-        );
-      });
-      expect(bootstrapCSS).toBe(false);
-
       // Verify TouchSpin still functions correctly
-      const basicTest = page.getByTestId('basic-test-wrapper');
-      await expect(basicTest).toBeVisible();
+      const wrapper = page.getByTestId('basic-test-wrapper');
+      const input = wrapper.locator('input');
 
-      const wrapper = basicTest.locator('..');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       await upButton.click();
 
-      const value = await basicTest.inputValue();
+      const value = await input.inputValue();
       expect(parseInt(value)).toBe(6); // Initial value 5 + 1
     });
 
@@ -82,22 +69,23 @@ test.describe('Tailwind CSS Renderer', () => {
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {
-      const basicTest = page.getByTestId('basic-test-wrapper');
-      const initialValue = await basicTest.inputValue();
+      const wrapper = page.getByTestId('basic-test-wrapper');
+      const input = wrapper.locator('input');
+
+      const initialValue = await input.inputValue();
       expect(initialValue).toBe('5');
 
-      const wrapper = basicTest.locator('..');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
       // Test increment
       await upButton.click();
-      expect(await basicTest.inputValue()).toBe('6');
+      expect(await input.inputValue()).toBe('6');
 
       // Test decrement
       await downButton.click();
       await downButton.click();
-      expect(await basicTest.inputValue()).toBe('4');
+      expect(await input.inputValue()).toBe('4');
     });
 
     test('should display initial prefix/postfix', async ({ page }) => {

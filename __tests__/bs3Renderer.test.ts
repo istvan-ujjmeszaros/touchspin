@@ -102,8 +102,8 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ prefix: 'USD', postfix: 'kg' }]);
       });
 
-      const prefix = page.locator('#bs3-group [data-touchspin-injected="prefix"]');
-      const postfix = page.locator('#bs3-group [data-touchspin-injected="postfix"]');
+      const prefix = page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="prefix"]');
+      const postfix = page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toHaveText('USD');
       await expect(postfix).toHaveText('kg');
@@ -132,7 +132,7 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_txt: '▲', buttondown_txt: '▼' }]);
       });
 
-      const wrapper = page.locator('#bs3-group');
+      const wrapper = page.getByTestId('bs3-group-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -151,7 +151,7 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_class: 'custom-up-class', buttondown_class: 'custom-down-class' }]);
       });
 
-      const wrapper = page.locator('#bs3-group');
+      const wrapper = page.getByTestId('bs3-group-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -174,8 +174,8 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ prefix: 'USD', postfix: 'kg', prefix_extraclass: 'bs3-prefix-x', postfix_extraclass: 'bs3-postfix-y' }]);
       });
 
-      const prefix = page.locator('#bs3-group [data-touchspin-injected="prefix"]');
-      const postfix = page.locator('#bs3-group [data-touchspin-injected="postfix"]');
+      const prefix = page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="prefix"]');
+      const postfix = page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="postfix"]');
 
       // Class updates applied
       const prefixClass = await prefix.evaluate(el => el.className);
@@ -213,7 +213,7 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ verticalupclass: 'custom-vertical-up', verticaldownclass: 'custom-vertical-down' }]);
       });
 
-      const wrapper = page.locator('#bs3-group');
+      const wrapper = page.getByTestId('bs3-group-wrapper');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -241,7 +241,7 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ verticalup: '↑', verticaldown: '↓' }]);
       });
 
-      const wrapper = page.locator('#bs3-group');
+      const wrapper = page.getByTestId('bs3-group-wrapper');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -293,15 +293,15 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('#btn-init');
 
       // Verify elements are present
-      await expect(page.locator('#bs3-group [data-touchspin-injected="up"]')).toBeVisible();
-      await expect(page.locator('#bs3-group [data-touchspin-injected="down"]')).toBeVisible();
+      await expect(page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="up"]')).toBeVisible();
+      await expect(page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="down"]')).toBeVisible();
 
       // Destroy
       await page.click('#btn-destroy');
 
       // Verify cleanup
-      await expect(page.locator('#bs3-group [data-touchspin-injected="up"]')).not.toBeVisible();
-      await expect(page.locator('#bs3-group [data-touchspin-injected="down"]')).not.toBeVisible();
+      await expect(page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="up"]')).not.toBeVisible();
+      await expect(page.getByTestId('bs3-group-wrapper').locator('[data-touchspin-injected="down"]')).not.toBeVisible();
     });
 
     test('should remove all data-touchspin-injected elements', async ({ page }) => {
