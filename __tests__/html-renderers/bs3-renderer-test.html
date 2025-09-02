@@ -8,38 +8,66 @@
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <script src="../html/assets/bootstrap/bootstrap-3.4.1.min.js"></script>
   <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  
+
   <style>
-    .test-section { 
-      margin: 20px; 
-      padding: 15px; 
-      border: 1px solid #ddd; 
+    .test-section {
+      margin: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
       border-radius: 4px;
     }
-    .controls { 
-      margin-top: 10px; 
-      display: flex; 
-      flex-wrap: wrap; 
-      gap: 5px; 
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
     }
-    .controls button { 
-      padding: 5px 10px; 
-      font-size: 12px; 
+    .controls button {
+      padding: 5px 10px;
+      font-size: 12px;
       margin: 2px;
     }
     h4 { margin-top: 0; }
+
+    /* Visible styling for prefix extra classes */
+    .bs3-test-prefix-extra,
+    .bs3-initial-prefix,
+    .bs3-updated-prefix,
+    .bs3-combined-prefix,
+    .bs3-all-prefix,
+    .bs3-prefix-x,
+    .bs3-prefix-z {
+      border: 3px solid #ff6b6b !important;
+      background-color: #ffe0e0 !important;
+      font-weight: bold !important;
+      box-shadow: 0 0 5px rgba(255, 107, 107, 0.5) !important;
+    }
+
+    /* Visible styling for postfix extra classes */
+    .bs3-test-postfix-extra,
+    .bs3-initial-postfix,
+    .bs3-updated-postfix,
+    .bs3-combined-postfix,
+    .bs3-all-postfix,
+    .bs3-postfix-y,
+    .bs3-postfix-q {
+      border: 3px solid #4ecdc4 !important;
+      background-color: #e0fffd !important;
+      font-weight: bold !important;
+      box-shadow: 0 0 5px rgba(78, 205, 196, 0.5) !important;
+    }
   </style>
 
   <!-- Install the core-backed jQuery wrapper -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer
     globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap3Renderer = Bootstrap3Renderer;
 
@@ -48,92 +76,92 @@
       const $ = window.jQuery;
 
       // Initialize inputs
-      $('#input-basic').TouchSpin({ 
-        min: 0, 
-        max: 100 
+      $('#input-basic').TouchSpin({
+        min: 0,
+        max: 100
       });
-      
-      $('#input-with-prefix').TouchSpin({ 
-        prefix: '$', 
+
+      $('#input-with-prefix').TouchSpin({
+        prefix: '$',
         postfix: '.00',
         prefix_extraclass: 'bs3-initial-prefix',
         postfix_extraclass: 'bs3-initial-postfix',
         min: 0,
         max: 100
       });
-      
-      $('#input-advanced').TouchSpin({ 
-        min: 0, 
-        max: 200 
+
+      $('#input-advanced').TouchSpin({
+        min: 0,
+        max: 200
       });
-      
-      $('#input-vertical').TouchSpin({ 
+
+      $('#input-vertical').TouchSpin({
         verticalbuttons: true,
-        min: 0, 
-        max: 20 
+        min: 0,
+        max: 20
       });
 
       // Button handlers for basic input
       document.querySelector('[data-testid="basic-update-prefix"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ prefix: '$' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-postfix"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ postfix: '.00' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-clear-prefix"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ prefix: '' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-clear-postfix"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ postfix: '' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-prefix-class"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ prefix_extraclass: 'bs3-test-prefix-extra' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-postfix-class"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ postfix_extraclass: 'bs3-test-postfix-extra' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-clear-prefix-class"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ prefix_extraclass: '' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-clear-postfix-class"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ postfix_extraclass: '' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-up-text"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ buttonup_txt: '▲' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-down-text"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ buttondown_txt: '▼' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-reset-button-text"]').addEventListener('click', () => {
         $('#input-basic').trigger('touchspin.updatesettings', [{ buttonup_txt: '+', buttondown_txt: '−' }]);
       });
-      
+
       document.querySelector('[data-testid="basic-update-all"]').addEventListener('click', () => {
-        $('#input-basic').trigger('touchspin.updatesettings', [{ 
-          prefix: 'USD', 
-          postfix: 'kg', 
-          prefix_extraclass: 'bs3-combined-prefix', 
+        $('#input-basic').trigger('touchspin.updatesettings', [{
+          prefix: 'USD',
+          postfix: 'kg',
+          prefix_extraclass: 'bs3-combined-prefix',
           postfix_extraclass: 'bs3-combined-postfix',
           buttonup_txt: '⬆',
           buttondown_txt: '⬇'
         }]);
       });
-      
+
       document.querySelector('[data-testid="basic-clear-all"]').addEventListener('click', () => {
-        $('#input-basic').trigger('touchspin.updatesettings', [{ 
-          prefix: '', 
-          postfix: '', 
-          prefix_extraclass: '', 
+        $('#input-basic').trigger('touchspin.updatesettings', [{
+          prefix: '',
+          postfix: '',
+          prefix_extraclass: '',
           postfix_extraclass: '',
           buttonup_txt: '+',
           buttondown_txt: '−'
@@ -144,63 +172,63 @@
       document.querySelector('[data-testid="prefixed-update-prefix"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ prefix: 'USD' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-postfix"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ postfix: 'kg' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-clear-prefix"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ prefix: '' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-clear-postfix"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ postfix: '' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-prefix-class"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ prefix_extraclass: 'bs3-updated-prefix' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-postfix-class"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ postfix_extraclass: 'bs3-updated-postfix' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-clear-prefix-class"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ prefix_extraclass: '' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-clear-postfix-class"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ postfix_extraclass: '' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-up-text"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ buttonup_txt: '↑' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-down-text"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ buttondown_txt: '↓' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-reset-button-text"]').addEventListener('click', () => {
         $('#input-with-prefix').trigger('touchspin.updatesettings', [{ buttonup_txt: '+', buttondown_txt: '−' }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-update-all"]').addEventListener('click', () => {
-        $('#input-with-prefix').trigger('touchspin.updatesettings', [{ 
-          prefix: 'ALL', 
-          postfix: 'NEW', 
-          prefix_extraclass: 'bs3-all-prefix', 
+        $('#input-with-prefix').trigger('touchspin.updatesettings', [{
+          prefix: 'ALL',
+          postfix: 'NEW',
+          prefix_extraclass: 'bs3-all-prefix',
           postfix_extraclass: 'bs3-all-postfix',
           buttonup_txt: '📈',
           buttondown_txt: '📉'
         }]);
       });
-      
+
       document.querySelector('[data-testid="prefixed-clear-all"]').addEventListener('click', () => {
-        $('#input-with-prefix').trigger('touchspin.updatesettings', [{ 
-          prefix: '', 
-          postfix: '', 
-          prefix_extraclass: '', 
+        $('#input-with-prefix').trigger('touchspin.updatesettings', [{
+          prefix: '',
+          postfix: '',
+          prefix_extraclass: '',
           postfix_extraclass: '',
           buttonup_txt: '+',
           buttondown_txt: '−'
@@ -211,15 +239,15 @@
       document.querySelector('[data-testid="advanced-update-prefix"]').addEventListener('click', () => {
         $('#input-advanced').trigger('touchspin.updatesettings', [{ prefix: '$' }]);
       });
-      
+
       document.querySelector('[data-testid="advanced-update-postfix"]').addEventListener('click', () => {
         $('#input-advanced').trigger('touchspin.updatesettings', [{ postfix: 'USD' }]);
       });
-      
+
       document.querySelector('[data-testid="advanced-clear-prefix"]').addEventListener('click', () => {
         $('#input-advanced').trigger('touchspin.updatesettings', [{ prefix: '' }]);
       });
-      
+
       document.querySelector('[data-testid="advanced-clear-postfix"]').addEventListener('click', () => {
         $('#input-advanced').trigger('touchspin.updatesettings', [{ postfix: '' }]);
       });
@@ -228,15 +256,15 @@
       document.querySelector('[data-testid="vertical-update-up-class"]').addEventListener('click', () => {
         $('#input-vertical').trigger('touchspin.updatesettings', [{ verticalupclass: 'btn-success' }]);
       });
-      
+
       document.querySelector('[data-testid="vertical-update-down-class"]').addEventListener('click', () => {
         $('#input-vertical').trigger('touchspin.updatesettings', [{ verticaldownclass: 'btn-danger' }]);
       });
-      
+
       document.querySelector('[data-testid="vertical-update-up-text"]').addEventListener('click', () => {
         $('#input-vertical').trigger('touchspin.updatesettings', [{ verticalup: '⬆' }]);
       });
-      
+
       document.querySelector('[data-testid="vertical-update-down-text"]').addEventListener('click', () => {
         $('#input-vertical').trigger('touchspin.updatesettings', [{ verticaldown: '⬇' }]);
       });
@@ -245,7 +273,7 @@
 </head>
 <body class="container">
   <h1>Bootstrap 3 Renderer Test Page</h1>
-  
+
   <!-- Basic input without prefix/postfix -->
   <div class="test-section">
     <h4>Basic Input (no initial prefix/postfix)</h4>
@@ -258,18 +286,18 @@
       <button data-testid="basic-update-postfix" class="btn btn-primary btn-xs">Update Postfix (.00)</button>
       <button data-testid="basic-clear-prefix" class="btn btn-default btn-xs">Clear Prefix</button>
       <button data-testid="basic-clear-postfix" class="btn btn-default btn-xs">Clear Postfix</button>
-      
+
       <!-- Extra class controls -->
       <button data-testid="basic-update-prefix-class" class="btn btn-info btn-xs">Add Prefix Class</button>
       <button data-testid="basic-update-postfix-class" class="btn btn-info btn-xs">Add Postfix Class</button>
       <button data-testid="basic-clear-prefix-class" class="btn btn-warning btn-xs">Clear Prefix Class</button>
       <button data-testid="basic-clear-postfix-class" class="btn btn-warning btn-xs">Clear Postfix Class</button>
-      
+
       <!-- Button text controls -->
       <button data-testid="basic-update-up-text" class="btn btn-success btn-xs">Update Up Text (▲)</button>
       <button data-testid="basic-update-down-text" class="btn btn-success btn-xs">Update Down Text (▼)</button>
       <button data-testid="basic-reset-button-text" class="btn btn-default btn-xs">Reset Button Text</button>
-      
+
       <!-- Combined controls -->
       <button data-testid="basic-update-all" class="btn btn-danger btn-xs">Update All</button>
       <button data-testid="basic-clear-all" class="btn btn-default btn-xs">Clear All</button>
@@ -288,18 +316,18 @@
       <button data-testid="prefixed-update-postfix" class="btn btn-primary btn-xs">Update Postfix (kg)</button>
       <button data-testid="prefixed-clear-prefix" class="btn btn-default btn-xs">Clear Prefix</button>
       <button data-testid="prefixed-clear-postfix" class="btn btn-default btn-xs">Clear Postfix</button>
-      
+
       <!-- Extra class controls -->
       <button data-testid="prefixed-update-prefix-class" class="btn btn-info btn-xs">Update Prefix Class</button>
       <button data-testid="prefixed-update-postfix-class" class="btn btn-info btn-xs">Update Postfix Class</button>
       <button data-testid="prefixed-clear-prefix-class" class="btn btn-warning btn-xs">Clear Prefix Class</button>
       <button data-testid="prefixed-clear-postfix-class" class="btn btn-warning btn-xs">Clear Postfix Class</button>
-      
+
       <!-- Button text controls -->
       <button data-testid="prefixed-update-up-text" class="btn btn-success btn-xs">Update Up Text (↑)</button>
       <button data-testid="prefixed-update-down-text" class="btn btn-success btn-xs">Update Down Text (↓)</button>
       <button data-testid="prefixed-reset-button-text" class="btn btn-default btn-xs">Reset Button Text</button>
-      
+
       <!-- Combined controls -->
       <button data-testid="prefixed-update-all" class="btn btn-danger btn-xs">Update All</button>
       <button data-testid="prefixed-clear-all" class="btn btn-default btn-xs">Clear All</button>

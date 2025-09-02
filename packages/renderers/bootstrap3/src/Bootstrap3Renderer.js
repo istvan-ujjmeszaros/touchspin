@@ -164,13 +164,16 @@ class Bootstrap3Renderer extends AbstractRenderer {
     const prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
     existingInputGroup.insertBefore(prefixEl, this.input);
     
+    // Declare postfixEl at function scope
+    let postfixEl;
+    
     if (this.settings.verticalbuttons) {
       // For vertical buttons, insert vertical wrapper after input
       const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
       existingInputGroup.insertBefore(verticalWrapper, this.input.nextSibling);
       
       // Insert postfix after vertical wrapper
-      const postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+      postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
       existingInputGroup.insertBefore(postfixEl, verticalWrapper.nextSibling);
     } else {
       // For horizontal buttons, insert them around the input
@@ -181,7 +184,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       existingInputGroup.insertBefore(upButtonWrapper, this.input.nextSibling);
       
       // Insert postfix after up button
-      const postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+      postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
       existingInputGroup.insertBefore(postfixEl, upButtonWrapper.nextSibling);
     }
     
