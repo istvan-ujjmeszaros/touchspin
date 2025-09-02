@@ -1768,6 +1768,10 @@
       key: "init",
       value: function init() {
         var _this = this;
+        // Initialize internal element references
+        this.prefixEl = null;
+        this.postfixEl = null;
+
         // Add form-control class if not present (Bootstrap requirement)
         if (!this.input.classList.contains('form-control')) {
           this.input.classList.add('form-control');
@@ -1777,9 +1781,11 @@
         // 1. Build and inject DOM structure around input
         this.wrapper = this.buildInputGroup();
 
-        // 2. Find created buttons
+        // 2. Find created buttons and store prefix/postfix references
         var upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
         var downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+        this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
 
         // 3. Tell core to attach its event handlers
         this.core.attachUpEvents(upButton);
@@ -1817,10 +1823,10 @@
           return _this.updateButtonText('down', newValue);
         });
         this.core.observeSetting('prefix_extraclass', function (newValue) {
-          return _this.updatePrefix(_this.settings.prefix);
+          return _this.updatePrefixClasses();
         });
         this.core.observeSetting('postfix_extraclass', function (newValue) {
-          return _this.updatePostfix(_this.settings.postfix);
+          return _this.updatePostfixClasses();
         });
       }
     }, {
@@ -1913,8 +1919,8 @@
           existingInputGroup.insertBefore(verticalWrapper, this.input.nextSibling);
 
           // Insert postfix after vertical wrapper
-          var postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          existingInputGroup.insertBefore(postfixEl, verticalWrapper.nextSibling);
+          var _postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          existingInputGroup.insertBefore(_postfixEl, verticalWrapper.nextSibling);
         } else {
           // For horizontal buttons, insert them around the input
           var downButton = tempDiv.querySelector('[data-touchspin-injected="down"]');
@@ -1923,9 +1929,13 @@
           existingInputGroup.insertBefore(upButton, this.input.nextSibling);
 
           // Insert postfix after up button
-          var _postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          existingInputGroup.insertBefore(_postfixEl, upButton.nextSibling);
+          var _postfixEl2 = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          existingInputGroup.insertBefore(_postfixEl2, upButton.nextSibling);
         }
+
+        // Store internal references for advanced mode too
+        this.prefixEl = prefixEl;
+        this.postfixEl = postfixEl;
 
         // Hide empty prefix/postfix
         this.hideEmptyPrefixPostfix(existingInputGroup);
@@ -1946,55 +1956,48 @@
       key: "hideEmptyPrefixPostfix",
       value: function hideEmptyPrefixPostfix() {
         var wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.wrapper;
-        var prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-        var postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+        // Use internal references if available, otherwise query from wrapper
+        var prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        var postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
         if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-          prefixEl.remove();
+          prefixEl.style.display = 'none';
         }
         if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-          postfixEl.remove();
+          postfixEl.style.display = 'none';
         }
       }
     }, {
       key: "updatePrefix",
       value: function updatePrefix(value) {
-        var prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        // Use internal reference
+        var prefixEl = this.prefixEl;
         if (value && value !== '') {
-          if (!prefixEl) {
-            // Re-create prefix element if it was removed
-            prefixEl = document.createElement('span');
+          if (prefixEl) {
+            prefixEl.textContent = value;
+            prefixEl.style.display = '';
+            // Update classes in case prefix_extraclass changed
             prefixEl.className = "input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
-            prefixEl.setAttribute('data-touchspin-injected', 'prefix');
-            // Insert at the beginning of the wrapper
-            this.wrapper.insertBefore(prefixEl, this.wrapper.firstChild);
           }
-          prefixEl.textContent = value;
-          // Update classes in case prefix_extraclass changed
-          prefixEl.className = "input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
         } else if (prefixEl) {
-          // Remove element if value is empty
-          prefixEl.remove();
+          // Hide element if value is empty but keep it in DOM
+          prefixEl.style.display = 'none';
         }
       }
     }, {
       key: "updatePostfix",
       value: function updatePostfix(value) {
-        var postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+        // Use internal reference
+        var postfixEl = this.postfixEl;
         if (value && value !== '') {
-          if (!postfixEl) {
-            // Re-create postfix element if it was removed
-            postfixEl = document.createElement('span');
+          if (postfixEl) {
+            postfixEl.textContent = value;
+            postfixEl.style.display = '';
+            // Update classes in case postfix_extraclass changed
             postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
-            postfixEl.setAttribute('data-touchspin-injected', 'postfix');
-            // Insert at the end of the wrapper
-            this.wrapper.appendChild(postfixEl);
           }
-          postfixEl.textContent = value;
-          // Update classes in case postfix_extraclass changed
-          postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
         } else if (postfixEl) {
-          // Remove element if value is empty
-          postfixEl.remove();
+          // Hide element if value is empty but keep it in DOM
+          postfixEl.style.display = 'none';
         }
       }
     }, {
@@ -2041,6 +2044,22 @@
         var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
         if (button) {
           button.textContent = text || (type === 'up' ? '+' : '−');
+        }
+      }
+    }, {
+      key: "updatePrefixClasses",
+      value: function updatePrefixClasses() {
+        var prefixEl = this.prefixEl;
+        if (prefixEl) {
+          prefixEl.className = "input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
+        }
+      }
+    }, {
+      key: "updatePostfixClasses",
+      value: function updatePostfixClasses() {
+        var postfixEl = this.postfixEl;
+        if (postfixEl) {
+          postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
         }
       }
     }]);

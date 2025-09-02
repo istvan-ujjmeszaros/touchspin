@@ -7,6 +7,10 @@ import AbstractRenderer from '../../../core/src/AbstractRenderer.js';
 class Bootstrap5Renderer extends AbstractRenderer {
 
   init() {
+    // Initialize internal element references
+    this.prefixEl = null;
+    this.postfixEl = null;
+    
     // Add form-control class if not present (Bootstrap requirement)
     if (!this.input.classList.contains('form-control')) {
       this.input.classList.add('form-control');
@@ -16,9 +20,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
     
-    // 2. Find created buttons
+    // 2. Find created buttons and store prefix/postfix references
     const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
     
     // 3. Tell core to attach its event handlers
     this.core.attachUpEvents(upButton);
@@ -35,8 +41,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.core.observeSetting('verticaldown', (newValue) => this.updateVerticalButtonText('down', newValue));
     this.core.observeSetting('buttonup_txt', (newValue) => this.updateButtonText('up', newValue));
     this.core.observeSetting('buttondown_txt', (newValue) => this.updateButtonText('down', newValue));
-    this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefix(this.settings.prefix));
-    this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfix(this.settings.postfix));
+    this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefixClasses());
+    this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfixClasses());
   }
 
   teardown() {
@@ -166,6 +172,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
       existingInputGroup.insertBefore(postfixEl, upButton.nextSibling);
     }
     
+    // Store internal references for advanced mode too
+    this.prefixEl = prefixEl;
+    this.postfixEl = postfixEl;
+    
     // Hide empty prefix/postfix
     this.hideEmptyPrefixPostfix(existingInputGroup);
     
@@ -183,56 +193,49 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   hideEmptyPrefixPostfix(wrapper = this.wrapper) {
-    const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    // Use internal references if available, otherwise query from wrapper
+    const prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    const postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
     
     if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-      prefixEl.remove();
+      prefixEl.style.display = 'none';
     }
     if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-      postfixEl.remove();
+      postfixEl.style.display = 'none';
     }
   }
 
   updatePrefix(value) {
-    let prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    // Use internal reference
+    const prefixEl = this.prefixEl;
     
     if (value && value !== '') {
-      if (!prefixEl) {
-        // Re-create prefix element if it was removed
-        prefixEl = document.createElement('span');
+      if (prefixEl) {
+        prefixEl.textContent = value;
+        prefixEl.style.display = '';
+        // Update classes in case prefix_extraclass changed
         prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
-        prefixEl.setAttribute('data-touchspin-injected', 'prefix');
-        // Insert at the beginning of the wrapper
-        this.wrapper.insertBefore(prefixEl, this.wrapper.firstChild);
       }
-      prefixEl.textContent = value;
-      // Update classes in case prefix_extraclass changed
-      prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
     } else if (prefixEl) {
-      // Remove element if value is empty
-      prefixEl.remove();
+      // Hide element if value is empty but keep it in DOM
+      prefixEl.style.display = 'none';
     }
   }
   
   updatePostfix(value) {
-    let postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    // Use internal reference
+    const postfixEl = this.postfixEl;
     
     if (value && value !== '') {
-      if (!postfixEl) {
-        // Re-create postfix element if it was removed
-        postfixEl = document.createElement('span');
+      if (postfixEl) {
+        postfixEl.textContent = value;
+        postfixEl.style.display = '';
+        // Update classes in case postfix_extraclass changed
         postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
-        postfixEl.setAttribute('data-touchspin-injected', 'postfix');
-        // Insert at the end of the wrapper
-        this.wrapper.appendChild(postfixEl);
       }
-      postfixEl.textContent = value;
-      // Update classes in case postfix_extraclass changed
-      postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
     } else if (postfixEl) {
-      // Remove element if value is empty
-      postfixEl.remove();
+      // Hide element if value is empty but keep it in DOM
+      postfixEl.style.display = 'none';
     }
   }
   
@@ -281,6 +284,20 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.textContent = text || (type === 'up' ? '+' : '−');
+    }
+  }
+
+  updatePrefixClasses() {
+    const prefixEl = this.prefixEl;
+    if (prefixEl) {
+      prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+    }
+  }
+
+  updatePostfixClasses() {
+    const postfixEl = this.postfixEl;
+    if (postfixEl) {
+      postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
     }
   }
 }

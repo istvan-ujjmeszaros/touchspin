@@ -361,7 +361,7 @@ export class TouchSpinCore {
     const oldSettings = { ...this.settings };
     const newSettings = opts || {};
 
-    this.settings = Object.assign({}, this.settings, newSettings);
+    Object.assign(this.settings, newSettings);
 
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
     const step = Number(this.settings.step || 1);

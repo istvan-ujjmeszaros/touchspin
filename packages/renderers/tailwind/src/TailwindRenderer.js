@@ -7,12 +7,18 @@ import AbstractRenderer from '../../../core/src/AbstractRenderer.js';
 class TailwindRenderer extends AbstractRenderer {
 
   init() {
+    // Initialize internal element references
+    this.prefixEl = null;
+    this.postfixEl = null;
+    
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
 
-    // 2. Find created buttons
+    // 2. Find created buttons and store prefix/postfix references
     const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
 
     // 3. Tell core to attach its event handlers
     this.core.attachUpEvents(upButton);
@@ -27,6 +33,10 @@ class TailwindRenderer extends AbstractRenderer {
     this.core.observeSetting('verticaldownclass', (newValue) => this.updateVerticalButtonClass('down', newValue));
     this.core.observeSetting('verticalup', (newValue) => this.updateVerticalButtonText('up', newValue));
     this.core.observeSetting('verticaldown', (newValue) => this.updateVerticalButtonText('down', newValue));
+    this.core.observeSetting('buttonup_txt', (newValue) => this.updateButtonText('up', newValue));
+    this.core.observeSetting('buttondown_txt', (newValue) => this.updateButtonText('down', newValue));
+    this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefixClasses());
+    this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfixClasses());
   }
 
   // teardown() uses inherited removeInjectedElements() - no override needed
@@ -51,17 +61,17 @@ class TailwindRenderer extends AbstractRenderer {
     if (isVertical) {
       html = `
         <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
+          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
           ${this.buildVerticalButtons()}
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
+          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
         </div>
       `;
     } else {
       html = `
         <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-l-md tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
+          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
+          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 rounded-r-md tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
         </div>
       `;
@@ -112,16 +122,16 @@ class TailwindRenderer extends AbstractRenderer {
     let elementsHtml;
     if (isVertical) {
       elementsHtml = `
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
+        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
         ${this.buildVerticalButtons()}
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
+        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
       `;
     } else {
       elementsHtml = `
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
+        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix">${this.settings.prefix || ''}</span>
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down" type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up" type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
+        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix">${this.settings.postfix || ''}</span>
       `;
     }
 
@@ -149,6 +159,10 @@ class TailwindRenderer extends AbstractRenderer {
     // Insert postfix after everything
     const postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
     existingContainer.appendChild(postfixEl);
+
+    // Store internal references for advanced mode too
+    this.prefixEl = prefixEl;
+    this.postfixEl = postfixEl;
 
     // Apply input styling
     this.input.className = this.input.className.replace('form-control', '');
@@ -195,56 +209,49 @@ class TailwindRenderer extends AbstractRenderer {
   }
 
   hideEmptyPrefixPostfix(wrapper = this.wrapper) {
-    const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    // Use internal references if available, otherwise query from wrapper
+    const prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    const postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
 
     if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-      prefixEl.remove();
+      prefixEl.style.display = 'none';
     }
     if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-      postfixEl.remove();
+      postfixEl.style.display = 'none';
     }
   }
 
   updatePrefix(value) {
-    let prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    // Use internal reference
+    const prefixEl = this.prefixEl;
 
     if (value && value !== '') {
-      if (!prefixEl) {
-        // Re-create prefix element if it was removed
-        prefixEl = document.createElement('span');
-        prefixEl.className = 'inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon';
-        prefixEl.setAttribute('data-touchspin-injected', 'prefix');
+      if (prefixEl) {
         prefixEl.textContent = value;
-        // Insert at the beginning of the wrapper
-        this.wrapper.insertBefore(prefixEl, this.wrapper.firstChild);
-      } else {
-        prefixEl.textContent = value;
+        prefixEl.style.display = '';
+        // Update classes in case prefix_extraclass changed
+        prefixEl.className = `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}`.trim();
       }
     } else if (prefixEl) {
-      // Remove element if value is empty
-      prefixEl.remove();
+      // Hide element if value is empty but keep it in DOM
+      prefixEl.style.display = 'none';
     }
   }
 
   updatePostfix(value) {
-    let postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    // Use internal reference
+    const postfixEl = this.postfixEl;
 
     if (value && value !== '') {
-      if (!postfixEl) {
-        // Re-create postfix element if it was removed
-        postfixEl = document.createElement('span');
-        postfixEl.className = 'inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon';
-        postfixEl.setAttribute('data-touchspin-injected', 'postfix');
+      if (postfixEl) {
         postfixEl.textContent = value;
-        // Insert at the end of the wrapper
-        this.wrapper.appendChild(postfixEl);
-      } else {
-        postfixEl.textContent = value;
+        postfixEl.style.display = '';
+        // Update classes in case postfix_extraclass changed
+        postfixEl.className = `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}`.trim();
       }
     } else if (postfixEl) {
-      // Remove element if value is empty
-      postfixEl.remove();
+      // Hide element if value is empty but keep it in DOM
+      postfixEl.style.display = 'none';
     }
   }
 
@@ -286,6 +293,27 @@ class TailwindRenderer extends AbstractRenderer {
       if (button) {
         button.textContent = text || (type === 'up' ? '+' : '−');
       }
+    }
+  }
+
+  updateButtonText(type, text) {
+    const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+    if (button) {
+      button.textContent = text || (type === 'up' ? '+' : '−');
+    }
+  }
+
+  updatePrefixClasses() {
+    const prefixEl = this.prefixEl;
+    if (prefixEl) {
+      prefixEl.className = `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}`.trim();
+    }
+  }
+
+  updatePostfixClasses() {
+    const postfixEl = this.postfixEl;
+    if (postfixEl) {
+      postfixEl.className = `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}`.trim();
     }
   }
 
