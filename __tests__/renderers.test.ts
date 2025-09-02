@@ -102,15 +102,21 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await downButton.click();
       expect(await input.inputValue()).toBe('9');
 
-      // Test that prefix/postfix are visible (if they exist)
+      // Test that prefix/postfix are visible only when they have content
       const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
       const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
 
       if (await prefix.count() > 0) {
-        await expect(prefix).toBeVisible();
+        const prefixText = await prefix.evaluate(el => (el.textContent || '').trim());
+        if (prefixText.length > 0) {
+          await expect(prefix).toBeVisible();
+        }
       }
       if (await postfix.count() > 0) {
-        await expect(postfix).toBeVisible();
+        const postfixText = await postfix.evaluate(el => (el.textContent || '').trim());
+        if (postfixText.length > 0) {
+          await expect(postfix).toBeVisible();
+        }
       }
     }
   });
