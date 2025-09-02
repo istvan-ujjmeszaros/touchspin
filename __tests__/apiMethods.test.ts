@@ -128,9 +128,20 @@ test.describe('API Methods', () => {
       // Wait for update to apply
       await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
 
-      // Check if prefix and postfix were updated
-      const prefixText = await page.$eval('[data-touchspin-injected="prefix"]', el => el.textContent);
-      const postfixText = await page.$eval('[data-touchspin-injected="postfix"]', el => el.textContent);
+      // Check if prefix and postfix were updated - scope to the specific TouchSpin instance
+      const prefixText = await page.evaluate((sel) => {
+        const input = document.querySelector(sel);
+        const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
+        const prefixEl = wrapper?.querySelector('[data-touchspin-injected="prefix"]');
+        return prefixEl?.textContent;
+      }, selector);
+      
+      const postfixText = await page.evaluate((sel) => {
+        const input = document.querySelector(sel);
+        const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
+        const postfixEl = wrapper?.querySelector('[data-touchspin-injected="postfix"]');
+        return postfixEl?.textContent;
+      }, selector);
 
       expect(prefixText).toContain('NEW');
       expect(postfixText).toContain('TEST');
