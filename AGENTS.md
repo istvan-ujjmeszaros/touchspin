@@ -209,6 +209,37 @@ await page.locator('[data-testid="my-spinner-up"]').click();
 await page.locator('[data-testid="my-spinner-prefix"]').textContent();
 ```
 
+### Test Checklist Maintenance (TEST_HTML_TODO.md)
+
+The `TEST_HTML_TODO.md` file contains a comprehensive checklist of all tests in the project:
+
+**File Purpose:**
+- Tracks execution status of all test files (42 files) and individual tests (375 tests)
+- Hierarchical structure: test files → individual tests
+- Pass/fail tracking for systematic test validation
+
+**Maintenance Rules:**
+1. **When adding new tests**: Add the test name to the appropriate test file section
+2. **When removing tests**: Remove the test entry from the checklist
+3. **When renaming tests**: Update the test name in the checklist
+4. **When adding new test files**: Add a new section with all tests in that file
+5. **File status**: Mark test file as `[x]` only when ALL individual tests pass
+6. **Individual test status**: Mark `[x]` for passing tests, `[ ]` for failing tests
+7. **Counter updates**: Update the overview counters when file/test status changes
+
+**Structure Pattern:**
+```markdown
+### __tests__/filename.test.ts
+- [ ] test name 1
+- [ ] test name 2
+```
+
+**Usage:**
+- Run `npm test` to execute all tests
+- Run `npx playwright test <test-file>` for specific files
+- Update checkboxes based on test results
+- Use for tracking test completion during development
+
 ## Key Development Notes
 
 ### Core Event Handling
