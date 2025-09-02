@@ -68,6 +68,7 @@
     "build:legacy": "node build.mjs",
     "build:watch": "rollup -c --watch",
     "check-build-integrity": "node check-build-integrity.mjs",
+    "check-console": "node scripts/check-console.mjs",
     "dev": "node scripts/serve.mjs",
     "preview": "node scripts/serve.mjs",
     "test:visual": "playwright test --project=visual-tests",
