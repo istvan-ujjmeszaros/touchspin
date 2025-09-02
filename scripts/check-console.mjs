@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import puppeteer from 'puppeteer';
+import { chromium } from 'playwright';
 
 const url = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
@@ -27,7 +27,7 @@ const result = {
   }
 };
 
-const browser = await puppeteer.launch();
+const browser = await chromium.launch();
 const page = await browser.newPage();
 
 // Capture console messages
@@ -95,7 +95,7 @@ page.on('response', response => {
 });
 
 try {
-  await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
   
   // Check TouchSpin initialization
   const touchspinData = await page.evaluate(() => {
