@@ -1623,11 +1623,7 @@
       /** @type {HTMLElement|null} */
       this.wrapper = null; // Set by subclasses during init()
 
-      // Legacy compatibility (transitional)
-      this.$ = typeof $ !== 'undefined' ? $ : null;
-      this.originalinput = this.$ ? this.$(inputEl) : null;
-      this.container = null;
-      this.elements = null;
+      // No legacy properties needed in modern architecture
     }
 
     /**
@@ -1701,70 +1697,8 @@
         });
       }
 
-      // Legacy methods (transitional - for backward compatibility)
-    }, {
-      key: "getFrameworkId",
-      value: function getFrameworkId() {
-        throw new Error('getFrameworkId() must be implemented by subclasses');
-      }
-    }, {
-      key: "buildAdvancedInputGroup",
-      value: function buildAdvancedInputGroup(parentelement) {
-        throw new Error('buildAdvancedInputGroup() must be implemented by subclasses');
-      }
-    }, {
-      key: "buildInputGroup",
-      value: function buildInputGroup() {
-        throw new Error('buildInputGroup() must be implemented by subclasses');
-      }
-    }, {
-      key: "buildVerticalButtons",
-      value: function buildVerticalButtons() {
-        throw new Error('buildVerticalButtons() must be implemented by subclasses');
-      }
-    }, {
-      key: "initElements",
-      value: function initElements(container) {
-        this.container = container;
-        var downButtons = this._findElements(container, 'down');
-        var upButtons = this._findElements(container, 'up');
-        if (downButtons.length === 0 || upButtons.length === 0) {
-          var verticalContainer = this._findElements(container.parent(), 'vertical-wrapper');
-          if (verticalContainer.length > 0) {
-            downButtons = this._findElements(verticalContainer, 'down');
-            upButtons = this._findElements(verticalContainer, 'up');
-          }
-        }
-
-        // Ensure input element has data-touchspin-injected="input" for core event targeting
-        this.originalinput.attr('data-touchspin-injected', 'input');
-        this.elements = {
-          down: downButtons,
-          up: upButtons,
-          input: this.$('input', container),
-          prefix: this._findElements(container, 'prefix').addClass(this.settings.prefix_extraclass),
-          postfix: this._findElements(container, 'postfix').addClass(this.settings.postfix_extraclass)
-        };
-        return this.elements;
-      }
-    }, {
-      key: "_findElements",
-      value: function _findElements(container, role) {
-        return this.$("[data-touchspin-injected=\"".concat(role, "\"]"), container);
-      }
-    }, {
-      key: "hideEmptyPrefixPostfix",
-      value: function hideEmptyPrefixPostfix() {
-        var detached = {};
-        if (this.settings.prefix === '') detached._detached_prefix = this.elements.prefix.detach();
-        if (this.settings.postfix === '') detached._detached_postfix = this.elements.postfix.detach();
-        return detached;
-      }
-    }, {
-      key: "updatePrefixPostfix",
-      value: function updatePrefixPostfix(newsettings, detached) {
-        throw new Error('updatePrefixPostfix() must be implemented by subclasses');
-      }
+      // All legacy jQuery-based methods have been removed
+      // Modern renderers implement their own init() method and use vanilla JS
     }, {
       key: "getWrapperTestId",
       value: function getWrapperTestId() {
