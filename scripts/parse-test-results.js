@@ -120,12 +120,23 @@ function generateChecklistUpdate(data) {
   const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
   console.log(`${now} | Tests: ${data.totalTests} | Passing: ${data.totalPassingTests} | Failing: ${data.totalTests - data.totalPassingTests - data.totalFlakyTests} | Flaky: ${data.totalFlakyTests}`);
 
-  console.log('\n## FILE STATUS UPDATE:');
+  console.log('\n## FILES WITH FAILING TESTS (for "Files with Failing Tests" section):');
   console.log('Copy and paste these into your checklist:\n');
 
   // Sort files alphabetically
   const sortedFiles = Object.entries(data.fileResults).sort(([a], [b]) => a.localeCompare(b));
 
+  // Show only failing files
+  const failingFiles = sortedFiles.filter(([, stats]) => stats.fail > 0);
+  if (failingFiles.length > 0) {
+    failingFiles.forEach(([file, stats]) => {
+      console.log(`- [${file}](./${file}) (${stats.fail} failing)`);
+    });
+  } else {
+    console.log('No files have failing tests!');
+  }
+
+  console.log('\n## ALL FILE STATUS (for reference):');
   sortedFiles.forEach(([file, stats]) => {
     const status = stats.fail === 0 ? '[x]' : '[ ]';
     let statusDetail = `${stats.pass}`;

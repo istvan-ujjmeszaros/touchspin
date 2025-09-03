@@ -57,8 +57,8 @@ This approach allows you to:
 ## Test Suite Overview
 - **Total Test Files**: 42
 - **Total Individual Tests**: 289
-- **Files Passing**: 32/42
-- **Tests Passing**: 237/289
+- **Files Passing**: 36/42
+- **Tests Passing**: 253/289
 - **Flaky Tests**: 0
 
 
@@ -67,12 +67,8 @@ This approach allows you to:
 - [advancedFeatures.test.ts](./__tests__/advancedFeatures.test.ts) (1 failing)
 - [buildValidation.test.ts](./__tests__/buildValidation.test.ts) (1 failing)
 - [renderers.test.ts](./__tests__/renderers.test.ts) (1 failing)
-- [x] [rtlSupport.test.ts](./__tests__/rtlSupport.test.ts) (6/6)
 - [targetedCoverage.test.ts](./__tests__/targetedCoverage.test.ts) (4 failing)
-- [x] [verticalButtons.test.ts](./__tests__/verticalButtons.test.ts) (6/6)
 - [visual/tailwind-visual.test.ts](./__tests__/visual/tailwind-visual.test.ts) (37 failing)
-- [x] [wrapperAdvancedTailwindContainer.test.ts](./__tests__/wrapperAdvancedTailwindContainer.test.ts) (1/1)
-- [x] [wrapperBootstrapMarkup.test.ts](./__tests__/wrapperBootstrapMarkup.test.ts) (3/3)
 ## 
 ## 
 ## 
