@@ -56,14 +56,23 @@ This approach allows you to:
 
 ## Test Suite Overview
 - **Total Test Files**: 42
-- **Total Individual Tests**: 287
-- **Files Passing**: 0/42
-- **Tests Passing**: 3/287
-- **Flaky Tests**: 1
+- **Total Individual Tests**: 289
+- **Files Passing**: 32/42
+- **Tests Passing**: 237/289
+- **Flaky Tests**: 0
 
 
 ### Files with Failing Tests
+- [abCompare.test.ts](./__tests__/abCompare.test.ts) (2 failing)
+- [advancedFeatures.test.ts](./__tests__/advancedFeatures.test.ts) (1 failing)
 - [buildValidation.test.ts](./__tests__/buildValidation.test.ts) (1 failing)
+- [renderers.test.ts](./__tests__/renderers.test.ts) (1 failing)
+- [rtlSupport.test.ts](./__tests__/rtlSupport.test.ts) (2 failing)
+- [targetedCoverage.test.ts](./__tests__/targetedCoverage.test.ts) (4 failing)
+- [verticalButtons.test.ts](./__tests__/verticalButtons.test.ts) (1 failing)
+- [visual/tailwind-visual.test.ts](./__tests__/visual/tailwind-visual.test.ts) (37 failing)
+- [wrapperAdvancedTailwindContainer.test.ts](./__tests__/wrapperAdvancedTailwindContainer.test.ts) (1 failing)
+- [wrapperBootstrapMarkup.test.ts](./__tests__/wrapperBootstrapMarkup.test.ts) (1 failing)
 ## 
 ## 
 ## 
@@ -81,7 +90,7 @@ This approach allows you to:
 - [x] Typing 77 after initial 40 creates 4077, Enter should sanitize to 100 with single change event
 - [-] Min boundary events fire when clicking down to reach min and at min boundary
 - [-] Max boundary events fire when clicking up to reach max and at max boundary
-- [-] Min/Max events fire before change events (correct ordering)
+- [x] Min/Max events fire before change events (correct ordering)
 
 ### __tests__/abParitySequences.test.ts
 - [x] boundary hold and disabled parity
@@ -521,6 +530,7 @@ Track test execution progress over time. Add new entries at the top.
 
 ```
 Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-03 01:11:54 |   289 |     237 |      52 |     0 | Full test suite run after ESLint cleanup
 2025-09-03 00:33:52 |     3 |       2 |       1 |     0 | Updated 1 files, 4 tests
 2025-09-03 00:33:22 |     2 |       2 |       0 |     0 | Updated 1 files, 2 tests
 2025-09-03 00:15:18 |     2 |       2 |       0 |     0 | Updated 1 files, 2 tests
