@@ -27,10 +27,10 @@ test.describe('Events', () => {
     // Trigger the TouchSpin button
     await touchspinHelpers.touchspinClickUp(page, testid);
 
-    // Wait for a period to ensure all events are processed (the click event is waiting for 200ms, so we are using a larger value to be on the safe side)
-    await touchspinHelpers.waitForTimeout(300);
-
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+    // Wait for change event to fire
+    await expect.poll(
+      async () => touchspinHelpers.changeEventCounter(page)
+    ).toBe(1);
   });
 
   test('should fire the change event exactly once when entering a proper value and pressing TAB', async ({ page }) => {
@@ -41,10 +41,10 @@ test.describe('Events', () => {
     // Press the TAB key to move out of the input field
     await page.keyboard.press('Tab');
 
-    // Wait for a short period to ensure all events are processed
-    await touchspinHelpers.waitForTimeout(500);
-
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+    // Wait for change event to fire
+    await expect.poll(
+      async () => touchspinHelpers.changeEventCounter(page)
+    ).toBe(1);
   });
 
   test('Should fire change event when pressing TAB (focus loss triggers sanitization)', async ({ page }) => {
@@ -67,11 +67,10 @@ test.describe('Events', () => {
     // Press the TAB key to move out of the input field
     await page.keyboard.press('Tab');
 
-    // Wait for a short period to ensure all events are processed
-    await touchspinHelpers.waitForTimeout(500);
-
     // TAB should trigger sanitization and fire change event
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+    await expect.poll(
+      async () => touchspinHelpers.changeEventCounter(page)
+    ).toBe(1);
 
     // Verify the value has been sanitized (step=10, so 67 rounds to 70)
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('70');
@@ -97,10 +96,10 @@ test.describe('Events', () => {
     // Press Tab to blur and commit the value (should sanitize and fire change)
     await page.keyboard.press('Tab');
 
-    // Wait for a short period to ensure all events are processed
-    await touchspinHelpers.waitForTimeout(500);
-
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+    // Wait for change event to fire
+    await expect.poll(
+      async () => touchspinHelpers.changeEventCounter(page)
+    ).toBe(1);
   });
 
   test('Should not fire change event when already at max value and entering a higher value', async ({ page }) => {
