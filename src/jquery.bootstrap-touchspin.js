@@ -324,9 +324,9 @@
         /** @type {HTMLElement|undefined} */
         containerEl,
         /** @type {HTMLElement|undefined} */
-        upEl,
+        _upEl,
         /** @type {HTMLElement|undefined} */
-        downEl;
+        _downEl;
 
       init();
 
@@ -401,7 +401,9 @@
           }
         });
         if (__touchspinInternalStore) {
-          try { __touchspinInternalStore.set(originalinput[0], originalinput.data('touchspinInternal')); } catch (e) {}
+          try { __touchspinInternalStore.set(originalinput[0], originalinput.data('touchspinInternal')); } catch {
+            // Ignore WeakMap storage errors
+          }
         }
       }
 
@@ -497,7 +499,7 @@ function _formatDisplay(num) {
        * @returns {number|null} Aligned value
        */
       function _alignToStep(val, step, dir) {
-        if (val == null) return val;
+        if (val === null) return val;
         // scale to integers to avoid float mod issues
         let k = 1, s = step;
         while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
@@ -520,11 +522,11 @@ function _formatDisplay(num) {
         if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
 
         // Normalize min/max to numbers for consistency (null/undefined preserved)
-        if (settings.min != null) {
+        if (settings.min !== null) {
           const minNum = Number(settings.min);
           settings.min = isFinite(minNum) ? minNum : null;
         }
-        if (settings.max != null) {
+        if (settings.max !== null) {
           const maxNum = Number(settings.max);
           settings.max = isFinite(maxNum) ? maxNum : null;
         }
@@ -666,7 +668,9 @@ function _formatDisplay(num) {
         // Cleanup internal facade reference
         originalinput.removeData('touchspinInternal');
         if (__touchspinInternalStore) {
-          try { __touchspinInternalStore.delete(originalinput[0]); } catch (e) {}
+          try { __touchspinInternalStore.delete(originalinput[0]); } catch {
+            // Ignore WeakMap deletion errors
+          }
         }
       }
 
@@ -770,8 +774,8 @@ function _formatDisplay(num) {
         elements = renderer.initElements(container);
         // Cache element handles
         containerEl = container && container[0];
-        upEl = elements && elements.up && elements.up[0];
-        downEl = elements && elements.down && elements.down[0];
+        _upEl = elements && elements.up && elements.up[0];
+        _downEl = elements && elements.down && elements.down[0];
       }
 
       /**
@@ -860,8 +864,8 @@ function _formatDisplay(num) {
       function _bindEvents() {
         inputEl = /** @type {HTMLInputElement} */ (originalinput[0]);
         containerEl = /** @type {HTMLElement} */ (container && container[0]);
-        upEl = /** @type {HTMLElement} */ (elements.up && elements.up[0]);
-        downEl = /** @type {HTMLElement} */ (elements.down && elements.down[0]);
+        _upEl = /** @type {HTMLElement} */ (elements.up && elements.up[0]);
+        _downEl = /** @type {HTMLElement} */ (elements.down && elements.down[0]);
 
         function _onNative(el, type, handler, options) {
           if (!el) return;
@@ -1012,7 +1016,7 @@ function _formatDisplay(num) {
         _onNative(inputEl, 'wheel', function (ev) {
           if (!settings.mousewheel || document.activeElement !== inputEl) return;
           const oe = /** @type {any} */ (ev);
-          const delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
+          const delta = (oe.wheelDelta !== null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
           ev.stopPropagation();
           ev.preventDefault();
           if (delta < 0) {
@@ -1174,8 +1178,8 @@ function _formatDisplay(num) {
           returnval = settings.max;
         }
 
-        const currentValue = String(inputEl.value ?? '');
-        const newValue = _setDisplay(parseFloat(returnval));
+        const _currentValue = String(inputEl.value ?? '');
+        const _newValue = _setDisplay(parseFloat(returnval));
 
         if (mayTriggerChange) {
           const nextDisplay = String(inputEl.value ?? '');
@@ -1225,10 +1229,10 @@ function _formatDisplay(num) {
         const newSettings = {};
 
         // Check min attribute
-        if (nativeMin != null) {
+        if (nativeMin !== null) {
           let parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
           // Normalize min to number for consistency (same as _initSettings)
-          if (parsedMin != null) {
+          if (parsedMin !== null) {
             const minNum = Number(parsedMin);
             parsedMin = isFinite(minNum) ? minNum : null;
           }
@@ -1243,10 +1247,10 @@ function _formatDisplay(num) {
         }
 
         // Check max attribute
-        if (nativeMax != null) {
+        if (nativeMax !== null) {
           let parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
           // Normalize max to number for consistency (same as _initSettings)
-          if (parsedMax != null) {
+          if (parsedMax !== null) {
             const maxNum = Number(parsedMax);
             parsedMax = isFinite(maxNum) ? maxNum : null;
           }
@@ -1261,7 +1265,7 @@ function _formatDisplay(num) {
         }
 
         // Check step attribute
-        if (nativeStep != null) {
+        if (nativeStep !== null) {
           let parsedStep = (nativeStep === '' || nativeStep === 'any') ? 1 : parseFloat(nativeStep);
           if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
           if (parsedStep !== settings.step) {

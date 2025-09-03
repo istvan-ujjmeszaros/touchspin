@@ -80,7 +80,9 @@ export function installJqueryTouchSpin($) {
       const jqueryTeardown = () => {
         // Clean up event subscriptions to core
         unsubs.forEach(unsub => {
-          try { unsub(); } catch {}
+          try { unsub(); } catch {
+            // Ignore unsubscribe errors during cleanup
+          }
         });
         // Clean up ONLY the jQuery events that THIS plugin explicitly added
         // Based on lines 93-125 in this file: 8 explicit jQuery events

@@ -3,7 +3,7 @@
 // entry dynamically loads the classic plugin source and registers it to
 // window.jQuery when present.
 
-/* global window, document */
+
 
 function loadClassicPlugin() {
   const url = new URL('./jquery.bootstrap-touchspin.js', import.meta.url);
@@ -31,7 +31,7 @@ export async function registerJQueryPlugin() {
     if (typeof window !== 'undefined' && window.jQuery) {
       await registerJQueryPlugin();
     }
-  } catch (e) {
+  } catch {
     // Swallow to avoid breaking pages; debugging can inspect console
     // console.warn('TouchSpin ESM loader failed:', e);
   }

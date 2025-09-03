@@ -85,7 +85,9 @@ function installJqueryTouchSpin($) {
       const jqueryTeardown = () => {
         // Clean up event subscriptions to core
         unsubs.forEach(unsub => {
-          try { unsub(); } catch {}
+          try { unsub(); } catch {
+            // Ignore unsubscribe errors during cleanup
+          }
         });
         // Clean up jQuery events
         $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');

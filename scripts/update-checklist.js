@@ -14,7 +14,7 @@
  */
 
 import fs from 'fs';
-import path from 'path';
+// import path from 'path'; // Not used in this script
 import process from 'process';
 
 const CHECKLIST_FILE = 'TEST_EXECUTION_CHECKLIST.md';
@@ -112,9 +112,9 @@ function updateChecklist(checklistContent, testData) {
     const currentTestsMatch = overviewSection.match(/- \*\*Tests Passing\*\*: (\d+)\/(\d+)/);
 
     if (currentFilesMatch && currentTestsMatch) {
-      const currentPassingFiles = parseInt(currentFilesMatch[1]);
+      const _currentPassingFiles = parseInt(currentFilesMatch[1]);
       const totalFiles = parseInt(currentFilesMatch[2]);
-      const currentPassingTests = parseInt(currentTestsMatch[1]);
+      const _currentPassingTests = parseInt(currentTestsMatch[1]);
       const totalTests = parseInt(currentTestsMatch[2]);
 
       // Calculate new totals (replace with actual counts from results)
@@ -167,7 +167,7 @@ function updateChecklist(checklistContent, testData) {
 
   // Update individual test results
   for (const [fileName, testMap] of testData.testResults) {
-    const fileSection = `### __tests__/${fileName}`;
+    const _fileSection = `### __tests__/${fileName}`;
     const fileSectionRegex = new RegExp(`(### __tests__/${fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\n)((?:- \\[[\\sx~-]\\] .*\\n)*)`, 'g');
 
     const match = fileSectionRegex.exec(updatedContent);

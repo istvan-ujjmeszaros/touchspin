@@ -283,7 +283,7 @@ export class TouchSpinCore {
     const next = this._nextValue('up', v);
 
     // Check if already at max boundary before incrementing
-    if (this.settings.max != null && v === this.settings.max) {
+    if (this.settings.max !== null && v === this.settings.max) {
       this.emit('max');
       if (this.spinning && this.direction === 'up') {
         this.stopSpin();
@@ -292,7 +292,7 @@ export class TouchSpinCore {
     }
 
     // Fire max event BEFORE setting display if we're reaching max
-    if (this.settings.max != null && next === this.settings.max) {
+    if (this.settings.max !== null && next === this.settings.max) {
       this.emit('max');
       if (this.spinning && this.direction === 'up') {
         this.stopSpin();
@@ -312,7 +312,7 @@ export class TouchSpinCore {
     const next = this._nextValue('down', v);
 
     // Check if already at min boundary before decrementing
-    if (this.settings.min != null && v === this.settings.min) {
+    if (this.settings.min !== null && v === this.settings.min) {
       this.emit('min');
       if (this.spinning && this.direction === 'down') {
         this.stopSpin();
@@ -321,7 +321,7 @@ export class TouchSpinCore {
     }
 
     // Fire min event BEFORE setting display if we're reaching min
-    if (this.settings.min != null && next === this.settings.min) {
+    if (this.settings.min !== null && next === this.settings.min) {
       this.emit('min');
       if (this.spinning && this.direction === 'down') {
         this.stopSpin();
@@ -366,10 +366,10 @@ export class TouchSpinCore {
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
     const step = Number(this.settings.step || 1);
     if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && step !== 1) {
-      if (this.settings.max != null) {
+      if (this.settings.max !== null) {
         this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
       }
-      if (this.settings.min != null) {
+      if (this.settings.min !== null) {
         this.settings.min = this._alignToStep(Number(this.settings.min), step, 'up');
       }
     }
@@ -625,7 +625,9 @@ export class TouchSpinCore {
     const set = this._events.get(event);
     if (!set || set.size === 0) return;
     for (const fn of [...set]) {
-      try { fn(detail); } catch (_) {}
+      try { fn(detail); } catch {
+        // Silently ignore callback errors to prevent one bad callback from breaking others
+      }
     }
   }
 
@@ -638,10 +640,10 @@ export class TouchSpinCore {
 
     // Check if already at boundary - don't start spin if so
     const v = this.getValue();
-    if (dir === 'up' && this.settings.max != null && v === this.settings.max) {
+    if (dir === 'up' && this.settings.max !== null && v === this.settings.max) {
       return; // Already at max, don't start spin
     }
-    if (dir === 'down' && this.settings.min != null && v === this.settings.min) {
+    if (dir === 'down' && this.settings.min !== null && v === this.settings.min) {
       return; // Already at min, don't start spin
     }
 
@@ -671,8 +673,12 @@ export class TouchSpinCore {
   }
 
   _clearSpinTimers() {
-    try { if (this._spinDelayTimeout) { clearTimeout(this._spinDelayTimeout); } } catch {}
-    try { if (this._spinIntervalTimer) { clearInterval(this._spinIntervalTimer); } } catch {}
+    try { if (this._spinDelayTimeout) { clearTimeout(this._spinDelayTimeout); } } catch {
+      // Ignore timer cleanup errors
+    }
+    try { if (this._spinIntervalTimer) { clearInterval(this._spinIntervalTimer); } } catch {
+      // Ignore timer cleanup errors
+    }
     this._spinDelayTimeout = null;
     this._spinIntervalTimer = null;
   }
@@ -719,8 +725,8 @@ export class TouchSpinCore {
     const min = this.settings.min;
     const max = this.settings.max;
     let clamped = aligned;
-    if (min != null && clamped < min) clamped = min;
-    if (max != null && clamped > max) clamped = max;
+    if (min !== null && clamped < min) clamped = min;
+    if (max !== null && clamped > max) clamped = max;
     return clamped;
   }
 
@@ -762,7 +768,8 @@ export class TouchSpinCore {
   /** Aligns a value to nearest step boundary using integer arithmetic. */
   _alignToStep(val, step, dir) {
     if (step === 0) return val;
-    let k = 1, s = step;
+    let k = 1;
+    const s = step;
     while (((s * k) % 1) !== 0 && k < 1e6) k *= 10;
     const V = Math.round(val * k);
     const S = Math.round(step * k);
@@ -815,8 +822,8 @@ export class TouchSpinCore {
     }
     const min = this.settings.min;
     const max = this.settings.max;
-    if (min != null) el.setAttribute('aria-valuemin', String(min)); else el.removeAttribute('aria-valuemin');
-    if (max != null) el.setAttribute('aria-valuemax', String(max)); else el.removeAttribute('aria-valuemax');
+    if (min !== null) el.setAttribute('aria-valuemin', String(min)); else el.removeAttribute('aria-valuemin');
+    if (max !== null) el.setAttribute('aria-valuemax', String(max)); else el.removeAttribute('aria-valuemax');
     const raw = el.value;
     const before = this.settings.callback_before_calculation || ((v) => v);
     const num = parseFloat(before(String(raw)));
@@ -833,21 +840,21 @@ export class TouchSpinCore {
     // Only set native attributes on number inputs
     if (this.input.getAttribute('type') === 'number') {
       // Sync min attribute
-      if (this.settings.min != null && isFinite(this.settings.min)) {
+      if (this.settings.min !== null && isFinite(this.settings.min)) {
         this.input.setAttribute('min', String(this.settings.min));
       } else {
         this.input.removeAttribute('min');
       }
 
       // Sync max attribute
-      if (this.settings.max != null && isFinite(this.settings.max)) {
+      if (this.settings.max !== null && isFinite(this.settings.max)) {
         this.input.setAttribute('max', String(this.settings.max));
       } else {
         this.input.removeAttribute('max');
       }
 
       // Sync step attribute
-      if (this.settings.step != null && isFinite(this.settings.step) && this.settings.step > 0) {
+      if (this.settings.step !== null && isFinite(this.settings.step) && this.settings.step > 0) {
         this.input.setAttribute('step', String(this.settings.step));
       } else {
         this.input.removeAttribute('step');
@@ -868,37 +875,37 @@ export class TouchSpinCore {
     const newSettings = {};
 
     // Check min attribute
-    if (nativeMin != null) {
+    if (nativeMin !== null) {
       const parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
-      const minNum = parsedMin != null && isFinite(parsedMin) ? parsedMin : null;
+      const minNum = parsedMin !== null && isFinite(parsedMin) ? parsedMin : null;
       if (minNum !== this.settings.min) {
         newSettings.min = minNum;
         needsUpdate = true;
       }
-    } else if (this.settings.min != null) {
+    } else if (this.settings.min !== null) {
       // Attribute was removed
       newSettings.min = null;
       needsUpdate = true;
     }
 
     // Check max attribute
-    if (nativeMax != null) {
+    if (nativeMax !== null) {
       const parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
-      const maxNum = parsedMax != null && isFinite(parsedMax) ? parsedMax : null;
+      const maxNum = parsedMax !== null && isFinite(parsedMax) ? parsedMax : null;
       if (maxNum !== this.settings.max) {
         newSettings.max = maxNum;
         needsUpdate = true;
       }
-    } else if (this.settings.max != null) {
+    } else if (this.settings.max !== null) {
       // Attribute was removed
       newSettings.max = null;
       needsUpdate = true;
     }
 
     // Check step attribute
-    if (nativeStep != null) {
+    if (nativeStep !== null) {
       const parsedStep = nativeStep === '' ? null : parseFloat(nativeStep);
-      const stepNum = parsedStep != null && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : null;
+      const stepNum = parsedStep !== null && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : null;
       if (stepNum !== this.settings.step) {
         newSettings.step = stepNum;
         needsUpdate = true;

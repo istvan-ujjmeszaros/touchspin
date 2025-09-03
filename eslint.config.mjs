@@ -43,7 +43,12 @@ export default [
         require: 'readonly',
 
         // Build-time globals
-        MutationObserver: 'readonly'
+        MutationObserver: 'readonly',
+
+        // Browser DOM globals
+        Element: 'readonly',
+        Event: 'readonly',
+        URL: 'readonly'
       }
     },
     rules: {

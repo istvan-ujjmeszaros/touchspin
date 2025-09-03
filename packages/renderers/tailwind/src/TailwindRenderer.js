@@ -53,7 +53,7 @@ class TailwindRenderer extends AbstractRenderer {
   }
 
   buildBasicInputGroup() {
-    const inputSize = this._detectInputSize();
+    const _inputSize = this._detectInputSize();
     const isVertical = this.settings.verticalbuttons;
     const testidAttr = this.getWrapperTestId();
 

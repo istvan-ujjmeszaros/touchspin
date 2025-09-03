@@ -3,6 +3,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'child_process';
 import { createServer } from 'http';
 
+(async () => {
 const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
 
@@ -16,19 +17,19 @@ if (!path) {
 const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://localhost:8866/${path}`;
 
 // Auto-start development server if needed
-// 
+//
 // WHY THIS CODE EXISTS:
 // npm scripts with && operator don't work well with persistent servers.
 // Running "node serve.mjs && node inspect.mjs" causes the inspect script
 // to never execute because serve.mjs runs indefinitely.
-// 
+//
 // Cross-platform background process spawning (&, start, etc.) is unreliable
 // in npm scripts, so we handle server startup directly in this script.
 // This makes the inspect command self-sufficient and always work regardless
 // of whether the dev server is already running.
 const ensureServerRunning = async () => {
   const port = 8866;
-  
+
   // Check if server is already running
   const isPortInUse = await new Promise((resolve) => {
     const tester = createServer()
@@ -45,20 +46,20 @@ const ensureServerRunning = async () => {
       })
       .listen(port);
   });
-  
+
   if (isPortInUse) {
     // Server already running, proceed with inspection
     return;
   }
-  
+
   // Start the development server in detached mode
   const serverProcess = spawn('node', ['scripts/serve.mjs'], {
     detached: true,
     stdio: 'ignore'
   });
-  
+
   serverProcess.unref(); // Allow parent process to exit independently
-  
+
   // Wait for server to start (give it a moment to initialize)
   await new Promise(resolve => setTimeout(resolve, 2000));
 };
@@ -93,10 +94,10 @@ page.on('console', msg => {
     location: msg.location()
   };
   result.console.push(entry);
-  
+
   if (msg.type() === 'error') result.summary.totalConsoleErrors++;
   if (msg.type() === 'warning') result.summary.totalConsoleWarnings++;
-  
+
   if (format === 'text') {
     console.log(`[${msg.type().toUpperCase()}]`, msg.text());
   }
@@ -109,7 +110,7 @@ page.on('pageerror', err => {
     stack: err.stack
   });
   result.summary.totalPageErrors++;
-  
+
   if (format === 'text') {
     console.error('[PAGE ERROR]', err.message);
   }
@@ -125,7 +126,7 @@ page.on('requestfailed', request => {
   };
   result.networkErrors.push(failure);
   result.summary.totalNetworkErrors++;
-  
+
   if (format === 'text') {
     console.error('[NETWORK ERROR]', `${request.method()} ${request.url()}: ${request.failure()?.errorText}`);
   }
@@ -142,7 +143,7 @@ page.on('response', response => {
     };
     result.networkErrors.push(error);
     result.summary.totalNetworkErrors++;
-    
+
     if (format === 'text') {
       console.error('[HTTP ERROR]', `${response.status()} ${response.url()}`);
     }
@@ -151,7 +152,7 @@ page.on('response', response => {
 
 try {
   await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-  
+
   // Check TouchSpin initialization
   const touchspinData = await page.evaluate(() => {
     const inputs = document.querySelectorAll('input[data-testid]');
@@ -167,9 +168,9 @@ try {
     });
     return status;
   });
-  
+
   result.touchspinStatus = touchspinData;
-  
+
   // Count initialization status
   Object.values(touchspinData).forEach(status => {
     if (status.initialized) {
@@ -178,7 +179,7 @@ try {
       result.summary.touchspinNotInitialized++;
     }
   });
-  
+
   // Output results
   if (format === 'json') {
     console.log(JSON.stringify(result, null, 2));
@@ -192,13 +193,13 @@ try {
       console.log(`TouchSpin Initialized: ${result.summary.touchspinInitialized}/${result.summary.touchspinInitialized + result.summary.touchspinNotInitialized}`);
     }
   }
-  
+
 } catch (error) {
   result.loadError = {
     message: error.message,
     stack: error.stack
   };
-  
+
   if (format === 'json') {
     console.log(JSON.stringify(result, null, 2));
   } else {
@@ -210,7 +211,8 @@ try {
 }
 
 // Exit with error code if there were errors
-const hasErrors = result.summary.totalPageErrors > 0 || 
+const hasErrors = result.summary.totalPageErrors > 0 ||
                   result.summary.totalNetworkErrors > 0 ||
                   result.summary.totalConsoleErrors > 0;
 process.exit(hasErrors ? 1 : 0);
+})();
