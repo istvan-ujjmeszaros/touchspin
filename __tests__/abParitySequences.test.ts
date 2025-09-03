@@ -46,7 +46,12 @@ test.describe('A/B parity sequences', () => {
       $wrap.trigger('touchspin.startupspin');
       setTimeout(() => { $orig.trigger('touchspin.stopspin'); $wrap.trigger('touchspin.stopspin'); }, 200);
     });
-    await page.waitForTimeout(260);
+    // Wait for spin to complete and values to stabilize
+    await page.waitForFunction(() => {
+      const orig = (document.getElementById('orig-input') as HTMLInputElement)?.value;
+      const wrap = (document.getElementById('wrap-input') as HTMLInputElement)?.value;
+      return Number(orig) > 0 && Number(wrap) > 0; // Both should have incremented
+    }, { timeout: 500 });
     let { orig, wrap } = await getVals(page);
     expect(Math.abs(orig - wrap)).toBeLessThanOrEqual(1); // allow tiny drift
 
