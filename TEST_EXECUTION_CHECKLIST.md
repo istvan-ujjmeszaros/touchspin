@@ -63,10 +63,7 @@ This approach allows you to:
 
 
 ### Files with Failing Tests
-- [abCompare.test.ts](./__tests__/abCompare.test.ts) (2 failing)
-- [advancedFeatures.test.ts](./__tests__/advancedFeatures.test.ts) (1 failing)
 - [buildValidation.test.ts](./__tests__/buildValidation.test.ts) (1 failing)
-- [renderers.test.ts](./__tests__/renderers.test.ts) (1 failing)
 - [targetedCoverage.test.ts](./__tests__/targetedCoverage.test.ts) (4 failing)
 - [visual/tailwind-visual.test.ts](./__tests__/visual/tailwind-visual.test.ts) (37 failing)
 ## 
@@ -84,15 +81,15 @@ This approach allows you to:
 - [x] Pressing Enter after typing 77 should sanitize to 75 (step enforcement)
 - [x] Typing 7 at end of existing value 40 should result in 407 → 100 (max clamp) with single change event
 - [x] Typing 77 after initial 40 creates 4077, Enter should sanitize to 100 with single change event
-- [-] Min boundary events fire when clicking down to reach min and at min boundary
-- [-] Max boundary events fire when clicking up to reach max and at max boundary
+- [x] Min boundary events fire when clicking down to reach min and at min boundary
+- [x] Max boundary events fire when clicking up to reach max and at max boundary
 - [x] Min/Max events fire before change events (correct ordering)
 
 ### __tests__/abParitySequences.test.ts
 - [x] boundary hold and disabled parity
 
 ### __tests__/advancedFeatures.test.ts
-- [-] should respect data-bts-* attributes for configuration
+- [x] should respect data-bts-* attributes for configuration
 - [x] should enforce step divisibility with round mode
 - [x] should start spinning when holding down button
 - [x] should stop spinning on mouseup
@@ -346,7 +343,7 @@ This approach allows you to:
 - [x] should maintain consistent button behavior across Bootstrap versions
 - [x] should generate valid HTML structure for all versions
 - [x] should maintain consistent data-touchspin-injected attributes across versions
-- [-] should maintain consistent functional behavior across all renderers
+- [x] should maintain consistent functional behavior across all renderers
 
 ### __tests__/rtlSupport.test.ts
 - [x] should render and function correctly in RTL layout
@@ -395,7 +392,7 @@ This approach allows you to:
 
 ### __tests__/targetedCoverage.test.ts
 - [x] should warn about double initialization and destroy/reinitialize
-- [ ] should detect non-input elements and warn 
+- [x] should detect non-input elements and warn "Must be an input."
 - [x] should fallback to step=1 when step=0
 - [-] should fallback to step=1 when step is invalid
 - [-] should fallback to step=1 when step is negative
@@ -526,6 +523,7 @@ Track test execution progress over time. Add new entries at the top.
 
 ```
 Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-03 05:03:25 |    33 |      28 |       5 |     0 | 3 more files now passing: abCompare, advancedFeatures, renderers
 2025-09-03 04:26:10 |    16 |      16 |       0 |     0 | Fixed renderer tests: prefix/postfix visibility, Bootstrap markup, Tailwind classes
 2025-09-03 01:11:54 |   289 |     237 |      52 |     0 | Full test suite run after ESLint cleanup
 2025-09-03 00:33:52 |     3 |       2 |       1 |     0 | Updated 1 files, 4 tests
