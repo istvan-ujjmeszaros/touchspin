@@ -24,10 +24,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.uponce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should increment by one step
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe((initialValue + 1).toString());
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe((initialValue + 1).toString());
     });
 
     test('should handle touchspin.downonce event', async ({ page }) => {
@@ -41,10 +41,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.downonce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should decrement by one step
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe((initialValue - 1).toString());
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe((initialValue - 1).toString());
     });
 
     test('should handle touchspin.startupspin event', async ({ page }) => {
@@ -151,10 +151,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.uponce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should increment by 3 steps
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe((initialValue + 3).toString());
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe((initialValue + 3).toString());
     });
 
     test('should handle multiple downonce events in sequence', async ({ page }) => {
@@ -170,10 +170,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.downonce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should decrement by 3 steps
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe((initialValue - 3).toString());
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe((initialValue - 3).toString());
     });
 
     test('should handle spin direction changes', async ({ page }) => {
@@ -220,10 +220,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.uponce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should increment by step amount (10)
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('10');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('10');
 
       // Test downonce to go back to min
       await page.evaluate((testId) => {
@@ -232,10 +232,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.downonce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should be back at minimum (0)
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('0');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('0');
     });
 
     test('should handle events on disabled input gracefully', async ({ page }) => {
@@ -251,10 +251,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.startupspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Value should remain unchanged for disabled input
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe(initialValue);
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe(initialValue);
 
       // Stop any potential spinning
       await page.evaluate((testId) => {
@@ -283,13 +283,11 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.downonce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(300);
-
       // Should handle rapid events without errors
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
-      
       // Net effect should be: +1 -1 +1 -1 = 0, so should equal initial
-      expect(finalValue).toBe(initialValue);
+      await expect.poll(
+        async () => parseInt(await touchspinHelpers.readInputValue(page, testid) || '50')
+      ).toBe(initialValue);
     });
   });
 });
