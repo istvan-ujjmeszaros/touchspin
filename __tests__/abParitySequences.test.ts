@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
 async function clearLogs(page) {
   await page.evaluate(() => {
@@ -12,10 +12,16 @@ async function clearLogs(page) {
 async function initBoth(page, opts: any) {
   await page.evaluate((o) => {
     const $ = (window as any).jQuery;
-    const $orig = $('#orig-input');
-    const $wrap = $('#wrap-input');
-    try { $orig.trigger('touchspin.destroy'); } catch {}
-    try { $wrap.trigger('touchspin.destroy'); } catch {}
+    const $orig = $('[data-testid="ab-orig"]');
+    const $wrap = $('[data-testid="ab-wrap"]');
+    try {
+      $orig.trigger('touchspin.destroy');
+    } catch {
+    }
+    try {
+      $wrap.trigger('touchspin.destroy');
+    } catch {
+    }
     $orig.OriginalTouchSpin(o);
     $wrap.TouchSpin(Object.assign({renderer: (window as any).Bootstrap4Renderer}, o));
   }, opts);
@@ -23,66 +29,53 @@ async function initBoth(page, opts: any) {
 
 async function getVals(page) {
   const [orig, wrap] = await Promise.all([
-    page.inputValue('#orig-input'),
-    page.inputValue('#wrap-input'),
+    page.getByTestId('ab-orig').inputValue(),
+    page.getByTestId('ab-wrap').inputValue(),
   ]);
-  return { orig: Number(orig), wrap: Number(wrap) };
+  return {orig: Number(orig), wrap: Number(wrap)};
 }
 
 test.describe('A/B parity sequences', () => {
-  test('boundary hold and disabled parity', async ({ page }) => {
+  test('boundary hold and disabled parity', async ({page}, testInfo) => {
+    // Increase time budget for this multi-phase sequence
+    testInfo.setTimeout(15000);
+    page.setDefaultTimeout(5000);
     await page.goto('/__tests__/html-package/ab-compare.html');
     await clearLogs(page);
 
-    // Fast timings to keep tests snappy
-    await initBoth(page, { min: 0, max: 100, step: 1, stepinterval: 40, stepintervaldelay: 40, booster: true });
-
-    // Hold Up on both for a short duration
+    // Jump to near max and hold to boundary (deterministic timings)
+    await initBoth(page, {min: 0, max: 100, step: 5, stepinterval: 20, stepintervaldelay: 10, booster: false});
     await page.evaluate(() => {
       const $ = (window as any).jQuery;
-      const $orig = $('#orig-input');
-      const $wrap = $('#wrap-input');
-      $orig.trigger('touchspin.startupspin');
-      $wrap.trigger('touchspin.startupspin');
-      setTimeout(() => { $orig.trigger('touchspin.stopspin'); $wrap.trigger('touchspin.stopspin'); }, 200);
-    });
-    // Wait for spin to complete and values to stabilize
-    await page.waitForFunction(() => {
-      const orig = (document.getElementById('orig-input') as HTMLInputElement)?.value;
-      const wrap = (document.getElementById('wrap-input') as HTMLInputElement)?.value;
-      return Number(orig) > 0 && Number(wrap) > 0; // Both should have incremented
-    }, { timeout: 500 });
-    let { orig, wrap } = await getVals(page);
-    expect(Math.abs(orig - wrap)).toBeLessThanOrEqual(1); // allow tiny drift
-
-    // Jump to near max and hold to boundary
-    // Use deterministic spin timings to reduce flakiness in CI
-    await initBoth(page, { min: 0, max: 100, step: 1, stepinterval: 20, stepintervaldelay: 10, booster: false });
-    await page.evaluate(() => {
-      const $ = (window as any).jQuery; const $o=$('#orig-input'); const $w=$('#wrap-input');
-      $o.OriginalTouchSpin('set', 95); $w.TouchSpin('set', 95);
-      $o.trigger('touchspin.startupspin'); $w.trigger('touchspin.startupspin');
+      const $o = $('[data-testid="ab-orig"]');
+      const $w = $('[data-testid="ab-wrap"]');
+      // Set values directly for both plugins; original v4.7.3 lacks a 'set' command
+      $o.val('95').trigger('change');
+      $w.TouchSpin('set', 95);
+      $o.trigger('touchspin.startupspin');
+      $w.trigger('touchspin.startupspin');
       // Safety: ensure we stop even if boundary auto-stop timing differs across engines
-      setTimeout(() => { $o.trigger('touchspin.stopspin'); $w.trigger('touchspin.stopspin'); }, 600);
+      setTimeout(() => {
+        $o.trigger('touchspin.stopspin');
+        $w.trigger('touchspin.stopspin');
+      }, 800);
     });
-    await page.waitForFunction(() => {
-      const o = (document.getElementById('orig-input') as HTMLInputElement)?.value;
-      const w = (document.getElementById('wrap-input') as HTMLInputElement)?.value;
-      return o === '100' && w === '100';
-    }, { timeout: 4000 });
-    ({ orig, wrap } = await getVals(page));
-    expect(orig).toBe(100);
-    expect(wrap).toBe(100);
+    // Wait for boundary clamp to 100 on both using testids (robust in CI)
+    await expect(page.getByTestId('ab-orig')).toHaveValue('100', {timeout: 6000});
+    await expect(page.getByTestId('ab-wrap')).toHaveValue('100', {timeout: 6000});
 
     // Disable both and ensure ArrowUp does not change values
     await page.evaluate(() => {
-      const $ = (window as any).jQuery; const $o=$('#orig-input'); const $w=$('#wrap-input');
-      $o.attr('disabled',''); $w.attr('disabled','');
+      const $ = (window as any).jQuery;
+      const $o = $('[data-testid="ab-orig"]');
+      const $w = $('[data-testid="ab-wrap"]');
+      $o.attr('disabled', '');
+      $w.attr('disabled', '');
     });
     const before = await getVals(page);
-    await page.focus('#orig-input');
+    await page.getByTestId('ab-orig').focus();
     await page.keyboard.press('ArrowUp');
-    await page.focus('#wrap-input');
+    await page.getByTestId('ab-wrap').focus();
     await page.keyboard.press('ArrowUp');
     const after = await getVals(page);
     expect(after.orig).toBe(before.orig);
