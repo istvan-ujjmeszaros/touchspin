@@ -29,6 +29,7 @@ These rules apply to ALL AI agents working on this codebase:
 ### Code Management
 - **Never commit temporary files** to git
 - Create temp files in `tmp/` folder (gitignored)
+- **CRITICAL: Only work in `packages/` folder - NEVER edit `src/` folder (legacy reference only)**
 
 ### Debugging Workflow
 - Follow the systematic test debugging workflow (see below)
@@ -174,15 +175,16 @@ When documenting a fix, include:
 
 ## Architecture
 
-### Modern Architecture (Multi-Package)
+### Modern Architecture (Multi-Package) - ACTIVE CODE
 - **`packages/core/`** - Framework-agnostic core logic with element-attached instances
 - **`packages/jquery-plugin/`** - jQuery wrapper that bridges to core (callable events only)
 - **`packages/renderers/`** - Framework-specific DOM rendering (Bootstrap 3/4/5, Tailwind)
 
-### Legacy Architecture
-- **`src/`** - Source files (never edit `dist/` directly)
-  - `src/jquery.bootstrap-touchspin.js` - Main jQuery plugin implementation 
-  - `src/jquery.bootstrap-touchspin.css` - Component styles
+### Legacy Architecture - REFERENCE ONLY (DO NOT MODIFY)
+- **`src/`** - **LEGACY CODE FOR REFERENCE ONLY** - This is the old monolithic implementation
+  - `src/jquery.bootstrap-touchspin.js` - Old jQuery plugin implementation (replaced by packages/)
+  - `src/jquery.bootstrap-touchspin.css` - Old component styles
+  - **⚠️ IMPORTANT: Never edit files in src/ - they are kept only for reference during migration**
 
 ### Build Output
 - **`dist/`** - Generated files (transpiled, minified versions with source maps)
