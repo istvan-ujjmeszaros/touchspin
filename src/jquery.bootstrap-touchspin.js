@@ -289,12 +289,13 @@
 
     return this.each(function () {
 
+      /** @type {JQuery<HTMLInputElement>} Original input element */
+      const originalinput = $(this);
+      /** @type {Record<string, any>} Data attributes from original input */
+      const originalinput_data = originalinput.data();
+
       /** @type {TouchSpinOptions} Final merged settings */
       let settings,
-        /** @type {JQuery<HTMLInputElement>} Original input element */
-        originalinput = $(this),
-        /** @type {Record<string, any>} Data attributes from original input */
-        originalinput_data = originalinput.data(),
         /** @type {JQuery|null} Detached prefix element */
         _detached_prefix,
         /** @type {JQuery|null} Detached postfix element */
@@ -501,7 +502,8 @@ function _formatDisplay(num) {
       function _alignToStep(val, step, dir) {
         if (val === null) return val;
         // scale to integers to avoid float mod issues
-        let k = 1, s = step;
+        let k = 1;
+        const s = step;
         while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
         const V = Math.round(val * k), S = Math.round(step * k);
         if (S === 0) return val;
@@ -734,8 +736,8 @@ function _formatDisplay(num) {
        * @private
        */
       function _buildHtml() {
-        let initval = inputEl.value,
-          parentelement = originalinput.parent();
+        let initval = inputEl.value;
+        const parentelement = originalinput.parent();
 
         if (initval !== '') {
           const raw = settings.callback_before_calculation(initval);
@@ -1129,10 +1131,9 @@ function _formatDisplay(num) {
        * @fires touchspin.on.max
        */
       function _checkValue(mayTriggerChange) {
-        let val, parsedval, returnval;
+        let parsedval, returnval;
         const prevDisplay = String(inputEl.value ?? '');
-
-        val = settings.callback_before_calculation(inputEl.value);
+        const val = settings.callback_before_calculation(inputEl.value);
 
         if (val === '') {
           if (settings.replacementval !== '') {
