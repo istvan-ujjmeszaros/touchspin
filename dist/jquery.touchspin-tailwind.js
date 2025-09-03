@@ -40,7 +40,7 @@
     }
   }
   function _createClass(e, r, t) {
-    return r && _defineProperties(e.prototype, r), Object.defineProperty(e, "prototype", {
+    return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
       writable: false
     }), e;
   }
@@ -278,6 +278,8 @@
 
       /** @type {TouchSpinCoreOptions} */
       this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
+      // Sanitize settings to ensure safe, predictable behavior
+      this._sanitizeSettings();
 
       // Check for renderer: explicit option > global default > none
       if (!this.settings.renderer) {
@@ -358,6 +360,65 @@
         this._updateAriaAttributes();
         this._syncNativeAttributes();
         this._checkValue(false);
+      }
+
+      /**
+       * Normalize and validate settings: coerce invalid values to safe defaults.
+       * - step: > 0 number, otherwise 1
+       * - decimals: integer >= 0, otherwise 0
+       * - min/max: finite numbers or null
+       * - stepinterval/stepintervaldelay: integers >= 0 (fallback to defaults if invalid)
+       * @private
+       */
+    }, {
+      key: "_sanitizeSettings",
+      value: function _sanitizeSettings() {
+        // step
+        var stepNum = Number(this.settings.step);
+        if (!isFinite(stepNum) || stepNum <= 0) {
+          this.settings.step = 1;
+        } else {
+          this.settings.step = stepNum;
+        }
+
+        // decimals
+        var decNum = Number(this.settings.decimals);
+        if (!isFinite(decNum) || decNum < 0) {
+          this.settings.decimals = 0;
+        } else {
+          this.settings.decimals = Math.floor(decNum);
+        }
+
+        // min/max
+        // Preserve explicit nulls; coerce other values to numbers or null
+        if (this.settings.min === null || this.settings.min === undefined || this.settings.min === '') {
+          this.settings.min = null;
+        } else {
+          var minNum = Number(this.settings.min);
+          this.settings.min = isFinite(minNum) ? minNum : null;
+        }
+        if (this.settings.max === null || this.settings.max === undefined || this.settings.max === '') {
+          this.settings.max = null;
+        } else {
+          var maxNum = Number(this.settings.max);
+          this.settings.max = isFinite(maxNum) ? maxNum : null;
+        }
+
+        // Ensure min <= max when both present
+        if (this.settings.min !== null && this.settings.max !== null && this.settings.min > this.settings.max) {
+          // Swap to maintain logical bounds
+          var tmp = this.settings.min;
+          this.settings.min = this.settings.max;
+          this.settings.max = tmp;
+        }
+
+        // stepinterval
+        var si = Number(this.settings.stepinterval);
+        if (!isFinite(si) || si < 0) this.settings.stepinterval = DEFAULTS.stepinterval;
+
+        // stepintervaldelay
+        var sid = Number(this.settings.stepintervaldelay);
+        if (!isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
       }
 
       /**
@@ -555,11 +616,18 @@
         var _this = this;
         var oldSettings = _objectSpread2({}, this.settings);
         var newSettings = opts || {};
-        Object.assign(this.settings, newSettings);
+
+        // Sanitize the incoming partial BEFORE merge
+        var sanitizedPartial = TouchSpinCore.sanitizePartialSettings(newSettings, oldSettings);
+
+        // Apply incoming changes (sanitized) first
+        Object.assign(this.settings, sanitizedPartial);
+        // Extra safety: sanitize full settings after merge
+        this._sanitizeSettings();
 
         // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
         var step = Number(this.settings.step || 1);
-        if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && step !== 1) {
+        if ((sanitizedPartial.step !== undefined || sanitizedPartial.min !== undefined || sanitizedPartial.max !== undefined) && step !== 1) {
           if (this.settings.max !== null) {
             this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
           }
@@ -568,14 +636,14 @@
           }
         }
 
-        // Notify observers of changed settings
-        Object.keys(newSettings).forEach(function (key) {
-          if (oldSettings[key] !== newSettings[key]) {
+        // Notify observers of keys whose EFFECTIVE values changed after sanitization
+        Object.keys(this.settings).forEach(function (key) {
+          if (oldSettings[key] !== _this.settings[key]) {
             var observers = _this._settingObservers.get(key);
             if (observers) {
               observers.forEach(function (callback) {
                 try {
-                  callback(newSettings[key], oldSettings[key]);
+                  callback(_this.settings[key], oldSettings[key]);
                 } catch (error) {
                   console.error('TouchSpin: Error in setting observer callback:', error);
                 }
@@ -1485,6 +1553,59 @@
         if (isDisabled) {
           this.stopSpin();
         }
+      }
+    }], [{
+      key: "sanitizePartialSettings",
+      value:
+      /**
+       * Sanitize a partial settings object BEFORE applying it.
+       * Returns a new object with only provided keys normalized.
+       * @param {Partial<TouchSpinCoreOptions>} partial
+       * @param {TouchSpinCoreOptions} current
+       * @returns {Partial<TouchSpinCoreOptions>}
+       */
+      function sanitizePartialSettings(partial, current) {
+        var out = _objectSpread2({}, partial);
+        if (Object.prototype.hasOwnProperty.call(partial, 'step')) {
+          var n = Number(partial.step);
+          out.step = isFinite(n) && n > 0 ? n : 1;
+        }
+        if (Object.prototype.hasOwnProperty.call(partial, 'decimals')) {
+          var _n = Number(partial.decimals);
+          out.decimals = isFinite(_n) && _n >= 0 ? Math.floor(_n) : 0;
+        }
+        var hasMin = Object.prototype.hasOwnProperty.call(partial, 'min');
+        var hasMax = Object.prototype.hasOwnProperty.call(partial, 'max');
+        if (hasMin) {
+          if (partial.min === null || partial.min === undefined || partial.min === '') {
+            out.min = null;
+          } else {
+            var _n2 = Number(partial.min);
+            out.min = isFinite(_n2) ? _n2 : null;
+          }
+        }
+        if (hasMax) {
+          if (partial.max === null || partial.max === undefined || partial.max === '') {
+            out.max = null;
+          } else {
+            var _n3 = Number(partial.max);
+            out.max = isFinite(_n3) ? _n3 : null;
+          }
+        }
+        if (hasMin && hasMax && out.min !== null && out.max !== null && out.min > out.max) {
+          var tmp = out.min;
+          out.min = out.max;
+          out.max = tmp;
+        }
+        if (Object.prototype.hasOwnProperty.call(partial, 'stepinterval')) {
+          var _n4 = Number(partial.stepinterval);
+          out.stepinterval = isFinite(_n4) && _n4 >= 0 ? _n4 : DEFAULTS.stepinterval;
+        }
+        if (Object.prototype.hasOwnProperty.call(partial, 'stepintervaldelay')) {
+          var _n5 = Number(partial.stepintervaldelay);
+          out.stepintervaldelay = isFinite(_n5) && _n5 >= 0 ? _n5 : DEFAULTS.stepintervaldelay;
+        }
+        return out;
       }
     }]);
   }();
