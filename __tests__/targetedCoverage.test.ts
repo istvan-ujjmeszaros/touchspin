@@ -94,8 +94,9 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should fallback to step=1 and work normally
       await touchspinHelpers.touchspinClickUp(page, 'step-zero-test');
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, 'step-zero-test')).toBe('51'); // 50 + 1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-zero-test')
+      ).toBe('51'); // 50 + 1
     });
 
     test('should fallback to step=1 when step is invalid', async ({ page }) => {
@@ -113,8 +114,9 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should fallback to step=1 and work normally
       await touchspinHelpers.touchspinClickUp(page, 'step-invalid-test');
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, 'step-invalid-test')).toBe('51'); // 50 + 1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-invalid-test')
+      ).toBe('51'); // 50 + 1
     });
 
     test('should fallback to step=1 when step is negative', async ({ page }) => {
@@ -132,8 +134,9 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should fallback to step=1 and work normally
       await touchspinHelpers.touchspinClickUp(page, 'step-negative-test');
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, 'step-negative-test')).toBe('51'); // 50 + 1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-negative-test')
+      ).toBe('51'); // 50 + 1
     });
   });
 
@@ -154,10 +157,11 @@ test.describe('Targeted Coverage Tests', () => {
       // Should allow going below what would normally be min (since min becomes null)
       await touchspinHelpers.fillWithValue(page, 'invalid-min-test', '-999');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
       
       // Should accept the negative value (no min constraint)
-      expect(await touchspinHelpers.readInputValue(page, 'invalid-min-test')).toBe('-999');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'invalid-min-test')
+      ).toBe('-999');
     });
 
     test('should handle invalid max value and set to null', async ({ page }) => {
@@ -176,10 +180,11 @@ test.describe('Targeted Coverage Tests', () => {
       // Should allow going above what would normally be max (since max becomes null)
       await touchspinHelpers.fillWithValue(page, 'invalid-max-test', '9999');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
       
       // Should accept the high value (no max constraint)
-      expect(await touchspinHelpers.readInputValue(page, 'invalid-max-test')).toBe('9999');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'invalid-max-test')
+      ).toBe('9999');
     });
 
     test('should handle NaN min/max values', async ({ page }) => {
@@ -198,8 +203,9 @@ test.describe('Targeted Coverage Tests', () => {
       // Should work without limits
       await touchspinHelpers.fillWithValue(page, 'nan-limits-test', '12345');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
-      expect(await touchspinHelpers.readInputValue(page, 'nan-limits-test')).toBe('12345');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'nan-limits-test')
+      ).toBe('12345');
     });
   });
 
