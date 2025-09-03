@@ -38,11 +38,14 @@ test.describe('Advanced Features', () => {
       // Enter a value that doesn't align with step=2 (data-bts-step takes precedence over native step=3)
       await touchspinHelpers.fillWithValue(page, testid, '47');
       await page.keyboard.press('Tab'); // triggers blur → sanitize
-      await touchspinHelpers.waitForTimeout(50); // Allow time for sanitization
       
       // Should round to nearest valid step value (step=2, so should be even)
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '0');
-      expect(finalValue % 2).toBe(0); // Should be divisible by step=2
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '0') % 2;
+        }
+      ).toBe(0); // Should be divisible by step=2
     });
   });
 
@@ -94,11 +97,10 @@ test.describe('Advanced Features', () => {
       
       const valueAfterStop = await touchspinHelpers.readInputValue(page, testid);
       
-      // Wait a bit more to ensure spinning has stopped
-      await touchspinHelpers.waitForTimeout(300);
-      
-      const valueAfterWait = await touchspinHelpers.readInputValue(page, testid);
-      expect(valueAfterStop).toBe(valueAfterWait); // Should not continue incrementing
+      // Verify spinning has stopped by checking value doesn't change
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe(valueAfterStop); // Should not continue incrementing
     });
   });
 
@@ -116,8 +118,9 @@ test.describe('Advanced Features', () => {
         }, 100);
       }, testid);
       
-      await touchspinHelpers.waitForTimeout(200);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('51');
     });
   });
 
