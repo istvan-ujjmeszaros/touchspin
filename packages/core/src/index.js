@@ -103,6 +103,8 @@ export class TouchSpinCore {
 
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
+    // Sanitize settings to ensure safe, predictable behavior
+    this._sanitizeSettings();
 
     // Check for renderer: explicit option > global default > none
     if (!this.settings.renderer) {
@@ -181,6 +183,54 @@ export class TouchSpinCore {
     this._updateAriaAttributes();
     this._syncNativeAttributes();
     this._checkValue(false);
+  }
+
+  /**
+   * Normalize and validate settings: coerce invalid values to safe defaults.
+   * - step: > 0 number, otherwise 1
+   * - decimals: integer >= 0, otherwise 0
+   * - min/max: finite numbers or null
+   * - stepinterval/stepintervaldelay: integers >= 0 (fallback to defaults if invalid)
+   * @private
+   */
+  _sanitizeSettings() {
+    // step
+    const stepNum = Number(this.settings.step);
+    if (!isFinite(stepNum) || stepNum <= 0) {
+      this.settings.step = 1;
+    } else {
+      this.settings.step = stepNum;
+    }
+
+    // decimals
+    const decNum = Number(this.settings.decimals);
+    if (!isFinite(decNum) || decNum < 0) {
+      this.settings.decimals = 0;
+    } else {
+      this.settings.decimals = Math.floor(decNum);
+    }
+
+    // min/max
+    const minNum = Number(this.settings.min);
+    this.settings.min = isFinite(minNum) ? minNum : null;
+    const maxNum = Number(this.settings.max);
+    this.settings.max = isFinite(maxNum) ? maxNum : null;
+
+    // Ensure min <= max when both present
+    if (this.settings.min !== null && this.settings.max !== null && this.settings.min > this.settings.max) {
+      // Swap to maintain logical bounds
+      const tmp = this.settings.min;
+      this.settings.min = this.settings.max;
+      this.settings.max = tmp;
+    }
+
+    // stepinterval
+    const si = Number(this.settings.stepinterval);
+    if (!isFinite(si) || si < 0) this.settings.stepinterval = DEFAULTS.stepinterval;
+
+    // stepintervaldelay
+    const sid = Number(this.settings.stepintervaldelay);
+    if (!isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
   }
 
   /**
@@ -361,7 +411,10 @@ export class TouchSpinCore {
     const oldSettings = { ...this.settings };
     const newSettings = opts || {};
 
+    // Apply incoming changes first
     Object.assign(this.settings, newSettings);
+    // Sanitize after merge to normalize invalid inputs
+    this._sanitizeSettings();
 
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
     const step = Number(this.settings.step || 1);
