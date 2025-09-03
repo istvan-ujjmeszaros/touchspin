@@ -39,9 +39,9 @@ test.describe('Cross-Version Renderer Consistency', () => {
       const wrapper = page.getByTestId('touchspin-default-wrapper');
       await expect(wrapper).toBeAttached();
 
-      // Validate basic structure exists using data attributes (consistent across versions)
-      const hasUpButton = wrapper.locator('[data-touchspin-injected="up"]');
-      const hasDownButton = wrapper.locator('[data-touchspin-injected="down"]');
+      // Validate basic structure exists using data-testid selectors (consistent across versions)
+      const hasUpButton = wrapper.getByTestId('touchspin-default-up');
+      const hasDownButton = wrapper.getByTestId('touchspin-default-down');
 
       // All versions should have up/down buttons with data attributes
       await expect(hasUpButton).toBeVisible();
@@ -64,12 +64,12 @@ test.describe('Cross-Version Renderer Consistency', () => {
 
       // All versions should have consistent data attributes
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
-      await expect(wrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
-      await expect(wrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
+      await expect(wrapper.getByTestId('touchspin-default-up')).toBeVisible();
+      await expect(wrapper.getByTestId('touchspin-default-down')).toBeVisible();
 
       // Prefix/Postfix elements exist across versions; they may be hidden when empty
-      await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toHaveCount(1);
-      await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toHaveCount(1);
+      await expect(wrapper.getByTestId('touchspin-default-prefix')).toHaveCount(1);
+      await expect(wrapper.getByTestId('touchspin-default-postfix')).toHaveCount(1);
     }
   });
 
@@ -85,11 +85,11 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await page.goto(`/__tests__/html/${version.html}`);
 
       // Pick the first initialized wrapper on the page for each renderer
-      const wrapper = page.locator('[data-touchspin-injected="wrapper"]').first();
+      const wrapper = page.locator('[data-testid$="-wrapper"]').first();
       await expect(wrapper).toBeAttached();
       const input = wrapper.locator('input');
-      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
-      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+      const upButton = wrapper.locator('[data-testid$="-up"]');
+      const downButton = wrapper.locator('[data-testid$="-down"]');
 
       // Reset to known state
       await input.fill('10');
@@ -104,8 +104,8 @@ test.describe('Cross-Version Renderer Consistency', () => {
       expect(await input.inputValue()).toBe('9');
 
       // Test that prefix/postfix are visible only when they have content
-      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
-      const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
+      const prefix = wrapper.locator('[data-testid$="-prefix"]');
+      const postfix = wrapper.locator('[data-testid$="-postfix"]');
 
       if (await prefix.count() > 0) {
         const prefixText = await prefix.evaluate(el => (el.textContent || '').trim());

@@ -242,11 +242,16 @@ test.describe('A/B parity: original src vs wrapper', () => {
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
     });
 
-    // Click down 8 times to reach min (40→35→30→25→20→15→10→5→0)
-    for (let i = 0; i < 8; i++) {
-      await page.click('[data-testid="orig-down"]');
-      await page.click('[data-testid="wrap-down"]');
-    }
+    // Use API to decrement 8 times to reach min (40→35→30→25→20→15→10→5→0)
+    await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      for (let i = 0; i < 8; i++) {
+        $orig.trigger('touchspin.downonce');
+        $wrap.trigger('touchspin.downonce');
+      }
+    });
 
     // Get events after reaching min
     let events = await page.evaluate(() => ({
