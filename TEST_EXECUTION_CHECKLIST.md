@@ -63,7 +63,6 @@ This approach allows you to:
 
 
 ### Files with Failing Tests
-- [buildValidation.test.ts](./__tests__/buildValidation.test.ts) (1 failing)
 - [targetedCoverage.test.ts](./__tests__/targetedCoverage.test.ts) (4 failing)
 - [visual/tailwind-visual.test.ts](./__tests__/visual/tailwind-visual.test.ts) (37 failing)
 ## 
@@ -218,7 +217,7 @@ This approach allows you to:
 - [x] Bootstrap 3 UMD build should work
 - [x] Bootstrap 4 UMD build should work
 - [x] Bootstrap 5 UMD build should work
-- [-] Tailwind build should work
+- [x] Tailwind build should work
 
 ### __tests__/callbackTests.test.ts
 - [x] should apply initial currency formatting callback on load
@@ -523,6 +522,7 @@ Track test execution progress over time. Add new entries at the top.
 
 ```
 Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-03 05:12:04 |     4 |       4 |       0 |     0 | Fixed buildValidation.test.ts: made touchspinHelpers renderer-agnostic
 2025-09-03 05:03:25 |    33 |      28 |       5 |     0 | 3 more files now passing: abCompare, advancedFeatures, renderers
 2025-09-03 04:26:10 |    16 |      16 |       0 |     0 | Fixed renderer tests: prefix/postfix visibility, Bootstrap markup, Tailwind classes
 2025-09-03 01:11:54 |   289 |     237 |      52 |     0 | Full test suite run after ESLint cleanup
