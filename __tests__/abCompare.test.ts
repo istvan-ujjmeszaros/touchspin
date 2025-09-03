@@ -316,6 +316,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     for (let i = 0; i < 12; i++) {
       await page.click('[data-testid="orig-up"]');
       await page.click('[data-testid="wrap-up"]');
+      await page.waitForTimeout(50); // Small delay between iterations
     }
 
     // Get events after reaching max
@@ -386,6 +387,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     for (let i = 0; i < 7; i++) {
       await page.click('[data-testid="orig-down"]');
       await page.click('[data-testid="wrap-down"]');
+      await page.waitForTimeout(50); // Small delay between iterations
     }
 
     // Clear events, then click down once more to reach min and test ordering
