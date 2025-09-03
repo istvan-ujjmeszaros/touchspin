@@ -33,16 +33,16 @@ const checkPort = () => {
 
 const startServer = async () => {
   const portAvailable = await checkPort();
-  
+
   if (!portAvailable) {
     console.log(`Server already running on port ${port} - using existing server`);
     process.exit(0);
   }
-  
+
   const server = app.listen(port, () => {
     console.log(`Static server running at http://localhost:${port}`);
   });
-  
+
   const shutdown = () => server.close(() => process.exit(0));
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);

@@ -10,7 +10,7 @@ class TailwindRenderer extends AbstractRenderer {
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
-    
+
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
 

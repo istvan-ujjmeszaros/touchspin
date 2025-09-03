@@ -7,10 +7,10 @@ function TouchSpin(element, options = {}) {
   if (!(element instanceof Element)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }
-  
+
   // Set the baked-in renderer for this build
   options.renderer = options.renderer || Bootstrap5Renderer;
-  
+
   // Use the core TouchSpin function which properly handles initDOMEventHandling
   return CoreTouchSpin(element, options);
 }
@@ -25,7 +25,7 @@ function installJqueryTouchSpin($) {
       this.each(function() {
         const inputEl = /** @type {HTMLInputElement} */ (this);
         const api = getTouchSpin(inputEl);
-        
+
         // Handle get/getvalue specially - fall back to raw input value if no instance
         if ((cmd === 'getvalue' || cmd === 'get') && ret === undefined) {
           if (api) {
@@ -36,9 +36,9 @@ function installJqueryTouchSpin($) {
           }
           return; // Skip other commands if no instance
         }
-        
+
         if (!api) return; // No instance exists - other commands ignored
-        
+
         switch (cmd) {
           case 'destroy': api.destroy(); break; // Core removes instance from element
           case 'uponce': api.upOnce(); break;
@@ -57,7 +57,7 @@ function installJqueryTouchSpin($) {
     return this.each(function() {
       const $input = $(this);
       const inputEl = /** @type {HTMLInputElement} */ (this);
-      
+
       // Create TouchSpin instance with baked-in Bootstrap5Renderer
       const opts = options || {};
       opts.renderer = opts.renderer || Bootstrap5Renderer;
@@ -74,7 +74,7 @@ function installJqueryTouchSpin($) {
         [CORE_EVENTS.STOP_UP]: 'touchspin.on.stopupspin',
         [CORE_EVENTS.STOP_DOWN]: 'touchspin.on.stopdownspin',
       };
-      
+
       // Store unsubscribe functions for cleanup
       const unsubs = [];
       Object.keys(evMap).forEach(k => {
@@ -85,7 +85,7 @@ function installJqueryTouchSpin($) {
       const jqueryTeardown = () => {
         // Clean up event subscriptions to core
         unsubs.forEach(unsub => {
-          try { unsub(); } catch {} 
+          try { unsub(); } catch {}
         });
         // Clean up jQuery events
         $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy');

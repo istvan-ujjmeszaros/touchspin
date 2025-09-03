@@ -1,7 +1,7 @@
 /**
  * AbstractRenderer - Base class for TouchSpin renderers
  * Part of @touchspin/core package to avoid duplication across renderer packages
- * 
+ *
  * @example
  * class CustomRenderer extends AbstractRenderer {
  *   init() {
@@ -30,7 +30,7 @@ class AbstractRenderer {
     this.core = core; // Reference to core for calling attachment methods
     /** @type {HTMLElement|null} */
     this.wrapper = null; // Set by subclasses during init()
-    
+
     // Legacy compatibility (transitional)
     this.$ = typeof $ !== 'undefined' ? $ : null;
     this.originalinput = this.$ ? this.$(inputEl) : null;
@@ -43,10 +43,10 @@ class AbstractRenderer {
    * Must be implemented by subclasses
    * @abstract
    */
-  init() { 
-    throw new Error('init() must be implemented by renderer'); 
+  init() {
+    throw new Error('init() must be implemented by renderer');
   }
-  
+
   /**
    * Cleanup renderer - remove injected elements and restore original state
    * Default implementation removes all injected elements
@@ -57,7 +57,7 @@ class AbstractRenderer {
     this.removeInjectedElements();
     // Subclasses can override for custom teardown
   }
-  
+
   /**
    * Utility method to remove all injected TouchSpin elements
    * Handles both regular wrappers and advanced input groups
@@ -68,11 +68,11 @@ class AbstractRenderer {
     if (this.wrapper) {
       const injected = this.wrapper.querySelectorAll('[data-touchspin-injected]');
       injected.forEach(el => el.remove());
-      
+
       // If wrapper itself was injected and is not the original parent
       if (this.wrapper.hasAttribute('data-touchspin-injected') && this.wrapper.parentElement) {
         const injectedType = this.wrapper.getAttribute('data-touchspin-injected');
-        
+
         if (injectedType === 'wrapper-advanced') {
           // For advanced input groups, just remove the TouchSpin classes and attribute
           // but keep the original input-group structure intact
@@ -86,12 +86,12 @@ class AbstractRenderer {
         }
       }
     }
-    
+
     // Also find any injected elements that might be siblings or elsewhere
     const allInjected = document.querySelectorAll('[data-touchspin-injected]');
     allInjected.forEach(el => {
       // Only remove if it's related to this input (check if input is descendant or sibling)
-      if (el.contains(this.input) || 
+      if (el.contains(this.input) ||
           (el.parentElement && el.parentElement.contains(this.input)) ||
           this.input.parentElement?.contains(el)) {
         // Don't remove the input itself
@@ -119,10 +119,10 @@ class AbstractRenderer {
         upButtons = this._findElements(verticalContainer, 'up');
       }
     }
-    
+
     // Ensure input element has data-touchspin-injected="input" for core event targeting
     this.originalinput.attr('data-touchspin-injected', 'input');
-    
+
     this.elements = {
       down: downButtons,
       up: upButtons,

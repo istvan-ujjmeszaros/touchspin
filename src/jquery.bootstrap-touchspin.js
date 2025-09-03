@@ -22,7 +22,7 @@
 
   // Internal instance store to support future wrapper/core decoupling
   // Mirrors jQuery .data('touchspinInternal') without changing behavior
-  var __touchspinInternalStore = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
+  const __touchspinInternalStore = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
 
   /**
    * @fileoverview Bootstrap TouchSpin — mobile-friendly numeric input spinner.
@@ -170,7 +170,7 @@
   $.fn.TouchSpin = function (options, arg) {
 
     /** @type {TouchSpinOptions} */
-    var defaults = {
+    const defaults = {
       min: 0, // If null, there is no minimum enforced
       max: 100, // If null, there is no maximum enforced
       initval: '',
@@ -216,7 +216,7 @@
      * @type {Record<string,string>}
      * @private
      */
-    var attributeMap = {
+    const attributeMap = {
       min: 'min',
       max: 'max',
       initval: 'init-val',
@@ -246,11 +246,11 @@
 
     // Command API: allow calling internal methods directly
     if (typeof options === 'string') {
-      var cmd = String(options).toLowerCase();
-      var ret;
+      const cmd = String(options).toLowerCase();
+      let ret;
       this.each(function () {
-        var $el = $(this);
-        var api = $el.data('touchspinInternal');
+        const $el = $(this);
+        const api = $el.data('touchspinInternal');
         if (!api) return; // not initialized
         switch (cmd) {
           case 'destroy':
@@ -290,7 +290,7 @@
     return this.each(function () {
 
       /** @type {TouchSpinOptions} Final merged settings */
-      var settings,
+      let settings,
         /** @type {JQuery<HTMLInputElement>} Original input element */
         originalinput = $(this),
         /** @type {Record<string, any>} Data attributes from original input */
@@ -375,26 +375,26 @@
           updateSettings: changeSettings,
           destroy: function() { _destroy(); },
           getValue: function() {
-            var raw = String(inputEl.value ?? '');
+            const raw = String(inputEl.value ?? '');
             if (raw === '') return NaN;
-            var num = parseFloat(settings.callback_before_calculation(raw));
+            const num = parseFloat(settings.callback_before_calculation(raw));
             return isFinite(num) ? num : NaN;
           },
           setValue: function(v) {
             if (inputEl.disabled || inputEl.hasAttribute('readonly')) return;
             stopSpin();
-            var parsed = Number(v);
+            const parsed = Number(v);
             if (!isFinite(parsed)) return;
             // Apply step divisibility first, then clamp to bounds (mirrors _checkValue)
-            var adjusted = parseFloat(_forcestepdivisibility(parsed));
+            let adjusted = parseFloat(_forcestepdivisibility(parsed));
             if ((settings.min !== null) && (adjusted < settings.min)) {
               adjusted = settings.min;
             }
             if ((settings.max !== null) && (adjusted > settings.max)) {
               adjusted = settings.max;
             }
-            var prev = String(inputEl.value ?? '');
-            var next = _setDisplay(adjusted);
+            const prev = String(inputEl.value ?? '');
+            const next = _setDisplay(adjusted);
             if (prev !== next) {
               originalinput.trigger('change');
             }
@@ -425,10 +425,10 @@
         _checkValue(true);
 
         /** @type {string} */
-        var raw = String(inputEl.value ?? '');
+        const raw = String(inputEl.value ?? '');
 
         if (raw !== '') {
-          var num = parseFloat(settings.callback_before_calculation(raw));
+          const num = parseFloat(settings.callback_before_calculation(raw));
           if (isFinite(num)) {
             _setDisplay(num);
           }
@@ -444,11 +444,11 @@
        * @returns {number} next numeric value (clamped to min/max)
        */
       function _nextValue(dir, current) {
-        var v = current;
+        let v = current;
         if (isNaN(v)) {
           v = valueIfIsNaN();
         } else {
-          var step = _getBoostedStep();
+          const step = _getBoostedStep();
           v = dir === 'up' ? (v + step) : (v - step);
         }
         if ((settings.max !== null) && (v >= settings.max)) {
@@ -478,7 +478,7 @@ function _formatDisplay(num) {
        * @returns {string} the display string written to the input
        */
       function _setDisplay(num) {
-        var next = _formatDisplay(num);
+        const next = _formatDisplay(num);
         if (inputEl) {
           inputEl.value = next;
         } else {
@@ -499,11 +499,11 @@ function _formatDisplay(num) {
       function _alignToStep(val, step, dir) {
         if (val == null) return val;
         // scale to integers to avoid float mod issues
-        var k = 1, s = step;
+        let k = 1, s = step;
         while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
-        var V = Math.round(val * k), S = Math.round(step * k);
+        const V = Math.round(val * k), S = Math.round(step * k);
         if (S === 0) return val;
-        var r = V % S;
+        const r = V % S;
         if (r === 0) return val;
         return ((dir === 'down' ? (V - r) : (V + (S - r))) / k);
       }
@@ -516,21 +516,21 @@ function _formatDisplay(num) {
         settings = Object.assign({}, defaults, originalinput_data, _parseAttributes(), options);
 
         // Normalize step (guard against "any", 0, negatives, NaN)
-        var stepNum = Number(settings.step);
+        const stepNum = Number(settings.step);
         if (!isFinite(stepNum) || stepNum <= 0) settings.step = 1;
 
         // Normalize min/max to numbers for consistency (null/undefined preserved)
         if (settings.min != null) {
-          var minNum = Number(settings.min);
+          const minNum = Number(settings.min);
           settings.min = isFinite(minNum) ? minNum : null;
         }
         if (settings.max != null) {
-          var maxNum = Number(settings.max);
+          const maxNum = Number(settings.max);
           settings.max = isFinite(maxNum) ? maxNum : null;
         }
 
         // Normalize decimals (ensure non-negative integer)
-        var dec = parseInt(String(settings.decimals), 10);
+        const dec = parseInt(String(settings.decimals), 10);
         settings.decimals = isFinite(dec) && dec >= 0 ? dec : 0;
 
         // Normalize timing and boost options
@@ -538,7 +538,7 @@ function _formatDisplay(num) {
         settings.stepintervaldelay = Math.max(0, parseInt(String(settings.stepintervaldelay), 10) || 0);
         settings.boostat = Math.max(1, parseInt(String(settings.boostat), 10) || 10);
         if (settings.maxboostedstep !== false) {
-          var mbs = Number(settings.maxboostedstep);
+          const mbs = Number(settings.maxboostedstep);
           settings.maxboostedstep = isFinite(mbs) && mbs > 0 ? mbs : false;
         }
 
@@ -554,11 +554,11 @@ function _formatDisplay(num) {
        * @returns {Partial<TouchSpinOptions>} Parsed attribute values
        */
       function _parseAttributes() {
-        var data = {};
+        const data = {};
 
         // Setting up based on data attributes
         $.each(attributeMap, function (key, value) {
-          var attrName = 'bts-' + value;
+          const attrName = 'bts-' + value;
 
           if (originalinput.is('[data-' + attrName + ']')) {
             data[key] = originalinput.data(attrName);
@@ -627,7 +627,7 @@ function _formatDisplay(num) {
        * @private
        */
       function _destroy() {
-        var $parent = originalinput.parent();
+        const $parent = originalinput.parent();
 
         stopSpin();
 
@@ -730,12 +730,12 @@ function _formatDisplay(num) {
        * @private
        */
       function _buildHtml() {
-        var initval = inputEl.value,
+        let initval = inputEl.value,
           parentelement = originalinput.parent();
 
         if (initval !== '') {
-          var raw = settings.callback_before_calculation(initval);
-          var num = parseFloat(raw);
+          const raw = settings.callback_before_calculation(initval);
+          const num = parseFloat(raw);
           initval = isFinite(num)
             ? settings.callback_after_calculation(num.toFixed(settings.decimals))
             : settings.callback_after_calculation(raw);
@@ -793,8 +793,8 @@ function _formatDisplay(num) {
         }
 
         // Set current value (don't force 0 on empty input)
-        var rawInit = inputEl.value;
-        var nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
+        const rawInit = inputEl.value;
+        const nInit = rawInit !== '' ? parseFloat(String(rawInit)) : NaN;
         if (!isNaN(nInit)) {
           inputEl.setAttribute('aria-valuenow', String(nInit));
         } else {
@@ -813,12 +813,12 @@ function _formatDisplay(num) {
        * @private
        */
       function _updateAriaAttributes() {
-        var raw = String(inputEl.value ?? '');
+        const raw = String(inputEl.value ?? '');
         if (raw === '') {
           inputEl.removeAttribute('aria-valuenow');
           inputEl.removeAttribute('aria-valuetext');
         } else {
-          var n = parseFloat(raw);
+          const n = parseFloat(raw);
           if (!isNaN(n)) {
             inputEl.setAttribute('aria-valuenow', String(n));
           } else {
@@ -848,7 +848,7 @@ function _formatDisplay(num) {
         if (!renderer) {
           throw new Error('Bootstrap TouchSpin: Renderer not available for prefix/postfix handling.');
         }
-        var detached = renderer.hideEmptyPrefixPostfix();
+        const detached = renderer.hideEmptyPrefixPostfix();
         _detached_prefix = detached._detached_prefix;
         _detached_postfix = detached._detached_postfix;
       }
@@ -871,8 +871,8 @@ function _formatDisplay(num) {
 
         // Keyboard on input
         _onNative(inputEl, 'keydown', function (ev) {
-          var e = /** @type {KeyboardEvent} */ (ev);
-          var code = e.keyCode || e.which || 0;
+          const e = /** @type {KeyboardEvent} */ (ev);
+          const code = e.keyCode || e.which || 0;
           if (code === 38) {
             if (spinning !== 'up') {
               upOnce();
@@ -891,8 +891,8 @@ function _formatDisplay(num) {
         });
 
         _onNative(inputEl, 'keyup', function (ev) {
-          var e = /** @type {KeyboardEvent} */ (ev);
-          var code = e.keyCode || e.which || 0;
+          const e = /** @type {KeyboardEvent} */ (ev);
+          const code = e.keyCode || e.which || 0;
           if (code === 38 || code === 40) {
             stopSpin();
           }
@@ -909,10 +909,10 @@ function _formatDisplay(num) {
         }
 
         _onNative(containerEl, 'focusout', function (e) {
-          var next = /** @type {HTMLElement|null|undefined} */ ((/** @type {FocusEvent} */(e)).relatedTarget);
+          const next = /** @type {HTMLElement|null|undefined} */ ((/** @type {FocusEvent} */(e)).relatedTarget);
           if (!leavingWidget(next)) return;
           setTimeout(function () {
-            var ae = /** @type {HTMLElement|null} */ (document.activeElement);
+            const ae = /** @type {HTMLElement|null} */ (document.activeElement);
             if (leavingWidget(ae)) {
               stopSpin();
               _checkValue(true);
@@ -922,7 +922,7 @@ function _formatDisplay(num) {
 
         // Buttons: keyboard (keep jQuery bindings to support namespaced triggers)
         elements.down.on('keydown.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
+          const code = ev.keyCode || ev.which;
           if (code === 32 || code === 13) {
             if (spinning !== 'down') {
               downOnce();
@@ -932,13 +932,13 @@ function _formatDisplay(num) {
           }
         });
         elements.down.on('keyup.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
+          const code = ev.keyCode || ev.which;
           if (code === 32 || code === 13) {
             stopSpin();
           }
         });
         elements.up.on('keydown.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
+          const code = ev.keyCode || ev.which;
           if (code === 32 || code === 13) {
             if (spinning !== 'up') {
               upOnce();
@@ -948,7 +948,7 @@ function _formatDisplay(num) {
           }
         });
         elements.up.on('keyup.touchspin', function (ev) {
-          var code = ev.keyCode || ev.which;
+          const code = ev.keyCode || ev.which;
           if (code === 32 || code === 13) {
             stopSpin();
           }
@@ -1011,8 +1011,8 @@ function _formatDisplay(num) {
         // Mouse wheel on input (native)
         _onNative(inputEl, 'wheel', function (ev) {
           if (!settings.mousewheel || document.activeElement !== inputEl) return;
-          var oe = /** @type {any} */ (ev);
-          var delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
+          const oe = /** @type {any} */ (ev);
+          const delta = (oe.wheelDelta != null ? oe.wheelDelta : 0) || -oe.deltaY || -oe.detail || 0;
           ev.stopPropagation();
           ev.preventDefault();
           if (delta < 0) {
@@ -1065,8 +1065,8 @@ function _formatDisplay(num) {
        * @private
        */
       function _offAllNative() {
-        for (var i = 0; i < _nativeListeners.length; i++) {
-          var rec = _nativeListeners[i];
+        for (let i = 0; i < _nativeListeners.length; i++) {
+          const rec = _nativeListeners[i];
           rec[0].removeEventListener(rec[1], rec[2], rec[3]);
         }
         _nativeListeners = [];
@@ -1125,8 +1125,8 @@ function _formatDisplay(num) {
        * @fires touchspin.on.max
        */
       function _checkValue(mayTriggerChange) {
-        var val, parsedval, returnval;
-        var prevDisplay = String(inputEl.value ?? '');
+        let val, parsedval, returnval;
+        const prevDisplay = String(inputEl.value ?? '');
 
         val = settings.callback_before_calculation(inputEl.value);
 
@@ -1139,7 +1139,7 @@ function _formatDisplay(num) {
           }
           // For empty values, compare final result with initial value
           if (mayTriggerChange) {
-            var finalDisplay = String(inputEl.value ?? '');
+            const finalDisplay = String(inputEl.value ?? '');
             if (finalDisplay !== prevDisplay) {
               originalinput.trigger('change');
             }
@@ -1155,7 +1155,7 @@ function _formatDisplay(num) {
 
         if (isNaN(parsedval)) {
           if (settings.replacementval !== '') {
-            var rv = parseFloat(String(settings.replacementval));
+            const rv = parseFloat(String(settings.replacementval));
             parsedval = isNaN(rv) ? 0 : rv;
           } else {
             parsedval = 0;
@@ -1174,11 +1174,11 @@ function _formatDisplay(num) {
           returnval = settings.max;
         }
 
-        var currentValue = String(inputEl.value ?? '');
-        var newValue = _setDisplay(parseFloat(returnval));
+        const currentValue = String(inputEl.value ?? '');
+        const newValue = _setDisplay(parseFloat(returnval));
 
         if (mayTriggerChange) {
-          var nextDisplay = String(inputEl.value ?? '');
+          const nextDisplay = String(inputEl.value ?? '');
           if (nextDisplay !== prevDisplay) {
             originalinput.trigger('change');
           }
@@ -1218,18 +1218,18 @@ function _formatDisplay(num) {
        */
       function _syncSettingsFromNativeAttributes() {
         // Update TouchSpin settings when native attributes change externally
-        var nativeMin = inputEl.getAttribute('min');
-        var nativeMax = inputEl.getAttribute('max');
-        var nativeStep = inputEl.getAttribute('step');
-        var needsUpdate = false;
-        var newSettings = {};
+        const nativeMin = inputEl.getAttribute('min');
+        const nativeMax = inputEl.getAttribute('max');
+        const nativeStep = inputEl.getAttribute('step');
+        let needsUpdate = false;
+        const newSettings = {};
 
         // Check min attribute
         if (nativeMin != null) {
-          var parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
+          let parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
           // Normalize min to number for consistency (same as _initSettings)
           if (parsedMin != null) {
-            var minNum = Number(parsedMin);
+            const minNum = Number(parsedMin);
             parsedMin = isFinite(minNum) ? minNum : null;
           }
           if (parsedMin !== settings.min) {
@@ -1244,10 +1244,10 @@ function _formatDisplay(num) {
 
         // Check max attribute
         if (nativeMax != null) {
-          var parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
+          let parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
           // Normalize max to number for consistency (same as _initSettings)
           if (parsedMax != null) {
-            var maxNum = Number(parsedMax);
+            const maxNum = Number(parsedMax);
             parsedMax = isFinite(maxNum) ? maxNum : null;
           }
           if (parsedMax !== settings.max) {
@@ -1262,7 +1262,7 @@ function _formatDisplay(num) {
 
         // Check step attribute
         if (nativeStep != null) {
-          var parsedStep = (nativeStep === '' || nativeStep === 'any') ? 1 : parseFloat(nativeStep);
+          let parsedStep = (nativeStep === '' || nativeStep === 'any') ? 1 : parseFloat(nativeStep);
           if (!isFinite(parsedStep) || parsedStep <= 0) parsedStep = 1;
           if (parsedStep !== settings.step) {
             newSettings.step = parsedStep;
@@ -1304,7 +1304,7 @@ function _formatDisplay(num) {
         if (!settings.booster) {
           return settings.step;
         } else {
-          var boosted = Math.pow(2, Math.floor(spincount / settings.boostat)) * settings.step;
+          let boosted = Math.pow(2, Math.floor(spincount / settings.boostat)) * settings.step;
 
           if (settings.maxboostedstep) {
             if (boosted > settings.maxboostedstep) {
@@ -1405,14 +1405,14 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
-        var prevDisplay = String(inputEl.value ?? '');
+        const prevDisplay = String(inputEl.value ?? '');
         value = parseFloat(settings.callback_before_calculation(inputEl.value));
         value = _nextValue('up', value);
         if ((settings.max !== null) && (value === settings.max)) {
           originalinput.trigger('touchspin.on.max');
           stopSpin();
         }
-        var nextDisplay = _setDisplay(value);
+        const nextDisplay = _setDisplay(value);
         if (prevDisplay !== nextDisplay) originalinput.trigger('change');
       }
 
@@ -1427,14 +1427,14 @@ function _formatDisplay(num) {
         }
 
         _checkValue();
-        var prevDisplay = String(inputEl.value ?? '');
+        const prevDisplay = String(inputEl.value ?? '');
         value = parseFloat(settings.callback_before_calculation(inputEl.value));
         value = _nextValue('down', value);
         if ((settings.min !== null) && (value === settings.min)) {
           originalinput.trigger('touchspin.on.min');
           stopSpin();
         }
-        var nextDisplay = _setDisplay(value);
+        const nextDisplay = _setDisplay(value);
         if (prevDisplay !== nextDisplay) originalinput.trigger('change');
       }
 

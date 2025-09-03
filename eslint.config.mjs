@@ -1,6 +1,15 @@
 import js from '@eslint/js';
 
 export default [
+  {
+    ignores: [
+      'dist/**/*',
+      '__tests__/html/assets/**/*',
+      'reports/**/*',
+      'off/**/*',
+      'node_modules/**/*'
+    ]
+  },
   js.configs.recommended,
   {
     languageOptions: {
@@ -71,8 +80,8 @@ export default [
     },
   },
   {
-    // Separate config for modern build scripts
-    files: ['build.mjs', 'check-build-integrity.mjs', '*.config.mjs'],
+    // All .mjs files and modern JS files use modules
+    files: ['**/*.mjs', 'src/**/*.js', 'packages/**/*.js', 'scripts/**/*.js'],
     languageOptions: {
       sourceType: 'module'
     },

@@ -7,10 +7,10 @@ function TouchSpin(element, options = {}) {
   if (!(element instanceof Element)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }
-  
+
   // Set the baked-in renderer for this build
   options.renderer = options.renderer || Bootstrap5Renderer;
-  
+
   // Use the core TouchSpin function which properly handles initDOMEventHandling
   return CoreTouchSpin(element, options);
 }

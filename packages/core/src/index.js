@@ -635,7 +635,7 @@ export class TouchSpinCore {
    */
   _startSpin(dir) {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
-    
+
     // Check if already at boundary - don't start spin if so
     const v = this.getValue();
     if (dir === 'up' && this.settings.max != null && v === this.settings.max) {
@@ -644,7 +644,7 @@ export class TouchSpinCore {
     if (dir === 'down' && this.settings.min != null && v === this.settings.min) {
       return; // Already at min, don't start spin
     }
-    
+
     // If changing direction, reset counters
     const direction_changed = (!this.spinning || this.direction !== dir);
     if (direction_changed) {
