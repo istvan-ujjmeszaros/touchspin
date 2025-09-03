@@ -173,11 +173,14 @@ test.describe('Browser Native Spinner Controls', () => {
       // Try to go below new min=1
       for (let i = 0; i < 5; i++) {
         await page.keyboard.press('ArrowDown');
-        await touchspinHelpers.waitForTimeout(50);
       }
       
-      const minValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(parseInt(minValue || '0')).toBeGreaterThanOrEqual(1);
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '0');
+        }
+      ).toBeGreaterThanOrEqual(1);
       
       // Test new step=3
       await touchspinHelpers.fillWithValue(page, testid, '10');
@@ -264,14 +267,21 @@ test.describe('Browser Native Spinner Controls', () => {
       // Try to go above TouchSpin maximum (20) using native spinner
       for (let i = 0; i < 5; i++) {
         await page.keyboard.press('ArrowUp');
-        await touchspinHelpers.waitForTimeout(100);
       }
       
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '0');
+        }
+      ).toBeLessThanOrEqual(20);
       
-      // Should respect TouchSpin max=20, not original native max="15"
-      expect(parseInt(finalValue || '0')).toBeLessThanOrEqual(20);
-      expect(parseInt(finalValue || '0')).toBeGreaterThan(18); // Should have increased from initial value
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '0');
+        }
+      ).toBeGreaterThan(18); // Should have increased from initial value
     });
   });
 
@@ -362,12 +372,14 @@ test.describe('Browser Native Spinner Controls', () => {
       // Try arrow keys on text input - should do nothing
       await page.keyboard.press('ArrowUp');
       await page.keyboard.press('ArrowDown');
-      await touchspinHelpers.waitForTimeout(100);
-      
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Value should remain unchanged (8) since text inputs don't have native spinners
-      expect(parseInt(finalValue || '0')).toBe(8);
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '0');
+        }
+      ).toBe(8);
     });
 
     test('should show consistent TouchSpin button behavior across all input types', async ({ page }) => {
@@ -513,16 +525,17 @@ test.describe('Browser Native Spinner Controls', () => {
       // Use TouchSpin buttons repeatedly to trigger booster
       for (let i = 0; i < 5; i++) {
         await touchspinHelpers.touchspinClickUp(page, testid);
-        await touchspinHelpers.waitForTimeout(100);
       }
       
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
-      
       // Note: Booster functionality requires sustained clicking to activate (boostat: 3)
-      // With 100ms delays between clicks, booster may not activate as expected
       // Actual behavior shows exactly 5 increments (1 per click) without booster acceleration
-      const increment = parseInt(finalValue || '0') - parseInt(initialValue || '0');
-      expect(increment).toBeGreaterThanOrEqual(5); // Should increment at least 5 times (1 per click)
+      await expect.poll(
+        async () => {
+          const finalValue = await touchspinHelpers.readInputValue(page, testid);
+          const increment = parseInt(finalValue || '0') - parseInt(initialValue || '0');
+          return increment;
+        }
+      ).toBeGreaterThanOrEqual(5); // Should increment at least 5 times (1 per click)
     });
   });
 });
