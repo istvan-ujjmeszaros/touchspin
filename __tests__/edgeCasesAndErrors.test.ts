@@ -214,10 +214,10 @@ test.describe('Edge Cases and Error Handling', () => {
         (globalThis as any).TouchSpinDefaultRenderer = originalDefault;
       });
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should warn about no renderer
-      expect(consoleMessages.some(msg => msg.includes('No renderer specified'))).toBe(true);
+      await expect.poll(
+        () => consoleMessages.some(msg => msg.includes('No renderer specified'))
+      ).toBe(true);
     });
 
     test('should handle non-input elements appropriately', async ({ page }) => {
@@ -236,10 +236,10 @@ test.describe('Edge Cases and Error Handling', () => {
         $('#not-input-test').TouchSpin();
       });
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should log "Must be an input."
-      expect(consoleMessages.some(msg => msg.includes('Must be an input'))).toBe(true);
+      await expect.poll(
+        () => consoleMessages.some(msg => msg.includes('Must be an input'))
+      ).toBe(true);
     });
 
     test('should handle renderer constructor failure', async ({ page }) => {
@@ -365,10 +365,10 @@ test.describe('Edge Cases and Error Handling', () => {
         el.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true }));
       });
       
-      await touchspinHelpers.waitForTimeout(100);
-      
       // Value should not change (input is disabled)
-      expect(await touchspinHelpers.readInputValue(page, 'touchspin-disabled')).toBe('0');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'touchspin-disabled')
+      ).toBe('0');
     });
   });
 
@@ -388,13 +388,10 @@ test.describe('Edge Cases and Error Handling', () => {
         $input.trigger('touchspin.destroy');
       });
       
-      // Should not throw errors
-      await touchspinHelpers.waitForTimeout(100);
-      
       // Input should still exist and be functional as regular input
       const input = page.getByTestId('multi-destroy-test');
       await input.fill('123');
-      expect(await input.inputValue()).toBe('123');
+      await expect.poll(async () => input.inputValue()).toBe('123');
     });
   });
 });
