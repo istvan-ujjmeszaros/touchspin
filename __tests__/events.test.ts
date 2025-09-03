@@ -226,4 +226,41 @@ test.describe('Events', () => {
     expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max')).toBe(1);
   });
 
+  test('should handle rapid programmatic upOnce() calls without delays', async ({ page }) => {
+    // Create a new input with higher max value
+    await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      $('body').append('<input id="rapid-test" type="text" value="50" data-testid="rapid-test">');
+      $('#rapid-test').TouchSpin({
+        min: 0,
+        max: 1000,
+        step: 1
+      });
+    });
+    
+    const testid = 'rapid-test';
+    
+    // Get initial value (should be 50)
+    const initialValue = await touchspinHelpers.readInputValue(page, testid);
+    expect(initialValue).toBe('50');
+    
+    // Execute 100 upOnce() calls rapidly without any delays
+    await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const $input = $('#rapid-test');
+      
+      // Call upOnce 100 times in rapid succession
+      for (let i = 0; i < 100; i++) {
+        $input.TouchSpin('uponce');
+      }
+    });
+    
+    // Wait for processing to complete
+    await page.waitForTimeout(500);
+    
+    // Value should have increased by 100 (50 + 100 = 150)
+    const finalValue = await touchspinHelpers.readInputValue(page, testid);
+    expect(finalValue).toBe('150');
+  });
+
 });
