@@ -225,10 +225,20 @@ function parseExistingFailingFiles(overviewSection) {
   const failingFilesMatch = overviewSection.match(/### Files with Failing Tests\n([\s\S]*?)(?=\n\n|$)/);
   
   if (failingFilesMatch) {
-    const fileLines = failingFilesMatch[1].split('\n').filter(line => line.trim().startsWith('- __tests__/'));
+    const fileLines = failingFilesMatch[1].split('\n').filter(line => line.trim().startsWith('- '));
     
     for (const line of fileLines) {
-      const fileMatch = line.match(/- __tests__\/(.*?) \((\d+) failing(?:, (\d+) flaky)?\)/);
+      // Handle both markdown link format and old plain text format
+      let fileMatch;
+      
+      // Try markdown link format: - [filename.test.ts](./__tests__/filename.test.ts) (1 failing)
+      fileMatch = line.match(/- \[([^\]]+)\]\(\.\/__tests__\/[^)]+\) \((\d+) failing(?:, (\d+) flaky)?\)/);
+      
+      if (!fileMatch) {
+        // Try old plain text format: - __tests__/filename.test.ts (1 failing)
+        fileMatch = line.match(/- __tests__\/(.*?) \((\d+) failing(?:, (\d+) flaky)?\)/);
+      }
+      
       if (fileMatch) {
         const fileName = fileMatch[1];
         const failing = parseInt(fileMatch[2]);
@@ -276,7 +286,7 @@ function generateFailingFilesSection(failingFiles) {
       if (results.flaky > 0) {
         description += `, ${results.flaky} flaky`;
       }
-      return `- __tests__/${fileName} (${description})`;
+      return `- [${fileName}](./__tests__/${fileName}) (${description})`;
     })
     .join('\n');
   
