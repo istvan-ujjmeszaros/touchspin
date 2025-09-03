@@ -16,9 +16,9 @@ These rules apply to ALL AI agents working on this codebase:
 - Always use `--reporter=list` when running multiple tests (prevents hanging)
 
 ### Build Management
-- Run `npm run build` before pushing to avoid CI failures
-- **Never run `npm run check-build-integrity`** (it's only for GitHub workflows)
-- The build output in `dist/` must be committed to git
+- Always run `npm run build` locally before pushing.
+- Stage and commit changes under `dist/` as part of your push.
+- Do not run `npm run check-build-integrity` locally (GitHub workflow only).
 
 ### Development Server
 - **Always use port 8866** for development servers
@@ -29,7 +29,9 @@ These rules apply to ALL AI agents working on this codebase:
 ### Code Management
 - **Never commit temporary files** to git
 - Create temp files in `tmp/` folder (gitignored)
-- **CRITICAL: Only work in `packages/` folder - NEVER edit `src/` folder (legacy reference only)**
+- **CRITICAL: Only modify code in `packages/` for source changes.**
+  - `src/` is legacy and must not be edited. It may still be referenced by example/test HTML files.
+  - For test/demo HTML, prefer local assets over CDNs to avoid navigation timeouts in restricted environments.
 
 ### Debugging Workflow
 - Follow the systematic test debugging workflow (see below)
