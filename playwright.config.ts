@@ -42,14 +42,14 @@ export default defineConfig({
     video: 'retain-on-failure',
     
     /* Global timeout settings */
-    actionTimeout: 3000,
-    navigationTimeout: 10000,
+    actionTimeout: 1000,
+    navigationTimeout: 3000,
   },
   
   /* Global timeout */
-  timeout: 15000,
+  timeout: 5000,
   expect: {
-    timeout: 3000
+    timeout: 1000
   },
 
   /* Configure projects for major browsers */
