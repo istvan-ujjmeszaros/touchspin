@@ -62,6 +62,8 @@ test.describe('A/B parity sequences', () => {
       const $ = (window as any).jQuery; const $o=$('#orig-input'); const $w=$('#wrap-input');
       $o.OriginalTouchSpin('set', 95); $w.TouchSpin('set', 95);
       $o.trigger('touchspin.startupspin'); $w.trigger('touchspin.startupspin');
+      // Safety: ensure we stop even if boundary auto-stop timing differs across engines
+      setTimeout(() => { $o.trigger('touchspin.stopspin'); $w.trigger('touchspin.stopspin'); }, 600);
     });
     await page.waitForFunction(() => {
       const o = (document.getElementById('orig-input') as HTMLInputElement)?.value;
