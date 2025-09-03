@@ -87,6 +87,59 @@ const INSTANCE_KEY = '_touchSpinCore';
 
 export class TouchSpinCore {
   /**
+   * Sanitize a partial settings object BEFORE applying it.
+   * Returns a new object with only provided keys normalized.
+   * @param {Partial<TouchSpinCoreOptions>} partial
+   * @param {TouchSpinCoreOptions} current
+   * @returns {Partial<TouchSpinCoreOptions>}
+   */
+  static sanitizePartialSettings(partial, current) {
+    const out = { ...partial };
+
+    if (Object.prototype.hasOwnProperty.call(partial, 'step')) {
+      const n = Number(partial.step);
+      out.step = (isFinite(n) && n > 0) ? n : 1;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(partial, 'decimals')) {
+      const n = Number(partial.decimals);
+      out.decimals = (isFinite(n) && n >= 0) ? Math.floor(n) : 0;
+    }
+
+    const hasMin = Object.prototype.hasOwnProperty.call(partial, 'min');
+    const hasMax = Object.prototype.hasOwnProperty.call(partial, 'max');
+    if (hasMin) {
+      if (partial.min === null || partial.min === undefined || partial.min === '') {
+        out.min = null;
+      } else {
+        const n = Number(partial.min);
+        out.min = isFinite(n) ? n : null;
+      }
+    }
+    if (hasMax) {
+      if (partial.max === null || partial.max === undefined || partial.max === '') {
+        out.max = null;
+      } else {
+        const n = Number(partial.max);
+        out.max = isFinite(n) ? n : null;
+      }
+    }
+    if (hasMin && hasMax && out.min !== null && out.max !== null && out.min > out.max) {
+      const tmp = out.min; out.min = out.max; out.max = tmp;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(partial, 'stepinterval')) {
+      const n = Number(partial.stepinterval);
+      out.stepinterval = (isFinite(n) && n >= 0) ? n : DEFAULTS.stepinterval;
+    }
+    if (Object.prototype.hasOwnProperty.call(partial, 'stepintervaldelay')) {
+      const n = Number(partial.stepintervaldelay);
+      out.stepintervaldelay = (isFinite(n) && n >= 0) ? n : DEFAULTS.stepintervaldelay;
+    }
+
+    return out;
+  }
+  /**
    * @param {HTMLInputElement} inputEl
    * @param {Partial<TouchSpinCoreOptions>=} opts
    */
@@ -211,10 +264,19 @@ export class TouchSpinCore {
     }
 
     // min/max
-    const minNum = Number(this.settings.min);
-    this.settings.min = isFinite(minNum) ? minNum : null;
-    const maxNum = Number(this.settings.max);
-    this.settings.max = isFinite(maxNum) ? maxNum : null;
+    // Preserve explicit nulls; coerce other values to numbers or null
+    if (this.settings.min === null || this.settings.min === undefined || this.settings.min === '') {
+      this.settings.min = null;
+    } else {
+      const minNum = Number(this.settings.min);
+      this.settings.min = isFinite(minNum) ? minNum : null;
+    }
+    if (this.settings.max === null || this.settings.max === undefined || this.settings.max === '') {
+      this.settings.max = null;
+    } else {
+      const maxNum = Number(this.settings.max);
+      this.settings.max = isFinite(maxNum) ? maxNum : null;
+    }
 
     // Ensure min <= max when both present
     if (this.settings.min !== null && this.settings.max !== null && this.settings.min > this.settings.max) {
@@ -411,14 +473,17 @@ export class TouchSpinCore {
     const oldSettings = { ...this.settings };
     const newSettings = opts || {};
 
-    // Apply incoming changes first
-    Object.assign(this.settings, newSettings);
-    // Sanitize after merge to normalize invalid inputs
+    // Sanitize the incoming partial BEFORE merge
+    const sanitizedPartial = TouchSpinCore.sanitizePartialSettings(newSettings, oldSettings);
+
+    // Apply incoming changes (sanitized) first
+    Object.assign(this.settings, sanitizedPartial);
+    // Extra safety: sanitize full settings after merge
     this._sanitizeSettings();
 
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
     const step = Number(this.settings.step || 1);
-    if ((newSettings.step !== undefined || newSettings.min !== undefined || newSettings.max !== undefined) && step !== 1) {
+    if ((sanitizedPartial.step !== undefined || sanitizedPartial.min !== undefined || sanitizedPartial.max !== undefined) && step !== 1) {
       if (this.settings.max !== null) {
         this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
       }
@@ -427,14 +492,14 @@ export class TouchSpinCore {
       }
     }
 
-    // Notify observers of changed settings
-    Object.keys(newSettings).forEach(key => {
-      if (oldSettings[key] !== newSettings[key]) {
+    // Notify observers of keys whose EFFECTIVE values changed after sanitization
+    Object.keys(this.settings).forEach(key => {
+      if (oldSettings[key] !== this.settings[key]) {
         const observers = this._settingObservers.get(key);
         if (observers) {
           observers.forEach(callback => {
             try {
-              callback(newSettings[key], oldSettings[key]);
+              callback(this.settings[key], oldSettings[key]);
             } catch (error) {
               console.error('TouchSpin: Error in setting observer callback:', error);
             }
