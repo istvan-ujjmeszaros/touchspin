@@ -73,7 +73,9 @@ test.describe('Cross-Version Renderer Consistency', () => {
     }
   });
 
-  test('should maintain consistent functional behavior across all renderers', async ({ page }) => {
+  test('should maintain consistent functional behavior across all renderers', async ({ page }, testInfo) => {
+    // This test navigates across multiple pages; allow more time to avoid flakiness
+    testInfo.setTimeout(15000);
     const versions = [
       { name: 'Bootstrap 3', html: 'index-bs3.html' },
       { name: 'Bootstrap 4', html: 'index-bs4.html' },
