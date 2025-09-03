@@ -67,12 +67,12 @@ This approach allows you to:
 - [advancedFeatures.test.ts](./__tests__/advancedFeatures.test.ts) (1 failing)
 - [buildValidation.test.ts](./__tests__/buildValidation.test.ts) (1 failing)
 - [renderers.test.ts](./__tests__/renderers.test.ts) (1 failing)
-- [rtlSupport.test.ts](./__tests__/rtlSupport.test.ts) (2 failing)
+- [x] [rtlSupport.test.ts](./__tests__/rtlSupport.test.ts) (6/6)
 - [targetedCoverage.test.ts](./__tests__/targetedCoverage.test.ts) (4 failing)
-- [verticalButtons.test.ts](./__tests__/verticalButtons.test.ts) (1 failing)
+- [x] [verticalButtons.test.ts](./__tests__/verticalButtons.test.ts) (6/6)
 - [visual/tailwind-visual.test.ts](./__tests__/visual/tailwind-visual.test.ts) (37 failing)
-- [wrapperAdvancedTailwindContainer.test.ts](./__tests__/wrapperAdvancedTailwindContainer.test.ts) (1 failing)
-- [wrapperBootstrapMarkup.test.ts](./__tests__/wrapperBootstrapMarkup.test.ts) (1 failing)
+- [x] [wrapperAdvancedTailwindContainer.test.ts](./__tests__/wrapperAdvancedTailwindContainer.test.ts) (1/1)
+- [x] [wrapperBootstrapMarkup.test.ts](./__tests__/wrapperBootstrapMarkup.test.ts) (3/3)
 ## 
 ## 
 ## 
@@ -354,10 +354,10 @@ This approach allows you to:
 
 ### __tests__/rtlSupport.test.ts
 - [x] should render and function correctly in RTL layout
-- [-] should handle vertical buttons and prefix/postfix in RTL
+- [x] should handle vertical buttons and prefix/postfix in RTL
 - [x] should render and function correctly in RTL layout
 - [x] should render and function correctly in RTL layout
-- [-] should handle Bootstrap 5 structure without deprecated classes
+- [x] should handle Bootstrap 5 structure without deprecated classes
 - [x] should handle manual text input correctly in RTL
 
 ### __tests__/settingsPrecedence.test.ts
@@ -443,7 +443,7 @@ This approach allows you to:
 ### __tests__/verticalButtons.test.ts
 - [x] should render vertical button structure correctly
 - [x] should function correctly with vertical buttons
-- [-] should work with size variations and prefix/postfix
+- [x] should work with size variations and prefix/postfix
 - [x] should work with existing DOM input groups
 - [x] should handle disabled state for vertical buttons
 - [x] should support long press spinning for vertical buttons
@@ -493,15 +493,15 @@ This approach allows you to:
 - [x] BS5 advanced reuses input-group-text and cleans up on destroy
 
 ### __tests__/wrapperAdvancedTailwindContainer.test.ts
-- [-] enhances [data-touchspin-advanced] and cleans up on destroy
+- [x] enhances [data-touchspin-advanced] and cleans up on destroy
 
 ### __tests__/wrapperAttributeSync.test.ts
 - [x] disabled/readonly stop spin and prevent changes
 - [x] min/max/step sync via native attrs
 
 ### __tests__/wrapperBootstrapMarkup.test.ts
-- [-] BS3 wrapper uses input-group-addon and input-group-btn (no BS4/5 wrappers)
-- [-] BS4 wrapper uses prepend/append wrappers and input-group-text (no BS3 addon)
+- [x] BS3 wrapper uses input-group-addon and input-group-btn (no BS4/5 wrappers)
+- [x] BS4 wrapper uses prepend/append wrappers and input-group-text (no BS3 addon)
 - [x] BS5 wrapper uses input-group-text without prepend/append wrappers
 
 ### __tests__/wrapperKeyboardWheel.test.ts
@@ -530,6 +530,7 @@ Track test execution progress over time. Add new entries at the top.
 
 ```
 Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-03 04:26:10 |    16 |      16 |       0 |     0 | Fixed renderer tests: prefix/postfix visibility, Bootstrap markup, Tailwind classes
 2025-09-03 01:11:54 |   289 |     237 |      52 |     0 | Full test suite run after ESLint cleanup
 2025-09-03 00:33:52 |     3 |       2 |       1 |     0 | Updated 1 files, 4 tests
 2025-09-03 00:33:22 |     2 |       2 |       0 |     0 | Updated 1 files, 2 tests
