@@ -889,6 +889,7 @@
       value: function _startSpin(dir) {
         var _this4 = this;
         if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+        this.stopSpin();
 
         // Check if already at boundary - don't start spin if so
         var v = this.getValue();
