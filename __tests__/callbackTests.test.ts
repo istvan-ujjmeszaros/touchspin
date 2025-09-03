@@ -60,12 +60,10 @@ test.describe('TouchSpin Callback Tests', () => {
       // Navigate away to trigger blur
       await page.keyboard.press('Tab');
 
-      // Wait for callbacks to process the value
-      await touchspinHelpers.waitForTimeout(300);
-
       // Value should be rounded to nearest step (0.1) and formatted as currency
-      const formattedValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(formattedValue).toBe('$2,500.80'); // 2500.75 rounds to 2500.8 with step=0.1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$2,500.80'); // 2500.75 rounds to 2500.8 with step=0.1
 
       // Should fire change event with the decorated value
       expect(await touchspinHelpers.countChangeWithValue(page, '$2,500.80')).toBe(1);
@@ -149,11 +147,11 @@ test.describe('TouchSpin Callback Tests', () => {
 
       // Navigate away to trigger callbacks
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(300);
 
       // Should strip invalid characters, round to step=0.1, and format properly
-      const cleanedValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(cleanedValue).toBe('$1,500.40'); // 1500.37 rounds to 1500.4 with step=0.1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$1,500.40'); // 1500.37 rounds to 1500.4 with step=0.1
     });
   });
 
@@ -173,12 +171,10 @@ test.describe('TouchSpin Callback Tests', () => {
       // Click up button
       await touchspinHelpers.touchspinClickUp(page, testid);
 
-      // Wait for numeral.js callback processing
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should increment by step (0.1) and format with numeral.js
-      const newValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(newValue).toBe('$5,000.10');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,000.10');
     });
 
     test('should apply numeral.js callbacks when clicking down button', async ({ page }) => {
@@ -188,12 +184,10 @@ test.describe('TouchSpin Callback Tests', () => {
       // Click down button
       await touchspinHelpers.touchspinClickDown(page, testid);
 
-      // Wait for numeral.js callback processing
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should decrement by step (0.1) and format with numeral.js
-      const newValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(newValue).toBe('$4,999.90');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$4,999.90');
     });
 
     test('should handle manual entry with numeral.js callbacks', async ({ page }) => {
@@ -202,21 +196,22 @@ test.describe('TouchSpin Callback Tests', () => {
 
       // Navigate away to trigger callbacks
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(300);
 
       // Should be rounded to step=0.1 and formatted by numeral.js
-      const formattedValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(formattedValue).toBe('$4,500.40'); // 4500.37 rounds to 4500.4 with step=0.1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$4,500.40'); // 4500.37 rounds to 4500.4 with step=0.1
     });
 
     test('should handle spinning up to max with numeral.js callbacks', async ({ page }) => {
       // Set value close to max (5500)
       await touchspinHelpers.fillWithValue(page, testid, '5499.9');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Verify formatting
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('$5,499.90');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,499.90');
 
       // Start spinning up
       await page.evaluate((testId) => {
