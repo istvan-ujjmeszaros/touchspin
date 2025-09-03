@@ -41,15 +41,16 @@ test.describe('Targeted Coverage Tests', () => {
         });
       });
 
-      await touchspinHelpers.waitForTimeout(100);
-      
-      // Should warn about double initialization
-      expect(consoleWarnings.some(msg => msg.includes('Destroying existing instance and reinitializing'))).toBe(true);
+      // Wait for warnings to be logged
+      await expect.poll(
+        () => consoleWarnings.some(msg => msg.includes('Destroying existing instance and reinitializing'))
+      ).toBe(true);
 
       // Should still work normally after reinitialization  
       await touchspinHelpers.touchspinClickUp(page, 'double-init-test');
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, 'double-init-test')).toBe('51');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'double-init-test')
+      ).toBe('51');
     });
   });
 
@@ -71,10 +72,10 @@ test.describe('Targeted Coverage Tests', () => {
         $('#not-input-test').TouchSpin();
       });
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should warn "Must be an input." message
-      expect(consoleWarnings.some(msg => msg.includes('Must be an input.'))).toBe(true);
+      await expect.poll(
+        () => consoleWarnings.some(msg => msg.includes('Must be an input.'))
+      ).toBe(true);
     });
   });
 
@@ -228,10 +229,11 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('invalid-decimals-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
       
       // Should show integer (no decimals)
-      expect(await touchspinHelpers.readInputValue(page, 'invalid-decimals-test')).toBe('50');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'invalid-decimals-test')
+      ).toBe('50');
     });
 
     test('should fallback to decimals=0 when decimals is negative', async ({ page }) => {
@@ -252,10 +254,11 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('negative-decimals-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
       
       // Should show integer (no decimals)
-      expect(await touchspinHelpers.readInputValue(page, 'negative-decimals-test')).toBe('50');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'negative-decimals-test')
+      ).toBe('50');
     });
 
     test('should fallback to decimals=0 when decimals is NaN', async ({ page }) => {
@@ -276,10 +279,11 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('nan-decimals-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
       
       // Should show integer (no decimals)
-      expect(await touchspinHelpers.readInputValue(page, 'nan-decimals-test')).toBe('51'); // rounded to integer
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'nan-decimals-test')
+      ).toBe('51'); // rounded to integer
     });
   });
 
@@ -310,13 +314,15 @@ test.describe('Targeted Coverage Tests', () => {
       
       // Test functionality - should work normally
       await touchspinHelpers.touchspinClickUp(page, testid);
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('43'); // 42 + 1
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('43'); // 42 + 1
       
       // Test down click
       await touchspinHelpers.touchspinClickDown(page, testid);
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('42'); // back to original
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('42'); // back to original
       
       // Verify TestRenderer specific elements are present
       const testSpecificElements = await page.evaluate((testId) => {
@@ -417,11 +423,11 @@ test.describe('Targeted Coverage Tests', () => {
       // Test precision handling
       await touchspinHelpers.fillWithValue(page, 'extreme-decimals-test', '0.123456789123456789');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
       
-      const value = await touchspinHelpers.readInputValue(page, 'extreme-decimals-test');
       // Should be limited to specified decimal places
-      expect(value).toMatch(/^0\.\d{10}$/);
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'extreme-decimals-test')
+      ).toMatch(/^0\.\d{10}$/);
     });
 
     test('should handle very large numbers', async ({ page }) => {
@@ -439,10 +445,13 @@ test.describe('Targeted Coverage Tests', () => {
       // Test with large number
       await touchspinHelpers.fillWithValue(page, 'large-numbers-test', '999999999999999');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
       
-      const value = await touchspinHelpers.readInputValue(page, 'large-numbers-test');
-      expect(parseFloat(value || '0')).toBeCloseTo(999999999999999, -3); // Allow for floating point precision
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, 'large-numbers-test');
+          return parseFloat(value || '0');
+        }
+      ).toBeCloseTo(999999999999999, -3); // Allow for floating point precision
     });
   });
 });
