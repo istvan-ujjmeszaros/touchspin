@@ -637,6 +637,8 @@ export class TouchSpinCore {
    */
   _startSpin(dir) {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+    
+    this.stopSpin();
 
     // Check if already at boundary - don't start spin if so
     const v = this.getValue();
