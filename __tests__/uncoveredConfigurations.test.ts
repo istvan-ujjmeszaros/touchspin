@@ -32,10 +32,10 @@ test.describe('Uncovered Configuration Options', () => {
         el.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true }));
       });
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Value should not change
-      expect(await touchspinHelpers.readInputValue(page, 'no-mousewheel-test')).toBe('50');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'no-mousewheel-test')
+      ).toBe('50');
     });
   });
 
@@ -73,13 +73,13 @@ test.describe('Uncovered Configuration Options', () => {
         }
       }, 'no-booster-test');
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should have incremented consistently without acceleration
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'no-booster-test') || '10');
-      
       // Without booster, increments should be linear (step=1)
-      expect(finalValue).toBeGreaterThan(10);
+      await expect.poll(
+        async () => parseInt(await touchspinHelpers.readInputValue(page, 'no-booster-test') || '10')
+      ).toBeGreaterThan(10);
+      
+      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'no-booster-test') || '10');
       expect(finalValue).toBeLessThan(30); // Should not have big jumps
     });
   });
@@ -100,10 +100,11 @@ test.describe('Uncovered Configuration Options', () => {
       // Enter a value that doesn't align with step
       await touchspinHelpers.fillWithValue(page, 'step-none-test', '5');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should keep the value as-is without forcing step alignment
-      expect(await touchspinHelpers.readInputValue(page, 'step-none-test')).toBe('5');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-none-test')
+      ).toBe('5');
     });
 
     test('should handle forcestepdivisibility: "floor"', async ({ page }) => {
@@ -121,10 +122,11 @@ test.describe('Uncovered Configuration Options', () => {
       // Enter a value that doesn't align with step
       await touchspinHelpers.fillWithValue(page, 'step-floor-test', '8');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should round down to 6 (8 / 3 = 2.67, floor = 2, 2 * 3 = 6)
-      expect(await touchspinHelpers.readInputValue(page, 'step-floor-test')).toBe('6');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-floor-test')
+      ).toBe('6');
     });
 
     test('should handle forcestepdivisibility: "ceil"', async ({ page }) => {
@@ -142,10 +144,11 @@ test.describe('Uncovered Configuration Options', () => {
       // Enter a value that doesn't align with step
       await touchspinHelpers.fillWithValue(page, 'step-ceil-test', '7');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should round up to 9 (7 / 3 = 2.33, ceil = 3, 3 * 3 = 9)
-      expect(await touchspinHelpers.readInputValue(page, 'step-ceil-test')).toBe('9');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-ceil-test')
+      ).toBe('9');
     });
   });
 
@@ -180,13 +183,15 @@ test.describe('Uncovered Configuration Options', () => {
       // Should allow values outside normal ranges
       await touchspinHelpers.fillWithValue(page, 'null-limits-test', '-999');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
-      expect(await touchspinHelpers.readInputValue(page, 'null-limits-test')).toBe('-999');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'null-limits-test')
+      ).toBe('-999');
 
       await touchspinHelpers.fillWithValue(page, 'null-limits-test', '9999');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
-      expect(await touchspinHelpers.readInputValue(page, 'null-limits-test')).toBe('9999');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'null-limits-test')
+      ).toBe('9999');
     });
   });
 
@@ -216,8 +221,9 @@ test.describe('Uncovered Configuration Options', () => {
 
       // Should still function correctly
       await touchspinHelpers.touchspinClickUp(page, 'custom-vertical-test');
-      await touchspinHelpers.waitForTimeout(100);
-      expect(await touchspinHelpers.readInputValue(page, 'custom-vertical-test')).toBe('51');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'custom-vertical-test')
+      ).toBe('51');
     });
   });
 
@@ -409,9 +415,10 @@ test.describe('Uncovered Configuration Options', () => {
       const input = page.getByTestId('zero-decimals-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
 
-      expect(await touchspinHelpers.readInputValue(page, 'zero-decimals-test')).toBe('51');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'zero-decimals-test')
+      ).toBe('51');
     });
 
     test('should handle high decimal precision', async ({ page }) => {
@@ -430,9 +437,10 @@ test.describe('Uncovered Configuration Options', () => {
       const input = page.getByTestId('high-decimals-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
 
-      expect(await touchspinHelpers.readInputValue(page, 'high-decimals-test')).toBe('50.12300'); // Actual behavior: pads with zeros
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'high-decimals-test')
+      ).toBe('50.12300'); // Actual behavior: pads with zeros
     });
   });
 
