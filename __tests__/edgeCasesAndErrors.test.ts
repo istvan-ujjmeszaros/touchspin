@@ -183,12 +183,11 @@ test.describe('Edge Cases and Error Handling', () => {
         $('#conflict-test').TouchSpin();
       });
 
-      // Should have generated console warnings
-      await touchspinHelpers.waitForTimeout(200);
-      
       // Check that warnings were logged (specific text may vary)
-      expect(consoleMessages.length).toBeGreaterThan(0);
-      expect(consoleMessages.some(msg => msg.includes('data-bts-'))).toBe(true);
+      await expect.poll(() => consoleMessages.length).toBeGreaterThan(0);
+      await expect.poll(
+        () => consoleMessages.some(msg => msg.includes('data-bts-'))
+      ).toBe(true);
     });
   });
 
@@ -331,9 +330,10 @@ test.describe('Edge Cases and Error Handling', () => {
       const input = page.getByTestId('decimal-edge-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
 
-      expect(await touchspinHelpers.readInputValue(page, 'decimal-edge-test')).toBe('2.0');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'decimal-edge-test')
+      ).toBe('2.0');
     });
   });
 
@@ -344,14 +344,15 @@ test.describe('Edge Cases and Error Handling', () => {
       // Perform rapid clicks
       for (let i = 0; i < 5; i++) {
         await touchspinHelpers.touchspinClickUp(page, testid);
-        await touchspinHelpers.waitForTimeout(10); // Very short delay
       }
       
-      await touchspinHelpers.waitForTimeout(200); // Let everything settle
-      
       // Should handle all clicks without errors
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
-      expect(finalValue).toBeGreaterThanOrEqual(55); // 50 + 5 clicks
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '50');
+        }
+      ).toBeGreaterThanOrEqual(55); // 50 + 5 clicks
     });
 
     test('should handle mouse wheel on disabled input', async ({ page }) => {
