@@ -125,26 +125,26 @@ test.describe('API Methods', () => {
         }]);
       }, selector);
 
-      // Wait for update to apply
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-
       // Check if prefix and postfix were updated - scope to the specific TouchSpin instance
-      const prefixText = await page.evaluate((sel) => {
-        const input = document.querySelector(sel);
-        const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
-        const prefixEl = wrapper?.querySelector('[data-touchspin-injected="prefix"]');
-        return prefixEl?.textContent;
-      }, selector);
+      await expect.poll(async () => {
+        const prefixText = await page.evaluate((sel) => {
+          const input = document.querySelector(sel);
+          const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
+          const prefixEl = wrapper?.querySelector('[data-touchspin-injected="prefix"]');
+          return prefixEl?.textContent;
+        }, selector);
+        return prefixText;
+      }).toContain('NEW');
       
-      const postfixText = await page.evaluate((sel) => {
-        const input = document.querySelector(sel);
-        const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
-        const postfixEl = wrapper?.querySelector('[data-touchspin-injected="postfix"]');
-        return postfixEl?.textContent;
-      }, selector);
-
-      expect(prefixText).toContain('NEW');
-      expect(postfixText).toContain('TEST');
+      await expect.poll(async () => {
+        const postfixText = await page.evaluate((sel) => {
+          const input = document.querySelector(sel);
+          const wrapper = input.closest('[data-touchspin-injected="wrapper"]');
+          const postfixEl = wrapper?.querySelector('[data-touchspin-injected="postfix"]');
+          return postfixEl?.textContent;
+        }, selector);
+        return postfixText;
+      }).toContain('TEST');
     });
 
     test('should update min/max settings', async ({ page }) => {
@@ -207,8 +207,8 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.destroy');
       }, testid);
 
-      // Wait for destruction
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
+      // Wait for destruction by checking that TouchSpin buttons are removed
+      await expect(upButton).not.toBeVisible();
 
       // Verify TouchSpin functionality is disabled (buttons should not respond)
       const initialValue = await touchspinHelpers.readInputValue(page, testid);
@@ -236,8 +236,6 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.destroy');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-
       // Try to trigger TouchSpin events - they should not work
       await page.evaluate((testId) => {
         const input = document.querySelector(`[data-testid="${testId}"]`);
@@ -245,7 +243,9 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Value should not change since TouchSpin is destroyed
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('50');
     });
   });
 
@@ -305,11 +305,10 @@ test.describe('API Methods', () => {
         if (input) input.setAttribute('disabled', '');
       }, testid);
 
-      // Wait for mutation observer to kick in
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-
-      // Buttons should become disabled
-      expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
+      // Buttons should become disabled after mutation observer processes the change
+      await expect.poll(
+        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+      ).toBe(true);
     });
 
     test('should respond to readonly attribute changes', async ({ page }) => {
@@ -321,11 +320,10 @@ test.describe('API Methods', () => {
         if (input) input.setAttribute('readonly', '');
       }, testid);
 
-      // Wait for mutation observer
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-
-      // Buttons should become disabled
-      expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
+      // Buttons should become disabled after mutation observer processes the change
+      await expect.poll(
+        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+      ).toBe(true);
     });
 
     test('should respond to attribute removal', async ({ page }) => {
@@ -340,11 +338,10 @@ test.describe('API Methods', () => {
         if (input) input.removeAttribute('disabled');
       }, testid);
 
-      // Wait for mutation observer
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-
-      // Buttons should become enabled
-      expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(false);
+      // Buttons should become enabled after mutation observer processes the change
+      await expect.poll(
+        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+      ).toBe(false);
     });
   });
 
