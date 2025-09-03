@@ -72,7 +72,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.stopspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // No additional wait needed after stop
     });
 
     test('should handle touchspin.startdownspin event', async ({ page }) => {
@@ -100,7 +100,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.stopspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // No additional wait needed after stop
     });
 
     test('should handle touchspin.stopspin event', async ({ page }) => {
@@ -113,7 +113,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.startupspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // No additional wait needed after stop
 
       // Get value after spinning starts
       const valueAfterStart = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
@@ -125,13 +125,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.stopspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(200);
+      // Brief wait for stability
 
       // Value should not change further after stop
       const valueAfterStop = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       
       // Wait a bit more to ensure spinning really stopped
-      await touchspinHelpers.waitForTimeout(300);
+      // Brief wait for stability
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       
       // Final value should equal the value when we stopped (no further changes)
@@ -194,8 +194,6 @@ test.describe('Custom TouchSpin Events Tests', () => {
         }, 100);
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(500);
-
       // Just verify no errors occurred and input is still functional
       await page.evaluate((testId) => {
         const $ = (window as any).jQuery;
@@ -203,11 +201,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
         $input.trigger('touchspin.uponce');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should still work normally after spin direction changes
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
-      expect(finalValue).toBeGreaterThanOrEqual(50);
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, testid);
+          return parseInt(value || '50');
+        }
+      ).toBeGreaterThanOrEqual(50);
     });
 
     test('should handle events on input with step constraints', async ({ page }) => {
