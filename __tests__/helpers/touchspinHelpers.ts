@@ -111,7 +111,7 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
 
     if (!parent) return { success: false, error: 'Parent container not found' };
 
-    const button = parent.querySelector('.bootstrap-touchspin-up') as HTMLButtonElement;
+    const button = parent.querySelector('[data-touchspin-injected="up"]') as HTMLButtonElement;
     if (!button) return { success: false, error: 'Up button not found in parent' };
 
     // Check if button is clickable
@@ -234,7 +234,7 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
 
     if (!parent) return { success: false, error: 'Parent container not found' };
 
-    const button = parent.querySelector('.bootstrap-touchspin-down') as HTMLButtonElement;
+    const button = parent.querySelector('[data-touchspin-injected="down"]') as HTMLButtonElement;
     if (!button) return { success: false, error: 'Down button not found in parent' };
 
     // Check if button is clickable
@@ -381,14 +381,14 @@ async function waitForSanitization(page: Page, inputTestId: string): Promise<voi
 async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
   // Focus the up button within the specific TouchSpin widget
   const wrapper = page.getByTestId(inputTestId + '-wrapper');
-  const upButton = wrapper.locator('.bootstrap-touchspin-up');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
   await upButton.focus();
 }
 
 async function focusDownButton(page: Page, inputTestId: string): Promise<void> {
   // Focus the down button within the specific TouchSpin widget
   const wrapper = page.getByTestId(inputTestId + '-wrapper');
-  const downButton = wrapper.locator('.bootstrap-touchspin-down');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
   await downButton.focus();
 }
 
