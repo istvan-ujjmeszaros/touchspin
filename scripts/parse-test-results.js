@@ -120,20 +120,31 @@ function generateChecklistUpdate(data) {
   const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
   console.log(`${now} | Tests: ${data.totalTests} | Passing: ${data.totalPassingTests} | Failing: ${data.totalTests - data.totalPassingTests - data.totalFlakyTests} | Flaky: ${data.totalFlakyTests}`);
 
-  console.log('\n## FILES WITH FAILING TESTS (for "Files with Failing Tests" section):');
-  console.log('Copy and paste these into your checklist:\n');
+  console.log('\n## TESTED FILES TO REMOVE FROM "Files with Failing Tests" section:');
+  console.log('These files were tested and are now passing - remove them from the failing files section:\n');
 
   // Sort files alphabetically
   const sortedFiles = Object.entries(data.fileResults).sort(([a], [b]) => a.localeCompare(b));
 
-  // Show only failing files
+  // Show files that were tested and are now passing
+  const passingFiles = sortedFiles.filter(([, stats]) => stats.fail === 0);
+  if (passingFiles.length > 0) {
+    passingFiles.forEach(([file, stats]) => {
+      console.log(`- ${file} (${stats.pass}/${stats.total} tests passing)`);
+    });
+  } else {
+    console.log('No tested files are passing - all tested files still have failures.');
+  }
+
+  console.log('\n## TESTED FILES WITH FAILURES (keep these in "Files with Failing Tests" section):');
+  // Show only failing files from what was tested
   const failingFiles = sortedFiles.filter(([, stats]) => stats.fail > 0);
   if (failingFiles.length > 0) {
     failingFiles.forEach(([file, stats]) => {
       console.log(`- [${file}](./${file}) (${stats.fail} failing)`);
     });
   } else {
-    console.log('No files have failing tests!');
+    console.log('No tested files have failures!');
   }
 
   console.log('\n## ALL FILE STATUS (for reference):');

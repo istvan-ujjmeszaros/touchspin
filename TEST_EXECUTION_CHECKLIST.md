@@ -57,8 +57,8 @@ This approach allows you to:
 ## Test Suite Overview
 - **Total Test Files**: 42
 - **Total Individual Tests**: 289
-- **Files Passing**: 36/42
-- **Tests Passing**: 253/289
+- **Files Passing**: 32/42
+- **Tests Passing**: 237/289
 - **Flaky Tests**: 0
 
 
