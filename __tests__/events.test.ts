@@ -72,7 +72,7 @@ test.describe('Events', () => {
 
     // TAB should trigger sanitization and fire change event
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-    
+
     // Verify the value has been sanitized (step=10, so 67 rounds to 70)
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('70');
   });
@@ -202,13 +202,13 @@ test.describe('Events', () => {
     // Click on another element to trigger focusout - using a different TouchSpin element
     const otherInput = page.getByTestId('touchspin-group-lg');
     await otherInput.click({ clickCount: 1 });
-    
+
     // Allow the deferred focusout commit to run
     await page.waitForTimeout(0);
 
     // Raw '1000' should NOT be the committed value
     expect(await touchspinHelpers.countChangeWithValue(page, '1000')).toBe(0);
-    
+
     // Decorated value should be committed with change event
     await expect.poll(() => touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
@@ -237,30 +237,29 @@ test.describe('Events', () => {
         step: 1
       });
     });
-    
+
     const testid = 'rapid-test';
-    
+
     // Get initial value (should be 50)
     const initialValue = await touchspinHelpers.readInputValue(page, testid);
     expect(initialValue).toBe('50');
-    
+
     // Execute 100 upOnce() calls rapidly without any delays
     await page.evaluate(() => {
       const $ = (window as any).jQuery;
       const $input = $('#rapid-test');
-      
+
       // Call upOnce 100 times in rapid succession
       for (let i = 0; i < 100; i++) {
         $input.TouchSpin('uponce');
       }
     });
-    
-    // Wait for processing to complete
-    await page.waitForTimeout(500);
-    
+
     // Value should have increased by 100 (50 + 100 = 150)
-    const finalValue = await touchspinHelpers.readInputValue(page, testid);
-    expect(finalValue).toBe('150');
+    // Using expect.poll() to wait for the value to update
+    await expect.poll(
+      async () => touchspinHelpers.readInputValue(page, testid)
+    ).toBe('150');
   });
 
 });
