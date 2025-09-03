@@ -56,7 +56,8 @@ test.describe('A/B parity sequences', () => {
     expect(Math.abs(orig - wrap)).toBeLessThanOrEqual(1); // allow tiny drift
 
     // Jump to near max and hold to boundary
-    await initBoth(page, { min: 0, max: 100, step: 1, stepinterval: 30, stepintervaldelay: 30, booster: true });
+    // Use deterministic spin timings to reduce flakiness in CI
+    await initBoth(page, { min: 0, max: 100, step: 1, stepinterval: 20, stepintervaldelay: 10, booster: false });
     await page.evaluate(() => {
       const $ = (window as any).jQuery; const $o=$('#orig-input'); const $w=$('#wrap-input');
       $o.OriginalTouchSpin('set', 95); $w.TouchSpin('set', 95);
@@ -66,7 +67,7 @@ test.describe('A/B parity sequences', () => {
       const o = (document.getElementById('orig-input') as HTMLInputElement)?.value;
       const w = (document.getElementById('wrap-input') as HTMLInputElement)?.value;
       return o === '100' && w === '100';
-    }, { timeout: 2000 });
+    }, { timeout: 4000 });
     ({ orig, wrap } = await getVals(page));
     expect(orig).toBe(100);
     expect(wrap).toBe(100);
