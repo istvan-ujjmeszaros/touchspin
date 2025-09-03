@@ -74,6 +74,12 @@ function calculateFileChecksums(folderPath) {
   return fileChecksums;
 }
 
+function cleanupTemp() {
+  if (fs.existsSync(tempDistFolder)) {
+    try { fs.rmSync(tempDistFolder, { recursive: true, force: true }); } catch {}
+  }
+}
+
 function checkBuildIntegrity() {
   console.log('🔍 Checking build integrity...');
 
@@ -88,9 +94,7 @@ function checkBuildIntegrity() {
   console.log('Committed dist checksum:', committedChecksum);
 
   // Clean temp dist folder
-  if (fs.existsSync(tempDistFolder)) {
-    fs.rmSync(tempDistFolder, { recursive: true });
-  }
+  cleanupTemp();
 
   try {
     // Build fresh dist files into temp folder using integrity check mode
@@ -139,19 +143,21 @@ function checkBuildIntegrity() {
       if (hasDifferences) {
         console.error('\nPlease rebuild the dist files with "npm run build" and commit the changes.');
       }
-      process.exit(1);
+      // Ensure temp is cleaned even when failing
+      cleanupTemp();
+      return 1;
     } else {
       console.log('✅ Checksums match! The committed dist files are up-to-date.');
     }
   } catch (error) {
     console.error('❌ Build failed:', error.message);
-    process.exit(1);
-  } finally {
-    // Clean up temp folder
-    if (fs.existsSync(tempDistFolder)) {
-      fs.rmSync(tempDistFolder, { recursive: true });
-    }
+    cleanupTemp();
+    return 1;
   }
-}
 
-checkBuildIntegrity();
+  // Success path cleanup
+  cleanupTemp();
+  return 0;
+}
+const code = checkBuildIntegrity();
+process.exit(code);
