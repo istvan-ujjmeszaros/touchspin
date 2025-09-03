@@ -128,10 +128,10 @@ test.describe('Edge Cases and Error Handling', () => {
       
       // Quick test to ensure it works
       await touchspinHelpers.touchspinClickUp(page, 'unlimited-boost-test');
-      await touchspinHelpers.waitForTimeout(100);
       
-      const value = await touchspinHelpers.readInputValue(page, 'unlimited-boost-test');
-      expect(value).toBe('11'); // Simple increment
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'unlimited-boost-test')
+      ).toBe('11'); // Simple increment
     });
 
     test('should handle invalid maxboostedstep values', async ({ page }) => {
@@ -150,9 +150,10 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Should still work without errors
       await touchspinHelpers.touchspinClickUp(page, 'invalid-boost-test');
-      await touchspinHelpers.waitForTimeout(100);
       
-      expect(await touchspinHelpers.readInputValue(page, 'invalid-boost-test')).toBe('11');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'invalid-boost-test')
+      ).toBe('11');
     });
   });
 
