@@ -34,12 +34,10 @@ test.describe('TouchSpin Callback Tests', () => {
       // Click up button
       await touchspinHelpers.touchspinClickUp(page, testid);
 
-      // Wait for callback to process
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should increment by step (0.1) and format as currency
-      const newValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(newValue).toBe('$5,000.10');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,000.10');
     });
 
     test('should apply callbacks when clicking down button', async ({ page }) => {
@@ -49,12 +47,10 @@ test.describe('TouchSpin Callback Tests', () => {
       // Click down button
       await touchspinHelpers.touchspinClickDown(page, testid);
 
-      // Wait for callback to process
-      await touchspinHelpers.waitForTimeout(200);
-
       // Should decrement by step (0.1) and format as currency
-      const newValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(newValue).toBe('$4,999.90');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$4,999.90');
     });
 
     test('should apply callbacks on value update via blur/navigation', async ({ page }) => {
@@ -79,10 +75,11 @@ test.describe('TouchSpin Callback Tests', () => {
       // Set value close to max (5500) to test max boundary
       await touchspinHelpers.fillWithValue(page, testid, '5499.9');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Verify it formatted correctly
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('$5,499.90');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,499.90');
 
       // Start spinning up (hold down for enough time to reach max)
       await page.evaluate((testId) => {
@@ -105,12 +102,10 @@ test.describe('TouchSpin Callback Tests', () => {
         }
       }, testid);
 
-      // Wait for final callback processing
-      await touchspinHelpers.waitForTimeout(300);
-
       // Should reach max value and be properly formatted
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(finalValue).toBe('$5,500.00');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,500.00');
 
       // Check that max event fired
       const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
