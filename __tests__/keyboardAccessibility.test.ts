@@ -40,12 +40,10 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Value should increment once
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
-
-      await touchspinHelpers.waitForTimeout(100);
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('51');
     });
 
     test('should handle Space key on down button', async ({ page }) => {
@@ -67,10 +65,10 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Value should decrement once
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('49');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('49');
 
       // Release Space key
       await page.evaluate((testId) => {
@@ -107,10 +105,10 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Value should decrement once
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('49');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('49');
 
       // Release Enter key
       await page.evaluate((testId) => {
@@ -228,10 +226,10 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Value should remain unchanged
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe(initialValue);
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe(initialValue);
     });
 
     test('should handle rapid key events correctly', async ({ page }) => {
