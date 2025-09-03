@@ -21,23 +21,23 @@
     if (Array.isArray(r)) return _arrayLikeToArray(r);
   }
   function _assertThisInitialized(e) {
-    if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    if (void 0 === e) throw new ReferenceError('this hasn\'t been initialised - super() hasn\'t been called');
     return e;
   }
   function _callSuper(t, o, e) {
     return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e));
   }
   function _classCallCheck(a, n) {
-    if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
+    if (!(a instanceof n)) throw new TypeError('Cannot call a class as a function');
   }
   function _defineProperties(e, r) {
     for (var t = 0; t < r.length; t++) {
       var o = r[t];
-      o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, _toPropertyKey(o.key), o);
+      o.enumerable = o.enumerable || false, o.configurable = true, 'value' in o && (o.writable = true), Object.defineProperty(e, _toPropertyKey(o.key), o);
     }
   }
   function _createClass(e, r, t) {
-    return r && _defineProperties(e.prototype, r), Object.defineProperty(e, "prototype", {
+    return r && _defineProperties(e.prototype, r), Object.defineProperty(e, 'prototype', {
       writable: false
     }), e;
   }
@@ -50,7 +50,7 @@
     }) : e[r] = t, e;
   }
   function _get() {
-    return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) {
+    return _get = 'undefined' !== typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) {
       var p = _superPropBase(e, t);
       if (p) {
         var n = Object.getOwnPropertyDescriptor(p, t);
@@ -64,14 +64,14 @@
     }, _getPrototypeOf(t);
   }
   function _inherits(t, e) {
-    if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function");
+    if ('function' !== typeof e && null !== e) throw new TypeError('Super expression must either be null or a function');
     t.prototype = Object.create(e && e.prototype, {
       constructor: {
         value: t,
         writable: true,
         configurable: true
       }
-    }), Object.defineProperty(t, "prototype", {
+    }), Object.defineProperty(t, 'prototype', {
       writable: false
     }), e && _setPrototypeOf(t, e);
   }
@@ -84,10 +84,10 @@
     })();
   }
   function _iterableToArray(r) {
-    if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
+    if ('undefined' !== typeof Symbol && null != r[Symbol.iterator] || null != r['@@iterator']) return Array.from(r);
   }
   function _iterableToArrayLimit(r, l) {
-    var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+    var t = null == r ? null : 'undefined' !== typeof Symbol && r[Symbol.iterator] || r['@@iterator'];
     if (null != t) {
       var e,
         n,
@@ -111,10 +111,10 @@
     }
   }
   function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    throw new TypeError('Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.');
   }
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    throw new TypeError('Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.');
   }
   function ownKeys(e, r) {
     var t = Object.keys(e);
@@ -138,8 +138,8 @@
     return e;
   }
   function _possibleConstructorReturn(t, e) {
-    if (e && ("object" == typeof e || "function" == typeof e)) return e;
-    if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined");
+    if (e && ('object' === typeof e || 'function' === typeof e)) return e;
+    if (void 0 !== e) throw new TypeError('Derived constructors may only return object or undefined');
     return _assertThisInitialized(t);
   }
   function _setPrototypeOf(t, e) {
@@ -156,7 +156,7 @@
   }
   function _superPropGet(t, o, e, r) {
     var p = _get(_getPrototypeOf(t.prototype ), o, e);
-    return "function" == typeof p ? function (t) {
+    return 'function' === typeof p ? function (t) {
       return p.apply(e, t);
     } : p;
   }
@@ -164,24 +164,24 @@
     return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
   }
   function _toPrimitive(t, r) {
-    if ("object" != typeof t || !t) return t;
+    if ('object' !== typeof t || !t) return t;
     var e = t[Symbol.toPrimitive];
     if (void 0 !== e) {
       var i = e.call(t, r);
-      if ("object" != typeof i) return i;
-      throw new TypeError("@@toPrimitive must return a primitive value.");
+      if ('object' !== typeof i) return i;
+      throw new TypeError('@@toPrimitive must return a primitive value.');
     }
     return (String )(t);
   }
   function _toPropertyKey(t) {
-    var i = _toPrimitive(t, "string");
-    return "symbol" == typeof i ? i : i + "";
+    var i = _toPrimitive(t, 'string');
+    return 'symbol' === typeof i ? i : i + '';
   }
   function _unsupportedIterableToArray(r, a) {
     if (r) {
-      if ("string" == typeof r) return _arrayLikeToArray(r, a);
+      if ('string' === typeof r) return _arrayLikeToArray(r, a);
       var t = {}.toString.call(r).slice(8, -1);
-      return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      return 'Object' === t && r.constructor && (t = r.constructor.name), 'Map' === t || 'Set' === t ? Array.from(r) : 'Arguments' === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
     }
   }
 
@@ -363,7 +363,7 @@
      * @private
      */
     return _createClass(TouchSpinCore, [{
-      key: "_initializeInput",
+      key: '_initializeInput',
       value: function _initializeInput() {
         // Set initial value if specified and input is empty
         if (this.settings.initval !== '' && this.input.value === '') {
@@ -383,7 +383,7 @@
        * @private
        */
     }, {
-      key: "_parseDataAttributes",
+      key: '_parseDataAttributes',
       value: function _parseDataAttributes(inputEl) {
         var attributeMap = {
           min: 'min',
@@ -421,7 +421,7 @@
           var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
             optionName = _Object$entries$_i[0],
             attrName = _Object$entries$_i[1];
-          var fullAttrName = "data-bts-".concat(attrName);
+          var fullAttrName = 'data-bts-'.concat(attrName);
           if (inputEl.hasAttribute(fullAttrName)) {
             var rawValue = inputEl.getAttribute(fullAttrName);
             parsed[optionName] = this._coerceAttributeValue(optionName, rawValue);
@@ -434,7 +434,7 @@
           if (inputEl.hasAttribute(nativeAttr)) {
             var _rawValue = inputEl.getAttribute(nativeAttr);
             if (parsed[nativeAttr] !== undefined) {
-              console.warn("Both \"data-bts-".concat(nativeAttr, "\" and \"").concat(nativeAttr, "\" attributes specified. Native attribute takes precedence."), inputEl);
+              console.warn('Both "data-bts-'.concat(nativeAttr, '" and "').concat(nativeAttr, '" attributes specified. Native attribute takes precedence.'), inputEl);
             }
             parsed[nativeAttr] = this._coerceAttributeValue(nativeAttr, _rawValue);
           }
@@ -450,7 +450,7 @@
        * @private
        */
     }, {
-      key: "_coerceAttributeValue",
+      key: '_coerceAttributeValue',
       value: function _coerceAttributeValue(optionName, rawValue) {
         if (rawValue === null || rawValue === undefined) {
           return rawValue;
@@ -473,7 +473,7 @@
 
       /** Increment once according to step */
     }, {
-      key: "upOnce",
+      key: 'upOnce',
       value: function upOnce() {
         if (this.input.disabled || this.input.hasAttribute('readonly')) {
           return;
@@ -502,7 +502,7 @@
 
       /** Decrement once according to step */
     }, {
-      key: "downOnce",
+      key: 'downOnce',
       value: function downOnce() {
         if (this.input.disabled || this.input.hasAttribute('readonly')) {
           return;
@@ -531,21 +531,21 @@
 
       /** Start increasing repeatedly (placeholder) */
     }, {
-      key: "startUpSpin",
+      key: 'startUpSpin',
       value: function startUpSpin() {
         this._startSpin('up');
       }
 
       /** Start decreasing repeatedly (placeholder) */
     }, {
-      key: "startDownSpin",
+      key: 'startDownSpin',
       value: function startDownSpin() {
         this._startSpin('down');
       }
 
       /** Stop spinning (placeholder) */
     }, {
-      key: "stopSpin",
+      key: 'stopSpin',
       value: function stopSpin() {
         this._clearSpinTimers();
         if (this.spinning) {
@@ -566,7 +566,7 @@
        * @param {Partial<TouchSpinCoreOptions>} opts
        */
     }, {
-      key: "updateSettings",
+      key: 'updateSettings',
       value: function updateSettings(opts) {
         var _this = this;
         var oldSettings = _objectSpread2({}, this.settings);
@@ -608,7 +608,7 @@
 
       /** @returns {number} */
     }, {
-      key: "getValue",
+      key: 'getValue',
       value: function getValue() {
         var raw = this.input.value;
         if (raw === '' && this.settings.replacementval !== '') {
@@ -626,7 +626,7 @@
        * @param {number|string} v
        */
     }, {
-      key: "setValue",
+      key: 'setValue',
       value: function setValue(v) {
         if (this.input.disabled || this.input.hasAttribute('readonly')) return;
         var parsed = Number(v);
@@ -640,7 +640,7 @@
        * Must be called after the renderer has created the DOM structure.
        */
     }, {
-      key: "initDOMEventHandling",
+      key: 'initDOMEventHandling',
       value: function initDOMEventHandling() {
         // Find DOM elements and attach listeners
         this._findDOMElements();
@@ -654,7 +654,7 @@
        * @returns {Function} - Unregister function
        */
     }, {
-      key: "registerTeardown",
+      key: 'registerTeardown',
       value: function registerTeardown(callback) {
         var _this2 = this;
         if (typeof callback !== 'function') {
@@ -673,7 +673,7 @@
 
       /** Cleanup and destroy the TouchSpin instance */
     }, {
-      key: "destroy",
+      key: 'destroy',
       value: function destroy() {
         this.stopSpin();
 
@@ -719,7 +719,7 @@
        * @returns {TouchSpinCorePublicAPI}
        */
     }, {
-      key: "toPublicApi",
+      key: 'toPublicApi',
       value: function toPublicApi() {
         return {
           upOnce: this.upOnce.bind(this),
@@ -748,7 +748,7 @@
        * @param {HTMLElement|null} element - The element to attach events to
        */
     }, {
-      key: "attachUpEvents",
+      key: 'attachUpEvents',
       value: function attachUpEvents(element) {
         if (!element) {
           console.warn('TouchSpin: attachUpEvents called with null element');
@@ -776,7 +776,7 @@
        * @param {HTMLElement|null} element - The element to attach events to
        */
     }, {
-      key: "attachDownEvents",
+      key: 'attachDownEvents',
       value: function attachDownEvents(element) {
         if (!element) {
           console.warn('TouchSpin: attachDownEvents called with null element');
@@ -806,7 +806,7 @@
        * @returns {Function} Unsubscribe function
        */
     }, {
-      key: "observeSetting",
+      key: 'observeSetting',
       value: function observeSetting(settingName, callback) {
         if (!this._settingObservers.has(settingName)) {
           this._settingObservers.set(settingName, new Set());
@@ -828,7 +828,7 @@
        * @param {(detail?: any) => void} handler
        */
     }, {
-      key: "on",
+      key: 'on',
       value: function on(event, handler) {
         var _this3 = this;
         var set = this._events.get(event) || new Set();
@@ -845,7 +845,7 @@
        * @param {(detail?: any) => void=} handler
        */
     }, {
-      key: "off",
+      key: 'off',
       value: function off(event, handler) {
         var set = this._events.get(event);
         if (!set) return;
@@ -863,7 +863,7 @@
        * @param {any=} detail
        */
     }, {
-      key: "emit",
+      key: 'emit',
       value: function emit(event, detail) {
         var set = this._events.get(event);
         if (!set || set.size === 0) return;
@@ -880,7 +880,7 @@
        * @param {'up'|'down'} dir
        */
     }, {
-      key: "_startSpin",
+      key: '_startSpin',
       value: function _startSpin(dir) {
         var _this4 = this;
         if (this.input.disabled || this.input.hasAttribute('readonly')) return;
@@ -919,7 +919,7 @@
         }, delay);
       }
     }, {
-      key: "_clearSpinTimers",
+      key: '_clearSpinTimers',
       value: function _clearSpinTimers() {
         try {
           if (this._spinDelayTimeout) {
@@ -941,7 +941,7 @@
        * @param {number} current
        */
     }, {
-      key: "_nextValue",
+      key: '_nextValue',
       value: function _nextValue(dir, current) {
         var v = current;
         if (isNaN(v)) {
@@ -965,7 +965,7 @@
 
       /** Returns a reasonable value to use when current is NaN. */
     }, {
-      key: "_valueIfIsNaN",
+      key: '_valueIfIsNaN',
       value: function _valueIfIsNaN() {
         if (typeof this.settings.firstclickvalueifempty === 'number') {
           return this.settings.firstclickvalueifempty;
@@ -977,7 +977,7 @@
 
       /** Apply step divisibility and clamp to min/max. */
     }, {
-      key: "_applyConstraints",
+      key: '_applyConstraints',
       value: function _applyConstraints(v) {
         var aligned = this._forcestepdivisibility(v);
         var min = this.settings.min;
@@ -990,7 +990,7 @@
 
       /** Determine the effective step with booster if enabled. */
     }, {
-      key: "_getBoostedStep",
+      key: '_getBoostedStep',
       value: function _getBoostedStep() {
         var base = this.settings.step || 1;
         if (!this.settings.booster) return base;
@@ -1006,7 +1006,7 @@
 
       /** Aligns value to step per forcestepdivisibility. */
     }, {
-      key: "_forcestepdivisibility",
+      key: '_forcestepdivisibility',
       value: function _forcestepdivisibility(val) {
         var mode = this.settings.forcestepdivisibility || 'round';
         var step = this.settings.step || 1;
@@ -1033,7 +1033,7 @@
 
       /** Aligns a value to nearest step boundary using integer arithmetic. */
     }, {
-      key: "_alignToStep",
+      key: '_alignToStep',
       value: function _alignToStep(val, step, dir) {
         if (step === 0) return val;
         var k = 1,
@@ -1048,7 +1048,7 @@
 
       /** Format and write to input, optionally emit change if different. */
     }, {
-      key: "_setDisplay",
+      key: '_setDisplay',
       value: function _setDisplay(num, mayTriggerChange) {
         var _this$input$value;
         var prev = String((_this$input$value = this.input.value) !== null && _this$input$value !== void 0 ? _this$input$value : '');
@@ -1064,7 +1064,7 @@
         return next;
       }
     }, {
-      key: "_formatDisplay",
+      key: '_formatDisplay',
       value: function _formatDisplay(num) {
         var dec = this.settings.decimals || 0;
         var after = this.settings.callback_after_calculation || function (v) {
@@ -1079,7 +1079,7 @@
        * @param {'up'|'down'} dir
        */
     }, {
-      key: "_spinStep",
+      key: '_spinStep',
       value: function _spinStep(dir) {
         this.spincount++;
         if (dir === 'up') this.upOnce();else this.downOnce();
@@ -1087,7 +1087,7 @@
 
       /** Sanitize current input value and update display; optionally emits change. */
     }, {
-      key: "_checkValue",
+      key: '_checkValue',
       value: function _checkValue(mayTriggerChange) {
         var v = this.getValue();
         if (!isFinite(v)) return;
@@ -1095,7 +1095,7 @@
         this._setDisplay(adjusted, !!mayTriggerChange);
       }
     }, {
-      key: "_updateAriaAttributes",
+      key: '_updateAriaAttributes',
       value: function _updateAriaAttributes() {
         var el = this.input;
         if (el.getAttribute('role') !== 'spinbutton') {
@@ -1120,7 +1120,7 @@
        * @private
        */
     }, {
-      key: "_syncNativeAttributes",
+      key: '_syncNativeAttributes',
       value: function _syncNativeAttributes() {
         // Only set native attributes on number inputs
         if (this.input.getAttribute('type') === 'number') {
@@ -1153,7 +1153,7 @@
        * @private
        */
     }, {
-      key: "_syncSettingsFromNativeAttributes",
+      key: '_syncSettingsFromNativeAttributes',
       value: function _syncSettingsFromNativeAttributes() {
         var nativeMin = this.input.getAttribute('min');
         var nativeMax = this.input.getAttribute('max');
@@ -1216,7 +1216,7 @@
        * @private
        */
     }, {
-      key: "_findDOMElements",
+      key: '_findDOMElements',
       value: function _findDOMElements() {
         // Core doesn't need to find buttons - renderers handle button events directly
         // We only need to find the wrapper for potential future use
@@ -1232,7 +1232,7 @@
        * @private
        */
     }, {
-      key: "_attachDOMEventListeners",
+      key: '_attachDOMEventListeners',
       value: function _attachDOMEventListeners() {
         // Core should NOT attach button events - renderers handle that via attachUpEvents/attachDownEvents
 
@@ -1254,7 +1254,7 @@
        * @private
        */
     }, {
-      key: "_detachDOMEventListeners",
+      key: '_detachDOMEventListeners',
       value: function _detachDOMEventListeners() {
         // Core does not manage button events - renderers handle their own cleanup
 
@@ -1278,7 +1278,7 @@
        * @private
        */
     }, {
-      key: "_handleUpMouseDown",
+      key: '_handleUpMouseDown',
       value: function _handleUpMouseDown(e) {
         e.preventDefault();
         this.upOnce();
@@ -1290,7 +1290,7 @@
        * @private
        */
     }, {
-      key: "_handleDownMouseDown",
+      key: '_handleDownMouseDown',
       value: function _handleDownMouseDown(e) {
         e.preventDefault();
         this.downOnce();
@@ -1302,7 +1302,7 @@
        * @private
        */
     }, {
-      key: "_handleMouseUp",
+      key: '_handleMouseUp',
       value: function _handleMouseUp(e) {
         this.stopSpin();
       }
@@ -1312,7 +1312,7 @@
        * @private
        */
     }, {
-      key: "_handleUpKeyDown",
+      key: '_handleUpKeyDown',
       value: function _handleUpKeyDown(e) {
         // Only handle Enter and Space keys
         if (e.keyCode === 13 || e.keyCode === 32) {
@@ -1328,7 +1328,7 @@
        * @private
        */
     }, {
-      key: "_handleUpKeyUp",
+      key: '_handleUpKeyUp',
       value: function _handleUpKeyUp(e) {
         // Only handle Enter and Space keys
         if (e.keyCode === 13 || e.keyCode === 32) {
@@ -1342,7 +1342,7 @@
        * @private
        */
     }, {
-      key: "_handleDownKeyDown",
+      key: '_handleDownKeyDown',
       value: function _handleDownKeyDown(e) {
         // Only handle Enter and Space keys
         if (e.keyCode === 13 || e.keyCode === 32) {
@@ -1358,7 +1358,7 @@
        * @private
        */
     }, {
-      key: "_handleDownKeyUp",
+      key: '_handleDownKeyUp',
       value: function _handleDownKeyUp(e) {
         // Only handle Enter and Space keys
         if (e.keyCode === 13 || e.keyCode === 32) {
@@ -1372,7 +1372,7 @@
        * @private
        */
     }, {
-      key: "_handleInputChange",
+      key: '_handleInputChange',
       value: function _handleInputChange(e) {
         var currentValue = this.getValue();
         var wouldBeSanitized = this._applyConstraints(currentValue);
@@ -1389,7 +1389,7 @@
        * @private
        */
     }, {
-      key: "_handleInputBlur",
+      key: '_handleInputBlur',
       value: function _handleInputBlur(e) {
         this._checkValue(true);
       }
@@ -1399,7 +1399,7 @@
        * @private
        */
     }, {
-      key: "_handleKeyDown",
+      key: '_handleKeyDown',
       value: function _handleKeyDown(e) {
         switch (e.key) {
           case 'ArrowUp':
@@ -1423,7 +1423,7 @@
        * @private
        */
     }, {
-      key: "_handleKeyUp",
+      key: '_handleKeyUp',
       value: function _handleKeyUp(e) {
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           this.stopSpin();
@@ -1435,7 +1435,7 @@
        * @private
        */
     }, {
-      key: "_handleWheel",
+      key: '_handleWheel',
       value: function _handleWheel(e) {
         if (!this.settings.mousewheel) {
           return;
@@ -1455,7 +1455,7 @@
        * @private
        */
     }, {
-      key: "_setupMutationObserver",
+      key: '_setupMutationObserver',
       value: function _setupMutationObserver() {
         var _this5 = this;
         if (typeof MutationObserver !== 'undefined') {
@@ -1482,7 +1482,7 @@
        * @private
        */
     }, {
-      key: "_updateButtonDisabledState",
+      key: '_updateButtonDisabledState',
       value: function _updateButtonDisabledState() {
         var isDisabled = this.input.disabled || this.input.hasAttribute('readonly');
         if (this._upButton) {
@@ -1570,7 +1570,7 @@
   /**
    * AbstractRenderer - Base class for TouchSpin renderers
    * Part of @touchspin/core package to avoid duplication across renderer packages
-   * 
+   *
    * @example
    * class CustomRenderer extends AbstractRenderer {
    *   init() {
@@ -1614,7 +1614,7 @@
      * @abstract
      */
     return _createClass(AbstractRenderer, [{
-      key: "init",
+      key: 'init',
       value: function init() {
         throw new Error('init() must be implemented by renderer');
       }
@@ -1625,7 +1625,7 @@
        * Subclasses can override for custom teardown
        */
     }, {
-      key: "teardown",
+      key: 'teardown',
       value: function teardown() {
         // Default implementation - remove all injected elements
         this.removeInjectedElements();
@@ -1638,7 +1638,7 @@
        * Called automatically by teardown()
        */
     }, {
-      key: "removeInjectedElements",
+      key: 'removeInjectedElements',
       value: function removeInjectedElements() {
         var _this = this;
         // Find and remove all elements with data-touchspin-injected attribute
@@ -1681,27 +1681,27 @@
 
       // Legacy methods (transitional - for backward compatibility)
     }, {
-      key: "getFrameworkId",
+      key: 'getFrameworkId',
       value: function getFrameworkId() {
         throw new Error('getFrameworkId() must be implemented by subclasses');
       }
     }, {
-      key: "buildAdvancedInputGroup",
+      key: 'buildAdvancedInputGroup',
       value: function buildAdvancedInputGroup(parentelement) {
         throw new Error('buildAdvancedInputGroup() must be implemented by subclasses');
       }
     }, {
-      key: "buildInputGroup",
+      key: 'buildInputGroup',
       value: function buildInputGroup() {
         throw new Error('buildInputGroup() must be implemented by subclasses');
       }
     }, {
-      key: "buildVerticalButtons",
+      key: 'buildVerticalButtons',
       value: function buildVerticalButtons() {
         throw new Error('buildVerticalButtons() must be implemented by subclasses');
       }
     }, {
-      key: "initElements",
+      key: 'initElements',
       value: function initElements(container) {
         this.container = container;
         var downButtons = this._findElements(container, 'down');
@@ -1726,12 +1726,12 @@
         return this.elements;
       }
     }, {
-      key: "_findElements",
+      key: '_findElements',
       value: function _findElements(container, role) {
-        return this.$("[data-touchspin-injected=\"".concat(role, "\"]"), container);
+        return this.$('[data-touchspin-injected="'.concat(role, '"]'), container);
       }
     }, {
-      key: "hideEmptyPrefixPostfix",
+      key: 'hideEmptyPrefixPostfix',
       value: function hideEmptyPrefixPostfix() {
         var detached = {};
         if (this.settings.prefix === '') detached._detached_prefix = this.elements.prefix.detach();
@@ -1739,16 +1739,16 @@
         return detached;
       }
     }, {
-      key: "updatePrefixPostfix",
+      key: 'updatePrefixPostfix',
       value: function updatePrefixPostfix(newsettings, detached) {
         throw new Error('updatePrefixPostfix() must be implemented by subclasses');
       }
     }, {
-      key: "getWrapperTestId",
+      key: 'getWrapperTestId',
       value: function getWrapperTestId() {
         // Modern vanilla JS version
         var inputTestId = this.input.getAttribute('data-testid');
-        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-wrapper\"");
+        if (inputTestId) return ' data-testid="'.concat(inputTestId, '-wrapper"');
         return '';
       }
 
@@ -1757,10 +1757,10 @@
        * @returns {string} Testid attribute or empty string
        */
     }, {
-      key: "getUpButtonTestId",
+      key: 'getUpButtonTestId',
       value: function getUpButtonTestId() {
         var inputTestId = this.input.getAttribute('data-testid');
-        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-up\"");
+        if (inputTestId) return ' data-testid="'.concat(inputTestId, '-up"');
         return '';
       }
 
@@ -1769,10 +1769,10 @@
        * @returns {string} Testid attribute or empty string
        */
     }, {
-      key: "getDownButtonTestId",
+      key: 'getDownButtonTestId',
       value: function getDownButtonTestId() {
         var inputTestId = this.input.getAttribute('data-testid');
-        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-down\"");
+        if (inputTestId) return ' data-testid="'.concat(inputTestId, '-down"');
         return '';
       }
 
@@ -1781,10 +1781,10 @@
        * @returns {string} Testid attribute or empty string
        */
     }, {
-      key: "getPrefixTestId",
+      key: 'getPrefixTestId',
       value: function getPrefixTestId() {
         var inputTestId = this.input.getAttribute('data-testid');
-        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-prefix\"");
+        if (inputTestId) return ' data-testid="'.concat(inputTestId, '-prefix"');
         return '';
       }
 
@@ -1793,10 +1793,10 @@
        * @returns {string} Testid attribute or empty string
        */
     }, {
-      key: "getPostfixTestId",
+      key: 'getPostfixTestId',
       value: function getPostfixTestId() {
         var inputTestId = this.input.getAttribute('data-testid');
-        if (inputTestId) return " data-testid=\"".concat(inputTestId, "-postfix\"");
+        if (inputTestId) return ' data-testid="'.concat(inputTestId, '-postfix"');
         return '';
       }
     }]);
@@ -1809,7 +1809,7 @@
     }
     _inherits(Bootstrap4Renderer, _AbstractRenderer);
     return _createClass(Bootstrap4Renderer, [{
-      key: "init",
+      key: 'init',
       value: function init() {
         var _this = this;
         // Initialize internal element references
@@ -1874,7 +1874,7 @@
         });
       }
     }, {
-      key: "teardown",
+      key: 'teardown',
       value: function teardown() {
         // Remove form-control class only if we added it
         if (this._formControlAdded) {
@@ -1883,10 +1883,10 @@
         }
 
         // Call parent teardown to handle DOM cleanup
-        _superPropGet(Bootstrap4Renderer, "teardown", this)([]);
+        _superPropGet(Bootstrap4Renderer, 'teardown', this)([]);
       }
     }, {
-      key: "buildInputGroup",
+      key: 'buildInputGroup',
       value: function buildInputGroup() {
         // Check if input is already inside an input-group
         var existingInputGroup = this.input.closest('.input-group');
@@ -1897,15 +1897,15 @@
         }
       }
     }, {
-      key: "buildBasicInputGroup",
+      key: 'buildBasicInputGroup',
       value: function buildBasicInputGroup() {
         var inputGroupSize = this._detectInputGroupSize();
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix || '', "</span>\n          </div>\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
+          html = '\n        <div class="input-group '.concat(inputGroupSize, ' bootstrap-touchspin" data-touchspin-injected="wrapper"').concat(testidAttr, '>\n          <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix"').concat(this.getPrefixTestId(), '>\n            <span class="input-group-text ').concat(this.settings.prefix_extraclass || '', '">').concat(this.settings.prefix || '', '</span>\n          </div>\n          <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix"').concat(this.getPostfixTestId(), '>\n            <span class="input-group-text ').concat(this.settings.postfix_extraclass || '', '">').concat(this.settings.postfix || '', '</span>\n          </div>\n          ').concat(this.buildVerticalButtons(), '\n        </div>\n      ');
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix || '', "</span>\n          </div>\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          <div class=\"input-group-append\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n          <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix || '', "</span>\n          </div>\n        </div>\n      ");
+          html = '\n        <div class="input-group '.concat(inputGroupSize, ' bootstrap-touchspin" data-touchspin-injected="wrapper"').concat(testidAttr, '>\n          <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix"').concat(this.getPrefixTestId(), '>\n            <span class="input-group-text ').concat(this.settings.prefix_extraclass || '', '">').concat(this.settings.prefix || '', '</span>\n          </div>\n          <div class="input-group-prepend">\n            <button tabindex="').concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttondown_class || 'btn btn-outline-secondary', ' bootstrap-touchspin-down" data-touchspin-injected="down"').concat(this.getDownButtonTestId(), ' type="button" aria-label="Decrease value">').concat(this.settings.buttondown_txt || '−', '</button>\n          </div>\n          <div class="input-group-append">\n            <button tabindex="').concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttonup_class || 'btn btn-outline-secondary', ' bootstrap-touchspin-up" data-touchspin-injected="up"').concat(this.getUpButtonTestId(), ' type="button" aria-label="Increase value">').concat(this.settings.buttonup_txt || '+', '</button>\n          </div>\n          <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix"').concat(this.getPostfixTestId(), '>\n            <span class="input-group-text ').concat(this.settings.postfix_extraclass || '', '">').concat(this.settings.postfix || '', '</span>\n          </div>\n        </div>\n      ');
         }
 
         // Create wrapper and wrap the input
@@ -1932,7 +1932,7 @@
         return wrapper;
       }
     }, {
-      key: "buildAdvancedInputGroup",
+      key: 'buildAdvancedInputGroup',
       value: function buildAdvancedInputGroup(existingInputGroup) {
         // Add bootstrap-touchspin class to existing input-group
         existingInputGroup.classList.add('bootstrap-touchspin');
@@ -1942,15 +1942,15 @@
         var inputTestId = this.input.getAttribute('data-testid');
         var existingWrapperTestId = existingInputGroup.getAttribute('data-testid');
         if (!existingWrapperTestId && inputTestId) {
-          existingInputGroup.setAttribute('data-testid', "".concat(inputTestId, "-wrapper"));
+          existingInputGroup.setAttribute('data-testid', ''.concat(inputTestId, '-wrapper'));
         }
 
         // Create elements based on vertical or horizontal layout
         var elementsHtml;
         if (this.settings.verticalbuttons) {
-          elementsHtml = "\n        <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix || '', "</span>\n        </div>\n        ").concat(this.buildVerticalButtons(), "\n      ");
+          elementsHtml = '\n        <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix"'.concat(this.getPrefixTestId(), '>\n          <span class="input-group-text ').concat(this.settings.prefix_extraclass || '', '">').concat(this.settings.prefix || '', '</span>\n        </div>\n        <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix"').concat(this.getPostfixTestId(), '>\n          <span class="input-group-text ').concat(this.settings.postfix_extraclass || '', '">').concat(this.settings.postfix || '', '</span>\n        </div>\n        ').concat(this.buildVerticalButtons(), '\n      ');
         } else {
-          elementsHtml = "\n        <div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix || '', "</span>\n        </div>\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        <div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+          elementsHtml = '\n        <div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix"'.concat(this.getPrefixTestId(), '>\n          <span class="input-group-text ').concat(this.settings.prefix_extraclass || '', '">').concat(this.settings.prefix || '', '</span>\n        </div>\n        <div class="input-group-prepend">\n          <button tabindex="').concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttondown_class || 'btn btn-outline-secondary', ' bootstrap-touchspin-down" data-touchspin-injected="down"').concat(this.getDownButtonTestId(), ' type="button">').concat(this.settings.buttondown_txt || '-', '</button>\n        </div>\n        <div class="input-group-append">\n          <button tabindex="').concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttonup_class || 'btn btn-outline-secondary', ' bootstrap-touchspin-up" data-touchspin-injected="up"').concat(this.getUpButtonTestId(), ' type="button">').concat(this.settings.buttonup_txt || '+', '</button>\n        </div>\n        <div class="input-group-append bootstrap-touchspin-postfix" data-touchspin-injected="postfix"').concat(this.getPostfixTestId(), '>\n          <span class="input-group-text ').concat(this.settings.postfix_extraclass || '', '">').concat(this.settings.postfix || '', '</span>\n        </div>\n      ');
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -1990,7 +1990,7 @@
         return existingInputGroup;
       }
     }, {
-      key: "_detectInputGroupSize",
+      key: '_detectInputGroupSize',
       value: function _detectInputGroupSize() {
         var classList = this.input.className;
         if (classList.includes('form-control-sm')) {
@@ -2001,7 +2001,7 @@
         return '';
       }
     }, {
-      key: "hideEmptyPrefixPostfix",
+      key: 'hideEmptyPrefixPostfix',
       value: function hideEmptyPrefixPostfix() {
         var wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.wrapper;
         // Use internal references if available, otherwise query from wrapper
@@ -2015,7 +2015,7 @@
         }
       }
     }, {
-      key: "updatePrefix",
+      key: 'updatePrefix',
       value: function updatePrefix(value) {
         // Use internal reference
         var prefixEl = this.prefixEl;
@@ -2025,10 +2025,10 @@
             textEl.textContent = value;
             prefixEl.style.display = '';
             // Update classes in case prefix_extraclass changed
-            textEl.className = "input-group-text ".concat(this.settings.prefix_extraclass || '').trim();
+            textEl.className = 'input-group-text '.concat(this.settings.prefix_extraclass || '').trim();
             // Also apply extra class to the wrapper element for consistency with test expectations
             if (this.settings.prefix_extraclass) {
-              prefixEl.className = "input-group-prepend bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass).trim();
+              prefixEl.className = 'input-group-prepend bootstrap-touchspin-prefix '.concat(this.settings.prefix_extraclass).trim();
             }
           }
         } else if (prefixEl) {
@@ -2037,7 +2037,7 @@
         }
       }
     }, {
-      key: "updatePostfix",
+      key: 'updatePostfix',
       value: function updatePostfix(value) {
         // Use internal reference
         var postfixEl = this.postfixEl;
@@ -2047,10 +2047,10 @@
             textEl.textContent = value;
             postfixEl.style.display = '';
             // Update classes in case postfix_extraclass changed
-            textEl.className = "input-group-text ".concat(this.settings.postfix_extraclass || '').trim();
+            textEl.className = 'input-group-text '.concat(this.settings.postfix_extraclass || '').trim();
             // Also apply extra class to the wrapper element for consistency with test expectations
             if (this.settings.postfix_extraclass) {
-              postfixEl.className = "input-group-append bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass).trim();
+              postfixEl.className = 'input-group-append bootstrap-touchspin-postfix '.concat(this.settings.postfix_extraclass).trim();
             }
           }
         } else if (postfixEl) {
@@ -2059,76 +2059,76 @@
         }
       }
     }, {
-      key: "updateButtonClass",
+      key: 'updateButtonClass',
       value: function updateButtonClass(type, className) {
-        var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+        var button = this.wrapper.querySelector('[data-touchspin-injected="'.concat(type, '"]'));
         if (button) {
-          button.className = "".concat(className || 'btn btn-outline-secondary', " bootstrap-touchspin-").concat(type);
+          button.className = ''.concat(className || 'btn btn-outline-secondary', ' bootstrap-touchspin-').concat(type);
         }
       }
     }, {
-      key: "buildVerticalButtons",
+      key: 'buildVerticalButtons',
       value: function buildVerticalButtons() {
         // Bootstrap 4: Return complete structure with input-group-text wrapper (matches original)
-        return "\n      <span class=\"input-group-text bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n        <span class=\"input-group-btn-vertical\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticalupclass || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " ").concat(this.settings.verticaldownclass || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n        </span>\n      </span>\n    ");
+        return '\n      <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">\n        <span class="input-group-btn-vertical">\n          <button tabindex="'.concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttonup_class || 'btn btn-outline-secondary', ' ').concat(this.settings.verticalupclass || 'btn btn-outline-secondary', ' bootstrap-touchspin-up" data-touchspin-injected="up"').concat(this.getUpButtonTestId(), ' type="button" aria-label="Increase value">').concat(this.settings.verticalup || '+', '</button>\n          <button tabindex="').concat(this.settings.focusablebuttons ? '0' : '-1', '" class="').concat(this.settings.buttondown_class || 'btn btn-outline-secondary', ' ').concat(this.settings.verticaldownclass || 'btn btn-outline-secondary', ' bootstrap-touchspin-down" data-touchspin-injected="down"').concat(this.getDownButtonTestId(), ' type="button" aria-label="Decrease value">').concat(this.settings.verticaldown || '−', '</button>\n        </span>\n      </span>\n    ');
       }
     }, {
-      key: "updateVerticalButtonClass",
+      key: 'updateVerticalButtonClass',
       value: function updateVerticalButtonClass(type, className) {
         var verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
         if (verticalWrapper) {
-          var button = verticalWrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+          var button = verticalWrapper.querySelector('[data-touchspin-injected="'.concat(type, '"]'));
           if (button) {
             // Update the vertical-specific class while preserving base classes
             var baseClasses = this.settings.buttonup_class || this.settings.buttondown_class || 'btn btn-outline-secondary';
-            button.className = "".concat(baseClasses, " ").concat(className || 'btn btn-outline-secondary', " bootstrap-touchspin-").concat(type);
+            button.className = ''.concat(baseClasses, ' ').concat(className || 'btn btn-outline-secondary', ' bootstrap-touchspin-').concat(type);
           }
         }
       }
     }, {
-      key: "updateVerticalButtonText",
+      key: 'updateVerticalButtonText',
       value: function updateVerticalButtonText(type, text) {
         var verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
         if (verticalWrapper) {
-          var button = verticalWrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+          var button = verticalWrapper.querySelector('[data-touchspin-injected="'.concat(type, '"]'));
           if (button) {
             button.textContent = text || (type === 'up' ? '+' : '−');
           }
         }
       }
     }, {
-      key: "updateButtonText",
+      key: 'updateButtonText',
       value: function updateButtonText(type, text) {
-        var button = this.wrapper.querySelector("[data-touchspin-injected=\"".concat(type, "\"]"));
+        var button = this.wrapper.querySelector('[data-touchspin-injected="'.concat(type, '"]'));
         if (button) {
           button.textContent = text || (type === 'up' ? '+' : '−');
         }
       }
     }, {
-      key: "updatePrefixClasses",
+      key: 'updatePrefixClasses',
       value: function updatePrefixClasses() {
         var prefixEl = this.prefixEl;
         if (prefixEl) {
           var textEl = prefixEl.querySelector('.input-group-text');
-          textEl.className = "input-group-text ".concat(this.settings.prefix_extraclass || '').trim();
+          textEl.className = 'input-group-text '.concat(this.settings.prefix_extraclass || '').trim();
           // Also apply extra class to the wrapper element for consistency with test expectations
           if (this.settings.prefix_extraclass) {
-            prefixEl.className = "input-group-prepend bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass).trim();
+            prefixEl.className = 'input-group-prepend bootstrap-touchspin-prefix '.concat(this.settings.prefix_extraclass).trim();
           } else {
             prefixEl.className = 'input-group-prepend bootstrap-touchspin-prefix';
           }
         }
       }
     }, {
-      key: "updatePostfixClasses",
+      key: 'updatePostfixClasses',
       value: function updatePostfixClasses() {
         var postfixEl = this.postfixEl;
         if (postfixEl) {
           var textEl = postfixEl.querySelector('.input-group-text');
-          textEl.className = "input-group-text ".concat(this.settings.postfix_extraclass || '').trim();
+          textEl.className = 'input-group-text '.concat(this.settings.postfix_extraclass || '').trim();
           // Also apply extra class to the wrapper element for consistency with test expectations
           if (this.settings.postfix_extraclass) {
-            postfixEl.className = "input-group-append bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass).trim();
+            postfixEl.className = 'input-group-append bootstrap-touchspin-postfix '.concat(this.settings.postfix_extraclass).trim();
           } else {
             postfixEl.className = 'input-group-append bootstrap-touchspin-postfix';
           }

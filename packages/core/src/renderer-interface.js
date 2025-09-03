@@ -54,7 +54,7 @@
  *
  * Required Data Attributes (for core DOM event handling):
  * - `data-touchspin-injected="up"` on increment buttons
- * - `data-touchspin-injected="down"` on decrement buttons  
+ * - `data-touchspin-injected="down"` on decrement buttons
  * - `data-touchspin-injected="input"` on the input element
  * - `data-touchspin-injected="wrapper"` on wrapper element (buildInputGroup)
  * - `data-touchspin-injected="enhanced-wrapper"` on enhanced parent element (buildAdvancedInputGroup)

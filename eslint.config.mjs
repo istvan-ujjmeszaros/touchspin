@@ -15,24 +15,24 @@ export default [
         setInterval: 'readonly',
         clearTimeout: 'readonly',
         clearInterval: 'readonly',
-        
+
         // Node.js globals (for build scripts)
         process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         global: 'readonly',
-        
+
         // jQuery globals
         $: 'readonly',
         jQuery: 'readonly',
-        
+
         // UMD pattern globals
         module: 'writable',
         exports: 'writable',
         define: 'readonly',
         require: 'readonly',
-        
+
         // Build-time globals
         MutationObserver: 'readonly'
       }
@@ -44,13 +44,13 @@ export default [
       'no-trailing-spaces': 'error',
       'quotes': ['error', 'single'],
       'no-undef': 'error',
-      
+
       // Modern JavaScript best practices (warnings for legacy code)
       'prefer-const': 'off', // Allow var in legacy jQuery plugin
       'no-var': 'off',       // Allow var in legacy jQuery plugin
       'arrow-spacing': 'error',
       'object-shorthand': 'off', // Don't enforce for jQuery compatibility
-      
+
       // Relaxed rules for jQuery plugin development
       'no-prototype-builtins': 'off',
       'no-inner-declarations': 'off'
