@@ -231,12 +231,10 @@ test.describe('TouchSpin Callback Tests', () => {
         }
       }, testid);
 
-      // Wait for final callback processing
-      await touchspinHelpers.waitForTimeout(300);
-
       // Should reach max value with proper numeral.js formatting
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
-      expect(finalValue).toBe('$5,500.00');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$5,500.00');
     });
   });
 
@@ -268,7 +266,6 @@ test.describe('TouchSpin Callback Tests', () => {
       // Perform multiple up clicks
       for (let i = 0; i < 3; i++) {
         await touchspinHelpers.touchspinClickUp(page, testid);
-        await touchspinHelpers.waitForTimeout(150);
       }
 
       // Should have multiple change events, all with decorated values (currency format)

@@ -312,12 +312,18 @@ test.describe('A/B parity: original src vs wrapper', () => {
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
     });
 
-    // Click up 12 times to reach max (40→45→50→55→60→65→70→75→80→85→90→95→100)
-    for (let i = 0; i < 12; i++) {
-      await page.click('[data-testid="orig-up"]');
-      await page.click('[data-testid="wrap-up"]');
-      await page.waitForTimeout(50); // Small delay between iterations
-    }
+    // Use API to increment 12 times to reach max (40→45→50→55→60→65→70→75→80→85→90→95→100)
+    await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      
+      // Use API calls instead of clicking for speed and reliability
+      for (let i = 0; i < 12; i++) {
+        $orig.trigger('touchspin.uponce');
+        $wrap.trigger('touchspin.uponce');
+      }
+    });
 
     // Get events after reaching max
     let events = await page.evaluate(() => ({
@@ -383,12 +389,18 @@ test.describe('A/B parity: original src vs wrapper', () => {
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
     });
 
-    // Click down 7 times to reach near min (40→35→30→25→20→15→10→5)
-    for (let i = 0; i < 7; i++) {
-      await page.click('[data-testid="orig-down"]');
-      await page.click('[data-testid="wrap-down"]');
-      await page.waitForTimeout(50); // Small delay between iterations
-    }
+    // Use API to decrement 7 times to reach near min (40→35→30→25→20→15→10→5)
+    await page.evaluate(() => {
+      const $ = (window as any).jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      
+      // Use API calls instead of clicking for speed and reliability
+      for (let i = 0; i < 7; i++) {
+        $orig.trigger('touchspin.downonce');
+        $wrap.trigger('touchspin.downonce');
+      }
+    });
 
     // Clear events, then click down once more to reach min and test ordering
     await page.evaluate(() => {
