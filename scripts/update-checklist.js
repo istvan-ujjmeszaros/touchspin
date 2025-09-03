@@ -100,7 +100,7 @@ function updateChecklist(checklistContent, testData) {
   let updatedFiles = 0;
   let updatedTests = 0;
   
-  // Update overview counters
+  // Update overview counters and failing files summary
   const overviewPattern = /## Test Suite Overview\n([\s\S]*?)(?=\n## )/;
   const overviewMatch = updatedContent.match(overviewPattern);
   
@@ -142,6 +142,23 @@ function updateChecklist(checklistContent, testData) {
         } else {
           overviewSection += `- **Flaky Tests**: ${newFlaky}\n`;
         }
+      }
+      
+      // Parse existing failing files from the checklist
+      const existingFailingFiles = parseExistingFailingFiles(overviewSection);
+      
+      // Update failing files with current test results
+      const updatedFailingFiles = updateFailingFilesList(existingFailingFiles, testData.fileResults);
+      
+      // Generate failing files section
+      const failingFilesSection = generateFailingFilesSection(updatedFailingFiles);
+      
+      // Remove existing failing files section if it exists
+      overviewSection = overviewSection.replace(/\n\n### Files with Failing Tests[\s\S]*?(?=\n\n|$)/, '');
+      
+      // Add updated failing files section
+      if (failingFilesSection) {
+        overviewSection += failingFilesSection;
       }
     }
     
@@ -203,7 +220,70 @@ function updateChecklist(checklistContent, testData) {
   };
 }
 
-async function main() {
+function parseExistingFailingFiles(overviewSection) {
+  const failingFiles = new Map();
+  const failingFilesMatch = overviewSection.match(/### Files with Failing Tests\n([\s\S]*?)(?=\n\n|$)/);
+  
+  if (failingFilesMatch) {
+    const fileLines = failingFilesMatch[1].split('\n').filter(line => line.trim().startsWith('- __tests__/'));
+    
+    for (const line of fileLines) {
+      const fileMatch = line.match(/- __tests__\/(.*?) \((\d+) failing(?:, (\d+) flaky)?\)/);
+      if (fileMatch) {
+        const fileName = fileMatch[1];
+        const failing = parseInt(fileMatch[2]);
+        const flaky = fileMatch[3] ? parseInt(fileMatch[3]) : 0;
+        failingFiles.set(fileName, { fail: failing, flaky });
+      }
+    }
+  }
+  
+  return failingFiles;
+}
+
+function updateFailingFilesList(existingFailingFiles, currentResults) {
+  const updatedFailingFiles = new Map(existingFailingFiles);
+  
+  // Update with current test results
+  for (const [fileName, results] of Object.entries(currentResults)) {
+    const cleanFileName = fileName.replace('__tests__/', '');
+    
+    if (results.fail > 0 || results.flaky > 0) {
+      // File has failures or flaky tests - add/update in the list
+      updatedFailingFiles.set(cleanFileName, {
+        fail: results.fail,
+        flaky: results.flaky
+      });
+    } else if (results.total > 0) {
+      // File was tested and all tests passed - remove from failing list
+      updatedFailingFiles.delete(cleanFileName);
+    }
+    // If file wasn't tested (results.total === 0), keep existing entry
+  }
+  
+  return updatedFailingFiles;
+}
+
+function generateFailingFilesSection(failingFiles) {
+  if (failingFiles.size === 0) {
+    return '';
+  }
+  
+  const sortedFiles = Array.from(failingFiles.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([fileName, results]) => {
+      let description = `${results.fail} failing`;
+      if (results.flaky > 0) {
+        description += `, ${results.flaky} flaky`;
+      }
+      return `- __tests__/${fileName} (${description})`;
+    })
+    .join('\n');
+  
+  return `\n\n### Files with Failing Tests\n${sortedFiles}`;
+}
+
+function main() {
   let resultsData;
   
   // Check if reading from file argument or stdin
@@ -259,7 +339,4 @@ async function main() {
   }
 }
 
-main().catch(error => {
-  console.error('Unexpected error:', error);
-  process.exit(1);
-});
+main();

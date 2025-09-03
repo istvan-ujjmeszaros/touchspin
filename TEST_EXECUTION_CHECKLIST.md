@@ -58,9 +58,15 @@ This approach allows you to:
 - **Total Test Files**: 42
 - **Total Individual Tests**: 287
 - **Files Passing**: 1/42
-- **Tests Passing**: 8/287
+- **Tests Passing**: 2/287
 - **Flaky Tests**: 1
 
+
+### Files with Failing Tests
+- __tests__/buildValidation.test.ts (1 failing)
+## 
+## 
+## 
 ## 
 ## 
 ## Test Files and Individual Tests
@@ -110,7 +116,7 @@ This approach allows you to:
 - [x] should handle missing jQuery gracefully
 
 ### __tests__/aria-sync.test.ts
-- [~] aria attributes update on value change and settings updates
+- [x] aria attributes update on value change and settings updates
 - [x] vertical buttons do not alter change emission semantics
 
 ### __tests__/basicOperations.test.ts
@@ -513,6 +519,10 @@ Track test execution progress over time. Add new entries at the top.
 
 ```
 Date/Time           | Tests | Passing | Failing | Flaky | Notes
+2025-09-03 00:15:18 |     2 |       2 |       0 |     0 | Updated 1 files, 2 tests
+2025-09-03 00:14:25 |     3 |       2 |       1 |     0 | Updated 1 files, 4 tests
+2025-09-03 00:10:44 |     8 |       8 |       0 |     0 | Updated 1 files, 8 tests
+2025-09-03 00:02:58 |     8 |       8 |       0 |     0 | Updated 1 files, 8 tests
 2025-09-03 00:00:06 |     8 |       8 |       0 |     0 | Updated 1 files, 8 tests
 2025-09-02 23:57:12 |   287 |     234 |      52 |     1 | Updated 42 files, 331 tests
 2025-09-02 20:49:45 |   287 |     234 |      52 |     1 | Full test suite run - 76% files passing, main issues in visual tests
