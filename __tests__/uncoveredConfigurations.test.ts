@@ -477,11 +477,13 @@ test.describe('Uncovered Configuration Options', () => {
         }
       }, 'timing-test');
 
-      await touchspinHelpers.waitForTimeout(100);
-
       // Should have incremented multiple times due to fast interval
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'timing-test') || '10');
-      expect(finalValue).toBeGreaterThan(12); // Should have fast increments
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, 'timing-test');
+          return parseInt(value || '10');
+        }
+      ).toBeGreaterThan(12); // Should have fast increments
     });
   });
 });

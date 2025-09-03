@@ -24,10 +24,11 @@ test.describe('Double Initialization and Non-Input Element Tests', () => {
 
     // Navigate again to trigger the HTML script execution with console listener active
     await page.goto('/__tests__/html/index-bs4.html');
-    await touchspinHelpers.waitForTimeout(500);
 
     // Should log "Must be an input." message from HTML initialization
-    expect(consoleMessages.some(msg => msg.includes('Must be an input'))).toBe(true);
+    await expect.poll(
+      () => consoleMessages.some(msg => msg.includes('Must be an input'))
+    ).toBe(true);
 
     // Verify no TouchSpin wrapper was created for the non-input element
     const wrapperExists = await page.evaluate(() => {

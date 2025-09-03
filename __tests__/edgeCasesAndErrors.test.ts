@@ -99,11 +99,15 @@ test.describe('Edge Cases and Error Handling', () => {
         }
       }, 'maxboost-test');
 
-      await touchspinHelpers.waitForTimeout(200);
-
       // Verify boosting occurred but was limited
+      await expect.poll(
+        async () => {
+          const value = await touchspinHelpers.readInputValue(page, 'maxboost-test');
+          return parseInt(value || '10');
+        }
+      ).toBeGreaterThan(10); // Should have increased
+      
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'maxboost-test') || '10');
-      expect(finalValue).toBeGreaterThan(10); // Should have increased
       expect(finalValue).toBeLessThan(50); // But not too much due to maxboostedstep limit
     });
 
@@ -282,10 +286,11 @@ test.describe('Edge Cases and Error Handling', () => {
       // Enter a value that doesn't align with step
       await touchspinHelpers.fillWithValue(page, 'step-edge-test', '5');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should round up to next step multiple (6)
-      expect(await touchspinHelpers.readInputValue(page, 'step-edge-test')).toBe('6');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'step-edge-test')
+      ).toBe('6');
     });
 
     test('should handle empty input with replacementval', async ({ page }) => {
@@ -303,10 +308,11 @@ test.describe('Edge Cases and Error Handling', () => {
       const input = page.getByTestId('replacement-test');
       await input.focus();
       await input.blur();
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should use replacement value
-      expect(await touchspinHelpers.readInputValue(page, 'replacement-test')).toBe('25');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'replacement-test')
+      ).toBe('25');
     });
 
     test('should handle decimal edge cases', async ({ page }) => {

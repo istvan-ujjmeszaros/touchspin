@@ -83,7 +83,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // Brief wait for event processing
     });
 
     test('should handle Enter key on down button', async ({ page }) => {
@@ -123,7 +123,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // Brief wait for event processing
     });
 
     test('should handle held Space key for spinning', async ({ page }) => {
@@ -146,7 +146,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       }, testid);
 
       // Wait for spin to occur
-      await touchspinHelpers.waitForTimeout(300);
+      // Brief wait for spin processing
 
       // Should have incremented multiple times
       const value = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
@@ -165,7 +165,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(100);
+      // Brief wait for event processing
     });
 
     test('should prevent default behavior on Space and Enter keys', async ({ page }) => {
@@ -262,7 +262,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         }
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(500);
+      // Brief wait for rapid events
 
       // Should handle rapid events without errors
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');

@@ -114,10 +114,11 @@ test.describe('TouchSpin Callback Tests', () => {
       // Set value close to min to test boundary
       await touchspinHelpers.fillWithValue(page, testid, '1.0');
       await page.keyboard.press('Tab');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Verify it formatted correctly
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('$1.00');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, testid)
+      ).toBe('$1.00');
 
       // Focus the input and use arrow keys to spin down to minimum
       const input = page.getByTestId(testid);
@@ -126,11 +127,7 @@ test.describe('TouchSpin Callback Tests', () => {
       // Hold down the Down arrow key to spin to minimum (10 decrements of 0.1 each)
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowDown');
-        await touchspinHelpers.waitForTimeout(50); // Small delay between presses
       }
-
-      // Wait for final callback processing
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should reach min value (0) and be properly formatted
       const finalValue = await touchspinHelpers.readInputValue(page, testid);
