@@ -100,3 +100,102 @@ Summary of Notable Behavioral Diff Fixes (observed in tests)
 - Native attribute sync limited to `type="number"` for browser parity.
 - Event ordering matches legacy (min/max events before change at boundary).
 
+
+Hotspots — Deep Dive Pseudo‑code
+
+1) Input Change vs Blur Sanitization
+- Legacy
+  - On blur (jQuery): `_checkValue(true)`
+  - On container focusout (leaving widget): stopSpin(); `_checkValue(true)`
+  - On Enter key in input: `_checkValue(true)`
+  - Native change events propagate unless blur fixes the value afterwards.
+  - Pseudo:
+    - if input.value == '' → replacementval or clear aria; emit change only if display changed.
+    - else if decimals>0 and value=='.' → ignore.
+    - parse, align to step via `_forcestepdivisibility`, clamp to min/max.
+    - If reached min/max exactly, trigger min/max BEFORE changing display when coming from spin paths.
+    - Update display; if changed and mayTriggerChange → `originalinput.trigger('change')`.
+
+- Core
+  - Intercepts native change in capture to prevent wrong “intermediate” values from propagating: `_handleInputChange(e)` stops immediate propagation if it would sanitize.
+  - Performs actual sanitization in `_handleInputBlur(true)` and on Enter; dispatches native change via `_setDisplay()` when value changes.
+  - Pseudo:
+    - on change(capture): if current != sanitized(current) → stopImmediatePropagation();
+    - on blur/Enter: `_checkValue(true)` → setDisplay(sanitized), which dispatches native change if display changed.
+
+2) Boundary Event Ordering (min/max before change)
+- Legacy + Core
+  - In `upOnce()`/`downOnce()`, when next value hits exact boundary, trigger `min|max` BEFORE setting display.
+  - Prevent hold from starting at boundary; stop spin when boundary reached.
+  - Pseudo:
+    - v = current; n = next(dir, v); if at boundary already → emit boundary + stop spin; return.
+    - if n == boundary → emit(boundary); if spinning in that dir → stopSpin(); setDisplay(n, true)
+
+3) Booster Step Escalation & Cap
+- Legacy + Core
+  - stepUnclamped = 2^(floor(spincount/boostat)) * step
+  - if `maxboostedstep` finite and stepUnclamped > cap → step = cap and align value to boosted step grid
+  - Pseudo: boosted = base * 2^k; if cap && boosted > cap → boosted = cap; v = round(v/boosted)*boosted; final step = max(base, boosted)
+
+4) Settings Sanitization and Observer Notifications
+- Core improvement
+  - `sanitizePartialSettings(partial)` pre-merge to avoid transient invalid assignments; `_sanitizeSettings()` post‑merge.
+  - Observer notification based on effective sanitized value changes.
+  - Pseudo: partialSan = sanitize(partial); settings = {...settings, ...partialSan}; fullSanitize(); alignBoundsIfStepChanged(); for each key changed → notify
+
+5) Native Attribute Sync Behavior
+- Core improvement
+  - Sync min/max/step only for `type="number"` inputs; avoid undesired browser rules on text inputs.
+
+6) Mutation Observer
+- Legacy + Core
+  - Observe ['disabled','readonly','min','max','step']; on disabled/readonly toggle → update button disabled; on min/max/step change → resync settings and ARIA.
+Hotspots — Deep Dive Pseudo‑code
+
+1) Input Change vs Blur Sanitization
+- Legacy
+  - On blur (jQuery): `_checkValue(true)`
+  - On container focusout (leaving widget): stopSpin(); `_checkValue(true)`
+  - On Enter key in input: `_checkValue(true)`
+  - Native change events propagate unless blur fixes the value afterwards.
+  - Pseudo:
+    - if input.value == '' → replacementval or clear aria; emit change only if display changed.
+    - else if decimals>0 and value=='.' → ignore.
+    - parse, align to step via `_forcestepdivisibility`, clamp to min/max.
+    - If reached min/max exactly, trigger min/max BEFORE changing display when coming from spin paths.
+    - Update display; if changed and mayTriggerChange → `originalinput.trigger('change')`.
+
+- Core
+  - Intercepts native change in capture to prevent wrong “intermediate” values from propagating: `_handleInputChange(e)` stops immediate propagation if it would sanitize.
+  - Performs actual sanitization in `_handleInputBlur(true)` and on Enter; dispatches native change via `_setDisplay()` when value changes.
+  - Pseudo:
+    - on change(capture): if current != sanitized(current) → stopImmediatePropagation();
+    - on blur/Enter: `_checkValue(true)` → setDisplay(sanitized), which dispatches native change if display changed.
+
+2) Boundary Event Ordering (min/max before change)
+- Legacy + Core
+  - In `upOnce()`/`downOnce()`, when next value hits exact boundary, trigger `min|max` BEFORE setting display.
+  - Prevent hold from starting at boundary; stop spin when boundary reached.
+  - Pseudo:
+    - v = current; n = next(dir, v); if at boundary already → emit boundary + stop spin; return.
+    - if n == boundary → emit(boundary); if spinning in that dir → stopSpin(); setDisplay(n, true)
+
+3) Booster Step Escalation & Cap
+- Legacy + Core
+  - stepUnclamped = 2^(floor(spincount/boostat)) * step
+  - if `maxboostedstep` finite and stepUnclamped > cap → step = cap and align value to boosted step grid
+  - Pseudo: boosted = base * 2^k; if cap && boosted > cap → boosted = cap; v = round(v/boosted)*boosted; final step = max(base, boosted)
+
+4) Settings Sanitization and Observer Notifications
+- Core improvement
+  - `sanitizePartialSettings(partial)` pre-merge to avoid transient invalid assignments; `_sanitizeSettings()` post‑merge.
+  - Observer notification based on effective sanitized value changes.
+  - Pseudo: partialSan = sanitize(partial); settings = {...settings, ...partialSan}; fullSanitize(); alignBoundsIfStepChanged(); for each key changed → notify
+
+5) Native Attribute Sync Behavior
+- Core improvement
+  - Sync min/max/step only for `type="number"` inputs; avoid undesired browser rules on text inputs.
+
+6) Mutation Observer
+- Legacy + Core
+  - Observe ['disabled','readonly','min','max','step']; on disabled/readonly toggle → update button disabled; on min/max/step change → resync settings and ARIA.
