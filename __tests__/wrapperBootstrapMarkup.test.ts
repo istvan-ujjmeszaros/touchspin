@@ -7,7 +7,7 @@ test.describe('Bootstrap Wrapper Markup', () => {
     await page.evaluate(() => {
       const $ = (window as any).jQuery; const $i = $('#bs3-input');
       try { $i.trigger('touchspin.destroy'); } catch {}
-      $i.TouchSpin({ min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
+      $i.TouchSpin({ renderer: (window as any).Bootstrap3Renderer, min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
     });
     const wrapper = page.locator('[data-touchspin-injected="wrapper"]');
     await expect(wrapper).toHaveCount(1);
@@ -17,8 +17,8 @@ test.describe('Bootstrap Wrapper Markup', () => {
     await expect(wrapper.locator('[data-touchspin-injected="prefix"].input-group-addon')).toHaveCount(1);
     await expect(wrapper.locator('[data-touchspin-injected="postfix"].input-group-addon')).toHaveCount(1);
     // Buttons wrapped in .input-group-btn
-    await expect(wrapper.locator('[data-touchspin-injected="down"].input-group-btn')).toHaveCount(1);
-    await expect(wrapper.locator('[data-touchspin-injected="up"].input-group-btn')).toHaveCount(1);
+    await expect(wrapper.locator('.input-group-btn [data-touchspin-injected="down"]')).toHaveCount(1);
+    await expect(wrapper.locator('.input-group-btn [data-touchspin-injected="up"]')).toHaveCount(1);
     // No BS4 wrappers
     await expect(wrapper.locator('.input-group-prepend')).toHaveCount(0);
     await expect(wrapper.locator('.input-group-append')).toHaveCount(0);
@@ -29,7 +29,7 @@ test.describe('Bootstrap Wrapper Markup', () => {
     await page.evaluate(() => {
       const $ = (window as any).jQuery; const $i = $('#bs4-input');
       try { $i.trigger('touchspin.destroy'); } catch {}
-      $i.TouchSpin({ min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
+      $i.TouchSpin({ renderer: (window as any).Bootstrap4Renderer, min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
     });
     const wrapper = page.locator('[data-touchspin-injected="wrapper"]');
     await expect(wrapper).toHaveCount(1);
@@ -52,7 +52,7 @@ test.describe('Bootstrap Wrapper Markup', () => {
     await page.evaluate(() => {
       const $ = (window as any).jQuery; const $i = $('#bs5-input');
       try { $i.trigger('touchspin.destroy'); } catch {}
-      $i.TouchSpin({ min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
+      $i.TouchSpin({ renderer: (window as any).Bootstrap5Renderer, min: 0, max: 100, step: 1, prefix: '$', postfix: 'kg' });
     });
     const wrapper = page.locator('[data-touchspin-injected="wrapper"]');
     await expect(wrapper).toHaveCount(1);

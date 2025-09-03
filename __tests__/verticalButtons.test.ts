@@ -45,9 +45,9 @@ test.describe('Vertical Buttons', () => {
     await touchspinHelpers.touchspinClickUp(page, testid);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
     
-    // Verify prefix/postfix exist
-    const prefix = page.locator('[data-touchspin-injected="prefix"]').first();
-    const postfix = page.locator('[data-touchspin-injected="postfix"]').first();
+    // Verify prefix/postfix exist using specific testids
+    const prefix = page.locator(`[data-testid="${testid}-prefix"]`);
+    const postfix = page.locator(`[data-testid="${testid}-postfix"]`);
     await expect(prefix).toBeVisible();
     await expect(postfix).toBeVisible();
   });

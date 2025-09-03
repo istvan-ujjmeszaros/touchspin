@@ -15,8 +15,8 @@ test.describe('Tailwind advanced container', () => {
 
     // The container should be marked as enhanced and have one up/down button
     await expect(container).toHaveAttribute('data-touchspin-injected', 'wrapper-advanced');
-    await expect(container.locator('.bootstrap-touchspin-down')).toHaveCount(1);
-    await expect(container.locator('.bootstrap-touchspin-up')).toHaveCount(1);
+    await expect(container.locator('.tailwind-btn[data-touchspin-injected="down"]')).toHaveCount(1);
+    await expect(container.locator('.tailwind-btn[data-touchspin-injected="up"]')).toHaveCount(1);
 
     // Prefix/Postfix should be injected when provided in settings
     await expect(container.locator('[data-touchspin-injected="prefix"]')).toHaveCount(1);
@@ -28,8 +28,8 @@ test.describe('Tailwind advanced container', () => {
     await expect(container).toBeVisible();
     await expect(input).toBeVisible();
     await expect(container.locator('[data-touchspin-injected]')).toHaveCount(0);
-    await expect(container.locator('.bootstrap-touchspin-down')).toHaveCount(0);
-    await expect(container.locator('.bootstrap-touchspin-up')).toHaveCount(0);
+    await expect(container.locator('.tailwind-btn[data-touchspin-injected="down"]')).toHaveCount(0);
+    await expect(container.locator('.tailwind-btn[data-touchspin-injected="up"]')).toHaveCount(0);
   });
 });
 
