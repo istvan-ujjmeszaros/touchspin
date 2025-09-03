@@ -31,10 +31,11 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Click the up button on empty input
       await touchspinHelpers.touchspinClickUp(page, 'firstclick-test');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should use firstclickvalueifempty value
-      expect(await touchspinHelpers.readInputValue(page, 'firstclick-test')).toBe('42');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'firstclick-test')
+      ).toBe('42');
     });
 
     test('should fall back to midpoint when firstclickvalueifempty is null', async ({ page }) => {
@@ -51,10 +52,11 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Click the up button on empty input
       await touchspinHelpers.touchspinClickUp(page, 'midpoint-test');
-      await touchspinHelpers.waitForTimeout(200);
 
       // Should use midpoint between min and max (10+30)/2 = 20
-      expect(await touchspinHelpers.readInputValue(page, 'midpoint-test')).toBe('20');
+      await expect.poll(
+        async () => touchspinHelpers.readInputValue(page, 'midpoint-test')
+      ).toBe('20');
     });
   });
 
