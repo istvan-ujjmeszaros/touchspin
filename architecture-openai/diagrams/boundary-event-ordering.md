@@ -3,17 +3,17 @@ sequenceDiagram
   autonumber
   participant I as Input
   participant C as Core
-  participant $ as jQuery Wrapper
+  participant J as jQuery Wrapper
 
   Note over I,C: Increment to exact max boundary
   I->>C: upOnce()
   C->>C: compute next respecting step/decimals
   alt next == max
-    C-->>$: emit max
-    C->>I: setDisplay to max; emit native change
+    C-->>J: emit max
+    C->>I: setDisplay to max and emit native change
     opt holding
       C->>C: stopSpin()
-      C-->>$: emit stopupspin; emit stopspin
+      C-->>J: emit stopupspin and emit stopspin
     end
   else next < max
     C->>I: setDisplay(next) + native change
@@ -23,11 +23,11 @@ sequenceDiagram
   I->>C: downOnce()
   C->>C: compute next
   alt next == min
-    C-->>$: emit min
-    C->>I: setDisplay to min; emit native change
+    C-->>J: emit min
+    C->>I: setDisplay to min and emit native change
     opt holding
       C->>C: stopSpin()
-      C-->>$: emit stopdownspin; emit stopspin
+      C-->>J: emit stopdownspin and emit stopspin
     end
   else next > min
     C->>I: setDisplay(next) + native change

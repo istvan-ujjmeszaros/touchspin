@@ -11,6 +11,6 @@ sequenceDiagram
   end
   I->>C: blur
   C->>C: _checkValue(true)
-  C->>I: setDisplay sanitized; dispatch native change if display changed
+  C->>I: setDisplay sanitized and dispatch native change if display changed
 ```
 

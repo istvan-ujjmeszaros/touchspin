@@ -13,7 +13,7 @@ classDiagram
     +initDOMEventHandling()
     +destroy()
     +on(event, handler)
-    +off(event, handler?)
+    +off(event, handler)
     +observeSetting(name, cb)
     +attachUpEvents(el)
     +attachDownEvents(el)
@@ -21,13 +21,14 @@ classDiagram
 
   class JQueryWrapper {
     +installJqueryTouchSpin(jQuery)
-    +TouchSpin(opts|command) via jQuery
+    +TouchSpin(args)
   }
 
-  class Renderer <<abstract>> {
+  class Renderer {
     +init()
     +teardown()
   }
+  <<abstract>> Renderer
   class Bootstrap3Renderer
   class Bootstrap4Renderer
   class Bootstrap5Renderer
@@ -35,9 +36,9 @@ classDiagram
 
   JQueryWrapper --> TouchSpinCore : forwards commands
   JQueryWrapper ..> TouchSpinCore : bridges events
-  TouchSpinCore <|.. Bootstrap3Renderer
-  TouchSpinCore <|.. Bootstrap4Renderer
-  TouchSpinCore <|.. Bootstrap5Renderer
-  TouchSpinCore <|.. TailwindRenderer
+  TouchSpinCore --> Renderer : uses
+  Renderer <|-- Bootstrap3Renderer
+  Renderer <|-- Bootstrap4Renderer
+  Renderer <|-- Bootstrap5Renderer
+  Renderer <|-- TailwindRenderer
 ```
-

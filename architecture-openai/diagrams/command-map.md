@@ -8,8 +8,8 @@ flowchart TD
     C5[startdownspin]
     C6[stopspin]
     C7[updatesettings]
-    C8[get|getvalue]
-    C9[set|setvalue]
+    C8["get|getvalue"]
+    C9["set|setvalue"]
   end
 
   subgraph Core API
@@ -34,6 +34,4 @@ flowchart TD
   C8 --> A8
   C9 --> A9
 
-  note right of C8: returns number or raw value if no instance
 ```
-

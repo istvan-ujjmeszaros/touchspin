@@ -16,21 +16,22 @@ classDiagram
     +initDOMEventHandling()
     +destroy()
     +on(event, handler)
-    +off(event, handler?)
+    +off(event, handler)
     +observeSetting(name, cb)
     +attachUpEvents(el)
     +attachDownEvents(el)
   }
 
   class JQueryWrapper {
-    +installJqueryTouchSpin($)
-    +$(...).TouchSpin(opts|command)
+    +installJqueryTouchSpin(jQuery)
+    +TouchSpin(args)
   }
 
-  class Renderer <<abstract>> {
+  class Renderer {
     +init()
     +teardown()
   }
+  <<abstract>> Renderer
   class Bootstrap3Renderer
   class Bootstrap4Renderer
   class Bootstrap5Renderer
@@ -38,28 +39,29 @@ classDiagram
 
   JQueryWrapper --> TouchSpinCore : forwards commands
   JQueryWrapper ..> TouchSpinCore : bridges events
-  TouchSpinCore <|.. Bootstrap3Renderer
-  TouchSpinCore <|.. Bootstrap4Renderer
-  TouchSpinCore <|.. Bootstrap5Renderer
-  TouchSpinCore <|.. TailwindRenderer
+  TouchSpinCore --> Renderer : uses
+  Renderer <|-- Bootstrap3Renderer
+  Renderer <|-- Bootstrap4Renderer
+  Renderer <|-- Bootstrap5Renderer
+  Renderer <|-- TailwindRenderer
 ```
 
 ## Init Sequence (Wrapper + Core + Renderer)
 ```mermaid
 sequenceDiagram
   participant U as User Code
-  participant $ as jQuery Wrapper
+  participant J as jQuery Wrapper
   participant C as Core
   participant R as Renderer
 
-  U->>$: $(input).TouchSpin(options)
-  $->>$: create or reuse instance
-  $->>C: TouchSpin(input, options)
+  U->>J: $(input).TouchSpin(options)
+  J->>J: create or reuse instance
+  J->>C: TouchSpin(input, options)
   C->>R: new Renderer(input, settings, core)
   R->>R: init() build DOM (+ testids)
   R->>C: attachUpEvents/attachDownEvents
   C->>C: initDOMEventHandling (input listeners, observers)
-  C-->>$: public API
+  C-->>J: public API
 ```
 
 ## Spin Sequence (Hold Up)
@@ -82,14 +84,13 @@ sequenceDiagram
 ## Destroy Sequence
 ```mermaid
 sequenceDiagram
-  participant $ as jQuery Wrapper
+  participant J as jQuery Wrapper
   participant C as Core
   participant R as Renderer
 
-  $->>C: destroy()
+  J->>C: destroy()
   C->>R: teardown() (remove injected elements)
   C->>C: detach input listeners, stop timers
   C->>C: run registered teardowns (wrapper cleanup)
   C->>C: delete input._touchSpinCore
 ```
-

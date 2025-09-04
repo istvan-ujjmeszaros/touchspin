@@ -16,15 +16,13 @@ flowchart TB
   classDef postfix fill:#dff,stroke:#4cc
 
   %% Data roles & testids
-  Tailwind Wrapper ---|data-touchspin-injected="wrapper"\n data-testid="{id}-wrapper"| Tailwind Wrapper
-  P1 ---|data-touchspin-injected="prefix"\n data-testid="{id}-prefix"| P1
-  P2 ---|data-touchspin-injected="postfix"\n data-testid="{id}-postfix"| P2
-  U1 ---|data-touchspin-injected="up"\n data-testid="{id}-up"| U1
-  D1 ---|data-touchspin-injected="down"\n data-testid="{id}-down"| D1
+  P1 ---|data-touchspin-injected=prefix and data-testid={id}-prefix| P1
+  P2 ---|data-touchspin-injected=postfix and data-testid={id}-postfix| P2
+  U1 ---|data-touchspin-injected=up and data-testid={id}-up| U1
+  D1 ---|data-touchspin-injected=down and data-testid={id}-down| D1
 
   P1 -.-> I
   D1 -.-> I
   U1 -.-> I
   P2 -.-> I
 ```
-
