@@ -30,12 +30,11 @@ This documentation helps developers understand:
 - **[reference/common-patterns.md](reference/common-patterns.md)** - Implementation patterns and examples
 
 ### 📈 Visual Documentation
-- **[diagrams/architecture-overview.mmd](diagrams/architecture-overview.mmd)** - High-level architecture comparison
-- **[diagrams/data-flow.mmd](diagrams/data-flow.mmd)** - Data and event flow patterns
-- **[diagrams/initialization-sequence.mmd](diagrams/initialization-sequence.mmd)** - Detailed initialization flow
-- **[diagrams/event-lifecycle.mmd](diagrams/event-lifecycle.mmd)** - Event emission timeline
-- **[diagrams/state-machine.mmd](diagrams/state-machine.mmd)** - Spinner state transitions
-- **[diagrams/boundary-handling.mmd](diagrams/boundary-handling.mmd)** - Boundary logic evolution
+- **[diagrams/architecture-overview.md](diagrams/architecture-overview.md)** - High-level architecture comparison
+- **[diagrams/data-flow.md](diagrams/data-flow.md)** - Data and event flow patterns
+- **[diagrams/initialization-sequence.md](diagrams/initialization-sequence.md)** - Detailed initialization flow
+- **[diagrams/event-lifecycle.md](diagrams/event-lifecycle.md)** - Event emission timeline
+- **[diagrams/boundary-handling.md](diagrams/boundary-handling.md)** - Boundary logic evolution
 
 ### 💻 Implementation Details
 - **[pseudo-code/legacy-implementation.md](pseudo-code/legacy-implementation.md)** - TRUE legacy (873 lines)

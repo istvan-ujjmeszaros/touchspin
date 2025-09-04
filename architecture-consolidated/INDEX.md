@@ -42,16 +42,15 @@ Fast navigation to all architectural documentation. Use this as a quick lookup t
 ### High-Level Architecture
 | Diagram | Shows | Best For |
 |---------|--------|----------|
-| [diagrams/architecture-overview.mmd](diagrams/architecture-overview.mmd) | Component relationships across stages | Understanding overall structure |
-| [diagrams/data-flow.mmd](diagrams/data-flow.mmd) | Data and event flow patterns | Tracing data transformations |
+| [diagrams/architecture-overview.md](diagrams/architecture-overview.md) | Component relationships across stages | Understanding overall structure |
+| [diagrams/data-flow.md](diagrams/data-flow.md) | Data and event flow patterns | Tracing data transformations |
 
 ### Detailed Flows
 | Diagram | Shows | Best For |
 |---------|--------|----------|
-| [diagrams/initialization-sequence.mmd](diagrams/initialization-sequence.mmd) | Step-by-step initialization | Debugging startup issues |
-| [diagrams/event-lifecycle.mmd](diagrams/event-lifecycle.mmd) | Event emission timeline | Understanding event order |
-| [diagrams/boundary-handling.mmd](diagrams/boundary-handling.mmd) | Min/max boundary logic evolution | Debugging boundary behavior |
-| [diagrams/state-machine.mmd](diagrams/state-machine.mmd) | Spinner state transitions | Understanding spin behavior |
+| [diagrams/initialization-sequence.md](diagrams/initialization-sequence.md) | Step-by-step initialization | Debugging startup issues |
+| [diagrams/event-lifecycle.md](diagrams/event-lifecycle.md) | Event emission timeline | Understanding event order |
+| [diagrams/boundary-handling.md](diagrams/boundary-handling.md) | Min/max boundary logic evolution | Debugging boundary behavior |
 
 ## 💻 Implementation Details (Pseudo-code)
 
@@ -80,13 +79,12 @@ Fast navigation to all architectural documentation. Use this as a quick lookup t
 
 ### Debugging & Testing
 - [reference/test-traceability.md](reference/test-traceability.md) - Test coverage
-- [diagrams/event-lifecycle.mmd](diagrams/event-lifecycle.mmd) - Event debugging
-- [diagrams/initialization-sequence.mmd](diagrams/initialization-sequence.mmd) - Startup debugging
-- [diagrams/state-machine.mmd](diagrams/state-machine.mmd) - State debugging
+- [diagrams/event-lifecycle.md](diagrams/event-lifecycle.md) - Event debugging
+- [diagrams/initialization-sequence.md](diagrams/initialization-sequence.md) - Startup debugging
 
 ### Architecture Understanding
 - [three-stage-evolution.md](three-stage-evolution.md) - Complete evolution story
-- [diagrams/architecture-overview.mmd](diagrams/architecture-overview.mmd) - Visual architecture
+- [diagrams/architecture-overview.md](diagrams/architecture-overview.md) - Visual architecture
 - [analysis/architecture-model.json](analysis/architecture-model.json) - Structured data model
 
 ## 📝 Document Types Legend
@@ -107,18 +105,18 @@ Fast navigation to all architectural documentation. Use this as a quick lookup t
 
 ### "I'm implementing a custom renderer"  
 1. [reference/renderer-checklist.md](reference/renderer-checklist.md) - Requirements
-2. [diagrams/architecture-overview.mmd](diagrams/architecture-overview.mmd) - Architecture
+2. [diagrams/architecture-overview.md](diagrams/architecture-overview.md) - Architecture
 3. [pseudo-code/modern-implementation.md](pseudo-code/modern-implementation.md) - Interface details
 4. [reference/common-patterns.md](reference/common-patterns.md) - Examples
 
 ### "I'm debugging an issue"
 1. [reference/event-matrix.md](reference/event-matrix.md) - Event behavior
-2. [diagrams/event-lifecycle.mmd](diagrams/event-lifecycle.mmd) - Event timing
-3. [diagrams/state-machine.mmd](diagrams/state-machine.mmd) - State behavior
+2. [diagrams/event-lifecycle.md](diagrams/event-lifecycle.md) - Event timing
+3. [diagrams/boundary-handling.md](diagrams/boundary-handling.md) - Boundary behavior
 4. [reference/test-traceability.md](reference/test-traceability.md) - Test coverage
 
 ### "I want to understand the architecture"
 1. [README.md](README.md) - Overview
 2. [three-stage-evolution.md](three-stage-evolution.md) - Evolution story  
-3. [diagrams/architecture-overview.mmd](diagrams/architecture-overview.mmd) - Visual structure
+3. [diagrams/architecture-overview.md](diagrams/architecture-overview.md) - Visual structure
 4. [analysis/method-comparison.md](analysis/method-comparison.md) - Detailed changes
