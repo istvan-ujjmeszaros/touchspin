@@ -26,8 +26,7 @@ flowchart TB
   P2 -.-> I
 
   %% Wrapper
-  Bootstrap Input Group:::wrap
+  %% Wrapper is the input-group container
 
-  classDef wrap fill:#f8f8f8,stroke:#aaa,stroke-dasharray: 5 5
-```
+  ```
 
