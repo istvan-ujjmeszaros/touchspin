@@ -15,11 +15,7 @@ flowchart TB
   classDef prefix fill:#ffd,stroke:#cc4
   classDef postfix fill:#dff,stroke:#4cc
 
-  %% Data roles & testids
-  P1 ---|data-touchspin-injected=prefix and data-testid={id}-prefix| P1
-  P2 ---|data-touchspin-injected=postfix and data-testid={id}-postfix| P2
-  U1 ---|data-touchspin-injected=up and data-testid={id}-up| U1
-  D1 ---|data-touchspin-injected=down and data-testid={id}-down| D1
+  %% Data roles & testids added: prefix, postfix, up, down with {id}-* testids
 
   P1 -.-> I
   D1 -.-> I

@@ -6,10 +6,7 @@ flowchart LR
   B --> U[Up button]
   B --> D[Down button]
   B --> W[Wrapper testid: {input}-wrapper]
-  U -->|data-testid {input}-up| U
-  D -->|data-testid {input}-down| D
-  P1 -->|data-testid {input}-prefix| P1
-  P2 -->|data-testid {input}-postfix| P2
+  %% testids added automatically: {input}-up, {input}-down, {input}-prefix, {input}-postfix
   U --> AE[core.attachUpEvents(U)]
   D --> AD[core.attachDownEvents(D)]
   subgraph Reactive
