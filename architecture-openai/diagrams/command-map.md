@@ -13,15 +13,15 @@ flowchart TD
   end
 
   subgraph Core API
-    A1[destroy()]
-    A2[upOnce()]
-    A3[downOnce()]
-    A4[startUpSpin()]
-    A5[startDownSpin()]
-    A6[stopSpin()]
-    A7[updateSettings(partial)]
-    A8[getValue()]
-    A9[setValue(v)]
+    A1["destroy()"]
+    A2["upOnce()"]
+    A3["downOnce()"]
+    A4["startUpSpin()"]
+    A5["startDownSpin()"]
+    A6["stopSpin()"]
+    A7["updateSettings(partial)"]
+    A8["getValue()"]
+    A9["setValue(v)"]
   end
 
   C1 --> A1
