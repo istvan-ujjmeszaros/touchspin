@@ -1,7 +1,7 @@
 ```mermaid
 flowchart LR
   %% High-level call graph (selected paths)
-  Start[TouchSpin(input, opts)] --> R[renderer.init()]
+  Start["TouchSpin(input, opts)"] --> R["renderer.init()"]
   R --> H[initDOMEventHandling]
   H --> KL[keydown/keyup/wheel]
   H --> CH[change capture]

@@ -1,23 +1,22 @@
 ```mermaid
 flowchart LR
   subgraph User
-    U1[$(input).TouchSpin(opts)]
-    U2[trigger('touchspin.*')]
+    U1[jQuery TouchSpin call]
+    U2[trigger touchspin events]
     U3[native interaction]
   end
 
   subgraph Wrapper
-    W1[parse opts/commands]
-    W2[bridge core events -> jQuery]
+    W1[parse options or commands]
+    W2[bridge core events to jQuery]
   end
 
   subgraph Core
-    C1[TouchSpin(input,opts)]
-    C2[Value pipeline<br/>before->parse->forcestep->decimals->after]
-    C3[Spin logic<br/>start/stop/upOnce/downOnce]
-    C4[Settings
-        sanitize/align/notify]
-    C5[ARIA + Native attrs]
+    C1[Core TouchSpin]
+    C2[Value pipeline: before → parse → step → decimals → after]
+    C3[Spin logic: start/stop/upOnce/downOnce]
+    C4[Settings: sanitize, align, notify]
+    C5[ARIA and native attributes]
   end
 
   subgraph Renderer
