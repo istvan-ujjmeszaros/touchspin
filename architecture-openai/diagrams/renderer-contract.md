@@ -13,9 +13,8 @@ flowchart LR
   U --> AE[core.attachUpEvents(U)]
   D --> AD[core.attachDownEvents(D)]
   subgraph Reactive
-    O1[core.observeSetting('prefix', cb)]
-    O2[core.observeSetting('postfix', cb)]
-    O3[core.observeSetting('button*', cb)]
+    O1["observeSetting prefix"]
+    O2["observeSetting postfix"]
+    O3["observeSetting button*"]
   end
 ```
-

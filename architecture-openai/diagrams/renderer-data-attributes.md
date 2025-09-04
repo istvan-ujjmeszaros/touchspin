@@ -1,6 +1,6 @@
 ```mermaid
 flowchart LR
-  I[(input[data-testid="id"]) ] --> W[wrapper div]
+  I["input data-testid = id"] --> W[wrapper div]
   W --> U[button up]
   W --> D[button down]
   W --> P1[prefix]
@@ -18,4 +18,3 @@ flowchart LR
   P1 ---|data-testid="id-prefix"| P1
   P2 ---|data-testid="id-postfix"| P2
 ```
-

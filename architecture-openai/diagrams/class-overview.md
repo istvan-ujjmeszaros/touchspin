@@ -20,8 +20,8 @@ classDiagram
   }
 
   class JQueryWrapper {
-    +installJqueryTouchSpin($)
-    +$(...).TouchSpin(opts|command)
+    +installJqueryTouchSpin(jQuery)
+    +TouchSpin(opts|command) via jQuery
   }
 
   class Renderer <<abstract>> {

@@ -1,6 +1,6 @@
 ```mermaid
 flowchart TD
-  A[raw input value (string)] --> B[callback_before_calculation]
+  A["raw input value (string)"] --> B[callback_before_calculation]
   B --> C[parseFloat]
   C -->|NaN| D[empty / replacementval]
   C -->|number| E[forcestepdivisibility]
@@ -9,4 +9,3 @@ flowchart TD
   G --> H[display value]
   D --> H
 ```
-

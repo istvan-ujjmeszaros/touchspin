@@ -3,7 +3,7 @@ sequenceDiagram
   participant I as Input
   participant C as Core
 
-  I->>C: change (capture)
+  I->>C: change capture
   alt would sanitize
     C->>C: stopImmediatePropagation()
   else
@@ -11,6 +11,6 @@ sequenceDiagram
   end
   I->>C: blur
   C->>C: _checkValue(true)
-  C->>I: setDisplay(sanitized) + dispatch native change if display changed
+  C->>I: setDisplay sanitized; dispatch native change if display changed
 ```
 

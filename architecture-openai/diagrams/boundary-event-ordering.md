@@ -7,13 +7,13 @@ sequenceDiagram
 
   Note over I,C: Increment to exact max boundary
   I->>C: upOnce()
-  C->>C: compute next (respect step/decimals)
+  C->>C: compute next respecting step/decimals
   alt next == max
-    C-->>$: emit('max')
-    C->>I: setDisplay(max) + native change
+    C-->>$: emit max
+    C->>I: setDisplay to max; emit native change
     opt holding
       C->>C: stopSpin()
-      C-->>$: emit('stopupspin'), emit('stopspin')
+      C-->>$: emit stopupspin; emit stopspin
     end
   else next < max
     C->>I: setDisplay(next) + native change
@@ -23,11 +23,11 @@ sequenceDiagram
   I->>C: downOnce()
   C->>C: compute next
   alt next == min
-    C-->>$: emit('min')
-    C->>I: setDisplay(min) + native change
+    C-->>$: emit min
+    C->>I: setDisplay to min; emit native change
     opt holding
       C->>C: stopSpin()
-      C-->>$: emit('stopdownspin'), emit('stopspin')
+      C-->>$: emit stopdownspin; emit stopspin
     end
   else next > min
     C->>I: setDisplay(next) + native change
