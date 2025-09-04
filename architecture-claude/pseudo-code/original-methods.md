@@ -1,32 +1,23 @@
 # Original TouchSpin Implementation - Pseudo Code Analysis
 
-## File: `src/jquery.bootstrap-touchspin.js`
+## File: `tmp/jquery.bootstrap-touchspin.legacy.js`
 
-This is the original monolithic jQuery plugin implementation. All functionality is contained within a single file with a jQuery plugin structure.
+This is the true original TouchSpin implementation (873 lines) - a simple jQuery plugin with hardcoded Bootstrap markup and no renderer system. This is the version that existed before the architectural modernization.
 
 ## Main Plugin Structure
 
 ```pseudocode
-FUNCTION $.fn.TouchSpin(options, arg):
-    // Command API handling
-    IF typeof options === 'string':
-        cmd = options.toLowerCase()
-        FOR each selected element:
-            api = element.data('touchspinInternal')
-            SWITCH cmd:
-                CASE 'destroy': api.destroy()
-                CASE 'uponce': api.upOnce()  
-                CASE 'downonce': api.downOnce()
-                CASE 'startupspin': api.startUpSpin()
-                CASE 'startdownspin': api.startDownSpin()
-                CASE 'stopspin': api.stopSpin()
-                CASE 'updatesettings': api.updateSettings(arg)
-                CASE 'getvalue'/'get': return api.getValue()
-                CASE 'setvalue'/'set': api.setValue(arg)
+FUNCTION $.fn.TouchSpin(options):
+    // Legacy version has NO command API - only initialization
+    // Control is achieved through callable events like:
+    // $('#input').trigger('touchspin.uponce')
     
-    // Initialization
     FOR each selected input element:
-        initialize TouchSpin instance
+        IF already initialized: return (skip)
+        INCREMENT _currentSpinnerId (global counter)
+        SET spinnerid data attribute
+        INITIALIZE TouchSpin instance with hardcoded Bootstrap markup
+        RETURN jQuery collection (chainable)
 ```
 
 ## Core Internal Methods
@@ -35,139 +26,109 @@ FUNCTION $.fn.TouchSpin(options, arg):
 
 ```pseudocode
 FUNCTION init():
-    IF already initialized:
-        destroy current instance
+    IF already initialized: return (skip duplicate init)
     
-    SET alreadyinitialized flag
-    VALIDATE input element
+    SET alreadyinitialized flag = true
+    INCREMENT _currentSpinnerId (global counter) 
+    SET spinnerid data attribute
+    VALIDATE input element (must be <input>)
     CALL _initSettings()
-    CALL _initRenderer()  
-    CALL _setInitval()
+    CALL _setInitval() 
     CALL _checkValue()
-    CALL _buildHtml()
+    CALL _buildHtml() // Direct Bootstrap HTML construction
     CALL _initElements()
-    CALL _initAriaAttributes()
     CALL _updateButtonDisabledState()
     CALL _hideEmptyPrefixPostfix()
-    CALL _syncNativeAttributes()
-    CALL _setupMutationObservers()
     CALL _bindEvents()
-    CALL _bindEventsInterface()
+    CALL _bindEventsInterface() // Callable events only
     
-    // Expose internal API
-    SET element.data('touchspinInternal') = {
-        upOnce, downOnce, startUpSpin, startDownSpin,
-        stopSpin, updateSettings, destroy, getValue, setValue
-    }
+    // NO internal API exposure - control via callable events only
 ```
 
 ```pseudocode
 FUNCTION _initSettings():
-    MERGE defaults + data attributes + options
-    NORMALIZE step (guard against invalid values)
-    NORMALIZE min/max to numbers or null
-    NORMALIZE decimals to non-negative integer  
-    NORMALIZE timing options
-    ALIGN min/max to step boundaries IF step != 1
-```
-
-```pseudocode
-FUNCTION _initRenderer():
-    IF custom renderer provided:
-        USE settings.renderer
-    ELSE:
-        GET global RendererFactory
-        CREATE temp renderer for framework defaults
-        MERGE renderer defaults with settings
-        CREATE final renderer instance
+    MERGE defaults + data attributes + options via $.extend()
+    // Legacy: Basic assignment with hardcoded Bootstrap classes
+    // Button classes: 'btn btn-primary' (hardcoded defaults)
+    // No complex validation or renderer integration
+    // Simple object merging without sanitization
 ```
 
 ### Value Management Methods
 
 ```pseudocode
-FUNCTION getValue():
-    raw = input.value OR ''
-    IF raw === '': return NaN
-    num = parseFloat(callback_before_calculation(raw))
-    RETURN isFinite(num) ? num : NaN
-```
-
-```pseudocode
-FUNCTION setValue(value):
-    IF disabled OR readonly: return
-    CALL stopSpin()
-    parsed = Number(value)
-    IF not finite: return
-    
-    adjusted = _forcestepdivisibility(parsed)
-    CLAMP adjusted to min/max bounds
-    prev = current input value
-    next = _setDisplay(adjusted)
-    IF prev !== next: trigger 'change' event
-```
-
-```pseudocode
-FUNCTION _checkValue(mayTriggerChange):
-    prevDisplay = input.value
-    val = callback_before_calculation(input.value)
+FUNCTION _checkValue():
+    // Legacy: Much simpler than later versions (20 lines vs 60+ lines)
+    val = callback_before_calculation(input.val())
     
     IF val === '':
         IF replacementval !== '':
-            SET input.value = replacementval
-        UPDATE aria attributes
-        IF mayTriggerChange AND display changed:
-            TRIGGER change event
+            SET input.val(replacementval)
+            TRIGGER 'change'
         return
-    
+        
     IF decimals > 0 AND val === '.': return
     
     parsedval = parseFloat(val)
     IF isNaN(parsedval):
-        parsedval = parseFloat(replacementval) OR 0
+        parsedval = replacementval OR 0
     
-    returnval = _forcestepdivisibility(parsedval)
+    returnval = _forcestepdivisibility(parsedval)  
     CLAMP returnval to min/max bounds
     
-    newValue = _setDisplay(parseFloat(returnval))
-    IF mayTriggerChange AND display changed:
-        TRIGGER change event
+    SET input.val(callback_after_calculation(formatted))
 ```
 
 ### Spin Operation Methods
 
 ```pseudocode
 FUNCTION upOnce():
-    IF disabled OR readonly: return
+    // Legacy: Direct disabled check with jQuery selector
+    IF input is ':disabled,[readonly]': return
     
     CALL _checkValue()
-    prevDisplay = input.value
-    value = parseFloat(callback_before_calculation(input.value))
-    value = _nextValue('up', value)
+    value = parseFloat(callback_before_calculation(elements.input.val()))
+    initvalue = value // Store for change detection
     
-    IF max !== null AND value === max:
+    IF isNaN(value):
+        value = valueIfIsNaN()
+    ELSE:
+        boostedstep = _getBoostedStep() // Inline calculation, no _nextValue helper
+        value = value + boostedstep
+    
+    // Legacy: Uses >= instead of === for boundary check
+    IF max !== null AND value >= max:
+        value = max
         TRIGGER 'touchspin.on.max'
         CALL stopSpin()
     
-    nextDisplay = _setDisplay(value)
-    IF prevDisplay !== nextDisplay:
+    // Legacy: Direct DOM manipulation, no _setDisplay helper
+    SET elements.input.val(callback_after_calculation(formatted))
+    IF initvalue !== value:
         TRIGGER 'change'
 ```
 
 ```pseudocode
 FUNCTION downOnce():
-    IF disabled OR readonly: return
+    IF input is ':disabled,[readonly]': return
     
     CALL _checkValue()
-    prevDisplay = input.value  
-    value = parseFloat(callback_before_calculation(input.value))
-    value = _nextValue('down', value)
+    value = parseFloat(callback_before_calculation(elements.input.val()))
+    initvalue = value
     
-    IF min !== null AND value === min:
+    IF isNaN(value):
+        value = valueIfIsNaN()
+    ELSE:
+        boostedstep = _getBoostedStep()
+        value = value - boostedstep // Inline calculation
+    
+    IF min !== null AND value <= min:
+        value = min
         TRIGGER 'touchspin.on.min'
         CALL stopSpin()
     
-    nextDisplay = _setDisplay(value)
-    IF prevDisplay !== nextDisplay:
+    SET elements.input.val(callback_after_calculation(formatted))
+    IF initvalue !== value:
         TRIGGER 'change'
 ```
 
@@ -218,65 +179,104 @@ FUNCTION stopSpin():
 
 ```pseudocode
 FUNCTION _buildHtml():
-    initval = input.value
-    parentelement = input parent
+    // Legacy: Direct HTML template string construction
+    initval = input.val()
+    parentelement = input.parent()
     
     IF initval !== '':
-        raw = callback_before_calculation(initval)
-        num = parseFloat(raw)
-        IF finite: initval = callback_after_calculation(formatted)
-        ELSE: initval = callback_after_calculation(raw)
+        initval = callback_before_calculation(initval)
+        initval = callback_after_calculation(formatted)
     
     SET input data 'initvalue' = initval
-    SET input value = initval
+    SET input value = initval  
     ADD 'form-control' class to input
     
+    // Legacy: Hardcoded HTML template strings
+    verticalbuttons_html = `<span class="input-group-addon bootstrap-touchspin-vertical-button-wrapper">
+        <span class="input-group-btn-vertical">
+            <button class="${settings.buttondown_class} bootstrap-touchspin-up">${settings.verticalup}</button>
+            <button class="${settings.buttonup_class} bootstrap-touchspin-down">${settings.verticaldown}</button>
+        </span>
+    </span>`
+    
     IF parent has 'input-group' class:
-        container = renderer.buildAdvancedInputGroup(parent)
+        CALL _advanceInputGroup(parent) // Inject buttons/prefix/postfix into existing group
     ELSE:
-        container = renderer.buildInputGroup()
+        CALL _buildInputGroup() // Create new input-group wrapper
 ```
 
 ```pseudocode
-FUNCTION _initElements():
-    elements = renderer.initElements(container)
-    CACHE element handles (containerEl, _upEl, _downEl)
+FUNCTION _advanceInputGroup(parentelement):
+    // Legacy: Complex template-based DOM manipulation
+    ADD 'bootstrap-touchspin' class to parent
+    
+    prefixhtml = `<span class="input-group-addon bootstrap-touchspin-prefix">
+        <span class="input-group-text">${settings.prefix}</span>
+    </span>`
+    
+    downhtml = `<span class="input-group-btn">
+        <button class="${settings.buttondown_class} bootstrap-touchspin-down">${settings.buttondown_txt}</button>
+    </span>`
+    
+    uphtml = `<span class="input-group-btn">  
+        <button class="${settings.buttonup_class} bootstrap-touchspin-up">${settings.buttonup_txt}</button>
+    </span>`
+    
+    // Insert HTML strings using jQuery DOM manipulation
+    INSERT prefixhtml before input
+    INSERT downhtml before input  
+    INSERT uphtml after input
+    INSERT postfixhtml after input
+```
+
+```pseudocode
+FUNCTION _buildInputGroup():
+    // Legacy: Create complete input-group wrapper with hardcoded Bootstrap classes
+    html = `<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+        <span class="input-group-addon bootstrap-touchspin-prefix">
+            <span class="input-group-text">${settings.prefix}</span>
+        </span>
+        // ... buttons and postfix with hardcoded class names
+    </div>`
+    
+    WRAP input with generated HTML
+    container = new wrapper element
 ```
 
 ### Event Handling Methods
 
 ```pseudocode
 FUNCTION _bindEvents():
-    CACHE DOM element references
+    // Legacy: Simple jQuery event binding on buttons and input
     
-    // Input keyboard events
-    BIND input 'keydown': handle arrow up/down, enter
-    BIND input 'keyup': stop spin on arrow up/down release
-    BIND input 'blur': sanitize value
+    // Button click events
+    BIND up button 'mousedown touchstart': upOnce() + startUpSpin()
+    BIND down button 'mousedown touchstart': downOnce() + startDownSpin()
+    BIND buttons 'mouseup mouseout touchend': stopSpin()
     
-    // Container focusout handling  
-    BIND container 'focusout': stop spin and sanitize when leaving widget
+    // Input events
+    BIND input 'keydown': handle arrow up/down keys
+    BIND input 'keyup': stop spin on arrow key release  
+    BIND input 'mousewheel DOMMouseScroll': handle wheel events
     
-    // Button events (jQuery bindings)
-    BIND up/down buttons:
-        - keydown/keyup: space/enter handling
-        - mousedown/touchstart: start spin
-        - mouseup/mouseout/touchend: stop spin
-        - mousemove/touchmove: prevent default during spin
-    
-    // Mouse wheel on input
-    BIND input 'wheel': increment/decrement on wheel
+    // Focus/blur events
+    BIND input 'focus': select all text
+    BIND input 'blur': validate and sanitize value
 ```
 
-```pseudocode
+```pseudocode  
 FUNCTION _bindEventsInterface():
-    BIND input 'touchspin.destroy': _destroy()
-    BIND input 'touchspin.uponce': stopSpin() + upOnce()  
-    BIND input 'touchspin.downonce': stopSpin() + downOnce()
+    // Legacy: ONLY callable events for external control (no command API)
+    BIND input 'touchspin.destroy': destroy()
+    BIND input 'touchspin.uponce': upOnce()
+    BIND input 'touchspin.downonce': downOnce()  
     BIND input 'touchspin.startupspin': startUpSpin()
     BIND input 'touchspin.startdownspin': startDownSpin()
     BIND input 'touchspin.stopspin': stopSpin()
-    BIND input 'touchspin.updatesettings': changeSettings()
+    BIND input 'touchspin.updatesettings': _updateSettings()
+    
+    // Usage: $('#input').trigger('touchspin.uponce')
+    // NO command API like $('#input').TouchSpin('uponce')
 ```
 
 ### Helper Methods
@@ -325,42 +325,38 @@ FUNCTION _setDisplay(num):
 ### Cleanup Methods
 
 ```pseudocode
-FUNCTION _destroy():
+FUNCTION destroy():
+    // Legacy: Simple cleanup without complex DOM detection
     parent = input.parent()
     CALL stopSpin()
     
-    // Remove jQuery event handlers
-    OFF input events: keydown, keyup, mousewheel, etc.
-    OFF container events
+    // Remove all jQuery event handlers
+    OFF input '.touchspin' events
     
-    // Remove native listeners  
-    CALL _offAllNative()
-    
-    // Disconnect MutationObserver
-    IF mutationObserver: disconnect()
-    
-    // Teardown DOM based on injection type
-    injectedMarker = parent.attr('data-touchspin-injected')
-    IF injectedMarker === 'wrapper':
-        REMOVE plugin-injected siblings
-        UNWRAP input
+    // Simple DOM cleanup
+    IF parent has 'bootstrap-touchspin-injected' class:
+        REMOVE all siblings with injected classes
+        UNWRAP input from parent container
     ELSE:
-        REMOVE injected elements from parent
-        REMOVE bootstrap-touchspin class and attributes
+        REMOVE all '.bootstrap-touchspin-injected' elements from parent
+        REMOVE 'bootstrap-touchspin' class from parent
     
-    // Cleanup data
+    // Cleanup flags
     SET alreadyinitialized = false
-    REMOVE touchspinInternal data
-    REMOVE from WeakMap store
+    // NO internal API cleanup (didn't exist)
+    // NO WeakMap cleanup (didn't exist)
+    // NO mutation observer cleanup (didn't exist)
 ```
 
 ## Key Architectural Characteristics
 
-1. **Monolithic Structure**: All functionality in single file (~1500 lines)
-2. **jQuery Plugin Pattern**: Uses `$.fn.TouchSpin` with closure-based instance storage
-3. **Renderer System**: Delegates UI construction to external renderer classes
-4. **Event-Driven**: Heavy use of jQuery events for internal communication
+1. **Monolithic Structure**: All functionality in single file (873 lines)
+2. **jQuery Plugin Pattern**: Simple `$.fn.TouchSpin` initialization only (no command API)
+3. **Hardcoded Bootstrap**: Direct HTML template strings with Bootstrap 3/4 classes
+4. **Callable Events Only**: Control via `$('#input').trigger('touchspin.uponce')` 
 5. **Closure-Based State**: Instance variables stored in function closure
-6. **WeakMap Support**: Fallback instance storage using WeakMap
-7. **Mutation Observer**: Watches for attribute changes on input element
-8. **Complex DOM Management**: Handles both injected wrappers and existing containers
+6. **Global ID Counter**: `_currentSpinnerId` for unique identification
+7. **Simple DOM Management**: Basic jQuery DOM manipulation without complex detection
+8. **No Framework Abstraction**: Bootstrap classes and structure hardcoded throughout
+9. **Basic Event Handling**: Simple jQuery event binding without namespacing
+10. **Limited Validation**: Basic settings merging without sanitization

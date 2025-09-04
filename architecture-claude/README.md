@@ -5,9 +5,8 @@ This folder contains a comprehensive analysis comparing the original monolithic 
 ## Structure
 
 ### `/analysis/`
-- **`method-comparison.md`** - Detailed method-by-method comparison between versions
-- **`architecture-model.json`** - Complete data model of both architectures with dependencies
-- **`coverage-analysis.md`** - Test coverage comparison and gap analysis
+- **`method-comparison.md`** - Detailed three-stage evolution comparison (Legacy → In-Between → New)
+- **`architecture-model.json`** - Complete data model of all three architectures with dependencies
 
 ### `/diagrams/`  
 - **`class-structure.mmd`** - Class diagrams showing structural differences
@@ -21,10 +20,10 @@ This folder contains a comprehensive analysis comparing the original monolithic 
 
 ## Purpose
 
-1. **Method-level comparison** to identify functionality changes, improvements, or gaps
-2. **Architecture visualization** to understand structural differences
-3. **Coverage analysis** to ensure feature parity and identify missing test coverage
-4. **Documentation** for future development and maintenance
+1. **Three-stage evolution tracking** to understand the complete architectural transformation
+2. **Method-level comparison** to identify functionality changes, improvements, and patterns
+3. **Architecture visualization** to understand structural differences across all stages  
+4. **Documentation** for understanding the modernization journey and future development
 
 ## Navigation
 
