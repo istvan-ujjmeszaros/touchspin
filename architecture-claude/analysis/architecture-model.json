@@ -1,0 +1,491 @@
+{
+  "metadata": {
+    "title": "Bootstrap TouchSpin Architecture Model",
+    "version": "1.0.0",
+    "description": "Comprehensive JSON model documenting both original monolithic and new modular architectures",
+    "generated_date": "2025-01-20",
+    "analysis_scope": "Complete architectural transformation from jQuery plugin to modular framework-agnostic core"
+  },
+  "architectures": {
+    "original": {
+      "name": "Monolithic jQuery Plugin",
+      "description": "Single-file jQuery plugin with closure-based state management",
+      "file_structure": {
+        "main_file": "src/jquery.bootstrap-touchspin.js",
+        "size_lines": 1502,
+        "pattern": "Self-contained jQuery plugin with UMD wrapper",
+        "dependencies": ["jQuery", "Bootstrap CSS framework"],
+        "build_output": "dist/jquery.bootstrap-touchspin.js"
+      },
+      "architectural_patterns": [
+        {
+          "pattern": "jQuery Plugin Pattern",
+          "description": "Extends jQuery.fn with TouchSpin method",
+          "implementation": "$.fn.TouchSpin = function(options, arg) { ... }"
+        },
+        {
+          "pattern": "Closure-based State Management",
+          "description": "Private variables and functions within closure scope",
+          "implementation": "Local variables in plugin function closure"
+        },
+        {
+          "pattern": "UMD Module Pattern",
+          "description": "Universal module definition for AMD, CommonJS, and global",
+          "implementation": "Factory function wrapper with environment detection"
+        },
+        {
+          "pattern": "Renderer Factory Pattern",
+          "description": "Dynamic renderer creation based on Bootstrap version",
+          "implementation": "RendererFactory.createRenderer() method"
+        }
+      ],
+      "state_management": {
+        "type": "Closure-based",
+        "scope": "Function-local variables",
+        "persistence": "jQuery .data() API",
+        "variables": [
+          "settings", "value", "spinning", "spincount", "elements",
+          "container", "renderer", "_detached_prefix", "_detached_postfix"
+        ]
+      },
+      "public_api": {
+        "initialization": {
+          "method": "$(selector).TouchSpin(options)",
+          "parameters": ["options: TouchSpinOptions"]
+        },
+        "commands": {
+          "destroy": "Cleanup and restore original input",
+          "uponce": "Increment value once",
+          "downonce": "Decrement value once",
+          "startupspin": "Start continuous increment",
+          "startdownspin": "Start continuous decrement", 
+          "stopspin": "Stop continuous spinning",
+          "updatesettings": "Update configuration",
+          "getvalue": "Get current numeric value",
+          "setvalue": "Set value programmatically"
+        }
+      }
+    },
+    "new": {
+      "name": "Modular Multi-Package Architecture",
+      "description": "Framework-agnostic core with separate renderer packages",
+      "file_structure": {
+        "packages": {
+          "core": {
+            "path": "packages/core/src/",
+            "files": ["index.js", "AbstractRenderer.js", "renderer-interface.js"],
+            "description": "Framework-agnostic core logic",
+            "exports": ["TouchSpinCore", "TouchSpin", "getTouchSpin", "CORE_EVENTS"]
+          },
+          "jquery-plugin": {
+            "path": "packages/jquery-plugin/src/",
+            "files": ["index.js"],
+            "description": "jQuery wrapper that bridges to core",
+            "exports": ["installJqueryTouchSpin"]
+          },
+          "renderers": {
+            "bootstrap3": "packages/renderers/bootstrap3/src/",
+            "bootstrap4": "packages/renderers/bootstrap4/src/",
+            "bootstrap5": "packages/renderers/bootstrap5/src/",
+            "tailwind": "packages/renderers/tailwind/src/"
+          }
+        }
+      },
+      "architectural_patterns": [
+        {
+          "pattern": "Class-based Architecture",
+          "description": "ES6 classes for core and renderers",
+          "implementation": "TouchSpinCore class with instance methods"
+        },
+        {
+          "pattern": "Observer Pattern",
+          "description": "Setting changes notification system",
+          "implementation": "core.observeSetting(key, callback)"
+        },
+        {
+          "pattern": "Dependency Injection",
+          "description": "Renderer injected into core constructor",
+          "implementation": "new TouchSpinCore(input, opts) with renderer option"
+        },
+        {
+          "pattern": "Abstract Factory Pattern",
+          "description": "AbstractRenderer base class for all renderers",
+          "implementation": "Renderer extends AbstractRenderer"
+        },
+        {
+          "pattern": "Strategy Pattern",
+          "description": "Pluggable renderers for different UI frameworks",
+          "implementation": "Renderer classes implementing common interface"
+        },
+        {
+          "pattern": "Bridge Pattern",
+          "description": "jQuery plugin bridges to framework-agnostic core",
+          "implementation": "jQuery wrapper forwards calls to TouchSpinCore"
+        }
+      ],
+      "state_management": {
+        "type": "Class-based instance properties",
+        "scope": "TouchSpinCore instance",
+        "persistence": "Element property with WeakMap fallback",
+        "key": "_touchSpinCore",
+        "properties": [
+          "input", "settings", "spinning", "spincount", "direction",
+          "_events", "_teardownCallbacks", "_settingObservers"
+        ]
+      },
+      "public_api": {
+        "initialization": {
+          "core": "TouchSpin(inputEl, opts)",
+          "jquery": "$(selector).TouchSpin(options)"
+        },
+        "methods": [
+          "upOnce", "downOnce", "startUpSpin", "startDownSpin", "stopSpin",
+          "updateSettings", "getValue", "setValue", "destroy", "on", "off"
+        ]
+      }
+    }
+  },
+  "method_mapping": {
+    "description": "Mapping between original and new implementation methods",
+    "public_methods": {
+      "upOnce": {
+        "original": "upOnce() - internal function in closure",
+        "new": "TouchSpinCore.upOnce() - public instance method",
+        "compatibility": "identical",
+        "changes": "None - same functionality"
+      },
+      "downOnce": {
+        "original": "downOnce() - internal function in closure",
+        "new": "TouchSpinCore.downOnce() - public instance method", 
+        "compatibility": "identical",
+        "changes": "None - same functionality"
+      },
+      "startUpSpin": {
+        "original": "startUpSpin() - internal function",
+        "new": "TouchSpinCore.startUpSpin() - public method",
+        "compatibility": "identical",
+        "changes": "Event timing preserved"
+      },
+      "startDownSpin": {
+        "original": "startDownSpin() - internal function",
+        "new": "TouchSpinCore.startDownSpin() - public method",
+        "compatibility": "identical", 
+        "changes": "Event timing preserved"
+      },
+      "stopSpin": {
+        "original": "stopSpin() - internal function",
+        "new": "TouchSpinCore.stopSpin() - public method",
+        "compatibility": "identical",
+        "changes": "Event order preserved"
+      },
+      "updateSettings": {
+        "original": "changeSettings(newsettings) - internal function",
+        "new": "TouchSpinCore.updateSettings(opts) - public method",
+        "compatibility": "enhanced",
+        "changes": "Added settings sanitization and observer notifications"
+      },
+      "getValue": {
+        "original": "Internal calculation in command API",
+        "new": "TouchSpinCore.getValue() - public method",
+        "compatibility": "identical",
+        "changes": "Extracted into dedicated method"
+      },
+      "setValue": {
+        "original": "Internal logic in command API", 
+        "new": "TouchSpinCore.setValue(v) - public method",
+        "compatibility": "identical",
+        "changes": "Extracted into dedicated method"
+      },
+      "destroy": {
+        "original": "_destroy() - internal cleanup function",
+        "new": "TouchSpinCore.destroy() - public method",
+        "compatibility": "enhanced",
+        "changes": "Added teardown callback system"
+      }
+    },
+    "internal_methods": {
+      "_initSettings": {
+        "original": "Settings initialization and attribute parsing",
+        "new": "TouchSpinCore._sanitizeSettings() + _parseDataAttributes()",
+        "changes": "Split into focused methods with validation"
+      },
+      "_buildHtml": {
+        "original": "Monolithic HTML construction with renderer",
+        "new": "Renderer.init() - delegated to renderer classes",
+        "changes": "Extracted to separate renderer classes"
+      },
+      "_bindEvents": {
+        "original": "Mixed jQuery and native event binding",
+        "new": "TouchSpinCore._attachDOMEventListeners() + renderer events",
+        "changes": "Separated core and renderer event handling"
+      },
+      "_checkValue": {
+        "original": "Value validation and sanitization",
+        "new": "TouchSpinCore._checkValue(mayTriggerChange)",
+        "changes": "Simplified with constraint application"
+      },
+      "_updateSettings": {
+        "original": "Settings update with DOM sync",
+        "new": "TouchSpinCore.updateSettings() with observer pattern",
+        "changes": "Added observer notifications for renderers"
+      }
+    },
+    "removed_methods": [
+      {
+        "method": "_initRenderer",
+        "reason": "Renderer creation now handled in constructor",
+        "replacement": "Constructor renderer option"
+      },
+      {
+        "method": "_hideEmptyPrefixPostfix", 
+        "reason": "Delegated to renderer implementation",
+        "replacement": "Renderer.hideEmptyPrefixPostfix()"
+      },
+      {
+        "method": "_bindEventsInterface",
+        "reason": "jQuery-specific event binding moved to wrapper",
+        "replacement": "jQuery plugin handles jQuery events"
+      }
+    ],
+    "new_methods": [
+      {
+        "method": "on/off/emit",
+        "description": "Event system for core events",
+        "purpose": "Framework-agnostic event handling"
+      },
+      {
+        "method": "observeSetting", 
+        "description": "Observer pattern for setting changes",
+        "purpose": "Renderer notification of setting updates"
+      },
+      {
+        "method": "attachUpEvents/attachDownEvents",
+        "description": "Event attachment methods for renderers",
+        "purpose": "Delegate button event handling to core"
+      },
+      {
+        "method": "registerTeardown",
+        "description": "Cleanup callback registration",
+        "purpose": "Allow wrappers to register cleanup logic"
+      },
+      {
+        "method": "initDOMEventHandling",
+        "description": "Initialize DOM event listeners",
+        "purpose": "Separate DOM setup from construction"
+      }
+    ]
+  },
+  "dependencies": {
+    "original": {
+      "external": [
+        {
+          "name": "jQuery", 
+          "version": ">=1.9",
+          "usage": "Core dependency for DOM manipulation and events",
+          "scope": "global"
+        },
+        {
+          "name": "Bootstrap CSS",
+          "version": "3.x/4.x/5.x",
+          "usage": "Styling framework for UI components", 
+          "scope": "global"
+        }
+      ],
+      "internal": [
+        {
+          "name": "RendererFactory",
+          "description": "Global factory for creating Bootstrap-specific renderers",
+          "location": "Global scope or built-in"
+        }
+      ]
+    },
+    "new": {
+      "external": [
+        {
+          "name": "jQuery",
+          "version": ">=1.9", 
+          "usage": "Optional - only required for jQuery plugin wrapper",
+          "scope": "jquery-plugin package only"
+        },
+        {
+          "name": "Bootstrap CSS",
+          "version": "3.x/4.x/5.x",
+          "usage": "Required for Bootstrap renderer packages",
+          "scope": "renderer packages only"
+        }
+      ],
+      "internal": [
+        {
+          "name": "@touchspin/core",
+          "exports": ["TouchSpinCore", "TouchSpin", "getTouchSpin", "AbstractRenderer"],
+          "dependents": ["jquery-plugin", "all renderers"]
+        },
+        {
+          "name": "AbstractRenderer",
+          "description": "Base class for all renderer implementations",
+          "location": "packages/core/src/AbstractRenderer.js"
+        }
+      ],
+      "dependency_graph": {
+        "core": {
+          "dependencies": [],
+          "dependents": ["jquery-plugin", "all renderers"]
+        },
+        "jquery-plugin": {
+          "dependencies": ["@touchspin/core", "jQuery"],
+          "dependents": []
+        },
+        "renderers": {
+          "dependencies": ["@touchspin/core", "Bootstrap CSS"],
+          "dependents": []
+        }
+      }
+    }
+  },
+  "event_flow": {
+    "original": {
+      "pattern": "jQuery event system",
+      "events": [
+        "touchspin.on.min", "touchspin.on.max", "touchspin.on.startspin",
+        "touchspin.on.stopspin", "touchspin.on.startupspin", "touchspin.on.startdownspin",
+        "touchspin.on.stopupspin", "touchspin.on.stopdownspin"
+      ],
+      "callable_events": [
+        "touchspin.destroy", "touchspin.uponce", "touchspin.downonce",
+        "touchspin.startupspin", "touchspin.startdownspin", "touchspin.stopspin",
+        "touchspin.updatesettings"
+      ],
+      "flow": "DOM Events → jQuery Events → Internal Functions"
+    },
+    "new": {
+      "pattern": "Observer pattern with event bridging",
+      "core_events": [
+        "min", "max", "startspin", "stopspin", 
+        "startupspin", "startdownspin", "stopupspin", "stopdownspin"
+      ],
+      "flow": "DOM Events → Core Events → Wrapper Events (if applicable)",
+      "bridging": {
+        "jquery": "Core events bridged to jQuery events for compatibility",
+        "native": "Core events available directly via on/off methods"
+      }
+    }
+  },
+  "data_flow": {
+    "original": {
+      "input_processing": "DOM value → callback_before_calculation → parsing → validation → callback_after_calculation → DOM display",
+      "state_storage": "jQuery .data() API + closure variables",
+      "settings_flow": "defaults → data attributes → options parameter → internal settings object"
+    },
+    "new": {
+      "input_processing": "DOM value → callback_before_calculation → parsing → constraint application → callback_after_calculation → DOM display",
+      "state_storage": "TouchSpinCore instance properties",
+      "settings_flow": "defaults → data attributes → options parameter → sanitization → observer notifications"
+    }
+  },
+  "interfaces": {
+    "original": {
+      "TouchSpinOptions": {
+        "description": "Configuration interface for jQuery plugin",
+        "properties": {
+          "min": "number|null - Minimum value",
+          "max": "number|null - Maximum value", 
+          "step": "number - Increment/decrement amount",
+          "decimals": "number - Decimal places to display",
+          "initval": "string - Initial value if input empty",
+          "prefix": "string - Text before input",
+          "postfix": "string - Text after input",
+          "renderer": "TouchSpinRenderer|null - Custom renderer instance"
+        }
+      },
+      "TouchSpinRenderer": {
+        "description": "Renderer interface for Bootstrap compatibility",
+        "methods": {
+          "buildInputGroup": "() => JQuery - Create basic input group",
+          "buildAdvancedInputGroup": "(JQuery) => JQuery - Enhance existing input group",
+          "initElements": "(JQuery) => TouchSpinElements - Initialize DOM elements",
+          "hideEmptyPrefixPostfix": "() => {_detached_prefix, _detached_postfix}",
+          "updatePrefixPostfix": "(settings, detached) => void"
+        }
+      }
+    },
+    "new": {
+      "TouchSpinCoreOptions": {
+        "description": "Core configuration interface",
+        "properties": {
+          "min": "number|null - Minimum value",
+          "max": "number|null - Maximum value",
+          "step": "number - Step amount", 
+          "decimals": "number - Decimal precision",
+          "renderer": "Function - Renderer class constructor",
+          "callback_before_calculation": "TouchSpinCalcCallback",
+          "callback_after_calculation": "TouchSpinCalcCallback"
+        }
+      },
+      "TouchSpinCorePublicAPI": {
+        "description": "Public API interface returned by toPublicApi()",
+        "methods": {
+          "upOnce": "() => void - Increment once",
+          "downOnce": "() => void - Decrement once", 
+          "startUpSpin": "() => void - Start continuous increment",
+          "startDownSpin": "() => void - Start continuous decrement",
+          "stopSpin": "() => void - Stop spinning",
+          "updateSettings": "(opts) => void - Update configuration",
+          "getValue": "() => number - Get current value",
+          "setValue": "(v) => void - Set value",
+          "destroy": "() => void - Cleanup instance"
+        }
+      },
+      "AbstractRenderer": {
+        "description": "Base renderer interface",
+        "methods": {
+          "init": "() => void - Initialize renderer (must implement)",
+          "teardown": "() => void - Cleanup renderer",
+          "removeInjectedElements": "() => void - Remove DOM elements"
+        },
+        "properties": {
+          "input": "HTMLInputElement - Input element reference",
+          "settings": "Object - Read-only settings",
+          "core": "TouchSpinCore - Core instance reference"
+        }
+      }
+    }
+  },
+  "transformation_summary": {
+    "architectural_changes": [
+      {
+        "from": "Monolithic jQuery plugin",
+        "to": "Modular multi-package architecture",
+        "benefit": "Better separation of concerns, framework independence"
+      },
+      {
+        "from": "Closure-based state management", 
+        "to": "Class-based instance properties",
+        "benefit": "Better encapsulation and testability"
+      },
+      {
+        "from": "Mixed DOM/event handling",
+        "to": "Clear separation: core handles logic, renderer handles UI",
+        "benefit": "Framework independence and extensibility"
+      },
+      {
+        "from": "jQuery dependency throughout",
+        "to": "Optional jQuery dependency only in wrapper",
+        "benefit": "Reduced bundle size and broader compatibility"
+      }
+    ],
+    "compatibility": {
+      "public_api": "100% backward compatible",
+      "events": "100% compatible via jQuery wrapper", 
+      "settings": "100% compatible with added validation",
+      "dom_output": "Identical DOM structure via renderers"
+    },
+    "benefits": [
+      "Framework agnostic core",
+      "Tree-shakable modules",
+      "Better testability", 
+      "Cleaner separation of concerns",
+      "Extensible renderer system",
+      "Reduced bundle size for non-jQuery users"
+    ]
+  }
+}
