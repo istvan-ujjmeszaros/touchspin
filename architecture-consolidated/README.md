@@ -1,147 +1,419 @@
-# Bootstrap TouchSpin Architecture Analysis (Consolidated)
+# Bootstrap TouchSpin Architecture Guide
 
-This consolidated analysis combines the architectural insights from both Claude and OpenAI analyses, providing a comprehensive understanding of Bootstrap TouchSpin's evolution and modern implementation.
+A comprehensive guide to the modular architecture of Bootstrap TouchSpin - a framework-agnostic numeric input component with 100% backward compatibility.
 
-## Purpose
+## Architecture Overview
 
-This documentation helps developers understand:
-- The complete three-stage architectural evolution 
-- Migration paths from legacy to modern implementations
-- Practical implementation guidance and patterns
-- Detailed method behaviors and API differences
-- Visual representations of architecture and data flows
+TouchSpin uses a **modular architecture** that separates concerns into focused packages:
 
-## Quick Navigation
+```
+packages/
+├── core/              # Framework-agnostic business logic
+├── jquery-plugin/     # jQuery compatibility wrapper  
+└── renderers/         # UI builders for CSS frameworks
+    ├── bootstrap3/    # Bootstrap 3 support
+    ├── bootstrap4/    # Bootstrap 4 support  
+    ├── bootstrap5/    # Bootstrap 5 support
+    └── tailwind/      # Tailwind CSS support
+```
 
-### 🎯 Start Here
-- **[INDEX.md](INDEX.md)** - Quick reference index to all documentation
-- **[three-stage-evolution.md](three-stage-evolution.md)** - Complete evolution story and overview
+This design enables:
+- **Framework Independence**: Core logic works with any CSS framework
+- **100% Backward Compatibility**: Existing jQuery code works unchanged
+- **Extensibility**: Easy to add new renderers and framework wrappers
+- **Testability**: Each package can be tested in isolation
+- **Modern JavaScript**: Uses contemporary patterns while supporting legacy usage
 
-### 📊 Core Analysis
-- **[analysis/method-comparison.md](analysis/method-comparison.md)** - Detailed method evolution across all three stages
-- **[analysis/architecture-model.json](analysis/architecture-model.json)** - Machine-readable architecture data
-- **[analysis/migration-guide.md](analysis/migration-guide.md)** - Practical migration guidance and pitfalls
+## Package Responsibilities
 
-### 🔧 Developer References
-- **[reference/api-quick-reference.md](reference/api-quick-reference.md)** - Quick API lookup and usage examples
-- **[reference/renderer-checklist.md](reference/renderer-checklist.md)** - Renderer implementation requirements
-- **[reference/options-feature-matrix.md](reference/options-feature-matrix.md)** - Options and features cross-reference
-- **[reference/event-matrix.md](reference/event-matrix.md)** - Event mapping and timing details
-- **[reference/common-patterns.md](reference/common-patterns.md)** - Implementation patterns and examples
+### Core Package (`packages/core/`)
 
-### 📈 Visual Documentation
-- **[diagrams/architecture-overview.md](diagrams/architecture-overview.md)** - High-level architecture comparison
-- **[diagrams/data-flow.md](diagrams/data-flow.md)** - Data and event flow patterns
-- **[diagrams/initialization-sequence.md](diagrams/initialization-sequence.md)** - Detailed initialization flow
-- **[diagrams/event-lifecycle.md](diagrams/event-lifecycle.md)** - Event emission timeline
-- **[diagrams/boundary-handling.md](diagrams/boundary-handling.md)** - Boundary logic evolution
+**Responsibilities:**
+- Business logic (validation, calculations, state management)
+- Event system (framework-agnostic event emitter)
+- Settings management with comprehensive sanitization
+- Public API for direct usage
 
-### 💻 Implementation Details
-- **[pseudo-code/legacy-implementation.md](pseudo-code/legacy-implementation.md)** - TRUE legacy (873 lines)
-- **[pseudo-code/in-between-implementation.md](pseudo-code/in-between-implementation.md)** - Enhanced monolithic (1,502 lines)
-- **[pseudo-code/modern-implementation.md](pseudo-code/modern-implementation.md)** - New modular architecture
+**Key Classes:**
+- `TouchSpinCore` - Main business logic class
+- `AbstractRenderer` - Base class for all renderers
+- Factory functions: `TouchSpin()`, `getTouchSpin()`
 
-## Three-Stage Evolution Summary
-
-| Stage | Version | Lines | Key Characteristics |
-|-------|---------|-------|-------------------|
-| **TRUE Legacy** | v3.x | 873 | Original simple jQuery plugin with hardcoded Bootstrap markup |
-| **In-Between** | v4.x | 1,502 | Enhanced monolithic with renderer system and command API |
-| **New Modular** | v5.x | ~300/pkg | Complete modular rewrite with framework-agnostic core |
-
-## Architecture Comparison
-
-### Legacy (v3.x) - Simple Monolith
-- Single jQuery plugin file
-- Hardcoded Bootstrap 3/4 HTML templates
-- Basic spin functionality
-- Callable events only (no API methods)
-- Simple closure-based state management
-
-### In-Between (v4.x) - Enhanced Monolith  
-- Renderer system for multi-Bootstrap support
-- Command API alongside callable events
-- Enhanced features (ARIA, mutation observers)
-- Still monolithic but more sophisticated
-- Backward-compatible event system
-
-### New Modular (v5.x) - Framework Agnostic
-- **`packages/core/`** - Framework-agnostic logic
-- **`packages/jquery-plugin/`** - Optional jQuery wrapper
-- **`packages/renderers/`** - Bootstrap 3/4/5 + Tailwind support
-- Full public API with methods and events
-- Modern patterns (observers, sanitization, accessibility)
-
-## Key Architectural Changes
-
-### API Evolution
+**Usage:**
 ```javascript
-// Legacy v3.x - Events only
-$('#spinner').trigger('touchspin.uponce');
+import { TouchSpin } from '@touchspin/core';
 
-// In-Between v4.x - Command API
-$('#spinner').TouchSpin('uponce');
+const api = TouchSpin(inputElement, {
+    min: 0,
+    max: 100,
+    step: 1
+});
 
-// New v5.x - Direct methods
-const api = TouchSpin('#spinner');
+api.on('change', (data) => console.log('Value:', data.newValue));
 api.upOnce();
 ```
 
-### Boundary Logic Evolution
+### Renderer Packages (`packages/renderers/*`)
+
+**Responsibilities:**
+- Framework-specific DOM construction
+- CSS class management
+- Visual element updates (prefix/postfix, button states)
+- Event attachment coordination with core
+
+**Available Renderers:**
+- `Bootstrap3Renderer` - Bootstrap 3.x support
+- `Bootstrap4Renderer` - Bootstrap 4.x support  
+- `Bootstrap5Renderer` - Bootstrap 5.x support
+- `TailwindRenderer` - Tailwind CSS support
+
+**Renderer Pattern:**
 ```javascript
-// Legacy: Reactive, inclusive
-if (value >= settings.max) {
-    value = settings.max;
-    emit('max');
-}
-
-// In-Between: Reactive, exact match  
-if (value === settings.max) {
-    emit('max');
-}
-
-// New: Proactive prevention
-if (this.settings.max !== null && value === this.settings.max) {
-    this.emit('max');
-    return; // Prevents operation entirely
+class CustomRenderer extends AbstractRenderer {
+    init() {
+        // 1. Build DOM structure
+        this.wrapper = this.buildWrapper();
+        
+        // 2. Find buttons and elements
+        const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+        
+        // 3. Attach core event handlers
+        this.core.attachUpEvents(upButton);
+        
+        // 4. Observe setting changes
+        this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+    }
 }
 ```
 
-### Instance Storage Evolution
+### jQuery Plugin (`packages/jquery-plugin/`)
+
+**Responsibilities:**
+- Backward compatibility with jQuery-based code
+- Event bridging (core events → jQuery events)
+- Command API support (`TouchSpin('uponce')`)
+- Chainable jQuery interface
+
+**Compatibility Layer:**
 ```javascript
-// Legacy: Simple flag
-element.data('alreadyinitialized', true);
+// Modern API
+const api = TouchSpin('#spinner', options);
 
-// In-Between: Data API + WeakMap
-element.data('touchspinInternal', api);
-
-// New: Direct element property
-element[INSTANCE_KEY] = coreInstance;
+// jQuery API (same functionality)
+$('#spinner').TouchSpin(options);
+$('#spinner').TouchSpin('uponce');
+$('#spinner').on('touchspin.on.max', handler);
 ```
 
-## Documentation Organization
+## Core Architecture Details
 
-This consolidated analysis is organized by:
+### TouchSpinCore Class
 
-1. **Audience** - Quick navigation by developer role/need
-2. **Depth** - From overview to detailed implementation
-3. **Usage** - Reference materials for daily development  
-4. **Visual** - Diagrams for architectural understanding
-5. **Historical** - Evolution tracking for migration planning
+The heart of the system is the `TouchSpinCore` class:
 
-## Contributing
+```javascript
+class TouchSpinCore {
+    constructor(inputEl, settings) {
+        this.inputEl = inputEl;
+        this.settings = sanitizeSettings(settings);
+        this.eventEmitter = new Map();
+        this.spinning = false;
+        
+        this.setupEventHandlers();
+        this.initializeValue();
+    }
+    
+    // Public API methods
+    upOnce() { /* Increment by one step */ }
+    downOnce() { /* Decrement by one step */ }
+    startUpSpin() { /* Begin continuous increment */ }
+    stopSpin() { /* Stop continuous operation */ }
+    getValue() { /* Get current numeric value */ }
+    setValue(value) { /* Set value with validation */ }
+    updateSettings(options) { /* Update configuration */ }
+    
+    // Event system
+    on(event, callback) { /* Add event listener */ }
+    off(event, callback) { /* Remove event listener */ }
+    emit(event, data) { /* Emit event */ }
+    
+    // Lifecycle
+    destroy() { /* Clean up instance */ }
+}
+```
 
-When updating this documentation:
-1. Maintain accuracy with actual code implementation
-2. Update both summary and detailed sections when making changes
-3. Verify diagram accuracy if modifying architectural details
-4. Test examples and code snippets for correctness
-5. Keep cross-references updated when adding new content
+### Event System
 
-## Sources
+TouchSpin uses a **framework-agnostic event system** with automatic jQuery bridging:
 
-This analysis consolidates insights from:
-- **Claude Analysis** (`../architecture-claude/`) - Complete three-stage evolution tracking
-- **OpenAI Analysis** (`../architecture-openai/`) - Detailed implementation and migration guidance  
-- **Source Code** - Actual implementations for fact-checking
-- **Test Suite** - Behavior verification and edge case documentation
+**Core Events:**
+- `change` - Value changed
+- `min` / `max` - Boundary reached
+- `startspin` / `stopspin` - Spinning state changes
+- `boostchange` - Step size changed during acceleration
+
+**Event Flow:**
+```javascript
+// Core emits framework-agnostic events
+core.emit('max', {value: 100, direction: 'up'});
+
+// jQuery wrapper automatically bridges to legacy events
+$(input).trigger('touchspin.on.max', {value: 100, direction: 'up'});
+```
+
+### Settings Management
+
+Settings undergo **comprehensive sanitization** to ensure valid configurations:
+
+```javascript
+// Input sanitization
+const settings = sanitizeSettings({
+    step: 0,      // Invalid - corrected to 1
+    decimals: -1, // Invalid - corrected to 0
+    min: 'invalid', // Invalid - corrected to null
+    max: 100
+});
+
+// Result: {step: 1, decimals: 0, min: null, max: 100}
+```
+
+**Observer Pattern** for reactive updates:
+```javascript
+// Renderers can observe setting changes
+core.observeSetting('prefix', (newValue) => {
+    this.prefixElement.textContent = newValue;
+});
+```
+
+### Boundary Logic
+
+TouchSpin uses **proactive boundary checking** for optimal performance:
+
+```javascript
+upOnce() {
+    // Check boundary BEFORE operation
+    if (this.getValue() === this.settings.max) {
+        this.emit('max');
+        return; // Prevent unnecessary calculation
+    }
+    
+    // Safe to proceed with increment
+    const nextValue = this._nextValue('up', this.getValue());
+    this._setDisplay(nextValue, true);
+}
+```
+
+This prevents wasted calculations and provides predictable event timing.
+
+## Extending TouchSpin
+
+### Creating Custom Renderers
+
+TouchSpin can support any CSS framework through custom renderers. See the **[Creating Custom Renderers Guide](creating-custom-renderer.md)** for complete details.
+
+**Quick Example:**
+```javascript
+import { AbstractRenderer } from '@touchspin/core';
+
+class MaterialRenderer extends AbstractRenderer {
+    init() {
+        this.wrapper = this.buildMaterialWrapper();
+        const upButton = this.wrapper.querySelector('.mdc-button--up');
+        this.core.attachUpEvents(upButton);
+        
+        // Observe settings for reactive updates
+        this.core.observeSetting('prefix', this.updateMaterialPrefix);
+    }
+    
+    buildMaterialWrapper() {
+        // Material Design HTML structure
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mdc-text-field mdc-text-field--outlined';
+        // ... Material-specific DOM construction
+        return wrapper;
+    }
+}
+```
+
+### Creating Framework Wrappers
+
+TouchSpin can be integrated into any JavaScript framework. See the **[Creating Framework Wrappers Guide](creating-framework-wrapper.md)** for detailed examples.
+
+**Angular Example:**
+```typescript
+@Component({
+    selector: 'app-touchspin',
+    template: '<input [id]="inputId">'
+})
+export class TouchSpinComponent implements OnInit, OnDestroy {
+    @Input() options: TouchSpinOptions = {};
+    @Output() valueChange = new EventEmitter<number>();
+    
+    private api: TouchSpinAPI;
+    
+    ngOnInit() {
+        this.api = TouchSpin(`#${this.inputId}`, this.options);
+        this.api.on('change', (data) => this.valueChange.emit(data.newValue));
+    }
+    
+    ngOnDestroy() {
+        this.api?.destroy();
+    }
+}
+```
+
+**React Hook Example:**
+```javascript
+function useTouchSpin(inputRef, options) {
+    const [value, setValue] = useState(0);
+    const apiRef = useRef(null);
+    
+    useEffect(() => {
+        if (inputRef.current) {
+            apiRef.current = TouchSpin(inputRef.current, options);
+            apiRef.current.on('change', (data) => setValue(data.newValue));
+        }
+        
+        return () => apiRef.current?.destroy();
+    }, [inputRef, options]);
+    
+    return { value, api: apiRef.current };
+}
+```
+
+## API Reference
+
+### Core API Methods
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `getValue()` | none | `number` | Get current numeric value |
+| `setValue(value)` | `number` | `void` | Set value with validation |
+| `upOnce()` | none | `void` | Increment by one step |
+| `downOnce()` | none | `void` | Decrement by one step |
+| `startUpSpin()` | none | `void` | Begin continuous increment |
+| `startDownSpin()` | none | `void` | Begin continuous decrement |
+| `stopSpin()` | none | `void` | Stop any spinning |
+| `updateSettings(opts)` | `object` | `void` | Update configuration |
+| `on(event, callback)` | `string, function` | `void` | Add event listener |
+| `off(event, callback)` | `string, function` | `void` | Remove event listener |
+| `destroy()` | none | `void` | Clean up instance |
+
+### Configuration Options
+
+**Core Settings:**
+- `min` / `max` - Value boundaries
+- `step` - Increment/decrement amount  
+- `decimals` - Display precision
+- `initval` - Initial value if input empty
+
+**UI Settings:**
+- `prefix` / `postfix` - Text before/after input
+- `verticalbuttons` - Button layout
+- `mousewheel` - Mouse wheel support
+
+**Behavior Settings:**
+- `booster` - Step size acceleration
+- `stepinterval` - Spinning speed
+- `forcestepdivisibility` - Step alignment
+
+See **[Options Reference](reference/options-feature-matrix.md)** for complete details.
+
+### Events
+
+**Value Events:**
+- `change` - Value changed: `{oldValue, newValue}`
+- `min` / `max` - Boundary reached: `{value, direction}`
+
+**Interaction Events:**
+- `startspin` / `stopspin` - Spinning state: `{direction}`
+- `startupspin` / `startdownspin` - Direction-specific start
+- `stopupspin` / `stopdownspin` - Direction-specific stop
+
+**Acceleration Events:**
+- `boostchange` - Step size changed: `{step, isCapped, level}`
+
+See **[Event Reference](reference/event-matrix.md)** for timing and data details.
+
+## Getting Started
+
+### Installation
+
+```bash
+npm install @touchspin/core @touchspin/bootstrap5
+```
+
+### Basic Usage
+
+```javascript
+import { TouchSpin } from '@touchspin/core';
+import '@touchspin/bootstrap5'; // Registers Bootstrap 5 renderer
+
+const api = TouchSpin('#my-input', {
+    min: 0,
+    max: 100,
+    step: 1,
+    prefix: '$'
+});
+
+api.on('change', (data) => {
+    console.log(`Value changed to: ${data.newValue}`);
+});
+```
+
+### jQuery Compatibility
+
+```javascript
+// Existing jQuery code works unchanged
+$('#my-input').TouchSpin({
+    min: 0,
+    max: 100,
+    step: 1,
+    prefix: '$'
+});
+
+$('#my-input').on('touchspin.on.change', function(e, data) {
+    console.log(`Value changed to: ${data.newValue}`);
+});
+```
+
+## Documentation Structure
+
+- **[API Quick Reference](reference/api-quick-reference.md)** - Complete API documentation with examples
+- **[Options Reference](reference/options-feature-matrix.md)** - All configuration options
+- **[Event Reference](reference/event-matrix.md)** - Event system details
+- **[Common Patterns](reference/common-patterns.md)** - Implementation examples
+- **[Creating Custom Renderers](creating-custom-renderer.md)** - Build CSS framework support
+- **[Creating Framework Wrappers](creating-framework-wrapper.md)** - Framework integration guide
+- **[Architecture History](HISTORY.md)** - Evolution story and design decisions
+- **[Case Studies](case-study-blog.md)** - Detailed refactoring analysis
+
+## Architecture Principles
+
+### 1. Separation of Concerns
+- **Core**: Business logic only
+- **Renderers**: UI construction only  
+- **Wrappers**: Framework integration only
+
+### 2. Framework Independence
+- Core works with any CSS framework
+- Renderers provide framework-specific UI
+- No framework assumptions in business logic
+
+### 3. Backward Compatibility
+- 100% compatibility with existing jQuery code
+- New features available alongside legacy interface
+- Migration is opt-in, never required
+
+### 4. Extensibility
+- Plugin architecture for renderers
+- Observer pattern for reactive updates
+- Clean interfaces for framework integration
+
+### 5. Modern JavaScript
+- ES6+ classes and modules
+- Comprehensive JSDoc documentation
+- Tree-shakable package structure
+- Native event system with fallbacks
+
+This architecture enables TouchSpin to serve both legacy projects needing stability and modern projects requiring flexibility, all while maintaining the simple, familiar interface that made it popular.
