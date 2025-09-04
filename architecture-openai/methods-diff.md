@@ -1,8 +1,12 @@
-# TouchSpin v4 (Legacy) vs v5 (Modular) — Methods And Behavior
+# TouchSpin v4 (In-Between) vs v5 (Modular) — Methods And Behavior
+
+⚠️ **Note**: This analysis compares the "in-between" version with the new modular version. For the complete three-stage evolution including the TRUE legacy version (873 lines), see `three-stage-evolution.md` and `../architecture-claude/`.
 
 Scope
-- Legacy: `src/jquery.bootstrap-touchspin.js` (monolithic jQuery plugin)
+- In-Between (called "Legacy" in this analysis): `src/jquery.bootstrap-touchspin.js` (monolithic jQuery plugin - 1,502 lines)
 - Modern: `packages/core/src/index.js` (framework‑agnostic core), `packages/jquery-plugin/src/index.js` (wrapper), and renderers under `packages/renderers/*`
+
+This is stage 2 → 3 of the evolution. The TRUE legacy (stage 1, 873 lines) is in `tmp/jquery.bootstrap-touchspin.legacy.js`.
 
 Legend
 - [Legacy] — legacy plugin method or concept
