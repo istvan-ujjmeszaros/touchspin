@@ -1,10 +1,9 @@
 :root{
   --ts-font-size: 14px;
   --ts-height: 32px;
-  --ts-radius: 6px;
-  --ts-wrapper-radius: var(--ts-radius);
-  --ts-down-radius: var(--ts-radius);
-  --ts-up-radius: var(--ts-radius);
+  --ts-wrapper-radius: 6px;
+  --ts-down-radius: 6px;
+  --ts-up-radius: 6px;
   --ts-gap: 0px; /* default: seamless segments */
 
   --ts-bg: #fff;
@@ -51,7 +50,7 @@
   color: inherit;
   min-width: 4ch;
 }
-.ts-vanilla > input:focus-visible{ box-shadow: var(--ts-focus-ring); border-radius: calc(var(--ts-radius) - 2px); }
+.ts-vanilla > input:focus-visible{ box-shadow: var(--ts-focus-ring); border-radius: 0; }
 
 .ts-btn{
   display: inline-flex;
