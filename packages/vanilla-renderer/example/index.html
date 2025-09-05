@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VanillaRenderer with Theme Editor</title>
-  
+
   <!-- VanillaRenderer CSS -->
   <link rel="stylesheet" href="../src/themes/vanilla.css">
-  
+
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -16,7 +16,7 @@
       background-color: #f8fafc;
       color: #333;
     }
-    
+
     .container {
       display: grid;
       grid-template-columns: 1fr 400px;
@@ -24,17 +24,17 @@
       max-width: 1400px;
       margin: 0 auto;
     }
-    
+
     .examples-section {
       min-width: 0;
     }
-    
+
     h1 {
       color: #111827;
       margin-bottom: 30px;
       grid-column: 1 / -1;
     }
-    
+
     .example {
       background: white;
       padding: 30px;
@@ -42,20 +42,20 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 30px;
     }
-    
+
     .example h3 {
       margin-top: 0;
       color: #374151;
     }
-    
+
     .spinner {
       margin: 15px 0;
     }
-    
+
     .spinner input {
       width: 200px;
     }
-    
+
     /* Theme Editor Styles */
     .theme-editor {
       position: sticky;
@@ -67,7 +67,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       border: 1px solid #e5e7eb;
     }
-    
+
     .theme-editor-header {
       padding: 20px 20px 15px;
       border-bottom: 1px solid #e5e7eb;
@@ -77,18 +77,18 @@
       border-radius: 8px 8px 0 0;
       z-index: 10;
     }
-    
+
     .theme-editor-header h2 {
       margin: 0 0 15px;
       color: #111827;
       font-size: 1.25rem;
     }
-    
+
     .theme-editor-actions {
       display: flex;
       gap: 10px;
     }
-    
+
     .theme-editor-actions button {
       padding: 8px 16px;
       border-radius: 6px;
@@ -100,42 +100,42 @@
       font-weight: 500;
       transition: all 0.15s ease;
     }
-    
+
     .theme-editor-actions button:hover {
       background: #f3f4f6;
       border-color: #9ca3af;
     }
-    
+
     .theme-editor-actions button:active {
       background: #e5e7eb;
     }
-    
+
     #copy-theme {
       background: #3b82f6;
       border-color: #3b82f6;
       color: white;
     }
-    
+
     #copy-theme:hover {
       background: #2563eb;
       border-color: #2563eb;
     }
-    
+
     #copy-theme:active {
       background: #1d4ed8;
     }
-    
+
     .theme-editor-sections {
       padding: 20px;
     }
-    
+
     .theme-editor-sections details {
       margin-bottom: 20px;
       border: 1px solid #e5e7eb;
       border-radius: 6px;
       overflow: hidden;
     }
-    
+
     .theme-editor-sections summary {
       padding: 12px 16px;
       background: #f9fafb;
@@ -146,15 +146,15 @@
       user-select: none;
       position: relative;
     }
-    
+
     .theme-editor-sections summary:hover {
       background: #f3f4f6;
     }
-    
+
     .theme-editor-sections summary::marker {
       display: none;
     }
-    
+
     .theme-editor-sections summary::before {
       content: '▶';
       position: absolute;
@@ -162,15 +162,15 @@
       transition: transform 0.2s ease;
       font-size: 0.75rem;
     }
-    
+
     .theme-editor-sections details[open] summary::before {
       transform: rotate(90deg);
     }
-    
+
     .variable-group {
       padding: 16px;
     }
-    
+
     .variable-group label {
       display: flex;
       justify-content: space-between;
@@ -178,16 +178,16 @@
       margin-bottom: 12px;
       font-size: 0.875rem;
     }
-    
+
     .variable-group label:last-child {
       margin-bottom: 0;
     }
-    
+
     .variable-group span {
       color: #4b5563;
       font-weight: 500;
     }
-    
+
     .variable-group input[type="color"] {
       width: 60px;
       height: 32px;
@@ -196,7 +196,7 @@
       cursor: pointer;
       padding: 2px;
     }
-    
+
     .variable-group input[type="text"] {
       width: 120px;
       padding: 6px 10px;
@@ -205,24 +205,24 @@
       font-size: 0.875rem;
       font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
     }
-    
+
     .variable-group input[type="text"]:focus {
       outline: none;
       border-color: #3b82f6;
       box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2);
     }
-    
+
     .copy-success {
       background: #10b981 !important;
       border-color: #10b981 !important;
     }
-    
+
     @media (max-width: 1200px) {
       .container {
         grid-template-columns: 1fr;
         gap: 20px;
       }
-      
+
       .theme-editor {
         position: relative;
         top: auto;
@@ -235,7 +235,7 @@
 <body>
   <div class="container">
     <h1>VanillaRenderer with Theme Editor</h1>
-    
+
     <div class="examples-section">
       <div class="example">
         <h3>Basic Spinner</h3>
@@ -273,7 +273,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="theme-editor">
       <div class="theme-editor-header">
         <h2>Theme Customizer</h2>
@@ -282,7 +282,7 @@
           <button id="copy-theme">Copy CSS</button>
         </div>
       </div>
-      
+
       <div class="theme-editor-sections">
         <!-- Wrapper Section -->
         <details open>
@@ -310,7 +310,7 @@
             </label>
           </div>
         </details>
-        
+
         <!-- Focus States Section -->
         <details open>
           <summary>Focus States</summary>
@@ -325,9 +325,9 @@
             </label>
           </div>
         </details>
-        
+
         <!-- Disabled/Readonly Section -->
-        <details>
+        <details open>
           <summary>Disabled & Readonly States</summary>
           <div class="variable-group">
             <label>
@@ -344,7 +344,7 @@
             </label>
           </div>
         </details>
-        
+
         <!-- Input Section -->
         <details open>
           <summary>Input Styles</summary>
@@ -367,7 +367,7 @@
             </label>
           </div>
         </details>
-        
+
         <!-- Button Section -->
         <details open>
           <summary>Button Styles</summary>
@@ -408,11 +408,15 @@
               <span>Up Button Border Radius</span>
               <input type="text" data-var="--ts-button-up-border-radius">
             </label>
+            <label>
+              <span>Button Min Width</span>
+              <input type="text" data-var="--ts-button-min-width" placeholder="2rem">
+            </label>
           </div>
         </details>
-        
+
         <!-- Addon Section -->
-        <details>
+        <details open>
           <summary>Addon (Prefix/Postfix) Styles</summary>
           <div class="variable-group">
             <label>
@@ -429,9 +433,9 @@
             </label>
           </div>
         </details>
-        
+
         <!-- Vertical Button Section -->
-        <details>
+        <details open>
           <summary>Vertical Button Styles</summary>
           <div class="variable-group">
             <label>
@@ -478,6 +482,10 @@
               <span>Down Button Border Radius</span>
               <input type="text" data-var="--ts-vertical-button-down-border-radius">
             </label>
+            <label>
+              <span>Button Min Width</span>
+              <input type="text" data-var="--ts-vertical-button-min-width" placeholder="1.5rem">
+            </label>
           </div>
         </details>
       </div>
@@ -495,14 +503,14 @@
         this.defaultValues = {};
         this.init();
       }
-      
+
       init() {
         this.captureDefaults();
         this.bindEvents();
         this.loadSavedVariables();
         this.updateInputs();
       }
-      
+
       captureDefaults() {
         // Capture all default values from CSS
         const inputs = document.querySelectorAll('[data-var]');
@@ -514,30 +522,30 @@
           this.defaultValues[varName] = computedValue;
         });
       }
-      
+
       bindEvents() {
         // Bind input changes
         document.querySelectorAll('[data-var]').forEach(input => {
           input.addEventListener('input', (e) => {
             this.updateVariable(e.target.dataset.var, e.target.value);
           });
-          
+
           input.addEventListener('change', (e) => {
             this.saveVariables();
           });
         });
-        
+
         // Bind reset button
         document.getElementById('reset-theme').addEventListener('click', () => {
           this.resetToDefaults();
         });
-        
+
         // Bind copy button
         document.getElementById('copy-theme').addEventListener('click', () => {
           this.copyToClipboard();
         });
       }
-      
+
       loadSavedVariables() {
         const saved = localStorage.getItem(this.storageKey);
         if (saved) {
@@ -545,12 +553,12 @@
           this.applyVariables(variables);
         }
       }
-      
+
       saveVariables() {
         const variables = this.getCurrentVariables();
         localStorage.setItem(this.storageKey, JSON.stringify(variables));
       }
-      
+
       getCurrentVariables() {
         const variables = {};
         document.querySelectorAll('[data-var]').forEach(input => {
@@ -558,23 +566,23 @@
         });
         return variables;
       }
-      
+
       applyVariables(variables) {
         Object.entries(variables).forEach(([key, value]) => {
           document.documentElement.style.setProperty(key, value);
         });
       }
-      
+
       updateVariable(varName, value) {
         document.documentElement.style.setProperty(varName, value);
       }
-      
+
       resetToDefaults() {
         this.applyVariables(this.defaultValues);
         this.updateInputs();
         localStorage.removeItem(this.storageKey);
       }
-      
+
       updateInputs() {
         document.querySelectorAll('[data-var]').forEach(input => {
           const varName = input.dataset.var;
@@ -584,11 +592,11 @@
           input.value = value;
         });
       }
-      
+
       async copyToClipboard() {
         const variables = this.getCurrentVariables();
         const css = this.generateCSS(variables);
-        
+
         try {
           await navigator.clipboard.writeText(css);
           this.showCopySuccess();
@@ -596,7 +604,7 @@
           console.error('Failed to copy to clipboard:', err);
         }
       }
-      
+
       generateCSS(variables) {
         let css = ':root {\n';
         Object.entries(variables).forEach(([key, value]) => {
@@ -605,13 +613,13 @@
         css += '}';
         return css;
       }
-      
+
       showCopySuccess() {
         const button = document.getElementById('copy-theme');
         const originalText = button.textContent;
         button.textContent = 'Copied!';
         button.classList.add('copy-success');
-        
+
         setTimeout(() => {
           button.textContent = originalText;
           button.classList.remove('copy-success');
