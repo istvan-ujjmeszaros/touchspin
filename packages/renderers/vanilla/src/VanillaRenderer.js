@@ -14,7 +14,7 @@ class VanillaRenderer extends AbstractRenderer {
     wrapper.setAttribute('data-touchspin-injected', 'wrapper');
 
     // Derive testid suffixes if present
-    const testId = this.inputEl.getAttribute('data-testid');
+    const testId = this.input.getAttribute('data-testid');
     if (testId) {
       wrapper.setAttribute('data-testid', `${testId}-wrapper`);
     }
@@ -43,7 +43,7 @@ class VanillaRenderer extends AbstractRenderer {
     downBtn.setAttribute('aria-label', 'Decrease');
     if (testId) downBtn.setAttribute('data-testid', `${testId}-down`);
     downBtn.innerHTML = this.settings.buttondown_txt || '-';
-    wrapper.insertBefore(downBtn, this.inputEl);
+    wrapper.insertBefore(downBtn, this.input);
 
     // Up button
     const upBtn = doc.createElement('button');
