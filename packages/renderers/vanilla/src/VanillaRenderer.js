@@ -6,7 +6,7 @@ import AbstractRenderer from '../../../core/src/AbstractRenderer.js';
  */
 class VanillaRenderer extends AbstractRenderer {
   init() {
-    const doc = this.inputEl.ownerDocument;
+    const doc = this.input.ownerDocument;
 
     // Build wrapper
     const wrapper = doc.createElement('div');
@@ -20,9 +20,9 @@ class VanillaRenderer extends AbstractRenderer {
     }
 
     // Place wrapper around input
-    const parent = this.inputEl.parentElement;
-    if (parent) parent.insertBefore(wrapper, this.inputEl);
-    wrapper.appendChild(this.inputEl);
+    const parent = this.input.parentElement;
+    if (parent) parent.insertBefore(wrapper, this.input);
+    wrapper.appendChild(this.input);
 
     // Prefix
     let prefixEl = null;
@@ -32,7 +32,7 @@ class VanillaRenderer extends AbstractRenderer {
       prefixEl.setAttribute('data-touchspin-injected', 'prefix');
       if (testId) prefixEl.setAttribute('data-testid', `${testId}-prefix`);
       prefixEl.innerHTML = this.settings.prefix || '';
-      wrapper.insertBefore(prefixEl, this.inputEl);
+      wrapper.insertBefore(prefixEl, this.input);
     }
 
     // Down button
@@ -67,7 +67,7 @@ class VanillaRenderer extends AbstractRenderer {
     }
 
     // Save for teardown
-    this.container = wrapper;
+    this.wrapper = wrapper;
     this._upBtn = upBtn;
     this._downBtn = downBtn;
     this._prefixEl = prefixEl;
@@ -77,32 +77,7 @@ class VanillaRenderer extends AbstractRenderer {
     this.core.attachUpEvents(upBtn);
     this.core.attachDownEvents(downBtn);
   }
-
-  teardown() {
-    // Remove injected elements and unwrap input
-    const wrapper = this.container;
-    if (!wrapper) return;
-
-    // Detach buttons explicitly in case core listeners were attached
-    if (this._upBtn && this._upBtn.parentElement === wrapper) wrapper.removeChild(this._upBtn);
-    if (this._downBtn && this._downBtn.parentElement === wrapper) wrapper.removeChild(this._downBtn);
-    if (this._prefixEl && this._prefixEl.parentElement === wrapper) wrapper.removeChild(this._prefixEl);
-    if (this._postfixEl && this._postfixEl.parentElement === wrapper) wrapper.removeChild(this._postfixEl);
-
-    // Move input out of wrapper
-    if (this.inputEl.parentElement === wrapper && wrapper.parentElement) {
-      wrapper.parentElement.insertBefore(this.inputEl, wrapper);
-    }
-    // Remove wrapper
-    if (wrapper.parentElement) wrapper.parentElement.removeChild(wrapper);
-
-    this.container = null;
-    this._upBtn = null;
-    this._downBtn = null;
-    this._prefixEl = null;
-    this._postfixEl = null;
-  }
+  // Use AbstractRenderer.teardown() default to remove injected elements and unwrap input
 }
 
 export default VanillaRenderer;
-
