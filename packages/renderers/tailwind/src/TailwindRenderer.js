@@ -61,7 +61,7 @@ class TailwindRenderer extends AbstractRenderer {
     if (isVertical) {
       html = `
         <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50" data-touchspin-injected="wrapper"${testidAttr}>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 rounded-l-md tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
           ${this.buildVerticalButtons()}
         </div>
@@ -267,9 +267,9 @@ class TailwindRenderer extends AbstractRenderer {
 
   buildVerticalButtons() {
     return `
-      <div class="flex flex-col ml-1" data-touchspin-injected="vertical-wrapper">
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-gray-300 rounded-t tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-gray-300 rounded-b tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+      <div class="flex flex-col" data-touchspin-injected="vertical-wrapper">
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-gray-300 rounded-tr tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-gray-300 rounded-br tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
       </div>
     `;
   }
