@@ -1,0 +1,16 @@
+{
+  "name": "@touchspin/renderer-vanilla",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vanilla (framework-agnostic) renderer for TouchSpin with modern CSS variables",
+  "license": "MIT",
+  "sideEffects": true,
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.js"
+    }
+  }
+}
+

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TouchSpin Vanilla Renderer — Example</title>
+    <style>
+      body{font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 32px;}
+      .panel{display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start}
+      .card{border:1px solid #e5e7eb; border-radius:8px; padding:16px}
+      pre{background:#0b1020; color:#d1d5db; padding:12px; border-radius:6px; overflow:auto}
+      .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+      .log{max-height:220px; overflow:auto; font-family: ui-monospace, Menlo, monospace; background:#0b1020; color:#9ca3af; padding:8px; border-radius:6px}
+      .vars{display:grid; grid-template-columns: 200px 1fr; gap:8px; align-items:center}
+      label{font-size:12px; color:#374151}
+      input[type="text"], input[type="number"], input[type="color"]{padding:6px 8px; border:1px solid #d1d5db; border-radius:6px}
+      button{padding:6px 10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; cursor:pointer}
+      button:hover{background:#e5e7eb}
+      h2{margin:0 0 8px 0}
+    </style>
+  </head>
+  <body>
+    <h1>TouchSpin — Vanilla Renderer</h1>
+    <div class="panel">
+      <div class="card">
+        <h2>Demo</h2>
+        <div class="row" style="gap:16px">
+          <input id="qty" data-testid="qty" type="text" value="2" />
+          <div class="row">
+            <button id="btn-up-once">upOnce()</button>
+            <button id="btn-down-once">downOnce()</button>
+            <button id="btn-start-up">startUpSpin()</button>
+            <button id="btn-start-down">startDownSpin()</button>
+            <button id="btn-stop">stopSpin()</button>
+          </div>
+        </div>
+        <h3>Events</h3>
+        <div class="log" id="log"></div>
+      </div>
+      <div class="card">
+        <h2>CSS Variables</h2>
+        <div class="vars">
+          <label>--ts-font-size</label><input data-var="--ts-font-size" value="14px" />
+          <label>--ts-height</label><input data-var="--ts-height" value="32px" />
+          <label>--ts-radius</label><input data-var="--ts-radius" value="6px" />
+          <label>--ts-gap</label><input data-var="--ts-gap" value="4px" />
+          <label>--ts-bg</label><input data-var="--ts-bg" value="#ffffff" />
+          <label>--ts-fg</label><input data-var="--ts-fg" value="#1f2937" />
+          <label>--ts-border</label><input data-var="--ts-border" value="#cbd5e1" />
+          <label>--ts-btn-bg</label><input data-var="--ts-btn-bg" value="#f3f4f6" />
+          <label>--ts-btn-fg</label><input data-var="--ts-btn-fg" value="#111827" />
+          <label>--ts-btn-hover-bg</label><input data-var="--ts-btn-hover-bg" value="#e5e7eb" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h2>Source</h2>
+      <h4>HTML</h4>
+      <pre id="src-html"></pre>
+      <h4>JS</h4>
+      <pre id="src-js"></pre>
+      <h4>CSS (tokens)</h4>
+      <pre id="src-css"></pre>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+  </html>
+

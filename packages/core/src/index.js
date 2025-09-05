@@ -154,8 +154,14 @@ export class TouchSpinCore {
     // Parse data-bts-* attributes
     const dataAttrs = this._parseDataAttributes(inputEl);
 
+    // Allow global default options (e.g., to set a global default renderer or defaults)
+    /** @type {Partial<TouchSpinCoreOptions>} */
+    const globalDefaults = (typeof globalThis !== 'undefined' && globalThis.TouchSpinDefaultOptions)
+      ? TouchSpinCore.sanitizePartialSettings(globalThis.TouchSpinDefaultOptions, DEFAULTS)
+      : {};
+
     /** @type {TouchSpinCoreOptions} */
-    this.settings = Object.assign({}, DEFAULTS, dataAttrs, opts);
+    this.settings = Object.assign({}, DEFAULTS, globalDefaults, dataAttrs, opts);
     // Sanitize settings to ensure safe, predictable behavior
     this._sanitizeSettings();
 
