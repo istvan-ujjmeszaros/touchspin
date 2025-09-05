@@ -101,9 +101,6 @@ class VanillaRenderer extends AbstractRenderer {
     // Hide empty prefix/postfix elements
     this.hideEmptyPrefixPostfix(wrapper);
 
-    // Apply size variant if input has size indicators
-    this.applyInputSizeVariant(wrapper);
-
     return wrapper;
   }
 
@@ -116,19 +113,6 @@ class VanillaRenderer extends AbstractRenderer {
     `;
   }
 
-  applyInputSizeVariant(wrapper = this.wrapper) {
-    // Detect size from common input class patterns
-    const classList = this.input.className;
-    
-    if (classList.includes('form-control-sm') || classList.includes('input-sm') || 
-        classList.includes('text-sm') || classList.includes('small')) {
-      wrapper.classList.add('ts-wrapper--small');
-    } else if (classList.includes('form-control-lg') || classList.includes('input-lg') || 
-               classList.includes('text-lg') || classList.includes('large')) {
-      wrapper.classList.add('ts-wrapper--large');
-    }
-    // Default size needs no additional class
-  }
 
   hideEmptyPrefixPostfix(wrapper = this.wrapper) {
     const prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');

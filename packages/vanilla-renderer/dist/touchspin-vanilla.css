@@ -1,171 +1,205 @@
 /**
- * TouchSpin Modern Renderer - Light Theme
- * Clean light theme with TailwindRenderer colors and CSS custom properties
+ * TouchSpin Vanilla Renderer - CSS Variables Theme
+ * Clean vanilla theme with descriptive CSS custom properties for theming
  */
 
-/* Main wrapper - exact match to TailwindRenderer flex structure */
+:root {
+  /* Wrapper Styles */
+  --ts-wrapper-background-color: #ffffff;
+  --ts-wrapper-border-color: #d1d5db;
+  --ts-wrapper-border-width: 1px;
+  --ts-wrapper-border-radius: 0.375rem;
+  --ts-wrapper-box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  
+  /* Focus States */
+  --ts-wrapper-focus-border-color: #3b82f6;
+  --ts-wrapper-focus-box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2), 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  
+  /* Disabled States */
+  --ts-wrapper-disabled-background-color: #f9fafb;
+  --ts-wrapper-disabled-opacity: 0.6;
+  
+  /* Readonly States */
+  --ts-wrapper-readonly-background-color: #f9fafb;
+  
+  /* Input Styles */
+  --ts-input-text-color: #111827;
+  --ts-input-placeholder-color: #6b7280;
+  --ts-input-font-size: 1rem;
+  --ts-input-padding: 0.5rem 0.75rem;
+  
+  /* Button Styles */
+  --ts-button-background-color: #f3f4f6;
+  --ts-button-background-color-hover: #e5e7eb;
+  --ts-button-background-color-active: #d1d5db;
+  --ts-button-text-color: #374151;
+  --ts-button-font-weight: 500;
+  --ts-button-padding: 0.5rem 0.75rem;
+  --ts-button-disabled-opacity: 0.5;
+  
+  /* Button Border Radius (Shorthand Format) */
+  --ts-button-down-border-radius: 0.375rem 0 0 0.375rem;
+  --ts-button-up-border-radius: 0 0.375rem 0.375rem 0;
+  
+  /* Addon (Prefix/Postfix) Styles */
+  --ts-addon-background-color: #f9fafb;
+  --ts-addon-text-color: #6b7280;
+  --ts-addon-padding: 0.5rem 0.75rem;
+  
+  /* Vertical Button Styles */
+  --ts-vertical-button-background-color: #f3f4f6;
+  --ts-vertical-button-background-color-hover: #e5e7eb;
+  --ts-vertical-button-text-color: #374151;
+  --ts-vertical-button-border-color: #d1d5db;
+  --ts-vertical-button-border-width: 1px;
+  --ts-vertical-button-padding: 0.25rem 0.5rem;
+  --ts-vertical-button-font-size: 0.75rem;
+  --ts-vertical-button-font-weight: 500;
+  --ts-vertical-button-disabled-opacity: 0.5;
+  
+  /* Vertical Button Border Radius (Shorthand Format) */
+  --ts-vertical-button-up-border-radius: 0 0.25rem 0 0;
+  --ts-vertical-button-down-border-radius: 0 0 0.25rem 0;
+}
+
+/* Main wrapper - uses CSS variables */
 .ts-wrapper {
   display: flex;
-  align-items: stretch;                  /* stretch to match TailwindRenderer */
-  border-radius: 0.375rem;               /* rounded-md */
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);  /* shadow-sm */
-  border: 1px solid #d1d5db;             /* gray-300 */
-  background-color: #ffffff;
+  align-items: stretch;
+  border-radius: var(--ts-wrapper-border-radius);
+  box-shadow: var(--ts-wrapper-box-shadow);
+  border: var(--ts-wrapper-border-width) solid var(--ts-wrapper-border-color);
+  background-color: var(--ts-wrapper-background-color);
 }
 
-/* Focus state for entire wrapper - matches focus-within:ring-2 focus-within:ring-blue-500 */
+/* Focus state for entire wrapper */
 .ts-wrapper:focus-within {
-  border-color: #3b82f6;                 /* blue-500 */
-  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.2), 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border-color: var(--ts-wrapper-focus-border-color);
+  box-shadow: var(--ts-wrapper-focus-box-shadow);
 }
 
-/* Disabled state using :has() selector - matches has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 */
+/* Disabled state using :has() selector */
 .ts-wrapper:has(input:disabled) {
-  opacity: 0.6;
-  background-color: #f9fafb;             /* gray-50 */
+  opacity: var(--ts-wrapper-disabled-opacity);
+  background-color: var(--ts-wrapper-disabled-background-color);
 }
 
-/* Read-only state - matches has-[:read-only]:bg-gray-50 */
+/* Read-only state */
 .ts-wrapper:has(input:read-only) {
-  background-color: #f9fafb;             /* gray-50 */
+  background-color: var(--ts-wrapper-readonly-background-color);
 }
 
-/* Input styling - exact match to TailwindRenderer flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 */
+/* Input styling */
 .ts-input {
   flex: 1 1 auto;
-  padding: 0.5rem 0.75rem;               /* py-2 px-3 */
+  padding: var(--ts-input-padding);
   border: 0;
   background: transparent;
   outline: none;
-  color: #111827;                        /* text-gray-900 */
-  font-size: 1rem;
+  color: var(--ts-input-text-color);
+  font-size: var(--ts-input-font-size);
 }
 
 .ts-input::placeholder {
-  color: #6b7280;                        /* placeholder-gray-500 */
+  color: var(--ts-input-placeholder-color);
 }
 
-/* Button base styling - exact match to TailwindRenderer inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-0 */
+/* Button base styling */
 .ts-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0.75rem;               /* px-3 py-2 */
-  background-color: #f3f4f6;             /* bg-gray-100 */
-  color: #374151;                        /* text-gray-700 */
-  font-weight: 500;                      /* font-medium */
+  padding: var(--ts-button-padding);
+  background-color: var(--ts-button-background-color);
+  color: var(--ts-button-text-color);
+  font-weight: var(--ts-button-font-weight);
   border: 0;
   cursor: pointer;
   user-select: none;
 }
 
 .ts-btn:hover:not(:disabled) {
-  background-color: #e5e7eb;             /* hover:bg-gray-200 */
+  background-color: var(--ts-button-background-color-hover);
 }
 
 .ts-btn:active:not(:disabled) {
-  background-color: #d1d5db;             /* active:bg-gray-300 */
+  background-color: var(--ts-button-background-color-active);
 }
 
 .ts-btn:disabled {
-  opacity: 0.5;                          /* disabled:opacity-50 */
-  cursor: not-allowed;                   /* disabled:cursor-not-allowed */
+  opacity: var(--ts-button-disabled-opacity);
+  cursor: not-allowed;
 }
 
 .ts-btn:disabled:hover {
-  background-color: #f3f4f6;             /* disabled:hover:bg-gray-100 */
+  background-color: var(--ts-button-background-color);
 }
 
-/* Button positioning - exact match to TailwindRenderer rounded-l-md / rounded-r-md */
+/* Button positioning - using shorthand border-radius */
 .ts-btn--down {
-  border-top-left-radius: 0.375rem;     /* rounded-l-md */
-  border-bottom-left-radius: 0.375rem;
+  border-radius: var(--ts-button-down-border-radius);
 }
 
 .ts-btn--up {
-  border-top-right-radius: 0.375rem;    /* rounded-r-md */
-  border-bottom-right-radius: 0.375rem;
+  border-radius: var(--ts-button-up-border-radius);
 }
 
-/* Addon styling - exact match to TailwindRenderer inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon */
+/* Addon styling */
 .ts-addon {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;               /* px-3 py-2 */
-  background-color: #f9fafb;             /* bg-gray-50 */
-  color: #6b7280;                        /* text-gray-600 */
+  padding: var(--ts-addon-padding);
+  background-color: var(--ts-addon-background-color);
+  color: var(--ts-addon-text-color);
   border: 0;
 }
 
 /* Vertical layout - prefix gets left border radius */
 .ts-wrapper--vertical .ts-prefix {
-  border-top-left-radius: 0.375rem;     /* rounded-tl-md */
-  border-bottom-left-radius: 0.375rem;  /* rounded-bl-md */
+  border-top-left-radius: var(--ts-wrapper-border-radius);
+  border-bottom-left-radius: var(--ts-wrapper-border-radius);
 }
 
-/* Vertical layout - exact match to TailwindRenderer flex flex-col ml-1 */
+/* Vertical layout */
 .ts-wrapper--vertical {
   position: relative;
 }
 
 .ts-vertical-wrapper {
-  display: flex;                         /* flex */
-  flex-direction: column;                /* flex-col */
+  display: flex;
+  flex-direction: column;
 }
 
-/* Vertical buttons - exact match to TailwindRenderer inline-flex items-center justify-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed */
+/* Vertical buttons */
 .ts-btn--vertical {
-  display: inline-flex;                  /* inline-flex */
-  align-items: center;                   /* items-center */
-  justify-content: center;               /* justify-center */
-  padding: 0.25rem 0.5rem;               /* px-2 py-1 */
-  font-size: 0.75rem;                    /* text-xs */
-  background-color: #f3f4f6;             /* bg-gray-100 */
-  color: #374151;                        /* text-gray-700 */
-  font-weight: 500;                      /* font-medium */
-  border: 1px solid #d1d5db;             /* border border-gray-300 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ts-vertical-button-padding);
+  font-size: var(--ts-vertical-button-font-size);
+  background-color: var(--ts-vertical-button-background-color);
+  color: var(--ts-vertical-button-text-color);
+  font-weight: var(--ts-vertical-button-font-weight);
+  border: var(--ts-vertical-button-border-width) solid var(--ts-vertical-button-border-color);
   cursor: pointer;
   user-select: none;
 }
 
 .ts-btn--vertical:hover:not(:disabled) {
-  background-color: #e5e7eb;             /* hover:bg-gray-200 */
+  background-color: var(--ts-vertical-button-background-color-hover);
 }
 
 .ts-btn--vertical:disabled {
-  opacity: 0.5;                          /* disabled:opacity-50 */
-  cursor: not-allowed;                   /* disabled:cursor-not-allowed */
+  opacity: var(--ts-vertical-button-disabled-opacity);
+  cursor: not-allowed;
 }
 
-/* Vertical button positioning - no left radius, only right radius */
+/* Vertical button positioning - using shorthand border-radius */
 .ts-btn--vertical-up {
-  border-top-right-radius: 0.25rem;     /* rounded-tr */
+  border-radius: var(--ts-vertical-button-up-border-radius);
 }
 
 .ts-btn--vertical-down {
-  border-bottom-right-radius: 0.25rem;  /* rounded-br */
-  border-top: 0;                         /* border-t-0 */
-}
-
-/* Size variants */
-.ts-wrapper--small {
-  font-size: 0.875rem;                   /* text-sm */
-}
-
-.ts-wrapper--small .ts-input,
-.ts-wrapper--small .ts-btn,
-.ts-wrapper--small .ts-addon {
-  padding: 0.25rem 0.5rem;               /* py-1 px-2 */
-  font-size: 0.875rem;                   /* text-sm */
-}
-
-.ts-wrapper--large {
-  font-size: 1.125rem;                   /* text-lg */
-}
-
-.ts-wrapper--large .ts-input,
-.ts-wrapper--large .ts-btn,
-.ts-wrapper--large .ts-addon {
-  padding: 0.75rem 1rem;                 /* py-3 px-4 */
-  font-size: 1.125rem;                   /* text-lg */
+  border-radius: var(--ts-vertical-button-down-border-radius);
+  border-top: 0;
 }
