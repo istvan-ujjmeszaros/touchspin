@@ -2,8 +2,9 @@
   --ts-font-size: 14px;
   --ts-height: 32px;
   --ts-radius: 6px;
-  --ts-radius-left: var(--ts-radius);
-  --ts-radius-right: var(--ts-radius);
+  --ts-wrapper-radius: var(--ts-radius);
+  --ts-down-radius: var(--ts-radius);
+  --ts-up-radius: var(--ts-radius);
   --ts-gap: 0px; /* default: seamless segments */
 
   --ts-bg: #fff;
@@ -25,7 +26,7 @@
   background: var(--ts-bg);
   color: var(--ts-fg);
   border: 1px solid var(--ts-wrapper-border);
-  border-radius: var(--ts-radius);
+  border-radius: var(--ts-wrapper-radius);
   padding: 0; /* remove inner gaps so controls are flush */
 }
 
@@ -59,12 +60,14 @@
   min-width: var(--ts-height);
   padding: 0 10px;
   border: 1px solid var(--ts-control-border);
-  border-radius: 0;
+  border-radius: 0; /* overridden per-side below */
   background: var(--ts-btn-bg);
   color: var(--ts-btn-fg);
   cursor: pointer;
   user-select: none;
 }
+.ts-btn-down{ border-radius: var(--ts-down-radius); }
+.ts-btn-up{ border-radius: var(--ts-up-radius); }
 .ts-btn:hover{ background: var(--ts-btn-hover-bg); }
 .ts-btn:disabled{ background: var(--ts-btn-disabled-bg); cursor: not-allowed; opacity: .65; }
 
@@ -85,12 +88,4 @@
   width: 0;
 }
 
-/* Edge rounding via structure: first child gets left radius, last child gets right radius */
-.ts-vanilla > :first-child{
-  border-top-left-radius: var(--ts-radius-left);
-  border-bottom-left-radius: var(--ts-radius-left);
-}
-.ts-vanilla > :last-child{
-  border-top-right-radius: var(--ts-radius-right);
-  border-bottom-right-radius: var(--ts-radius-right);
-}
+/* Edge rounding is controlled via per-button variables above */
