@@ -26,7 +26,7 @@ class VanillaRenderer extends AbstractRenderer {
 
     // Prefix
     let prefixEl = null;
-    if (this.settings.prefix !== undefined && this.settings.prefix !== null) {
+    if (this.settings.prefix && String(this.settings.prefix).trim().length > 0) {
       prefixEl = doc.createElement('span');
       prefixEl.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
       prefixEl.setAttribute('data-touchspin-injected', 'prefix');
@@ -57,7 +57,7 @@ class VanillaRenderer extends AbstractRenderer {
 
     // Postfix
     let postfixEl = null;
-    if (this.settings.postfix !== undefined && this.settings.postfix !== null) {
+    if (this.settings.postfix && String(this.settings.postfix).trim().length > 0) {
       postfixEl = doc.createElement('span');
       postfixEl.className = `ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
       postfixEl.setAttribute('data-touchspin-injected', 'postfix');
@@ -67,6 +67,11 @@ class VanillaRenderer extends AbstractRenderer {
     }
 
     // Save for teardown
+    // Default theme: light (avoid surprising dark when page is light)
+    if (!this.wrapper) {
+      // noop guard
+    }
+    wrapper.setAttribute('data-theme', 'light');
     this.wrapper = wrapper;
     this._upBtn = upBtn;
     this._downBtn = downBtn;

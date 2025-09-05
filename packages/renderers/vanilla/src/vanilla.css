@@ -1,4 +1,4 @@
-:root{
+.ts-vanilla{
   --ts-font-size: 14px;
   --ts-height: 32px;
   --ts-radius: 6px;
@@ -15,8 +15,18 @@
   --ts-btn-disabled-bg: #f9fafb;
 }
 
+.ts-vanilla[data-theme="dark"]{
+  --ts-bg: #111827;
+  --ts-fg: #e5e7eb;
+  --ts-border: #374151;
+  --ts-btn-bg: #1f2937;
+  --ts-btn-fg: #f3f4f6;
+  --ts-btn-hover-bg: #374151;
+  --ts-btn-disabled-bg: #1f2937;
+}
+
 @media (prefers-color-scheme: dark){
-  :root{
+  .ts-vanilla[data-theme="auto"]{
     --ts-bg: #111827;
     --ts-fg: #e5e7eb;
     --ts-border: #374151;
@@ -35,7 +45,7 @@
   color: var(--ts-fg);
   border: 1px solid var(--ts-border);
   border-radius: var(--ts-radius);
-  padding: 2px;
+  padding: 0; /* remove inner gaps so controls are flush */
 }
 
 .ts-vanilla > input[type="text"],
@@ -78,3 +88,9 @@
   opacity: .9;
 }
 
+/* Hide empty affixes to avoid gaps */
+.ts-prefix:empty, .ts-postfix:empty{
+  display: none;
+  padding: 0;
+  width: 0;
+}
