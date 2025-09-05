@@ -76,20 +76,12 @@
   width: 0;
 }
 
-/* Edge rounding logic */
-.ts-vanilla:not(.ts-has-prefix) .ts-btn-down{
+/* Edge rounding via structure: first child gets left radius, last child gets right radius */
+.ts-vanilla > :first-child{
   border-top-left-radius: var(--ts-radius);
   border-bottom-left-radius: var(--ts-radius);
 }
-.ts-vanilla.ts-has-prefix .ts-prefix{
-  border-top-left-radius: var(--ts-radius);
-  border-bottom-left-radius: var(--ts-radius);
-}
-.ts-vanilla:not(.ts-has-postfix) .ts-btn-up{
-  border-top-right-radius: var(--ts-radius);
-  border-bottom-right-radius: var(--ts-radius);
-}
-.ts-vanilla.ts-has-postfix .ts-postfix{
+.ts-vanilla > :last-child{
   border-top-right-radius: var(--ts-radius);
   border-bottom-right-radius: var(--ts-radius);
 }

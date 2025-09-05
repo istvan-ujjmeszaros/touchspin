@@ -19,24 +19,14 @@ class VanillaRenderer extends AbstractRenderer {
       wrapper.setAttribute('data-testid', `${testId}-wrapper`);
     }
 
-    // Place wrapper around input
+    // Place wrapper around input (do not append input yet; we will build order explicitly)
     const parent = this.input.parentElement;
     if (parent) parent.insertBefore(wrapper, this.input);
-    wrapper.appendChild(this.input);
 
-    // Prefix
+    // Create controls in explicit order: [down] [prefix?] [input] [postfix?] [up]
     let prefixEl = null;
-    if (this.settings.prefix && String(this.settings.prefix).trim().length > 0) {
-      prefixEl = doc.createElement('span');
-      prefixEl.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
-      prefixEl.setAttribute('data-touchspin-injected', 'prefix');
-      if (testId) prefixEl.setAttribute('data-testid', `${testId}-prefix`);
-      prefixEl.innerHTML = this.settings.prefix || '';
-      wrapper.insertBefore(prefixEl, this.input);
-      wrapper.classList.add('ts-has-prefix');
-    }
 
-    // Down button
+    // Down button (left edge)
     const downBtn = doc.createElement('button');
     downBtn.type = 'button';
     downBtn.className = `ts-btn ts-btn-down ${this.settings.buttondown_class || ''}`.trim();
@@ -44,19 +34,22 @@ class VanillaRenderer extends AbstractRenderer {
     downBtn.setAttribute('aria-label', 'Decrease');
     if (testId) downBtn.setAttribute('data-testid', `${testId}-down`);
     downBtn.innerHTML = this.settings.buttondown_txt || '-';
-    wrapper.insertBefore(downBtn, this.input);
+    wrapper.appendChild(downBtn);
 
-    // Up button
-    const upBtn = doc.createElement('button');
-    upBtn.type = 'button';
-    upBtn.className = `ts-btn ts-btn-up ${this.settings.buttonup_class || ''}`.trim();
-    upBtn.setAttribute('data-touchspin-injected', 'up');
-    upBtn.setAttribute('aria-label', 'Increase');
-    if (testId) upBtn.setAttribute('data-testid', `${testId}-up`);
-    upBtn.innerHTML = this.settings.buttonup_txt || '+';
-    wrapper.appendChild(upBtn);
+    // Optional prefix (inside, after down button)
+    if (this.settings.prefix && String(this.settings.prefix).trim().length > 0) {
+      prefixEl = doc.createElement('span');
+      prefixEl.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+      prefixEl.setAttribute('data-touchspin-injected', 'prefix');
+      if (testId) prefixEl.setAttribute('data-testid', `${testId}-prefix`);
+      prefixEl.innerHTML = this.settings.prefix || '';
+      wrapper.appendChild(prefixEl);
+    }
 
-    // Postfix
+    // Input in the middle
+    wrapper.appendChild(this.input);
+
+    // Optional postfix (inside, before up button)
     let postfixEl = null;
     if (this.settings.postfix && String(this.settings.postfix).trim().length > 0) {
       postfixEl = doc.createElement('span');
@@ -65,8 +58,17 @@ class VanillaRenderer extends AbstractRenderer {
       if (testId) postfixEl.setAttribute('data-testid', `${testId}-postfix`);
       postfixEl.innerHTML = this.settings.postfix || '';
       wrapper.appendChild(postfixEl);
-      wrapper.classList.add('ts-has-postfix');
     }
+
+    // Up button (right edge)
+    const upBtn = doc.createElement('button');
+    upBtn.type = 'button';
+    upBtn.className = `ts-btn ts-btn-up ${this.settings.buttonup_class || ''}`.trim();
+    upBtn.setAttribute('data-touchspin-injected', 'up');
+    upBtn.setAttribute('aria-label', 'Increase');
+    if (testId) upBtn.setAttribute('data-testid', `${testId}-up`);
+    upBtn.innerHTML = this.settings.buttonup_txt || '+';
+    wrapper.appendChild(upBtn);
 
     // Save for teardown
     this.wrapper = wrapper;
