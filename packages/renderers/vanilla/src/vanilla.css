@@ -10,8 +10,11 @@
   --ts-bg: #fff;
   --ts-fg: #1f2937;
   --ts-wrapper-border: #cbd5e1;
+  --ts-wrapper-border-width: 1px;
   --ts-button-border: #cbd5e1;
   --ts-affix-border: #cbd5e1;
+  --ts-separator-width: 1px; /* collapsed seam between segments */
+  --ts-separator-color: var(--ts-button-border);
   --ts-focus-ring: 0 0 0 3px rgba(59,130,246,0.35);
 
   --ts-btn-bg: #f3f4f6;
@@ -27,19 +30,26 @@
   background: var(--ts-bg);
   color: var(--ts-fg);
   font-size: var(--ts-font-size);
-  border: 1px solid var(--ts-wrapper-border);
+  border: var(--ts-wrapper-border-width) solid var(--ts-wrapper-border);
   border-radius: var(--ts-wrapper-radius);
   padding: 0; /* remove inner gaps so controls are flush */
 }
 
 /* Ensure all immediate children align and include borders in height */
 .ts-vanilla > *{
+  position: relative; /* for separator pseudo-element */
   box-sizing: border-box;
   height: var(--ts-height);
 }
 
-/* Collapse shared borders for seamless segments */
-.ts-vanilla > * + *{ margin-left: -1px; }
+/* Draw a single separator on the left edge of each subsequent segment */
+.ts-vanilla > * + *::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--ts-separator-width);
+  background: var(--ts-separator-color);
+}
 
 .ts-vanilla > input[type="text"],
 .ts-vanilla > input[type="number"]{
@@ -61,7 +71,7 @@
   justify-content: center;
   min-width: var(--ts-height);
   padding: 0 10px;
-  border: 1px solid var(--ts-button-border);
+  border: 0; /* borders handled by wrapper + separators */
   border-radius: 0; /* overridden per-side below */
   background: var(--ts-btn-bg);
   color: var(--ts-btn-fg);
@@ -80,7 +90,7 @@
   align-items: center;
   padding: 0 8px;
   color: inherit;
-  border: 1px solid var(--ts-affix-border);
+  border: 0; /* borders handled by wrapper + separators */
   border-radius: 0;
   font-size: var(--ts-affix-font-size, inherit);
   line-height: var(--ts-height);

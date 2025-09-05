@@ -38,7 +38,7 @@ document.getElementById('ctrl-postfix').addEventListener('input', (e) => api.upd
 // Show source blocks
 const srcHtml = `<input id="qty" data-testid="qty" type="text" value="2" />`
 const srcJs = `import { TouchSpin } from '@touchspin/core'\nimport { VanillaRenderer } from '@touchspin/renderer-vanilla'\n\nglobalThis.TouchSpinDefaultRenderer = VanillaRenderer\n\nconst input = document.querySelector('#qty')\nTouchSpin(input, { min: 0, max: 1000000, prefix: '$', postfix: 'kg' })`
-const srcCss = `:root{\n  --ts-font-size: 14px; --ts-height: 32px; --ts-gap: 0px;\n  --ts-wrapper-radius: 6px; --ts-down-radius: 6px; --ts-up-radius: 6px;\n  --ts-bg:#fff; --ts-fg:#1f2937; --ts-wrapper-border:#cbd5e1; --ts-button-border:#cbd5e1; --ts-affix-border:#cbd5e1;\n  --ts-btn-bg:#f3f4f6; --ts-btn-fg:#111827; --ts-btn-hover-bg:#e5e7eb;\n}`
+const srcCss = `:root{\n  --ts-font-size: 14px; --ts-height: 32px; --ts-gap: 0px;\n  --ts-wrapper-radius: 6px; --ts-down-radius: 6px 0 0 6px; --ts-up-radius: 0 6px 6px 0;\n  --ts-bg:#fff; --ts-fg:#1f2937; --ts-wrapper-border:#cbd5e1; --ts-wrapper-border-width:1px;\n  --ts-separator-width:1px; --ts-separator-color:#cbd5e1;\n  --ts-btn-bg:#f3f4f6; --ts-btn-fg:#111827; --ts-btn-hover-bg:#e5e7eb;\n}`
 
 document.getElementById('src-html').textContent = srcHtml
 document.getElementById('src-js').textContent = srcJs
