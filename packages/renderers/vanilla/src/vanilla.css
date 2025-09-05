@@ -2,7 +2,9 @@
   --ts-font-size: 14px;
   --ts-height: 32px;
   --ts-radius: 6px;
-  --ts-gap: 4px;
+  --ts-radius-left: var(--ts-radius);
+  --ts-radius-right: var(--ts-radius);
+  --ts-gap: 0px; /* default: seamless segments */
 
   --ts-bg: #fff;
   --ts-fg: #1f2937;
@@ -85,10 +87,10 @@
 
 /* Edge rounding via structure: first child gets left radius, last child gets right radius */
 .ts-vanilla > :first-child{
-  border-top-left-radius: var(--ts-radius);
-  border-bottom-left-radius: var(--ts-radius);
+  border-top-left-radius: var(--ts-radius-left);
+  border-bottom-left-radius: var(--ts-radius-left);
 }
 .ts-vanilla > :last-child{
-  border-top-right-radius: var(--ts-radius);
-  border-bottom-right-radius: var(--ts-radius);
+  border-top-right-radius: var(--ts-radius-right);
+  border-bottom-right-radius: var(--ts-radius-right);
 }
