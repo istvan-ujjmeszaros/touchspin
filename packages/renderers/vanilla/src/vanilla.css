@@ -27,6 +27,15 @@
   padding: 0; /* remove inner gaps so controls are flush */
 }
 
+/* Ensure all immediate children align and include borders in height */
+.ts-vanilla > *{
+  box-sizing: border-box;
+  height: var(--ts-height);
+}
+
+/* Collapse shared borders for seamless segments */
+.ts-vanilla > * + *{ margin-left: -1px; }
+
 .ts-vanilla > input[type="text"],
 .ts-vanilla > input[type="number"]{
   border: none;
@@ -45,7 +54,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: var(--ts-height);
   min-width: var(--ts-height);
   padding: 0 10px;
   border: 1px solid var(--ts-control-border);
@@ -62,7 +70,6 @@
   display: inline-flex;
   align-items: center;
   padding: 0 8px;
-  height: var(--ts-height);
   color: inherit;
   border: 1px solid var(--ts-control-border);
   border-radius: 0;

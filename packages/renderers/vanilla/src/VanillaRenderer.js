@@ -70,7 +70,7 @@ class VanillaRenderer extends AbstractRenderer {
     upBtn.innerHTML = this.settings.buttonup_txt || '+';
     wrapper.appendChild(upBtn);
 
-    // Save for teardown
+    // Save for teardown and dynamic updates
     this.wrapper = wrapper;
     this._upBtn = upBtn;
     this._downBtn = downBtn;
@@ -80,6 +80,45 @@ class VanillaRenderer extends AbstractRenderer {
     // Attach events via core API
     this.core.attachUpEvents(upBtn);
     this.core.attachDownEvents(downBtn);
+
+    // Observe setting changes for live prefix/postfix updates
+    this.core.observeSetting('prefix', (val) => {
+      const has = val && String(val).trim().length > 0;
+      if (has && !this._prefixEl) {
+        const el = doc.createElement('span');
+        el.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+        el.setAttribute('data-touchspin-injected', 'prefix');
+        const testId2 = this.input.getAttribute('data-testid');
+        if (testId2) el.setAttribute('data-testid', `${testId2}-prefix`);
+        el.innerHTML = String(val);
+        this.wrapper.insertBefore(el, this.input);
+        this._prefixEl = el;
+      } else if (!has && this._prefixEl) {
+        this._prefixEl.remove();
+        this._prefixEl = null;
+      } else if (has && this._prefixEl) {
+        this._prefixEl.innerHTML = String(val);
+      }
+    });
+
+    this.core.observeSetting('postfix', (val) => {
+      const has = val && String(val).trim().length > 0;
+      if (has && !this._postfixEl) {
+        const el = doc.createElement('span');
+        el.className = `ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+        el.setAttribute('data-touchspin-injected', 'postfix');
+        const testId2 = this.input.getAttribute('data-testid');
+        if (testId2) el.setAttribute('data-testid', `${testId2}-postfix`);
+        el.innerHTML = String(val);
+        this.wrapper.insertBefore(el, this._upBtn);
+        this._postfixEl = el;
+      } else if (!has && this._postfixEl) {
+        this._postfixEl.remove();
+        this._postfixEl = null;
+      } else if (has && this._postfixEl) {
+        this._postfixEl.innerHTML = String(val);
+      }
+    });
   }
   // Use AbstractRenderer.teardown() default to remove injected elements and unwrap input
 }
