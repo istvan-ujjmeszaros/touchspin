@@ -9,7 +9,8 @@
   --ts-bg: #fff;
   --ts-fg: #1f2937;
   --ts-wrapper-border: #cbd5e1;
-  --ts-control-border: #cbd5e1;
+  --ts-button-border: #cbd5e1;
+  --ts-affix-border: #cbd5e1;
   --ts-focus-ring: 0 0 0 3px rgba(59,130,246,0.35);
 
   --ts-btn-bg: #f3f4f6;
@@ -24,6 +25,7 @@
   gap: var(--ts-gap);
   background: var(--ts-bg);
   color: var(--ts-fg);
+  font-size: var(--ts-font-size);
   border: 1px solid var(--ts-wrapper-border);
   border-radius: var(--ts-wrapper-radius);
   padding: 0; /* remove inner gaps so controls are flush */
@@ -58,10 +60,12 @@
   justify-content: center;
   min-width: var(--ts-height);
   padding: 0 10px;
-  border: 1px solid var(--ts-control-border);
+  border: 1px solid var(--ts-button-border);
   border-radius: 0; /* overridden per-side below */
   background: var(--ts-btn-bg);
   color: var(--ts-btn-fg);
+  font-size: var(--ts-button-font-size, inherit);
+  line-height: var(--ts-height);
   cursor: pointer;
   user-select: none;
 }
@@ -75,8 +79,10 @@
   align-items: center;
   padding: 0 8px;
   color: inherit;
-  border: 1px solid var(--ts-control-border);
+  border: 1px solid var(--ts-affix-border);
   border-radius: 0;
+  font-size: var(--ts-affix-font-size, inherit);
+  line-height: var(--ts-height);
   opacity: .9;
 }
 
