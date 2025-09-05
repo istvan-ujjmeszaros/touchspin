@@ -23,6 +23,7 @@
       .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
       .log{max-height:220px; overflow:auto; font-family: ui-monospace, Menlo, monospace; background:#0b1020; color:#9ca3af; padding:8px; border-radius:6px}
       .vars{display:grid; grid-template-columns: 260px 1fr; gap:8px; align-items:center}
+      .header-line{display:flex; align-items:center; justify-content:space-between; gap:12px}
       label{font-size:12px; color:#374151}
       input[type="text"], input[type="number"], input[type="color"]{padding:6px 8px; border:1px solid #d1d5db; border-radius:6px}
       button{padding:6px 10px; border:1px solid #d1d5db; border-radius:6px; background:#f3f4f6; cursor:pointer}
@@ -55,7 +56,13 @@
         <div class="log" id="log"></div>
       </div>
       <div class="card">
-        <h2>CSS Variables</h2>
+        <div class="header-line">
+          <h2 style="margin:0">CSS Variables</h2>
+          <div class="row" style="gap:8px">
+            <button id="btn-copy-vars" title=",:root block">Copy Variables</button>
+            <span id="copied-msg" style="font-size:12px;color:#059669;display:none">Copied!</span>
+          </div>
+        </div>
         <div class="vars">
           <label>--ts-font-size</label><input data-var="--ts-font-size" value="14px" />
           <label>--ts-height</label><input data-var="--ts-height" value="32px" />
@@ -79,10 +86,6 @@
           <label>--ts-button-foreground</label><input data-var="--ts-button-foreground" value="#111827" />
           <label>--ts-button-hover-background</label><input data-var="--ts-button-hover-background" value="#e5e7eb" />
           <label>--ts-button-disabled-background</label><input data-var="--ts-button-disabled-background" value="#f9fafb" />
-        </div>
-        <div class="row" style="margin-top:12px">
-          <button id="btn-copy-vars" title=",:root block">Copy Variables</button>
-          <span id="copied-msg" style="font-size:12px;color:#059669;display:none">Copied!</span>
         </div>
       </div>
     </div>
