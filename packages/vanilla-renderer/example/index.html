@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VanillaRenderer Simple Example</title>
+  
+  <!-- VanillaRenderer CSS -->
+  <link rel="stylesheet" href="../src/themes/vanilla.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f8fafc;
+      color: #333;
+    }
+    
+    h1 {
+      color: #111827;
+      margin-bottom: 30px;
+    }
+    
+    .example {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    
+    .example h3 {
+      margin-top: 0;
+      color: #374151;
+    }
+    
+    .spinner {
+      margin: 15px 0;
+    }
+    
+    .spinner input {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>VanillaRenderer Simple Example</h1>
+  
+  <div class="example">
+    <h3>Basic Spinner</h3>
+    <div class="spinner">
+      <input type="number" id="basic" value="5" min="0" max="100" step="1">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>With Prefix & Postfix</h3>
+    <div class="spinner">
+      <input type="number" id="currency" value="25" min="0" max="1000" step="5">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Different Sizes</h3>
+    <div class="spinner">
+      <input type="number" id="small" value="1" min="1" max="10" style="width: 150px; font-size: 12px;">
+    </div>
+    <div class="spinner">
+      <input type="number" id="large" value="8" min="1" max="10" style="width: 250px; font-size: 16px;">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Focusable Buttons (Tabbable)</h3>
+    <div class="spinner">
+      <input type="number" id="tabbable" value="10" min="0" max="100" step="1">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Vertical Buttons</h3>
+    <div class="spinner">
+      <input type="number" id="vertical" value="50" min="0" max="100" step="10">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Vertical Buttons with Prefix & Postfix</h3>
+    <div class="spinner">
+      <input type="number" id="vertical-prefix" value="75" min="0" max="200" step="5">
+    </div>
+  </div>
+
+  <script type="module">
+    import { TouchSpin } from '../../core/src/index.js';
+    import { VanillaRenderer } from '../src/index.js';
+
+    // Basic spinner
+    TouchSpin(document.getElementById('basic'), {
+      renderer: VanillaRenderer
+    });
+
+    // Currency spinner
+    TouchSpin(document.getElementById('currency'), {
+      renderer: VanillaRenderer,
+      prefix: '$',
+      postfix: 'USD'
+    });
+
+    // Small spinner
+    TouchSpin(document.getElementById('small'), {
+      renderer: VanillaRenderer
+    });
+
+    // Large spinner
+    TouchSpin(document.getElementById('large'), {
+      renderer: VanillaRenderer
+    });
+
+    // Tabbable spinner (focusable buttons)
+    TouchSpin(document.getElementById('tabbable'), {
+      renderer: VanillaRenderer,
+      focusablebuttons: true
+    });
+
+    // Vertical buttons spinner
+    TouchSpin(document.getElementById('vertical'), {
+      renderer: VanillaRenderer,
+      verticalbuttons: true
+    });
+
+    // Vertical buttons with prefix & postfix
+    TouchSpin(document.getElementById('vertical-prefix'), {
+      renderer: VanillaRenderer,
+      verticalbuttons: true,
+      prefix: '$',
+      postfix: '/mo'
+    });
+
+    console.log('✅ All TouchSpin instances initialized successfully');
+  </script>
+</body>
+</html>

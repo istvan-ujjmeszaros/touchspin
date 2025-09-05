@@ -1,0 +1,51 @@
+{
+  "name": "@touchspin/vanilla-renderer",
+  "version": "1.0.0",
+  "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
+  "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "style": "dist/touchspin-vanilla.css",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./css": "./dist/touchspin-vanilla.css",
+    "./themes/vanilla": "./src/themes/vanilla.css"
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "mkdir -p dist && cp src/themes/vanilla.css dist/touchspin-vanilla.css",
+    "clean": "rm -rf dist/*",
+    "test": "echo 'No tests yet' && exit 0"
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "input",
+    "renderer",
+    "css",
+    "vanilla",
+    "accessibility",
+    "framework-agnostic"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "peerDependencies": {
+    "@touchspin/core": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/bootstrap-touchspin.git",
+    "directory": "packages/vanilla-renderer"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/your-org/bootstrap-touchspin/tree/main/packages/vanilla-renderer#readme"
+}
