@@ -31,20 +31,9 @@ document.querySelectorAll('[data-var]').forEach(inp => {
   })
 })
 
-// Prefix/Postfix live editors
-const makeTextInput = (label, initial, apply) => {
-  const row = document.createElement('div');
-  row.className = 'row';
-  const lab = document.createElement('label'); lab.textContent = label; lab.style.minWidth = '140px';
-  const txt = document.createElement('input'); txt.type = 'text'; txt.value = initial;
-  txt.addEventListener('input', () => apply(txt.value));
-  row.appendChild(lab); row.appendChild(txt);
-  return row;
-}
-
-const rightCard = document.querySelectorAll('.card')[1];
-rightCard.appendChild(makeTextInput('prefix (live)', '$', (v) => api.updateSettings({ prefix: v })));
-rightCard.appendChild(makeTextInput('postfix (live)', 'kg', (v) => api.updateSettings({ postfix: v })));
+// Prefix/Postfix inputs next to component
+document.getElementById('ctrl-prefix').addEventListener('input', (e) => api.updateSettings({ prefix: e.target.value }))
+document.getElementById('ctrl-postfix').addEventListener('input', (e) => api.updateSettings({ postfix: e.target.value }))
 
 // Show source blocks
 const srcHtml = `<input id="qty" data-testid="qty" type="text" value="2" />`
