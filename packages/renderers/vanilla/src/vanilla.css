@@ -45,23 +45,24 @@
   height: var(--ts-height);
 }
 
-/* Draw a single separator on the right edge of each segment except the last.
-   Using ::after avoids relying on input pseudo-elements (which don't render in all browsers). */
-.ts-vanilla > *:not(:last-child)::after{
+/* Only two seams: after prefix, and before postfix */
+.ts-vanilla > .ts-prefix::after{
   content: "";
   position: absolute;
   right: 0; top: 0; bottom: 0;
-  width: var(--ts-separator-width);
-  background: var(--ts-separator-color);
+  width: var(--ts-separator-affix-width);
+  background: var(--ts-separator-affix-color);
   z-index: 1;
   pointer-events: none;
 }
-
-/* Affix seams can be styled separately */
-.ts-vanilla > .ts-prefix:not(:last-child)::after,
-.ts-vanilla > .ts-postfix:not(:last-child)::after{
+.ts-vanilla > .ts-postfix::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
   width: var(--ts-separator-affix-width);
   background: var(--ts-separator-affix-color);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .ts-vanilla > input[type="text"],
