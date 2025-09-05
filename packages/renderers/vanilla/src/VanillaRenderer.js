@@ -33,6 +33,7 @@ class VanillaRenderer extends AbstractRenderer {
       if (testId) prefixEl.setAttribute('data-testid', `${testId}-prefix`);
       prefixEl.innerHTML = this.settings.prefix || '';
       wrapper.insertBefore(prefixEl, this.input);
+      wrapper.classList.add('ts-has-prefix');
     }
 
     // Down button
@@ -64,14 +65,10 @@ class VanillaRenderer extends AbstractRenderer {
       if (testId) postfixEl.setAttribute('data-testid', `${testId}-postfix`);
       postfixEl.innerHTML = this.settings.postfix || '';
       wrapper.appendChild(postfixEl);
+      wrapper.classList.add('ts-has-postfix');
     }
 
     // Save for teardown
-    // Default theme: light (avoid surprising dark when page is light)
-    if (!this.wrapper) {
-      // noop guard
-    }
-    wrapper.setAttribute('data-theme', 'light');
     this.wrapper = wrapper;
     this._upBtn = upBtn;
     this._downBtn = downBtn;

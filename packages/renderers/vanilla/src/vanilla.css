@@ -1,4 +1,4 @@
-.ts-vanilla{
+:root{
   --ts-font-size: 14px;
   --ts-height: 32px;
   --ts-radius: 6px;
@@ -6,7 +6,8 @@
 
   --ts-bg: #fff;
   --ts-fg: #1f2937;
-  --ts-border: #cbd5e1;
+  --ts-wrapper-border: #cbd5e1;
+  --ts-control-border: #cbd5e1;
   --ts-focus-ring: 0 0 0 3px rgba(59,130,246,0.35);
 
   --ts-btn-bg: #f3f4f6;
@@ -15,35 +16,13 @@
   --ts-btn-disabled-bg: #f9fafb;
 }
 
-.ts-vanilla[data-theme="dark"]{
-  --ts-bg: #111827;
-  --ts-fg: #e5e7eb;
-  --ts-border: #374151;
-  --ts-btn-bg: #1f2937;
-  --ts-btn-fg: #f3f4f6;
-  --ts-btn-hover-bg: #374151;
-  --ts-btn-disabled-bg: #1f2937;
-}
-
-@media (prefers-color-scheme: dark){
-  .ts-vanilla[data-theme="auto"]{
-    --ts-bg: #111827;
-    --ts-fg: #e5e7eb;
-    --ts-border: #374151;
-    --ts-btn-bg: #1f2937;
-    --ts-btn-fg: #f3f4f6;
-    --ts-btn-hover-bg: #374151;
-    --ts-btn-disabled-bg: #1f2937;
-  }
-}
-
 .ts-vanilla{
   display: inline-flex;
   align-items: stretch;
   gap: var(--ts-gap);
   background: var(--ts-bg);
   color: var(--ts-fg);
-  border: 1px solid var(--ts-border);
+  border: 1px solid var(--ts-wrapper-border);
   border-radius: var(--ts-radius);
   padding: 0; /* remove inner gaps so controls are flush */
 }
@@ -69,8 +48,8 @@
   height: var(--ts-height);
   min-width: var(--ts-height);
   padding: 0 10px;
-  border: 1px solid var(--ts-border);
-  border-radius: calc(var(--ts-radius) - 2px);
+  border: 1px solid var(--ts-control-border);
+  border-radius: 0;
   background: var(--ts-btn-bg);
   color: var(--ts-btn-fg);
   cursor: pointer;
@@ -85,6 +64,8 @@
   padding: 0 8px;
   height: var(--ts-height);
   color: inherit;
+  border: 1px solid var(--ts-control-border);
+  border-radius: 0;
   opacity: .9;
 }
 
@@ -93,4 +74,22 @@
   display: none;
   padding: 0;
   width: 0;
+}
+
+/* Edge rounding logic */
+.ts-vanilla:not(.ts-has-prefix) .ts-btn-down{
+  border-top-left-radius: var(--ts-radius);
+  border-bottom-left-radius: var(--ts-radius);
+}
+.ts-vanilla.ts-has-prefix .ts-prefix{
+  border-top-left-radius: var(--ts-radius);
+  border-bottom-left-radius: var(--ts-radius);
+}
+.ts-vanilla:not(.ts-has-postfix) .ts-btn-up{
+  border-top-right-radius: var(--ts-radius);
+  border-bottom-right-radius: var(--ts-radius);
+}
+.ts-vanilla.ts-has-postfix .ts-postfix{
+  border-top-right-radius: var(--ts-radius);
+  border-bottom-right-radius: var(--ts-radius);
 }
