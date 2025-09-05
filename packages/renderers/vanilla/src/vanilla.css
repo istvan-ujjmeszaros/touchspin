@@ -2,8 +2,9 @@
   --ts-font-size: 14px;
   --ts-height: 32px;
   --ts-wrapper-radius: 6px;
-  --ts-down-radius: 6px;
-  --ts-up-radius: 6px;
+  /* Default: only outer corners rounded */
+  --ts-down-radius: 6px 0 0 6px;   /* top-left, top-right, bottom-right, bottom-left */
+  --ts-up-radius: 0 6px 6px 0;
   --ts-gap: 0px; /* default: seamless segments */
 
   --ts-bg: #fff;
