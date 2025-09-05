@@ -37,6 +37,7 @@ const copiedMsg = document.getElementById('copied-msg')
 copyBtn?.addEventListener('click', async () => {
   const vars = Array.from(document.querySelectorAll('[data-var]'))
   const entries = vars.map(el => [el.getAttribute('data-var'), el.value])
+    .sort((a,b) => a[0].localeCompare(b[0]))
   const block = `:root{\n${entries.map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}`
   try {
     await navigator.clipboard.writeText(block)
