@@ -5,7 +5,6 @@
   /* Default: only outer corners rounded */
   --ts-down-radius: 6px 0 0 6px;   /* top-left, top-right, bottom-right, bottom-left */
   --ts-up-radius: 0 6px 6px 0;
-  --ts-gap: 0px; /* default: seamless segments */
 
   --ts-bg: #fff;
   --ts-fg: #1f2937;
@@ -30,7 +29,7 @@
 .ts-vanilla{
   display: inline-flex;
   align-items: stretch;
-  gap: var(--ts-gap);
+  gap: 0; /* fixed: internal seams are handled by separators */
   background: var(--ts-bg);
   color: var(--ts-fg);
   font-size: var(--ts-font-size);
