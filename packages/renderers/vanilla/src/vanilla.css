@@ -65,6 +65,26 @@
   pointer-events: none;
 }
 
+/* Also draw seams for controls: after down, before up */
+.ts-vanilla > .ts-btn-down::after{
+  content: "";
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: var(--ts-separator-width);
+  background: var(--ts-separator-color);
+  z-index: 1;
+  pointer-events: none;
+}
+.ts-vanilla > .ts-btn-up::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--ts-separator-width);
+  background: var(--ts-separator-color);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .ts-vanilla > input[type="text"],
 .ts-vanilla > input[type="number"]{
   border: none;
