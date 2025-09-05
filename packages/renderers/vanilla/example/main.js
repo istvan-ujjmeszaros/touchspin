@@ -31,6 +31,23 @@ document.querySelectorAll('[data-var]').forEach(inp => {
   })
 })
 
+// Copy Variables button — builds a :root block of current vars
+const copyBtn = document.getElementById('btn-copy-vars')
+const copiedMsg = document.getElementById('copied-msg')
+copyBtn?.addEventListener('click', async () => {
+  const vars = Array.from(document.querySelectorAll('[data-var]'))
+  const entries = vars.map(el => [el.getAttribute('data-var'), el.value])
+  const block = `:root{\n${entries.map(([k,v]) => `  ${k}: ${v};`).join('\n')}\n}`
+  try {
+    await navigator.clipboard.writeText(block)
+    if (copiedMsg){ copiedMsg.style.display = 'inline'; setTimeout(()=> copiedMsg.style.display='none', 1200) }
+  } catch(err){
+    console.warn('Clipboard unavailable, logging block:', block)
+    alert('Clipboard not available. See console for the CSS block.')
+    console.log(block)
+  }
+})
+
 // Prefix/Postfix inputs next to component
 document.getElementById('ctrl-prefix').addEventListener('input', (e) => api.updateSettings({ prefix: e.target.value }))
 document.getElementById('ctrl-postfix').addEventListener('input', (e) => api.updateSettings({ postfix: e.target.value }))

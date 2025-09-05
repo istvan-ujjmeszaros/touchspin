@@ -17,6 +17,10 @@
   --ts-separator-color: var(--ts-button-border);
   --ts-focus-ring: 0 0 0 3px rgba(59,130,246,0.35);
 
+  /* Optional different seam for affixes */
+  --ts-separator-affix-width: var(--ts-separator-width);
+  --ts-separator-affix-color: var(--ts-separator-color);
+
   --ts-btn-bg: #f3f4f6;
   --ts-btn-fg: #111827;
   --ts-btn-hover-bg: #e5e7eb;
@@ -49,6 +53,15 @@
   left: 0; top: 0; bottom: 0;
   width: var(--ts-separator-width);
   background: var(--ts-separator-color);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Affix seams can be styled separately */
+.ts-vanilla > .ts-prefix::before,
+.ts-vanilla > .ts-postfix::before{
+  width: var(--ts-separator-affix-width);
+  background: var(--ts-separator-affix-color);
 }
 
 .ts-vanilla > input[type="text"],
