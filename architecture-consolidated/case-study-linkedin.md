@@ -1,26 +1,27 @@
-# Case Study: From Monolith to Modular — Refactoring Bootstrap TouchSpin
+# Case Study: TouchSpin’s Behavior‑First Rewrite (LinkedIn Short)
 
-Problem
-- The v4.x plugin was a single, monolithic jQuery implementation mixing rendering, logic, and event wiring. Supporting multiple frameworks (Bootstrap 3/4/5, Tailwind) and evolving behavior without regressions had become risky.
+What we walked into
+- A capable but tangled v4.x jQuery plugin. Rendering, behavior, and event wiring lived together. Adding Bootstrap/Tailwind variants raised risk, not velocity.
 
-Approach
-- Split responsibilities into a framework‑agnostic core, a minimal jQuery wrapper, and framework‑specific renderers.
-- Preserve public behavior with end‑to‑end Playwright tests only (no unit tests), enabling aggressive internal refactors.
-- Establish renderer and event contracts: data roles, deterministic testids, and strict event ordering at boundaries.
-- Harden settings: sanitize before/after merges, sync native attributes only for `type="number"`, and gate native `change` to prevent intermediate values from leaking.
+The move we made
+- Split the spinner into three parts:
+  - Core: framework‑agnostic logic (math, events, ARIA, timers).
+  - Wrapper: tiny jQuery bridge (commands + event re‑emission).
+  - Renderers: Bootstrap/Tailwind DOM only.
+- Guard behavior with Playwright end‑to‑end tests (no unit tests). Tests assert what users see, not how code is arranged.
 
-Highlights
-- Proactive boundary prevention: spin cannot start at min/max; single steps at a boundary are no‑ops; boundary events fire before display changes when applicable.
-- Deterministic testing: predictable `data-testid` derivations across renderers eliminate fragile selectors.
-- Extensibility: renderers build DOM and call `core.attachUpEvents/attachDownEvents`; the wrapper only bridges commands and events.
+Two contracts that changed everything
+- Roles + testids: renderers tag DOM with `data-touchspin-injected` and derive `{id}-up|down|...` selectors. Tests became stable across frameworks.
+- Event ordering: one invariant timeline (startspin → directional start → … → directional stop → stopspin) and `min|max` before display at boundaries.
 
-Results
-- Faster iteration on framework support (Bootstrap 3/4/5, Tailwind) with zero changes to core logic.
-- Reduced coupling and clearer ownership of responsibilities; simpler teardown paths.
-- Safer updates: Playwright tests validate real browser behavior rather than implementation details.
+Moments that felt like progress
+- Spinning couldn’t start at a boundary anymore. Edge cases stopped being edge cases.
+- Native `change` fired only for real, sanitized values. Noise disappeared from apps listening to changes.
 
-Takeaways
-- Behavior‑first tests make architectural rewrites feasible.
-- Clear contracts (data roles, testids, events) enable independent evolution of core and renderers.
-- Avoid line‑count comparisons; documentation and separation create healthier code over time.
+What this unlocked
+- New renderers without touching core logic.
+- Cleaner teardown; fewer integration surprises.
+- A clearer mental model for anyone joining the project.
 
+Takeaway
+- When a component spans frameworks, design contracts first: data roles, event order, and selectors. Then let end‑to‑end tests keep you honest while you refactor underneath.
