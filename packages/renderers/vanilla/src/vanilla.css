@@ -6,34 +6,34 @@
   --ts-down-radius: 6px 0 0 6px;   /* top-left, top-right, bottom-right, bottom-left */
   --ts-up-radius: 0 6px 6px 0;
 
-  --ts-bg: #fff;
-  --ts-fg: #1f2937;
-  --ts-wrapper-border: #cbd5e1;
+  --ts-background: #fff;
+  --ts-foreground: #1f2937;
+  --ts-wrapper-border-color: #cbd5e1;
   --ts-wrapper-border-width: 1px;
   --ts-button-border: #cbd5e1;
   --ts-affix-border: #cbd5e1;
   --ts-separator-width: 1px; /* collapsed seam between segments */
-  --ts-separator-color: var(--ts-button-border);
+  --ts-separator-color: var(--ts-wrapper-border-color);
   --ts-focus-ring: 0 0 0 3px rgba(59,130,246,0.35);
 
   /* Optional different seam for affixes */
   --ts-separator-affix-width: var(--ts-separator-width);
   --ts-separator-affix-color: var(--ts-separator-color);
 
-  --ts-btn-bg: #f3f4f6;
-  --ts-btn-fg: #111827;
-  --ts-btn-hover-bg: #e5e7eb;
-  --ts-btn-disabled-bg: #f9fafb;
+  --ts-button-background: #f3f4f6;
+  --ts-button-foreground: #111827;
+  --ts-button-hover-background: #e5e7eb;
+  --ts-button-disabled-background: #f9fafb;
 }
 
 .ts-vanilla{
   display: inline-flex;
   align-items: stretch;
   gap: 0; /* fixed: internal seams are handled by separators */
-  background: var(--ts-bg);
-  color: var(--ts-fg);
+  background: var(--ts-background);
+  color: var(--ts-foreground);
   font-size: var(--ts-font-size);
-  border: var(--ts-wrapper-border-width) solid var(--ts-wrapper-border);
+  border: var(--ts-wrapper-border-width) solid var(--ts-wrapper-border-color);
   border-radius: var(--ts-wrapper-radius);
   padding: 0; /* remove inner gaps so controls are flush */
 }
@@ -85,8 +85,8 @@
   padding: 0 10px;
   border: 0; /* borders handled by wrapper + separators */
   border-radius: 0; /* overridden per-side below */
-  background: var(--ts-btn-bg);
-  color: var(--ts-btn-fg);
+  background: var(--ts-button-background);
+  color: var(--ts-button-foreground);
   font-size: var(--ts-button-font-size, inherit);
   line-height: var(--ts-height);
   cursor: pointer;
@@ -94,8 +94,8 @@
 }
 .ts-btn-down{ border-radius: var(--ts-down-radius); }
 .ts-btn-up{ border-radius: var(--ts-up-radius); }
-.ts-btn:hover{ background: var(--ts-btn-hover-bg); }
-.ts-btn:disabled{ background: var(--ts-btn-disabled-bg); cursor: not-allowed; opacity: .65; }
+.ts-btn:hover{ background: var(--ts-button-hover-background); }
+.ts-btn:disabled{ background: var(--ts-button-disabled-background); cursor: not-allowed; opacity: .65; }
 
 .ts-prefix, .ts-postfix{
   display: inline-flex;
