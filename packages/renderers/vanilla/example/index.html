@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TouchSpin Vanilla Renderer — Example</title>
+    <!-- Import map for static serving (e.g., PHPStorm) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@touchspin/core": "../../../core/src/index.js",
+          "@touchspin/renderer-vanilla": "../src/index.js"
+        }
+      }
+    </script>
+    <!-- Direct CSS link for static serving (and works with Vite too) -->
+    <link rel="stylesheet" href="../src/vanilla.css" />
     <style>
       body{font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 32px;}
       .panel{display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start}
@@ -64,7 +75,6 @@
       <pre id="src-css"></pre>
     </div>
 
-    <script type="module" src="/main.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
   </html>
-
