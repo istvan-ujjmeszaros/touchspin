@@ -383,6 +383,59 @@
 
     // Get the basic spinner for interactive controls
     const basicSpinner = document.getElementById('basic');
+    const basicCodeExample = document.querySelector('.example:first-of-type .code-example');
+
+    // Generate HTML code from current element state
+    function generateCodeExample() {
+      const attributes = [];
+      
+      // Always include basic attributes with their current values
+      const min = basicSpinner.getAttribute('min') || '0';
+      const max = basicSpinner.getAttribute('max') || '100';
+      const value = basicSpinner.getAttribute('value') || '50';
+      const step = basicSpinner.getAttribute('step') || '1';
+      
+      attributes.push(`min="${min}"`);
+      attributes.push(`max="${max}"`);
+      attributes.push(`value="${value}"`);
+      attributes.push(`step="${step}"`);
+      
+      // Add optional attributes if they exist
+      const prefix = basicSpinner.getAttribute('prefix');
+      if (prefix) {
+        attributes.push(`prefix="${prefix}"`);
+      }
+      
+      const postfix = basicSpinner.getAttribute('postfix');
+      if (postfix) {
+        attributes.push(`postfix="${postfix}"`);
+      }
+      
+      const verticalButtons = basicSpinner.getAttribute('vertical-buttons');
+      if (verticalButtons === 'true') {
+        attributes.push(`vertical-buttons="true"`);
+      }
+      
+      // Add state attributes if they exist
+      if (basicSpinner.disabled) {
+        attributes.push('disabled');
+      }
+      
+      if (basicSpinner.readonly) {
+        attributes.push('readonly');
+      }
+      
+      // Generate the HTML
+      const attributeString = attributes.join(' ');
+      const html = `&lt;touchspin-element ${attributeString}&gt;&lt;/touchspin-element&gt;`;
+      
+      return html;
+    }
+
+    // Update the code example
+    function updateCodeExample() {
+      basicCodeExample.innerHTML = generateCodeExample();
+    }
 
     // Property controls
     const controls = {
@@ -417,38 +470,47 @@
     // Property change handlers
     controls.value.addEventListener('input', (e) => {
       basicSpinner.value = e.target.value;
+      updateCodeExample();
     });
 
     controls.min.addEventListener('input', (e) => {
       basicSpinner.min = e.target.value;
+      updateCodeExample();
     });
 
     controls.max.addEventListener('input', (e) => {
       basicSpinner.max = e.target.value;
+      updateCodeExample();
     });
 
     controls.step.addEventListener('input', (e) => {
       basicSpinner.step = e.target.value;
+      updateCodeExample();
     });
 
     controls.prefix.addEventListener('input', (e) => {
       basicSpinner.setAttribute('prefix', e.target.value);
+      updateCodeExample();
     });
 
     controls.postfix.addEventListener('input', (e) => {
       basicSpinner.setAttribute('postfix', e.target.value);
+      updateCodeExample();
     });
 
     controls.disabled.addEventListener('change', (e) => {
       basicSpinner.disabled = e.target.checked;
+      updateCodeExample();
     });
 
     controls.readonly.addEventListener('change', (e) => {
       basicSpinner.readonly = e.target.checked;
+      updateCodeExample();
     });
 
     controls.vertical.addEventListener('change', (e) => {
       basicSpinner.setAttribute('vertical-buttons', e.target.checked ? 'true' : 'false');
+      updateCodeExample();
     });
 
     // Method testing
@@ -519,7 +581,11 @@
     // Sync control values with spinner changes
     basicSpinner.addEventListener('touchspin-change', (e) => {
       controls.value.value = e.detail.value;
+      updateCodeExample();
     });
+
+    // Initialize code example on page load
+    updateCodeExample();
 
     console.log('✅ TouchSpin Web Component Demo initialized');
     console.log('Available events:', events);
