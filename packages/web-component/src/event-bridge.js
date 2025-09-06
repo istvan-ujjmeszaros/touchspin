@@ -3,7 +3,7 @@
  * Converts TouchSpin core events to CustomEvents
  */
 
-import { CORE_EVENTS } from '@touchspin/core';
+import { CORE_EVENTS } from '../../core/src/index.js';
 
 /**
  * Map core event names to custom event names

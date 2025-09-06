@@ -3,8 +3,8 @@
  * Standards-based custom element providing TouchSpin functionality
  */
 
-import { TouchSpin, getTouchSpin } from '@touchspin/core';
-import { VanillaRenderer } from '@touchspin/vanilla-renderer';
+import { TouchSpin, getTouchSpin } from '../../core/src/index.js';
+import { VanillaRenderer } from '../../vanilla-renderer/src/index.js';
 import { getSettingsFromAttributes, OBSERVED_ATTRIBUTES, attributeToSetting, parseAttributeValue } from './attribute-mapping.js';
 import { bridgeEvents } from './event-bridge.js';
 

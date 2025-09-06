@@ -328,22 +328,6 @@
           </div>
         </details>
 
-        <!-- Method Testing -->
-        <details open>
-          <summary>Method Testing</summary>
-          <div class="control-group">
-            <button id="test-up-once">upOnce()</button>
-            <button id="test-down-once">downOnce()</button>
-            <br>
-            <button id="test-start-up">startUpSpin()</button>
-            <button id="test-start-down">startDownSpin()</button>
-            <button id="test-stop-spin">stopSpin()</button>
-            <br>
-            <button id="test-set-random">setValue(random)</button>
-            <button id="test-get-value">getValue()</button>
-          </div>
-        </details>
-
         <!-- State Controls -->
         <details>
           <summary>State Controls</summary>
@@ -360,6 +344,22 @@
               <span>Vertical Buttons</span>
               <input type="checkbox" id="control-vertical">
             </label>
+          </div>
+        </details>
+
+        <!-- Method Testing -->
+        <details open>
+          <summary>Method Testing</summary>
+          <div class="control-group">
+            <button id="test-up-once">upOnce()</button>
+            <button id="test-down-once">downOnce()</button>
+            <br>
+            <button id="test-start-up">startUpSpin()</button>
+            <button id="test-start-down">startDownSpin()</button>
+            <button id="test-stop-spin">stopSpin()</button>
+            <br>
+            <button id="test-set-random">setValue(random)</button>
+            <button id="test-get-value">getValue()</button>
           </div>
         </details>
 
@@ -484,7 +484,10 @@
     });
 
     document.getElementById('test-get-value').addEventListener('click', () => {
+      console.log('getValue button clicked');
+      console.log('basicSpinner:', basicSpinner);
       const currentValue = basicSpinner.value;
+      console.log('currentValue:', currentValue);
       logEvent('method-call', { method: 'getValue()', result: currentValue });
     });
 
