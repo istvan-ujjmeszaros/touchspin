@@ -43,6 +43,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.core.observeSetting('buttondown_txt', (newValue) => this.updateButtonText('down', newValue));
     this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefixClasses());
     this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfixClasses());
+    this.core.observeSetting('verticalbuttons', (newValue) => this.handleVerticalButtonsChange(newValue));
+    this.core.observeSetting('focusablebuttons', (newValue) => this.updateButtonFocusability(newValue));
   }
 
   teardown() {
@@ -303,6 +305,45 @@ class Bootstrap5Renderer extends AbstractRenderer {
     if (postfixEl) {
       postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
     }
+  }
+
+  handleVerticalButtonsChange(newValue) {
+    // Remove old DOM and rebuild with new layout
+    this.rebuildDOM();
+  }
+
+  rebuildDOM() {
+    // Remove old DOM and rebuild with current settings
+    this.removeInjectedElements();
+    // Reset wrapper reference since it was removed
+    this.wrapper = null;
+    this.prefixEl = null;
+    this.postfixEl = null;
+    this.buildAndAttachDOM();
+  }
+
+  buildAndAttachDOM() {
+    // 1. Build and inject DOM structure around input
+    this.wrapper = this.buildInputGroup();
+
+    // 2. Find created buttons and store prefix/postfix references
+    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+
+    // 3. Tell core to attach its event handlers
+    this.core.attachUpEvents(upButton);
+    this.core.attachDownEvents(downButton);
+  }
+
+  updateButtonFocusability(newValue) {
+    // Find all buttons and update their tabindex
+    const buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
+    const tabindex = newValue ? '0' : '-1';
+    buttons.forEach(button => {
+      button.setAttribute('tabindex', tabindex);
+    });
   }
 }
 
