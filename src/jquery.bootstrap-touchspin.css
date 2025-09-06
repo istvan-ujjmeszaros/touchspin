@@ -1,4 +1,10 @@
 /* This CSS file is unnecessary if you are not using vertical buttons functionality */
+
+/* Ensure input-group takes full width */
+.input-group.bootstrap-touchspin {
+  width: 100%;
+}
+
 .bootstrap-touchspin .bootstrap-touchspin-vertical-button-wrapper {
   position: relative;
   width: 25px;
