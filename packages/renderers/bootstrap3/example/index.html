@@ -333,6 +333,11 @@
                   <input type="checkbox" id="control-vertical"> Vertical Buttons
                 </label>
               </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-focusable"> Focusable Buttons
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -466,7 +471,8 @@
       postfix: document.getElementById('control-postfix'),
       disabled: document.getElementById('control-disabled'),
       readonly: document.getElementById('control-readonly'),
-      vertical: document.getElementById('control-vertical')
+      vertical: document.getElementById('control-vertical'),
+      focusable: document.getElementById('control-focusable')
     };
 
     // Event log
@@ -529,6 +535,11 @@
 
     controls.vertical.addEventListener('change', (e) => {
       basicSpinner.updateSettings({ verticalbuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.focusable.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ focusablebuttons: e.target.checked });
       updateCodeExample();
     });
 
