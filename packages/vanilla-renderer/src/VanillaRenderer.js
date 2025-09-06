@@ -133,7 +133,7 @@ class VanillaRenderer extends AbstractRenderer {
     if (value && value !== '') {
       prefixEl.textContent = value;
       prefixEl.style.display = '';
-      prefixEl.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+      prefixEl.className = `ts-addon ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
     } else {
       prefixEl.style.display = 'none';
     }
@@ -146,7 +146,7 @@ class VanillaRenderer extends AbstractRenderer {
     if (value && value !== '') {
       postfixEl.textContent = value;
       postfixEl.style.display = '';
-      postfixEl.className = `ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+      postfixEl.className = `ts-addon ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
     } else {
       postfixEl.style.display = 'none';
     }
@@ -195,14 +195,14 @@ class VanillaRenderer extends AbstractRenderer {
   updatePrefixClasses() {
     const prefixEl = this.prefixEl;
     if (prefixEl) {
-      prefixEl.className = `ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+      prefixEl.className = `ts-addon ts-prefix ${this.settings.prefix_extraclass || ''}`.trim();
     }
   }
 
   updatePostfixClasses() {
     const postfixEl = this.postfixEl;
     if (postfixEl) {
-      postfixEl.className = `ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+      postfixEl.className = `ts-addon ts-postfix ${this.settings.postfix_extraclass || ''}`.trim();
     }
   }
 
