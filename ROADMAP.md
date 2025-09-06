@@ -11,23 +11,26 @@ Status markers
 
 ## In Progress / Near Term
 - [x] Docs sweep (README/PLAN/CHECKLIST)  
-- [x] Release prep (version bump, CHANGELOG)  
-- [ ] Decide naming scheme for future split builds (see below).
+- [x] Release prep (version bump, CHANGELOG)
+- [x] VanillaRenderer with CSS variables and theme editor
+- [ ] Web Components package for framework-agnostic usage
 
-## Upcoming Milestones
-1) Core extraction (Phase A)
-- [ ] Migrate internal state, value pipeline, and events to `@touchspin/core`.  
-- [ ] Ensure jQuery plugin becomes a thin wrapper over the core.  
-- [ ] Keep tests fully green; add targeted tests for core.
+## Completed Milestones
+1) Core extraction (Phase A) ✅
+- ✅ Migrated internal state, value pipeline, and events to `@touchspin/core`
+- ✅ jQuery plugin is now a thin wrapper over the core
+- ✅ All tests remain green with comprehensive core test coverage
 
-2) Renderer packages (Phase B)
-- [ ] Extract Bootstrap/Tailwind renderers into versioned packages.  
-- [ ] Maintain identical markup and class semantics per current renderers.
+2) Renderer packages (Phase B) ✅
+- ✅ Extracted Bootstrap 3/4/5 and Tailwind renderers into versioned packages
+- ✅ Added VanillaRenderer with CSS variables for framework-agnostic styling
+- ✅ Maintain identical markup and class semantics per current renderers
 
+## Next Phase
 3) Framework wrappers (Phase C)
-- [ ] React: idiomatic component with props mapping to options.  
-- [ ] Angular: component/directive; Rx outputs for events.  
-- [ ] Web Component: custom element with attributes/events.
+- [ ] Web Component: custom element with attributes/events (Priority: High)
+- [ ] React: idiomatic component with props mapping to options  
+- [ ] Angular: component/directive; Rx outputs for events
 
 4) Build Variants (Phase D)
 - [ ] Ship explicit artifacts:

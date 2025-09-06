@@ -151,6 +151,15 @@
   border-radius: var(--ts-button-up-border-radius);
 }
 
+/* RTL support - flip button border radius for right-to-left languages */
+:dir(rtl) .ts-btn--down {
+  border-radius: var(--ts-button-up-border-radius);
+}
+
+:dir(rtl) .ts-btn--up {
+  border-radius: var(--ts-button-down-border-radius);
+}
+
 /* Addon styling */
 .ts-addon {
   display: inline-flex;
@@ -165,6 +174,14 @@
 .ts-wrapper--vertical .ts-prefix {
   border-top-left-radius: var(--ts-wrapper-border-radius);
   border-bottom-left-radius: var(--ts-wrapper-border-radius);
+}
+
+/* RTL support for vertical layout - prefix gets right border radius */
+:dir(rtl) .ts-wrapper--vertical .ts-prefix {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: var(--ts-wrapper-border-radius);
+  border-bottom-right-radius: var(--ts-wrapper-border-radius);
 }
 
 /* Vertical layout */
