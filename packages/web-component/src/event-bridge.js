@@ -10,7 +10,7 @@ import { CORE_EVENTS } from '../../core/src/index.js';
  */
 export const EVENT_NAME_MAP = {
   [CORE_EVENTS.MIN]: 'touchspin-min',
-  [CORE_EVENTS.MAX]: 'touchspin-max', 
+  [CORE_EVENTS.MAX]: 'touchspin-max',
   [CORE_EVENTS.START_SPIN]: 'touchspin-start-spin',
   [CORE_EVENTS.START_UP]: 'touchspin-start-up',
   [CORE_EVENTS.START_DOWN]: 'touchspin-start-down',
@@ -27,25 +27,25 @@ export const EVENT_NAME_MAP = {
  */
 export function bridgeEvents(touchspinInstance, element) {
   const unsubscribers = [];
-  
+
   // Bridge all core events
   for (const [coreEvent, customEventName] of Object.entries(EVENT_NAME_MAP)) {
     const unsubscribe = touchspinInstance.on(coreEvent, () => {
       const customEvent = new CustomEvent(customEventName, {
-        detail: { 
+        detail: {
           value: touchspinInstance.getValue(),
-          instance: touchspinInstance 
+          instance: touchspinInstance
         },
         bubbles: true,
         cancelable: true
       });
-      
+
       element.dispatchEvent(customEvent);
     });
-    
+
     unsubscribers.push(unsubscribe);
   }
-  
+
   // Bridge input change events
   const input = element.querySelector('input');
   if (input) {
@@ -59,22 +59,22 @@ export function bridgeEvents(touchspinInstance, element) {
         bubbles: true,
         cancelable: true
       });
-      
+
       element.dispatchEvent(customEvent);
     };
-    
+
     input.addEventListener('change', handleInputChange);
-    
+
     // Return cleanup function that includes input listener cleanup
     const originalCleanup = () => {
       unsubscribers.forEach(unsub => unsub());
     };
-    
+
     unsubscribers.push(() => {
       input.removeEventListener('change', handleInputChange);
     });
   }
-  
+
   return unsubscribers;
 }
 

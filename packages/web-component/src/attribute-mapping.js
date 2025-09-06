@@ -30,7 +30,7 @@ export function attributeToSetting(attrName) {
     'replacement-val': 'replacementval',
     'focusable-buttons': 'focusablebuttons'
   };
-  
+
   return mapping[attrName] || attrName;
 }
 
@@ -43,27 +43,27 @@ export function attributeToSetting(attrName) {
 export function parseAttributeValue(value, settingName) {
   if (value === null) return null;
   if (value === '') return true; // Boolean attributes present without value
-  
+
   // Boolean settings
   const booleanSettings = [
     'verticalbuttons', 'mousewheel', 'booster', 'focusablebuttons'
   ];
-  
+
   if (booleanSettings.includes(settingName)) {
     return value === 'true' || value === '';
   }
-  
+
   // Number settings
   const numberSettings = [
     'min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay',
     'boostat', 'maxboostedstep', 'firstclickvalueifempty'
   ];
-  
+
   if (numberSettings.includes(settingName)) {
     const num = Number(value);
     return isNaN(num) ? null : num;
   }
-  
+
   // String settings - return as-is
   return value;
 }
@@ -75,21 +75,21 @@ export function parseAttributeValue(value, settingName) {
  */
 export function getSettingsFromAttributes(element) {
   const settings = {};
-  
+
   // Get all attributes
   for (const attr of element.attributes) {
     if (attr.name === 'is' || attr.name.startsWith('data-testid')) {
       continue; // Skip special attributes
     }
-    
+
     const settingName = attributeToSetting(attr.name);
     const value = parseAttributeValue(attr.value, settingName);
-    
+
     if (value !== null) {
       settings[settingName] = value;
     }
   }
-  
+
   return settings;
 }
 
@@ -98,7 +98,7 @@ export function getSettingsFromAttributes(element) {
  */
 export const OBSERVED_ATTRIBUTES = [
   'min',
-  'max', 
+  'max',
   'step',
   'value',
   'decimals',

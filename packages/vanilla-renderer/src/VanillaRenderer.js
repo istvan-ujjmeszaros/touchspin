@@ -5,25 +5,25 @@
 import AbstractRenderer from '../../core/src/AbstractRenderer.js';
 
 class VanillaRenderer extends AbstractRenderer {
-  
+
   init() {
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
-    
+
     // Build and inject DOM structure
     this.wrapper = this.buildInputGroup();
-    
+
     // Find created elements and store references
     const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
     this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
     this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
-    
+
     // Attach core event handlers to buttons
     this.core.attachUpEvents(upButton);
     this.core.attachDownEvents(downButton);
-    
+
     // Register for setting changes
     this.core.observeSetting('prefix', (newValue) => this.updatePrefix(newValue));
     this.core.observeSetting('postfix', (newValue) => this.updatePostfix(newValue));
@@ -155,7 +155,7 @@ class VanillaRenderer extends AbstractRenderer {
   updateButtonClass(type, className) {
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (!button) return;
-    
+
     // Preserve base classes and add custom class
     const baseClasses = `ts-btn ts-btn--${type}`;
     const verticalClass = button.classList.contains('ts-btn--vertical') ? ' ts-btn--vertical' : '';
@@ -165,10 +165,10 @@ class VanillaRenderer extends AbstractRenderer {
   updateVerticalButtonClass(type, className) {
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (!verticalWrapper) return;
-    
+
     const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (!button) return;
-    
+
     // Update vertical-specific class while preserving base classes
     const baseClasses = `ts-btn ts-btn--${type} ts-btn--vertical`;
     const buttonClass = this.settings.buttonup_class || this.settings.buttondown_class || '';
@@ -178,7 +178,7 @@ class VanillaRenderer extends AbstractRenderer {
   updateVerticalButtonText(type, text) {
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (!verticalWrapper) return;
-    
+
     const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.textContent = text || (type === 'up' ? '+' : '−');
@@ -212,7 +212,7 @@ class VanillaRenderer extends AbstractRenderer {
    */
   setTheme(theme) {
     if (!this.wrapper || !theme) return;
-    
+
     Object.entries(theme).forEach(([key, value]) => {
       const cssProperty = key.startsWith('--') ? key : `--ts-${key}`;
       this.wrapper.style.setProperty(cssProperty, value);
@@ -222,7 +222,7 @@ class VanillaRenderer extends AbstractRenderer {
   teardown() {
     // Remove added classes from input
     this.input.classList.remove('ts-input');
-    
+
     // Call parent teardown to handle DOM cleanup
     super.teardown();
   }
