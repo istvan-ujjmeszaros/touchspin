@@ -1,0 +1,46 @@
+{
+  "name": "@touchspin/web-component",
+  "version": "4.8.0",
+  "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "python3 -m http.server 8867 --directory example",
+    "build": "rollup -c",
+    "test": "echo \"Tests not implemented yet\" && exit 1"
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "number-input",
+    "web-components",
+    "custom-elements",
+    "framework-agnostic"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "^4.8.0",
+    "@touchspin/vanilla-renderer": "^4.8.0"
+  },
+  "peerDependencies": {
+    "@touchspin/renderers": "^4.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/web-component"
+  }
+}
