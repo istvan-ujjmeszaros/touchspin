@@ -55,88 +55,131 @@
       margin: 15px 0;
     }
 
-    .controls-panel {
-      background: white;
-      padding: 30px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
+    /* Control Panel Styles */
+    .control-panel {
       position: sticky;
       top: 20px;
-      height: fit-content;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #ddd;
     }
 
-    .controls-panel h3 {
-      margin-top: 0;
+    .control-panel-header {
+      padding: 20px 20px 15px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      background: white;
+      border-radius: 6px 6px 0 0;
+      z-index: 10;
+    }
+
+    .control-panel-header h2 {
+      margin: 0 0 10px;
       color: #333;
+      font-size: 18px;
+    }
+
+    .control-sections {
+      padding: 20px;
+    }
+
+    .control-sections .control-panel-section {
+      margin-bottom: 15px;
     }
 
     .control-group {
-      margin-bottom: 20px;
+      padding: 15px;
+    }
+
+    .control-group .form-group {
+      margin-bottom: 15px;
+    }
+
+    .control-group .form-group:last-child {
+      margin-bottom: 0;
     }
 
     .control-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+      font-weight: 500;
     }
 
-    .control-group input[type="text"],
-    .control-group input[type="number"],
-    .control-group select {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
+    .control-group .form-control {
+      width: 120px;
+      margin-left: 10px;
+      padding: 6px 10px;
+      border: 1px solid #ced4da;
       border-radius: 4px;
-      font-size: 14px;
-      background-color: #fff;
+      font-size: 13px;
     }
 
-    .control-group input[type="checkbox"] {
+    .control-group .checkbox {
+      margin-bottom: 10px;
+    }
+
+    .control-group .checkbox label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-weight: normal;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+
+    .control-group .checkbox input[type="checkbox"] {
       margin-right: 8px;
     }
 
-    .checkbox-label {
-      display: flex !important;
-      align-items: center;
-      font-weight: normal !important;
-      margin-bottom: 0 !important;
-      cursor: pointer;
+    .event-log {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 10px;
+      height: 120px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
     }
 
-    .btn-apply {
-      background-color: #007bff;
+    .event-entry {
+      margin: 2px 0;
+      color: #495057;
+    }
+
+    .event-entry.event-touchspin { color: #007bff; }
+    .event-entry.event-method { color: #28a745; }
+    .event-entry.event-error { color: #dc3545; }
+    .event-entry.event-info { color: #6c757d; }
+
+    .btn {
+      padding: 6px 12px;
+      margin: 2px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      background: #f8f9fa;
+      color: #495057;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn:hover {
+      background: #e2e6ea;
+    }
+
+    .btn-danger {
+      background: #dc3545;
       color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-top: 10px;
+      border-color: #dc3545;
     }
 
-    .btn-apply:hover {
-      background-color: #0056b3;
-    }
-
-    .generated-code {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 4px;
-      padding: 15px;
-      margin-top: 20px;
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-      font-size: 13px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .generated-code h4 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #333;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    .btn-danger:hover {
+      background: #c82333;
     }
 
     /* Tailwind TouchSpin specific styles */
@@ -191,264 +234,504 @@
         <h3>Basic Usage</h3>
         <p>Simple number input with TouchSpin controls.</p>
         <div class="spinner">
-          <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="50" min="0" max="100" step="1" data-testid="basic-spinner" id="basic-spinner">
+          <input type="number" id="basic" min="0" max="100" value="50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="code-example" id="basic-code-example">
+          <!-- Will be populated by JavaScript -->
         </div>
       </div>
 
       <!-- Currency Example -->
       <div class="example">
         <h3>Currency Input</h3>
-        <p>TouchSpin with prefix and postfix for currency display.</p>
         <div class="spinner">
-          <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="25.50" min="0" max="1000" step="0.50" data-testid="currency-spinner" id="currency-spinner">
+          <input type="number" id="currency" min="0" max="1000" value="25.50" step="0.50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 data-bts-prefix="$" data-bts-postfix=".00">
+        </div>
+        <div class="code-example">
+          $('#currency').TouchSpin({<br>
+          &nbsp;&nbsp;prefix: '$',<br>
+          &nbsp;&nbsp;postfix: '.00',<br>
+          &nbsp;&nbsp;step: 0.01<br>
+          });
         </div>
       </div>
 
-      <!-- Vertical Buttons Example -->
       <div class="example">
         <h3>Vertical Buttons</h3>
-        <p>TouchSpin with vertical button layout.</p>
         <div class="spinner">
-          <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="10" min="0" max="100" step="1" data-testid="vertical-spinner" id="vertical-spinner">
+          <input type="number" id="vertical" min="0" max="100" value="75" step="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 data-bts-vertical-buttons="true">
+        </div>
+        <div class="code-example">
+          $('#vertical').TouchSpin({<br>
+          &nbsp;&nbsp;verticalbuttons: true<br>
+          });
         </div>
       </div>
 
-      <!-- Custom Range Example -->
       <div class="example">
-        <h3>Custom Range</h3>
-        <p>TouchSpin with custom min/max values and step size.</p>
+        <h3>Custom Button Text</h3>
         <div class="spinner">
-          <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="500" min="100" max="1000" step="50" data-testid="range-spinner" id="range-spinner">
+          <input type="number" id="custom-text" min="1" max="10" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 data-bts-button-up-txt="▲" data-bts-button-down-txt="▼">
+        </div>
+        <div class="code-example">
+          $('#custom-text').TouchSpin({<br>
+          &nbsp;&nbsp;buttonup_txt: '▲',<br>
+          &nbsp;&nbsp;buttondown_txt: '▼'<br>
+          });
         </div>
       </div>
 
-      <!-- Small Size Example -->
       <div class="example">
-        <h3>Small Size Input</h3>
-        <p>TouchSpin with small input size.</p>
+        <h3>Disabled State</h3>
         <div class="spinner">
-          <input type="number" class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="5" min="0" max="10" step="1" data-testid="small-spinner" id="small-spinner">
+          <input type="number" id="disabled" min="0" max="100" value="42" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" disabled>
+        </div>
+        <div class="code-example">
+          $('#disabled').TouchSpin(); // Input disabled via HTML
         </div>
       </div>
 
-      <!-- Large Size Example -->
-      <div class="example">
-        <h3>Large Size Input</h3>
-        <p>TouchSpin with large input size.</p>
+      <div class="example" dir="rtl">
+        <h3>RTL Support</h3>
         <div class="spinner">
-          <input type="number" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="75" min="0" max="100" step="5" data-testid="large-spinner" id="large-spinner">
+          <input type="number" id="rtl" min="0" max="100" value="33" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                 data-bts-prefix="₪" data-bts-postfix=" ש״ח">
+        </div>
+        <div class="code-example">
+          &lt;div dir="rtl"&gt;<br>
+          &nbsp;&nbsp;$('#rtl').TouchSpin({<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;prefix: '₪',<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;postfix: ' ש״ח'<br>
+          &nbsp;&nbsp;});<br>
+          &lt;/div&gt;
         </div>
       </div>
     </div>
 
-    <div class="controls-panel">
-      <h3>Live Controls</h3>
-      <p>Modify the basic spinner in real-time:</p>
-
-      <div class="control-group">
-        <label for="prefix-input">Prefix:</label>
-        <input type="text" id="prefix-input" placeholder="e.g., $">
+    <div class="control-panel">
+      <div class="control-panel-header">
+        <h2>Interactive Controls</h2>
+        <p style="margin: 0; font-size: 13px; color: #777;">Interact with the basic spinner above</p>
       </div>
 
-      <div class="control-group">
-        <label for="postfix-input">Postfix:</label>
-        <input type="text" id="postfix-input" placeholder="e.g., USD">
-      </div>
+      <div class="control-sections">
+        <!-- Property Controls -->
+        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
+          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+            <h4 class="font-semibold text-gray-800 m-0">Properties</h4>
+          </div>
+          <div class="control-group">
+            <div class="form-group">
+              <label>
+                <span>Current Value</span>
+                <input type="number" id="control-value" value="50" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Minimum</span>
+                <input type="number" id="control-min" value="0" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Maximum</span>
+                <input type="number" id="control-max" value="100" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Step</span>
+                <input type="number" id="control-step" value="1" step="0.1" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Prefix</span>
+                <input type="text" id="control-prefix" placeholder="e.g. $" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Postfix</span>
+                <input type="text" id="control-postfix" placeholder="e.g. .00" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Decimal Places</span>
+                <input type="number" id="control-decimals" value="0" min="0" max="10" step="1" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Button Up Text</span>
+                <input type="text" id="control-buttonup-txt" value="+" class="form-control">
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <span>Button Down Text</span>
+                <input type="text" id="control-buttondown-txt" value="−" class="form-control">
+              </label>
+            </div>
+          </div>
+        </div>
 
-      <div class="control-group">
-        <label for="min-input">Min Value:</label>
-        <input type="number" id="min-input" value="0">
-      </div>
+        <!-- State Controls -->
+        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
+          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+            <h4 class="font-semibold text-gray-800 m-0">State Controls</h4>
+          </div>
+          <div class="control-group">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="control-disabled"> Disabled
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="control-readonly"> Readonly
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="control-vertical"> Vertical Buttons
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="control-focusable"> Focusable Buttons
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="control-mousewheel" checked> Mouse Wheel
+              </label>
+            </div>
+          </div>
+        </div>
 
-      <div class="control-group">
-        <label for="max-input">Max Value:</label>
-        <input type="number" id="max-input" value="100">
-      </div>
+        <!-- Method Testing -->
+        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
+          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+            <h4 class="font-semibold text-gray-800 m-0">Method Testing</h4>
+          </div>
+          <div class="control-group">
+            <button id="test-up-once" class="btn">upOnce()</button>
+            <button id="test-down-once" class="btn">downOnce()</button>
+            <br><br>
+            <button id="test-start-up" class="btn">startUpSpin()</button>
+            <button id="test-start-down" class="btn">startDownSpin()</button>
+            <button id="test-stop-spin" class="btn">stopSpin()</button>
+            <br><br>
+            <button id="test-set-random" class="btn">setValue(random)</button>
+            <button id="test-get-value" class="btn">getValue()</button>
+          </div>
+        </div>
 
-      <div class="control-group">
-        <label for="step-input">Step Size:</label>
-        <input type="number" id="step-input" value="1" min="0.01" step="0.01">
-      </div>
-
-      <div class="control-group">
-        <label for="decimals-input">Decimal Places:</label>
-        <input type="number" id="decimals-input" value="0" min="0" max="10" step="1">
-      </div>
-
-      <div class="control-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="vertical-checkbox">
-          Vertical Buttons
-        </label>
-      </div>
-
-      <div class="control-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="mouse-wheel-checkbox" checked>
-          Mouse Wheel
-        </label>
-      </div>
-
-      <div class="control-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="focusable-checkbox">
-          Focusable Buttons
-        </label>
-      </div>
-
-      <div class="control-group">
-        <label for="button-up-text">Up Button Text:</label>
-        <input type="text" id="button-up-text" value="+">
-      </div>
-
-      <div class="control-group">
-        <label for="button-down-text">Down Button Text:</label>
-        <input type="text" id="button-down-text" value="−">
-      </div>
-
-      <button class="btn-apply" onclick="applySettings()">Apply Settings</button>
-
-      <div class="generated-code">
-        <h4>Generated Code:</h4>
-        <div id="generated-code-content">
-          <!-- Will be populated by JavaScript -->
+        <!-- Event Monitor -->
+        <div class="control-panel-section bg-white border border-gray-200 rounded-lg">
+          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
+            <h4 class="font-semibold text-gray-800 m-0">Event Monitor</h4>
+          </div>
+          <div class="control-group">
+            <div class="event-log" id="event-log">
+              <div class="event-entry">Waiting for events...</div>
+            </div>
+            <br>
+            <button class="btn btn-danger" id="clear-log">Clear Log</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <script type="module">
+    // Import TouchSpin core and Tailwind renderer
     import { TouchSpin } from '../../../core/src/index.js';
     import TailwindRenderer from '../src/TailwindRenderer.js';
 
-    console.log('✅ TouchSpin Tailwind Demo initialized');
+    // Initialize all TouchSpin instances
+    const basicSpinner = TouchSpin(document.getElementById('basic'), { renderer: TailwindRenderer });
+    TouchSpin(document.getElementById('currency'), { renderer: TailwindRenderer });
+    TouchSpin(document.getElementById('vertical'), { renderer: TailwindRenderer });
+    TouchSpin(document.getElementById('custom-text'), { renderer: TailwindRenderer });
+    TouchSpin(document.getElementById('disabled'), { renderer: TailwindRenderer });
+    TouchSpin(document.getElementById('rtl'), { renderer: TailwindRenderer });
 
-    // Initialize all examples
-    const basicSpinner = TouchSpin(document.getElementById('basic-spinner'), {
-      renderer: TailwindRenderer
-    });
+    const basicCodeExample = document.getElementById('basic-code-example');
 
-    const currencySpinner = TouchSpin(document.getElementById('currency-spinner'), {
-      renderer: TailwindRenderer,
-      prefix: '$',
-      postfix: 'USD',
-      decimals: 2
-    });
-
-    const verticalSpinner = TouchSpin(document.getElementById('vertical-spinner'), {
-      renderer: TailwindRenderer,
-      verticalbuttons: true
-    });
-
-    const rangeSpinner = TouchSpin(document.getElementById('range-spinner'), {
-      renderer: TailwindRenderer,
-      prefix: '#'
-    });
-
-    const smallSpinner = TouchSpin(document.getElementById('small-spinner'), {
-      renderer: TailwindRenderer,
-      prefix: 'x',
-      postfix: 'items'
-    });
-
-    const largeSpinner = TouchSpin(document.getElementById('large-spinner'), {
-      renderer: TailwindRenderer,
-      postfix: '%'
-    });
-
-    console.log('Basic spinner instance:', {
-      upOnce: basicSpinner.upOnce || '',
-      downOnce: basicSpinner.downOnce || '',
-      startUpSpin: basicSpinner.startUpSpin || '',
-      startDownSpin: basicSpinner.startDownSpin || '',
-      stopSpin: basicSpinner.stopSpin || ''
-    });
-
-    // Store basic spinner instance for controls
-    window.basicSpinnerInstance = basicSpinner;
-
-    // Initialize controls
-    updateGeneratedCode();
-
-    // Apply settings function
-    window.applySettings = function() {
-      const prefix = document.getElementById('prefix-input').value;
-      const postfix = document.getElementById('postfix-input').value;
-      const min = parseInt(document.getElementById('min-input').value) || 0;
-      const max = parseInt(document.getElementById('max-input').value) || 100;
-      const step = parseFloat(document.getElementById('step-input').value) || 1;
-      const decimals = parseInt(document.getElementById('decimals-input').value) || 0;
-      const verticalbuttons = document.getElementById('vertical-checkbox').checked;
-      const mousewheel = document.getElementById('mouse-wheel-checkbox').checked;
-      const focusablebuttons = document.getElementById('focusable-checkbox').checked;
-      const buttonup_txt = document.getElementById('button-up-text').value || '+';
-      const buttondown_txt = document.getElementById('button-down-text').value || '−';
-
-      // Update settings
-      basicSpinner.updateSettings({
-        prefix,
-        postfix,
-        min,
-        max,
-        step,
-        decimals,
-        verticalbuttons,
-        mousewheel,
-        focusablebuttons,
-        buttonup_txt,
-        buttondown_txt
-      });
-
-      updateGeneratedCode();
-    };
-
-    function updateGeneratedCode() {
-      const prefix = document.getElementById('prefix-input').value;
-      const postfix = document.getElementById('postfix-input').value;
-      const min = document.getElementById('min-input').value;
-      const max = document.getElementById('max-input').value;
-      const step = document.getElementById('step-input').value;
-      const decimals = document.getElementById('decimals-input').value;
-      const verticalbuttons = document.getElementById('vertical-checkbox').checked;
-      const mousewheel = document.getElementById('mouse-wheel-checkbox').checked;
-      const focusablebuttons = document.getElementById('focusable-checkbox').checked;
-      const buttonup_txt = document.getElementById('button-up-text').value;
-      const buttondown_txt = document.getElementById('button-down-text').value;
-
-      let htmlCode = `<input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="50"`;
-      if (min) htmlCode += ` min="${min}"`;
-      if (max) htmlCode += ` max="${max}"`;
-      if (step) htmlCode += ` step="${step}"`;
-      htmlCode += ` data-testid="my-spinner">`;
-
-      let jsCode = `import { TouchSpin } from '@touchspin/core';\nimport TailwindRenderer from '@touchspin/tailwind';\n\nconst spinner = TouchSpin(document.getElementById('my-spinner'), {\n  renderer: TailwindRenderer`;
-
-      const options = [];
-      if (prefix) options.push(`prefix: '${prefix}'`);
-      if (postfix) options.push(`postfix: '${postfix}'`);
-      if (decimals && decimals !== '0') options.push(`decimals: ${decimals}`);
-      if (verticalbuttons) options.push(`verticalbuttons: true`);
-      if (!mousewheel) options.push(`mousewheel: false`);
-      if (focusablebuttons) options.push(`focusablebuttons: true`);
-      if (buttonup_txt && buttonup_txt !== '+') options.push(`buttonup_txt: '${buttonup_txt}'`);
-      if (buttondown_txt && buttondown_txt !== '−') options.push(`buttondown_txt: '${buttondown_txt}'`);
-
-      if (options.length > 0) {
-        jsCode += ',\n  ' + options.join(',\n  ');
+    // Generate code example from current control values
+    function generateCodeExample() {
+      const attributes = [];
+      
+      // Get values from controls
+      const min = parseFloat(controls.min.value) || 0;
+      const max = parseFloat(controls.max.value) || 100;
+      const value = controls.value.value || '50';
+      const step = parseFloat(controls.step.value) || 1;
+      
+      // Always include basic HTML attributes
+      attributes.push(`type="number"`);
+      attributes.push(`class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"`);
+      if (min !== 0) attributes.push(`min="${min}"`);
+      if (max !== 100) attributes.push(`max="${max}"`);
+      if (value !== '50') attributes.push(`value="${value}"`);
+      if (step !== 1) attributes.push(`step="${step}"`);
+      
+      // Add TouchSpin data attributes for optional settings
+      const prefix = controls.prefix.value;
+      if (prefix) {
+        attributes.push(`data-bts-prefix="${prefix}"`);
       }
-      jsCode += '\n});';
-
-      document.getElementById('generated-code-content').textContent =
-        'HTML:\n' + htmlCode + '\n\nJavaScript:\n' + jsCode;
+      
+      const postfix = controls.postfix.value;
+      if (postfix) {
+        attributes.push(`data-bts-postfix="${postfix}"`);
+      }
+      
+      const verticalButtons = controls.vertical.checked;
+      if (verticalButtons) {
+        attributes.push(`data-bts-vertical-buttons="true"`);
+      }
+      
+      // Add state attributes
+      const input = document.getElementById('basic');
+      if (input.disabled) {
+        attributes.push(`disabled`);
+      }
+      
+      if (input.readOnly) {
+        attributes.push(`readonly`);
+      }
+      
+      // Generate the HTML
+      const attributeString = attributes.join(' ');
+      let code = `&lt;input ${attributeString}&gt;\\n\\n`;
+      
+      // Add JavaScript initialization
+      code += `&lt;script type="module"&gt;\\n`;
+      code += `  import { TouchSpin } from '@touchspin/core';\\n`;
+      code += `  import TailwindRenderer from '@touchspin/tailwind-renderer';\\n\\n`;
+      code += `  TouchSpin(document.getElementById('myInput'), {\\n`;
+      code += `    renderer: TailwindRenderer\\n`;
+      code += `  });\\n`;
+      code += `&lt;/script&gt;`;
+      
+      return code;
     }
 
-    // Update code when controls change
-    ['prefix-input', 'postfix-input', 'min-input', 'max-input', 'step-input',
-     'decimals-input', 'vertical-checkbox', 'mouse-wheel-checkbox',
-     'focusable-checkbox', 'button-up-text', 'button-down-text'].forEach(id => {
-      document.getElementById(id).addEventListener('input', updateGeneratedCode);
-      document.getElementById(id).addEventListener('change', updateGeneratedCode);
+    // Update the code example
+    function updateCodeExample() {
+      basicCodeExample.innerHTML = generateCodeExample().replace(/\\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;');
+    }
+
+    // Property controls
+    const controls = {
+      value: document.getElementById('control-value'),
+      min: document.getElementById('control-min'),
+      max: document.getElementById('control-max'),
+      step: document.getElementById('control-step'),
+      prefix: document.getElementById('control-prefix'),
+      postfix: document.getElementById('control-postfix'),
+      decimals: document.getElementById('control-decimals'),
+      buttonupTxt: document.getElementById('control-buttonup-txt'),
+      buttondownTxt: document.getElementById('control-buttondown-txt'),
+      disabled: document.getElementById('control-disabled'),
+      readonly: document.getElementById('control-readonly'),
+      vertical: document.getElementById('control-vertical'),
+      focusable: document.getElementById('control-focusable'),
+      mousewheel: document.getElementById('control-mousewheel')
+    };
+
+    // Event log
+    const eventLog = document.getElementById('event-log');
+    let eventCount = 0;
+
+    function addEventToLog(message, type = 'event-info') {
+      eventCount++;
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = `event-entry ${type}`;
+      entry.textContent = `[${timestamp}] ${message}`;
+      
+      // Remove first entry if log gets too long
+      if (eventLog.children.length > 20) {
+        eventLog.removeChild(eventLog.firstChild);
+      }
+      
+      eventLog.appendChild(entry);
+      eventLog.scrollTop = eventLog.scrollHeight;
+    }
+
+    // Initialize log
+    addEventToLog('TouchSpin Tailwind Demo initialized', 'event-info');
+
+    // Property control event listeners
+    controls.value.addEventListener('input', (e) => {
+      const newValue = parseFloat(e.target.value);
+      if (!isNaN(newValue)) {
+        basicSpinner.setValue(newValue);
+        addEventToLog(`setValue(${newValue})`, 'event-method');
+        updateCodeExample();
+      }
     });
+
+    controls.min.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ min: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.max.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ max: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.step.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ step: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.prefix.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ prefix: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.postfix.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ postfix: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.decimals.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ decimals: parseInt(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.buttonupTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttonup_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.buttondownTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttondown_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    // State control event listeners
+    controls.disabled.addEventListener('change', (e) => {
+      const input = document.getElementById('basic');
+      if (e.target.checked) {
+        basicSpinner.disable();
+        input.disabled = true;
+        addEventToLog('disable()', 'event-method');
+      } else {
+        basicSpinner.enable();
+        input.disabled = false;
+        addEventToLog('enable()', 'event-method');
+      }
+      updateCodeExample();
+    });
+
+    controls.readonly.addEventListener('change', (e) => {
+      const input = document.getElementById('basic');
+      if (e.target.checked) {
+        input.readOnly = true;
+      } else {
+        input.readOnly = false;
+      }
+      updateCodeExample();
+    });
+
+    controls.vertical.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ verticalbuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.focusable.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ focusablebuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.mousewheel.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ mousewheel: e.target.checked });
+      updateCodeExample();
+    });
+
+    // Method testing buttons
+    document.getElementById('test-up-once').addEventListener('click', () => {
+      basicSpinner.upOnce();
+      addEventToLog('upOnce() called', 'event-method');
+      controls.value.value = basicSpinner.getValue();
+    });
+
+    document.getElementById('test-down-once').addEventListener('click', () => {
+      basicSpinner.downOnce();
+      addEventToLog('downOnce() called', 'event-method');
+      controls.value.value = basicSpinner.getValue();
+    });
+
+    document.getElementById('test-start-up').addEventListener('click', () => {
+      basicSpinner.startUpSpin();
+      addEventToLog('startUpSpin() called', 'event-method');
+    });
+
+    document.getElementById('test-start-down').addEventListener('click', () => {
+      basicSpinner.startDownSpin();
+      addEventToLog('startDownSpin() called', 'event-method');
+    });
+
+    document.getElementById('test-stop-spin').addEventListener('click', () => {
+      basicSpinner.stopSpin();
+      addEventToLog('stopSpin() called', 'event-method');
+    });
+
+    document.getElementById('test-set-random').addEventListener('click', () => {
+      const randomValue = Math.floor(Math.random() * 100);
+      basicSpinner.setValue(randomValue);
+      controls.value.value = randomValue;
+      addEventToLog(`setValue(${randomValue}) called`, 'event-method');
+      updateCodeExample();
+    });
+
+    document.getElementById('test-get-value').addEventListener('click', () => {
+      const currentValue = basicSpinner.getValue();
+      addEventToLog(`getValue() returned: ${currentValue}`, 'event-method');
+    });
+
+    // Clear log button
+    document.getElementById('clear-log').addEventListener('click', () => {
+      eventLog.innerHTML = '<div class="event-entry">Event log cleared</div>';
+      eventCount = 0;
+    });
+
+    // TouchSpin event listeners for the basic spinner
+    const basicInput = document.getElementById('basic');
+    basicInput.addEventListener('touchspin:start', (e) => {
+      addEventToLog(`touchspin:start - Direction: ${e.detail.direction}`, 'event-touchspin');
+    });
+
+    basicInput.addEventListener('touchspin:startspin', (e) => {
+      addEventToLog(`touchspin:startspin - Direction: ${e.detail.direction}`, 'event-touchspin');
+    });
+
+    basicInput.addEventListener('touchspin:stopspin', (e) => {
+      addEventToLog('touchspin:stopspin', 'event-touchspin');
+    });
+
+    basicInput.addEventListener('touchspin:min', (e) => {
+      addEventToLog(`touchspin:min - Value: ${e.detail.value}`, 'event-touchspin');
+    });
+
+    basicInput.addEventListener('touchspin:max', (e) => {
+      addEventToLog(`touchspin:max - Value: ${e.detail.value}`, 'event-touchspin');
+    });
+
+    // Initialize the code example
+    updateCodeExample();
   </script>
 </body>
 </html>
