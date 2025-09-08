@@ -307,6 +307,24 @@
                   <input type="text" id="control-postfix" placeholder="e.g. .00" class="form-control">
                 </label>
               </div>
+              <div class="form-group">
+                <label>
+                  <span>Decimal Places</span>
+                  <input type="number" id="control-decimals" value="0" min="0" max="10" step="1" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Button Up Text</span>
+                  <input type="text" id="control-buttonup-txt" value="+" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Button Down Text</span>
+                  <input type="text" id="control-buttondown-txt" value="−" class="form-control">
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -336,6 +354,11 @@
               <div class="checkbox">
                 <label>
                   <input type="checkbox" id="control-focusable"> Focusable Buttons
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-mousewheel" checked> Mouse Wheel
                 </label>
               </div>
             </div>
@@ -469,10 +492,14 @@
       step: document.getElementById('control-step'),
       prefix: document.getElementById('control-prefix'),
       postfix: document.getElementById('control-postfix'),
+      decimals: document.getElementById('control-decimals'),
+      buttonupTxt: document.getElementById('control-buttonup-txt'),
+      buttondownTxt: document.getElementById('control-buttondown-txt'),
       disabled: document.getElementById('control-disabled'),
       readonly: document.getElementById('control-readonly'),
       vertical: document.getElementById('control-vertical'),
-      focusable: document.getElementById('control-focusable')
+      focusable: document.getElementById('control-focusable'),
+      mousewheel: document.getElementById('control-mousewheel')
     };
 
     // Event log
@@ -540,6 +567,26 @@
 
     controls.focusable.addEventListener('change', (e) => {
       basicSpinner.updateSettings({ focusablebuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.decimals.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ decimals: parseInt(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.buttonupTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttonup_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.buttondownTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttondown_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.mousewheel.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ mousewheel: e.target.checked });
       updateCodeExample();
     });
 

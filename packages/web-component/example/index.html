@@ -329,7 +329,7 @@
         </details>
 
         <!-- State Controls -->
-        <details>
+        <details open>
           <summary>State Controls</summary>
           <div class="control-group">
             <label>
@@ -388,47 +388,47 @@
     // Generate HTML code from current element state
     function generateCodeExample() {
       const attributes = [];
-      
+
       // Always include basic attributes with their current values
       const min = basicSpinner.getAttribute('min') || '0';
       const max = basicSpinner.getAttribute('max') || '100';
       const value = basicSpinner.getAttribute('value') || '50';
       const step = basicSpinner.getAttribute('step') || '1';
-      
+
       attributes.push(`min="${min}"`);
       attributes.push(`max="${max}"`);
       attributes.push(`value="${value}"`);
       attributes.push(`step="${step}"`);
-      
+
       // Add optional attributes if they exist
       const prefix = basicSpinner.getAttribute('prefix');
       if (prefix) {
         attributes.push(`prefix="${prefix}"`);
       }
-      
+
       const postfix = basicSpinner.getAttribute('postfix');
       if (postfix) {
         attributes.push(`postfix="${postfix}"`);
       }
-      
+
       const verticalButtons = basicSpinner.getAttribute('vertical-buttons');
       if (verticalButtons === 'true') {
         attributes.push(`vertical-buttons="true"`);
       }
-      
+
       // Add state attributes if they exist
       if (basicSpinner.disabled) {
         attributes.push('disabled');
       }
-      
+
       if (basicSpinner.readonly) {
         attributes.push('readonly');
       }
-      
+
       // Generate the HTML
       const attributeString = attributes.join(' ');
       const html = `&lt;touchspin-element ${attributeString}&gt;&lt;/touchspin-element&gt;`;
-      
+
       return html;
     }
 
@@ -460,7 +460,7 @@
       entry.className = `event-entry ${eventName.replace('touchspin-', '')}`;
       entry.textContent = `${eventCount}. ${eventName}: ${JSON.stringify(detail)}`;
       eventLog.insertBefore(entry, eventLog.firstChild);
-      
+
       // Keep only last 20 events
       while (eventLog.children.length > 20) {
         eventLog.removeChild(eventLog.lastChild);
