@@ -255,6 +255,33 @@
           &lt;/div&gt;
         </div>
       </div>
+
+      <div class="example">
+        <h3>Advanced Input Group</h3>
+        <p style="margin: 10px 0; color: #666;">Input inside an existing Bootstrap input-group with other addons</p>
+        <div class="spinner">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-calendar"></i>
+            </span>
+            <input type="number" id="advanced-group" min="0" max="100" value="25" step="1" class="form-control">
+            <span class="input-group-text">.00</span>
+          </div>
+        </div>
+        <div class="code-example">
+          &lt;div class="input-group"&gt;<br>
+          &nbsp;&nbsp;&lt;span class="input-group-text"&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;i class="bi bi-calendar"&gt;&lt;/i&gt;<br>
+          &nbsp;&nbsp;&lt;/span&gt;<br>
+          &nbsp;&nbsp;&lt;input type="number" id="advanced" class="form-control"&gt;<br>
+          &nbsp;&nbsp;&lt;span class="input-group-text"&gt;.00&lt;/span&gt;<br>
+          &lt;/div&gt;<br><br>
+          $('#advanced').TouchSpin({<br>
+          &nbsp;&nbsp;min: 0,<br>
+          &nbsp;&nbsp;max: 100<br>
+          });
+        </div>
+      </div>
     </div>
 
     <div class="control-panel">
@@ -411,6 +438,7 @@
     TouchSpin(document.getElementById('custom-text'), { renderer: Bootstrap5Renderer });
     TouchSpin(document.getElementById('disabled'), { renderer: Bootstrap5Renderer });
     TouchSpin(document.getElementById('rtl'), { renderer: Bootstrap5Renderer });
+    TouchSpin(document.getElementById('advanced-group'), { renderer: Bootstrap5Renderer });
 
     const basicCodeExample = document.getElementById('basic-code-example');
 

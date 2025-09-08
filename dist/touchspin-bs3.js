@@ -1884,18 +1884,8 @@
           this._formControlAdded = true; // Track if we added it
         }
 
-        // 1. Build and inject DOM structure around input
-        this.wrapper = this.buildInputGroup();
-
-        // 2. Find created buttons and store prefix/postfix references
-        var upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-        var downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-        this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-        this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
-
-        // 3. Tell core to attach its event handlers
-        this.core.attachUpEvents(upButton);
-        this.core.attachDownEvents(downButton);
+        // Build DOM structure and attach events
+        this.buildAndAttachDOM();
 
         // 4. Register for setting changes we care about
         this.core.observeSetting('prefix', function (newValue) {
@@ -1934,6 +1924,12 @@
         this.core.observeSetting('postfix_extraclass', function (newValue) {
           return _this.updatePostfixClasses();
         });
+        this.core.observeSetting('verticalbuttons', function (newValue) {
+          return _this.handleVerticalButtonsChange(newValue);
+        });
+        this.core.observeSetting('focusablebuttons', function (newValue) {
+          return _this.updateButtonFocusability(newValue);
+        });
       }
     }, {
       key: "teardown",
@@ -1946,6 +1942,22 @@
 
         // Call parent teardown to handle DOM cleanup
         _superPropGet(Bootstrap3Renderer, "teardown", this)([]);
+      }
+    }, {
+      key: "buildAndAttachDOM",
+      value: function buildAndAttachDOM() {
+        // 1. Build and inject DOM structure around input
+        this.wrapper = this.buildInputGroup();
+
+        // 2. Find created buttons and store prefix/postfix references
+        var upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+        var downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+        this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+
+        // 3. Tell core to attach its event handlers
+        this.core.attachUpEvents(upButton);
+        this.core.attachDownEvents(downButton);
       }
     }, {
       key: "buildInputGroup",
@@ -1965,9 +1977,9 @@
         var testidAttr = this.getWrapperTestId();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon bootstrap-touchspin-prefix ").concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-addon bootstrap-touchspin-postfix ").concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix || '', "</span>\n          <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            ").concat(this.buildVerticalButtons(), "\n          </span>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          ").concat(this.settings.postfix ? "<span class=\"input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n          <span class=\"input-group-btn bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n            ").concat(this.buildVerticalButtons(), "\n          </span>\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-addon bootstrap-touchspin-prefix ").concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix || '', "</span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </span>\n          <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </span>\n          <span class=\"input-group-addon bootstrap-touchspin-postfix ").concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix || '', "</span>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </span>\n          ").concat(this.settings.prefix ? "<span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          ").concat(this.settings.postfix ? "<span class=\"input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n          <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </span>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -1980,17 +1992,33 @@
 
         // Find the position to insert input
         if (this.settings.verticalbuttons) {
-          // For vertical buttons, insert after prefix
+          // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
           var prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-          wrapper.insertBefore(this.input, prefixEl.nextSibling);
+          var postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+          if (prefixEl) {
+            // Insert after prefix
+            wrapper.insertBefore(this.input, prefixEl.nextSibling);
+          } else if (postfixEl) {
+            // No prefix, insert before postfix
+            wrapper.insertBefore(this.input, postfixEl);
+          } else {
+            // No prefix or postfix, insert before vertical wrapper
+            var verticalWrapper = wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+            wrapper.insertBefore(this.input, verticalWrapper);
+          }
         } else {
-          // For horizontal buttons, find the position after down button, before up button
-          var upButton = wrapper.querySelector('.input-group-btn:has([data-touchspin-injected="up"])') || wrapper.querySelector('[data-touchspin-injected="up-wrapper"]');
-          wrapper.insertBefore(this.input, upButton);
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
+          var _prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
+          wrapper.querySelector('[data-touchspin-injected="postfix"]');
+          if (_prefixEl) {
+            // Insert after prefix
+            wrapper.insertBefore(this.input, _prefixEl.nextSibling);
+          } else {
+            // No prefix, insert after down button
+            var downButton = wrapper.querySelector('[data-touchspin-injected="down-wrapper"]');
+            wrapper.insertBefore(this.input, downButton.nextSibling);
+          }
         }
-
-        // Hide empty prefix/postfix
-        this.hideEmptyPrefixPostfix(wrapper);
         return wrapper;
       }
     }, {
@@ -2010,45 +2038,47 @@
         // Create elements based on vertical or horizontal layout
         var elementsHtml;
         if (this.settings.verticalbuttons) {
-          elementsHtml = "\n        <span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-addon bootstrap-touchspin-postfix ").concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix || '', "</span>\n        <span class=\"input-group-addon bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n          ").concat(this.buildVerticalButtons(), "\n        </span>\n      ");
+          elementsHtml = "\n        ".concat(this.settings.prefix ? "<span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        ").concat(this.settings.postfix ? "<span class=\"input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n        <span class=\"input-group-btn bootstrap-touchspin-vertical-button-wrapper\" data-touchspin-injected=\"vertical-wrapper\">\n          ").concat(this.buildVerticalButtons(), "\n        </span>\n      ");
         } else {
-          elementsHtml = "\n        <span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix || '', "</span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n        </span>\n        <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </span>\n        <span class=\"input-group-addon bootstrap-touchspin-postfix ").concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix || '', "</span>\n      ");
+          elementsHtml = "\n        <span class=\"input-group-btn\" data-touchspin-injected=\"down-wrapper\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n        </span>\n        ").concat(this.settings.prefix ? "<span class=\"input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        ").concat(this.settings.postfix ? "<span class=\"input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n        <span class=\"input-group-btn\" data-touchspin-injected=\"up-wrapper\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </span>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
 
-        // Insert prefix before the input
-        var prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-        existingInputGroup.insertBefore(prefixEl, this.input);
-
-        // Declare postfixEl at function scope
+        // Declare element references at function scope
+        var prefixEl;
         var postfixEl;
         if (this.settings.verticalbuttons) {
-          // For vertical buttons, insert vertical wrapper after input
+          // For vertical buttons: prefix -> input -> postfix -> vertical wrapper
+          prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+          if (prefixEl) {
+            existingInputGroup.insertBefore(prefixEl, this.input);
+          }
+          postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          if (postfixEl) {
+            existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+          }
           var verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
-          existingInputGroup.insertBefore(verticalWrapper, this.input.nextSibling);
-
-          // Insert postfix after vertical wrapper
-          postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          existingInputGroup.insertBefore(postfixEl, verticalWrapper.nextSibling);
+          existingInputGroup.insertBefore(verticalWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
         } else {
-          // For horizontal buttons, insert them around the input
-          var downButtonWrapper = tempDiv.querySelector('.input-group-btn:has([data-touchspin-injected="down"])') || tempDiv.querySelector('[data-touchspin-injected="down-wrapper"]');
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
+          var downButtonWrapper = tempDiv.querySelector('[data-touchspin-injected="down-wrapper"]');
           existingInputGroup.insertBefore(downButtonWrapper, this.input);
-          var upButtonWrapper = tempDiv.querySelector('.input-group-btn:has([data-touchspin-injected="up"])') || tempDiv.querySelector('[data-touchspin-injected="up-wrapper"]');
-          existingInputGroup.insertBefore(upButtonWrapper, this.input.nextSibling);
-
-          // Insert postfix after up button
+          prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+          if (prefixEl) {
+            existingInputGroup.insertBefore(prefixEl, this.input);
+          }
           postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          existingInputGroup.insertBefore(postfixEl, upButtonWrapper.nextSibling);
+          if (postfixEl) {
+            existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+          }
+          var upButtonWrapper = tempDiv.querySelector('[data-touchspin-injected="up-wrapper"]');
+          existingInputGroup.insertBefore(upButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
         }
 
         // Store internal references for advanced mode too
         this.prefixEl = prefixEl;
         this.postfixEl = postfixEl;
-
-        // Hide empty prefix/postfix
-        this.hideEmptyPrefixPostfix(existingInputGroup);
         return existingInputGroup;
       }
     }, {
@@ -2063,20 +2093,6 @@
         return '';
       }
     }, {
-      key: "hideEmptyPrefixPostfix",
-      value: function hideEmptyPrefixPostfix() {
-        var wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.wrapper;
-        // Use internal references if available, otherwise query from wrapper
-        var prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
-        var postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
-        if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-          prefixEl.style.display = 'none';
-        }
-        if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-          postfixEl.style.display = 'none';
-        }
-      }
-    }, {
       key: "updatePrefix",
       value: function updatePrefix(value) {
         // Use internal reference
@@ -2087,10 +2103,13 @@
             prefixEl.style.display = '';
             // Update classes in case prefix_extraclass changed
             prefixEl.className = "input-group-addon bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
+          } else {
+            // Element doesn't exist, need to rebuild DOM
+            this.rebuildDOM();
           }
         } else if (prefixEl) {
-          // Hide element if value is empty but keep it in DOM
-          prefixEl.style.display = 'none';
+          // Remove element if value is empty
+          this.rebuildDOM();
         }
       }
     }, {
@@ -2104,10 +2123,13 @@
             postfixEl.style.display = '';
             // Update classes in case postfix_extraclass changed
             postfixEl.className = "input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
+          } else {
+            // Element doesn't exist, need to rebuild DOM
+            this.rebuildDOM();
           }
         } else if (postfixEl) {
-          // Hide element if value is empty but keep it in DOM
-          postfixEl.style.display = 'none';
+          // Remove element if value is empty
+          this.rebuildDOM();
         }
       }
     }, {
@@ -2123,7 +2145,7 @@
       value: function buildVerticalButtons() {
         // Bootstrap 3: Return content for input-group-btn wrapper
         // The outer wrapper is handled by the calling code
-        return "\n      <span class=\"input-group-btn-vertical\">\n        <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " ").concat(this.settings.verticalupclass || 'btn btn-default', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n        <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " ").concat(this.settings.verticaldownclass || 'btn btn-default', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n      </span>\n    ");
+        return "\n      <span class=\"input-group-btn-vertical\">\n        <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-default', " ").concat(this.settings.verticalupclass || '', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.verticalup || '+', "</button>\n        <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-default', " ").concat(this.settings.verticaldownclass || '', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.verticaldown || '−', "</button>\n      </span>\n    ");
       }
     }, {
       key: "updateVerticalButtonClass",
@@ -2172,6 +2194,32 @@
         if (postfixEl) {
           postfixEl.className = "input-group-addon bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
         }
+      }
+    }, {
+      key: "handleVerticalButtonsChange",
+      value: function handleVerticalButtonsChange(newValue) {
+        // Remove old DOM and rebuild with new layout
+        this.rebuildDOM();
+      }
+    }, {
+      key: "rebuildDOM",
+      value: function rebuildDOM() {
+        // Remove old DOM and rebuild with current settings
+        this.removeInjectedElements();
+
+        // Reset wrapper reference since it was removed
+        this.wrapper = null;
+        this.buildAndAttachDOM();
+      }
+    }, {
+      key: "updateButtonFocusability",
+      value: function updateButtonFocusability(newValue) {
+        // Find all buttons and update their tabindex
+        var buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
+        var tabindex = newValue ? '0' : '-1';
+        buttons.forEach(function (button) {
+          button.setAttribute('tabindex', tabindex);
+        });
       }
     }]);
   }(AbstractRenderer);

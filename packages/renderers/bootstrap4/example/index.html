@@ -255,6 +255,41 @@
           &lt;/div&gt;
         </div>
       </div>
+
+      <div class="example">
+        <h3>Advanced Input Group</h3>
+        <p style="margin: 10px 0; color: #666;">Input inside an existing Bootstrap input-group with other addons</p>
+        <div class="spinner">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-calendar"></i>
+              </span>
+            </div>
+            <input type="number" id="advanced-group" min="0" max="100" value="25" step="1" class="form-control">
+            <div class="input-group-append">
+              <span class="input-group-text">.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="code-example">
+          &lt;div class="input-group"&gt;<br>
+          &nbsp;&nbsp;&lt;div class="input-group-prepend"&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="input-group-text"&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;i class="fas fa-calendar"&gt;&lt;/i&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;/span&gt;<br>
+          &nbsp;&nbsp;&lt;/div&gt;<br>
+          &nbsp;&nbsp;&lt;input type="number" id="advanced" class="form-control"&gt;<br>
+          &nbsp;&nbsp;&lt;div class="input-group-append"&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="input-group-text"&gt;.00&lt;/span&gt;<br>
+          &nbsp;&nbsp;&lt;/div&gt;<br>
+          &lt;/div&gt;<br><br>
+          $('#advanced').TouchSpin({<br>
+          &nbsp;&nbsp;min: 0,<br>
+          &nbsp;&nbsp;max: 100<br>
+          });
+        </div>
+      </div>
     </div>
 
     <div class="control-panel">
@@ -416,6 +451,7 @@
     TouchSpin(document.getElementById('custom-text'), { renderer: Bootstrap4Renderer });
     TouchSpin(document.getElementById('disabled'), { renderer: Bootstrap4Renderer });
     TouchSpin(document.getElementById('rtl'), { renderer: Bootstrap4Renderer });
+    TouchSpin(document.getElementById('advanced-group'), { renderer: Bootstrap4Renderer });
 
     const basicCodeExample = document.getElementById('basic-code-example');
 

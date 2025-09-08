@@ -1949,6 +1949,12 @@
         this.core.observeSetting('postfix_extraclass', function (newValue) {
           return _this.updatePostfixClasses();
         });
+        this.core.observeSetting('verticalbuttons', function (newValue) {
+          return _this.handleVerticalButtonsChange(newValue);
+        });
+        this.core.observeSetting('focusablebuttons', function (newValue) {
+          return _this.updateButtonFocusability(newValue);
+        });
       }
     }, {
       key: "teardown",
@@ -2186,6 +2192,49 @@
         if (postfixEl) {
           postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
         }
+      }
+    }, {
+      key: "handleVerticalButtonsChange",
+      value: function handleVerticalButtonsChange(newValue) {
+        // Remove old DOM and rebuild with new layout
+        this.rebuildDOM();
+      }
+    }, {
+      key: "rebuildDOM",
+      value: function rebuildDOM() {
+        // Remove old DOM and rebuild with current settings
+        this.removeInjectedElements();
+        // Reset wrapper reference since it was removed
+        this.wrapper = null;
+        this.prefixEl = null;
+        this.postfixEl = null;
+        this.buildAndAttachDOM();
+      }
+    }, {
+      key: "buildAndAttachDOM",
+      value: function buildAndAttachDOM() {
+        // 1. Build and inject DOM structure around input
+        this.wrapper = this.buildInputGroup();
+
+        // 2. Find created buttons and store prefix/postfix references
+        var upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+        var downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+        this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+        this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+
+        // 3. Tell core to attach its event handlers
+        this.core.attachUpEvents(upButton);
+        this.core.attachDownEvents(downButton);
+      }
+    }, {
+      key: "updateButtonFocusability",
+      value: function updateButtonFocusability(newValue) {
+        // Find all buttons and update their tabindex
+        var buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
+        var tabindex = newValue ? '0' : '-1';
+        buttons.forEach(function (button) {
+          button.setAttribute('tabindex', tabindex);
+        });
       }
     }]);
   }(AbstractRenderer);

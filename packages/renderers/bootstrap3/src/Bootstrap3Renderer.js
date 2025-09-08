@@ -193,10 +193,14 @@ class Bootstrap3Renderer extends AbstractRenderer {
     if (this.settings.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical wrapper
       prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-      existingInputGroup.insertBefore(prefixEl, this.input);
+      if (prefixEl) {
+        existingInputGroup.insertBefore(prefixEl, this.input);
+      }
 
       postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-      existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      if (postfixEl) {
+        existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      }
 
       const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
       existingInputGroup.insertBefore(verticalWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
@@ -206,13 +210,17 @@ class Bootstrap3Renderer extends AbstractRenderer {
       existingInputGroup.insertBefore(downButtonWrapper, this.input);
 
       prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-      existingInputGroup.insertBefore(prefixEl, this.input);
+      if (prefixEl) {
+        existingInputGroup.insertBefore(prefixEl, this.input);
+      }
 
       postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-      existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      if (postfixEl) {
+        existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      }
 
       const upButtonWrapper = tempDiv.querySelector('[data-touchspin-injected="up-wrapper"]');
-      existingInputGroup.insertBefore(upButtonWrapper, postfixEl.nextSibling);
+      existingInputGroup.insertBefore(upButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
     }
 
     // Store internal references for advanced mode too
