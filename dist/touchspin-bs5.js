@@ -1963,7 +1963,7 @@
         if (this.settings.verticalbuttons) {
           html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -1991,15 +1991,19 @@
             wrapper.insertBefore(this.input, verticalWrapper);
           }
         } else {
-          // For horizontal buttons: prefix -> down -> input -> up -> postfix
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
           var _prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-          var downButton = wrapper.querySelector('[data-touchspin-injected="down"]');
+          var _postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
           if (_prefixEl) {
             // Insert after prefix
             wrapper.insertBefore(this.input, _prefixEl.nextSibling);
+          } else if (_postfixEl) {
+            // No prefix, insert before postfix
+            wrapper.insertBefore(this.input, _postfixEl);
           } else {
-            // No prefix, insert after down button
-            wrapper.insertBefore(this.input, downButton.nextSibling);
+            // No prefix or postfix, insert before up button
+            var upButton = wrapper.querySelector('[data-touchspin-injected="up"]');
+            wrapper.insertBefore(this.input, upButton);
           }
         }
         return wrapper;
@@ -2023,7 +2027,7 @@
         if (this.settings.verticalbuttons) {
           elementsHtml = "\n        ".concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n        ").concat(this.buildVerticalButtons(), "\n      ");
         } else {
-          elementsHtml = "\n        ".concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n        <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n        ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n      ");
+          elementsHtml = "\n        <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n        ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n        <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -2046,22 +2050,22 @@
             existingInputGroup.insertBefore(verticalWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
           }
         } else {
-          // For horizontal buttons: prefix -> down -> input -> up -> postfix
-          prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-          if (prefixEl) {
-            existingInputGroup.insertBefore(prefixEl, this.input);
-          }
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
           var downButton = tempDiv.querySelector('[data-touchspin-injected="down"]');
           if (downButton) {
             existingInputGroup.insertBefore(downButton, this.input);
           }
-          var upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
-          if (upButton) {
-            existingInputGroup.insertBefore(upButton, this.input.nextSibling);
+          prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+          if (prefixEl) {
+            existingInputGroup.insertBefore(prefixEl, this.input);
           }
           postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          if (postfixEl && upButton) {
-            existingInputGroup.insertBefore(postfixEl, upButton.nextSibling);
+          if (postfixEl) {
+            existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+          }
+          var upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
+          if (upButton) {
+            existingInputGroup.insertBefore(upButton, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
           }
         }
 

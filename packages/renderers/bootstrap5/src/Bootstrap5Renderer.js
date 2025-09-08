@@ -75,10 +75,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
     } else {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
-          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
         </div>
       `;
     }
@@ -109,16 +109,20 @@ class Bootstrap5Renderer extends AbstractRenderer {
         wrapper.insertBefore(this.input, verticalWrapper);
       }
     } else {
-      // For horizontal buttons: prefix -> down -> input -> up -> postfix
+      // For horizontal buttons: down -> prefix -> input -> postfix -> up
       const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-      const downButton = wrapper.querySelector('[data-touchspin-injected="down"]');
+      const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
       
       if (prefixEl) {
         // Insert after prefix
         wrapper.insertBefore(this.input, prefixEl.nextSibling);
+      } else if (postfixEl) {
+        // No prefix, insert before postfix
+        wrapper.insertBefore(this.input, postfixEl);
       } else {
-        // No prefix, insert after down button
-        wrapper.insertBefore(this.input, downButton.nextSibling);
+        // No prefix or postfix, insert before up button
+        const upButton = wrapper.querySelector('[data-touchspin-injected="up"]');
+        wrapper.insertBefore(this.input, upButton);
       }
     }
 
@@ -147,10 +151,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
       `;
     } else {
       elementsHtml = `
-        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
         ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
       `;
     }
 
@@ -178,25 +182,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
         existingInputGroup.insertBefore(verticalWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
       }
     } else {
-      // For horizontal buttons: prefix -> down -> input -> up -> postfix
-      prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-      if (prefixEl) {
-        existingInputGroup.insertBefore(prefixEl, this.input);
-      }
-
+      // For horizontal buttons: down -> prefix -> input -> postfix -> up
       const downButton = tempDiv.querySelector('[data-touchspin-injected="down"]');
       if (downButton) {
         existingInputGroup.insertBefore(downButton, this.input);
       }
 
-      const upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
-      if (upButton) {
-        existingInputGroup.insertBefore(upButton, this.input.nextSibling);
+      prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+      if (prefixEl) {
+        existingInputGroup.insertBefore(prefixEl, this.input);
       }
 
       postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-      if (postfixEl && upButton) {
-        existingInputGroup.insertBefore(postfixEl, upButton.nextSibling);
+      if (postfixEl) {
+        existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      }
+
+      const upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
+      if (upButton) {
+        existingInputGroup.insertBefore(upButton, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
       }
     }
 

@@ -1963,7 +1963,7 @@
         if (this.settings.verticalbuttons) {
           html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          <div class=\"input-group-append\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          <div class=\"input-group-append\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -1991,15 +1991,19 @@
             wrapper.insertBefore(this.input, verticalWrapper);
           }
         } else {
-          // For horizontal buttons: prefix -> down -> input -> up -> postfix
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
           var _prefixWrapper = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-          var downButtonWrapper = wrapper.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])');
+          var _postfixWrapper = wrapper.querySelector('[data-touchspin-injected="postfix"]');
           if (_prefixWrapper) {
             // Insert after prefix
             wrapper.insertBefore(this.input, _prefixWrapper.nextSibling);
+          } else if (_postfixWrapper) {
+            // No prefix, insert before postfix
+            wrapper.insertBefore(this.input, _postfixWrapper);
           } else {
-            // No prefix, insert after down button
-            wrapper.insertBefore(this.input, downButtonWrapper.nextSibling);
+            // No prefix or postfix, insert before up button
+            var upButtonWrapper = wrapper.querySelector('.input-group-append');
+            wrapper.insertBefore(this.input, upButtonWrapper);
           }
         }
         return wrapper;
@@ -2023,7 +2027,7 @@
         if (this.settings.verticalbuttons) {
           elementsHtml = "\n        ".concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n        </div>") : '', "\n        ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n        </div>") : '', "\n        ").concat(this.buildVerticalButtons(), "\n      ");
         } else {
-          elementsHtml = "\n        ".concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n        </div>") : '', "\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        <div class=\"input-group-append\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n        ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n        </div>") : '', "\n      ");
+          elementsHtml = "\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n        </div>") : '', "\n        ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n        </div>") : '', "\n        <div class=\"input-group-append\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -2046,7 +2050,7 @@
             existingInputGroup.insertBefore(verticalButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
           }
         } else {
-          // For horizontal buttons: prefix -> down -> input -> up -> postfix
+          // For horizontal buttons: down -> prefix -> input -> postfix -> up
           var downButtonWrapper = tempDiv.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])');
           if (downButtonWrapper) {
             existingInputGroup.insertBefore(downButtonWrapper, this.input);
@@ -2055,13 +2059,13 @@
           if (prefixEl) {
             existingInputGroup.insertBefore(prefixEl, this.input);
           }
+          postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+          if (postfixEl) {
+            existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+          }
           var upButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
           if (upButtonWrapper) {
-            existingInputGroup.insertBefore(upButtonWrapper, this.input.nextSibling);
-          }
-          postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          if (postfixEl && upButtonWrapper) {
-            existingInputGroup.insertBefore(postfixEl, upButtonWrapper.nextSibling);
+            existingInputGroup.insertBefore(upButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
           }
         }
 
