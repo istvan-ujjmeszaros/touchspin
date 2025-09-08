@@ -33,17 +33,23 @@ test.describe('Vertical Buttons', () => {
     
     // Test increment
     await touchspinHelpers.touchspinClickUp(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('51');
     
     // Test decrement
     await touchspinHelpers.touchspinClickDown(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('50');
   });
 
   test('should work with size variations and prefix/postfix', async ({ page }) => {
     const testid = 'touchspin-group-sm-vertical';
     await touchspinHelpers.touchspinClickUp(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('51');
     
     // Verify prefix/postfix exist using specific testids
     const prefix = page.locator(`[data-testid="${testid}-prefix"]`);
@@ -65,7 +71,9 @@ test.describe('Vertical Buttons', () => {
     
     // Should still function correctly
     await touchspinHelpers.touchspinClickUp(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('51');
   });
 
   test('should handle disabled state for vertical buttons', async ({ page }) => {

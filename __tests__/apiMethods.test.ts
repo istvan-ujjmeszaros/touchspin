@@ -21,7 +21,9 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.uponce');
       }, testid);
 
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('51');
     });
 
     test('should respond to touchspin.downonce event', async ({ page }) => {
@@ -32,7 +34,9 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.downonce');
       }, testid);
 
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('49');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('49');
     });
 
     test('should respond to touchspin.startupspin event', async ({ page }) => {
@@ -164,11 +168,15 @@ test.describe('API Methods', () => {
 
       // Try to set below new min
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '5');
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('10');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('10');
 
       // Try to set above new max
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '25');
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('20');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('20');
     });
 
     test('should update step setting', async ({ page }) => {
@@ -188,7 +196,9 @@ test.describe('API Methods', () => {
       // Click up once
       await touchspinHelpers.touchspinClickUp(page, testid);
 
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('15');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('15');
     });
   });
 
@@ -263,7 +273,9 @@ test.describe('API Methods', () => {
       // TouchSpin should still work with new value
       await touchspinHelpers.touchspinClickUp(page, testid);
 
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('76');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('76');
     });
 
     test('should validate programmatically set values against constraints', async ({ page }) => {
@@ -277,7 +289,9 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Should be constrained to max value
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('100');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('100');
     });
 
     test('should handle programmatic decimal value changes', async ({ page }) => {
@@ -291,7 +305,9 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Should be formatted to correct decimal places
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('12.35');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('12.35');
     });
   });
 

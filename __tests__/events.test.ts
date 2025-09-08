@@ -18,7 +18,9 @@ test.describe('Events', () => {
     // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
     await touchspinHelpers.touchspinClickUp(page, testid);
 
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('51');
   });
 
   test('should fire the change event only once when updating the value', async ({ page }) => {
@@ -73,7 +75,9 @@ test.describe('Events', () => {
     ).toBe(1);
 
     // Verify the value has been sanitized (step=10, so 67 rounds to 70)
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('70');
+    await expect.poll(
+      async () => await touchspinHelpers.readInputValue(page, testid)
+    ).toBe('70');
   });
 
   test('Should fire the change event only once when correcting the value according to step after focus loss', async ({ page }) => {

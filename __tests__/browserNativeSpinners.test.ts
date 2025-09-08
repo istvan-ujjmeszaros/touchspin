@@ -51,6 +51,11 @@ test.describe('Browser Native Spinner Controls', () => {
         await page.keyboard.press('ArrowDown');
       }
       
+      // Wait for value to settle after rapid keyboard events
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toMatch(/\d+/);
+      
       const minValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Should respect native min="2"
@@ -65,6 +70,11 @@ test.describe('Browser Native Spinner Controls', () => {
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowUp');
       }
+      
+      // Wait for value to settle after rapid keyboard events
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toMatch(/\d+/);
       
       const maxValue = await touchspinHelpers.readInputValue(page, testid);
       

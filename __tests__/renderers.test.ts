@@ -24,8 +24,9 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
       await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
 
-      const value = await touchspinHelpers.readInputValue(page, 'touchspin-default');
-      expect(value).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, 'touchspin-default')
+      ).toBe('51');
     }
   });
 
