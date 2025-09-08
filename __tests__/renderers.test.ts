@@ -67,9 +67,44 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await expect(wrapper.getByTestId('touchspin-default-up')).toBeVisible();
       await expect(wrapper.getByTestId('touchspin-default-down')).toBeVisible();
 
-      // Prefix/Postfix elements exist across versions; they may be hidden when empty
-      await expect(wrapper.getByTestId('touchspin-default-prefix')).toHaveCount(1);
-      await expect(wrapper.getByTestId('touchspin-default-postfix')).toHaveCount(1);
+      // Prefix/Postfix elements are conditionally rendered - only exist when values are provided
+      // Since touchspin-default is initialized without prefix/postfix, they should not exist
+      await expect(wrapper.getByTestId('touchspin-default-prefix')).toHaveCount(0);
+      await expect(wrapper.getByTestId('touchspin-default-postfix')).toHaveCount(0);
+    }
+  });
+
+  test('should maintain consistent prefix/postfix elements when initialized with values', async ({ page }) => {
+    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
+    
+    for (const html of versions) {
+      await page.goto(`/__tests__/html/${html}`);
+      
+      // Initialize the test input with prefix and postfix values
+      await page.evaluate(() => {
+        const $ = (window as any).jQuery;
+        // Destroy if already initialized
+        try {
+          $('#testinput_prefix_postfix').trigger('touchspin.destroy');
+        } catch {}
+        // Initialize with prefix and postfix
+        $('#testinput_prefix_postfix').TouchSpin({
+          prefix: '$',
+          postfix: '.00'
+        });
+      });
+      
+      // Wait for initialization
+      const wrapper = page.getByTestId('prefix-postfix-wrapper');
+      await expect(wrapper).toBeAttached();
+      
+      // Now prefix/postfix elements should exist
+      await expect(wrapper.getByTestId('prefix-postfix-prefix')).toHaveCount(1);
+      await expect(wrapper.getByTestId('prefix-postfix-postfix')).toHaveCount(1);
+      
+      // Verify they contain the expected text
+      await expect(wrapper.getByTestId('prefix-postfix-prefix')).toHaveText('$');
+      await expect(wrapper.getByTestId('prefix-postfix-postfix')).toHaveText('.00');
     }
   });
 
