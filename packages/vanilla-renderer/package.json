@@ -36,8 +36,8 @@
   ],
   "author": "TouchSpin Contributors",
   "license": "MIT",
-  "peerDependencies": {
-    "@touchspin/core": "^1.0.0"
+  "dependencies": {
+    "@touchspin/core": "file:../core"
   },
   "repository": {
     "type": "git",

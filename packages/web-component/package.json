@@ -32,11 +32,8 @@
   "author": "TouchSpin Contributors",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "^4.8.0",
-    "@touchspin/vanilla-renderer": "^4.8.0"
-  },
-  "peerDependencies": {
-    "@touchspin/renderers": "^4.8.0"
+    "@touchspin/core": "file:../core",
+    "@touchspin/vanilla-renderer": "file:../vanilla-renderer"
   },
   "repository": {
     "type": "git",
