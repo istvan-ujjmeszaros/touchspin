@@ -242,6 +242,13 @@
 
       <div class="example" dir="rtl">
         <h3>RTL Support</h3>
+        <p style="margin: 10px 0; color: #666;">
+          Note: Proper RTL rendering requires the Bootstrap RTL CSS file.
+          <a href="#" id="rtl-css-toggle" style="color: #337ab7;">Click here to inject RTL CSS</a>
+        </p>
+        <div class="code-example" id="rtl-css-code" style="margin: 10px 0; font-size: 12px; display: none;">
+          &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-v4-rtl/4.6.2-2/css/bootstrap-rtl.min.css"&gt;
+        </div>
         <div class="spinner">
           <input type="number" id="rtl" min="0" max="100" value="33" class="form-control"
                  data-bts-prefix="₪" data-bts-postfix=" ש״ח">
@@ -702,6 +709,36 @@
     
     // Initialize code example
     updateCodeExample();
+
+    // RTL CSS injection toggle
+    let rtlCssLink = null;
+    const rtlToggle = document.getElementById('rtl-css-toggle');
+    const rtlCodeExample = document.getElementById('rtl-css-code');
+
+    rtlToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      if (!rtlCssLink) {
+        // Inject RTL CSS
+        rtlCssLink = document.createElement('link');
+        rtlCssLink.rel = 'stylesheet';
+        rtlCssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-v4-rtl/4.6.2-2/css/bootstrap-rtl.min.css';
+        rtlCssLink.id = 'bootstrap-rtl-css';
+        document.head.appendChild(rtlCssLink);
+        
+        rtlToggle.textContent = 'Click here to remove RTL CSS';
+        rtlCodeExample.style.display = 'block';
+      } else {
+        // Remove RTL CSS
+        if (rtlCssLink.parentNode) {
+          rtlCssLink.parentNode.removeChild(rtlCssLink);
+        }
+        rtlCssLink = null;
+        
+        rtlToggle.textContent = 'Click here to inject RTL CSS';
+        rtlCodeExample.style.display = 'none';
+      }
+    });
 
     console.log('✅ TouchSpin Bootstrap 4 Demo initialized');
     console.log('Basic spinner instance:', basicSpinner);
