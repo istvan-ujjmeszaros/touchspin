@@ -17,18 +17,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
       this._formControlAdded = true; // Track if we added it
     }
 
-    // 1. Build and inject DOM structure around input
-    this.wrapper = this.buildInputGroup();
-
-    // 2. Find created buttons and store prefix/postfix references
-    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
-
-    // 3. Tell core to attach its event handlers
-    this.core.attachUpEvents(upButton);
-    this.core.attachDownEvents(downButton);
+    // Build DOM structure and attach events
+    this.buildAndAttachDOM();
 
     // 4. Register for setting changes we care about
     this.core.observeSetting('prefix', (newValue) => this.updatePrefix(newValue));
@@ -77,18 +67,18 @@ class Bootstrap5Renderer extends AbstractRenderer {
     if (this.settings.verticalbuttons) {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
-          <span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-          <span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
+          ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
           ${this.buildVerticalButtons()}
         </div>
       `;
     } else {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
-          <span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
-          <span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+          ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
         </div>
       `;
     }
@@ -103,17 +93,34 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     // Find the position to insert input
     if (this.settings.verticalbuttons) {
-      // For vertical buttons, insert after prefix
+      // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
       const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-      wrapper.insertBefore(this.input, prefixEl.nextSibling);
+      const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+      
+      if (prefixEl) {
+        // Insert after prefix
+        wrapper.insertBefore(this.input, prefixEl.nextSibling);
+      } else if (postfixEl) {
+        // No prefix, insert before postfix
+        wrapper.insertBefore(this.input, postfixEl);
+      } else {
+        // No prefix or postfix, insert before vertical wrapper
+        const verticalWrapper = wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+        wrapper.insertBefore(this.input, verticalWrapper);
+      }
     } else {
-      // For horizontal buttons, insert after down button, before up button
-      const upButton = wrapper.querySelector('[data-touchspin-injected="up"]');
-      wrapper.insertBefore(this.input, upButton);
+      // For horizontal buttons: prefix -> down -> input -> up -> postfix
+      const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
+      const downButton = wrapper.querySelector('[data-touchspin-injected="down"]');
+      
+      if (prefixEl) {
+        // Insert after prefix
+        wrapper.insertBefore(this.input, prefixEl.nextSibling);
+      } else {
+        // No prefix, insert after down button
+        wrapper.insertBefore(this.input, downButton.nextSibling);
+      }
     }
-
-    // Hide empty prefix/postfix (pass wrapper directly since this.wrapper isn't set yet)
-    this.hideEmptyPrefixPostfix(wrapper);
 
     return wrapper;
   }
@@ -134,56 +141,68 @@ class Bootstrap5Renderer extends AbstractRenderer {
     let elementsHtml;
     if (this.settings.verticalbuttons) {
       elementsHtml = `
-        <span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-        <span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
+        ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
         ${this.buildVerticalButtons()}
       `;
     } else {
       elementsHtml = `
-        <span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
-        <span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+        ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
       `;
     }
 
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = elementsHtml;
 
-    // Insert prefix before the input
-    const prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-    existingInputGroup.insertBefore(prefixEl, this.input);
-
-    // Declare postfixEl at function scope
+    // Declare element references at function scope
+    let prefixEl;
     let postfixEl;
 
     if (this.settings.verticalbuttons) {
-      // For vertical buttons, insert vertical wrapper after input
-      const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
-      existingInputGroup.insertBefore(verticalWrapper, this.input.nextSibling);
+      // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
+      prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+      if (prefixEl) {
+        existingInputGroup.insertBefore(prefixEl, this.input);
+      }
 
-      // Insert postfix after vertical wrapper
       postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-      existingInputGroup.insertBefore(postfixEl, verticalWrapper.nextSibling);
+      if (postfixEl) {
+        existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
+      }
+
+      const verticalWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+      if (verticalWrapper) {
+        existingInputGroup.insertBefore(verticalWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
+      }
     } else {
-      // For horizontal buttons, insert them around the input
+      // For horizontal buttons: prefix -> down -> input -> up -> postfix
+      prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+      if (prefixEl) {
+        existingInputGroup.insertBefore(prefixEl, this.input);
+      }
+
       const downButton = tempDiv.querySelector('[data-touchspin-injected="down"]');
-      existingInputGroup.insertBefore(downButton, this.input);
+      if (downButton) {
+        existingInputGroup.insertBefore(downButton, this.input);
+      }
 
       const upButton = tempDiv.querySelector('[data-touchspin-injected="up"]');
-      existingInputGroup.insertBefore(upButton, this.input.nextSibling);
+      if (upButton) {
+        existingInputGroup.insertBefore(upButton, this.input.nextSibling);
+      }
 
-      // Insert postfix after up button
       postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-      existingInputGroup.insertBefore(postfixEl, upButton.nextSibling);
+      if (postfixEl && upButton) {
+        existingInputGroup.insertBefore(postfixEl, upButton.nextSibling);
+      }
     }
 
     // Store internal references for advanced mode too
     this.prefixEl = prefixEl;
     this.postfixEl = postfixEl;
-
-    // Hide empty prefix/postfix
-    this.hideEmptyPrefixPostfix(existingInputGroup);
 
     return existingInputGroup;
   }
@@ -198,17 +217,19 @@ class Bootstrap5Renderer extends AbstractRenderer {
     return '';
   }
 
-  hideEmptyPrefixPostfix(wrapper = this.wrapper) {
-    // Use internal references if available, otherwise query from wrapper
-    const prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    const postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
+  buildAndAttachDOM() {
+    // 1. Build and inject DOM structure around input
+    this.wrapper = this.buildInputGroup();
 
-    if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
-      prefixEl.style.display = 'none';
-    }
-    if (postfixEl && (!this.settings.postfix || this.settings.postfix === '')) {
-      postfixEl.style.display = 'none';
-    }
+    // 2. Find created buttons and store prefix/postfix references
+    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
+    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+
+    // 3. Tell core to attach its event handlers
+    this.core.attachUpEvents(upButton);
+    this.core.attachDownEvents(downButton);
   }
 
   updatePrefix(value) {
@@ -221,10 +242,13 @@ class Bootstrap5Renderer extends AbstractRenderer {
         prefixEl.style.display = '';
         // Update classes in case prefix_extraclass changed
         prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+      } else {
+        // Element doesn't exist, need to rebuild DOM
+        this.rebuildDOM();
       }
     } else if (prefixEl) {
-      // Hide element if value is empty but keep it in DOM
-      prefixEl.style.display = 'none';
+      // Remove element if value is empty
+      this.rebuildDOM();
     }
   }
 
@@ -238,10 +262,13 @@ class Bootstrap5Renderer extends AbstractRenderer {
         postfixEl.style.display = '';
         // Update classes in case postfix_extraclass changed
         postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+      } else {
+        // Element doesn't exist, need to rebuild DOM
+        this.rebuildDOM();
       }
     } else if (postfixEl) {
-      // Hide element if value is empty but keep it in DOM
-      postfixEl.style.display = 'none';
+      // Remove element if value is empty
+      this.rebuildDOM();
     }
   }
 
@@ -320,21 +347,6 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
-  }
-
-  buildAndAttachDOM() {
-    // 1. Build and inject DOM structure around input
-    this.wrapper = this.buildInputGroup();
-
-    // 2. Find created buttons and store prefix/postfix references
-    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
-
-    // 3. Tell core to attach its event handlers
-    this.core.attachUpEvents(upButton);
-    this.core.attachDownEvents(downButton);
   }
 
   updateButtonFocusability(newValue) {
