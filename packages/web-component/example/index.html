@@ -302,7 +302,7 @@
           <summary>Properties</summary>
           <div class="control-group">
             <label>
-              <span>Current Value</span>
+              <span>Initial Value</span>
               <input type="number" id="control-value" value="50">
             </label>
             <label>
@@ -389,16 +389,16 @@
     function generateCodeExample() {
       const attributes = [];
 
-      // Always include basic attributes with their current values
-      const min = basicSpinner.getAttribute('min') || '0';
-      const max = basicSpinner.getAttribute('max') || '100';
-      const value = basicSpinner.getAttribute('value') || '50';
-      const step = basicSpinner.getAttribute('step') || '1';
+      // Include attributes that are actually set on the element
+      const min = basicSpinner.getAttribute('min');
+      const max = basicSpinner.getAttribute('max');
+      const value = basicSpinner.getAttribute('value');
+      const step = basicSpinner.getAttribute('step');
 
-      attributes.push(`min="${min}"`);
-      attributes.push(`max="${max}"`);
-      attributes.push(`value="${value}"`);
-      attributes.push(`step="${step}"`);
+      if (min) attributes.push(`min="${min}"`);
+      if (max) attributes.push(`max="${max}"`);
+      if (value) attributes.push(`value="${value}"`);
+      if (step) attributes.push(`step="${step}"`);
 
       // Add optional attributes if they exist
       const prefix = basicSpinner.getAttribute('prefix');
@@ -578,12 +578,17 @@
       });
     });
 
-    // Sync control values with spinner changes
+    // Log spinner changes without syncing to controls
     basicSpinner.addEventListener('touchspin-change', (e) => {
-      controls.value.value = e.detail.value;
-      updateCodeExample();
+      // Value change is logged but control is not updated
     });
 
+    // Initialize controls with actual element values
+    controls.value.value = basicSpinner.value || '';
+    controls.min.value = basicSpinner.min || '';
+    controls.max.value = basicSpinner.max || '';
+    controls.step.value = basicSpinner.step || '';
+    
     // Initialize code example on page load
     updateCodeExample();
 

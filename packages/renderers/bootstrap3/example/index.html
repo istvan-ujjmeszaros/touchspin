@@ -273,7 +273,7 @@
             <div class="control-group">
               <div class="form-group">
                 <label>
-                  <span>Current Value</span>
+                  <span>Initial Value</span>
                   <input type="number" id="control-value" value="50" class="form-control">
                 </label>
               </div>
@@ -424,18 +424,18 @@
       const attributes = [];
       
       // Get values from controls
-      const min = parseFloat(controls.min.value) || 0;
-      const max = parseFloat(controls.max.value) || 100;
-      const value = controls.value.value || '50';
-      const step = parseFloat(controls.step.value) || 1;
+      const min = controls.min.value;
+      const max = controls.max.value;
+      const value = controls.value.value;
+      const step = controls.step.value;
       
       // Always include basic HTML attributes
       attributes.push(`type="number"`);
       attributes.push(`class="form-control"`);
-      if (min !== 0) attributes.push(`min="${min}"`);
-      if (max !== 100) attributes.push(`max="${max}"`);
-      if (value !== '50') attributes.push(`value="${value}"`);
-      if (step !== 1) attributes.push(`step="${step}"`);
+      if (min) attributes.push(`min="${min}"`);
+      if (max) attributes.push(`max="${max}"`);
+      if (value) attributes.push(`value="${value}"`);
+      if (step) attributes.push(`step="${step}"`);
       
       // Add TouchSpin data attributes for optional settings
       const prefix = controls.prefix.value;
@@ -654,11 +654,16 @@
     });
 
     input.addEventListener('change', (e) => {
-      controls.value.value = e.target.value;
       logEvent('input.change', { value: e.target.value });
-      updateCodeExample();
     });
 
+    // Initialize controls with actual input values
+    const basicInput = document.getElementById('basic');
+    controls.value.value = basicInput.value || '';
+    controls.min.value = basicInput.min || '';
+    controls.max.value = basicInput.max || '';
+    controls.step.value = basicInput.step || '';
+    
     // Initialize code example
     updateCodeExample();
 

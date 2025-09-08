@@ -55,6 +55,17 @@
       margin: 15px 0;
     }
 
+    .code-example {
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
     /* Control Panel Styles */
     .control-panel {
       position: sticky;
@@ -234,7 +245,7 @@
         <h3>Basic Usage</h3>
         <p>Simple number input with TouchSpin controls.</p>
         <div class="spinner">
-          <input type="number" id="basic" min="0" max="100" value="50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <input type="number" id="basic" min="0" max="100" value="50" step="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="code-example" id="basic-code-example">
           <!-- Will be populated by JavaScript -->
@@ -326,7 +337,7 @@
           <div class="control-group">
             <div class="form-group">
               <label>
-                <span>Current Value</span>
+                <span>Initial Value</span>
                 <input type="number" id="control-value" value="50" class="form-control">
               </label>
             </div>
@@ -470,18 +481,18 @@
       const attributes = [];
       
       // Get values from controls
-      const min = parseFloat(controls.min.value) || 0;
-      const max = parseFloat(controls.max.value) || 100;
-      const value = controls.value.value || '50';
-      const step = parseFloat(controls.step.value) || 1;
+      const min = controls.min.value;
+      const max = controls.max.value;
+      const value = controls.value.value;
+      const step = controls.step.value;
       
       // Always include basic HTML attributes
       attributes.push(`type="number"`);
       attributes.push(`class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"`);
-      if (min !== 0) attributes.push(`min="${min}"`);
-      if (max !== 100) attributes.push(`max="${max}"`);
-      if (value !== '50') attributes.push(`value="${value}"`);
-      if (step !== 1) attributes.push(`step="${step}"`);
+      if (min) attributes.push(`min="${min}"`);
+      if (max) attributes.push(`max="${max}"`);
+      if (value) attributes.push(`value="${value}"`);
+      if (step) attributes.push(`step="${step}"`);
       
       // Add TouchSpin data attributes for optional settings
       const prefix = controls.prefix.value;
@@ -665,13 +676,11 @@
     document.getElementById('test-up-once').addEventListener('click', () => {
       basicSpinner.upOnce();
       addEventToLog('upOnce() called', 'event-method');
-      controls.value.value = basicSpinner.getValue();
     });
 
     document.getElementById('test-down-once').addEventListener('click', () => {
       basicSpinner.downOnce();
       addEventToLog('downOnce() called', 'event-method');
-      controls.value.value = basicSpinner.getValue();
     });
 
     document.getElementById('test-start-up').addEventListener('click', () => {
@@ -692,9 +701,7 @@
     document.getElementById('test-set-random').addEventListener('click', () => {
       const randomValue = Math.floor(Math.random() * 100);
       basicSpinner.setValue(randomValue);
-      controls.value.value = randomValue;
       addEventToLog(`setValue(${randomValue}) called`, 'event-method');
-      updateCodeExample();
     });
 
     document.getElementById('test-get-value').addEventListener('click', () => {
@@ -730,6 +737,13 @@
       addEventToLog(`touchspin:max - Value: ${e.detail.value}`, 'event-touchspin');
     });
 
+    // Initialize controls with actual input values
+    const inputElement = document.getElementById('basic');
+    controls.value.value = inputElement.value || '';
+    controls.min.value = inputElement.min || '';
+    controls.max.value = inputElement.max || '';
+    controls.step.value = inputElement.step || '';
+    
     // Initialize the code example
     updateCodeExample();
   </script>
