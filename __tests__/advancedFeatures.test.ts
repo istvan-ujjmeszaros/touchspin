@@ -13,29 +13,31 @@ test.describe('Advanced Features', () => {
   });
 
   test.describe('Data Attributes Configuration', () => {
-    test('should respect data-bts-* attributes for configuration', async ({ page }) => {
+    test('should clamp to min via data-bts-min', async ({ page }) => {
       const testid = 'touchspin-data-attributes';
-
       await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
-
-      // Test data-bts-min="40"
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '30');
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid),
         { timeout: 2000 }
       ).toBe('40');
+    });
 
-      // Reset to known state before next test
+    test('should clamp to max via data-bts-max', async ({ page }) => {
+      const testid = 'touchspin-data-attributes';
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      // reset to a known baseline then exceed max
       await touchspinHelpers.fillWithValue(page, testid, '50');
-
-      // Test data-bts-max="60"
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '70');
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid),
         { timeout: 2000 }
       ).toBe('60');
+    });
 
-      // Test data-bts-step="2" - just click up from known value
+    test('should apply step from data-bts-step', async ({ page }) => {
+      const testid = 'touchspin-data-attributes';
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await touchspinHelpers.fillWithValue(page, testid, '50');
       await touchspinHelpers.touchspinClickUp(page, testid);
       await expect.poll(
