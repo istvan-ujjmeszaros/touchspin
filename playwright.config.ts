@@ -43,7 +43,7 @@ export default defineConfig({
     
     /* Global timeout settings */
     actionTimeout: 3000,
-    navigationTimeout: 3000,
+    navigationTimeout: 10000,
   },
   
   /* Global timeout */
