@@ -354,11 +354,32 @@
       if (this.settings.renderer) {
         this.renderer = new this.settings.renderer(inputEl, this.settings, this);
         this.renderer.init();
-        this.renderer.setWrapperTestId();
       }
 
       // Set up mutation observer to watch for disabled/readonly changes
       this._setupMutationObserver();
+
+      // Finalize wrapper attributes after complete initialization
+      //
+      // The data-touchspin-injected attribute serves as a marker that the TouchSpin
+      // component is fully constructed - DOM is built, event handlers are attached,
+      // and mutation observer is active. Tests use this attribute to detect when
+      // components are ready for interaction.
+      //
+      // By setting these attributes as the final initialization step, we prevent race
+      // conditions where tests might try to interact with components before their DOM
+      // structure, event handlers, or internal monitoring are ready. This is especially
+      // important under high CPU load where DOM operations may take longer.
+      //
+      // Complete initialization sequence:
+      // 1. renderer.init() - Constructs DOM and attaches event handlers
+      // 2. _setupMutationObserver() - Starts monitoring input attribute changes
+      // 3. renderer.finalizeWrapperAttributes() - Marks component as ready:
+      //    - Adds data-testid for test element selection
+      //    - Adds data-touchspin-injected to signal component is fully ready
+      if (this.settings.renderer) {
+        this.renderer.finalizeWrapperAttributes();
+      }
     }
 
     /**
@@ -591,14 +612,14 @@
         this._setDisplay(next, true);
       }
 
-      /** Start increasing repeatedly (placeholder) */
+      /** Start increasing repeatedly; no immediate step here. */
     }, {
       key: "startUpSpin",
       value: function startUpSpin() {
         this._startSpin('up');
       }
 
-      /** Start decreasing repeatedly (placeholder) */
+      /** Start decreasing repeatedly; no immediate step here. */
     }, {
       key: "startDownSpin",
       value: function startDownSpin() {
@@ -955,15 +976,26 @@
       value: function _startSpin(dir) {
         var _this4 = this;
         if (this.input.disabled || this.input.hasAttribute('readonly')) return;
-        this.stopSpin();
 
-        // Check if already at boundary - don't start spin if so
+        // If already spinning in the same direction, do nothing (idempotent)
+        if (this.spinning && this.direction === dir) {
+          return;
+        }
+        // If switching direction while spinning, stop first
+        if (this.spinning && this.direction !== dir) {
+          this.stopSpin();
+        }
+
+        // Perform an immediate single step before starting timers (parity with jQuery plugin UX)
+        if (dir === 'up') this.upOnce();else this.downOnce();
+
+        // If we reached a boundary after the initial step, don't start continuous spin
         var v = this.getValue();
         if (dir === 'up' && this.settings.max !== null && v === this.settings.max) {
-          return; // Already at max, don't start spin
+          return;
         }
         if (dir === 'down' && this.settings.min !== null && v === this.settings.min) {
-          return; // Already at min, don't start spin
+          return;
         }
 
         // If changing direction, reset counters
@@ -979,7 +1011,7 @@
 
         // Clear previous timers
         this._clearSpinTimers();
-        // Schedule repeat after delay, then at interval (no immediate step; wrapper triggers first step)
+        // Schedule repeat after delay, then at interval
         var delay = this.settings.stepintervaldelay || 500;
         var interval = this.settings.stepinterval || 100;
         this._spinDelayTimeout = setTimeout(function () {
@@ -1357,7 +1389,6 @@
       key: "_handleUpMouseDown",
       value: function _handleUpMouseDown(e) {
         e.preventDefault();
-        this.upOnce();
         this.startUpSpin();
       }
 
@@ -1369,7 +1400,6 @@
       key: "_handleDownMouseDown",
       value: function _handleDownMouseDown(e) {
         e.preventDefault();
-        this.downOnce();
         this.startDownSpin();
       }
 
@@ -1394,7 +1424,8 @@
         if (e.keyCode === 13 || e.keyCode === 32) {
           // Enter or Space
           e.preventDefault();
-          this.upOnce();
+          // Ignore auto-repeat while holding the key
+          if (e.repeat) return;
           this.startUpSpin();
         }
       }
@@ -1424,7 +1455,8 @@
         if (e.keyCode === 13 || e.keyCode === 32) {
           // Enter or Space
           e.preventDefault();
-          this.downOnce();
+          // Ignore auto-repeat while holding the key
+          if (e.repeat) return;
           this.startDownSpin();
         }
       }
@@ -1480,12 +1512,12 @@
         switch (e.key) {
           case 'ArrowUp':
             e.preventDefault();
-            this.upOnce();
+            if (e.repeat) return; // ignore auto-repeat
             this.startUpSpin();
             break;
           case 'ArrowDown':
             e.preventDefault();
-            this.downOnce();
+            if (e.repeat) return; // ignore auto-repeat
             this.startDownSpin();
             break;
           case 'Enter':
@@ -1729,6 +1761,8 @@
       this.core = core; // Reference to core for calling attachment methods
       /** @type {HTMLElement|null} */
       this.wrapper = null; // Set by subclasses during init()
+      /** @type {string} */
+      this.wrapperType = 'wrapper'; // Default wrapper type, set to 'wrapper-advanced' by buildAdvancedInputGroup
 
       // No legacy properties needed in modern architecture
     }
@@ -1856,15 +1890,22 @@
       }
 
       /**
-       * Set the testid attribute on the wrapper element.
-       * Called by core after initialization is complete.
+       * Finalize wrapper attributes after DOM construction and event attachment.
+       * Sets both data-testid and data-touchspin-injected attributes.
+       * Called by core as the final initialization step.
        */
     }, {
-      key: "setWrapperTestId",
-      value: function setWrapperTestId() {
-        var testid = this.input.getAttribute('data-testid');
-        if (testid && this.wrapper) {
-          this.wrapper.setAttribute('data-testid', testid + '-wrapper');
+      key: "finalizeWrapperAttributes",
+      value: function finalizeWrapperAttributes() {
+        if (this.wrapper) {
+          // Set test ID if input has one and wrapper doesn't already have one
+          var testid = this.input.getAttribute('data-testid');
+          if (testid && !this.wrapper.hasAttribute('data-testid')) {
+            this.wrapper.setAttribute('data-testid', testid + '-wrapper');
+          }
+
+          // Mark component as ready (DOM built, events attached)
+          this.wrapper.setAttribute('data-touchspin-injected', this.wrapperType);
         }
       }
     }]);
@@ -1966,9 +2007,9 @@
         var inputGroupSize = this._detectInputGroupSize();
         var html;
         if (this.settings.verticalbuttons) {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\">\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\">\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prepend-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n            ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          </div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"append-wrapper\">\n            ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prepend-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n            ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          </div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"append-wrapper\">\n            ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -2007,7 +2048,9 @@
       value: function buildAdvancedInputGroup(existingInputGroup) {
         // Add bootstrap-touchspin class to existing input-group
         existingInputGroup.classList.add('bootstrap-touchspin');
-        existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+
+        // Mark this as an advanced wrapper
+        this.wrapperType = 'wrapper-advanced';
 
         // Create elements based on vertical or horizontal layout
         var elementsHtml;

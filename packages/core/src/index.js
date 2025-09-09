@@ -222,12 +222,12 @@ export class TouchSpinCore {
     this._setupMutationObserver();
 
     // Finalize wrapper attributes after complete initialization
-    // 
+    //
     // The data-touchspin-injected attribute serves as a marker that the TouchSpin
     // component is fully constructed - DOM is built, event handlers are attached,
-    // and mutation observer is active. Tests use this attribute to detect when 
+    // and mutation observer is active. Tests use this attribute to detect when
     // components are ready for interaction.
-    // 
+    //
     // By setting these attributes as the final initialization step, we prevent race
     // conditions where tests might try to interact with components before their DOM
     // structure, event handlers, or internal monitoring are ready. This is especially
@@ -465,11 +465,15 @@ export class TouchSpinCore {
     this._setDisplay(next, true);
   }
 
-  /** Start increasing repeatedly (placeholder) */
-  startUpSpin() { this._startSpin('up'); }
+  /** Start increasing repeatedly; no immediate step here. */
+  startUpSpin() {
+    this._startSpin('up');
+  }
 
-  /** Start decreasing repeatedly (placeholder) */
-  startDownSpin() { this._startSpin('down'); }
+  /** Start decreasing repeatedly; no immediate step here. */
+  startDownSpin() {
+    this._startSpin('down');
+  }
 
   /** Stop spinning (placeholder) */
   stopSpin() {
@@ -778,15 +782,25 @@ export class TouchSpinCore {
   _startSpin(dir) {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
 
-    this.stopSpin();
+    // If already spinning in the same direction, do nothing (idempotent)
+    if (this.spinning && this.direction === dir) {
+      return;
+    }
+    // If switching direction while spinning, stop first
+    if (this.spinning && this.direction !== dir) {
+      this.stopSpin();
+    }
 
-    // Check if already at boundary - don't start spin if so
+    // Perform an immediate single step before starting timers (parity with jQuery plugin UX)
+    if (dir === 'up') this.upOnce(); else this.downOnce();
+
+    // If we reached a boundary after the initial step, don't start continuous spin
     const v = this.getValue();
     if (dir === 'up' && this.settings.max !== null && v === this.settings.max) {
-      return; // Already at max, don't start spin
+      return;
     }
     if (dir === 'down' && this.settings.min !== null && v === this.settings.min) {
-      return; // Already at min, don't start spin
+      return;
     }
 
     // If changing direction, reset counters
@@ -802,7 +816,7 @@ export class TouchSpinCore {
 
     // Clear previous timers
     this._clearSpinTimers();
-    // Schedule repeat after delay, then at interval (no immediate step; wrapper triggers first step)
+    // Schedule repeat after delay, then at interval
     const delay = this.settings.stepintervaldelay || 500;
     const interval = this.settings.stepinterval || 100;
     this._spinDelayTimeout = setTimeout(() => {
@@ -1128,7 +1142,6 @@ export class TouchSpinCore {
    */
   _handleUpMouseDown(e) {
     e.preventDefault();
-    this.upOnce();
     this.startUpSpin();
   }
 
@@ -1138,7 +1151,6 @@ export class TouchSpinCore {
    */
   _handleDownMouseDown(e) {
     e.preventDefault();
-    this.downOnce();
     this.startDownSpin();
   }
 
@@ -1158,7 +1170,8 @@ export class TouchSpinCore {
     // Only handle Enter and Space keys
     if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
       e.preventDefault();
-      this.upOnce();
+      // Ignore auto-repeat while holding the key
+      if (e.repeat) return;
       this.startUpSpin();
     }
   }
@@ -1182,7 +1195,8 @@ export class TouchSpinCore {
     // Only handle Enter and Space keys
     if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
       e.preventDefault();
-      this.downOnce();
+      // Ignore auto-repeat while holding the key
+      if (e.repeat) return;
       this.startDownSpin();
     }
   }
@@ -1230,12 +1244,12 @@ export class TouchSpinCore {
     switch (e.key) {
       case 'ArrowUp':
         e.preventDefault();
-        this.upOnce();
+        if (e.repeat) return; // ignore auto-repeat
         this.startUpSpin();
         break;
       case 'ArrowDown':
         e.preventDefault();
-        this.downOnce();
+        if (e.repeat) return; // ignore auto-repeat
         this.startDownSpin();
         break;
       case 'Enter':
