@@ -446,44 +446,36 @@ test.describe('Browser Native Spinner Controls', () => {
       // Test 5: Input is disabled via TouchSpin after initialization
       const testid = 'touchspin-disabled-test';
       
-      // Ensure TouchSpin is initialized by waiting for wrapper
-      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
-      
-      // Wait a bit longer for the disable to take effect (set in HTML after 500ms)
-      await touchspinHelpers.waitForTimeout(1500);
-      
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
-      
+      // Ensure TouchSpin is initialized and disabled immediately after init
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+
       const input = page.getByTestId(testid);
-      await input.focus();
-      
+      await expect(input).toBeDisabled();
+
       // Try to use native spinner controls on disabled input
-      await page.keyboard.press('ArrowUp');
-      
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
-      
-      // Value should not change when TouchSpin is disabled
-      expect(parseInt(finalValue || '0')).toBe(parseInt(initialValue || '0'));
+      await input.focus();
+      await page.keyboard.down('ArrowUp');
+      await page.keyboard.up('ArrowUp');
+
+      // Value should not change when disabled
+      const value = await touchspinHelpers.readInputValue(page, testid);
+      expect(parseInt(value || '0')).toBe(5);
     });
 
     test('should also disable TouchSpin buttons when input is disabled', async ({ page }) => {
       // Verify TouchSpin buttons are also disabled
       const testid = 'touchspin-disabled-test';
       
-      // Ensure TouchSpin is initialized by waiting for wrapper
-      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
-      
-      // Wait for disable to take effect
-      await touchspinHelpers.waitForTimeout(1500);
-      
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
-      
-      // Try TouchSpin button (should not work when disabled)
-      await touchspinHelpers.touchspinClickUp(page, testid);
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
-      
-      // TouchSpin buttons should also not work when disabled
-      expect(parseInt(finalValue || '0')).toBe(parseInt(initialValue || '0'));
+      // Ensure TouchSpin is initialized and disabled
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const input = page.getByTestId(testid);
+      await expect(input).toBeDisabled();
+
+      // Buttons should be disabled
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+      await expect(upButton).toBeDisabled();
+      await expect(downButton).toBeDisabled();
     });
   });
 
