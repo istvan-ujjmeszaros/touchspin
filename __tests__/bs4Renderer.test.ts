@@ -40,20 +40,39 @@ test.describe('Bootstrap 4 Renderer', () => {
       expect(await input.inputValue()).toBe(String(parseInt(initialValue) + 1));
     });
 
-    test('should use input-group-text class for prefix and postfix', async ({ page }) => {
-      // In Bootstrap 4, the data-touchspin-injected="prefix/postfix" elements are wrappers
-      // that contain a span.input-group-text. Verify the span has the correct class.
-      const prefixSpanClass = await page
-        .getByTestId('prefixed-container')
-        .locator('[data-touchspin-injected="prefix"] .input-group-text')
-        .evaluate(el => el.className);
-      const postfixSpanClass = await page
-        .getByTestId('prefixed-container')
-        .locator('[data-touchspin-injected="postfix"] .input-group-text')
-        .evaluate(el => el.className);
-
-      expect(prefixSpanClass).toContain('input-group-text');
-      expect(postfixSpanClass).toContain('input-group-text');
+    test('should generate proper Bootstrap 4 markup structure', async ({ page }) => {
+      // Verify the correct Bootstrap 4 structure:
+      // <div class="input-group">
+      //   <div class="input-group-prepend">
+      //     <button>-</button>
+      //     <span class="input-group-text">prefix</span>
+      //   </div>
+      //   <input>
+      //   <div class="input-group-append">
+      //     <span class="input-group-text">postfix</span>
+      //     <button>+</button>
+      //   </div>
+      // </div>
+      
+      const wrapper = page.getByTestId('prefixed-container').locator('[data-touchspin-injected="wrapper"]');
+      
+      // Should have single prepend and append wrappers
+      await expect(wrapper.locator('.input-group-prepend')).toHaveCount(1);
+      await expect(wrapper.locator('.input-group-append')).toHaveCount(1);
+      
+      // Prepend wrapper should contain down button and prefix
+      const prependWrapper = wrapper.locator('.input-group-prepend');
+      await expect(prependWrapper.locator('[data-touchspin-injected="down"]')).toHaveCount(1);
+      await expect(prependWrapper.locator('[data-touchspin-injected="prefix"].input-group-text')).toHaveCount(1);
+      
+      // Append wrapper should contain postfix and up button
+      const appendWrapper = wrapper.locator('.input-group-append');
+      await expect(appendWrapper.locator('[data-touchspin-injected="postfix"].input-group-text')).toHaveCount(1);
+      await expect(appendWrapper.locator('[data-touchspin-injected="up"]')).toHaveCount(1);
+      
+      // Verify prefix/postfix are input-group-text spans (not wrapper divs)
+      await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toHaveClass(/input-group-text/);
+      await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toHaveClass(/input-group-text/);
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {

@@ -1978,7 +1978,7 @@
         if (this.settings.verticalbuttons) {
           html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          ").concat(this.buildVerticalButtons(), "\n        </div>\n      ");
         } else {
-          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n          </div>\n          ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n          </div>") : '', "\n          ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n            <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n          </div>") : '', "\n          <div class=\"input-group-append\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n        </div>\n      ");
+          html = "\n        <div class=\"input-group ".concat(inputGroupSize, " bootstrap-touchspin\" data-touchspin-injected=\"wrapper\"").concat(testidAttr, ">\n          <div class=\"input-group-prepend\" data-touchspin-injected=\"prepend-wrapper\">\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\" aria-label=\"Decrease value\">").concat(this.settings.buttondown_txt || '−', "</button>\n            ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n          </div>\n          <div class=\"input-group-append\" data-touchspin-injected=\"append-wrapper\">\n            ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n            <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\" aria-label=\"Increase value\">").concat(this.settings.buttonup_txt || '+', "</button>\n          </div>\n        </div>\n      ");
         }
 
         // Create wrapper and wrap the input
@@ -2006,20 +2006,9 @@
             wrapper.insertBefore(this.input, verticalWrapper);
           }
         } else {
-          // For horizontal buttons: down -> prefix -> input -> postfix -> up
-          var _prefixWrapper = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-          var _postfixWrapper = wrapper.querySelector('[data-touchspin-injected="postfix"]');
-          if (_prefixWrapper) {
-            // Insert after prefix
-            wrapper.insertBefore(this.input, _prefixWrapper.nextSibling);
-          } else if (_postfixWrapper) {
-            // No prefix, insert before postfix
-            wrapper.insertBefore(this.input, _postfixWrapper);
-          } else {
-            // No prefix or postfix, insert before up button
-            var upButtonWrapper = wrapper.querySelector('.input-group-append');
-            wrapper.insertBefore(this.input, upButtonWrapper);
-          }
+          // For horizontal buttons: input goes between prepend and append wrappers
+          var appendWrapper = wrapper.querySelector('[data-touchspin-injected="append-wrapper"]');
+          wrapper.insertBefore(this.input, appendWrapper);
         }
         return wrapper;
       }
@@ -2042,7 +2031,7 @@
         if (this.settings.verticalbuttons) {
           elementsHtml = "\n        ".concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n        </div>") : '', "\n        ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n        </div>") : '', "\n        ").concat(this.buildVerticalButtons(), "\n      ");
         } else {
-          elementsHtml = "\n        <div class=\"input-group-prepend\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n        </div>\n        ").concat(this.settings.prefix ? "<div class=\"input-group-prepend bootstrap-touchspin-prefix\" data-touchspin-injected=\"prefix\"".concat(this.getPrefixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.prefix_extraclass || '', "\">").concat(this.settings.prefix, "</span>\n        </div>") : '', "\n        ").concat(this.settings.postfix ? "<div class=\"input-group-append bootstrap-touchspin-postfix\" data-touchspin-injected=\"postfix\"".concat(this.getPostfixTestId(), ">\n          <span class=\"input-group-text ").concat(this.settings.postfix_extraclass || '', "\">").concat(this.settings.postfix, "</span>\n        </div>") : '', "\n        <div class=\"input-group-append\">\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n      ");
+          elementsHtml = "\n        <div class=\"input-group-prepend\" data-touchspin-injected=\"prepend-wrapper\">\n          <button tabindex=\"".concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttondown_class || 'btn btn-outline-secondary', " bootstrap-touchspin-down\" data-touchspin-injected=\"down\"").concat(this.getDownButtonTestId(), " type=\"button\">").concat(this.settings.buttondown_txt || '-', "</button>\n          ").concat(this.settings.prefix ? "<span class=\"input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '', "\" data-touchspin-injected=\"prefix\"").concat(this.getPrefixTestId(), ">").concat(this.settings.prefix, "</span>") : '', "\n        </div>\n        <div class=\"input-group-append\" data-touchspin-injected=\"append-wrapper\">\n          ").concat(this.settings.postfix ? "<span class=\"input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '', "\" data-touchspin-injected=\"postfix\"").concat(this.getPostfixTestId(), ">").concat(this.settings.postfix, "</span>") : '', "\n          <button tabindex=\"").concat(this.settings.focusablebuttons ? '0' : '-1', "\" class=\"").concat(this.settings.buttonup_class || 'btn btn-outline-secondary', " bootstrap-touchspin-up\" data-touchspin-injected=\"up\"").concat(this.getUpButtonTestId(), " type=\"button\">").concat(this.settings.buttonup_txt || '+', "</button>\n        </div>\n      ");
         }
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = elementsHtml;
@@ -2065,23 +2054,19 @@
             existingInputGroup.insertBefore(verticalButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
           }
         } else {
-          // For horizontal buttons: down -> prefix -> input -> postfix -> up
-          var downButtonWrapper = tempDiv.querySelector('.input-group-prepend:not([data-touchspin-injected="prefix"])');
-          if (downButtonWrapper) {
-            existingInputGroup.insertBefore(downButtonWrapper, this.input);
+          // For horizontal buttons: prepend wrapper -> input -> append wrapper
+          var prependWrapper = tempDiv.querySelector('[data-touchspin-injected="prepend-wrapper"]');
+          if (prependWrapper) {
+            existingInputGroup.insertBefore(prependWrapper, this.input);
           }
-          prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
-          if (prefixEl) {
-            existingInputGroup.insertBefore(prefixEl, this.input);
+          var appendWrapper = tempDiv.querySelector('[data-touchspin-injected="append-wrapper"]');
+          if (appendWrapper) {
+            existingInputGroup.insertBefore(appendWrapper, this.input.nextSibling);
           }
-          postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
-          if (postfixEl) {
-            existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
-          }
-          var upButtonWrapper = tempDiv.querySelector('.input-group-append:not([data-touchspin-injected="postfix"])');
-          if (upButtonWrapper) {
-            existingInputGroup.insertBefore(upButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
-          }
+
+          // Store references to prefix/postfix elements within their wrappers
+          prefixEl = prependWrapper ? prependWrapper.querySelector('[data-touchspin-injected="prefix"]') : null;
+          postfixEl = appendWrapper ? appendWrapper.querySelector('[data-touchspin-injected="postfix"]') : null;
         }
 
         // Store internal references for advanced mode too
@@ -2123,15 +2108,11 @@
         var prefixEl = this.prefixEl;
         if (value && value !== '') {
           if (prefixEl) {
-            var textEl = prefixEl.querySelector('.input-group-text');
-            textEl.textContent = value;
+            // prefixEl is now the span element itself
+            prefixEl.textContent = value;
             prefixEl.style.display = '';
             // Update classes in case prefix_extraclass changed
-            textEl.className = "input-group-text ".concat(this.settings.prefix_extraclass || '').trim();
-            // Also apply extra class to the wrapper element for consistency with test expectations
-            if (this.settings.prefix_extraclass) {
-              prefixEl.className = "input-group-prepend bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass).trim();
-            }
+            prefixEl.className = "input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
           } else {
             // Element doesn't exist, need to rebuild DOM
             this.rebuildDOM();
@@ -2148,15 +2129,11 @@
         var postfixEl = this.postfixEl;
         if (value && value !== '') {
           if (postfixEl) {
-            var textEl = postfixEl.querySelector('.input-group-text');
-            textEl.textContent = value;
+            // postfixEl is now the span element itself
+            postfixEl.textContent = value;
             postfixEl.style.display = '';
             // Update classes in case postfix_extraclass changed
-            textEl.className = "input-group-text ".concat(this.settings.postfix_extraclass || '').trim();
-            // Also apply extra class to the wrapper element for consistency with test expectations
-            if (this.settings.postfix_extraclass) {
-              postfixEl.className = "input-group-append bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass).trim();
-            }
+            postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
           } else {
             // Element doesn't exist, need to rebuild DOM
             this.rebuildDOM();
@@ -2217,14 +2194,8 @@
       value: function updatePrefixClasses() {
         var prefixEl = this.prefixEl;
         if (prefixEl) {
-          var textEl = prefixEl.querySelector('.input-group-text');
-          textEl.className = "input-group-text ".concat(this.settings.prefix_extraclass || '').trim();
-          // Also apply extra class to the wrapper element for consistency with test expectations
-          if (this.settings.prefix_extraclass) {
-            prefixEl.className = "input-group-prepend bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass).trim();
-          } else {
-            prefixEl.className = 'input-group-prepend bootstrap-touchspin-prefix';
-          }
+          // prefixEl is now the span element itself
+          prefixEl.className = "input-group-text bootstrap-touchspin-prefix ".concat(this.settings.prefix_extraclass || '').trim();
         }
       }
     }, {
@@ -2232,14 +2203,8 @@
       value: function updatePostfixClasses() {
         var postfixEl = this.postfixEl;
         if (postfixEl) {
-          var textEl = postfixEl.querySelector('.input-group-text');
-          textEl.className = "input-group-text ".concat(this.settings.postfix_extraclass || '').trim();
-          // Also apply extra class to the wrapper element for consistency with test expectations
-          if (this.settings.postfix_extraclass) {
-            postfixEl.className = "input-group-append bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass).trim();
-          } else {
-            postfixEl.className = 'input-group-append bootstrap-touchspin-postfix';
-          }
+          // postfixEl is now the span element itself
+          postfixEl.className = "input-group-text bootstrap-touchspin-postfix ".concat(this.settings.postfix_extraclass || '').trim();
         }
       }
     }, {
