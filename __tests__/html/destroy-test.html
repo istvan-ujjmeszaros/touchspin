@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TouchSpin Destroy/Reinitialize Test</title>
-  
+
   <!-- Bootstrap 4 CSS (local) -->
   <link href="assets/bootstrap/bootstrap-4.6.2.min.css" rel="stylesheet">
-  
+
   <!-- TouchSpin CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
-  
+  <link href="../../packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet">
+
   <style>
     .test-section {
       margin: 30px 0;
@@ -41,7 +41,7 @@
     <div class="test-section">
       <h3>Test 1: New Container Creation (buildInputGroup)</h3>
       <p>This input will get a new wrapper container when TouchSpin is initialized.</p>
-      
+
       <div class="form-group">
         <label for="test-input-new">Test Input (New Container):</label>
         <input id="test-input-new" type="text" value="10" data-testid="test-input-new" class="form-control">
@@ -60,7 +60,7 @@
     <div class="test-section">
       <h3>Test 2: Existing Container Enhancement (buildAdvancedInputGroup)</h3>
       <p>This input is already in an input-group and will be enhanced when TouchSpin is initialized.</p>
-      
+
       <div class="form-group">
         <label>Test Input (Existing Container):</label>
         <div class="input-group existing-container" id="existing-container" data-testid="existing-container">
@@ -87,7 +87,7 @@
     <div class="test-section">
       <h3>Test 3: Vertical Buttons</h3>
       <p>This input will use vertical buttons layout.</p>
-      
+
       <div class="form-group">
         <label for="test-input-vertical">Test Input (Vertical Buttons):</label>
         <input id="test-input-vertical" type="text" value="15" data-testid="test-input-vertical" class="form-control">
@@ -106,13 +106,13 @@
   <!-- jQuery and Bootstrap JS (local) -->
   <script src="assets/jquery/jquery-3.7.1.min.js"></script>
   <script src="assets/bootstrap/bootstrap-4.6.2.bundle.min.js"></script>
-  
+
 
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
@@ -120,7 +120,7 @@
 
   <script>
     $(document).ready(function() {
-      
+
       // Test 1: New Container Creation
       $('#init-new-btn').click(function() {
         $('#test-input-new').TouchSpin({

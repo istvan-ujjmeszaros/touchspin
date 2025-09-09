@@ -1,6 +1,6 @@
 // Standalone Bootstrap 4 build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../packages/core/src/index.js';
-import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../../core/src/index.js';
+import Bootstrap4Renderer from './Bootstrap4Renderer.js';
 
 // Create a wrapper that automatically sets the Bootstrap 4 renderer
 function TouchSpin(element, options = {}) {

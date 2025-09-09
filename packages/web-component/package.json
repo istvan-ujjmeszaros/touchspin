@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "python3 -m http.server 8867 --directory example",
-    "build": "rollup -c",
+    "build": "echo 'Web component does not need build - uses ES modules directly'",
     "test": "echo \"Tests not implemented yet\" && exit 1"
   },
   "keywords": [

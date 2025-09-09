@@ -17,14 +17,14 @@ const banner = `/*
 
 // Build configurations for each variant
 const variants = [
-  { name: 'touchspin-bs3', entry: 'src/entries/standalone-bs3.js', external: [] },
-  { name: 'touchspin-bs4', entry: 'src/entries/standalone-bs4.js', external: [] },
-  { name: 'touchspin-bs5', entry: 'src/entries/standalone-bs5.js', external: [] },
-  { name: 'touchspin-tailwind', entry: 'src/entries/standalone-tailwind.js', external: [] },
-  { name: 'jquery.touchspin-bs3', entry: 'src/entries/jquery-bs3.js', external: ['jquery'] },
-  { name: 'jquery.touchspin-bs4', entry: 'src/entries/jquery-bs4.js', external: ['jquery'] },
-  { name: 'jquery.touchspin-bs5', entry: 'src/entries/jquery-bs5.js', external: ['jquery'] },
-  { name: 'jquery.touchspin-tailwind', entry: 'src/entries/jquery-tailwind.js', external: ['jquery'] }
+  { name: 'touchspin-bs3', entry: 'packages/renderers/bootstrap3/src/entry.js', external: [] },
+  { name: 'touchspin-bs4', entry: 'packages/renderers/bootstrap4/src/entry.js', external: [] },
+  { name: 'touchspin-bs5', entry: 'packages/renderers/bootstrap5/src/entry.js', external: [] },
+  { name: 'touchspin-tailwind', entry: 'packages/renderers/tailwind/src/entry.js', external: [] },
+  { name: 'jquery.touchspin-bs3', entry: 'packages/renderers/bootstrap3/src/jquery-entry.js', external: ['jquery'] },
+  { name: 'jquery.touchspin-bs4', entry: 'packages/renderers/bootstrap4/src/jquery-entry.js', external: ['jquery'] },
+  { name: 'jquery.touchspin-bs5', entry: 'packages/renderers/bootstrap5/src/jquery-entry.js', external: ['jquery'] },
+  { name: 'jquery.touchspin-tailwind', entry: 'packages/renderers/tailwind/src/jquery-entry.js', external: ['jquery'] }
 ];
 
 // Helper to create a single build configuration

@@ -14,19 +14,19 @@
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  
+  <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
+
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
-    
+
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer - no need to specify on each TouchSpin call
     globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;

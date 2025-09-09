@@ -14,18 +14,18 @@
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../../packages/renderers/bootstrap3/dist/touchspin-bootstrap3.css" rel="stylesheet" type="text/css" media="all">
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
-    
+
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer - no need to specify on each TouchSpin call
     globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap3Renderer = Bootstrap3Renderer;
     window.modernTouchSpinInstalled = true;

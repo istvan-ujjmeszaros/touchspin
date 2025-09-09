@@ -12,6 +12,11 @@
       "require": "./src/Bootstrap5Renderer.js"
     }
   },
+  "scripts": {
+    "build:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map",
+    "build": "npm run build:css",
+    "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch"
+  },
   "dependencies": {
     "@touchspin/core": "file:../../core"
   }

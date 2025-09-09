@@ -5,6 +5,9 @@
   "type": "module",
   "description": "Tailwind renderer for TouchSpin",
   "license": "MIT",
+  "scripts": {
+    "build": "echo 'Tailwind renderer has no build steps'"
+  },
   "dependencies": {
     "@touchspin/core": "file:../../core"
   }

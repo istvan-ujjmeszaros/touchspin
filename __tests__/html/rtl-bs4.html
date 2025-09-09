@@ -5,26 +5,26 @@
   <title>Bootstrap TouchSpin - Bootstrap 4 RTL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
+
   <script src="assets/jquery/jquery-3.7.1.min.js"></script>
   <link rel="stylesheet" href="assets/bootstrap/bootstrap-4.6.2.min.css" media="screen">
   <link rel="stylesheet" href="assets/bootstrap/bootstrap-4.6.2-rtl.css" media="screen">
   <link rel="stylesheet" href="assets/fontawesome/fontawesome-5.15.4.min.css">
-  
+
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  
+  <link href="../../packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet" type="text/css" media="all">
+
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-    
+
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer - no need to specify on each TouchSpin call
     globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;

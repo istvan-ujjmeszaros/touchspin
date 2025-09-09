@@ -5,6 +5,11 @@
   "type": "module",
   "description": "Bootstrap 4 renderer for TouchSpin",
   "license": "MIT",
+  "scripts": {
+    "build:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map",
+    "build": "npm run build:css",
+    "watch:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map --watch"
+  },
   "dependencies": {
     "@touchspin/core": "file:../../core"
   }

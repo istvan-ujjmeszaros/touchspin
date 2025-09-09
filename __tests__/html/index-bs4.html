@@ -15,19 +15,19 @@
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../../packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet" type="text/css" media="all">
 
 
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer - no need to specify on each TouchSpin call
     globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
@@ -52,7 +52,7 @@
       $("#testinput_readonly").TouchSpin();
       $("#testinput_data_attributes").TouchSpin();
       $("#testinput_individual_min_max_step_properties").TouchSpin();
-      
+
       // Callback example (currency)
       (function() {
         const before = (raw) => (raw ?? '').replace(/[^\d\.\-]/g, ''); // strip $, commas, spaces, etc.
@@ -85,7 +85,7 @@
         prefix: "$",
         postfix: "/qty"
       });
-      
+
       // Numeral.js callback example
       $("#input_callbacks").TouchSpin({
         min: 0,
@@ -133,7 +133,7 @@
       });
       $("#input_group_from_dom_prefix_postfix").TouchSpin();
       $("#input_group_from_dom_prefix").TouchSpin();
-      
+
       // Double init test
       $('#double-init-input').TouchSpin({
         min: 0,
@@ -146,7 +146,7 @@
         max: 300,
         step: 10
       });
-      
+
       // Test invalid element (expected to fail)
       try {
         $('#not-an-input').TouchSpin();

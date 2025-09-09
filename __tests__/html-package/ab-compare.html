@@ -6,7 +6,7 @@
   <title>TouchSpin A/B Compare (Original vs Wrapper)</title>
   <link rel="stylesheet" href="../html/assets/bootstrap/bootstrap-4.6.2.min.css">
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <link href="../../packages/renderers/bootstrap3/dist/touchspin-bootstrap3.css" rel="stylesheet">
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
     .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -61,7 +61,7 @@
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap4Renderer = Bootstrap4Renderer;
   </script>

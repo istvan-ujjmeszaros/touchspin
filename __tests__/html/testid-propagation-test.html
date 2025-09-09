@@ -5,18 +5,18 @@
   <title>TestID Propagation Test</title>
 
   <script src="assets/jquery/jquery-3.7.1.min.js"></script>
-  
+
   <!-- BOOTSTRAP 5 -->
   <link href="assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
   <script src="assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
 
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
   <!-- Load main TouchSpin source file -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
@@ -26,7 +26,7 @@
 <body>
 <div class="container">
   <h1>TestID Propagation Test</h1>
-  
+
   <!-- Test case 1: New input group creation -->
   <div class="mb-3">
     <label for="test-input-1" class="form-label">Test Input 1 (New wrapper):</label>
@@ -58,28 +58,28 @@
   <script>
     $(document).ready(function() {
       console.log('Initializing TouchSpin instances...');
-      
+
       // Test case 1: Regular TouchSpin (should create new wrapper with testid)
       $('#test-input-1').TouchSpin({
         renderer: Bootstrap5Renderer
       });
-      
+
       // Test case 2: Existing input-group (should add testid to existing wrapper)
       $('#test-input-2').TouchSpin({
         renderer: Bootstrap5Renderer
       });
-      
+
       // Test case 3: Vertical buttons (should create wrapper with testid)
       $('#test-input-3').TouchSpin({
         renderer: Bootstrap5Renderer,
         verticalbuttons: true
       });
-      
+
       // Test case 4: No testid (should not create wrapper testid)
       $('#test-input-4').TouchSpin({
         renderer: Bootstrap5Renderer
       });
-      
+
       console.log('TouchSpin initialization complete');
     });
   </script>

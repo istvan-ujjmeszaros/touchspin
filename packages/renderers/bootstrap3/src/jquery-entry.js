@@ -1,6 +1,6 @@
-// jQuery Tailwind build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin, CORE_EVENTS } from '../../packages/core/src/index.js';
-import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+// jQuery Bootstrap 3 build entry point
+import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin, CORE_EVENTS } from '../../../core/src/index.js';
+import Bootstrap3Renderer from './Bootstrap3Renderer.js';
 
 // Wrapper function for standalone use (when jQuery is not available)
 function TouchSpin(element, options = {}) {
@@ -9,13 +9,13 @@ function TouchSpin(element, options = {}) {
   }
 
   // Set the baked-in renderer for this build
-  options.renderer = options.renderer || TailwindRenderer;
+  options.renderer = options.renderer || Bootstrap3Renderer;
 
   // Use the core TouchSpin function which properly handles initDOMEventHandling
   return CoreTouchSpin(element, options);
 }
 
-// Custom jQuery plugin installer with baked-in TailwindRenderer
+// Custom jQuery plugin installer with baked-in Bootstrap3Renderer
 function installJqueryTouchSpin($) {
   $.fn.TouchSpin = function(options, arg) {
     // Command API - forward to core (core manages instance lifecycle)
@@ -58,9 +58,9 @@ function installJqueryTouchSpin($) {
       const $input = $(this);
       const inputEl = /** @type {HTMLInputElement} */ (this);
 
-      // Create TouchSpin instance with baked-in TailwindRenderer
+      // Create TouchSpin instance with baked-in Bootstrap3Renderer
       const opts = options || {};
-      opts.renderer = opts.renderer || TailwindRenderer;
+      opts.renderer = opts.renderer || Bootstrap3Renderer;
       const inst = CoreTouchSpin(inputEl, opts);
 
       // Bridge core events to jQuery events (minimal event forwarding only)
@@ -140,9 +140,9 @@ if (typeof window !== 'undefined') {
   window.TouchSpin = TouchSpin;
   window.TouchSpinCore = TouchSpinCore;
   window.getTouchSpin = getTouchSpin;
-  window.TailwindRenderer = TailwindRenderer;
+  window.Bootstrap3Renderer = Bootstrap3Renderer;
   window.installJqueryTouchSpin = installJqueryTouchSpin;
 }
 
 // Export for module systems only (no default export)
-export { TouchSpin, TouchSpinCore, getTouchSpin, TailwindRenderer, installJqueryTouchSpin };
+export { TouchSpin, TouchSpinCore, getTouchSpin, Bootstrap3Renderer, installJqueryTouchSpin };

@@ -1,15 +1,15 @@
-// Standalone Bootstrap 5 build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../packages/core/src/index.js';
-import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+// Standalone Bootstrap 3 build entry point
+import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../../core/src/index.js';
+import Bootstrap3Renderer from './Bootstrap3Renderer.js';
 
-// Create a wrapper that automatically sets the Bootstrap 5 renderer
+// Create a wrapper that automatically sets the Bootstrap 3 renderer
 function TouchSpin(element, options = {}) {
   if (!(element instanceof Element)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }
 
   // Set the baked-in renderer for this build
-  options.renderer = options.renderer || Bootstrap5Renderer;
+  options.renderer = options.renderer || Bootstrap3Renderer;
 
   // Use the core TouchSpin function which properly handles initDOMEventHandling
   return CoreTouchSpin(element, options);
@@ -31,8 +31,8 @@ if (typeof window !== 'undefined') {
   window.TouchSpin = TouchSpin;
   window.TouchSpinCore = TouchSpinCore;
   window.getTouchSpin = getTouchSpin;
-  window.Bootstrap5Renderer = Bootstrap5Renderer;
+  window.Bootstrap3Renderer = Bootstrap3Renderer;
 }
 
 // Export for module systems only (no default export)
-export { TouchSpin, TouchSpinCore, getTouchSpin, Bootstrap5Renderer };
+export { TouchSpin, TouchSpinCore, getTouchSpin, Bootstrap3Renderer };
