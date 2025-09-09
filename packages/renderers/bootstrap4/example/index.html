@@ -6,8 +6,8 @@
   <title>TouchSpin Bootstrap 4 Demo</title>
 
   <!-- Bootstrap 4 CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
   <!-- TouchSpin CSS -->
   <link rel="stylesheet" href="../../../../src/jquery.bootstrap-touchspin.css">
 
@@ -191,7 +191,7 @@
       <div class="example">
         <h3>With Prefix & Postfix</h3>
         <div class="spinner">
-          <input type="number" id="currency" min="0" max="1000" value="25" step="0.01" class="form-control" 
+          <input type="number" id="currency" min="0" max="1000" value="25" step="0.01" class="form-control"
                  data-bts-prefix="€" data-bts-postfix=".00">
         </div>
         <div class="code-example">
@@ -465,13 +465,13 @@
     // Generate code example from current control values
     function generateCodeExample() {
       const attributes = [];
-      
+
       // Get values from controls
       const min = controls.min.value;
       const max = controls.max.value;
       const value = controls.value.value;
       const step = controls.step.value;
-      
+
       // Always include basic HTML attributes
       attributes.push(`type="number"`);
       attributes.push(`class="form-control"`);
@@ -479,37 +479,37 @@
       if (max) attributes.push(`max="${max}"`);
       if (value) attributes.push(`value="${value}"`);
       if (step) attributes.push(`step="${step}"`);
-      
+
       // Add TouchSpin data attributes for optional settings
       const prefix = controls.prefix.value;
       if (prefix) {
         attributes.push(`data-bts-prefix="${prefix}"`);
       }
-      
+
       const postfix = controls.postfix.value;
       if (postfix) {
         attributes.push(`data-bts-postfix="${postfix}"`);
       }
-      
+
       const verticalButtons = controls.vertical.checked;
       if (verticalButtons) {
         attributes.push(`data-bts-vertical-buttons="true"`);
       }
-      
+
       // Add state attributes
       const input = document.getElementById('basic-spinner');
       if (input.disabled) {
         attributes.push(`disabled`);
       }
-      
+
       if (input.readOnly) {
         attributes.push(`readonly`);
       }
-      
+
       // Generate the HTML
       const attributeString = attributes.join(' ');
       let code = `&lt;input ${attributeString}&gt;\n\n`;
-      
+
       // Add JavaScript initialization
       code += `&lt;script type="module"&gt;\n`;
       code += `  import { TouchSpin } from '@touchspin/core';\n`;
@@ -518,7 +518,7 @@
       code += `    renderer: Bootstrap4Renderer\n`;
       code += `  });\n`;
       code += `&lt;/script&gt;`;
-      
+
       return code;
     }
 
@@ -555,7 +555,7 @@
       entry.className = `event-entry ${eventName.replace('touchspin.', '')}`;
       entry.textContent = `${eventCount}. ${eventName}: ${JSON.stringify(detail)}`;
       eventLog.insertBefore(entry, eventLog.firstChild);
-      
+
       // Keep only last 20 events
       while (eventLog.children.length > 20) {
         eventLog.removeChild(eventLog.lastChild);
@@ -679,7 +679,7 @@
 
     // Event listeners for TouchSpin events
     const input = document.getElementById('basic-spinner');
-    
+
     input.addEventListener('touchspin.on.min', (e) => {
       logEvent('touchspin.on.min', { value: e.detail || basicSpinner.getValue() });
     });
@@ -706,7 +706,7 @@
     controls.min.value = basicInput.min || '';
     controls.max.value = basicInput.max || '';
     controls.step.value = basicInput.step || '';
-    
+
     // Initialize code example
     updateCodeExample();
 
@@ -717,7 +717,7 @@
 
     rtlToggle.addEventListener('click', (e) => {
       e.preventDefault();
-      
+
       if (!rtlCssLink) {
         // Inject RTL CSS
         rtlCssLink = document.createElement('link');
@@ -725,7 +725,7 @@
         rtlCssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-v4-rtl/4.6.2-2/css/bootstrap-rtl.min.css';
         rtlCssLink.id = 'bootstrap-rtl-css';
         document.head.appendChild(rtlCssLink);
-        
+
         rtlToggle.textContent = 'Click here to remove RTL CSS';
         rtlCodeExample.style.display = 'block';
       } else {
@@ -734,7 +734,7 @@
           rtlCssLink.parentNode.removeChild(rtlCssLink);
         }
         rtlCssLink = null;
-        
+
         rtlToggle.textContent = 'Click here to inject RTL CSS';
         rtlCodeExample.style.display = 'none';
       }

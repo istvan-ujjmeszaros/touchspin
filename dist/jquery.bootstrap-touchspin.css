@@ -90,3 +90,11 @@
   left: auto;
   right: 5px;
 }
+
+/* Override Bootstrap RTL border-radius on prefix/postfix in horizontal mode */
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-prefix,
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-postfix,
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-prefix,
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-postfix {
+  border-radius: 0 !important;
+}
