@@ -84,9 +84,8 @@ test.describe('Cross-Version Renderer Consistency', () => {
         });
       });
       
-      // Wait for initialization
-      const wrapper = page.getByTestId('prefix-postfix-wrapper');
-      await expect(wrapper).toBeAttached();
+      // Wait for TouchSpin wrapper with injected attribute to be ready
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'prefix-postfix-wrapper');
       
       // Now prefix/postfix elements should exist
       await expect(wrapper.getByTestId('prefix-postfix-prefix')).toHaveCount(1);
