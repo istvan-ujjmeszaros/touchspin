@@ -61,12 +61,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildBasicInputGroup() {
     const inputGroupSize = this._detectInputGroupSize();
-    const testidAttr = this.getWrapperTestId();
 
     let html;
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
           ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
           ${this.buildVerticalButtons()}
@@ -74,7 +73,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
@@ -134,12 +133,6 @@ class Bootstrap5Renderer extends AbstractRenderer {
     existingInputGroup.classList.add('bootstrap-touchspin');
     existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
 
-    // Add testid if wrapper doesn't already have one and input has one
-    const inputTestId = this.input.getAttribute('data-testid');
-    const existingWrapperTestId = existingInputGroup.getAttribute('data-testid');
-    if (!existingWrapperTestId && inputTestId) {
-      existingInputGroup.setAttribute('data-testid', `${inputTestId}-wrapper`);
-    }
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

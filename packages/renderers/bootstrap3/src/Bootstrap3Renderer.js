@@ -77,12 +77,11 @@ class Bootstrap3Renderer extends AbstractRenderer {
 
   buildBasicInputGroup() {
     const inputGroupSize = this._detectInputGroupSize();
-    const testidAttr = this.getWrapperTestId();
 
     let html;
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
           ${this.settings.prefix ? `<span class="input-group-addon bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-addon bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
           <span class="input-group-btn bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
@@ -92,7 +91,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
           <span class="input-group-btn" data-touchspin-injected="down-wrapper">
             <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           </span>
@@ -153,12 +152,6 @@ class Bootstrap3Renderer extends AbstractRenderer {
     existingInputGroup.classList.add('bootstrap-touchspin');
     existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
 
-    // Add testid if wrapper doesn't already have one and input has one
-    const inputTestId = this.input.getAttribute('data-testid');
-    const existingWrapperTestId = existingInputGroup.getAttribute('data-testid');
-    if (!existingWrapperTestId && inputTestId) {
-      existingInputGroup.setAttribute('data-testid', `${inputTestId}-wrapper`);
-    }
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

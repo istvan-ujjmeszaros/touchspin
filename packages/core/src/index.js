@@ -216,6 +216,7 @@ export class TouchSpinCore {
     if (this.settings.renderer) {
       this.renderer = new this.settings.renderer(inputEl, this.settings, this);
       this.renderer.init();
+      this.renderer.setWrapperTestId();
     }
 
     // Set up mutation observer to watch for disabled/readonly changes

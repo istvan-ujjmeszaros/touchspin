@@ -42,13 +42,12 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
   buildInputGroup() {
-    const testidAttr = this.getWrapperTestId();
     const isVertical = this.settings.verticalbuttons;
 
     let html;
     if (isVertical) {
       html = `
-        <div class="ts-wrapper ts-wrapper--vertical" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="ts-wrapper ts-wrapper--vertical" data-touchspin-injected="wrapper">
           <span class="ts-addon ts-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
           <span class="ts-addon ts-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
           ${this.buildVerticalButtons()}
@@ -56,7 +55,7 @@ class VanillaRenderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="ts-wrapper" data-touchspin-injected="wrapper"${testidAttr}>
+        <div class="ts-wrapper" data-touchspin-injected="wrapper">
           <button 
             tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" 
             class="ts-btn ts-btn--down ${this.settings.buttondown_class || ''}" 

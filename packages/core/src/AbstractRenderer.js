@@ -101,13 +101,6 @@ class AbstractRenderer {
   // All legacy jQuery-based methods have been removed
   // Modern renderers implement their own init() method and use vanilla JS
 
-  getWrapperTestId() {
-    // Modern vanilla JS version
-    const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) return ` data-testid="${inputTestId}-wrapper"`;
-    return '';
-  }
-
   /**
    * Get testid attribute for up button
    * @returns {string} Testid attribute or empty string
@@ -146,6 +139,17 @@ class AbstractRenderer {
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) return ` data-testid="${inputTestId}-postfix"`;
     return '';
+  }
+
+  /**
+   * Set the testid attribute on the wrapper element.
+   * Called by core after initialization is complete.
+   */
+  setWrapperTestId() {
+    const testid = this.input.getAttribute('data-testid');
+    if (testid && this.wrapper) {
+      this.wrapper.setAttribute('data-testid', testid + '-wrapper');
+    }
   }
 }
 
