@@ -850,11 +850,15 @@ export class TouchSpinCore {
       v = this._valueIfIsNaN();
     } else {
       const base = this.settings.step || 1;
-      const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
-      const stepUnclamped = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
       const mbs = this.settings.maxboostedstep;
-      let step = stepUnclamped;
-      if (mbs && isFinite(mbs) && stepUnclamped > Number(mbs)) {
+      let stepCandidate = base;
+      // Apply booster only if enabled
+      if (this.settings.booster) {
+        const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
+        stepCandidate = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+      }
+      let step = stepCandidate;
+      if (mbs && isFinite(mbs) && stepCandidate > Number(mbs)) {
         step = Number(mbs);
         // Align current value to the boosted step grid when clamped (parity with jQuery plugin)
         v = Math.round(v / step) * step;
