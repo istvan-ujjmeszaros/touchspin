@@ -40,7 +40,7 @@ async function waitForInputOrWrapper(page: Page, testid: string, timeout: number
  * wrapper with `[data-touchspin-injected]` using either the exact testid as-is
  * or the derived "-wrapper" suffix, and always returns the wrapper.
  */
-async function waitForInstanceReady(page: Page, testid: string, timeout: number = 5000): Promise<Locator> {
+async function getWrapperInstanceWhenReady(page: Page, testid: string, timeout: number = 5000): Promise<Locator> {
   const asIsWrapper = page
     .locator(`[data-testid="${testid}"][data-touchspin-injected]`)
     .first();
@@ -83,8 +83,8 @@ async function setInputAttr(page: Page, inputTestId: string, attributeName: 'dis
 }
 
 async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Promise<boolean> {
-  const wrapper = await waitForInstanceReady(page, inputTestId);
-  
+  const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
+
   // Try different button locations within this specific TouchSpin instance
   const selectors = [
     '.bootstrap-touchspin-up',
@@ -96,7 +96,7 @@ async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Prom
   for (const sel of selectors) {
     const button = wrapper.locator(sel);
     const count = await button.count();
-    
+
     if (count > 0) {
       const isDisabled = await button.first().evaluate((el: HTMLButtonElement) => {
         return el.hasAttribute('disabled') || el.disabled;
@@ -109,17 +109,17 @@ async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Prom
 }
 
 async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> {
-  const wrapper = await waitForInstanceReady(page, inputTestId);
+  const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
     if (!input) return null;
-    
+
     // Check input state
     const isDisabled = input.disabled || input.hasAttribute('disabled');
     const isReadonly = input.readOnly || input.hasAttribute('readonly');
     const currentValue = parseFloat(input.value) || 0;
-    
+
     // Try to get TouchSpin settings from core instance
     const touchSpinCore = (input as any)._touchSpinCore;
     let maxValue = null;
@@ -132,11 +132,11 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
       if (dataMax) maxValue = parseFloat(dataMax);
       else if (nativeMax) maxValue = parseFloat(nativeMax);
     }
-    
+
     // Determine if value change is expected
     const atMaxBoundary = maxValue != null && currentValue >= maxValue;
     const shouldChange = !isDisabled && !isReadonly && !atMaxBoundary;
-    
+
     return {
       value: input.value,
       disabled: isDisabled,
@@ -178,15 +178,15 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
       cancelable: true,
       button: 0
     });
-    
+
     const mouseUpEvent = new MouseEvent('mouseup', {
       bubbles: true,
       cancelable: true,
       button: 0
     });
-    
+
     button.dispatchEvent(mouseDownEvent);
-    
+
     // Immediately trigger mouseup to prevent spinning
     setTimeout(() => {
       button.dispatchEvent(mouseUpEvent);
@@ -230,17 +230,17 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
 }
 
 async function touchspinClickDown(page: Page, inputTestId: string): Promise<void> {
-  const wrapper = await waitForInstanceReady(page, inputTestId);
+  const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
     if (!input) return null;
-    
+
     // Check input state
     const isDisabled = input.disabled || input.hasAttribute('disabled');
     const isReadonly = input.readOnly || input.hasAttribute('readonly');
     const currentValue = parseFloat(input.value) || 0;
-    
+
     // Try to get TouchSpin settings from core instance
     const touchSpinCore = (input as any)._touchSpinCore;
     let minValue = null;
@@ -253,11 +253,11 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
       if (dataMin) minValue = parseFloat(dataMin);
       else if (nativeMin) minValue = parseFloat(nativeMin);
     }
-    
+
     // Determine if value change is expected
     const atMinBoundary = minValue != null && currentValue <= minValue;
     const shouldChange = !isDisabled && !isReadonly && !atMinBoundary;
-    
+
     return {
       value: input.value,
       disabled: isDisabled,
@@ -299,15 +299,15 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
       cancelable: true,
       button: 0
     });
-    
+
     const mouseUpEvent = new MouseEvent('mouseup', {
       bubbles: true,
       cancelable: true,
       button: 0
     });
-    
+
     button.dispatchEvent(mouseDownEvent);
-    
+
     // Immediately trigger mouseup to prevent spinning
     setTimeout(() => {
       button.dispatchEvent(mouseUpEvent);
@@ -353,7 +353,7 @@ async function touchspinClickDown(page: Page, inputTestId: string): Promise<void
 async function changeEventCounter(page: Page): Promise<number> {
   // Get the event log content (this is global, not scoped to a specific TouchSpin)
   const eventLogContent = await page.locator('#events_log').textContent();
-  
+
   // Count the number of 'change' events
   return (eventLogContent?.match(/change\[/g) ?? []).length;
 }
@@ -401,13 +401,13 @@ async function fillWithValueAndBlur(page: Page, inputTestId: string, value: stri
   await waitForInputOrWrapper(page, inputTestId);
   // Fill the input with a value and trigger blur-based sanitization
   await fillWithValue(page, inputTestId, value);
-  
+
   // Get the current value to detect if sanitization occurs
   const initialValue = await readInputValue(page, inputTestId);
-  
+
   // Press Tab to trigger blur
   await page.keyboard.press('Tab');
-  
+
   // Wait for sanitization to complete - check if value changed or wait a reasonable time
   try {
     await page.waitForFunction(
@@ -432,13 +432,13 @@ async function waitForSanitization(page: Page, inputTestId: string): Promise<voi
 }
 
 async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
-  const wrapper = await waitForInstanceReady(page, inputTestId);
+  const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   const upButton = wrapper.locator('[data-touchspin-injected="up"]');
   await upButton.focus();
 }
 
 async function focusDownButton(page: Page, inputTestId: string): Promise<void> {
-  const wrapper = await waitForInstanceReady(page, inputTestId);
+  const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   const downButton = wrapper.locator('[data-touchspin-injected="down"]');
   await downButton.focus();
 }
@@ -466,14 +466,14 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
   const fs = require('fs');
   const path = require('path');
   const v8toIstanbul = require('v8-to-istanbul');
-  
+
   const coverageDir = 'reports/coverage';
   if (!fs.existsSync(coverageDir)) {
     fs.mkdirSync(coverageDir, { recursive: true });
   }
-  
+
   // Filter coverage to include all TouchSpin source files
-  const touchspinCoverage = coverage.filter(entry => 
+  const touchspinCoverage = coverage.filter(entry =>
     entry.url && (
       entry.url.includes('jquery.bootstrap-touchspin') ||
       entry.url.includes('touchspin') ||
@@ -481,11 +481,11 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
       entry.url.includes('/renderers/')
     )
   );
-  
+
   if (touchspinCoverage.length > 0) {
     // Convert V8 coverage to Istanbul format for NYC
     const istanbulCoverage: Record<string, any> = {};
-    
+
     for (const entry of touchspinCoverage) {
       try {
         // Extract file path from URL
@@ -494,7 +494,7 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
           const srcIndex = entry.url.indexOf('src/');
           filePath = path.join(process.cwd(), entry.url.substring(srcIndex));
         }
-        
+
         if (filePath && fs.existsSync(filePath)) {
           const converter = v8toIstanbul(filePath);
           await converter.load();
@@ -505,11 +505,11 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
         console.warn(`Failed to process coverage for ${entry.url}:`, error.message);
       }
     }
-    
+
     // Save in Istanbul format that NYC expects
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     fs.writeFileSync(
-      path.join(coverageDir, fileName), 
+      path.join(coverageDir, fileName),
       JSON.stringify(istanbulCoverage, null, 2)
     );
   }
@@ -526,7 +526,7 @@ async function blurAway(page: Page): Promise<void> {
 // For manual wrapper access, use: page.getByTestId(inputTestId + '-wrapper')
 
 export default {
-  waitForInstanceReady,
+  waitForInstanceReady: getWrapperInstanceWhenReady,
   waitForTimeout,
   cleanupTimeouts,
   readInputValue,
