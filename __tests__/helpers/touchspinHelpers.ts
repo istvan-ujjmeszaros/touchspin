@@ -475,6 +475,32 @@ async function blurAway(page: Page): Promise<void> {
 // For manual wrapper access, use: page.getByTestId(inputTestId + '-wrapper')
 
 export default {
+  /**
+   * Waits for a TouchSpin instance to be ready and returns its wrapper locator.
+   *
+   * The `testid` can be either:
+   * - the input's testid (e.g., "my-spinner"), in which case the helper will
+   *   resolve the wrapper as `my-spinner-wrapper`, or
+   * - the wrapper's own unique testid (e.g., "price-wrapper-custom"), which is used as-is.
+   *
+   * In both cases, this waits for `[data-touchspin-injected]` to be present on the wrapper.
+   */
+  async waitForInstanceReady(page: Page, testid: string, timeout: number = 5000): Promise<Locator> {
+    // Determine if provided testid refers to an input element
+    const candidate = page.getByTestId(testid).first();
+    const isInput = await candidate.evaluateAll((els) => {
+      if (!els.length) return false;
+      const el = els[0] as HTMLElement;
+      return el.tagName.toLowerCase() === 'input';
+    });
+
+    const wrapperTestId = isInput ? `${testid}-wrapper` : testid;
+    const wrapper = page
+      .locator(`[data-testid="${wrapperTestId}"][data-touchspin-injected]`)
+      .first();
+    await expect(wrapper).toBeAttached({ timeout });
+    return wrapper;
+  },
   waitForTimeout,
   cleanupTimeouts,
   readInputValue,
