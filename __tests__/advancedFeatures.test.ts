@@ -71,20 +71,19 @@ test.describe('Advanced Features', () => {
       const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
 
       // Hold mousedown for longer than stepintervaldelay (500ms)
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      }, testid);
+      });
 
       // Wait for spin to start and continue
       await touchspinHelpers.waitForTimeout(800);
 
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      }, testid);
+      });
 
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       expect(finalValue).toBeGreaterThan(initialValue + 1); // Should have spun multiple times
@@ -94,20 +93,19 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-default';
 
       // Start spinning
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper2.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      }, testid);
+      });
 
       await touchspinHelpers.waitForTimeout(200); // Short hold
 
       // Stop spinning
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper2.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      }, testid);
+      });
 
       const valueAfterStop = await touchspinHelpers.readInputValue(page, testid);
 
@@ -123,14 +121,14 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-default';
 
       // Simulate touch events
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper3 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper3.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('touchstart', { bubbles: true }));
         setTimeout(() => {
           button?.dispatchEvent(new Event('touchend', { bubbles: true }));
         }, 100);
-      }, testid);
+      });
 
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
@@ -169,19 +167,18 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-default';
 
       // Start spinning and check for events
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper4 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper4.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      }, testid);
+      });
 
       await touchspinHelpers.waitForTimeout(600); // Wait for spin to start
 
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper4.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      }, testid);
+      });
 
       // Check that spin events were logged (if events logging is available)
       const hasSpinEvents = await page.evaluate(() => {

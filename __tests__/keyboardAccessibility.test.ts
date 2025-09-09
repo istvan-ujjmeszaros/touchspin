@@ -18,27 +18,15 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Focus the up button and press Enter
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper.evaluate((container) => {
+        const upButton = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (upButton) {
-          (upButton as HTMLElement).focus();
-          
-          // Simulate Enter keydown and immediate keyup
-          upButton.dispatchEvent(new KeyboardEvent('keydown', { 
-            keyCode: 13, 
-            which: 13, 
-            bubbles: true 
-          }));
-          
-          // Immediately simulate keyup to stop spinning
-          upButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 13, 
-            which: 13, 
-            bubbles: true 
-          }));
+          upButton.focus();
+          upButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13, which: 13, bubbles: true }));
+          upButton.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 13, which: 13, bubbles: true }));
         }
-      }, testid);
+      });
 
       // Value should increment once
       await expect.poll(
@@ -50,27 +38,15 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Focus the down button and press Space
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const downButton = container?.querySelector('.bootstrap-touchspin-down');
+      const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper2.evaluate((container) => {
+        const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
-          (downButton as HTMLElement).focus();
-          
-          // Simulate Space keydown and immediate keyup
-          downButton.dispatchEvent(new KeyboardEvent('keydown', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-          
-          // Immediately simulate keyup to stop spinning
-          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
+          downButton.focus();
+          downButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 32, which: 32, bubbles: true }));
+          downButton.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 32, which: 32, bubbles: true }));
         }
-      }, testid);
+      });
 
       // Value should decrement once
       await expect.poll(
@@ -85,27 +61,15 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Focus the down button and press Enter
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const downButton = container?.querySelector('.bootstrap-touchspin-down');
+      const wrapper3 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper3.evaluate((container) => {
+        const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
-          (downButton as HTMLElement).focus();
-          
-          // Simulate Enter keydown and immediate keyup
-          downButton.dispatchEvent(new KeyboardEvent('keydown', { 
-            keyCode: 13, 
-            which: 13, 
-            bubbles: true 
-          }));
-          
-          // Immediately simulate keyup to stop spinning
-          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 13, 
-            which: 13, 
-            bubbles: true 
-          }));
+          downButton.focus();
+          downButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13, which: 13, bubbles: true }));
+          downButton.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 13, which: 13, bubbles: true }));
         }
-      }, testid);
+      });
 
       // Value should decrement once
       await expect.poll(
@@ -120,29 +84,19 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Hold Space key on up button to trigger spinning
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper4 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper4.evaluate((container) => {
+        const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
-          (upButton as HTMLElement).focus();
-          
+          upButton.focus();
           // Start spinning with Space keydown
-          upButton.dispatchEvent(new KeyboardEvent('keydown', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-          
+          upButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 32, which: 32, bubbles: true }));
           // Brief delay for spinning, then stop
           setTimeout(() => {
-            upButton.dispatchEvent(new KeyboardEvent('keyup', { 
-              keyCode: 32, 
-              which: 32, 
-              bubbles: true 
-            }));
+            upButton.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 32, which: 32, bubbles: true }));
           }, 50);
         }
-      }, testid);
+      });
 
       // Wait for spin to occur
       // Brief wait for spin processing
@@ -161,32 +115,22 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Test that preventDefault is called
-      const preventDefaultCalled = await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper5 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const preventDefaultCalled = await wrapper5.evaluate((container) => {
+        const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         let preventDefaultWasCalled = false;
-        
         if (upButton) {
-          (upButton as HTMLElement).focus();
-          
-          // Create event and override preventDefault to detect if it's called
-          const event = new KeyboardEvent('keydown', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          });
-          
+          upButton.focus();
+          const event = new KeyboardEvent('keydown', { keyCode: 32, which: 32, bubbles: true });
           const originalPreventDefault = event.preventDefault;
-          event.preventDefault = function() {
+          (event as any).preventDefault = function(this: Event) {
             preventDefaultWasCalled = true;
-            originalPreventDefault.call(this);
+            return originalPreventDefault.call(this);
           };
-          
           upButton.dispatchEvent(event);
         }
-        
         return preventDefaultWasCalled;
-      }, testid);
+      });
 
       expect(preventDefaultCalled).toBe(true);
     });
@@ -196,24 +140,17 @@ test.describe('Keyboard Accessibility Tests', () => {
       const initialValue = await touchspinHelpers.readInputValue(page, testid);
       
       // Press various other keys that should not trigger actions
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper6 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper6.evaluate((container) => {
+        const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
-          (upButton as HTMLElement).focus();
-          
-          // Test various keys that should be ignored
-          const ignoredKeys = [27, 65, 66, 9, 16]; // Escape, A, B, Tab, Shift
-          
+          upButton.focus();
+          const ignoredKeys = [27, 65, 66, 9, 16];
           ignoredKeys.forEach(keyCode => {
-            upButton.dispatchEvent(new KeyboardEvent('keydown', { 
-              keyCode: keyCode, 
-              which: keyCode, 
-              bubbles: true 
-            }));
+            upButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode, which: keyCode, bubbles: true }));
           });
         }
-      }, testid);
+      });
 
       // Value should remain unchanged
       await expect.poll(
@@ -225,31 +162,19 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
       
       // Rapidly press and release Space key multiple times
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper7 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper7.evaluate((container) => {
+        const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
-          (upButton as HTMLElement).focus();
-          
-          // Simulate rapid key presses
+          upButton.focus();
           for (let i = 0; i < 3; i++) {
-            upButton.dispatchEvent(new KeyboardEvent('keydown', { 
-              keyCode: 32, 
-              which: 32, 
-              bubbles: true 
-            }));
-            
-            // Brief pause
+            upButton.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 32, which: 32, bubbles: true }));
             setTimeout(() => {
-              upButton.dispatchEvent(new KeyboardEvent('keyup', { 
-                keyCode: 32, 
-                which: 32, 
-                bubbles: true 
-              }));
+              upButton.dispatchEvent(new KeyboardEvent('keyup', { keyCode: 32, which: 32, bubbles: true }));
             }, 50);
           }
         }
-      }, testid);
+      });
 
       // Brief wait for rapid events
 

@@ -22,9 +22,9 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that user button text was applied
-      const wrapper = page.getByTestId('test-button-text-wrapper');
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      const downButton = wrapper.locator('.bootstrap-touchspin-down');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-button-text-wrapper');
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
       
       await expect(upButton).toHaveText('USER-UP');
       await expect(downButton).toHaveText('USER-DOWN');
@@ -38,7 +38,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that user prefix/postfix was applied
-      const wrapper = page.getByTestId('test-prefix-postfix-wrapper');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-prefix-postfix-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
       
@@ -54,9 +54,9 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that user vertical button content was applied
-      const wrapper = page.getByTestId('test-vertical-wrapper');
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      const downButton = wrapper.locator('.bootstrap-touchspin-down');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-vertical-wrapper');
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
       
       await expect(upButton).toHaveText('USER-↑');
       await expect(downButton).toHaveText('USER-↓');
@@ -74,9 +74,9 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that user classes override renderer defaults
-      const wrapper = page.getByTestId('test-user-override-wrapper');
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
-      const downButton = wrapper.locator('.bootstrap-touchspin-down');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-user-override-wrapper');
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+      const downButton = wrapper.locator('[data-touchspin-injected="down"]');
       
       // Should have user custom classes, NOT renderer defaults
       await expect(upButton).toHaveClass(/user-custom-up-class/);
@@ -153,7 +153,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that data attributes were applied
-      const wrapper = page.getByTestId('test-data-attrs-wrapper');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-data-attrs-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
       
@@ -178,7 +178,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check that JS settings override data attributes
-      const wrapper = page.getByTestId('test-js-override-wrapper');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-js-override-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       
       // Should have JS prefix, not data attribute prefix
@@ -205,8 +205,8 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
       
       // Check initial state
-      const wrapper = page.getByTestId('test-button-text-wrapper');
-      const upButton = wrapper.locator('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-button-text-wrapper');
+      const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       
       await expect(upButton).toHaveText('USER-UP');
       

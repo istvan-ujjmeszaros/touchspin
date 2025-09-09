@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
 
 test.describe('TouchSpin Destroy and Reinitialize', () => {
 
@@ -22,34 +23,28 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await initBtn.click();
     
     // Wait for TouchSpin to be fully initialized
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="test-input-new-wrapper"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
     
     await expect(status).toHaveText('Status: Initialized ($ prefix, .00 postfix)');
 
     // Verify TouchSpin UI elements are present
     const container = input.locator('xpath=..');
     await expect(container).toHaveClass(/bootstrap-touchspin/);
-    await expect(page.locator('.bootstrap-touchspin-up')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-down')).toBeVisible();
-    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('$');
-    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText('.00');
+    await expect(wrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
+    await expect(wrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
+    await expect(wrapper.locator('[data-touchspin-injected="prefix"]').first()).toHaveText('$');
+    await expect(wrapper.locator('[data-touchspin-injected="postfix"]').first()).toHaveText('.00');
 
     // Test functionality - increment
-    await page.locator('.bootstrap-touchspin-up').click();
+    await wrapper.locator('[data-touchspin-injected="up"]').click();
     await expect(input).toHaveValue('11');
 
     // Destroy TouchSpin
     await destroyBtn.click();
     await expect(status).toHaveText('Status: Destroyed');
 
-    // Verify TouchSpin UI elements are removed
-    await expect(page.locator('.bootstrap-touchspin-up')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-down')).not.toBeVisible();
-    await expect(page.locator('[data-touchspin-injected="prefix"]')).not.toBeVisible();
-    await expect(page.locator('[data-touchspin-injected="postfix"]')).not.toBeVisible();
+    // Verify TouchSpin UI elements are removed (wrapper should be gone)
+    await expect(page.locator('[data-testid="test-input-new-wrapper"][data-touchspin-injected]')).toHaveCount(0);
 
     // Verify original structure is restored (input should not be in bootstrap-touchspin container)
     const parentAfterDestroy = input.locator('xpath=..');
@@ -59,20 +54,17 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await reinitBtn.click();
     
     // Wait for TouchSpin to be fully reinitialized
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="test-input-new-wrapper"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const reinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
     
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 5)');
 
     // Verify new settings are applied
-    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('€');
-    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText(' EUR');
+    await expect(reinitWrapper.locator('[data-touchspin-injected="prefix"]').first()).toHaveText('€');
+    await expect(reinitWrapper.locator('[data-touchspin-injected="postfix"]').first()).toHaveText(' EUR');
 
     // Test new step value
     const initialValue = await input.inputValue();
-    await page.locator('.bootstrap-touchspin-up').click();
+    await reinitWrapper.locator('[data-touchspin-injected="up"]').click();
     const newValue = await input.inputValue();
     expect(parseInt(newValue) - parseInt(initialValue)).toBe(5);
   });
@@ -99,17 +91,14 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await initBtn.click();
     
     // Wait for TouchSpin to be fully initialized on existing container
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="existing-container"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const existWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'existing-container');
     
     await expect(status).toHaveText('Status: Enhanced existing input-group ($ prefix, .00 postfix)');
 
     // Verify TouchSpin elements are added to existing container
     await expect(existingContainer).toHaveClass(/bootstrap-touchspin/);
-    await expect(page.locator('.bootstrap-touchspin-up')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-down')).toBeVisible();
+    await expect(existWrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
+    await expect(existWrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
     await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('$');
     await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText('.00');
 
@@ -142,20 +131,17 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await reinitBtn.click();
     
     // Wait for TouchSpin to be fully reinitialized on existing container
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="existing-container"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const existReinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'existing-container');
     
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 10)');
 
     // Verify new settings are applied
-    await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('€');
-    await expect(page.locator('[data-touchspin-injected="postfix"]')).toHaveText(' EUR');
+    await expect(existReinitWrapper.locator('[data-touchspin-injected="prefix"]').first()).toHaveText('€');
+    await expect(existReinitWrapper.locator('[data-touchspin-injected="postfix"]').first()).toHaveText(' EUR');
 
     // Test new step value
     const initialValue = await input.inputValue();
-    await page.locator('.bootstrap-touchspin-up').click();
+    await existReinitWrapper.locator('[data-touchspin-injected="up"]').click();
     const newValue = await input.inputValue();
     expect(parseInt(newValue) - parseInt(initialValue)).toBe(10);
   });
@@ -175,34 +161,30 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await initBtn.click();
     
     // Wait for TouchSpin to be fully initialized with vertical buttons
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="test-input-vertical-wrapper"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const vWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-vertical');
     
     await expect(status).toHaveText('Status: Initialized (vertical buttons ▲/▼)');
 
     // Verify vertical button elements are present
     const container = input.locator('xpath=..');
     await expect(container).toHaveClass(/bootstrap-touchspin/);
-    await expect(page.locator('.bootstrap-touchspin-up')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-down')).toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-up')).toHaveText('▲');
-    await expect(page.locator('.bootstrap-touchspin-down')).toHaveText('▼');
+    await expect(vWrapper.locator('[data-touchspin-injected="up"]')).toBeVisible();
+    await expect(vWrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
+    await expect(vWrapper.locator('[data-touchspin-injected="up"]').first()).toHaveText('▲');
+    await expect(vWrapper.locator('[data-touchspin-injected="down"]').first()).toHaveText('▼');
 
     // Test functionality
-    await page.locator('.bootstrap-touchspin-up').click();
+    await vWrapper.locator('[data-touchspin-injected="up"]').click();
     await expect(input).toHaveValue('16');
-    await page.locator('.bootstrap-touchspin-down').click();
+    await vWrapper.locator('[data-touchspin-injected="down"]').click();
     await expect(input).toHaveValue('15');
 
     // Destroy TouchSpin
     await destroyBtn.click();
     await expect(status).toHaveText('Status: Destroyed');
 
-    // Verify vertical button elements are removed
-    await expect(page.locator('.bootstrap-touchspin-up')).not.toBeVisible();
-    await expect(page.locator('.bootstrap-touchspin-down')).not.toBeVisible();
+    // Verify vertical button elements are removed (wrapper should be gone)
+    await expect(page.locator('[data-testid="test-input-vertical-wrapper"][data-touchspin-injected]')).toHaveCount(0);
 
     // Verify original structure is restored
     const parentAfterDestroy = input.locator('xpath=..');
@@ -212,20 +194,17 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await reinitBtn.click();
     
     // Wait for TouchSpin to be fully reinitialized with vertical buttons
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="test-input-vertical-wrapper"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    const vReinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-vertical');
     
     await expect(status).toHaveText('Status: Reinitialized (vertical buttons ↑/↓, step 5)');
 
     // Verify new settings are applied
-    await expect(page.locator('.bootstrap-touchspin-up')).toHaveText('↑');
-    await expect(page.locator('.bootstrap-touchspin-down')).toHaveText('↓');
+    await expect(vReinitWrapper.locator('[data-touchspin-injected="up"]').first()).toHaveText('↑');
+    await expect(vReinitWrapper.locator('[data-touchspin-injected="down"]').first()).toHaveText('↓');
 
     // Test new step value
     const initialValue = await input.inputValue();
-    await page.locator('.bootstrap-touchspin-up').click();
+    await vReinitWrapper.locator('[data-touchspin-injected="up"]').click();
     const newValue = await input.inputValue();
     expect(parseInt(newValue) - parseInt(initialValue)).toBe(5);
   });
@@ -239,10 +218,7 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
     await initBtn.click();
     
     // Wait for TouchSpin to be fully initialized
-    await expect.poll(async () => {
-      const wrapper = page.locator('[data-testid="test-input-new-wrapper"][data-touchspin-injected]');
-      return await wrapper.count() > 0;
-    }).toBe(true);
+    await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
 
     // Test that keyboard events work
     await input.focus();
