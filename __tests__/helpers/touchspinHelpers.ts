@@ -526,7 +526,7 @@ async function blurAway(page: Page): Promise<void> {
 // For manual wrapper access, use: page.getByTestId(inputTestId + '-wrapper')
 
 export default {
-  waitForInstanceReady: getWrapperInstanceWhenReady,
+  getWrapperInstanceWhenReady,
   waitForTimeout,
   cleanupTimeouts,
   readInputValue,

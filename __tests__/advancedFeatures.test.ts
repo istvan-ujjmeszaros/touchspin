@@ -16,7 +16,7 @@ test.describe('Advanced Features', () => {
     test('should respect data-bts-* attributes for configuration', async ({ page }) => {
       const testid = 'touchspin-data-attributes';
 
-      await touchspinHelpers.waitForInstanceReady(page, testid);
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
 
       // Test data-bts-min="40"
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '30');

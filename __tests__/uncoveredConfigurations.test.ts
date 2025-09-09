@@ -55,23 +55,22 @@ test.describe('Uncovered Configuration Options', () => {
       });
 
       // Hold down button for extended time to see if boosting occurs
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'no-booster-test');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mousedown', { bubbles: true }));
         }
-      }, 'no-booster-test');
+      });
 
       await touchspinHelpers.waitForTimeout(1000); // Long enough for boosting
 
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mouseup', { bubbles: true }));
         }
-      }, 'no-booster-test');
+      });
 
       // Should have incremented consistently without acceleration
       // Without booster, increments should be linear (step=1)
