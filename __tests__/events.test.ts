@@ -229,6 +229,58 @@ test.describe('Events', () => {
     expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max')).toBe(1);
   });
 
+  test('should fire exactly one touchspin.on.startupspin when holding ArrowUp to spin', async ({ page }) => {
+    const testid: string = 'touchspin-default';
+    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+
+    // Ensure ready and isolate events for this test
+    await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+    await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
+
+    // Focus the input and hold ArrowUp to initiate spinning
+    const input = page.getByTestId(testid);
+    await input.focus();
+    await page.keyboard.down('ArrowUp');
+    await page.keyboard.down('ArrowUp');
+    await page.keyboard.down('ArrowUp');
+    await page.keyboard.down('ArrowUp');
+    await page.keyboard.down('ArrowUp');
+    await touchspinHelpers.waitForTimeout(100); // hold longer than stepintervaldelay
+    await page.keyboard.up('ArrowUp');
+    await touchspinHelpers.waitForTimeout(50);
+
+    // Exactly one startupspin event should have been fired for this element
+    await expect.poll(
+      async () => touchspinHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
+    ).toBe(1);
+  });
+
+  test('should fire exactly one touchspin.on.startupspin when holding Space on Up button', async ({ page }) => {
+    const testid: string = 'touchspin-default';
+    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+
+    // Ensure ready and isolate events for this test
+    const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+    await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
+
+    const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+    await upButton.focus();
+
+    // Simulate a hold: multiple downs without intermediate ups
+    await page.keyboard.down(' ');
+    await page.keyboard.down(' ');
+    await page.keyboard.down(' ');
+    await page.keyboard.down(' ');
+    await page.keyboard.down(' ');
+    await touchspinHelpers.waitForTimeout(100);
+    await page.keyboard.up(' ');
+    await touchspinHelpers.waitForTimeout(50);
+
+    await expect.poll(
+      async () => touchspinHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
+    ).toBe(1);
+  });
+
   test('should handle rapid programmatic upOnce() calls without delays', async ({ page }) => {
     // Create a new input with higher max value
     await page.evaluate(() => {
