@@ -81,7 +81,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
     let html;
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           ${this.settings.prefix ? `<span class="input-group-addon bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-addon bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
           <span class="input-group-btn bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
@@ -91,7 +91,7 @@ class Bootstrap3Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           <span class="input-group-btn" data-touchspin-injected="down-wrapper">
             <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-default'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           </span>
@@ -150,8 +150,9 @@ class Bootstrap3Renderer extends AbstractRenderer {
   buildAdvancedInputGroup(existingInputGroup) {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
-    existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
-
+    
+    // Mark this as an advanced wrapper
+    this.wrapperType = 'wrapper-advanced';
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

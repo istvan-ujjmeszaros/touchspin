@@ -216,11 +216,32 @@ export class TouchSpinCore {
     if (this.settings.renderer) {
       this.renderer = new this.settings.renderer(inputEl, this.settings, this);
       this.renderer.init();
-      this.renderer.setWrapperTestId();
     }
 
     // Set up mutation observer to watch for disabled/readonly changes
     this._setupMutationObserver();
+
+    // Finalize wrapper attributes after complete initialization
+    // 
+    // The data-touchspin-injected attribute serves as a marker that the TouchSpin
+    // component is fully constructed - DOM is built, event handlers are attached,
+    // and mutation observer is active. Tests use this attribute to detect when 
+    // components are ready for interaction.
+    // 
+    // By setting these attributes as the final initialization step, we prevent race
+    // conditions where tests might try to interact with components before their DOM
+    // structure, event handlers, or internal monitoring are ready. This is especially
+    // important under high CPU load where DOM operations may take longer.
+    //
+    // Complete initialization sequence:
+    // 1. renderer.init() - Constructs DOM and attaches event handlers
+    // 2. _setupMutationObserver() - Starts monitoring input attribute changes
+    // 3. renderer.finalizeWrapperAttributes() - Marks component as ready:
+    //    - Adds data-testid for test element selection
+    //    - Adds data-touchspin-injected to signal component is fully ready
+    if (this.settings.renderer) {
+      this.renderer.finalizeWrapperAttributes();
+    }
   }
 
   /**

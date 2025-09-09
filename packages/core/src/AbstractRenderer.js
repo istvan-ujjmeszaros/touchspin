@@ -30,6 +30,8 @@ class AbstractRenderer {
     this.core = core; // Reference to core for calling attachment methods
     /** @type {HTMLElement|null} */
     this.wrapper = null; // Set by subclasses during init()
+    /** @type {string} */
+    this.wrapperType = 'wrapper'; // Default wrapper type, set to 'wrapper-advanced' by buildAdvancedInputGroup
 
     // No legacy properties needed in modern architecture
   }
@@ -142,14 +144,20 @@ class AbstractRenderer {
   }
 
   /**
-   * Set the testid attribute on the wrapper element.
-   * Called by core after initialization is complete.
-   * Only sets testid if wrapper doesn't already have one.
+   * Finalize wrapper attributes after DOM construction and event attachment.
+   * Sets both data-testid and data-touchspin-injected attributes.
+   * Called by core as the final initialization step.
    */
-  setWrapperTestId() {
-    const testid = this.input.getAttribute('data-testid');
-    if (testid && this.wrapper && !this.wrapper.hasAttribute('data-testid')) {
-      this.wrapper.setAttribute('data-testid', testid + '-wrapper');
+  finalizeWrapperAttributes() {
+    if (this.wrapper) {
+      // Set test ID if input has one and wrapper doesn't already have one
+      const testid = this.input.getAttribute('data-testid');
+      if (testid && !this.wrapper.hasAttribute('data-testid')) {
+        this.wrapper.setAttribute('data-testid', testid + '-wrapper');
+      }
+      
+      // Mark component as ready (DOM built, events attached)
+      this.wrapper.setAttribute('data-touchspin-injected', this.wrapperType);
     }
   }
 }

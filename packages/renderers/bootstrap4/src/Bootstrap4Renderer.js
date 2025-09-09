@@ -66,7 +66,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     let html;
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           ${this.settings.prefix ? `<div class="input-group-prepend bootstrap-touchspin-prefix" data-touchspin-injected="prefix"${this.getPrefixTestId()}>
             <span class="input-group-text ${this.settings.prefix_extraclass || ''}">${this.settings.prefix}</span>
           </div>` : ''}
@@ -78,7 +78,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           <div class="input-group-prepend" data-touchspin-injected="prepend-wrapper">
             <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
             ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
@@ -128,8 +128,9 @@ class Bootstrap4Renderer extends AbstractRenderer {
   buildAdvancedInputGroup(existingInputGroup) {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
-    existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
-
+    
+    // Mark this as an advanced wrapper
+    this.wrapperType = 'wrapper-advanced';
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

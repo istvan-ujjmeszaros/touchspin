@@ -65,7 +65,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     let html;
     if (this.settings.verticalbuttons) {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
           ${this.buildVerticalButtons()}
@@ -73,7 +73,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       `;
     } else {
       html = `
-        <div class="input-group ${inputGroupSize} bootstrap-touchspin" data-touchspin-injected="wrapper">
+        <div class="input-group ${inputGroupSize} bootstrap-touchspin">
           <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
           ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
           ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
@@ -131,8 +131,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
   buildAdvancedInputGroup(existingInputGroup) {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
-    existingInputGroup.setAttribute('data-touchspin-injected', 'wrapper-advanced');
-
+    
+    // Mark this as an advanced wrapper
+    this.wrapperType = 'wrapper-advanced';
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

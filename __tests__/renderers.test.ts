@@ -123,7 +123,8 @@ test.describe('Cross-Version Renderer Consistency', () => {
       await page.goto(`/__tests__/html/${version.html}`);
 
       // Pick the first initialized wrapper on the page for each renderer
-      const wrapper = page.locator('[data-testid$="-wrapper"]').first();
+      // Wait for data-touchspin-injected to ensure component is fully ready
+      const wrapper = page.locator('[data-testid$="-wrapper"][data-touchspin-injected]').first();
       await expect(wrapper).toBeAttached();
       const input = wrapper.locator('input');
       const upButton = wrapper.locator('[data-testid$="-up"]');
