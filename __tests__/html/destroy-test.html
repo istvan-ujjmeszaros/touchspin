@@ -116,9 +116,8 @@
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
-  </script>
 
-  <script>
+    // Initialize jQuery after modules are loaded to prevent race conditions
     $(document).ready(function() {
 
       // Test 1: New Container Creation

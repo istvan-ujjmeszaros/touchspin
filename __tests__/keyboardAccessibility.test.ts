@@ -24,7 +24,7 @@ test.describe('Keyboard Accessibility Tests', () => {
         if (upButton) {
           (upButton as HTMLElement).focus();
           
-          // Simulate Enter keydown
+          // Simulate Enter keydown and immediate keyup
           upButton.dispatchEvent(new KeyboardEvent('keydown', { 
             keyCode: 13, 
             which: 13, 
@@ -56,8 +56,15 @@ test.describe('Keyboard Accessibility Tests', () => {
         if (downButton) {
           (downButton as HTMLElement).focus();
           
-          // Simulate Space keydown
+          // Simulate Space keydown and immediate keyup
           downButton.dispatchEvent(new KeyboardEvent('keydown', { 
+            keyCode: 32, 
+            which: 32, 
+            bubbles: true 
+          }));
+          
+          // Immediately simulate keyup to stop spinning
+          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
             keyCode: 32, 
             which: 32, 
             bubbles: true 
@@ -70,18 +77,6 @@ test.describe('Keyboard Accessibility Tests', () => {
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('49');
 
-      // Release Space key
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const downButton = container?.querySelector('.bootstrap-touchspin-down');
-        if (downButton) {
-          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-        }
-      }, testid);
 
       // Brief wait for event processing
     });
@@ -96,8 +91,15 @@ test.describe('Keyboard Accessibility Tests', () => {
         if (downButton) {
           (downButton as HTMLElement).focus();
           
-          // Simulate Enter keydown
+          // Simulate Enter keydown and immediate keyup
           downButton.dispatchEvent(new KeyboardEvent('keydown', { 
+            keyCode: 13, 
+            which: 13, 
+            bubbles: true 
+          }));
+          
+          // Immediately simulate keyup to stop spinning
+          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
             keyCode: 13, 
             which: 13, 
             bubbles: true 
@@ -110,18 +112,6 @@ test.describe('Keyboard Accessibility Tests', () => {
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('49');
 
-      // Release Enter key
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const downButton = container?.querySelector('.bootstrap-touchspin-down');
-        if (downButton) {
-          downButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 13, 
-            which: 13, 
-            bubbles: true 
-          }));
-        }
-      }, testid);
 
       // Brief wait for event processing
     });
@@ -142,6 +132,15 @@ test.describe('Keyboard Accessibility Tests', () => {
             which: 32, 
             bubbles: true 
           }));
+          
+          // Brief delay for spinning, then stop
+          setTimeout(() => {
+            upButton.dispatchEvent(new KeyboardEvent('keyup', { 
+              keyCode: 32, 
+              which: 32, 
+              bubbles: true 
+            }));
+          }, 50);
         }
       }, testid);
 
@@ -152,18 +151,8 @@ test.describe('Keyboard Accessibility Tests', () => {
       const value = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       expect(value).toBeGreaterThan(50);
 
-      // Stop spinning with keyup
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const upButton = container?.querySelector('.bootstrap-touchspin-up');
-        if (upButton) {
-          upButton.dispatchEvent(new KeyboardEvent('keyup', { 
-            keyCode: 32, 
-            which: 32, 
-            bubbles: true 
-          }));
-        }
-      }, testid);
+      // Wait briefly for spinning effect
+      await page.waitForTimeout(100);
 
       // Brief wait for event processing
     });
