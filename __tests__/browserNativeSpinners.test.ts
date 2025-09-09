@@ -33,54 +33,40 @@ test.describe('Browser Native Spinner Controls', () => {
   });
 
   test.describe('Native Attributes Only', () => {
-    test('should respect native min/max when no TouchSpin min/max provided', async ({ page }) => {
-      // Test input with only native attributes, no TouchSpin overrides
-      // Input has native min="2" max="12", TouchSpin initialized with no min/max
+    test('should respect native min when no TouchSpin min provided', async ({ page }) => {
       const testid = 'touchspin-native-only-attrs';
-      
-      // Ensure TouchSpin is initialized by waiting for wrapper
-      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
-      
-      // Test minimum boundary - try to go below native min=2
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+
+      // Try to go below native min=2 from a known baseline
       await touchspinHelpers.fillWithValue(page, testid, '5');
       const input = page.getByTestId(testid);
       await input.focus();
-      
-      // Go down multiple steps to hit minimum
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowDown');
       }
-      
-      // Wait for value to settle after rapid keyboard events
-      await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
-      ).toMatch(/\d+/);
-      
+
       const minValue = await touchspinHelpers.readInputValue(page, testid);
-      
-      // Should respect native min="2"
-      expect(parseInt(minValue || '0')).toBeGreaterThanOrEqual(2);
-      expect(parseInt(minValue || '0')).toBeLessThan(5); // Should have decreased
-      
-      // Test maximum boundary - try to go above native max=12
+      const minNumeric = parseInt(minValue || '0');
+      expect(minNumeric).toBeGreaterThanOrEqual(2);
+      expect(minNumeric).toBeLessThan(5);
+    });
+
+    test('should respect native max when no TouchSpin max provided', async ({ page }) => {
+      const testid = 'touchspin-native-only-attrs';
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+
+      // Try to go above native max=12 from a known baseline
       await touchspinHelpers.fillWithValue(page, testid, '10');
+      const input = page.getByTestId(testid);
       await input.focus();
-      
-      // Go up multiple steps to hit maximum
       for (let i = 0; i < 10; i++) {
         await page.keyboard.press('ArrowUp');
       }
-      
-      // Wait for value to settle after rapid keyboard events
-      await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
-      ).toMatch(/\d+/);
-      
+
       const maxValue = await touchspinHelpers.readInputValue(page, testid);
-      
-      // Should respect native max="12"
-      expect(parseInt(maxValue || '0')).toBeLessThanOrEqual(12);
-      expect(parseInt(maxValue || '0')).toBeGreaterThan(10); // Should have increased
+      const maxNumeric = parseInt(maxValue || '0');
+      expect(maxNumeric).toBeLessThanOrEqual(12);
+      expect(maxNumeric).toBeGreaterThan(10);
     });
 
     test('should use native step when no TouchSpin step provided', async ({ page }) => {
