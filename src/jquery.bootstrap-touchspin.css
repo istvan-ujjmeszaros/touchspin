@@ -83,10 +83,13 @@
   right: 5px;
 }
 
-/* Override Bootstrap RTL border-radius on prefix/postfix in horizontal mode */
-[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-prefix,
-[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-postfix,
-.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-prefix,
-.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-postfix {
-  border-radius: 0 !important;
+/* RTL support: Swap border-radius for up/down buttons in horizontal mode */
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-down,
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-down {
+  border-radius: 0 .25rem .25rem 0 !important; /* Right side rounded in RTL */
+}
+
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-up,
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) .bootstrap-touchspin-up {
+  border-radius: .25rem 0 0 .25rem !important; /* Left side rounded in RTL */
 }
