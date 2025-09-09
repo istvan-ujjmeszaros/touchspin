@@ -11,10 +11,9 @@
     // Minimal custom renderer for targeted coverage
     class TestRenderer extends AbstractRenderer {
       init() {
-        const testidAttr = this.getWrapperTestId();
         // Build simple structure
         const html = `
-          <div class="test-container" data-touchspin-injected="wrapper"${testidAttr}>
+          <div class="test-container" data-touchspin-injected="wrapper">
             <span class="test-prefix" data-touchspin-injected="prefix"${this.getPrefixTestId()}>pre</span>
             <button type="button" class="test-btn-down" data-touchspin-injected="down"${this.getDownButtonTestId()} aria-label="Decrease value">-</button>
             <button type="button" class="test-btn-up" data-touchspin-injected="up"${this.getUpButtonTestId()} aria-label="Increase value">+</button>

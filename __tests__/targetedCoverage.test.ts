@@ -299,18 +299,18 @@ test.describe('Targeted Coverage Tests', () => {
       await touchspinHelpers.waitForTimeout(500); // Let page load
       
       // Check that custom TestRenderer was used by looking for test-specific classes
-      const hasTestClasses = await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        return !!(container && (
-          container.classList.contains('test-container') ||
-          container.querySelector('.test-prefix') ||
-          container.querySelector('.test-postfix') ||
-          container.querySelector('.test-btn-up') ||
-          container.querySelector('.test-btn-down')
-        ));
-      }, testid);
-      
-      expect(hasTestClasses).toBe(true);
+      await expect.poll(async () => {
+        return await page.evaluate((testId) => {
+          const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+          return !!(container && (
+            container.classList.contains('test-container') ||
+            container.querySelector('.test-prefix') ||
+            container.querySelector('.test-postfix') ||
+            container.querySelector('.test-btn-up') ||
+            container.querySelector('.test-btn-down')
+          ));
+        }, testid);
+      }).toBe(true);
       
       // Test functionality - should work normally
       await touchspinHelpers.touchspinClickUp(page, testid);

@@ -144,10 +144,11 @@ class AbstractRenderer {
   /**
    * Set the testid attribute on the wrapper element.
    * Called by core after initialization is complete.
+   * Only sets testid if wrapper doesn't already have one.
    */
   setWrapperTestId() {
     const testid = this.input.getAttribute('data-testid');
-    if (testid && this.wrapper) {
+    if (testid && this.wrapper && !this.wrapper.hasAttribute('data-testid')) {
       this.wrapper.setAttribute('data-testid', testid + '-wrapper');
     }
   }
