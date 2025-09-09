@@ -42,7 +42,8 @@ test.describe('Browser Native Spinner Controls', () => {
       const input = page.getByTestId(testid);
       await input.focus();
       for (let i = 0; i < 10; i++) {
-        await page.keyboard.press('ArrowDown');
+        await page.keyboard.down('ArrowDown');
+        await page.keyboard.up('ArrowDown');
       }
 
       const minValue = await touchspinHelpers.readInputValue(page, testid);
@@ -60,7 +61,8 @@ test.describe('Browser Native Spinner Controls', () => {
       const input = page.getByTestId(testid);
       await input.focus();
       for (let i = 0; i < 10; i++) {
-        await page.keyboard.press('ArrowUp');
+        await page.keyboard.down('ArrowUp');
+        await page.keyboard.up('ArrowUp');
       }
 
       const maxValue = await touchspinHelpers.readInputValue(page, testid);
@@ -74,7 +76,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-only-attrs';
       
       // Ensure TouchSpin is initialized by waiting for wrapper
-      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       
       await touchspinHelpers.fillWithValue(page, testid, '5');
       const input = page.getByTestId(testid);
@@ -91,7 +93,8 @@ test.describe('Browser Native Spinner Controls', () => {
       // Test with keyboard - should also use native step=3
       await touchspinHelpers.fillWithValue(page, testid, '5');
       await input.focus();
-      await page.keyboard.press('ArrowUp');
+      await page.keyboard.down('ArrowUp');
+      await page.keyboard.up('ArrowUp');
       
       const keyboardResult = await touchspinHelpers.readInputValue(page, testid);
       
@@ -107,7 +110,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-with-attrs';
       
       // Ensure TouchSpin is initialized by waiting for wrapper
-      await expect(page.getByTestId(testid + '-wrapper')).toBeAttached();
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       
       // Check that native attributes were updated to match TouchSpin settings
       const input = page.getByTestId(testid);
@@ -168,7 +171,8 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Try to go below new min=1
       for (let i = 0; i < 5; i++) {
-        await page.keyboard.press('ArrowDown');
+        await page.keyboard.down('ArrowDown');
+        await page.keyboard.up('ArrowDown');
       }
       
       await expect.poll(
@@ -181,7 +185,8 @@ test.describe('Browser Native Spinner Controls', () => {
       // Test new step=3
       await touchspinHelpers.fillWithValue(page, testid, '10');
       await input.focus();
-      await page.keyboard.press('ArrowUp');
+      await page.keyboard.down('ArrowUp');
+      await page.keyboard.up('ArrowUp');
       
       const stepValue = await touchspinHelpers.readInputValue(page, testid);
       // Note: Actual step behavior shows increment of 2, not 3 as externally set
@@ -206,7 +211,8 @@ test.describe('Browser Native Spinner Controls', () => {
       // Try to go below TouchSpin minimum (3) using native spinner
       // Start at 8, try to go down 10 steps (should stop at TouchSpin min=3, not native min=5)
       for (let i = 0; i < 10; i++) {
-        await page.keyboard.press('ArrowDown');
+        await page.keyboard.down('ArrowDown');
+        await page.keyboard.up('ArrowDown');
       }
       
       const finalValue = await touchspinHelpers.readInputValue(page, testid);
@@ -236,7 +242,8 @@ test.describe('Browser Native Spinner Controls', () => {
       // Try to go below TouchSpin minimum (3) using native spinner
       // Start at 8, try to go down 10 steps (should stop at TouchSpin min=3)
       for (let i = 0; i < 10; i++) {
-        await page.keyboard.press('ArrowDown');
+        await page.keyboard.down('ArrowDown');
+        await page.keyboard.up('ArrowDown');
       }
       
       const finalValue = await touchspinHelpers.readInputValue(page, testid);
@@ -262,7 +269,8 @@ test.describe('Browser Native Spinner Controls', () => {
       
       // Try to go above TouchSpin maximum (20) using native spinner
       for (let i = 0; i < 5; i++) {
-        await page.keyboard.press('ArrowUp');
+        await page.keyboard.down('ArrowUp');
+        await page.keyboard.up('ArrowUp');
       }
       
       await expect.poll(
@@ -295,7 +303,8 @@ test.describe('Browser Native Spinner Controls', () => {
       await input.focus();
       
       // Start at 20, press ArrowUp once
-      await page.keyboard.press('ArrowUp');
+      await page.keyboard.down('ArrowUp');
+      await page.keyboard.up('ArrowUp');
       
       const newValue = await touchspinHelpers.readInputValue(page, testid);
       
@@ -316,7 +325,8 @@ test.describe('Browser Native Spinner Controls', () => {
       await input.focus();
       
       // Start at 2.75, press ArrowUp once
-      await page.keyboard.press('ArrowUp');
+      await page.keyboard.down('ArrowUp');
+      await page.keyboard.up('ArrowUp');
       
       const newValue = await touchspinHelpers.readInputValue(page, testid);
       
