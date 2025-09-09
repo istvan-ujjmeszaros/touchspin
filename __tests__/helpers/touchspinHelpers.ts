@@ -12,13 +12,36 @@ async function cleanupTimeouts(): Promise<void> {
   // Can be used for custom cleanup if needed
 }
 
+/**
+ * Waits for a TouchSpin instance to be ready and returns its wrapper locator.
+ *
+ * Accepts either the input's testid or the wrapper's testid and always returns the wrapper.
+ */
+async function waitForInstanceReady(page: Page, testid: string, timeout: number = 5000): Promise<Locator> {
+  const candidate = page.getByTestId(testid).first();
+  const isInput = await candidate.evaluateAll((els) => {
+    if (!els.length) return false;
+    const el = els[0] as HTMLElement;
+    return el.tagName.toLowerCase() === 'input';
+  });
+
+  const wrapperTestId = isInput ? `${testid}-wrapper` : testid;
+  const wrapper = page
+    .locator(`[data-testid="${wrapperTestId}"][data-touchspin-injected]`)
+    .first();
+  await expect(wrapper).toBeAttached({ timeout });
+  return wrapper;
+}
+
 async function readInputValue(page: Page, inputTestId: string): Promise<string | null> {
+  await waitForInstanceReady(page, inputTestId);
   // Directly access input using its testid
   const input = page.getByTestId(inputTestId);
   return await input.inputValue();
 }
 
 async function setInputAttr(page: Page, inputTestId: string, attributeName: 'disabled' | 'readonly', attributeValue: boolean): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Directly access input using its testid
   const input = page.getByTestId(inputTestId);
   if (attributeValue) {
@@ -29,6 +52,7 @@ async function setInputAttr(page: Page, inputTestId: string, attributeName: 'dis
 }
 
 async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Promise<boolean> {
+  await waitForInstanceReady(page, inputTestId);
   // Wait for TouchSpin wrapper to be ready and get it
   const touchspinContainer = page.getByTestId(inputTestId + '-wrapper');
   
@@ -56,6 +80,7 @@ async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Prom
 }
 
 async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
@@ -179,6 +204,7 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
 }
 
 async function touchspinClickDown(page: Page, inputTestId: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
@@ -320,6 +346,7 @@ async function countChangeWithValue(page: Page, expectedValue: string): Promise<
 }
 
 async function getElementIdFromTestId(page: Page, testid: string): Promise<string> {
+  await waitForInstanceReady(page, testid);
   // Get the element ID from a testid for event counting
   const elementId = await page.getByTestId(testid).getAttribute('id');
   return elementId || testid;
@@ -336,6 +363,7 @@ async function countEvent(page: Page, elementIdOrSelector: string, event: string
 }
 
 async function fillWithValue(page: Page, inputTestId: string, value: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Directly access input using its testid
   const input = page.getByTestId(inputTestId);
   await input.focus();
@@ -347,6 +375,7 @@ async function fillWithValue(page: Page, inputTestId: string, value: string): Pr
 }
 
 async function fillWithValueAndBlur(page: Page, inputTestId: string, value: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Fill the input with a value and trigger blur-based sanitization
   await fillWithValue(page, inputTestId, value);
   
@@ -374,11 +403,13 @@ async function fillWithValueAndBlur(page: Page, inputTestId: string, value: stri
 }
 
 async function waitForSanitization(page: Page, inputTestId: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Wait for any async sanitization to complete after user input
   await waitForTimeout(100);
 }
 
 async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Focus the up button within the specific TouchSpin widget
   const wrapper = page.getByTestId(inputTestId + '-wrapper');
   const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -386,6 +417,7 @@ async function focusUpButton(page: Page, inputTestId: string): Promise<void> {
 }
 
 async function focusDownButton(page: Page, inputTestId: string): Promise<void> {
+  await waitForInstanceReady(page, inputTestId);
   // Focus the down button within the specific TouchSpin widget
   const wrapper = page.getByTestId(inputTestId + '-wrapper');
   const downButton = wrapper.locator('[data-touchspin-injected="down"]');
@@ -475,32 +507,7 @@ async function blurAway(page: Page): Promise<void> {
 // For manual wrapper access, use: page.getByTestId(inputTestId + '-wrapper')
 
 export default {
-  /**
-   * Waits for a TouchSpin instance to be ready and returns its wrapper locator.
-   *
-   * The `testid` can be either:
-   * - the input's testid (e.g., "my-spinner"), in which case the helper will
-   *   resolve the wrapper as `my-spinner-wrapper`, or
-   * - the wrapper's own unique testid (e.g., "price-wrapper-custom"), which is used as-is.
-   *
-   * In both cases, this waits for `[data-touchspin-injected]` to be present on the wrapper.
-   */
-  async waitForInstanceReady(page: Page, testid: string, timeout: number = 5000): Promise<Locator> {
-    // Determine if provided testid refers to an input element
-    const candidate = page.getByTestId(testid).first();
-    const isInput = await candidate.evaluateAll((els) => {
-      if (!els.length) return false;
-      const el = els[0] as HTMLElement;
-      return el.tagName.toLowerCase() === 'input';
-    });
-
-    const wrapperTestId = isInput ? `${testid}-wrapper` : testid;
-    const wrapper = page
-      .locator(`[data-testid="${wrapperTestId}"][data-touchspin-injected]`)
-      .first();
-    await expect(wrapper).toBeAttached({ timeout });
-    return wrapper;
-  },
+  waitForInstanceReady,
   waitForTimeout,
   cleanupTimeouts,
   readInputValue,
