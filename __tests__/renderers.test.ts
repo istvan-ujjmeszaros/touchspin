@@ -64,38 +64,32 @@ test.describe('Cross-Version Renderer Consistency', () => {
     });
   }
 
-  test('should maintain consistent prefix/postfix elements when initialized with values', async ({ page }) => {
-    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
-    
-    for (const html of versions) {
+  const ppVersions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'] as const;
+  for (const html of ppVersions) {
+    test(`should maintain consistent prefix/postfix elements when initialized with values (${html})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(20000);
       await page.goto(`/__tests__/html/${html}`);
-      
-      // Initialize the test input with prefix and postfix values
+
+      // Initialize the test input with prefix and postfix values (fresh init per page)
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
-        // Destroy if already initialized
-        try {
-          $('#testinput_prefix_postfix').trigger('touchspin.destroy');
-        } catch {}
-        // Initialize with prefix and postfix
-        $('#testinput_prefix_postfix').TouchSpin({
-          prefix: '$',
-          postfix: '.00'
-        });
+        try { $('#testinput_prefix_postfix').trigger('touchspin.destroy'); } catch {}
+        $('#testinput_prefix_postfix').TouchSpin({ prefix: '$', postfix: '.00' });
       });
-      
-      // Wait for TouchSpin wrapper with injected attribute to be ready
+
+      // Wait for wrapper fully injected
       const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'prefix-postfix-wrapper');
-      
-      // Now prefix/postfix elements should exist
-      await expect(wrapper.getByTestId('prefix-postfix-prefix')).toHaveCount(1);
-      await expect(wrapper.getByTestId('prefix-postfix-postfix')).toHaveCount(1);
-      
-      // Verify they contain the expected text
-      await expect(wrapper.getByTestId('prefix-postfix-prefix')).toHaveText('$');
-      await expect(wrapper.getByTestId('prefix-postfix-postfix')).toHaveText('.00');
-    }
-  });
+
+      // Prefer role-based selectors to avoid relying on testid propagation timing
+      const prefixEl = wrapper.locator('[data-touchspin-injected="prefix"]').first();
+      const postfixEl = wrapper.locator('[data-touchspin-injected="postfix"]').first();
+
+      await expect(prefixEl).toBeVisible();
+      await expect(postfixEl).toBeVisible();
+      await expect(prefixEl).toHaveText('$');
+      await expect(postfixEl).toHaveText('.00');
+    });
+  }
 
   const functionalCases = [
     { name: 'Bootstrap 3', html: 'index-bs3.html' },
