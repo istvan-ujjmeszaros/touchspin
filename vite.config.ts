@@ -7,6 +7,7 @@ import path from 'node:path';
 // - Keep dev port at 8866 (strict) for local tooling compatibility
 export default defineConfig({
   server: {
+    open: '/examples/',
     port: 8866,
     strictPort: true,
     fs: {
@@ -22,37 +23,36 @@ export default defineConfig({
         server.middlewares.use((req, res, next) => {
           const url = req.url || '/';
           if (url === '/examples' || url === '/examples/') {
-            // List packages with example folders
+            // Recursively find example/index.html under packages/**/example/
             const pkgsDir = path.resolve(process.cwd(), 'packages');
-            const entries = fs.readdirSync(pkgsDir, { withFileTypes: true });
-            const withExamples = entries
-              .filter((d) => d.isDirectory())
-              .filter((d) => fs.existsSync(path.join(pkgsDir, d.name, 'example')))
-              .map((d) => d.name)
-              .sort();
-            const html = `<!doctype html><meta charset="utf-8"><title>Examples</title><h1>Examples</h1><ul>${withExamples
-              .map((n) => `<li><a href="/examples/${n}/">${n}</a></li>`)
-              .join('')}</ul>`;
-            res.setHeader('Content-Type', 'text/html');
-            res.end(html);
-            return;
-          }
+            const exampleLinks: Array<{ label: string; href: string }> = [];
 
-          const m = url.match(/^\/examples\/([^/]+)\/?$/);
-          if (m) {
-            const pkg = m[1];
-            const dir = path.resolve(process.cwd(), 'packages', pkg, 'example');
-            if (!fs.existsSync(dir)) {
-              res.statusCode = 404;
-              res.end('Not found');
-              return;
+            function walk(dir: string, rel = '') {
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+              for (const e of entries) {
+                if (e.name.startsWith('.')) continue;
+                const full = path.join(dir, e.name);
+                const relPath = path.join(rel, e.name);
+                if (e.isDirectory()) {
+                  const exampleDir = path.join(full, 'example');
+                  if (fs.existsSync(exampleDir) && fs.statSync(exampleDir).isDirectory()) {
+                    const files = fs.readdirSync(exampleDir).filter((f) => f.toLowerCase().endsWith('.html'));
+                    for (const f of files) {
+                      exampleLinks.push({
+                        label: `${relPath}/example/${f}`,
+                        href: `/packages/${relPath}/example/${f}`,
+                      });
+                    }
+                  }
+                  walk(full, relPath);
+                }
+              }
             }
-            const files = fs
-              .readdirSync(dir)
-              .filter((f) => f.toLowerCase().endsWith('.html'))
-              .sort();
-            const html = `<!doctype html><meta charset="utf-8"><title>${pkg} Examples</title><h1>${pkg} Examples</h1><ul>${files
-              .map((f) => `<li><a href="/packages/${pkg}/example/${f}">${f}</a></li>`)
+
+            walk(pkgsDir);
+            exampleLinks.sort((a, b) => a.label.localeCompare(b.label));
+            const html = `<!doctype html><meta charset="utf-8"><title>Examples</title><h1>Examples</h1><ul>${exampleLinks
+              .map((l) => `<li><a href="${l.href}">${l.label}</a></li>`)
               .join('')}</ul>`;
             res.setHeader('Content-Type', 'text/html');
             res.end(html);

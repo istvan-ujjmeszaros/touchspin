@@ -5,11 +5,11 @@
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "style": "dist/touchspin-vanilla.css",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "import": "./src/index.ts",
       "require": "./dist/index.cjs"
     },
@@ -42,6 +42,7 @@
     }
   },
   "devDependencies": {
+    "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
   },

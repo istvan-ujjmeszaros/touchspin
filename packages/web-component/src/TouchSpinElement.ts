@@ -125,7 +125,7 @@ export class TouchSpinElement extends HTMLElement {
     this._applyInputAttributes();
 
     // Initialize TouchSpin
-    this._touchspin = TouchSpin(this._input, settings as unknown as import('../../core/src/index').TouchSpinCoreOptions);
+    this._touchspin = TouchSpin(this._input, settings as unknown as import('@touchspin/core').TouchSpinCoreOptions);
 
     // Bridge events
     if (this._touchspin) {

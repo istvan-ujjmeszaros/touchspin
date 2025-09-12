@@ -54,7 +54,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   buildInputGroup(): HTMLElement {
     // Check if input is already inside an input-group
-    const existingInputGroup = this.input.closest('.input-group');
+    const existingInputGroup = this.input.closest('.input-group') as HTMLElement | null;
 
     if (existingInputGroup) {
       return this.buildAdvancedInputGroup(existingInputGroup);
@@ -92,7 +92,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const wrapper = tempDiv.firstChild as HTMLElement;
 
     // Insert wrapper and move input into it
-    this.input.parentElement.insertBefore(wrapper, this.input);
+    if (this.input.parentElement && wrapper) {
+      this.input.parentElement.insertBefore(wrapper, this.input);
+    }
 
     // Find the position to insert input
     if (this.settings.verticalbuttons) {

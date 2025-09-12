@@ -1,10 +1,10 @@
 // Standalone Tailwind build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../../core/src/index';
+import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
 import TailwindRenderer from './TailwindRenderer';
 
 // Create a wrapper that automatically sets the Tailwind renderer
-function TouchSpin(element, options = {}) {
-  if (!(element instanceof Element)) {
+function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}): ReturnType<typeof CoreTouchSpin> {
+  if (!(element instanceof HTMLInputElement)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }
 
@@ -17,7 +17,7 @@ function TouchSpin(element, options = {}) {
 
 // Expose additional API functions
 TouchSpin.get = getTouchSpin;
-TouchSpin.destroy = (element) => {
+TouchSpin.destroy = (element: HTMLInputElement) => {
   const instance = getTouchSpin(element);
   if (instance && instance.destroy) {
     instance.destroy();

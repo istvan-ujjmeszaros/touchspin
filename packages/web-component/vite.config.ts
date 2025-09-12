@@ -4,7 +4,7 @@ import path from 'node:path';
 
 export default defineConfig({
   plugins: [
-    dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true }),
+    dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true, skipDiagnostics: true }),
   ],
   server: {
     open: '/example/index.html',
@@ -23,6 +23,13 @@ export default defineConfig({
     minify: 'esbuild',
     rollupOptions: {
       external: ['@touchspin/core', '@touchspin/vanilla-renderer'],
+      output: {
+        exports: 'named',
+        globals: {
+          '@touchspin/core': 'TouchSpinCore',
+          '@touchspin/vanilla-renderer': 'TouchSpinVanillaRenderer',
+        },
+      },
     },
     outDir: 'dist',
     emptyOutDir: true,

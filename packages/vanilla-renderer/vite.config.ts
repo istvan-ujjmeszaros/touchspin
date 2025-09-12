@@ -24,6 +24,11 @@ export default defineConfig({
     rollupOptions: {
       external: ['@touchspin/core', '@touchspin/core/renderer'],
       output: {
+        exports: 'named',
+        globals: {
+          '@touchspin/core': 'TouchSpinCore',
+          '@touchspin/core/renderer': 'TouchSpinCoreRenderer',
+        },
         // Keep CSS filename stable when imported in library entry
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {

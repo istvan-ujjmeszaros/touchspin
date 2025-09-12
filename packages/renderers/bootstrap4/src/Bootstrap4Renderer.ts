@@ -6,6 +6,10 @@
 import { AbstractRenderer } from '@touchspin/core/renderer';
 
 class Bootstrap4Renderer extends AbstractRenderer {
+  private prefixEl: HTMLElement | null = null;
+  private postfixEl: HTMLElement | null = null;
+  private _formControlAdded?: boolean;
+  declare wrapper: HTMLElement | null;
 
   init() {
     // Initialize internal element references
@@ -38,7 +42,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.core.observeSetting('focusablebuttons', (newValue) => this.updateButtonFocusability(newValue));
   }
 
-  teardown() {
+  teardown(): void {
     // Remove form-control class only if we added it
     if (this._formControlAdded) {
       this.input.classList.remove('form-control');
@@ -49,9 +53,9 @@ class Bootstrap4Renderer extends AbstractRenderer {
     super.teardown();
   }
 
-  buildInputGroup() {
+  buildInputGroup(): HTMLElement {
     // Check if input is already inside an input-group
-    const existingInputGroup = this.input.closest('.input-group');
+    const existingInputGroup = this.input.closest('.input-group') as HTMLElement | null;
 
     if (existingInputGroup) {
       return this.buildAdvancedInputGroup(existingInputGroup);
@@ -60,7 +64,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  buildBasicInputGroup() {
+  buildBasicInputGroup(): HTMLElement {
     const inputGroupSize = this._detectInputGroupSize();
 
     let html;
@@ -94,38 +98,40 @@ class Bootstrap4Renderer extends AbstractRenderer {
     // Create wrapper and wrap the input
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html.trim();
-    const wrapper = tempDiv.firstChild;
+    const wrapper = tempDiv.firstChild as HTMLElement | null;
 
     // Insert wrapper and move input into it
-    this.input.parentElement.insertBefore(wrapper, this.input);
+    if (this.input.parentElement && wrapper) {
+      this.input.parentElement.insertBefore(wrapper, this.input);
+    }
 
     // Find the position to insert input
     if (this.settings.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
-      const prefixWrapper = wrapper.querySelector('[data-touchspin-injected="prefix"]');
-      const postfixWrapper = wrapper.querySelector('[data-touchspin-injected="postfix"]');
+      const prefixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
+      const postfixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
       
       if (prefixWrapper) {
         // Insert after prefix
-        wrapper.insertBefore(this.input, prefixWrapper.nextSibling);
+        if (wrapper) (wrapper as HTMLElement).insertBefore(this.input, (prefixWrapper as HTMLElement).nextSibling);
       } else if (postfixWrapper) {
         // No prefix, insert before postfix
-        wrapper.insertBefore(this.input, postfixWrapper);
+        if (wrapper) (wrapper as HTMLElement).insertBefore(this.input, postfixWrapper as Node);
       } else {
         // No prefix or postfix, insert before vertical wrapper
-        const verticalWrapper = wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
-        wrapper.insertBefore(this.input, verticalWrapper);
+        const verticalWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="vertical-wrapper"]');
+        if (wrapper && verticalWrapper) (wrapper as HTMLElement).insertBefore(this.input, verticalWrapper);
       }
     } else {
       // For horizontal buttons: input goes between prepend and append wrappers
-      const appendWrapper = wrapper.querySelector('[data-touchspin-injected="append-wrapper"]');
-      wrapper.insertBefore(this.input, appendWrapper);
+      const appendWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="append-wrapper"]');
+      if (wrapper && appendWrapper) (wrapper as HTMLElement).insertBefore(this.input, appendWrapper);
     }
 
-    return wrapper;
+    return (wrapper as HTMLElement);
   }
 
-  buildAdvancedInputGroup(existingInputGroup) {
+  buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
     
@@ -161,40 +167,40 @@ class Bootstrap4Renderer extends AbstractRenderer {
     tempDiv.innerHTML = elementsHtml;
 
     // Declare element references at function scope
-    let prefixEl;
-    let postfixEl;
+    let prefixEl: HTMLElement | null;
+    let postfixEl: HTMLElement | null;
 
     if (this.settings.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
-      prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
+      prefixEl = tempDiv.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
       if (prefixEl) {
         existingInputGroup.insertBefore(prefixEl, this.input);
       }
 
-      postfixEl = tempDiv.querySelector('[data-touchspin-injected="postfix"]');
+      postfixEl = tempDiv.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
       if (postfixEl) {
         existingInputGroup.insertBefore(postfixEl, this.input.nextSibling);
       }
 
-      const verticalButtonWrapper = tempDiv.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+      const verticalButtonWrapper = tempDiv.querySelector<HTMLElement>('[data-touchspin-injected="vertical-wrapper"]');
       if (verticalButtonWrapper) {
         existingInputGroup.insertBefore(verticalButtonWrapper, postfixEl ? postfixEl.nextSibling : this.input.nextSibling);
       }
     } else {
       // For horizontal buttons: prepend wrapper -> input -> append wrapper
-      const prependWrapper = tempDiv.querySelector('[data-touchspin-injected="prepend-wrapper"]');
+      const prependWrapper = tempDiv.querySelector<HTMLElement>('[data-touchspin-injected="prepend-wrapper"]');
       if (prependWrapper) {
         existingInputGroup.insertBefore(prependWrapper, this.input);
       }
 
-      const appendWrapper = tempDiv.querySelector('[data-touchspin-injected="append-wrapper"]');
+      const appendWrapper = tempDiv.querySelector<HTMLElement>('[data-touchspin-injected="append-wrapper"]');
       if (appendWrapper) {
         existingInputGroup.insertBefore(appendWrapper, this.input.nextSibling);
       }
 
       // Store references to prefix/postfix elements within their wrappers
-      prefixEl = prependWrapper ? prependWrapper.querySelector('[data-touchspin-injected="prefix"]') : null;
-      postfixEl = appendWrapper ? appendWrapper.querySelector('[data-touchspin-injected="postfix"]') : null;
+      prefixEl = prependWrapper ? prependWrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]') : null;
+      postfixEl = appendWrapper ? appendWrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]') : null;
     }
 
     // Store internal references for advanced mode too
@@ -204,7 +210,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     return existingInputGroup;
   }
 
-  _detectInputGroupSize() {
+  _detectInputGroupSize(): string {
     const classList = this.input.className;
     if (classList.includes('form-control-sm')) {
       return 'input-group-sm';
@@ -214,22 +220,23 @@ class Bootstrap4Renderer extends AbstractRenderer {
     return '';
   }
 
-  buildAndAttachDOM() {
+  buildAndAttachDOM(): void {
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
 
     // 2. Find created buttons and store prefix/postfix references
-    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    if (!this.wrapper) return;
+    const upButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="up"]');
+    const downButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="down"]');
+    this.prefixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
+    this.postfixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
 
     // 3. Tell core to attach its event handlers
     this.core.attachUpEvents(upButton);
     this.core.attachDownEvents(downButton);
   }
 
-  updatePrefix(value) {
+  updatePrefix(value: string | null | undefined): void {
     // Use internal reference
     const prefixEl = this.prefixEl;
 
@@ -250,7 +257,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  updatePostfix(value) {
+  updatePostfix(value: string | null | undefined): void {
     // Use internal reference
     const postfixEl = this.postfixEl;
 
@@ -271,14 +278,15 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  updateButtonClass(type, className) {
-    const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+  updateButtonClass(type: 'up' | 'down', className?: string | null): void {
+    if (!this.wrapper) return;
+    const button = this.wrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.className = `${className || 'btn btn-outline-secondary'} bootstrap-touchspin-${type}`;
     }
   }
 
-  buildVerticalButtons() {
+  buildVerticalButtons(): string {
     // Bootstrap 4: Return complete structure with input-group-text wrapper (matches original)
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
@@ -290,10 +298,11 @@ class Bootstrap4Renderer extends AbstractRenderer {
     `;
   }
 
-  updateVerticalButtonClass(type, className) {
-    const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+  updateVerticalButtonClass(type: 'up' | 'down', className?: string | null): void {
+    if (!this.wrapper) return;
+    const verticalWrapper = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="vertical-wrapper"]');
     if (verticalWrapper) {
-      const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+      const button = verticalWrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
       if (button) {
         // Update the vertical-specific class while preserving base classes
         const baseClasses = this.settings.buttonup_class || this.settings.buttondown_class || 'btn btn-outline-secondary';
@@ -302,24 +311,26 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  updateVerticalButtonText(type, text) {
-    const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+  updateVerticalButtonText(type: 'up' | 'down', text?: string | null): void {
+    if (!this.wrapper) return;
+    const verticalWrapper = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="vertical-wrapper"]');
     if (verticalWrapper) {
-      const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+      const button = verticalWrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
       if (button) {
         button.textContent = text || (type === 'up' ? '+' : '−');
       }
     }
   }
 
-  updateButtonText(type, text) {
-    const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
+  updateButtonText(type: 'up' | 'down', text?: string | null): void {
+    if (!this.wrapper) return;
+    const button = this.wrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.textContent = text || (type === 'up' ? '+' : '−');
     }
   }
 
-  updatePrefixClasses() {
+  updatePrefixClasses(): void {
     const prefixEl = this.prefixEl;
     if (prefixEl) {
       // prefixEl is now the span element itself
@@ -327,7 +338,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  updatePostfixClasses() {
+  updatePostfixClasses(): void {
     const postfixEl = this.postfixEl;
     if (postfixEl) {
       // postfixEl is now the span element itself
@@ -335,12 +346,12 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  handleVerticalButtonsChange(newValue) {
+  handleVerticalButtonsChange(newValue: boolean): void {
     // Remove old DOM and rebuild with new layout
     this.rebuildDOM();
   }
 
-  rebuildDOM() {
+  rebuildDOM(): void {
     // Remove old DOM and rebuild with current settings
     this.removeInjectedElements();
     // Reset wrapper reference since it was removed
@@ -350,9 +361,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.buildAndAttachDOM();
   }
 
-  updateButtonFocusability(newValue) {
+  updateButtonFocusability(newValue: boolean): void {
     // Find all buttons and update their tabindex
-    const buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
+    if (!this.wrapper) return;
+    const buttons = this.wrapper.querySelectorAll<HTMLElement>('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
     const tabindex = newValue ? '0' : '-1';
     buttons.forEach(button => {
       button.setAttribute('tabindex', tabindex);

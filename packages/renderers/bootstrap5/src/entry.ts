@@ -1,10 +1,10 @@
 // Standalone Bootstrap 5 build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '../../../core/src/index';
+import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
 import Bootstrap5Renderer from './Bootstrap5Renderer';
 
 // Create a wrapper that automatically sets the Bootstrap 5 renderer
-function TouchSpin(element: HTMLElement, options: Record<string, unknown> = {}) {
-  if (!(element instanceof Element)) {
+function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}) {
+  if (!(element instanceof HTMLInputElement)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }
 
@@ -17,7 +17,7 @@ function TouchSpin(element: HTMLElement, options: Record<string, unknown> = {}) 
 
 // Expose additional API functions
 TouchSpin.get = getTouchSpin;
-TouchSpin.destroy = (element) => {
+TouchSpin.destroy = (element: HTMLInputElement) => {
   const instance = getTouchSpin(element);
   if (instance && instance.destroy) {
     instance.destroy();

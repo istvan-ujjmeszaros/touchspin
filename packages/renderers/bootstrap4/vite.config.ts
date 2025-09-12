@@ -28,6 +28,11 @@ export default defineConfig({
     rollupOptions: {
       external: ['@touchspin/core', '@touchspin/core/renderer'],
       output: {
+        exports: 'named',
+        globals: {
+          '@touchspin/core': 'TouchSpinCore',
+          '@touchspin/core/renderer': 'TouchSpinCoreRenderer',
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith('.css')) {
             return 'touchspin-bootstrap4.css';

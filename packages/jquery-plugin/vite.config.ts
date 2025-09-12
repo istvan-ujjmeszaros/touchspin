@@ -16,7 +16,9 @@ export default defineConfig({
       output: {
         globals: {
           jquery: 'jQuery',
+          '@touchspin/core': 'TouchSpinCore',
         },
+        exports: 'named',
       },
     },
     outDir: 'dist',

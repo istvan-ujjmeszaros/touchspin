@@ -7,15 +7,15 @@
   "sideEffects": false,
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "import": "./src/index.ts",
       "require": "./dist/index.cjs"
     },
     "./renderer": {
-      "types": "./src/renderer.ts",
+      "types": "./dist/renderer.d.ts",
       "import": "./src/renderer.ts",
       "require": "./dist/renderer.cjs"
     }
@@ -45,6 +45,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
   }

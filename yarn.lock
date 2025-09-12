@@ -1163,6 +1163,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1173,6 +1174,7 @@ __metadata:
   resolution: "@touchspin/jquery-plugin@workspace:packages/jquery-plugin"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1183,6 +1185,7 @@ __metadata:
   resolution: "@touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1193,6 +1196,7 @@ __metadata:
   resolution: "@touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1203,6 +1207,7 @@ __metadata:
   resolution: "@touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1213,6 +1218,7 @@ __metadata:
   resolution: "@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1223,6 +1229,7 @@ __metadata:
   resolution: "@touchspin/vanilla-renderer@workspace:packages/vanilla-renderer"
   dependencies:
     "@touchspin/core": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
@@ -1234,6 +1241,7 @@ __metadata:
   dependencies:
     "@touchspin/core": "workspace:*"
     "@touchspin/vanilla-renderer": "workspace:*"
+    typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown

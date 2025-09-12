@@ -77,8 +77,8 @@ export function parseAttributeValue(value: string | null, settingName: string): 
 export function getSettingsFromAttributes(element: HTMLElement): Record<string, unknown> {
   const settings: Record<string, unknown> = {};
 
-  // Get all attributes
-  for (const attr of element.attributes) {
+  // Get all attributes (ensure iterable in TS)
+  for (const attr of Array.from(element.attributes)) {
     if (attr.name === 'is' || attr.name.startsWith('data-testid')) {
       continue; // Skip special attributes
     }
