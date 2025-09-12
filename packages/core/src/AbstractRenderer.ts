@@ -14,6 +14,8 @@
  *   }
  * }
  */
+import type { TouchSpinCoreOptions } from './index';
+
 class AbstractRenderer {
   /**
    * @param {HTMLInputElement} inputEl - The input element to render around
@@ -21,19 +23,18 @@ class AbstractRenderer {
    * @param {Object} core - TouchSpin core instance for event delegation
    */
   input: HTMLInputElement;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  settings: Readonly<Record<string, unknown>>;
+  settings: Readonly<TouchSpinCoreOptions>;
   // Core instance provides specific methods used by renderers
   // Using a structural type to avoid circular import
   core: {
     attachUpEvents: (el: HTMLElement | null) => void;
     attachDownEvents: (el: HTMLElement | null) => void;
-    observeSetting: (key: string, cb: (value: unknown) => void) => () => void;
+    observeSetting: <K extends keyof TouchSpinCoreOptions>(key: K, cb: (value: NonNullable<TouchSpinCoreOptions[K]>) => void) => () => void;
   };
   wrapper: HTMLElement | null;
   wrapperType: string;
 
-  constructor(inputEl: HTMLInputElement, settings: Readonly<Record<string, unknown>>, core: { attachUpEvents: (el: HTMLElement | null) => void; attachDownEvents: (el: HTMLElement | null) => void; observeSetting: (key: string, cb: (value: unknown) => void) => () => void; }) {
+  constructor(inputEl: HTMLInputElement, settings: Readonly<TouchSpinCoreOptions>, core: { attachUpEvents: (el: HTMLElement | null) => void; attachDownEvents: (el: HTMLElement | null) => void; observeSetting: <K extends keyof TouchSpinCoreOptions>(key: K, cb: (value: NonNullable<TouchSpinCoreOptions[K]>) => void) => () => void; }) {
     // New renderer architecture
     this.input = inputEl;
     this.settings = settings; // Read-only access to settings
