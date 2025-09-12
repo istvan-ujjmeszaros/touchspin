@@ -725,6 +725,20 @@ npm run coverage:open
 
 ### Testing
 
+You can run tests (Playwright) and the dev examples server together while iterating:
+
+- `yarn test` — run Playwright tests once (non‑watch)
+- `yarn test:watch` — open the Playwright UI (watch mode)
+- `yarn test:dev` — run both the examples dev server and tests in watch mode
+- `yarn dev:test` — alias for `yarn test:dev`
+
+The combined mode uses `concurrently` to run:
+
+```
+yarn dev   # Vite on port 8866, opens /examples/
+yarn test:watch  # Playwright UI
+```
+
 Test suite using Playwright with automated coverage reporting:
 
 - **Real browser testing** with Chromium 
