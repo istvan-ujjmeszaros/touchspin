@@ -7,6 +7,7 @@ export default defineConfig({
     dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true, skipDiagnostics: true }),
   ],
   server: {
+    open: '/example/index.html',
     port: 8866,
     strictPort: true,
     fs: { allow: [path.resolve(__dirname, '../../../..')] }
