@@ -28,6 +28,7 @@
   "docs": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/master.zip",
   "devDependencies": {
+    "@changesets/cli": "^2.27.7",
     "@eslint/js": "^9.33.0",
     "@playwright/test": "^1.54.2",
     "@types/jquery": "^3.5.30",
@@ -42,7 +43,7 @@
     "sass": "^1.77.8",
     "typescript": "^5.7.2",
     "vite": "^7.0.0",
-    "@changesets/cli": "^2.27.7"
+    "vite-plugin-dts": "^4.2.3"
   },
   "scripts": {
     "dev": "npm run examples:gen && vite --port 8866 --strictPort",
@@ -60,14 +61,20 @@
     "test": "playwright test --project=chromium --reporter=list",
     "test:headed": "playwright test --project=chromium --headed",
     "test:ui": "playwright test --project=chromium --ui",
-    "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed"
+    "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed",
+    "dev:bootstrap3": "yarn workspace @touchspin/renderer-bootstrap3 dev",
+    "dev:bootstrap4": "yarn workspace @touchspin/renderer-bootstrap4 dev",
+    "dev:bootstrap5": "yarn workspace @touchspin/renderer-bootstrap5 dev",
+    "dev:tailwind": "yarn workspace @touchspin/renderer-tailwind dev",
+    "dev:vanilla": "yarn workspace @touchspin/vanilla-renderer dev",
+    "dev:web-component": "yarn workspace @touchspin/web-component dev"
   },
   "workspaces": [
     "packages/*",
     "packages/renderers/*"
   ],
-  "packageManager": "npm@10.9.3",
   "dependencies": {
     "ci": "^2.3.0"
-  }
+  },
+  "packageManager": "yarn@4.9.4"
 }

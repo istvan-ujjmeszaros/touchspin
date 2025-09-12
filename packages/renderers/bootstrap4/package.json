@@ -1,19 +1,46 @@
 {
   "name": "@touchspin/renderer-bootstrap4",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "Bootstrap 4 renderer for TouchSpin",
   "license": "MIT",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "src/index.ts",
+  "style": "dist/touchspin-bootstrap4.css",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    },
+    "./css": "./dist/touchspin-bootstrap4.css"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "scripts": {
-    "dev": "vite --port 8866 --strictPort --open packages/renderers/bootstrap4/example/index.html",
+    "dev": "vite dev --port 8866",
     "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map --watch"
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"
+  },
+  "publishConfig": {
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./css": "./dist/touchspin-bootstrap4.css"
+    }
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   }
 }

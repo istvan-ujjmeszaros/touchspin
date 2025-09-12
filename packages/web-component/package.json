@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/web-component",
-  "version": "4.8.0",
+  "version": "1.0.0",
   "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -14,14 +14,13 @@
     }
   },
   "files": [
-    "src/",
     "dist/",
     "README.md"
   ],
   "scripts": {
-    "dev": "vite --port 8866 --strictPort --open packages/web-component/example/index.html",
+    "dev": "vite dev --port 8866",
     "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "touchspin",
@@ -36,6 +35,19 @@
   "dependencies": {
     "@touchspin/core": "workspace:*",
     "@touchspin/vanilla-renderer": "workspace:*"
+  },
+  "publishConfig": {
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 import path from 'node:path';
 
 export default defineConfig({
+  plugins: [
+    dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true, skipDiagnostics: true }),
+  ],
   server: {
     port: 8866,
     strictPort: true,
@@ -17,7 +21,7 @@ export default defineConfig({
     sourcemap: true,
     minify: 'esbuild',
     rollupOptions: {
-      external: ['@touchspin/core'],
+      external: ['@touchspin/core', '@touchspin/core/renderer'],
       output: {
         // Keep CSS filename stable when imported in library entry
         assetFileNames: (assetInfo) => {

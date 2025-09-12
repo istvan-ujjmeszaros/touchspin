@@ -23,10 +23,26 @@
     "LICENSE"
   ],
   "scripts": {
-    "dev": "vite --port 8866 --strictPort --open packages/vanilla-renderer/example/index.html",
-    "build": "vite build && mkdir -p dist && cp src/themes/vanilla.css dist/touchspin-vanilla.css",
+    "dev": "vite dev --port 8866",
+    "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "watch:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --source-map --watch",
     "clean": "rm -rf dist"
+  },
+  "publishConfig": {
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./css": "./dist/touchspin-vanilla.css",
+      "./themes/vanilla": "./src/themes/vanilla.css"
+    }
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   },
   "keywords": [
     "touchspin",

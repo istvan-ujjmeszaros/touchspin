@@ -1,7 +1,6 @@
 {
   "name": "@touchspin/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "Core logic for TouchSpin (framework-agnostic)",
   "license": "MIT",
@@ -21,9 +20,31 @@
       "require": "./dist/renderer.cjs"
     }
   },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./renderer": {
+        "types": "./dist/renderer.d.ts",
+        "import": "./dist/renderer.mjs",
+        "require": "./dist/renderer.cjs"
+      }
+    }
+  },
   "scripts": {
-    "dev": "vite --port 8866 --strictPort",
+    "dev": "vite dev --port 8866",
     "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   }
 }

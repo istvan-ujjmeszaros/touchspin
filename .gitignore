@@ -18,6 +18,11 @@ reports/
 # Build outputs
 dist/
 
+# Obsolete planning/agent docs (ignored for local dev)
+**/*AGENT*.md
+**/*PLAN*.md
+**/TODO*.md
+
 # Playwright browsers (if locally installed)
 .playwright/
 

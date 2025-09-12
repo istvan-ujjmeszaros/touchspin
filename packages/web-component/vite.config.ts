@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 import path from 'node:path';
 
 export default defineConfig({
+  plugins: [
+    dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true }),
+  ],
   server: {
     port: 8866,
     strictPort: true,

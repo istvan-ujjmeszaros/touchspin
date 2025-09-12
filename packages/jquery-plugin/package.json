@@ -1,25 +1,43 @@
 {
   "name": "@touchspin/jquery-plugin",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "jQuery wrapper for TouchSpin core (delegates to core, preserves API/events)",
   "license": "MIT",
   "sideEffects": false,
-  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "types": "./types/index.d.ts",
+      "import": "./src/index.ts",
       "require": "./dist/index.cjs"
     }
   },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "scripts": {
-    "dev": "vite --port 8866 --strictPort",
-    "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "dev": "vite dev --port 8866",
+    "build": "vite build && mkdir -p dist && cp -f types/index.d.ts dist/index.d.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"
+  },
+  "publishConfig": {
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
   }
 }

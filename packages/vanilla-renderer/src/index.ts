@@ -4,3 +4,5 @@
  */
 export { default as VanillaRenderer } from './VanillaRenderer';
 export { default } from './VanillaRenderer';
+// Emit CSS for CDN/static usage
+import './themes/vanilla.css';
