@@ -1,5 +1,52 @@
 <!doctype html>
-  <meta charset="utf-8">
-  <title>vanilla-renderer Examples</title>
-  <h1>vanilla-renderer Examples</h1>
-  <ul><li><a href="./index.html">index.html</a></li></ul>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Vanilla Renderer Demo</title>
+
+  <!-- Vanilla renderer styles (CSS imported for HMR in dev) -->
+  <script type="module">import '../src/themes/vanilla.css';</script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; }
+    .example { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 20px; }
+    .spinner { margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <h1>TouchSpin Vanilla Renderer Demo</h1>
+
+  <div class="example">
+    <h3>Basic Usage</h3>
+    <div class="spinner">
+      <input type="number" id="basic" min="0" max="100" value="50" step="1">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Prefix & Postfix</h3>
+    <div class="spinner">
+      <input type="number" id="currency" min="0" max="1000" value="25" step="0.5" data-bts-prefix="$" data-bts-postfix=".00">
+    </div>
+  </div>
+
+  <div class="example">
+    <h3>Vertical Buttons</h3>
+    <div class="spinner">
+      <input type="number" id="vertical" min="0" max="100" value="75" step="5" data-bts-vertical-buttons="true">
+    </div>
+  </div>
+
+  <script type="module">
+    import { TouchSpin } from '@touchspin/core';
+    import VanillaRenderer from '@touchspin/vanilla-renderer';
+
+    TouchSpin(document.getElementById('basic'), { renderer: VanillaRenderer });
+    TouchSpin(document.getElementById('currency'), { renderer: VanillaRenderer });
+    TouchSpin(document.getElementById('vertical'), { renderer: VanillaRenderer });
+
+    console.log('✅ Vanilla renderer demo loaded');
+  </script>
+</body>
+</html>
