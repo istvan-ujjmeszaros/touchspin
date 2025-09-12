@@ -9,6 +9,7 @@ It builds on the current monorepo state (Yarn 4 PnP, Vite builds per package, SC
   (`@touchspin/core`, `@touchspin/vanilla-renderer`, `@touchspin/web-component`, `@touchspin/renderer-*`, `@touchspin/jquery-plugin`).
 * [ ] Add `"prepack": "yarn build"` to each package (or a centralized release pipeline step).
 * [ ] Add `"sideEffects": false` to renderer and vanilla/web-component packages if safe for tree-shaking.
+* [ ] (Optional) Add separate `*.min.js` UMD outputs for CDN parity (current UMD is already minified by esbuild).
 
 ## Testing
 
@@ -40,6 +41,7 @@ It builds on the current monorepo state (Yarn 4 PnP, Vite builds per package, SC
   * `"bugs": { "url": "https://github.com/<org>/bootstrap-touchspin/issues" }`
   * `"homepage": "https://github.com/<org>/bootstrap-touchspin/tree/main/packages/<name>#readme"`
   * `"keywords"` and `"author"` consistent across packages.
+* [ ] Add `"peerDependencies": { "jquery": ">=3" }` to `@touchspin/jquery-plugin` and document this requirement.
 
 ## Release Workflow
 
