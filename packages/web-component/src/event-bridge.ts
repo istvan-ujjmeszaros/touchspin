@@ -25,11 +25,15 @@ export const EVENT_NAME_MAP: Record<(typeof CORE_EVENTS)[keyof typeof CORE_EVENT
  * @param {HTMLElement} element - Custom element to dispatch events from
  * @returns {Function[]} - Array of unsubscribe functions
  */
-export function bridgeEvents(touchspinInstance: { on: (evt: string, cb: () => void) => () => void; getValue: () => number }, element: HTMLElement): Array<() => void> {
+export function bridgeEvents(
+  touchspinInstance: { on: (evt: (typeof CORE_EVENTS)[keyof typeof CORE_EVENTS], cb: () => void) => () => void; getValue: () => number },
+  element: HTMLElement
+): Array<() => void> {
   const unsubscribers: Array<() => void> = [];
 
   // Bridge all core events
-  for (const [coreEvent, customEventName] of Object.entries(EVENT_NAME_MAP)) {
+  for (const coreEvent of Object.keys(EVENT_NAME_MAP) as Array<keyof typeof EVENT_NAME_MAP>) {
+    const customEventName = EVENT_NAME_MAP[coreEvent];
     const unsubscribe = touchspinInstance.on(coreEvent, () => {
       const customEvent = new CustomEvent(customEventName, {
         detail: {

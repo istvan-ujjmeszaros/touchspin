@@ -1,11 +1,13 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "@playwright/test"],
+    "types": ["node", "@playwright/test", "jquery"],
     "baseUrl": "."
   },
   "include": [
-    "packages/**/*.ts"
+    "packages/core/**/*.ts",
+    "packages/vanilla-renderer/**/*.ts",
+    "packages/web-component/**/*.ts"
   ],
   "exclude": [
     "node_modules",

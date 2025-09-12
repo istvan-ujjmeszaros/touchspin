@@ -63,7 +63,7 @@ export class TouchSpinElement extends HTMLElement {
     // Handle special attributes
     if (name === 'value') {
       if (newValue !== oldValue) {
-        this._touchspin.setValue(newValue);
+        this._touchspin.setValue(newValue ?? '');
       }
       return;
     }
@@ -84,7 +84,7 @@ export class TouchSpinElement extends HTMLElement {
 
     // Handle renderer changes
     if (name === 'renderer') {
-      this._handleRendererChange(newValue);
+      this._handleRendererChange(newValue ?? '');
       return;
     }
 
@@ -125,17 +125,19 @@ export class TouchSpinElement extends HTMLElement {
     this._applyInputAttributes();
 
     // Initialize TouchSpin
-    this._touchspin = TouchSpin(this._input, settings);
+    this._touchspin = TouchSpin(this._input, settings as unknown as import('../../core/src/index').TouchSpinCoreOptions);
 
     // Bridge events
-    this._eventUnsubscribers = bridgeEvents(this._touchspin, this);
+    if (this._touchspin) {
+      this._eventUnsubscribers = bridgeEvents(this._touchspin, this);
+    }
   }
 
   /**
    * Apply HTML attributes to input element
    * @private
    */
-  _applyInputAttributes() {
+  _applyInputAttributes(): void {
     if (!this._input) return;
 
     // Apply value
@@ -159,7 +161,7 @@ export class TouchSpinElement extends HTMLElement {
     for (const attr of nativeAttributes) {
       const value = this.getAttribute(attr);
       if (value !== null) {
-        this._input.setAttribute(attr, value);
+        this._input.setAttribute(attr, String(value));
       }
     }
   }
@@ -169,7 +171,7 @@ export class TouchSpinElement extends HTMLElement {
    * @param {string} rendererName - Name of renderer to switch to
    * @private
    */
-  _handleRendererChange(rendererName) {
+  _handleRendererChange(rendererName: string): void {
     if (!rendererName || !this._touchspin) return;
 
     const renderer = this._resolveRenderer(rendererName);
@@ -186,7 +188,7 @@ export class TouchSpinElement extends HTMLElement {
    * @returns {Function|null} - Renderer class
    * @private
    */
-  _resolveRenderer(name) {
+  _resolveRenderer(name: string) {
     // This would need to be extended to support dynamic renderer loading
     // For now, return VanillaRenderer as fallback
     if (name === 'VanillaRenderer' || name === 'vanilla') {
@@ -223,55 +225,55 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Get/set current value
    */
-  get value() {
+  get value(): string | number {
     return this._touchspin ? this._touchspin.getValue() : (this._input ? this._input.value : '');
   }
 
-  set value(val) {
-    this.setAttribute('value', val);
+  set value(val: string | number) {
+    this.setAttribute('value', String(val));
   }
 
   /**
    * Get/set minimum value
    */
-  get min() {
+  get min(): string | null {
     return this.getAttribute('min');
   }
 
-  set min(val) {
-    this.setAttribute('min', val);
+  set min(val: string | number | null) {
+    if (val === null) this.removeAttribute('min'); else this.setAttribute('min', String(val));
   }
 
   /**
    * Get/set maximum value
    */
-  get max() {
+  get max(): string | null {
     return this.getAttribute('max');
   }
 
-  set max(val) {
-    this.setAttribute('max', val);
+  set max(val: string | number | null) {
+    if (val === null) this.removeAttribute('max'); else this.setAttribute('max', String(val));
   }
 
   /**
    * Get/set step value
    */
-  get step() {
+  get step(): string | null {
     return this.getAttribute('step');
   }
 
-  set step(val) {
-    this.setAttribute('step', val);
+  set step(val: string | number | null) {
+    if (val === null) this.removeAttribute('step'); else this.setAttribute('step', String(val));
   }
 
   /**
    * Get/set disabled state
    */
-  get disabled() {
+  get disabled(): boolean {
     return this.hasAttribute('disabled');
   }
 
-  set disabled(val) {
+  set disabled(val: boolean) {
     if (val) {
       this.setAttribute('disabled', '');
     } else {
@@ -282,11 +284,11 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Get/set readonly state
    */
-  get readonly() {
+  get readonly(): boolean {
     return this.hasAttribute('readonly');
   }
 
-  set readonly(val) {
+  set readonly(val: boolean) {
     if (val) {
       this.setAttribute('readonly', '');
     } else {
@@ -299,7 +301,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Increment value once
    */
-  upOnce() {
+  upOnce(): void {
     if (this._touchspin && this._touchspin.upOnce) {
       this._touchspin.upOnce();
     }
@@ -308,7 +310,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Decrement value once
    */
-  downOnce() {
+  downOnce(): void {
     if (this._touchspin && this._touchspin.downOnce) {
       this._touchspin.downOnce();
     }
@@ -317,7 +319,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Start spinning up
    */
-  startUpSpin() {
+  startUpSpin(): void {
     if (this._touchspin && this._touchspin.startUpSpin) {
       this._touchspin.startUpSpin();
     }
@@ -326,7 +328,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Start spinning down
    */
-  startDownSpin() {
+  startDownSpin(): void {
     if (this._touchspin && this._touchspin.startDownSpin) {
       this._touchspin.startDownSpin();
     }
@@ -335,7 +337,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Stop spinning
    */
-  stopSpin() {
+  stopSpin(): void {
     if (this._touchspin && this._touchspin.stopSpin) {
       this._touchspin.stopSpin();
     }
@@ -345,7 +347,7 @@ export class TouchSpinElement extends HTMLElement {
    * Update TouchSpin settings
    * @param {Object} options - Settings to update
    */
-  updateSettings(options) {
+  updateSettings(options: Record<string, unknown>): void {
     if (this._touchspin && this._touchspin.updateSettings) {
       this._touchspin.updateSettings(options);
     }
@@ -362,7 +364,7 @@ export class TouchSpinElement extends HTMLElement {
   /**
    * Manually destroy and cleanup
    */
-  destroy() {
+  destroy(): void {
     this._cleanup();
   }
 }

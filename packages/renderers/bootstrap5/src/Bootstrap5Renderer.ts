@@ -222,16 +222,18 @@ class Bootstrap5Renderer extends AbstractRenderer {
   buildAndAttachDOM(): void {
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
+    const wrapper = this.wrapper;
+    if (!wrapper) return;
 
     // 2. Find created buttons and store prefix/postfix references
-    const upButton = this.wrapper!.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-    const downButton = this.wrapper!.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
-    this.prefixEl = this.wrapper!.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper!.querySelector('[data-touchspin-injected="postfix"]');
+    const upButton = wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButton = wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]') as HTMLElement | null;
+    this.postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]') as HTMLElement | null;
 
     // 3. Tell core to attach its event handlers
-    this.core.attachUpEvents(upButton);
-    this.core.attachDownEvents(downButton);
+    this.core.attachUpEvents(upButton instanceof HTMLElement ? upButton : null);
+    this.core.attachDownEvents(downButton instanceof HTMLElement ? downButton : null);
   }
 
   updatePrefix(value: string): void {
@@ -275,6 +277,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   updateButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
+    if (!this.wrapper) return;
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.className = `${className || 'btn btn-outline-secondary'} bootstrap-touchspin-${type}`;
@@ -294,6 +297,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
+    if (!this.wrapper) return;
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (verticalWrapper) {
       const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
@@ -306,6 +310,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   updateVerticalButtonText(type: 'up' | 'down', text?: string): void {
+    if (!this.wrapper) return;
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (verticalWrapper) {
       const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
@@ -316,6 +321,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   updateButtonText(type: 'up' | 'down', text?: string): void {
+    if (!this.wrapper) return;
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.textContent = text || (type === 'up' ? '+' : '−');
@@ -353,6 +359,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   updateButtonFocusability(newValue: boolean): void {
     // Find all buttons and update their tabindex
+    if (!this.wrapper) return;
     const buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
     const tabindex = newValue ? '0' : '-1';
     buttons.forEach(button => {

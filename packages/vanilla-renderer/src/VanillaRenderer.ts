@@ -15,14 +15,18 @@ class VanillaRenderer extends AbstractRenderer {
 
     // Build and inject DOM structure
     this.wrapper = this.buildInputGroup();
+    const wrapper = this.wrapper;
+    if (!wrapper) return;
 
     // Find created elements and store references
-    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButtonEl = wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]') as HTMLElement | null;
+    this.postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]') as HTMLElement | null;
 
     // Attach core event handlers to buttons
+    const upButton = upButtonEl instanceof HTMLElement ? upButtonEl : null;
+    const downButton = downButtonEl instanceof HTMLElement ? downButtonEl : null;
     this.core.attachUpEvents(upButton);
     this.core.attachDownEvents(downButton);
 
@@ -86,7 +90,10 @@ class VanillaRenderer extends AbstractRenderer {
     const wrapper = tempDiv.firstChild as HTMLElement;
 
     // Insert wrapper and move input into it
-    this.input.parentElement.insertBefore(wrapper, this.input);
+    const parent = this.input.parentElement;
+    if (parent) {
+      parent.insertBefore(wrapper, this.input);
+    }
 
     // Position input correctly - after prefix, before postfix
     const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
@@ -117,9 +124,9 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
 
-  hideEmptyPrefixPostfix(wrapper = this.wrapper) {
-    const prefixEl = this.prefixEl || wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    const postfixEl = this.postfixEl || wrapper.querySelector('[data-touchspin-injected="postfix"]');
+  hideEmptyPrefixPostfix(wrapper: HTMLElement | null = this.wrapper) {
+    const prefixEl = this.prefixEl || wrapper?.querySelector('[data-touchspin-injected="prefix"]');
+    const postfixEl = this.postfixEl || wrapper?.querySelector('[data-touchspin-injected="postfix"]');
 
     if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
       prefixEl.style.display = 'none';
@@ -156,6 +163,7 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
   updateButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
+    if (!this.wrapper) return;
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (!button) return;
 
@@ -166,6 +174,7 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
+    if (!this.wrapper) return;
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (!verticalWrapper) return;
 
@@ -179,6 +188,7 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
   updateVerticalButtonText(type: 'up' | 'down', text?: string): void {
+    if (!this.wrapper) return;
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (!verticalWrapper) return;
 
@@ -189,6 +199,7 @@ class VanillaRenderer extends AbstractRenderer {
   }
 
   updateButtonText(type: 'up' | 'down', text?: string): void {
+    if (!this.wrapper) return;
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
       button.textContent = text || (type === 'up' ? '+' : '−');
@@ -227,20 +238,25 @@ class VanillaRenderer extends AbstractRenderer {
   buildAndAttachDOM(): void {
     // Build and inject DOM structure
     this.wrapper = this.buildInputGroup();
+    const wrapper = this.wrapper;
+    if (!wrapper) return;
 
     // Find created elements and store references
-    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = this.wrapper.querySelector('[data-touchspin-injected="prefix"]');
-    this.postfixEl = this.wrapper.querySelector('[data-touchspin-injected="postfix"]');
+    const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButtonEl = wrapper.querySelector('[data-touchspin-injected="down"]');
+    this.prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]') as HTMLElement | null;
+    this.postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]') as HTMLElement | null;
 
     // Attach core event handlers to buttons
+    const upButton = upButtonEl instanceof HTMLElement ? upButtonEl : null;
+    const downButton = downButtonEl instanceof HTMLElement ? downButtonEl : null;
     this.core.attachUpEvents(upButton);
     this.core.attachDownEvents(downButton);
   }
 
   updateButtonFocusability(newValue: boolean): void {
     // Find all buttons and update their tabindex
+    if (!this.wrapper) return;
     const buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
     const tabindex = newValue ? '0' : '-1';
     buttons.forEach(button => {
@@ -254,11 +270,12 @@ class VanillaRenderer extends AbstractRenderer {
    */
   // TODO: refine type
   setTheme(theme: Record<string, string>): void {
-    if (!this.wrapper || !theme) return;
+    const wrapper = this.wrapper;
+    if (!wrapper || !theme) return;
 
     Object.entries(theme).forEach(([key, value]) => {
       const cssProperty = key.startsWith('--') ? key : `--ts-${key}`;
-      this.wrapper.style.setProperty(cssProperty, value);
+      wrapper.style.setProperty(cssProperty, value);
     });
   }
 

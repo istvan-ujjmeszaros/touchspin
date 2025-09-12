@@ -8,7 +8,7 @@
  * @returns {string} - TouchSpin setting name (e.g. 'verticalbuttons')
  */
 export function attributeToSetting(attrName: string): string {
-  const mapping = {
+  const mapping: Record<string, string> = {
     'vertical-buttons': 'verticalbuttons',
     'vertical-up': 'verticalup',
     'vertical-down': 'verticaldown',
@@ -75,7 +75,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
  * @returns {Object} - TouchSpin settings object
  */
 export function getSettingsFromAttributes(element: HTMLElement): Record<string, unknown> {
-  const settings = {};
+  const settings: Record<string, unknown> = {};
 
   // Get all attributes
   for (const attr of element.attributes) {
