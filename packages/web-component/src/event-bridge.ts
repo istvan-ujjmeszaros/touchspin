@@ -3,7 +3,7 @@
  * Converts TouchSpin core events to CustomEvents
  */
 
-import { CORE_EVENTS } from '../../core/src/index';
+import { CORE_EVENTS } from '@touchspin/core';
 
 /**
  * Map core event names to custom event names
@@ -33,7 +33,7 @@ export function bridgeEvents(
 
   // Bridge all core events
   for (const coreEvent of Object.keys(EVENT_NAME_MAP) as Array<keyof typeof EVENT_NAME_MAP>) {
-    const customEventName = EVENT_NAME_MAP[coreEvent];
+    const customEventName = EVENT_NAME_MAP[coreEvent] as string;
     const unsubscribe = touchspinInstance.on(coreEvent, () => {
       const customEvent = new CustomEvent(customEventName, {
         detail: {

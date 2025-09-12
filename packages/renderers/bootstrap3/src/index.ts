@@ -1,5 +1,3 @@
-import type { JQueryStatic } from 'jquery';
-export function createRenderer(_$: JQueryStatic, _settings: unknown, _originalinput: unknown) {
-  throw new Error('Renderer package not wired yet (Phase B4 pending)');
-}
 export function getFrameworkId(): string { return 'bootstrap3'; }
+export { default as Bootstrap3Renderer } from './Bootstrap3Renderer';
+export { default } from './Bootstrap3Renderer';

@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "@playwright/test", "jquery"],
+    "types": ["node", "@playwright/test"],
     "baseUrl": "."
   },
   "include": [
@@ -13,6 +13,8 @@
     "node_modules",
     "dist",
     "reports",
-    "tmp"
+    "tmp",
+    "vite.config.ts",
+    "packages/**/vite.config.ts"
   ]
 }

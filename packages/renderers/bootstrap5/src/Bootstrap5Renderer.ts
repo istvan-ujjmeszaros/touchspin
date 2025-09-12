@@ -2,7 +2,7 @@
  * Bootstrap 5 Renderer - New Architecture
  * Builds Bootstrap 5 UI elements around TouchSpin input
  */
-import AbstractRenderer from '../../../core/src/AbstractRenderer';
+import { AbstractRenderer } from '@touchspin/core/renderer';
 
 class Bootstrap5Renderer extends AbstractRenderer {
   private prefixEl: HTMLElement | null = null;

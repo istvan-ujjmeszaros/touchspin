@@ -463,8 +463,9 @@
 
   <script type="module">
     // Import TouchSpin core and Tailwind renderer
-    import { TouchSpin } from '../../../core/src/index';
-    import TailwindRenderer from '../src/TailwindRenderer';
+    // Dev: public APIs within workspace
+    import { TouchSpin } from '@touchspin/core';
+    import TailwindRenderer from '@touchspin/renderer-tailwind';
 
     // Initialize all TouchSpin instances
     const basicSpinner = TouchSpin(document.getElementById('basic'), { renderer: TailwindRenderer });

@@ -3,7 +3,7 @@
  * Builds Bootstrap 3 UI elements around TouchSpin input
  * Uses input-group-btn and input-group-addon for Bootstrap 3 compatibility
  */
-import AbstractRenderer from '../../../core/src/AbstractRenderer';
+import { AbstractRenderer } from '@touchspin/core/renderer';
 
 class Bootstrap3Renderer extends AbstractRenderer {
 

@@ -448,8 +448,9 @@
 
   <script type="module">
     // Import TouchSpin core and Bootstrap 4 renderer
-    import { TouchSpin } from '../../../core/src/index';
-    import Bootstrap4Renderer from '../src/Bootstrap4Renderer';
+    // Dev: public APIs within workspace
+    import { TouchSpin } from '@touchspin/core';
+    import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
 
     // Initialize all TouchSpin instances
     const basicSpinner = TouchSpin(document.getElementById('basic-spinner'), { renderer: Bootstrap4Renderer });

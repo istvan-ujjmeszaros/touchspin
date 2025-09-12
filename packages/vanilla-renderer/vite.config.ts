@@ -11,8 +11,8 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'TouchSpinVanillaRenderer',
-      formats: ['es', 'cjs'],
-      fileName: (format) => (format === 'es' ? 'index.mjs' : 'index.cjs'),
+      formats: ['es', 'cjs', 'umd'],
+      fileName: (format) => (format === 'es' ? 'index.mjs' : format === 'cjs' ? 'index.cjs' : 'index.umd.js'),
     },
     sourcemap: true,
     minify: 'esbuild',

@@ -1,5 +1,6 @@
 import type { JQueryStatic } from 'jquery';
-import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../core/src/index';
+import { TouchSpin, getTouchSpin, CORE_EVENTS } from '@touchspin/core';
+import type { TSRenderer } from '@touchspin/core/renderer';
 
 /**
  * Install a minimal jQuery plugin wrapper that just forwards everything to core.
@@ -136,4 +137,21 @@ export function installJqueryTouchSpin($: JQueryStatic) {
       });
     });
   };
+}
+
+/**
+ * Install the jQuery plugin and set a default renderer for TouchSpin.
+ * Uses global window.jQuery if available; otherwise, requires manual
+ * install via installJqueryTouchSpin($).
+ */
+export function installWithRenderer(renderer: TSRenderer): void {
+  // Set the global default renderer consumed by core if no renderer is provided in options
+  (globalThis as unknown as { TouchSpinDefaultRenderer?: TSRenderer }).TouchSpinDefaultRenderer = renderer;
+
+  const $ = (globalThis as unknown as { jQuery?: JQueryStatic }).jQuery;
+  if ($) {
+    installJqueryTouchSpin($);
+  } else {
+    console.warn('installWithRenderer: jQuery not found on window. Call installJqueryTouchSpin($) manually.');
+  }
 }

@@ -1,5 +1,3 @@
-import type { JQueryStatic } from 'jquery';
-export function createRenderer(_$: JQueryStatic, _settings: unknown, _originalinput: unknown) {
-  throw new Error('Renderer package not wired yet (Phase B4 pending)');
-}
 export function getFrameworkId(): string { return 'tailwind'; }
+export { default as TailwindRenderer } from './TailwindRenderer';
+export { default } from './TailwindRenderer';

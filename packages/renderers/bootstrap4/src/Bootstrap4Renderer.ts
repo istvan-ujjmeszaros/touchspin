@@ -3,7 +3,7 @@
  * Builds Bootstrap 4 UI elements around TouchSpin input
  * Uses input-group-prepend and input-group-append for Bootstrap 4 compatibility
  */
-import AbstractRenderer from '../../../core/src/AbstractRenderer';
+import { AbstractRenderer } from '@touchspin/core/renderer';
 
 class Bootstrap4Renderer extends AbstractRenderer {
 

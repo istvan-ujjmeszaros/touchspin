@@ -2,7 +2,7 @@
  * Tailwind CSS Renderer - New Architecture
  * Using Tailwind utility classes only; no external CSS dependency.
  */
-import AbstractRenderer from '../../../core/src/AbstractRenderer';
+import { AbstractRenderer } from '@touchspin/core/renderer';
 
 class TailwindRenderer extends AbstractRenderer {
 
