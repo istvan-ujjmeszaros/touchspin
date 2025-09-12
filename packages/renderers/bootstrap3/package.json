@@ -5,13 +5,15 @@
   "type": "module",
   "description": "Bootstrap 3 renderer for TouchSpin",
   "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build:css": "sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --source-map",
-    "build": "npm run build:css",
+    "dev": "vite --port 8866 --strictPort --open packages/renderers/bootstrap3/example/index.html",
+    "build": "vite build",
     "watch:css": "sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --source-map --watch"
   },
   "dependencies": {
-    "@touchspin/core": "file:../../core"
+    "@touchspin/core": "workspace:*"
   }
 }
-

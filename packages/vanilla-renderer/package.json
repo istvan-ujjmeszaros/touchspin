@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
   "type": "module",
-  "main": "src/index.js",
-  "module": "src/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "style": "dist/touchspin-vanilla.css",
   "exports": {
     ".": {
-      "import": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     },
     "./css": "./dist/touchspin-vanilla.css",
     "./themes/vanilla": "./src/themes/vanilla.css"
@@ -20,9 +23,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "mkdir -p dist && cp src/themes/vanilla.css dist/touchspin-vanilla.css",
-    "clean": "rm -rf dist/*",
-    "test": "echo 'No tests yet' && exit 0"
+    "dev": "vite --port 8866 --strictPort --open packages/vanilla-renderer/example/index.html",
+    "build": "vite build && mkdir -p dist && cp src/themes/vanilla.css dist/touchspin-vanilla.css",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "touchspin",
@@ -37,7 +41,7 @@
   "author": "TouchSpin Contributors",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "file:../core"
+    "@touchspin/core": "workspace:*"
   },
   "repository": {
     "type": "git",

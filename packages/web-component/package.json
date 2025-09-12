@@ -3,11 +3,13 @@
   "version": "4.8.0",
   "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./src/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.js",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
   },
@@ -17,9 +19,9 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "python3 -m http.server 8867 --directory example",
-    "build": "echo 'Web component does not need build - uses ES modules directly'",
-    "test": "echo \"Tests not implemented yet\" && exit 1"
+    "dev": "vite --port 8866 --strictPort --open packages/web-component/example/index.html",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "keywords": [
     "touchspin",
@@ -32,8 +34,8 @@
   "author": "TouchSpin Contributors",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "file:../core",
-    "@touchspin/vanilla-renderer": "file:../vanilla-renderer"
+    "@touchspin/core": "workspace:*",
+    "@touchspin/vanilla-renderer": "workspace:*"
   },
   "repository": {
     "type": "git",

@@ -6,19 +6,22 @@
   "description": "Bootstrap 5 renderer for TouchSpin",
   "license": "MIT",
   "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/Bootstrap5Renderer.js",
-      "require": "./src/Bootstrap5Renderer.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
-    "build:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map",
-    "build": "npm run build:css",
+    "dev": "vite --port 8866 --strictPort --open packages/renderers/bootstrap5/example/index.html",
+    "build": "vite build",
     "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch"
   },
   "dependencies": {
-    "@touchspin/core": "file:../../core"
+    "@touchspin/core": "workspace:*"
   }
 }
-

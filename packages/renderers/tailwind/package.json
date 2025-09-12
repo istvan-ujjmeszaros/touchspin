@@ -5,11 +5,14 @@
   "type": "module",
   "description": "Tailwind renderer for TouchSpin",
   "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "echo 'Tailwind renderer has no build steps'"
+    "dev": "vite --port 8866 --strictPort --open packages/renderers/tailwind/example/index.html",
+    "build": "vite build"
   },
   "dependencies": {
-    "@touchspin/core": "file:../../core"
+    "@touchspin/core": "workspace:*"
   }
 }
-

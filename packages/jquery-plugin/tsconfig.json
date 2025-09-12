@@ -4,10 +4,11 @@
     "lib": ["ES2022", "DOM"],
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["node"],
+    "types": ["node", "jquery"],
     "noEmit": true
   },
   "include": [
     "src/**/*.ts"
   ]
 }
+
