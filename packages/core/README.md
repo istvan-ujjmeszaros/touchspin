@@ -117,3 +117,13 @@ globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
 // Now this uses Bootstrap5Renderer automatically
 TouchSpin(document.querySelector('input') as HTMLInputElement);
 ```
+
+## Renderer Authoring Checklist
+
+- Extend `AbstractRenderer` and implement `Renderer`.
+- Export your renderer class as the default.
+- Provide a matching CSS file (`dist/touchspin-<flavor>.css`).
+- Verify with the examples hub.
+- Add Playwright smoke tests.
+
+For a detailed guide, see [CONTRIBUTING.md](../../CONTRIBUTING.md).
