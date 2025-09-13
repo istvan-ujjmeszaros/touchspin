@@ -18,12 +18,13 @@ This directory contains the modern multi-package architecture implementation of 
 ### Renderers (`packages/renderers/`)
 - **Bootstrap 5 Renderer** - Full Bootstrap 5 input group support
 - **Advanced input group detection** - Seamlessly integrates with existing markup
-- **RawRenderer** - Minimal renderer for keyboard/wheel-only usage
+  
+Renderers extend `AbstractRenderer` and implement the core `Renderer` contract. Available packages:
+- `@touchspin/renderer-bootstrap3`
+- `@touchspin/renderer-bootstrap4`
+- `@touchspin/renderer-bootstrap5`
+- `@touchspin/renderer-tailwind`
 
 ## Planned Packages
 
-- wrappers/*: `@touchspin/react`, `@touchspin/angular`, `@touchspin/webcomponent`
-- renderers/bootstrap3: `@touchspin/renderer-bootstrap3`  
-- renderers/bootstrap4: `@touchspin/renderer-bootstrap4`
-- renderers/tailwind: `@touchspin/renderer-tailwind`
-
+- wrappers/*: `@touchspin/react`, `@touchspin/angular`

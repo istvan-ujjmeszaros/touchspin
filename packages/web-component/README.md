@@ -280,7 +280,7 @@ For older browsers, use a [Web Components polyfill](https://www.webcomponents.or
 
 ```javascript
 import { TouchSpinElement } from '@touchspin/web-component';
-import { Bootstrap5Renderer } from '@touchspin/renderers/bootstrap5';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
 // Register with custom renderer
 class CustomTouchSpinElement extends TouchSpinElement {

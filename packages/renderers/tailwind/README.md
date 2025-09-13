@@ -23,11 +23,13 @@ TouchSpin(document.querySelector('input') as HTMLInputElement, { renderer: Tailw
 ## CDN (UMD)
 
 ```html
-<script src="/dist/index.umd.js"></script>
-<link rel="stylesheet" href="/dist/touchspin-tailwind.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/core/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind/dist/index.umd.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind/dist/touchspin-tailwind.css" />
 ```
 
 ## Notes
 - CSS is emitted as `dist/touchspin-tailwind.css`.
 - DOM event wiring uses `data-touchspin-injected` attributes.
 - See example: `/packages/renderers/tailwind/example/index.html`.
+ - This renderer extends `AbstractRenderer` and implements the core `Renderer` contract.

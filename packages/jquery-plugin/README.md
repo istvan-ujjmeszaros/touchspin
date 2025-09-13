@@ -23,6 +23,21 @@ import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
 installJqueryTouchSpin(window.jQuery);
 ```
 
+### With a Default Renderer
+
+The core requires a renderer class. You can set a global default via the jQuery plugin helper so jQuery users don’t need to pass a renderer on every call.
+
+```ts
+import { installWithRenderer } from '@touchspin/jquery-plugin';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+// Expects a RendererConstructor (a renderer class)
+installWithRenderer(Bootstrap5Renderer);
+
+// Now jQuery usage works without specifying a renderer in options
+$('#myinput').TouchSpin({ min: 0, max: 100 });
+```
+
 ## Usage
 
 ### Initialization
@@ -65,6 +80,30 @@ The jQuery wrapper is a thin bridge that:
 3. **Event Bridge**: Converts core events to jQuery events
 4. **No DOM Logic**: Core handles all DOM event management
 
+### Types
+
+- `installWithRenderer` expects a `RendererConstructor` (from `@touchspin/core/renderer`).
+- For TypeScript users, you can import: `import type { RendererConstructor } from '@touchspin/core/renderer'`.
+
+### CDN (UMD)
+
+```html
+<!-- Core + a renderer (Bootstrap 5) + jQuery plugin -->
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/core/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/index.umd.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css" />
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin/dist/index.umd.js"></script>
+
+<script>
+  // Set default renderer for core via plugin helper
+  TouchSpinJquery.installWithRenderer(TouchSpinRendererBootstrap5);
+  // Now you can use the jQuery API
+  jQuery('#myinput').TouchSpin({ min: 0, max: 100 });
+  // Or trigger commands/events
+  jQuery('#myinput').TouchSpin('uponce');
+<\/script>
+```
+
 ## Supported Methods
 
 ### Command API
@@ -78,4 +117,3 @@ The jQuery wrapper is a thin bridge that:
 ### jQuery Events (Emitted)
 - `touchspin.on.min`, `touchspin.on.max`, `touchspin.on.startspin`
 - `touchspin.on.stopspin`, `touchspin.on.startupspin`, `touchspin.on.startdownspin`
-

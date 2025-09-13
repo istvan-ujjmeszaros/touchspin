@@ -2,6 +2,8 @@
 
 A vanilla CSS-based renderer for TouchSpin components without framework dependencies.
 
+This renderer extends `AbstractRenderer` and implements the core `Renderer` contract from `@touchspin/core/renderer`.
+
 ## Features
 
 - 🎨 **Pure CSS** - No framework dependencies (no Bootstrap, Tailwind, etc.)

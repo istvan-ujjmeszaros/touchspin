@@ -7,5 +7,4 @@ Status: scaffold only. Each renderer package will encapsulate markup/classes for
 - @touchspin/renderer-bootstrap5
 - @touchspin/renderer-tailwind
 
-Renderers implement a small interface used by the core to create/enhance DOM, return handles, and update UI state.
-
+Renderers extend `AbstractRenderer` and implement the core `Renderer` contract (init, finalizeWrapperAttributes, optional teardown). Import types from `@touchspin/core/renderer` if you’re building a custom renderer.
