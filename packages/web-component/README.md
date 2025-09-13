@@ -32,6 +32,22 @@ npm install @touchspin/web-component
 <touchspin-element min="0" max="100" value="50"></touchspin-element>
 ```
 
+## Styles
+
+The web component uses the Vanilla renderer styles. Include the CSS in your page or bundle it once in your app entry:
+
+```html
+<link rel="stylesheet" href="/node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css" />
+```
+
+## CDN (UMD)
+
+```html
+<script src="/node_modules/@touchspin/web-component/dist/index.umd.js"></script>
+<link rel="stylesheet" href="/node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css" />
+<touchspin-element min="0" max="100" value="50"></touchspin-element>
+```
+
 ### Basic Examples
 
 ```html

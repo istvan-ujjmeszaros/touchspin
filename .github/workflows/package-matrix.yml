@@ -1,0 +1,47 @@
+name: Package Matrix
+
+on:
+  pull_request:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  build-by-package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - @touchspin/core
+          - @touchspin/renderer-bootstrap3
+          - @touchspin/renderer-bootstrap4
+          - @touchspin/renderer-bootstrap5
+          - @touchspin/renderer-tailwind
+          - @touchspin/vanilla-renderer
+          - @touchspin/web-component
+          - @touchspin/jquery-plugin
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Enable corepack (Yarn)
+        run: corepack enable
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - name: Build package
+        run: |
+          echo "Building ${{ matrix.pkg }}"
+          yarn workspace "${{ matrix.pkg }}" build
+
+      - name: Validate pack (dry-run)
+        run: |
+          cd "packages/${{ matrix.pkg##*@touchspin/ }}" || cd "packages/renderers/${{ matrix.pkg##*@touchspin/renderer- }}"
+          npm pack --dry-run
+

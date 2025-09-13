@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
   "type": "module",
+  "sideEffects": ["**/*.css", "**/*.scss"],
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -22,14 +23,8 @@
     "README.md",
     "LICENSE"
   ],
-  "scripts": {
-    "dev": "vite dev --port 8866",
-    "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "watch:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --source-map --watch",
-    "clean": "rm -rf dist"
-  },
   "publishConfig": {
+    "access": "public",
     "types": "./dist/index.d.ts",
     "exports": {
       ".": {
@@ -40,6 +35,14 @@
       "./css": "./dist/touchspin-vanilla.css",
       "./themes/vanilla": "./src/themes/vanilla.css"
     }
+  },
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "vite dev --port 8866",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "watch:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --source-map --watch",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "typescript": "^5.7.2",
@@ -63,11 +66,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/bootstrap-touchspin.git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/vanilla-renderer"
   },
   "bugs": {
-    "url": "https://github.com/your-org/bootstrap-touchspin/issues"
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
   },
-  "homepage": "https://github.com/your-org/bootstrap-touchspin/tree/main/packages/vanilla-renderer#readme"
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/vanilla-renderer#readme"
 }

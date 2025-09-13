@@ -1,12 +1,33 @@
-@touchspin/renderer-bootstrap5 (Scaffold)
-=====================================
+@touchspin/renderer-bootstrap5
+==============================
 
-Status: scaffold only. Extracted from `src/renderers/Bootstrap5Renderer.js` with the same markup/classes. Intended for consumption by core/wrappers once Phase B4 wires builds to use packages.
+Bootstrap 5 renderer for TouchSpin.
 
-Exports (planned)
-- createRenderer($, settings, originalinput) → instance
-- getFrameworkId() → 'bootstrap5'
+## Install
 
-Notes
-- This package currently includes a migrated copy of `AbstractRenderer` and `Bootstrap5Renderer` for isolation. API wiring to ESM exports happens in Phase B4.
+```
+npm i @touchspin/renderer-bootstrap5 @touchspin/core
+# or
+yarn add @touchspin/renderer-bootstrap5 @touchspin/core
+```
 
+## Usage (ESM)
+
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+TouchSpin(document.querySelector('input') as HTMLInputElement, { renderer: Bootstrap5Renderer });
+```
+
+## CDN (UMD)
+
+```html
+<script src="/dist/index.umd.js"></script>
+<link rel="stylesheet" href="/dist/touchspin-bootstrap5.css">
+```
+
+## Notes
+- CSS is emitted as `dist/touchspin-bootstrap5.css`.
+- DOM event wiring uses `data-touchspin-injected` attributes.
+- See example: `/packages/renderers/bootstrap5/example/index.html`.

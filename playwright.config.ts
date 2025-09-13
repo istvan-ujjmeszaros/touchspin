@@ -105,9 +105,9 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'node scripts/serve.mjs',
+    command: 'yarn dev',
     port: 8866,
     reuseExistingServer: !process.env.CI,
-    timeout: 10000,
+    timeout: 20000,
   },
 });

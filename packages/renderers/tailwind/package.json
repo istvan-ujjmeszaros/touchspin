@@ -2,6 +2,7 @@
   "name": "@touchspin/renderer-tailwind",
   "version": "1.0.0",
   "type": "module",
+  "sideEffects": ["**/*.css", "**/*.scss"],
   "description": "Tailwind renderer for TouchSpin",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -20,7 +21,9 @@
     "dist/",
     "README.md"
   ],
+  
   "scripts": {
+    "prepack": "yarn build",
     "dev": "vite dev --port 8866",
     "build": "vite build",
     "typecheck": "tsc --noEmit",
@@ -29,7 +32,16 @@
   "dependencies": {
     "@touchspin/core": "workspace:*"
   },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/renderers/tailwind"
+  },
+  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/tailwind#readme",
   "publishConfig": {
+    "access": "public",
     "types": "./dist/index.d.ts",
     "exports": {
       ".": {

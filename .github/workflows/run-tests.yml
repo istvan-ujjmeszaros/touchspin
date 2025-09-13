@@ -7,11 +7,10 @@ on:
     branches: [ master, main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
-      # Make Playwright use a stable cache location
       PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
 
     steps:
@@ -22,29 +21,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+
+      - name: Enable corepack (Yarn)
+        run: corepack enable
+
+      - name: Yarn install
+        run: yarn install --immutable
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('.yarnrc.yml', 'yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers (cached)
+      - name: Install Playwright browsers (chromium)
         run: npx playwright install chromium
 
-      - name: Check build integrity
-        run: npm run check-build-integrity
+      - name: Build all packages
+        run: yarn build
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests (Chromium)
+        run: yarn test
 
-      - name: Upload test results
+      - name: Validate tarballs (dry-run pack)
+        run: |
+          yarn workspaces foreach -A -v exec npm pack --dry-run
+
+      - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:

@@ -25,6 +25,7 @@
     "README.md"
   ],
   "publishConfig": {
+    "access": "public",
     "types": "./dist/index.d.ts",
     "exports": {
       ".": {
@@ -40,6 +41,7 @@
     }
   },
   "scripts": {
+    "prepack": "yarn build",
     "dev": "vite dev --port 8866",
     "build": "vite build",
     "typecheck": "tsc --noEmit"
@@ -48,5 +50,13 @@
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
-  }
+  },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/core"
+  },
+  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/core#readme"
 }
