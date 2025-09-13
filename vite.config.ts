@@ -17,6 +17,23 @@ export default defineConfig({
     }
   },
   plugins: [
+    // Silence noisy sourcemap requests for vendored Bootstrap assets used by tests
+    // These files reference .map files we do not ship. Respond with a minimal
+    // empty sourcemap to avoid console noise during dev.
+    {
+      name: 'silence-bootstrap-sourcemaps',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url || '';
+          if (url.startsWith('/__tests__/html/assets/bootstrap/') && url.endsWith('.map')) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end('{"version":3,"sources":[],"names":[],"mappings":""}');
+            return;
+          }
+          next();
+        });
+      },
+    },
     {
       name: 'touchspin-examples-index',
       configureServer(server) {
