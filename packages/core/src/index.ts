@@ -6,6 +6,8 @@ export type ForceStepDivisibility = 'none' | 'floor' | 'round' | 'ceil';
 
 export type TouchSpinCalcCallback = (value: string) => string;
 
+import type { Renderer, RendererConstructor } from './renderer';
+
 export interface TouchSpinCoreOptions {
   min?: number | null;
   max?: number | null;
@@ -21,8 +23,7 @@ export interface TouchSpinCoreOptions {
   callback_before_calculation?: TouchSpinCalcCallback;
   callback_after_calculation?: TouchSpinCalcCallback;
   // Renderer constructor (e.g., Bootstrap5Renderer) or null for no UI
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  renderer?: (new (inputEl: HTMLInputElement, settings: Readonly<TouchSpinCoreOptions>, core: TouchSpinCore) => { init(): void; finalizeWrapperAttributes(): void; teardown?: () => void }) | null | undefined;
+  renderer?: RendererConstructor | null | undefined;
   initval?: string;
   replacementval?: string;
   mousewheel?: boolean;
@@ -101,7 +102,7 @@ export class TouchSpinCore {
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
   private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
-  renderer?: { init(): void; finalizeWrapperAttributes(): void; teardown?: () => void };
+  renderer?: Renderer;
   /**
    * Sanitize a partial settings object BEFORE applying it.
    * Returns a new object with only provided keys normalized.
@@ -183,7 +184,7 @@ export class TouchSpinCore {
     // Check for renderer: explicit option > global default > none
     if (!this.settings.renderer) {
       // Check for global default renderer
-      const g = globalThis as unknown as { TouchSpinDefaultRenderer?: (new (inputEl: HTMLInputElement, settings: Readonly<TouchSpinCoreOptions>, core: TouchSpinCore) => { init(): void; finalizeWrapperAttributes(): void; teardown?: () => void }) };
+      const g = globalThis as unknown as { TouchSpinDefaultRenderer?: RendererConstructor };
       if (typeof g !== 'undefined' && g.TouchSpinDefaultRenderer) {
         this.settings.renderer = g.TouchSpinDefaultRenderer;
       } else {
@@ -236,7 +237,7 @@ export class TouchSpinCore {
 
     // Initialize renderer with reference to core
     if (this.settings.renderer) {
-      this.renderer = new (this.settings.renderer as NonNullable<TouchSpinCoreOptions['renderer']>)(inputEl, this.settings, this);
+      this.renderer = new (this.settings.renderer as NonNullable<RendererConstructor>)(inputEl, this.settings, this);
       this.renderer.init();
     }
 

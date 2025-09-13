@@ -15,8 +15,9 @@
  * }
  */
 import type { TouchSpinCoreOptions } from './index';
+import type { Renderer } from './renderer';
 
-class AbstractRenderer {
+abstract class AbstractRenderer implements Renderer {
   /**
    * @param {HTMLInputElement} inputEl - The input element to render around
    * @param {Object} settings - TouchSpin settings (read-only)
@@ -50,9 +51,7 @@ class AbstractRenderer {
    * Must be implemented by subclasses
    * @abstract
    */
-  init(): void {
-    throw new Error('init() must be implemented by renderer');
-  }
+  abstract init(): void;
 
   /**
    * Cleanup renderer - remove injected elements and restore original state
