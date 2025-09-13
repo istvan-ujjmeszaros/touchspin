@@ -1473,6 +1473,10 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/jquery-plugin", "workspace:packages/jquery-plugin"],\
+          ["@touchspin/renderer-bootstrap3", "workspace:packages/renderers/bootstrap3"],\
+          ["@touchspin/renderer-bootstrap4", "workspace:packages/renderers/bootstrap4"],\
+          ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
+          ["@touchspin/renderer-tailwind", "workspace:packages/renderers/tailwind"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
           ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
           ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\

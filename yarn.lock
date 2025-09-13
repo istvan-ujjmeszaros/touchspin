@@ -1174,13 +1174,17 @@ __metadata:
   resolution: "@touchspin/jquery-plugin@workspace:packages/jquery-plugin"
   dependencies:
     "@touchspin/core": "workspace:*"
+    "@touchspin/renderer-bootstrap3": "workspace:*"
+    "@touchspin/renderer-bootstrap4": "workspace:*"
+    "@touchspin/renderer-bootstrap5": "workspace:*"
+    "@touchspin/renderer-tailwind": "workspace:*"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3":
+"@touchspin/renderer-bootstrap3@workspace:*, @touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3"
   dependencies:
@@ -1191,7 +1195,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4":
+"@touchspin/renderer-bootstrap4@workspace:*, @touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4"
   dependencies:
@@ -1202,7 +1206,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5":
+"@touchspin/renderer-bootstrap5@workspace:*, @touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5"
   dependencies:
@@ -1213,7 +1217,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
+"@touchspin/renderer-tailwind@workspace:*, @touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind"
   dependencies:
