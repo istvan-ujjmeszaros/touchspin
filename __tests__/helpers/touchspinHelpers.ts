@@ -451,15 +451,29 @@ async function focusOutside(page: Page, outsideTestId: string): Promise<void> {
 
 // Coverage collection functionality
 async function startCoverage(page: Page): Promise<void> {
-  await page.coverage.startJSCoverage({
-    reportAnonymousScripts: true,
-    resetOnNavigation: false
-  });
+  const anyPage = page as unknown as { coverage?: { startJSCoverage?: Function } };
+  try {
+    if (anyPage.coverage && typeof anyPage.coverage.startJSCoverage === 'function') {
+      await anyPage.coverage.startJSCoverage({
+        reportAnonymousScripts: true,
+        resetOnNavigation: false
+      });
+    }
+  } catch {
+    // Ignore coverage errors in Playwright; not critical for test assertions
+  }
 }
 
 async function collectCoverage(page: Page, testName: string): Promise<void> {
-  const coverage = await page.coverage.stopJSCoverage();
-  await saveCoverageData(coverage, testName);
+  const anyPage = page as unknown as { coverage?: { stopJSCoverage?: Function } };
+  try {
+    if (anyPage.coverage && typeof anyPage.coverage.stopJSCoverage === 'function') {
+      const coverage = await anyPage.coverage.stopJSCoverage();
+      await saveCoverageData(coverage as any[], testName);
+    }
+  } catch {
+    // Ignore coverage errors in Playwright; not critical for test assertions
+  }
 }
 
 async function saveCoverageData(coverage: any[], testName: string): Promise<void> {

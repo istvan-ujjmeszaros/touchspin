@@ -13,9 +13,9 @@
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
   <!-- Load modern TouchSpin packages directly -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+    <script type="module">
+      import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.mjs';
+      import TailwindRenderer from '../../packages/renderers/tailwind/dist/index.mjs';
 
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);

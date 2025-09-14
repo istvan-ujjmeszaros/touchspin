@@ -14,8 +14,8 @@
   <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
   <!-- Load main TouchSpin source file -->
   <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.mjs';
+    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/dist/index.mjs';
 
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap5Renderer = Bootstrap5Renderer;

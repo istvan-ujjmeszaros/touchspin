@@ -112,9 +112,9 @@
   <script src="assets/bootstrap/bootstrap-4.6.2.bundle.min.js"></script>
 
   <!-- Load modern TouchSpin packages directly -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+    <script type="module">
+      import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.mjs';
+      import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/dist/index.mjs';
 
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap4Renderer = Bootstrap4Renderer;
