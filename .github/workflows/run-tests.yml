@@ -17,10 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (20.x for Vite 7)
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20.19.0'
 
       - name: Enable corepack (Yarn)
         run: corepack enable
@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers (chromium)
-        run: npx playwright install chromium
+        run: yarn playwright install --with-deps chromium
 
       - name: Build all packages
         run: yarn build
