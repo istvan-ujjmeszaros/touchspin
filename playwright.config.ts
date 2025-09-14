@@ -103,9 +103,9 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Run a simple static server for tests to avoid Vite dev server in CI */
   webServer: {
-    command: 'yarn dev',
+    command: 'node scripts/static-server.mjs --port 8866',
     port: 8866,
     reuseExistingServer: !process.env.CI,
     timeout: 20000,
