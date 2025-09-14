@@ -17,10 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (20.x for Vite 7)
+      - name: Setup Node.js (22.x for Vite 7 + PnP ESM)
         uses: actions/setup-node@v4
         with:
-          node-version: '20.19.0'
+          node-version: '22.12.0'
 
       - name: Enable corepack (Yarn)
         run: corepack enable
