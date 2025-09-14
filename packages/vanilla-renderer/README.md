@@ -16,7 +16,7 @@ This renderer extends `AbstractRenderer` and implements the core `Renderer` cont
 ## Installation
 
 ```bash
-npm install @touchspin/vanilla-renderer @touchspin/core
+yarn add @touchspin/vanilla-renderer @touchspin/core
 ```
 
 ## Quick Start

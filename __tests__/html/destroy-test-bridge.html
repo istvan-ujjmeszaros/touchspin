@@ -189,10 +189,7 @@
     window.modernTouchSpinInstalled = true;
   </script>
 
-  <!-- Install bridge as a module (after plugin is loaded) -->
-  <script type="module" src="../../src/wrappers/jquery-bridge.js"></script>
-  <!-- Install modern facade wrapper (LGTM-7a, manual pages only) -->
-  <script type="module" src="../../src/wrappers/modern-facade.js"></script>
+  <!-- Legacy wrappers removed in modern setup; jQuery plugin handles bridging -->
 
   <script>
     (function($) {

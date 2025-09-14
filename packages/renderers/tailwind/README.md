@@ -6,8 +6,6 @@ Tailwind renderer for TouchSpin.
 ## Install
 
 ```
-npm i @touchspin/renderer-tailwind @touchspin/core
-# or
 yarn add @touchspin/renderer-tailwind @touchspin/core
 ```
 

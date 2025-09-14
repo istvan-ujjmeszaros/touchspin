@@ -6,8 +6,6 @@ Bootstrap 4 renderer for TouchSpin.
 ## Install
 
 ```
-npm i @touchspin/renderer-bootstrap4 @touchspin/core
-# or
 yarn add @touchspin/renderer-bootstrap4 @touchspin/core
 ```
 

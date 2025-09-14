@@ -56,7 +56,7 @@ Choose the build that matches your Bootstrap version:
 
 ```bash
 # npm
-npm install bootstrap-touchspin
+yarn add bootstrap-touchspin
 
 # bower
 bower install bootstrap-touchspin
@@ -646,32 +646,32 @@ For specialized accessibility needs, you can add additional attributes:
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
 # Start dev server (safe to run multiple times)  
-npm run dev
+yarn dev
 
 # Inspect any page for issues (in another terminal)
-npm run inspect /__tests__/html/index-bs4.html text
+yarn inspect /__tests__/html/index-bs4.html text
 
 # Run tests
 npm test
 
 # Build the project
-npm run build
+yarn build
 ```
 
 ### Developer Tools
 
 **Page Inspection Script**  
-Use `npm run inspect <path> [json|text]` for comprehensive page diagnostics:
+Use `yarn inspect <path> [json|text]` for comprehensive page diagnostics:
 
 ```bash
 # Get detailed diagnostics in human-readable format
-npm run inspect /__tests__/html/index-bs5.html text
+yarn inspect /__tests__/html/index-bs5.html text
 
 # Get JSON output for automated processing
-npm run inspect /__tests__/html/index-bs5.html | jq '.summary'
+yarn inspect /__tests__/html/index-bs5.html | jq '.summary'
 ```
 
 The inspect script provides:
@@ -682,7 +682,7 @@ The inspect script provides:
 
 **Development Server**  
 - Always uses port 8866 for consistency
-- Safe to run `npm run dev` multiple times (checks if already running)
+- Safe to run `yarn dev` multiple times (checks if already running)
 - Serves static files from project root with disabled caching
 
 ### Build Process
@@ -691,13 +691,13 @@ TouchSpin uses a Rollup-based build system:
 
 ```bash
 # Production build
-npm run build
+yarn build
 
 # Run tests with automatic coverage report generation
-npm run test:coverage
+yarn test:coverage
 
 # Open coverage HTML report in browser
-npm run coverage:open
+yarn coverage:open
 ```
 
 ### Project Structure
@@ -748,15 +748,15 @@ Test suite using Playwright with automated coverage reporting:
 - **Automated coverage reports** using NYC/Istanbul with LCOV and HTML formats
 - **PHPStorm integration** via LCOV format at `reports/coverage/lcov.info`
 - **Visual HTML reports** automatically generated at `reports/coverage/html/index.html`
-- **Single command workflow** - `npm run test:coverage` runs tests and generates all reports
+- **Single command workflow** - `yarn test:coverage` runs tests and generates all reports
 
 ### Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/new-feature`
 3. Make your changes in `src/` directory
-4. Run tests: `npm test` (fast) or `npm run test:coverage` (with automatic report generation)
-5. Review coverage with `npm run coverage:open` to view detailed HTML reports
+4. Run tests: `yarn test` (fast) or `yarn test:coverage` (with automatic report generation)
+5. Review coverage with `yarn coverage:open` to view detailed HTML reports
 6. Commit your changes
 7. Push to the branch: `git push origin feature/new-feature`
 8. Create a Pull Request

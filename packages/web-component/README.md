@@ -15,7 +15,7 @@ A standards-based Web Component implementation of TouchSpin, providing a framewo
 ## Installation
 
 ```bash
-npm install @touchspin/web-component
+yarn add @touchspin/web-component
 ```
 
 ## Quick Start

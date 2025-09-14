@@ -683,4 +683,3 @@ function _typeof(obj) { '@babel/helpers - typeof'; return _typeof = 'function' =
     });
   };
 });
-//# sourceMappingURL=jquery.bootstrap-touchspin.js.map
