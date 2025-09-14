@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
   "type": "module",
-  "sideEffects": ["**/*.css", "**/*.scss"],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

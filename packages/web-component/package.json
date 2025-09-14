@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
   "type": "module",
-  "sideEffects": ["**/*.css", "**/*.scss"],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +21,6 @@
     "dist/",
     "README.md"
   ],
-  
   "scripts": {
     "prepack": "yarn build",
     "dev": "vite dev --port 8866",
@@ -50,7 +52,6 @@
     "@touchspin/core": "workspace:*",
     "@touchspin/vanilla-renderer": "workspace:*"
   },
-  
   "devDependencies": {
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
@@ -61,6 +62,8 @@
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/web-component"
   },
-  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/web-component#readme"
 }

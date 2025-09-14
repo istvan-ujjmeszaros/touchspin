@@ -57,6 +57,8 @@
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/core"
   },
-  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/core#readme"
 }

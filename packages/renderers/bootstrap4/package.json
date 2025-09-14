@@ -2,7 +2,10 @@
   "name": "@touchspin/renderer-bootstrap4",
   "version": "1.0.0",
   "type": "module",
-  "sideEffects": ["**/*.css", "**/*.scss"],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "description": "Bootstrap 4 renderer for TouchSpin",
   "license": "MIT",
   "main": "dist/index.cjs",
@@ -21,7 +24,6 @@
     "dist/",
     "README.md"
   ],
-  
   "scripts": {
     "prepack": "yarn build",
     "dev": "vite dev --port 8866",
@@ -38,7 +40,9 @@
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/renderers/bootstrap4"
   },
-  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/bootstrap4#readme",
   "publishConfig": {
     "access": "public",

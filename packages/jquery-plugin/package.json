@@ -25,9 +25,10 @@
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/jquery-plugin"
   },
-  "bugs": { "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues" },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/jquery-plugin#readme",
-  
   "scripts": {
     "prepack": "yarn build",
     "dev": "vite dev --port 8866",
@@ -52,7 +53,9 @@
     "jquery": ">=1.7"
   },
   "peerDependenciesMeta": {
-    "jquery": { "optional": true }
+    "jquery": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@touchspin/renderer-bootstrap3": "workspace:*",
