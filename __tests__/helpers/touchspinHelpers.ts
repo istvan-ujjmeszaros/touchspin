@@ -451,81 +451,53 @@ async function focusOutside(page: Page, outsideTestId: string): Promise<void> {
 
 // Coverage collection functionality
 async function startCoverage(page: Page): Promise<void> {
-  const anyPage = page as unknown as { coverage?: { startJSCoverage?: Function } };
-  try {
-    if (anyPage.coverage && typeof anyPage.coverage.startJSCoverage === 'function') {
-      await anyPage.coverage.startJSCoverage({
-        reportAnonymousScripts: true,
+  // Only collect coverage when running with coverage config
+  if (process.env.COVERAGE === '1') {
+    try {
+      await page.coverage.startJSCoverage({
         resetOnNavigation: false
       });
+    } catch (error) {
+      // Ignore coverage errors in non-chromium browsers
     }
-  } catch {
-    // Ignore coverage errors in Playwright; not critical for test assertions
   }
 }
 
 async function collectCoverage(page: Page, testName: string): Promise<void> {
-  const anyPage = page as unknown as { coverage?: { stopJSCoverage?: Function } };
-  try {
-    if (anyPage.coverage && typeof anyPage.coverage.stopJSCoverage === 'function') {
-      const coverage = await anyPage.coverage.stopJSCoverage();
-      await saveCoverageData(coverage as any[], testName);
+  // Only collect coverage when running with coverage config
+  if (process.env.COVERAGE === '1') {
+    try {
+      const coverage = await page.coverage.stopJSCoverage();
+      await saveCoverageData(coverage, testName);
+    } catch (error) {
+      // Ignore coverage errors in non-chromium browsers
     }
-  } catch {
-    // Ignore coverage errors in Playwright; not critical for test assertions
   }
 }
 
 async function saveCoverageData(coverage: any[], testName: string): Promise<void> {
   const fs = require('fs');
   const path = require('path');
-  const v8toIstanbul = require('v8-to-istanbul');
 
-  const coverageDir = 'reports/coverage';
+  const coverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
   if (!fs.existsSync(coverageDir)) {
     fs.mkdirSync(coverageDir, { recursive: true });
   }
 
-  // Filter coverage to include all TouchSpin source files
-  const touchspinCoverage = coverage.filter(entry =>
-    entry.url && (
-      entry.url.includes('jquery.bootstrap-touchspin') ||
-      entry.url.includes('touchspin') ||
-      entry.url.includes('/src/') ||
-      entry.url.includes('/renderers/')
-    )
-  );
+  // Filter coverage to include source files from packages
+  const sourceCoverage = coverage.filter(entry => {
+    const url = entry.url || '';
+    return url.includes('/packages/') &&
+           url.includes('/src/') &&
+           !url.includes('node_modules') &&
+           !url.includes('dist/');
+  });
 
-  if (touchspinCoverage.length > 0) {
-    // Convert V8 coverage to Istanbul format for NYC
-    const istanbulCoverage: Record<string, any> = {};
-
-    for (const entry of touchspinCoverage) {
-      try {
-        // Extract file path from URL
-        let filePath = '';
-        if (entry.url.includes('src/')) {
-          const srcIndex = entry.url.indexOf('src/');
-          filePath = path.join(process.cwd(), entry.url.substring(srcIndex));
-        }
-
-        if (filePath && fs.existsSync(filePath)) {
-          const converter = v8toIstanbul(filePath);
-          await converter.load();
-          converter.applyCoverage(entry.functions);
-          Object.assign(istanbulCoverage, converter.toIstanbul());
-        }
-      } catch (error: any) {
-        console.warn(`Failed to process coverage for ${entry.url}:`, error.message);
-      }
-    }
-
-    // Save in Istanbul format that NYC expects
+  if (sourceCoverage.length > 0) {
+    // Save raw V8 coverage for processing in teardown
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
-    fs.writeFileSync(
-      path.join(coverageDir, fileName),
-      JSON.stringify(istanbulCoverage, null, 2)
-    );
+    const filePath = path.join(coverageDir, fileName);
+    fs.writeFileSync(filePath, JSON.stringify(sourceCoverage, null, 2));
   }
 }
 
