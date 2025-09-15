@@ -15,7 +15,7 @@ export default [
   js.configs.recommended,
   ...ts.configs.recommended,
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['packages/**/*.ts', 'packages/**/*.tsx'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -30,6 +30,41 @@ export default [
       'eqeqeq': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '__tests__/**/*.ts', 'vite.config.ts', 'eslint.config.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-trailing-spaces': 'error',
+      'quotes': ['error', 'single'],
+      'eqeqeq': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.js', 'scripts/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-trailing-spaces': 'error',
+      'quotes': ['error', 'single'],
+      'eqeqeq': 'error',
+      'no-undef': 'error',
     },
   },
 ];

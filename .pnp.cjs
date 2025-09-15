@@ -86,6 +86,7 @@ const RAW_RUNTIME_STATE =
           ["prettier", "npm:3.6.2"],\
           ["sass", "npm:1.92.1"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["typescript-eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
           ["vite", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:7.1.5"],\
           ["vite-plugin-dts", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:4.5.4"]\
         ],\
@@ -2334,6 +2335,7 @@ const RAW_RUNTIME_STATE =
           ["prettier", "npm:3.6.2"],\
           ["sass", "npm:1.92.1"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["typescript-eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
           ["vite", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:7.1.5"],\
           ["vite-plugin-dts", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:4.5.4"]\
         ],\
@@ -5976,6 +5978,36 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../home/styu/.yarn/berry/cache/typescript-patch-bcfe2ebaf8-10c0.zip/node_modules/typescript/",\
         "packageDependencies": [\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["typescript-eslint", [\
+      ["npm:8.43.0", {\
+        "packageLocation": "../../home/styu/.yarn/berry/cache/typescript-eslint-npm-8.43.0-2735c4ad4a-10c0.zip/node_modules/typescript-eslint/",\
+        "packageDependencies": [\
+          ["typescript-eslint", "npm:8.43.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0", {\
+        "packageLocation": "./.yarn/__virtual__/typescript-eslint-virtual-d5a44c1787/3/home/styu/.yarn/berry/cache/typescript-eslint-npm-8.43.0-2735c4ad4a-10c0.zip/node_modules/typescript-eslint/",\
+        "packageDependencies": [\
+          ["@types/eslint", null],\
+          ["@types/typescript", null],\
+          ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
+          ["@typescript-eslint/parser", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
+          ["@typescript-eslint/typescript-estree", "virtual:815fee8018183ca12d1d9cab463f26fd8b4c8a8fbd1576c2f2b726720391673ec06b088462b08040b805e9cfc52c3fb380ebc2e50926bfcca5cc674b91657ab7#npm:8.43.0"],\
+          ["@typescript-eslint/utils", "virtual:3d0a0915080a2b90aa5533c4cc59860f6225d1a236cfb9fab041b06a90ecb2a20be20b3912f624e899d76b663d2f3a48e88d94cd6dbd22beca2b5b8270f2446a#npm:8.43.0"],\
+          ["eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.35.0"],\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["typescript-eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/eslint",\
+          "@types/typescript",\
+          "eslint",\
+          "typescript"\
         ],\
         "linkType": "HARD"\
       }]\
