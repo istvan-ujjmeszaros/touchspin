@@ -60,8 +60,10 @@ jobs:
 
       - name: Yarn install and prepare environment
         run: |
-          # Disable PnP for CI to avoid module resolution issues with Vite
-          echo "nodeLinker: node-modules" >> .yarnrc.yml
+          # Replace PnP with node-modules for CI to avoid Vite issues
+          cat > .yarnrc.yml << 'EOF'
+          nodeLinker: node-modules
+          EOF
           yarn install
 
       # Only install Playwright if not cached
