@@ -6,7 +6,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
   test.beforeEach(async ({ page }) => {
     await touchspinHelpers.startCoverage(page);
-    await page.goto('/packages/jquery-plugin/tests/html/emitted-events.html');
+    await page.goto('/packages/jquery-plugin/tests/html/test-fixture.html');
 
     // Wait for TouchSpin to be ready
     await page.waitForFunction(() => (window as any).touchSpinReady === true);

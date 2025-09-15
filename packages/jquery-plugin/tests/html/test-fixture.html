@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery TouchSpin Test Fixture</title>
+
+  <!-- jQuery -->
+  <script src="../../../../__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
+
+  <!-- Bootstrap 5 -->
+  <link href="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+
+  <!-- TouchSpin CSS -->
+  <link href="../../../renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet">
+
+  <!-- Load TouchSpin modules -->
+  <script type="module">
+    import { installWithRenderer } from '../../../jquery-plugin/src/index.js';
+    import Bootstrap5Renderer from '../../../renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
+    // Install jQuery plugin with Bootstrap 5 renderer as default
+    installWithRenderer(Bootstrap5Renderer);
+
+    // Mark as ready for tests
+    window.touchSpinReady = true;
+
+    // Global event logging function
+    window.setupEventLogging = function(inputId, textareaId) {
+      const $input = $(`#${inputId}`);
+      const $textarea = $(`#${textareaId}`);
+
+      // Clear the textarea
+      $textarea.val('');
+
+      // Helper to log events
+      const logEvent = (eventName, details = '') => {
+        const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+        const currentLog = $textarea.val();
+        const newEntry = `[${timestamp}] ${eventName}${details ? ': ' + details : ''}`;
+        const lines = currentLog ? currentLog.split('\n') : [];
+        lines.push(newEntry);
+
+        // Keep last 50 lines for performance
+        if (lines.length > 50) {
+          lines.shift();
+        }
+
+        $textarea.val(lines.join('\n'));
+        // Auto-scroll to bottom
+        $textarea[0].scrollTop = $textarea[0].scrollHeight;
+      };
+
+      // Log all TouchSpin events
+      const touchspinEvents = [
+        'touchspin.on.min',
+        'touchspin.on.max',
+        'touchspin.on.startspin',
+        'touchspin.on.startupspin',
+        'touchspin.on.startdownspin',
+        'touchspin.on.stopspin',
+        'touchspin.on.stopupspin',
+        'touchspin.on.stopdownspin'
+      ];
+
+      touchspinEvents.forEach(eventName => {
+        $input.on(eventName, function(e) {
+          logEvent(eventName);
+        });
+      });
+
+      // Log value changes
+      $input.on('change', function(e) {
+        logEvent('change', `value=${this.value}`);
+      });
+
+      // Log input events
+      $input.on('input', function(e) {
+        logEvent('input', `value=${this.value}`);
+      });
+
+      // Log focus events
+      $input.on('focus blur', function(e) {
+        logEvent(e.type);
+      });
+
+      // Log initialization
+      logEvent('Event logging initialized');
+    };
+
+    // Helper to create test containers dynamically
+    window.createTestContainer = function(id, label = 'Test Input') {
+      const container = document.createElement('div');
+      container.className = 'test-container mb-4 p-3 border rounded';
+      container.innerHTML = `
+        <div class="row">
+          <div class="col-md-6">
+            <label for="${id}" class="form-label">${label}</label>
+            <input type="text" id="${id}" class="form-control" value="50" data-testid="${id}">
+          </div>
+          <div class="col-md-6">
+            <label for="${id}-log" class="form-label">Event Log</label>
+            <textarea id="${id}-log" class="form-control" rows="5" readonly
+                      style="font-family: monospace; font-size: 12px; background-color: #f8f9fa;"></textarea>
+          </div>
+        </div>
+      `;
+      document.getElementById('test-containers').appendChild(container);
+
+      // Setup event logging for this input
+      window.setupEventLogging(id, `${id}-log`);
+
+      return container;
+    };
+  </script>
+
+  <style>
+    .test-container {
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .test-container:hover {
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+
+    textarea[readonly] {
+      cursor: default;
+      resize: vertical;
+    }
+
+    .event-summary {
+      background-color: #f0f0f0;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid mt-3">
+    <h1 class="mb-4">jQuery TouchSpin Test Fixture</h1>
+
+    <div id="test-containers">
+      <!-- Test containers will be dynamically added here -->
+    </div>
+
+    <!-- Pre-created test inputs for various test scenarios -->
+    <div class="test-container mb-4 p-3 border rounded" id="static-test-inputs">
+      <h3>Static Test Inputs</h3>
+
+      <!-- Create multiple test inputs that tests can use -->
+      <script>
+        // Pre-create common test inputs with event logging
+        const testInputIds = [
+          // Value Operations
+          'value-test', 'increment-test', 'spin-test', 'settings-test',
+          'lifecycle-test', 'case-test', 'chaining-test', 'non-init-test',
+          'options-test', 'boundaries-test',
+
+          // Callable Events
+          'event-updown', 'event-spin', 'event-settings', 'event-destroy',
+          'event-combined', 'event-params', 'event-stopspin', 'event-multi-1', 'event-multi-2',
+
+          // Emitted Events
+          'boundary-min', 'boundary-max', 'startspin-events', 'stopspin-events',
+          'all-spin-events', 'event-order', 'multiple-listeners', 'event-removal',
+          'native-change', 'button-click', 'combined-events'
+        ];
+
+        // Create a container for each test input
+        testInputIds.forEach(id => {
+          const row = document.createElement('div');
+          row.className = 'row mt-3';
+          row.innerHTML = `
+            <div class="col-md-6">
+              <label for="${id}" class="form-label">${id}</label>
+              <input type="text" id="${id}" class="form-control" value="50" data-testid="${id}">
+            </div>
+            <div class="col-md-6">
+              <label for="${id}-log" class="form-label">Event Log for ${id}</label>
+              <textarea id="${id}-log" class="form-control" rows="5" readonly
+                        style="font-family: monospace; font-size: 12px; background-color: #f8f9fa;"></textarea>
+            </div>
+          `;
+          document.currentScript.parentElement.appendChild(row);
+        });
+
+        // Set specific initial values for certain inputs
+        document.addEventListener('DOMContentLoaded', function() {
+          // Set specific values as needed by tests
+          const specificValues = {
+            'increment-test': '10',
+            'spin-test': '100',
+            'settings-test': '25',
+            'lifecycle-test': '75',
+            'case-test': '60',
+            'chaining-test': '30',
+            'non-init-test': '42',
+            'options-test': '5.50',
+            'boundaries-test': '50',
+            'event-updown': '50',
+            'event-spin': '100',
+            'event-settings': '25',
+            'event-destroy': '75',
+            'event-combined': '60',
+            'event-params': '30',
+            'event-stopspin': '80',
+            'event-multi-1': '10',
+            'event-multi-2': '20',
+            'boundary-min': '1',
+            'boundary-max': '99',
+            'startspin-events': '50',
+            'stopspin-events': '75',
+            'all-spin-events': '60',
+            'event-order': '30',
+            'multiple-listeners': '40',
+            'event-removal': '55',
+            'native-change': '65',
+            'button-click': '35',
+            'combined-events': '45'
+          };
+
+          Object.entries(specificValues).forEach(([id, value]) => {
+            const input = document.getElementById(id);
+            if (input) {
+              input.value = value;
+            }
+          });
+
+          // Setup event logging for all inputs
+          testInputIds.forEach(id => {
+            if (window.setupEventLogging) {
+              window.setupEventLogging(id, `${id}-log`);
+            }
+          });
+        });
+      </script>
+    </div>
+
+    <!-- Summary area for aggregate event tracking -->
+    <div class="event-summary">
+      <h4>Test Summary</h4>
+      <div id="test-summary">
+        <p>Tests will dynamically create inputs and log events above.</p>
+        <p>Each input has its own event log showing all TouchSpin events, value changes, and interactions.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Setup logging for default inputs on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.setupEventLogging) {
+        window.setupEventLogging('test-input-1', 'test-input-1-log');
+        window.setupEventLogging('test-input-2', 'test-input-2-log');
+      }
+    });
+  </script>
+</body>
+</html>
