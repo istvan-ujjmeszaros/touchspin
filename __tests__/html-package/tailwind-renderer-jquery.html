@@ -50,9 +50,9 @@
   </div>
 
   <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.mjs';
-    import { getTouchSpin } from '../../packages/core/dist/index.mjs';
-    import { TailwindRenderer } from '../../packages/renderers/tailwind/dist/index.mjs';
+    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+    import { getTouchSpin } from '../../packages/core/src/index.js';
+    import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
 
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
