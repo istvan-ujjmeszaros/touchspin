@@ -1,119 +1,328 @@
-@touchspin/jquery-plugin
-=======================
+# @touchspin/jquery-plugin
 
-**jQuery plugin wrapper that preserves the original TouchSpin API while using the modern core.**
+jQuery plugin wrapper for TouchSpin that provides **full backward compatibility** with the original Bootstrap TouchSpin jQuery plugin while leveraging the modern core architecture.
 
-## Status: ✅ IMPLEMENTED
+## Overview
 
-Complete jQuery plugin wrapper with full backward compatibility.
+This plugin preserves the complete original TouchSpin jQuery API while adding support for multiple UI frameworks through pluggable renderers (Bootstrap 3/4/5, Tailwind, vanilla, etc.). It acts as a thin bridge between jQuery and the modern TouchSpin core, delegating all logic to the core while maintaining the familiar jQuery interface.
 
 ## Features
 
-- **Full API Compatibility**: Preserves all original jQuery TouchSpin methods
-- **Callable Events**: All touchspin.* events supported
-- **Command API**: All TouchSpin('command') methods work
-- **Element-Attached**: Uses modern core with element-attached instances
-- **Event Bridging**: Forwards core events to jQuery events
-- **Clean Integration**: No DOM event logic - delegates everything to core
+- ✅ **100% API Compatible** - Drop-in replacement for the original jQuery TouchSpin
+- ✅ **Multiple Renderers** - Works with Bootstrap 3/4/5, Tailwind, and custom renderers
+- ✅ **Full Event Support** - All jQuery events and callable triggers preserved
+- ✅ **Chaining Support** - Standard jQuery method chaining works as expected
+- ✅ **Clean Architecture** - Thin wrapper that delegates to modern core
 
 ## Installation
 
+### ES Modules
+
 ```javascript
 import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+// Option 1: Install with a default renderer (recommended)
+import { installWithRenderer } from '@touchspin/jquery-plugin';
+installWithRenderer(Bootstrap5Renderer);
+
+// Option 2: Manual installation (renderer must be passed in options)
 installJqueryTouchSpin(window.jQuery);
 ```
 
-### With a Default Renderer
-
-The core requires a renderer class. You can set a global default via the jQuery plugin helper so jQuery users don’t need to pass a renderer on every call.
-
-```ts
-import { installWithRenderer } from '@touchspin/jquery-plugin';
-import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-
-// Expects a RendererConstructor (a renderer class)
-installWithRenderer(Bootstrap5Renderer);
-
-// Now jQuery usage works without specifying a renderer in options
-$('#myinput').TouchSpin({ min: 0, max: 100 });
-```
-
-## Usage
-
-### Initialization
-```javascript
-$('#myinput').TouchSpin({
-  min: 0,
-  max: 100,
-  step: 1
-});
-```
-
-### Command API
-```javascript
-$('#myinput').TouchSpin('uponce');           // Increment once
-$('#myinput').TouchSpin('downonce');         // Decrement once
-$('#myinput').TouchSpin('get');              // Get value
-$('#myinput').TouchSpin('set', 50);          // Set value
-$('#myinput').TouchSpin('destroy');          // Destroy
-```
-
-### Callable Events
-```javascript
-$('#myinput').trigger('touchspin.uponce');
-$('#myinput').trigger('touchspin.updatesettings', [{step: 5}]);
-```
-
-### jQuery Events
-```javascript
-$('#myinput').on('touchspin.on.min', function() {
-  console.log('Hit minimum value');
-});
-```
-
-## Architecture
-
-The jQuery wrapper is a thin bridge that:
-
-1. **Forwards to Core**: All methods delegate to `@touchspin/core`
-2. **Element Storage**: Uses `getTouchSpin()` instead of jQuery data
-3. **Event Bridge**: Converts core events to jQuery events
-4. **No DOM Logic**: Core handles all DOM event management
-
-### Types
-
-- `installWithRenderer` expects a `RendererConstructor` (from `@touchspin/core/renderer`).
-- For TypeScript users, you can import: `import type { RendererConstructor } from '@touchspin/core/renderer'`.
-
-### CDN (UMD)
+### CDN / UMD
 
 ```html
-<!-- Core + a renderer (Bootstrap 5) + jQuery plugin -->
+<!-- Core + Renderer + jQuery plugin -->
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/core/dist/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/index.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css" />
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin/dist/index.umd.js"></script>
 
 <script>
-  // Set default renderer for core via plugin helper
+  // Set default renderer
   TouchSpinJquery.installWithRenderer(TouchSpinRendererBootstrap5);
-  // Now you can use the jQuery API
+
+  // Now use the jQuery API
   jQuery('#myinput').TouchSpin({ min: 0, max: 100 });
-  // Or trigger commands/events
-  jQuery('#myinput').TouchSpin('uponce');
-<\/script>
+</script>
 ```
 
-## Supported Methods
+## Initialization
 
-### Command API
-- `destroy`, `uponce`, `downonce`, `startupspin`, `startdownspin`, `stopspin`
-- `updatesettings`, `getvalue`/`get`, `setvalue`/`set`
+### Basic Usage
 
-### Callable Events
-- `touchspin.uponce`, `touchspin.downonce`, `touchspin.startupspin`
-- `touchspin.startdownspin`, `touchspin.stopspin`, `touchspin.updatesettings`
+```javascript
+// Basic initialization
+$('#myinput').TouchSpin({
+  min: 0,
+  max: 100,
+  step: 1,
+  renderer: Bootstrap5Renderer // Required if no default renderer set
+});
 
-### jQuery Events (Emitted)
-- `touchspin.on.min`, `touchspin.on.max`, `touchspin.on.startspin`
-- `touchspin.on.stopspin`, `touchspin.on.startupspin`, `touchspin.on.startdownspin`
+// With all options
+$('#myinput').TouchSpin({
+  min: 0,                    // Minimum value
+  max: 100,                  // Maximum value
+  step: 1,                   // Step increment
+  decimals: 0,               // Number of decimal places
+  prefix: '$',               // Prefix text
+  postfix: 'USD',            // Postfix text
+  verticalbuttons: false,    // Vertical button layout
+  renderer: Bootstrap5Renderer // Renderer class (optional if default set)
+});
+```
+
+## Command API Reference
+
+All commands are called using the pattern: `$(selector).TouchSpin('command', [args])`
+
+Commands are **case-insensitive** - both `'upOnce'` and `'uponce'` work.
+
+### Value Operations
+
+```javascript
+// Get current value
+var value = $('#myinput').TouchSpin('get');
+var value = $('#myinput').TouchSpin('getvalue'); // Alias
+
+// Set value
+$('#myinput').TouchSpin('set', 50);
+$('#myinput').TouchSpin('setvalue', 50); // Alias
+```
+
+**Note:** `get`/`getvalue` returns the raw input value even if no TouchSpin instance exists.
+
+### Increment/Decrement
+
+```javascript
+// Increment value by one step
+$('#myinput').TouchSpin('uponce');
+
+// Decrement value by one step
+$('#myinput').TouchSpin('downonce');
+```
+
+### Continuous Spinning
+
+```javascript
+// Start continuous increment (until stopped)
+$('#myinput').TouchSpin('startupspin');
+
+// Start continuous decrement (until stopped)
+$('#myinput').TouchSpin('startdownspin');
+
+// Stop any active spinning
+$('#myinput').TouchSpin('stopspin');
+```
+
+### Settings & Lifecycle
+
+```javascript
+// Update settings dynamically
+$('#myinput').TouchSpin('updatesettings', {
+  min: -50,
+  max: 50,
+  step: 0.5
+});
+
+// Destroy TouchSpin instance
+$('#myinput').TouchSpin('destroy');
+```
+
+## Callable jQuery Events
+
+You can trigger these events to control TouchSpin programmatically:
+
+```javascript
+// Increment/decrement
+$('#myinput').trigger('touchspin.uponce');
+$('#myinput').trigger('touchspin.downonce');
+
+// Continuous spinning
+$('#myinput').trigger('touchspin.startupspin');
+$('#myinput').trigger('touchspin.startdownspin');
+$('#myinput').trigger('touchspin.stopspin');
+
+// Update settings
+$('#myinput').trigger('touchspin.updatesettings', [{
+  min: 0,
+  max: 200,
+  step: 5
+}]);
+
+// Destroy instance
+$('#myinput').trigger('touchspin.destroy');
+```
+
+## Emitted jQuery Events
+
+TouchSpin emits these events that you can listen to:
+
+### Boundary Events
+
+```javascript
+// Fired when minimum value is reached
+$('#myinput').on('touchspin.on.min', function() {
+  console.log('Minimum value reached');
+});
+
+// Fired when maximum value is reached
+$('#myinput').on('touchspin.on.max', function() {
+  console.log('Maximum value reached');
+});
+```
+
+### Spin Events
+
+```javascript
+// Fired when any spinning starts (up or down)
+$('#myinput').on('touchspin.on.startspin', function() {
+  console.log('Spinning started');
+});
+
+// Fired when increment spinning starts
+$('#myinput').on('touchspin.on.startupspin', function() {
+  console.log('Incrementing started');
+});
+
+// Fired when decrement spinning starts
+$('#myinput').on('touchspin.on.startdownspin', function() {
+  console.log('Decrementing started');
+});
+
+// Fired when any spinning stops
+$('#myinput').on('touchspin.on.stopspin', function() {
+  console.log('Spinning stopped');
+});
+
+// Fired when increment spinning stops
+$('#myinput').on('touchspin.on.stopupspin', function() {
+  console.log('Incrementing stopped');
+});
+
+// Fired when decrement spinning stops
+$('#myinput').on('touchspin.on.stopdownspin', function() {
+  console.log('Decrementing stopped');
+});
+```
+
+## Complete Example
+
+```javascript
+// Initialize with options
+$('#quantity').TouchSpin({
+  min: 1,
+  max: 100,
+  step: 1,
+  prefix: 'Qty: '
+});
+
+// Listen for events
+$('#quantity').on('touchspin.on.min', function() {
+  alert('Cannot order less than 1 item');
+});
+
+$('#quantity').on('touchspin.on.max', function() {
+  alert('Maximum quantity reached');
+});
+
+// Programmatic control
+$('#increase-btn').click(function() {
+  $('#quantity').trigger('touchspin.uponce');
+});
+
+$('#set-default-btn').click(function() {
+  $('#quantity').TouchSpin('set', 10);
+});
+
+// Dynamic settings update
+$('#wholesale-mode').change(function() {
+  if ($(this).is(':checked')) {
+    $('#quantity').TouchSpin('updatesettings', {
+      min: 10,
+      step: 10
+    });
+  }
+});
+
+// Get current value
+$('#show-value').click(function() {
+  var qty = $('#quantity').TouchSpin('get');
+  alert('Current quantity: ' + qty);
+});
+
+// Cleanup
+$('#remove-btn').click(function() {
+  $('#quantity').TouchSpin('destroy');
+});
+```
+
+## Chaining Support
+
+All command methods support jQuery chaining:
+
+```javascript
+$('#myinput')
+  .TouchSpin({ min: 0, max: 100 })
+  .TouchSpin('set', 50)
+  .TouchSpin('uponce')
+  .addClass('highlighted')
+  .on('touchspin.on.max', function() {
+    $(this).addClass('at-maximum');
+  });
+```
+
+## Architecture Notes
+
+The jQuery plugin is a thin wrapper that:
+1. **Forwards to Core** - All logic is handled by `@touchspin/core`
+2. **Element Storage** - Uses core's `getTouchSpin()` instead of jQuery data
+3. **Event Bridge** - Converts between core events and jQuery events
+4. **No DOM Logic** - Core handles all DOM event management
+
+## Important Notes
+
+- **Renderer Requirement**: The plugin requires either a global default renderer (set via `installWithRenderer`) or a `renderer` option passed during initialization
+- **Case Insensitivity**: All command names are case-insensitive
+- **Change Event**: The native `change` event is fired when values change, in addition to TouchSpin-specific events
+- **Safe Commands**: Commands are safely ignored if no TouchSpin instance exists (except `get`/`getvalue` which return the raw value)
+- **Multiple Instances**: Each input maintains its own independent TouchSpin instance
+
+## TypeScript Support
+
+For TypeScript users:
+
+```typescript
+import { installWithRenderer } from '@touchspin/jquery-plugin';
+import type { TSRenderer } from '@touchspin/core/renderer';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+// The renderer type is TSRenderer
+const renderer: typeof TSRenderer = Bootstrap5Renderer;
+installWithRenderer(renderer);
+```
+
+## Migration from Original TouchSpin
+
+This plugin is a **drop-in replacement** for the original Bootstrap TouchSpin. Simply:
+
+1. Replace the old script includes with the new ones
+2. Add a renderer (Bootstrap 3/4/5 depending on your framework)
+3. All existing code continues to work without changes
+
+```javascript
+// Old code - still works!
+$('.spinner').TouchSpin({
+  min: 0,
+  max: 100,
+  prefix: '$'
+});
+
+$('.spinner').TouchSpin('set', 50);
+```
+
+## License
+
+MIT
