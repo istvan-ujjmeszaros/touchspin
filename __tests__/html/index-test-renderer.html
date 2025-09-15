@@ -6,14 +6,16 @@
   <script src="assets/jquery/jquery-3.7.1.min.js"></script>
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-    import { AbstractRenderer } from '../../packages/core/src/index.js';
+    import AbstractRenderer from '../../packages/core/src/AbstractRenderer.js';
 
     // Minimal custom renderer for targeted coverage
     class TestRenderer extends AbstractRenderer {
       init() {
         // Build simple structure
+        const inputTestId = this.input.getAttribute('data-testid');
+        const wrapperTestId = inputTestId ? ` data-testid="${inputTestId}-wrapper"` : '';
         const html = `
-          <div class="test-container" data-touchspin-injected="wrapper">
+          <div class="test-container" data-touchspin-injected="wrapper"${wrapperTestId}>
             <span class="test-prefix" data-touchspin-injected="prefix"${this.getPrefixTestId()}>pre</span>
             <button type="button" class="test-btn-down" data-touchspin-injected="down"${this.getDownButtonTestId()} aria-label="Decrease value">-</button>
             <button type="button" class="test-btn-up" data-touchspin-injected="up"${this.getUpButtonTestId()} aria-label="Increase value">+</button>
@@ -39,11 +41,14 @@
 
     // Install plugin and set default renderer
     installJqueryTouchSpin(window.jQuery);
-    globalThis.TouchSpinDefaultRenderer = TestRenderer;
+    window.TestRenderer = TestRenderer;
 
     // Initialize on DOMContentLoaded
     window.addEventListener('DOMContentLoaded', () => {
-      window.jQuery('#test-target').TouchSpin();
+      // Explicitly pass the TestRenderer as the renderer option
+      window.jQuery('#test-target').TouchSpin({
+        renderer: TestRenderer
+      });
     });
   </script>
 </head>
