@@ -49,8 +49,8 @@
   </div>
 
   <script type="module">
-    import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../packages/core/src/index.js';
-    import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+    import { TouchSpin, getTouchSpin, CORE_EVENTS } from '../../packages/core/dist/index.mjs';
+    import { TailwindRenderer } from '../../packages/renderers/tailwind/dist/index.mjs';
 
     // Set global default renderer
     globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
