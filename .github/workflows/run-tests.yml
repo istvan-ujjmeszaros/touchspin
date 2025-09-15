@@ -10,34 +10,74 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (22.x for Vite 7 + PnP ESM)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.12.0'
+          cache: 'yarn'  # Built-in Node.js action cache for Yarn
 
       - name: Enable corepack (Yarn)
         run: corepack enable
 
-      - name: Yarn install
-        run: yarn install --immutable
+      # Cache Yarn dependencies (.yarn/cache directory for PnP)
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      # Get Playwright version for precise cache key
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(yarn list --pattern @playwright/test --depth=0 --json | grep -o '"version":"[^"]*"' | cut -d'"' -f4)" >> $GITHUB_OUTPUT
+
+      # Cache Playwright browsers with version-specific key
       - name: Cache Playwright browsers
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('.yarnrc.yml', 'yarn.lock') }}
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}-chromium
           restore-keys: |
+            ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}-
             ${{ runner.os }}-playwright-
 
-      - name: Install Playwright browsers (chromium)
-        run: yarn playwright install --with-deps chromium
+      - name: Yarn install
+        run: yarn install --immutable
+
+      # Only install Playwright if not cached
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: yarn playwright install chromium
+
+      # Install system dependencies separately (always needed even with cache)
+      - name: Install Playwright system dependencies
+        run: yarn playwright install-deps chromium
+
+      # Cache build artifacts
+      - name: Cache build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/renderers/*/dist
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/**/src/**', 'tsconfig*.json', 'vite.config.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
       - name: Build all packages
         run: yarn build
@@ -46,6 +86,7 @@ jobs:
         run: yarn test
 
       - name: Validate tarballs (dry-run pack)
+        if: success()
         run: |
           yarn workspaces foreach -A -v exec npm pack --dry-run
 
@@ -53,6 +94,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results
+          name: playwright-test-results-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/
           retention-days: 7
+          if-no-files-found: ignore
