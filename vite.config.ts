@@ -69,9 +69,12 @@ export default defineConfig({
   li { margin: 6px 0; }
   a { text-decoration: none; }
   a:hover { text-decoration: underline; }
+  #warning { margin: 8px 0 16px; padding: 10px 12px; border: 1px solid #e3b341; background: #fff8e1; border-radius: 6px; font-size: 13px; }
+  #warning code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
   @media (prefers-color-scheme: dark) {
     #filter { border-color: #555; background: #111; color: #eee; }
     #meta { color: #aaa; }
+    #warning { background: #2a230a; border-color: #6a560c; }
   }
   .path { color: #888; font-size: 12px; }
   .path::before { content: '\\00a0'; }
@@ -82,6 +85,11 @@ export default defineConfig({
 }
 </style>
 <h1>${title}</h1>
+<div id="warning" role="note">
+  <strong>Note:</strong> Many test HTML files reference built artifacts under <code>packages/*/dist</code> for CI parity.
+  If you don’t see your latest TypeScript changes reflected, run <code>yarn build</code> to regenerate the bundles
+  (or create a dev-only HTML that imports from <code>src/</code> when using Vite).
+</div>
 <input id="filter" type="search" placeholder="Filter by name or path…" autofocus>
 <div id="meta">Showing <span id="count"></span> of ${total}</div>
 <ul id="list">${list}</ul>
