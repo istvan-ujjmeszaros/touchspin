@@ -48,6 +48,7 @@
   },
   "scripts": {
     "dev": "npm run examples:gen && vite --port 8866 --strictPort",
+    "dev:force": "node scripts/dev-force.mjs",
     "examples:gen": "node scripts/gen-examples.mjs",
     "preview": "vite preview --port 8866 --strictPort",
     "build": "npm run -ws --if-present build",
