@@ -39,6 +39,7 @@
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
+    "jiti": "^1.21.0",
     "playwright": "^1.54.2",
     "prettier": "^3.3.3",
     "sass": "^1.77.8",

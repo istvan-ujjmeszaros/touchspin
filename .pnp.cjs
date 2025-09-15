@@ -81,6 +81,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.35.0"],\
           ["eslint-config-prettier", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.1.2"],\
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
+          ["jiti", "npm:1.21.7"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
           ["sass", "npm:1.92.1"],\
@@ -2328,6 +2329,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.35.0"],\
           ["eslint-config-prettier", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.1.2"],\
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
+          ["jiti", "npm:1.21.7"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
           ["sass", "npm:1.92.1"],\
@@ -3061,7 +3063,7 @@ const RAW_RUNTIME_STATE =
           ["ignore", "npm:5.3.2"],\
           ["imurmurhash", "npm:0.1.4"],\
           ["is-glob", "npm:4.0.3"],\
-          ["jiti", null],\
+          ["jiti", "npm:1.21.7"],\
           ["json-stable-stringify-without-jsonify", "npm:1.0.1"],\
           ["lodash.merge", "npm:4.6.2"],\
           ["minimatch", "npm:3.1.2"],\
@@ -4233,6 +4235,15 @@ const RAW_RUNTIME_STATE =
           ["@isaacs/cliui", "npm:8.0.2"],\
           ["@pkgjs/parseargs", "npm:0.11.0"],\
           ["jackspeak", "npm:3.4.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["jiti", [\
+      ["npm:1.21.7", {\
+        "packageLocation": "../../home/styu/.yarn/berry/cache/jiti-npm-1.21.7-9b00518619-10c0.zip/node_modules/jiti/",\
+        "packageDependencies": [\
+          ["jiti", "npm:1.21.7"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6129,7 +6140,7 @@ const RAW_RUNTIME_STATE =
           ["esbuild", "npm:0.25.9"],\
           ["fdir", "virtual:0e783aadbd2b4b8e6f6056033c0b290501892d23bc7c5dad5477e00e48ad8bd3e4434c3962a52dd75a58e06dbb7218094a494bac954ef2f7f6fdb65d9717e5f4#npm:6.5.0"],\
           ["fsevents", "patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"],\
-          ["jiti", null],\
+          ["jiti", "npm:1.21.7"],\
           ["less", null],\
           ["lightningcss", null],\
           ["picomatch", "npm:4.0.3"],\
