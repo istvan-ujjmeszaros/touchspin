@@ -1,4 +1,6 @@
 import {test, expect} from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 async function clearLogs(page) {
   await page.evaluate(() => {
@@ -36,6 +38,16 @@ async function getVals(page) {
 }
 
 test.describe('A/B parity sequences', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'abParitySequences');
+  });
+
   test('boundary hold and disabled parity', async ({page}, testInfo) => {
     // Increase time budget for this multi-phase sequence
     testInfo.setTimeout(15000);

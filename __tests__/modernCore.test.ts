@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Modern Core Unit Tests (TDD)', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'modernCore');
+  });
+
 
   test('Modern core should handle disabled/readonly checks', async ({ page }) => {
     // This test will fail initially and drive us to fix the modern core

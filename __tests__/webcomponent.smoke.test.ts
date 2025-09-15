@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Web Component Smoke', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'webcomponent.smoke');
+  });
+
   test('renders and injects controls', async ({ page }) => {
     await page.goto('/packages/web-component/example/index.html');
 

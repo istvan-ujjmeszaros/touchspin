@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Tailwind advanced container', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'wrapperAdvancedTailwindContainer');
+  });
+
   test('enhances [data-touchspin-advanced] and cleans up on destroy', async ({ page }) => {
     await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
 

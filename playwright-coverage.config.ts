@@ -1,5 +1,6 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import baseConfig from './playwright.config';
+import path from 'path';
 
 /**
  * Playwright configuration for coverage collection
@@ -7,21 +8,20 @@ import baseConfig from './playwright.config';
 export default defineConfig({
   ...baseConfig,
 
+
   // Use only chromium for coverage
   projects: [
     {
       name: 'chromium-coverage',
       testIgnore: '**/visual/**',
       use: {
-        ...baseConfig.projects?.[0]?.use,
+        ...devices['Desktop Chrome'],
         // Enable coverage collection
         contextOptions: {
-          ...baseConfig.projects?.[0]?.use?.contextOptions,
           // Enable JS coverage
           javaScriptEnabled: true,
         },
         launchOptions: {
-          ...baseConfig.projects?.[0]?.use?.launchOptions,
           args: [
             '--disable-background-timer-throttling',
             '--disable-backgrounding-occluded-windows',

@@ -459,7 +459,10 @@ async function startCoverage(page: Page): Promise<void> {
       });
     } catch (error) {
       // Ignore coverage errors in non-chromium browsers
+      // Ignore
     }
+  } else {
+    // Coverage not enabled
   }
 }
 
@@ -471,6 +474,7 @@ async function collectCoverage(page: Page, testName: string): Promise<void> {
       await saveCoverageData(coverage, testName);
     } catch (error) {
       // Ignore coverage errors in non-chromium browsers
+      // Ignore
     }
   }
 }
@@ -498,6 +502,8 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     const filePath = path.join(coverageDir, fileName);
     fs.writeFileSync(filePath, JSON.stringify(sourceCoverage, null, 2));
+  } else {
+    // No source files found in coverage
   }
 }
 

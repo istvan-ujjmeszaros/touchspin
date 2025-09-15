@@ -3,7 +3,13 @@ import touchspinHelpers from './helpers/touchspinHelpers';
 
 test.describe('TouchSpin Destroy and Reinitialize', () => {
 
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'destroyAndReinitialize');
+  });
+
+
   test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
     await page.goto('/__tests__/html/destroy-test.html');
     await page.waitForLoadState('networkidle');
   });

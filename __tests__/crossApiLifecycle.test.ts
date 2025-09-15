@@ -1,7 +1,19 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Cross-API Lifecycle Management', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'crossApiLifecycle');
+  });
+
   test('should handle jQuery init → core destroy cleanly', async ({ page }) => {
     // Navigate to the jQuery plugin smoke test page
     await page.goto('/__tests__/html-package/jquery-plugin-smoke.html');

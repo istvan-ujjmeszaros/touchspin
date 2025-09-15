@@ -1,7 +1,19 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Core Lifecycle (Direct)', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'coreLifecycle');
+  });
+
   test('should not respond to commands after destroy (core-only)', async ({ page }) => {
     // Navigate to the core smoke test page (no jQuery)
     await page.goto('/__tests__/html-package/core-smoke-simple.html');

@@ -16,11 +16,20 @@ async function globalTeardown() {
     .filter(f => f.endsWith('.json'));
 
   if (coverageFiles.length === 0) {
-    console.log('No coverage files found');
+    console.log('No coverage files found in', playwrightCoverageDir);
+
+    // Check old location
+    const oldCoverageDir = path.join(process.cwd(), 'reports', 'coverage');
+    if (fs.existsSync(oldCoverageDir)) {
+      const oldFiles = fs.readdirSync(oldCoverageDir).filter(f => f.endsWith('.json') && f !== 'coverage-final.json');
+      if (oldFiles.length > 0) {
+        console.log(`Found ${oldFiles.length} old coverage files in ${oldCoverageDir} - these are being incorrectly counted!`);
+      }
+    }
     return;
   }
 
-  console.log(`\n📊 Processing ${coverageFiles.length} coverage files...`);
+  console.log(`\n📊 Processing ${coverageFiles.length} coverage files from ${playwrightCoverageDir}...`);
 
   const istanbulCoverage: Record<string, any> = {};
   let filesProcessed = 0;
