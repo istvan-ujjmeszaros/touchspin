@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
 
 test.describe('jQuery TouchSpin Emitted Events', () => {
 
   test.beforeEach(async ({ page }) => {
     await touchspinHelpers.startCoverage(page);
-    await page.goto('/packages/jquery-plugin/tests/html/test-fixture.html');
-
-    // Wait for TouchSpin to be ready
+    await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
+    await touchspinHelpers.installJqueryPlugin(page);
     await page.waitForFunction(() => (window as any).touchSpinReady === true);
   });
 
@@ -19,7 +18,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Boundary Events', () => {
 
     test('should emit touchspin.on.min when minimum value is reached', async ({ page }) => {
-      const testId = 'boundary-min';
+      const testId = 'emit-1';
 
       // Initialize TouchSpin with value near min
       await page.evaluate((id) => {
@@ -50,7 +49,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.max when maximum value is reached', async ({ page }) => {
-      const testId = 'boundary-max';
+      const testId = 'emit-2';
 
       // Initialize TouchSpin with value near max
       await page.evaluate((id) => {
@@ -81,7 +80,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit min event when setting value to minimum', async ({ page }) => {
-      const testId = 'boundary-min';
+      const testId = 'emit-3';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -107,7 +106,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit max event when setting value to maximum', async ({ page }) => {
-      const testId = 'boundary-max';
+      const testId = 'emit-4';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -136,7 +135,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Start Spin Events', () => {
 
     test('should emit touchspin.on.startspin when any spinning starts', async ({ page }) => {
-      const testId = 'startspin-events';
+      const testId = 'emit-5';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -184,7 +183,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.startupspin when increment spinning starts', async ({ page }) => {
-      const testId = 'startspin-events';
+      const testId = 'emit-6';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -212,7 +211,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.startdownspin when decrement spinning starts', async ({ page }) => {
-      const testId = 'startspin-events';
+      const testId = 'emit-7';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -243,7 +242,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Stop Spin Events', () => {
 
     test('should emit touchspin.on.stopspin when any spinning stops', async ({ page }) => {
-      const testId = 'stopspin-events';
+      const testId = 'emit-8';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -272,7 +271,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.stopupspin when increment spinning stops', async ({ page }) => {
-      const testId = 'stopspin-events';
+      const testId = 'emit-9';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -301,7 +300,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.stopdownspin when decrement spinning stops', async ({ page }) => {
-      const testId = 'stopspin-events';
+      const testId = 'emit-10';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -333,7 +332,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('All Spin Events Together', () => {
 
     test('should emit correct sequence of events during spin cycle', async ({ page }) => {
-      const testId = 'all-spin-events';
+      const testId = 'emit-11';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -374,7 +373,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit events when switching spin direction', async ({ page }) => {
-      const testId = 'all-spin-events';
+      const testId = 'emit-12';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -423,7 +422,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Order', () => {
 
     test('should fire events in correct order', async ({ page }) => {
-      const testId = 'event-order';
+      const testId = 'emit-13';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -468,7 +467,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Multiple Listeners', () => {
 
     test('should support multiple listeners for the same event', async ({ page }) => {
-      const testId = 'multiple-listeners';
+      const testId = 'emit-14';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -506,7 +505,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should handle listener for multiple events', async ({ page }) => {
-      const testId = 'multiple-listeners';
+      const testId = 'emit-15';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -545,7 +544,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Removal', () => {
 
     test('should allow removing event listeners', async ({ page }) => {
-      const testId = 'event-removal';
+      const testId = 'emit-16';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -590,7 +589,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should support removing all listeners with off()', async ({ page }) => {
-      const testId = 'event-removal';
+      const testId = 'emit-17';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -631,7 +630,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Native Change Event', () => {
 
     test('should fire native change event when value changes', async ({ page }) => {
-      const testId = 'native-change';
+      const testId = 'emit-18';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -661,7 +660,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should fire change event when setting value', async ({ page }) => {
-      const testId = 'native-change';
+      const testId = 'emit-19';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -693,7 +692,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Button Click Events', () => {
 
     test('should emit events when clicking spinner buttons', async ({ page }) => {
-      const testId = 'button-click';
+      const testId = 'emit-20';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -727,7 +726,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit min/max events when clicking buttons at boundaries', async ({ page }) => {
-      const testId = 'button-click';
+      const testId = 'emit-21';
 
       // Initialize TouchSpin at max
       await page.evaluate((id) => {
@@ -763,7 +762,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Combined Events', () => {
 
     test('should handle multiple event types together', async ({ page }) => {
-      const testId = 'combined-events';
+      const testId = 'emit-22';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -812,7 +811,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit events during complex interaction sequence', async ({ page }) => {
-      const testId = 'combined-events';
+      const testId = 'emit-23';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -866,7 +865,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Context', () => {
 
     test('should provide correct context (this) in event handlers', async ({ page }) => {
-      const testId = 'event-order';
+      const testId = 'emit-24';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {
@@ -898,7 +897,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should pass jQuery event object to handlers', async ({ page }) => {
-      const testId = 'event-order';
+      const testId = 'emit-25';
 
       // Initialize TouchSpin
       await page.evaluate((id) => {

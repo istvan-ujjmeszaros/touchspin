@@ -5,8 +5,9 @@ import path from 'path';
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './__tests__',
-  testMatch: '**/?(*.)+(spec|test).[jt]s?(x)',
+  testDir: './',
+  testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/*/tests/**/*.spec.ts'],
+  testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
   
   /* Run tests in files in parallel */
   fullyParallel: false, // Keep sequential for now to match Jest behavior

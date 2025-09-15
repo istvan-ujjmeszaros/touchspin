@@ -33,7 +33,10 @@
     "prepack": "yarn build",
     "dev": "vite dev --port 8866",
     "build": "vite build && vite build -c vite.legacy.config.ts --mode=bootstrap3 && vite build -c vite.legacy.config.ts --mode=bootstrap4 && vite build -c vite.legacy.config.ts --mode=bootstrap5 && vite build -c vite.legacy.config.ts --mode=tailwind && mkdir -p dist && cp -f types/index.d.ts dist/index.d.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
+    "test:ui": "cd ../.. && playwright test packages/jquery-plugin/tests/ --ui",
+    "test:coverage": "cd ../.. && COVERAGE=1 playwright test packages/jquery-plugin/tests/"
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"
@@ -58,6 +61,7 @@
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@touchspin/renderer-bootstrap3": "workspace:*",
     "@touchspin/renderer-bootstrap4": "workspace:*",
     "@touchspin/renderer-bootstrap5": "workspace:*",

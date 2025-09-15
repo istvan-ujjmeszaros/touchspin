@@ -1117,7 +1117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.54.2":
+"@playwright/test@npm:^1.49.1, @playwright/test@npm:^1.54.2":
   version: 1.55.0
   resolution: "@playwright/test@npm:1.55.0"
   dependencies:
@@ -1370,6 +1370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/jquery-plugin@workspace:packages/jquery-plugin"
   dependencies:
+    "@playwright/test": "npm:^1.49.1"
     "@touchspin/core": "workspace:*"
     "@touchspin/renderer-bootstrap3": "workspace:*"
     "@touchspin/renderer-bootstrap4": "workspace:*"

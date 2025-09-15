@@ -467,6 +467,111 @@ async function startCoverage(page: Page): Promise<void> {
   }
 }
 
+// jQuery plugin installation AFTER coverage starts
+async function installJqueryPlugin(page: Page): Promise<void> {
+  // Install the jQuery plugin with Bootstrap 5 renderer
+  // This MUST be called after startCoverage() for accurate coverage
+  await page.evaluate(async () => {
+    // Import the plugin and renderer
+    const { installWithRenderer } = await import('/packages/jquery-plugin/src/index.js');
+    const { default: Bootstrap5Renderer } = await import('/packages/renderers/bootstrap5/src/Bootstrap5Renderer.js');
+
+    // Install with renderer
+    installWithRenderer(Bootstrap5Renderer);
+
+    // Mark as ready for tests
+    (window as any).touchSpinReady = true;
+
+    // Set up event logging for all inputs
+    const setupEventLogging = (inputId: string) => {
+      const $input = (window as any).$(`#${inputId}`);
+      const $textarea = (window as any).$(`#${inputId}-log`);
+
+      if (!$textarea.length) {
+        console.warn(`No log textarea found for ${inputId}`);
+        return;
+      }
+
+      // Helper to log events
+      const logEvent = (eventName: string, details = '') => {
+        const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+        const currentLog = $textarea.val();
+        const newEntry = `[${timestamp}] ${eventName}${details ? ': ' + details : ''}`;
+        const lines = currentLog ? currentLog.split('\n') : [];
+        lines.push(newEntry);
+
+        // Keep last 50 lines for performance
+        if (lines.length > 50) {
+          lines.shift();
+        }
+
+        $textarea.val(lines.join('\n'));
+        // Auto-scroll to bottom
+        $textarea[0].scrollTop = $textarea[0].scrollHeight;
+      };
+
+      // Log all TouchSpin events
+      const touchspinEvents = [
+        'touchspin.on.min',
+        'touchspin.on.max',
+        'touchspin.on.startspin',
+        'touchspin.on.startupspin',
+        'touchspin.on.startdownspin',
+        'touchspin.on.stopspin',
+        'touchspin.on.stopupspin',
+        'touchspin.on.stopdownspin'
+      ];
+
+      touchspinEvents.forEach(eventName => {
+        $input.on(eventName, function(e: any) {
+          logEvent(eventName);
+        });
+      });
+
+      // Log value changes
+      $input.on('change', function(e: any) {
+        logEvent('change', `value=${(this as any).value}`);
+      });
+
+      // Log input events
+      $input.on('input', function(e: any) {
+        logEvent('input', `value=${(this as any).value}`);
+      });
+
+      // Log focus events
+      $input.on('focus blur', function(e: any) {
+        logEvent(e.type);
+      });
+
+      // Log initialization
+      logEvent('Event logging initialized');
+    };
+
+    // Setup logging for all test inputs
+    // Command test inputs
+    for (let i = 1; i <= 29; i++) {
+      setupEventLogging(`cmd-${i}`);
+    }
+
+    // Callable event test inputs
+    for (let i = 1; i <= 15; i++) {
+      setupEventLogging(`call-${i}`);
+    }
+    // Special multi-input tests
+    setupEventLogging('call-16a');
+    setupEventLogging('call-16b');
+    setupEventLogging('call-17a');
+    setupEventLogging('call-17b');
+    setupEventLogging('call-18');
+    setupEventLogging('call-19');
+
+    // Emitted event test inputs
+    for (let i = 1; i <= 25; i++) {
+      setupEventLogging(`emit-${i}`);
+    }
+  });
+}
+
 async function collectCoverage(page: Page, testName: string): Promise<void> {
   // Only collect coverage when running with coverage config
   if (process.env.COVERAGE === '1') {
@@ -539,6 +644,7 @@ export default {
   blurAway,
   getElementIdFromTestId,
   startCoverage,
+  installJqueryPlugin,
   collectCoverage,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

@@ -1706,6 +1706,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/jquery-plugin", {\
         "packageLocation": "./packages/jquery-plugin/",\
         "packageDependencies": [\
+          ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/jquery-plugin", "workspace:packages/jquery-plugin"],\
           ["@touchspin/renderer-bootstrap3", "workspace:packages/renderers/bootstrap3"],\
