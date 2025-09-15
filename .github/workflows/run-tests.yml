@@ -10,9 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      # Ensure Yarn PnP loader is enabled for Node.js ESM
-      NODE_OPTIONS: "--loader .pnp.loader.mjs"
 
     steps:
       - name: Checkout code
@@ -39,10 +36,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            .yarn/cache
             .yarn/unplugged
             .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', '.yarnrc.yml') }}
+            .pnp.cjs
+            .pnp.loader.mjs
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'package.json') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
