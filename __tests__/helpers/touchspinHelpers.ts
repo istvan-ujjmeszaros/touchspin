@@ -64,11 +64,12 @@ async function getWrapperInstanceWhenReady(page: Page, testid: string, timeout: 
   return derivedWrapper;
 }
 
-async function readInputValue(page: Page, inputTestId: string): Promise<string | null> {
+async function readInputValue(page: Page, inputTestId: string): Promise<string> {
   await waitForInputOrWrapper(page, inputTestId);
   // Directly access input using its testid
   const input = page.getByTestId(inputTestId);
-  return await input.inputValue();
+  const value = await input.inputValue();
+  return value ?? '';
 }
 
 async function setInputAttr(page: Page, inputTestId: string, attributeName: 'disabled' | 'readonly', attributeValue: boolean): Promise<void> {

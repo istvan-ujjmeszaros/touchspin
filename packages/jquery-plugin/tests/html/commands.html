@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery TouchSpin Commands Test</title>
+
+  <!-- jQuery -->
+  <script src="../../../../__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
+
+  <!-- Bootstrap 5 -->
+  <link href="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+
+  <!-- TouchSpin CSS -->
+  <link href="../../../renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet">
+
+  <!-- Load TouchSpin modules -->
+  <script type="module">
+    import { installWithRenderer } from '../../../jquery-plugin/src/index.js';
+    import Bootstrap5Renderer from '../../../renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
+    // Install jQuery plugin with Bootstrap 5 renderer as default
+    installWithRenderer(Bootstrap5Renderer);
+
+    // Mark as ready for tests
+    window.touchSpinReady = true;
+  </script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>jQuery TouchSpin Commands Test</h1>
+
+    <!-- Test inputs for various command scenarios -->
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>Value Operations</h3>
+        <div class="mb-3">
+          <label for="value-test">Value Test Input</label>
+          <input type="text" id="value-test" class="form-control" value="50" data-testid="value-test">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Increment/Decrement</h3>
+        <div class="mb-3">
+          <label for="increment-test">Increment Test Input</label>
+          <input type="text" id="increment-test" class="form-control" value="10" data-testid="increment-test">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>Continuous Spinning</h3>
+        <div class="mb-3">
+          <label for="spin-test">Spin Test Input</label>
+          <input type="text" id="spin-test" class="form-control" value="100" data-testid="spin-test">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Settings Update</h3>
+        <div class="mb-3">
+          <label for="settings-test">Settings Test Input</label>
+          <input type="text" id="settings-test" class="form-control" value="25" data-testid="settings-test">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>Lifecycle Operations</h3>
+        <div class="mb-3">
+          <label for="lifecycle-test">Lifecycle Test Input</label>
+          <input type="text" id="lifecycle-test" class="form-control" value="75" data-testid="lifecycle-test">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Case Insensitivity Test</h3>
+        <div class="mb-3">
+          <label for="case-test">Case Test Input</label>
+          <input type="text" id="case-test" class="form-control" value="60" data-testid="case-test">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>Chaining Support</h3>
+        <div class="mb-3">
+          <label for="chaining-test">Chaining Test Input</label>
+          <input type="text" id="chaining-test" class="form-control" value="30" data-testid="chaining-test">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Non-initialized Input</h3>
+        <div class="mb-3">
+          <label for="non-init-test">Non-initialized Test Input</label>
+          <input type="text" id="non-init-test" class="form-control" value="42" data-testid="non-init-test">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h3>With Options</h3>
+        <div class="mb-3">
+          <label for="options-test">Options Test Input</label>
+          <input type="text" id="options-test" class="form-control" value="5.50" data-testid="options-test">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3>Boundaries Test</h3>
+        <div class="mb-3">
+          <label for="boundaries-test">Boundaries Test Input</label>
+          <input type="text" id="boundaries-test" class="form-control" value="50" data-testid="boundaries-test">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
