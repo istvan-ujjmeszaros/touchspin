@@ -63,8 +63,12 @@ jobs:
       - name: Yarn install and prepare environment
         run: |
           yarn install --immutable
-          # Force unplug vite for CI (needed for ESM module resolution)
-          yarn unplug vite
+          # Add vite's peer dependencies temporarily for CI
+          yarn add -D rollup esbuild
+          # Force unplug vite and its dependencies for CI (needed for ESM module resolution)
+          yarn unplug vite || true
+          yarn unplug rollup || true
+          yarn unplug esbuild || true
           yarn install
 
       # Only install Playwright if not cached
