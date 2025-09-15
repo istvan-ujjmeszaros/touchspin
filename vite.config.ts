@@ -7,7 +7,7 @@ import path from 'node:path';
 // - Keep dev port at 8866 (strict) for local tooling compatibility
 export default defineConfig({
   server: {
-    open: '/examples/',
+    open: '/',
     port: 8866,
     strictPort: true,
     fs: {
@@ -17,6 +17,67 @@ export default defineConfig({
     }
   },
   plugins: [
+    // Virtual index pages to browse HTML files during development
+    {
+      name: 'touchspin-html-indexes',
+      configureServer(server) {
+        const fsAllow = process.cwd();
+        const exts = ['.html', '.htm'];
+        const path = require('node:path');
+        const fs = require('node:fs');
+
+        const EXCLUDE_DIRS = new Set([
+          '.git', '.yarn', 'node_modules', 'dist', 'reports', 'coverage', 'tmp', 'off', '.idea'
+        ]);
+
+        function walk(dir, out) {
+          let entries: Array<import('node:fs').Dirent> = [];
+          try {
+            entries = fs.readdirSync(dir, { withFileTypes: true });
+          } catch {
+            return;
+          }
+          for (const e of entries) {
+            if (e.name.startsWith('.DS_')) continue;
+            const full = path.join(dir, e.name);
+            const rel = path.relative(fsAllow, full);
+            if (e.isDirectory()) {
+              if (EXCLUDE_DIRS.has(e.name)) continue;
+              walk(full, out);
+            } else if (e.isFile()) {
+              const ext = path.extname(e.name).toLowerCase();
+              if (exts.includes(ext)) out.push('/' + rel.replace(/\\/g, '/'));
+            }
+          }
+        }
+
+        function renderIndex(title: string, items: Array<{ href: string; label?: string }>) {
+          const list = items
+            .map(i => `<li><a href="${i.href}">${i.label || i.href}</a></li>`) 
+            .join('');
+          return `<!doctype html><meta charset="utf-8"><title>${title}</title><h1>${title}</h1><ul>${list}</ul>`;
+        }
+
+        server.middlewares.use((req, res, next) => {
+          const url = (req.url || '/').split('?')[0];
+
+          // Root and aliases list ALL html files
+          if (url === '/' || url === '/html' || url === '/html/' || url === '/examples' || url === '/examples/') {
+            const files: string[] = [];
+            walk(fsAllow, files);
+            files.sort((a, b) => a.localeCompare(b));
+            const html = renderIndex('All HTML files', files.map(href => ({ href })));
+            res.setHeader('Content-Type', 'text/html');
+            res.end(html);
+            return;
+          }
+
+          // No separate /tests or /examples index; root shows everything.
+
+          next();
+        });
+      },
+    },
     // Silence noisy sourcemap requests for vendored Bootstrap assets used by tests
     // These files reference .map files we do not ship. Respond with a minimal
     // empty sourcemap to avoid console noise during dev.
@@ -34,51 +95,7 @@ export default defineConfig({
         });
       },
     },
-    {
-      name: 'touchspin-examples-index',
-      configureServer(server) {
-        server.middlewares.use((req, res, next) => {
-          const url = req.url || '/';
-          if (url === '/examples' || url === '/examples/') {
-            // Recursively find example/index.html under packages/**/example/
-            const pkgsDir = path.resolve(process.cwd(), 'packages');
-            const exampleLinks: Array<{ label: string; href: string }> = [];
-
-            function walk(dir: string, rel = '') {
-              const entries = fs.readdirSync(dir, { withFileTypes: true });
-              for (const e of entries) {
-                if (e.name.startsWith('.')) continue;
-                const full = path.join(dir, e.name);
-                const relPath = path.join(rel, e.name);
-                if (e.isDirectory()) {
-                  const exampleDir = path.join(full, 'example');
-                  if (fs.existsSync(exampleDir) && fs.statSync(exampleDir).isDirectory()) {
-                    const files = fs.readdirSync(exampleDir).filter((f) => f.toLowerCase().endsWith('.html'));
-                    for (const f of files) {
-                      exampleLinks.push({
-                        label: `${relPath}/example/${f}`,
-                        href: `/packages/${relPath}/example/${f}`,
-                      });
-                    }
-                  }
-                  walk(full, relPath);
-                }
-              }
-            }
-
-            walk(pkgsDir);
-            exampleLinks.sort((a, b) => a.label.localeCompare(b.label));
-            const html = `<!doctype html><meta charset="utf-8"><title>Examples</title><h1>Examples</h1><ul>${exampleLinks
-              .map((l) => `<li><a href="${l.href}">${l.label}</a></li>`)
-              .join('')}</ul>`;
-            res.setHeader('Content-Type', 'text/html');
-            res.end(html);
-            return;
-          }
-          next();
-        });
-      },
-    },
+    // Examples hub removed; use root '/' to browse all HTML files.
   ],
   optimizeDeps: {
     include: [],

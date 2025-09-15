@@ -53,12 +53,6 @@ async function main() {
   console.log(`[dev:force] Freeing port ${port} if occupied...`);
   killPort(port);
 
-  console.log('[dev:force] Regenerating examples index...');
-  const gen = spawnSync(process.execPath, ['scripts/gen-examples.mjs'], { stdio: 'inherit' });
-  if (gen.status !== 0) {
-    console.error('[dev:force] Failed to generate examples');
-  }
-
   console.log(`[dev:force] Starting Vite on port ${port}...`);
   const child = spawn('vite', ['--port', String(port), '--strictPort'], { stdio: 'inherit' });
 
@@ -76,4 +70,3 @@ main().catch((err) => {
   console.error('[dev:force] Unexpected error:', err);
   process.exit(1);
 });
-
