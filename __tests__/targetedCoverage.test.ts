@@ -25,15 +25,15 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="double-init-test" type="text" value="50" data-testid="double-init-test">');
-        
+
         const $input = $('#double-init-test');
-        
+
         // Initialize TouchSpin first time
         $input.TouchSpin({
           min: 0,
           max: 100
         });
-        
+
         // Try to initialize again - should warn and destroy/reinitialize
         $input.TouchSpin({
           min: 0,
@@ -46,7 +46,7 @@ test.describe('Targeted Coverage Tests', () => {
         () => consoleWarnings.some(msg => msg.includes('Destroying existing instance and reinitializing'))
       ).toBe(true);
 
-      // Should still work normally after reinitialization  
+      // Should still work normally after reinitialization
       await touchspinHelpers.touchspinClickUp(page, 'double-init-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'double-init-test')
@@ -67,7 +67,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<div id="not-input-test">This is not an input</div>');
-        
+
         // Try to initialize TouchSpin on a div
         $('#not-input-test').TouchSpin();
       });
@@ -84,7 +84,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="step-zero-test" type="text" value="50" data-testid="step-zero-test">');
-        
+
         // Try to set step to 0 (invalid)
         $('#step-zero-test').TouchSpin({
           min: 0,
@@ -104,7 +104,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="step-invalid-test" type="text" value="50" data-testid="step-invalid-test">');
-        
+
         // Try to set step to invalid value
         $('#step-invalid-test').TouchSpin({
           min: 0,
@@ -124,7 +124,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="step-negative-test" type="text" value="50" data-testid="step-negative-test">');
-        
+
         // Try to set step to negative value
         $('#step-negative-test').TouchSpin({
           min: 0,
@@ -146,7 +146,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="invalid-min-test" type="text" value="50" data-testid="invalid-min-test">');
-        
+
         // Try to set min to invalid value
         $('#invalid-min-test').TouchSpin({
           min: 'invalid' as any, // Invalid min
@@ -158,7 +158,7 @@ test.describe('Targeted Coverage Tests', () => {
       // Should allow going below what would normally be min (since min becomes null)
       await touchspinHelpers.fillWithValue(page, 'invalid-min-test', '-999');
       await page.keyboard.press('Tab');
-      
+
       // Should accept the negative value (no min constraint)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'invalid-min-test')
@@ -169,7 +169,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="invalid-max-test" type="text" value="50" data-testid="invalid-max-test">');
-        
+
         // Try to set max to invalid value
         $('#invalid-max-test').TouchSpin({
           min: 0,
@@ -181,7 +181,7 @@ test.describe('Targeted Coverage Tests', () => {
       // Should allow going above what would normally be max (since max becomes null)
       await touchspinHelpers.fillWithValue(page, 'invalid-max-test', '9999');
       await page.keyboard.press('Tab');
-      
+
       // Should accept the high value (no max constraint)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'invalid-max-test')
@@ -192,7 +192,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="nan-limits-test" type="text" value="50" data-testid="nan-limits-test">');
-        
+
         // Try to set min/max to NaN
         $('#nan-limits-test').TouchSpin({
           min: NaN, // Will become null
@@ -215,7 +215,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="invalid-decimals-test" type="text" value="50.123" data-testid="invalid-decimals-test">');
-        
+
         // Try to set decimals to invalid value
         $('#invalid-decimals-test').TouchSpin({
           min: 0,
@@ -229,7 +229,7 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('invalid-decimals-test');
       await input.focus();
       await input.blur();
-      
+
       // Should show integer (no decimals)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'invalid-decimals-test')
@@ -240,7 +240,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="negative-decimals-test" type="text" value="50.123" data-testid="negative-decimals-test">');
-        
+
         // Try to set decimals to negative value
         $('#negative-decimals-test').TouchSpin({
           min: 0,
@@ -254,7 +254,7 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('negative-decimals-test');
       await input.focus();
       await input.blur();
-      
+
       // Should show integer (no decimals)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'negative-decimals-test')
@@ -265,7 +265,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="nan-decimals-test" type="text" value="50.999" data-testid="nan-decimals-test">');
-        
+
         // Try to set decimals to NaN
         $('#nan-decimals-test').TouchSpin({
           min: 0,
@@ -279,7 +279,7 @@ test.describe('Targeted Coverage Tests', () => {
       const input = page.getByTestId('nan-decimals-test');
       await input.focus();
       await input.blur();
-      
+
       // Should show integer (no decimals)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'nan-decimals-test')
@@ -291,13 +291,13 @@ test.describe('Targeted Coverage Tests', () => {
     test('should work with custom TestRenderer', async ({ page }) => {
       // Navigate to the test renderer page
       await page.goto('/__tests__/html/index-test-renderer.html');
-      
+
       // Test that the TestRenderer works correctly
       const testid = 'test-target';
-      
+
       // Should render and work with TestRenderer
       await touchspinHelpers.waitForTimeout(500); // Let page load
-      
+
       // Check that custom TestRenderer was used by looking for test-specific classes
       await expect.poll(async () => {
         return await page.evaluate((testId) => {
@@ -311,19 +311,19 @@ test.describe('Targeted Coverage Tests', () => {
           ));
         }, testid);
       }).toBe(true);
-      
+
       // Test functionality - should work normally
       await touchspinHelpers.touchspinClickUp(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('43'); // 42 + 1
-      
+
       // Test down click
       await touchspinHelpers.touchspinClickDown(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('42'); // back to original
-      
+
       // Verify TestRenderer specific elements are present
       const testSpecificElements = await page.evaluate((testId) => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
@@ -334,7 +334,7 @@ test.describe('Targeted Coverage Tests', () => {
           hasTestButtons: !!(container && container.querySelector('.test-btn-up') && container.querySelector('.test-btn-down'))
         };
       }, testid);
-      
+
       expect(testSpecificElements.hasTestWrapper).toBe(true);
       expect(testSpecificElements.hasTestPrefix).toBe(true);
       expect(testSpecificElements.hasTestPostfix).toBe(true);
@@ -347,7 +347,7 @@ test.describe('Targeted Coverage Tests', () => {
       // Test the UMD wrapper logic by simulating different environments
       const umdResults = await page.evaluate(() => {
         const results = [];
-        
+
         // Simulate AMD environment
         const originalDefine = (window as any).define;
         (window as any).define = function(deps: any, factory: any) {
@@ -355,7 +355,7 @@ test.describe('Targeted Coverage Tests', () => {
           return factory;
         };
         (window as any).define.amd = true;
-        
+
         // Test AMD path
         try {
           // The UMD wrapper should detect AMD
@@ -363,40 +363,40 @@ test.describe('Targeted Coverage Tests', () => {
         } catch (e) {
           results.push('AMD error: ' + e);
         }
-        
+
         // Cleanup
         if (originalDefine) {
           (window as any).define = originalDefine;
         } else {
           delete (window as any).define;
         }
-        
+
         // Simulate CommonJS environment
         const originalModule = (window as any).module;
         const originalExports = (window as any).exports;
-        
+
         (window as any).module = { exports: {} };
         (window as any).exports = (window as any).module.exports;
-        
+
         try {
           results.push('CommonJS simulation complete');
         } catch (e) {
           results.push('CommonJS error: ' + e);
         }
-        
+
         // Cleanup
         if (originalModule) {
           (window as any).module = originalModule;
         } else {
           delete (window as any).module;
         }
-        
+
         if (originalExports) {
           (window as any).exports = originalExports;
         } else {
           delete (window as any).exports;
         }
-        
+
         return results;
       });
 
@@ -410,7 +410,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="extreme-decimals-test" type="text" value="0" data-testid="extreme-decimals-test">');
-        
+
         // Test with very high decimal precision
         $('#extreme-decimals-test').TouchSpin({
           min: 0,
@@ -423,7 +423,7 @@ test.describe('Targeted Coverage Tests', () => {
       // Test precision handling
       await touchspinHelpers.fillWithValue(page, 'extreme-decimals-test', '0.123456789123456789');
       await page.keyboard.press('Tab');
-      
+
       // Should be limited to specified decimal places
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'extreme-decimals-test')
@@ -434,7 +434,7 @@ test.describe('Targeted Coverage Tests', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="large-numbers-test" type="text" value="0" data-testid="large-numbers-test">');
-        
+
         $('#large-numbers-test').TouchSpin({
           min: null, // No limit
           max: null, // No limit
@@ -445,7 +445,7 @@ test.describe('Targeted Coverage Tests', () => {
       // Test with large number
       await touchspinHelpers.fillWithValue(page, 'large-numbers-test', '999999999999999');
       await page.keyboard.press('Tab');
-      
+
       await expect.poll(
         async () => {
           const value = await touchspinHelpers.readInputValue(page, 'large-numbers-test');

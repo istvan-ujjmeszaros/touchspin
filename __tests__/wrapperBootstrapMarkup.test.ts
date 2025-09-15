@@ -33,28 +33,28 @@ test.describe('Bootstrap Wrapper Markup', () => {
     });
     const wrapper = page.locator('[data-touchspin-injected="wrapper"]');
     await expect(wrapper).toHaveCount(1);
-    
+
     // BS4 container is .input-group
     await expect(wrapper).toHaveClass(/input-group/);
-    
+
     // Should have exactly one prepend and one append wrapper (not multiple)
     await expect(wrapper.locator('.input-group-prepend')).toHaveCount(1);
     await expect(wrapper.locator('.input-group-append')).toHaveCount(1);
-    
+
     // Prepend wrapper should contain both down button and prefix
     const prependWrapper = wrapper.locator('.input-group-prepend');
     await expect(prependWrapper.locator('[data-touchspin-injected="down"]')).toHaveCount(1);
     await expect(prependWrapper.locator('[data-touchspin-injected="prefix"].input-group-text')).toHaveCount(1);
-    
-    // Append wrapper should contain both postfix and up button  
+
+    // Append wrapper should contain both postfix and up button
     const appendWrapper = wrapper.locator('.input-group-append');
     await expect(appendWrapper.locator('[data-touchspin-injected="postfix"].input-group-text')).toHaveCount(1);
     await expect(appendWrapper.locator('[data-touchspin-injected="up"]')).toHaveCount(1);
-    
+
     // Prefix/Postfix are .input-group-text spans themselves (BS4 style)
     await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toHaveClass(/input-group-text/);
     await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toHaveClass(/input-group-text/);
-    
+
     // No BS3 addon elements (confirms it's proper BS4)
     await expect(wrapper.locator('.input-group-addon')).toHaveCount(0);
   });

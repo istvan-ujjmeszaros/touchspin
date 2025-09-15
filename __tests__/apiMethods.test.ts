@@ -139,7 +139,7 @@ test.describe('API Methods', () => {
         }, selector);
         return prefixText;
       }).toContain('NEW');
-      
+
       await expect.poll(async () => {
         const postfixText = await page.evaluate((sel) => {
           const input = document.querySelector(sel);
@@ -222,7 +222,7 @@ test.describe('API Methods', () => {
 
       // Verify TouchSpin functionality is disabled (buttons should not respond)
       const initialValue = await touchspinHelpers.readInputValue(page, testid);
-      
+
       // After destroy, clicking up button should fail because buttons are removed
       let clickFailed = false;
       try {

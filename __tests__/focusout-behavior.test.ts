@@ -27,25 +27,25 @@ test.describe('Focus and Outside Click Behavior', () => {
       const $ = (window as any).jQuery;
       const _data = ($ as any)?._data;
       if (!_data) return { ok: true, note: 'no _data available' };
-      
+
       const ev = _data(document, 'events') || {};
       const names = (type: string) => (ev[type] || []).map((h: any) => h.namespace || '');
       const anyTs = (names('mousedown').concat(names('touchstart'))).some((n: string) => n.includes('touchspin'));
       return { ok: !anyTs, note: anyTs ? 'found touchspin handlers' : 'none' };
     });
-    
+
     expect(res.ok).toBeTruthy();
   });
 
   test('NEW TARGET: focus moving within widget should not sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
-    
+
     // Type invalid value
     await touchspinHelpers.fillWithValue(page, testid, '3');
-    
+
     // Focus the up button explicitly (within the same widget)
     await touchspinHelpers.focusUpButton(page, testid);
-    
+
     // Should NOT sanitize because we're still within the widget
     const valueAfterFocusButton = await touchspinHelpers.readInputValue(page, testid);
     expect(valueAfterFocusButton).toBe('3'); // Should stay unsanitized
@@ -53,13 +53,13 @@ test.describe('Focus and Outside Click Behavior', () => {
 
   test('NEW TARGET: leaving widget completely should sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
-    
+
     // Type invalid value
     await touchspinHelpers.fillWithValue(page, testid, '3');
-    
+
     // Focus outside the widget
     await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
-    
+
     // Compute expected sanitized value based on runtime step
     const { step, decimals, divisibility } = await page.evaluate(() => {
       const $ = (window as any).jQuery;
@@ -112,18 +112,18 @@ test.describe('Focus and Outside Click Behavior', () => {
 
   test('CLEANUP BEHAVIOR: destroy should remove all listeners', async ({ page }) => {
     const testid = 'touchspin-default';
-    
+
     // Initialize and then destroy
     await page.evaluate((testid) => {
       const $ = (window as any).jQuery;
       const input = $(`[data-testid="${testid}"]`);
       (input as any).trigger('touchspin.destroy');
     }, testid);
-    
+
     // After destroy, outside clicks should NOT trigger sanitization
     await touchspinHelpers.fillWithValue(page, testid, '3');
     await page.click('body');
-    
+
     const valueAfterDestroy = await touchspinHelpers.readInputValue(page, testid);
     expect(valueAfterDestroy).toBe('3'); // Should stay unchanged
   });
@@ -138,7 +138,7 @@ test.describe('Focus and Outside Click Behavior', () => {
       $inp.off('.test').on('change.test', () => (window as any).chg++);
       // Update settings to use replacementval
       $inp.trigger('touchspin.updatesettings', { replacementval: '0' });
-      
+
       // Set input to empty (like user deleting all text)
       $inp.val('');
     }, testid);
@@ -147,10 +147,10 @@ test.describe('Focus and Outside Click Behavior', () => {
     const input = page.getByTestId(testid);
     await input.focus();
     await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
-    
+
     // Allow the deferred focusout commit to run
     await page.waitForTimeout(0);
-    
+
     await expect.poll(() => page.evaluate(() => (window as any).chg)).toBe(1);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('0');
   });

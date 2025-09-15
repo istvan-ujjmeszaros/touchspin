@@ -28,7 +28,7 @@ if (!fs.existsSync(distFolder)) {
 
 packages.forEach(packageName => {
   const cssPath = `packages/renderers/${packageName}/dist/touchspin-${packageName}.css`;
-  
+
   // Check if the package CSS exists
   if (!fs.existsSync(cssPath)) {
     console.log(`⚠️  CSS not found for ${packageName}, skipping...`);

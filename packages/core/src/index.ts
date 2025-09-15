@@ -386,7 +386,7 @@ export class TouchSpinCore {
       if (inputEl.hasAttribute(fullAttrName)) {
         const rawValue = inputEl.getAttribute(fullAttrName);
         // Assign strongly typed value
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore - narrow via optionName switch
         parsed[optionName] = this._coerceAttributeValue(optionName as string, rawValue ?? '');
       }
@@ -399,7 +399,7 @@ export class TouchSpinCore {
         if ((parsed as Record<string, unknown>)[nativeAttr] !== undefined) {
           console.warn(`Both "data-bts-${nativeAttr}" and "${nativeAttr}" attributes specified. Native attribute takes precedence.`, inputEl);
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore
         parsed[nativeAttr as keyof TouchSpinCoreOptions] = this._coerceAttributeValue(nativeAttr, rawValue ?? '');
       }

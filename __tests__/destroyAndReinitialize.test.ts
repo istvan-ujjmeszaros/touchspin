@@ -21,10 +21,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Initialize TouchSpin
     await initBtn.click();
-    
+
     // Wait for TouchSpin to be fully initialized
     const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
-    
+
     await expect(status).toHaveText('Status: Initialized ($ prefix, .00 postfix)');
 
     // Verify TouchSpin UI elements are present
@@ -52,10 +52,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Reinitialize with different settings
     await reinitBtn.click();
-    
+
     // Wait for TouchSpin to be fully reinitialized
     const reinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
-    
+
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 5)');
 
     // Verify new settings are applied
@@ -89,10 +89,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Initialize TouchSpin
     await initBtn.click();
-    
+
     // Wait for TouchSpin to be fully initialized on existing container
     const existWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'existing-container');
-    
+
     await expect(status).toHaveText('Status: Enhanced existing input-group ($ prefix, .00 postfix)');
 
     // Verify TouchSpin elements are added to existing container
@@ -129,10 +129,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Reinitialize with different settings
     await reinitBtn.click();
-    
+
     // Wait for TouchSpin to be fully reinitialized on existing container
     const existReinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'existing-container');
-    
+
     await expect(status).toHaveText('Status: Reinitialized (€ prefix, EUR postfix, step 10)');
 
     // Verify new settings are applied
@@ -159,10 +159,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Initialize TouchSpin with vertical buttons
     await initBtn.click();
-    
+
     // Wait for TouchSpin to be fully initialized with vertical buttons
     const vWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-vertical');
-    
+
     await expect(status).toHaveText('Status: Initialized (vertical buttons ▲/▼)');
 
     // Verify vertical button elements are present
@@ -192,10 +192,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Reinitialize with different vertical buttons
     await reinitBtn.click();
-    
+
     // Wait for TouchSpin to be fully reinitialized with vertical buttons
     const vReinitWrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-vertical');
-    
+
     await expect(status).toHaveText('Status: Reinitialized (vertical buttons ↑/↓, step 5)');
 
     // Verify new settings are applied
@@ -216,7 +216,7 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Initialize TouchSpin
     await initBtn.click();
-    
+
     // Wait for TouchSpin to be fully initialized
     await touchspinHelpers.getWrapperInstanceWhenReady(page, 'test-input-new');
 
@@ -243,7 +243,7 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
 
     // Initialize TouchSpin
     await initBtn.click();
-    
+
     // Wait for TouchSpin to be fully initialized
     await expect.poll(async () => {
       const wrapper = page.locator('[data-testid="test-input-new-wrapper"][data-touchspin-injected]');

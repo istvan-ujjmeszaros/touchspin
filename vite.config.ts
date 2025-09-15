@@ -53,7 +53,7 @@ export default defineConfig({
 
         function renderIndex(title: string, items: Array<{ href: string; label?: string }>) {
           const list = items
-            .map(i => `<li><a href="${i.href}">${i.label || i.href}</a></li>`) 
+            .map(i => `<li><a href="${i.href}">${i.label || i.href}</a></li>`)
             .join('');
           const total = items.length;
           return `<!doctype html>

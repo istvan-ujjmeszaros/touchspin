@@ -53,23 +53,23 @@ test.describe('Bootstrap 4 Renderer', () => {
       //     <button>+</button>
       //   </div>
       // </div>
-      
+
       const wrapper = page.getByTestId('prefixed-container').locator('[data-touchspin-injected="wrapper"]');
-      
+
       // Should have single prepend and append wrappers
       await expect(wrapper.locator('.input-group-prepend')).toHaveCount(1);
       await expect(wrapper.locator('.input-group-append')).toHaveCount(1);
-      
+
       // Prepend wrapper should contain down button and prefix
       const prependWrapper = wrapper.locator('.input-group-prepend');
       await expect(prependWrapper.locator('[data-touchspin-injected="down"]')).toHaveCount(1);
       await expect(prependWrapper.locator('[data-touchspin-injected="prefix"].input-group-text')).toHaveCount(1);
-      
+
       // Append wrapper should contain postfix and up button
       const appendWrapper = wrapper.locator('.input-group-append');
       await expect(appendWrapper.locator('[data-touchspin-injected="postfix"].input-group-text')).toHaveCount(1);
       await expect(appendWrapper.locator('[data-touchspin-injected="up"]')).toHaveCount(1);
-      
+
       // Verify prefix/postfix are input-group-text spans (not wrapper divs)
       await expect(wrapper.locator('[data-touchspin-injected="prefix"]')).toHaveClass(/input-group-text/);
       await expect(wrapper.locator('[data-touchspin-injected="postfix"]')).toHaveClass(/input-group-text/);

@@ -163,7 +163,7 @@ abstract class AbstractRenderer implements Renderer {
       if (testid && !this.wrapper.hasAttribute('data-testid')) {
         this.wrapper.setAttribute('data-testid', testid + '-wrapper');
       }
-      
+
       // Mark component as ready (DOM built, events attached)
       this.wrapper.setAttribute('data-touchspin-injected', this.wrapperType);
     }

@@ -66,7 +66,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
 
     // Click back in left input to trigger blur on right
     await page.focus('#orig-input');
-    
+
     // Check right after blur
     const rightAfterBlur = await page.inputValue('#wrap-input');
     expect(rightAfterBlur).toBe('75'); // Should have snapped to 75 on blur
@@ -126,17 +126,17 @@ test.describe('A/B parity: original src vs wrapper', () => {
 
     // Click at end of right input (after "40") and type "7"
     await page.click('#wrap-input');
-    await page.keyboard.press('End'); // Ensure cursor is at end  
+    await page.keyboard.press('End'); // Ensure cursor is at end
     await page.keyboard.type('7');
     const rightBeforeBlur = await page.inputValue('#wrap-input');
     expect(rightBeforeBlur).toBe('407'); // Should show 407 while typing
 
     // Blur both inputs by clicking elsewhere
     await page.click('h1'); // Click on page title to blur
-    
+
     const leftAfterBlur = await page.inputValue('#orig-input');
     const rightAfterBlur = await page.inputValue('#wrap-input');
-    
+
     // Both should clamp to max value 100
     expect(leftAfterBlur).toBe('100');
     expect(rightAfterBlur).toBe('100');
@@ -153,7 +153,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     // Should not contain multiple change events (count occurrences of 'change[')
     const origChangeCount = (origLog.match(/change\[/g) || []).length;
     const wrapChangeCount = (wrapLog.match(/change\[/g) || []).length;
-    
+
     expect(origChangeCount).toBe(1);
     expect(wrapChangeCount).toBe(1);
   });
@@ -184,17 +184,17 @@ test.describe('A/B parity: original src vs wrapper', () => {
     await page.keyboard.type('77');
     const leftBeforeEnter = await page.inputValue('#orig-input');
     expect(leftBeforeEnter).toBe('4077'); // Should show 4077 after typing
-    
+
     await page.keyboard.press('Enter');
     const leftAfterEnter = await page.inputValue('#orig-input');
     expect(leftAfterEnter).toBe('100'); // Should clamp to max 100
 
-    // Test right input: Click, type "77", press Enter without blurring  
+    // Test right input: Click, type "77", press Enter without blurring
     await page.click('#wrap-input');
     await page.keyboard.type('77');
     const rightBeforeEnter = await page.inputValue('#wrap-input');
     expect(rightBeforeEnter).toBe('4077'); // Should show 4077 after typing
-    
+
     await page.keyboard.press('Enter');
     const rightAfterEnter = await page.inputValue('#wrap-input');
     expect(rightAfterEnter).toBe('100'); // Should clamp to max 100
@@ -211,7 +211,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     // Should not contain multiple change events (count occurrences of 'change[')
     const origChangeCount = (origLog.match(/change\[/g) || []).length;
     const wrapChangeCount = (wrapLog.match(/change\[/g) || []).length;
-    
+
     expect(origChangeCount).toBe(1);
     expect(wrapChangeCount).toBe(1);
   });
@@ -227,16 +227,16 @@ test.describe('A/B parity: original src vs wrapper', () => {
     await page.evaluate(() => {
       (window as any).origEvents = [];
       (window as any).wrapEvents = [];
-      
+
       const $ = (window as any).jQuery;
       const $orig = $('#orig-input');
       const $wrap = $('#wrap-input');
-      
+
       // Track min/max and change events in order
       $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
       $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
       $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
-      
+
       $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
       $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
@@ -263,7 +263,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     expect(events.orig).toContain('min.on');
     expect(events.wrap).toContain('min.on');
 
-    // Both should have change[0] event  
+    // Both should have change[0] event
     expect(events.orig).toContain('change[0]');
     expect(events.wrap).toContain('change[0]');
 
@@ -302,16 +302,16 @@ test.describe('A/B parity: original src vs wrapper', () => {
     await page.evaluate(() => {
       (window as any).origEvents = [];
       (window as any).wrapEvents = [];
-      
+
       const $ = (window as any).jQuery;
       const $orig = $('#orig-input');
       const $wrap = $('#wrap-input');
-      
+
       // Track min/max and change events in order
       $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
       $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
       $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
-      
+
       $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
       $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
@@ -322,7 +322,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
       const $ = (window as any).jQuery;
       const $orig = $('#orig-input');
       const $wrap = $('#wrap-input');
-      
+
       // Use API calls instead of clicking for speed and reliability
       for (let i = 0; i < 12; i++) {
         $orig.trigger('touchspin.uponce');
@@ -340,7 +340,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     expect(events.orig).toContain('max.on');
     expect(events.wrap).toContain('max.on');
 
-    // Both should have change[100] event  
+    // Both should have change[100] event
     expect(events.orig).toContain('change[100]');
     expect(events.wrap).toContain('change[100]');
 
@@ -379,16 +379,16 @@ test.describe('A/B parity: original src vs wrapper', () => {
     await page.evaluate(() => {
       (window as any).origEvents = [];
       (window as any).wrapEvents = [];
-      
+
       const $ = (window as any).jQuery;
       const $orig = $('#orig-input');
       const $wrap = $('#wrap-input');
-      
+
       // Track events in order they fire
       $orig.on('touchspin.on.min', () => (window as any).origEvents.push('min.on'));
       $orig.on('touchspin.on.max', () => (window as any).origEvents.push('max.on'));
       $orig.on('change', () => (window as any).origEvents.push('change[' + $orig.val() + ']'));
-      
+
       $wrap.on('touchspin.on.min', () => (window as any).wrapEvents.push('min.on'));
       $wrap.on('touchspin.on.max', () => (window as any).wrapEvents.push('max.on'));
       $wrap.on('change', () => (window as any).wrapEvents.push('change[' + $wrap.val() + ']'));
@@ -399,7 +399,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
       const $ = (window as any).jQuery;
       const $orig = $('#orig-input');
       const $wrap = $('#wrap-input');
-      
+
       // Use API calls instead of clicking for speed and reliability
       for (let i = 0; i < 7; i++) {
         $orig.trigger('touchspin.downonce');
@@ -425,7 +425,7 @@ test.describe('A/B parity: original src vs wrapper', () => {
     // Both should have both min.on and change events
     expect(events.orig).toContain('min.on');
     expect(events.orig).toContain('change[0]');
-    expect(events.wrap).toContain('min.on');  
+    expect(events.wrap).toContain('min.on');
     expect(events.wrap).toContain('change[0]');
 
     // Check event ordering: min.on should come before change

@@ -16,7 +16,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should handle Enter key on up button', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Focus the up button and press Enter
       const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper.evaluate((container) => {
@@ -36,7 +36,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should handle Space key on down button', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Focus the down button and press Space
       const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper2.evaluate((container) => {
@@ -59,7 +59,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should handle Enter key on down button', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Focus the down button and press Enter
       const wrapper3 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper3.evaluate((container) => {
@@ -82,7 +82,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should handle held Space key for spinning', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Hold Space key on up button to trigger spinning
       const wrapper4 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper4.evaluate((container) => {
@@ -113,7 +113,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should prevent default behavior on Space and Enter keys', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Test that preventDefault is called
       const wrapper5 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       const preventDefaultCalled = await wrapper5.evaluate((container) => {
@@ -138,7 +138,7 @@ test.describe('Keyboard Accessibility Tests', () => {
     test('should ignore other keys on buttons', async ({ page }) => {
       const testid = 'touchspin-default';
       const initialValue = await touchspinHelpers.readInputValue(page, testid);
-      
+
       // Press various other keys that should not trigger actions
       const wrapper6 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper6.evaluate((container) => {
@@ -160,7 +160,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should handle rapid key events correctly', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Rapidly press and release Space key multiple times
       const wrapper7 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper7.evaluate((container) => {

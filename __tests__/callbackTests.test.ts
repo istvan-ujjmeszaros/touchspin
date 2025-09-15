@@ -249,7 +249,7 @@ test.describe('TouchSpin Callback Tests', () => {
       // Start from a known value
       await touchspinHelpers.fillWithValue(page, testid, '100');
       await page.keyboard.press('Tab');
-      
+
       // Wait for value to be formatted
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)

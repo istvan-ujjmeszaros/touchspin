@@ -132,7 +132,7 @@ test.describe('Events', () => {
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-    expect(await touchspinHelpers.countChangeWithValue(page, "100")).toBe(1);
+    expect(await touchspinHelpers.countChangeWithValue(page, '100')).toBe(1);
   });
 
   test('Should not fire change event when already at min value and entering a lower value', async ({ page }) => {
@@ -161,7 +161,7 @@ test.describe('Events', () => {
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-    expect(await touchspinHelpers.countChangeWithValue(page, "0")).toBe(1);
+    expect(await touchspinHelpers.countChangeWithValue(page, '0')).toBe(1);
   });
 
   test('Should use the callback on the initial value', async ({ page }) => {
