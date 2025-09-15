@@ -77,7 +77,7 @@ const DEFAULTS: Required<Omit<TouchSpinCoreOptions, 'renderer'>> & { renderer: n
   buttonup_class: null,
   buttondown_class: null,
   buttonup_txt: '+',
-  buttondown_txt: '−',
+  buttondown_txt: '&minus;',
   callback_before_calculation: (v) => v,
   callback_after_calculation: (v) => v,
   renderer: null,
