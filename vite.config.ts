@@ -55,7 +55,72 @@ export default defineConfig({
           const list = items
             .map(i => `<li><a href="${i.href}">${i.label || i.href}</a></li>`) 
             .join('');
-          return `<!doctype html><meta charset="utf-8"><title>${title}</title><h1>${title}</h1><ul>${list}</ul>`;
+          const total = items.length;
+          return `<!doctype html>
+<meta charset="utf-8">
+<title>${title}</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; margin: 24px; line-height: 1.45; }
+  h1 { margin: 0 0 12px; font-size: 20px; }
+  #filter { padding: 8px 10px; width: 100%; max-width: 520px; border: 1px solid #ccc; border-radius: 6px; }
+  #meta { margin: 8px 0 16px; color: #666; font-size: 12px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { margin: 6px 0; }
+  a { text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  @media (prefers-color-scheme: dark) {
+    #filter { border-color: #555; background: #111; color: #eee; }
+    #meta { color: #aaa; }
+  }
+  .path { color: #888; font-size: 12px; }
+  .path::before { content: '\\00a0'; }
+  .dim { opacity: .65; }
+  .hidden { display: none; }
+  .group { margin-top: 16px; }
+  .group h2 { font-size: 14px; margin: 12px 0 6px; color: #666; }
+}
+</style>
+<h1>${title}</h1>
+<input id="filter" type="search" placeholder="Filter by name or path…" autofocus>
+<div id="meta">Showing <span id="count"></span> of ${total}</div>
+<ul id="list">${list}</ul>
+<script>
+  const input = document.getElementById('filter');
+  const list = document.getElementById('list');
+  const count = document.getElementById('count');
+  const items = Array.from(list.children);
+  function update() {
+    const q = input.value.trim().toLowerCase();
+    let shown = 0;
+    for (const li of items) {
+      const text = li.textContent.toLowerCase();
+      const ok = !q || text.includes(q);
+      li.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    }
+    count.textContent = String(shown);
+  }
+  input.addEventListener('input', update);
+  // Support pressing '/' to focus the filter, similar to GitHub.
+  window.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+  update();
+  // Auto-select first item with Enter when filter has focus.
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const first = items.find(li => li.style.display !== 'none');
+      if (first) {
+        const a = first.querySelector('a');
+        if (a) a.click();
+      }
+    }
+  });
+<\/script>`;
         }
 
         server.middlewares.use((req, res, next) => {
