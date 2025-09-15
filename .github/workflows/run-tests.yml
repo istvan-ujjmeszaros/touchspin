@@ -45,7 +45,7 @@ jobs:
       # Get Playwright version for precise cache key
       - name: Get Playwright version
         id: playwright-version
-        run: echo "version=$(yarn list --pattern @playwright/test --depth=0 --json | grep -o '"version":"[^"]*"' | cut -d'"' -f4)" >> $GITHUB_OUTPUT
+        run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> $GITHUB_OUTPUT
 
       # Cache Playwright browsers with version-specific key
       - name: Cache Playwright browsers
