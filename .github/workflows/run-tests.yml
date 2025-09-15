@@ -36,13 +36,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            .yarn/unplugged
-            .yarn/install-state.gz
-            .pnp.cjs
-            .pnp.loader.mjs
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json') }}
+            .yarn/cache
+            node_modules
+          key: ${{ runner.os }}-yarn-nm-${{ hashFiles('yarn.lock', 'package.json') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-nm-
 
       # Get Playwright version for precise cache key
       - name: Get Playwright version
@@ -62,13 +60,8 @@ jobs:
 
       - name: Yarn install and prepare environment
         run: |
-          yarn install --immutable
-          # Add vite's peer dependencies temporarily for CI
-          yarn add -D rollup esbuild
-          # Force unplug vite and its dependencies for CI (needed for ESM module resolution)
-          yarn unplug vite || true
-          yarn unplug rollup || true
-          yarn unplug esbuild || true
+          # Disable PnP for CI to avoid module resolution issues with Vite
+          echo "nodeLinker: node-modules" >> .yarnrc.yml
           yarn install
 
       # Only install Playwright if not cached
