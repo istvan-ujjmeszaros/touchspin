@@ -105,9 +105,9 @@ export default defineConfig({
     // },
   ],
 
-  /* Run a simple static server for tests to avoid Vite dev server in CI */
+  /* Run Vite dev server for tests to support ES module imports */
   webServer: {
-    command: 'node scripts/static-server.mjs --port 8866',
+    command: 'yarn dev',
     port: 8866,
     reuseExistingServer: !process.env.CI,
     timeout: 20000,
