@@ -40,7 +40,7 @@ jobs:
             .yarn/install-state.gz
             .pnp.cjs
             .pnp.loader.mjs
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'package.json') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
@@ -60,8 +60,12 @@ jobs:
             ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}-
             ${{ runner.os }}-playwright-
 
-      - name: Yarn install
-        run: yarn install --immutable
+      - name: Yarn install and prepare environment
+        run: |
+          yarn install --immutable
+          # Force unplug vite for CI (needed for ESM module resolution)
+          yarn unplug vite
+          yarn install
 
       # Only install Playwright if not cached
       - name: Install Playwright browser
