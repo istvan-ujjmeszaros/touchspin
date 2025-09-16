@@ -55,7 +55,7 @@
         <div class="input-wrapper">
             <label for="test-input">Test Input:</label>
             <input
-                type="text"
+                type="number"
                 id="test-input"
                 data-testid="test-input"
                 class="form-control"
@@ -137,7 +137,7 @@
             label.setAttribute('for', id);
 
             const input = document.createElement('input');
-            input.type = 'text';
+            input.type = 'number';
             input.id = id;
             input.setAttribute('data-testid', id);
             input.className = 'form-control';
