@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TouchSpin Tailwind Renderer + jQuery Wrapper Test</title>
   <script src="../html/assets/tailwind/tailwind.min.js"></script>
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
     .control-buttons button { margin: 4px; }
@@ -54,7 +53,7 @@
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import { getTouchSpin } from '../../packages/core/src/index.js';
     import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
-    
+
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
 
@@ -86,9 +85,9 @@
     // Basic init/destroy functions
     function init() {
       try { destroy(); } catch {}
-      $input.TouchSpin({ 
-        min: 0, 
-        max: 100, 
+      $input.TouchSpin({
+        min: 0,
+        max: 100,
         step: 1,
         renderer: TailwindRenderer
       });
@@ -104,9 +103,9 @@
     function initAdvanced() {
       try { destroyAdvanced(); } catch {}
       // Initialize on the input within the advanced container
-      $advInput.TouchSpin({ 
-        min: 0, 
-        max: 200, 
+      $advInput.TouchSpin({
+        min: 0,
+        max: 200,
         step: 5,
         renderer: TailwindRenderer,
         prefix: '$',

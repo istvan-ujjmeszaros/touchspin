@@ -14,19 +14,19 @@
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
   <!-- Load source CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
-  
+  <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
+
   <!-- Load modern TouchSpin packages directly -->
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
-    
+
     // Install jQuery plugin
     installJqueryTouchSpin(window.jQuery);
-    
+
     // Set global default renderer - no need to specify on each TouchSpin call
     globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
-    
+
     // Keep for backwards compatibility with tests
     window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
@@ -49,7 +49,7 @@
       $("#testinput_readonly").TouchSpin();
       $("#testinput_data_attributes").TouchSpin();
       $("#testinput_individual_min_max_step_properties").TouchSpin();
-      
+
       // Callback example (currency)
       (function() {
         const before = (raw) => (raw ?? '').replace(/[^\d\.\-]/g, ''); // strip $, commas, spaces, etc.
@@ -82,7 +82,7 @@
         prefix: "$",
         postfix: "/qty"
       });
-      
+
       // Numeral.js callback example
       $("#input_callbacks").TouchSpin({
         min: 0,
@@ -130,7 +130,7 @@
       });
       $("#input_group_from_dom_prefix_postfix").TouchSpin();
       $("#input_group_from_dom_prefix").TouchSpin();
-      
+
       // Double init test
       $('#double-init-input').TouchSpin({
         min: 0,
@@ -143,7 +143,7 @@
         max: 300,
         step: 10
       });
-      
+
       // Test invalid element
       $('#not-an-input').TouchSpin();
     });
@@ -160,6 +160,11 @@
         <label for="testinput_default" class="form-label">#testinput_default:</label>
         <input id="testinput_default" data-testid="touchspin-default" type="text" value="50" name="testinput_default" class="form-control">
 
+      </div>
+
+      <div class="wrapper">
+        <label for="testinput_prefix_postfix" class="form-label">#testinput_prefix_postfix:</label>
+        <input id="testinput_prefix_postfix" data-testid="prefix-postfix" type="text" value="100" name="testinput_prefix_postfix" class="form-control">
       </div>
 
       <div class="wrapper">

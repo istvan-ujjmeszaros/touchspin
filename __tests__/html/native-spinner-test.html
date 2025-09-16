@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/bootstrap/bootstrap-4.6.2.min.css">
 
     <!-- TouchSpin CSS -->
-    <link rel="stylesheet" href="../../src/jquery.bootstrap-touchspin.css">
+    <link rel="stylesheet" href="../../packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css">
 
     <!-- jQuery -->
     <script src="assets/jquery/jquery-3.7.1.min.js"></script>
@@ -18,10 +18,10 @@
     <script src="assets/bootstrap/bootstrap-4.6.2.bundle.min.js"></script>
 
     <!-- TouchSpin JS -->
-    <script type="module">
-        import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
-        import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-        
+        <script type="module">
+          import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+          import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
+
         installJqueryTouchSpin(window.jQuery);
         window.Bootstrap4Renderer = Bootstrap4Renderer;
         window.modernTouchSpinInstalled = true;
@@ -1029,32 +1029,32 @@ $('#step-div-ceil').TouchSpin({
                     $('#step-div-status').html(testHTML);
                     checkAllStepDivisibility();
                 }
-                
+
                 function checkInitializationValues() {
                     const inputs = ['none', 'round', 'floor', 'ceil'];
                     const expectedValues = {
                         'none': 7,   // Should keep original value (no step divisibility enforced)
-                        'round': 5,  // Should round 7 to nearest step multiple (5 or 10, 7 is closer to 5) 
+                        'round': 5,  // Should round 7 to nearest step multiple (5 or 10, 7 is closer to 5)
                         'floor': 5,  // Should floor 7 to lower step multiple (5)
                         'ceil': 10   // Should ceil 7 to higher step multiple (10)
                     };
-                    
+
                     let statusHTML = '<div class="alert alert-success"><strong>🎯 Post-Initialization Values Test:</strong><br>';
                     statusHTML += '<strong>Initial value was 7 for all inputs. Expected after TouchSpin initialization:</strong><br><br>';
-                    
+
                     let allCorrect = true;
-                    
+
                     inputs.forEach(function(type) {
                         const input = document.getElementById('step-div-' + type);
                         const actualValue = parseFloat(input.value);
                         const expectedValue = expectedValues[type];
                         const isCorrect = actualValue === expectedValue;
-                        
+
                         if (!isCorrect) allCorrect = false;
-                        
+
                         const statusIcon = isCorrect ? '✅' : '❌';
                         const statusColor = isCorrect ? 'success' : 'danger';
-                        
+
                         statusHTML += '<strong>' + type + ':</strong> ' + statusIcon + ' ';
                         statusHTML += 'Expected: ' + expectedValue + ', Actual: ' + actualValue;
                         if (!isCorrect) {
@@ -1062,19 +1062,19 @@ $('#step-div-ceil').TouchSpin({
                         }
                         statusHTML += '<br>';
                     });
-                    
+
                     statusHTML += '<br><strong>Step Calculation Logic (min=2, step=5):</strong><br>';
                     statusHTML += '• <strong>none:</strong> No adjustment → keep original value 7<br>';
                     statusHTML += '• <strong>round:</strong> Round 7 to nearest step multiple → Math.round(7/5)*5 = 1*5 = 5<br>';
                     statusHTML += '• <strong>floor:</strong> Floor 7 to lower step multiple → Math.floor(7/5)*5 = 1*5 = 5<br>';
                     statusHTML += '• <strong>ceil:</strong> Ceil 7 to higher step multiple → Math.ceil(7/5)*5 = 2*5 = 10<br>';
-                    
+
                     if (allCorrect) {
                         statusHTML += '<br><div class="alert alert-success">🎉 All initialization values are correct!</div>';
                     } else {
                         statusHTML += '<br><div class="alert alert-danger">⚠️ Some values don\'t match expectations. Check forcestepdivisibility implementation.</div>';
                     }
-                    
+
                     statusHTML += '</div>';
                     $('#step-div-status').html(statusHTML);
                 }

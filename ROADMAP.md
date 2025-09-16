@@ -1,50 +1,53 @@
-# TouchSpin Roadmap
+# Ready-to-Publish Roadmap
 
-Status markers
-- [x] Done  - [~] Partially done  - [ ] Planned  - [!] Decision needed
+This document tracks the final steps needed before publishing the `@touchspin/*` packages to npm.
+It builds on the current monorepo state (Yarn 4 PnP, Vite builds per package, SCSS/CSS HMR, DTS fixes, examples hub, Playwright tests).
 
-## Completed
-- [x] Wrapper‑first extraction: modern facade moved out of plugin (LGTM‑7a).  
-- [x] Build hooks to append wrappers (APPEND_WRAPPERS) (LGTM‑7b).  
-- [x] Default builds append modern facade; plugin trimmed (LGTM‑8).  
-- [x] ESM manual page fix: facade waits for plugin to register.
+## Build
 
-## In Progress / Near Term
-- [x] Docs sweep (README/PLAN/CHECKLIST)  
-- [x] Release prep (version bump, CHANGELOG)  
-- [ ] Decide naming scheme for future split builds (see below).
+* [ ] Add `"publishConfig": { "access": "public" }` to every publishable package
+  (`@touchspin/core`, `@touchspin/vanilla-renderer`, `@touchspin/web-component`, `@touchspin/renderer-*`, `@touchspin/jquery-plugin`).
+* [ ] Add `"prepack": "yarn build"` to each package (or a centralized release pipeline step).
+* [ ] Add `"sideEffects": false` to renderer and vanilla/web-component packages if safe for tree-shaking.
+* [ ] (Optional) Add separate `*.min.js` UMD outputs for CDN parity (current UMD is already minified by esbuild).
 
-## Upcoming Milestones
-1) Core extraction (Phase A)
-- [ ] Migrate internal state, value pipeline, and events to `@touchspin/core`.  
-- [ ] Ensure jQuery plugin becomes a thin wrapper over the core.  
-- [ ] Keep tests fully green; add targeted tests for core.
+## Testing
 
-2) Renderer packages (Phase B)
-- [ ] Extract Bootstrap/Tailwind renderers into versioned packages.  
-- [ ] Maintain identical markup and class semantics per current renderers.
+* [ ] Add Playwright smoke tests for `@touchspin/vanilla-renderer` and `@touchspin/web-component`
+  (basic init, vertical buttons, prefix/postfix, disabled/readonly).
+* [ ] Ensure CI runs `yarn install`, `yarn build`, `yarn test` across all packages.
 
-3) Framework wrappers (Phase C)
-- [ ] React: idiomatic component with props mapping to options.  
-- [ ] Angular: component/directive; Rx outputs for events.  
-- [ ] Web Component: custom element with attributes/events.
+## Documentation
 
-4) Build Variants (Phase D)
-- [ ] Ship explicit artifacts:
-  - UMD jQuery plugin builds per renderer, e.g., `touchspin.jquery.bs5.js`.  
-  - Core‑only ESM build, e.g., `@touchspin/core`.  
-  - Optional UMD wrapper bundle for non‑module consumers (no jQuery).
+* [ ] Update package READMEs with:
 
-5) Docs and site (Phase E)
-- [ ] Package READMEs, migration guides, examples per framework.  
-- [ ] Visual test matrix for renderers.
+  * Install instructions (npm/yarn/pnpm).
+  * ESM/CJS usage snippet.
+  * CDN example (UMD + CSS).
+  * Notes on renderer CSS (`dist/touchspin-*.css`) and `data-touchspin-injected` attributes.
+  * Link to repo, issues, and examples hub.
+* [ ] Fix placeholder `repository`, `bugs`, and `homepage` fields in `@touchspin/vanilla-renderer`.
 
-## Naming Proposal (subject to change)
-- UMD jQuery plugin: `dist/touchspin.jquery.bsX(.min).js`  
-- UMD no‑framework (if shipped): `dist/touchspin.umdwrapper(.min).js`  
-- Core ESM: `@touchspin/core`  
-- Renderers: `@touchspin/renderer-bootstrap5` etc.  
-- React: `@touchspin/react`  
-- Angular: `@touchspin/angular`  
-- Web Component: `@touchspin/webcomponent`
+## Developer Experience
 
+* [ ] Replace `packages/jquery-plugin/types/index.d.ts` stub with proper type definitions
+  (ambient module or generated types).
+
+## Package Metadata
+
+* [ ] Ensure all packages include:
+
+  * `"repository": { "type": "git", "url": "https://github.com/<org>/bootstrap-touchspin.git", "directory": "packages/<name>" }`
+  * `"bugs": { "url": "https://github.com/<org>/bootstrap-touchspin/issues" }`
+  * `"homepage": "https://github.com/<org>/bootstrap-touchspin/tree/main/packages/<name>#readme"`
+  * `"keywords"` and `"author"` consistent across packages.
+* [ ] Add `"peerDependencies": { "jquery": ">=3" }` to `@touchspin/jquery-plugin` and document this requirement.
+
+## Release Workflow
+
+* [ ] Validate changesets flow:
+
+  * Create changeset → version bump → `yarn build` → publish (`access: public`).
+  * Changelogs update per package.
+* [ ] Tag releases in git.
+* [ ] Configure npm provenance if required.

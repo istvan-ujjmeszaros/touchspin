@@ -1,0 +1,390 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { test, expect } from '@playwright/test';
+import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
+import '../../../__tests__/coverage.hooks';
+
+test.describe('jQuery TouchSpin Commands API', () => {
+
+  test.beforeEach(async ({ page }) => {
+    // Reload page for each test to ensure clean state
+    await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
+    await page.waitForFunction(() => (window as any).testPageReady === true);
+    await touchspinHelpers.installJqueryPlugin(page);
+    await page.waitForFunction(() => (window as any).touchSpinReady === true);
+  });
+
+  test.describe('Plugin Initialization', () => {
+
+    test('should initialize TouchSpin on element', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      // TouchSpin should be properly initialized with wrapper
+      expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+
+      // Should have up and down buttons with correct test IDs
+      expect(await page.locator('[data-testid="test-input-up"]').count()).toBe(1);
+      expect(await page.locator('[data-testid="test-input-down"]').count()).toBe(1);
+    });
+
+    test('should initialize with custom settings', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
+        prefix: '$',
+        postfix: '.00'
+      });
+
+      // TouchSpin should be initialized
+      expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+
+      // Settings should be applied with correct test IDs
+      expect(await page.locator('[data-testid="test-input-prefix"]').textContent()).toBe('$');
+      expect(await page.locator('[data-testid="test-input-postfix"]').textContent()).toBe('.00');
+    });
+  });
+
+  test.describe('Value Commands', () => {
+
+    test('should get value using get command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      const value = await page.evaluate(() => {
+        return (window as any).$('[data-testid="test-input"]').TouchSpin('get');
+      });
+
+      expect(value).toBe(50); // Default test input value
+    });
+
+    test('should get value using getvalue command alias', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      const value = await page.evaluate(() => {
+        return (window as any).$('[data-testid="test-input"]').TouchSpin('getvalue');
+      });
+
+      expect(value).toBe(50); // Default test input value
+    });
+
+    test('should set value using set command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('set', 75);
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('75');
+    });
+
+    test('should set value using setvalue command alias', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('setvalue', 25);
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('25');
+    });
+
+    test('should return raw value when not initialized', async ({ page }) => {
+      // Don't initialize TouchSpin - test graceful handling
+      const value = await page.evaluate(() => {
+        return (window as any).$('[data-testid="test-input"]').TouchSpin('get');
+      });
+
+      expect(value).toBe('50'); // Raw input value as string
+    });
+  });
+
+  test.describe('Increment/Decrement Commands', () => {
+
+    test('should increment using uponce command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+    });
+
+    test('should decrement using downonce command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 3 });
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('downonce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('48'); // 50 - 3, rounded to step
+    });
+  });
+
+  test.describe('Continuous Spinning Commands', () => {
+
+    test('should start up spin using startupspin command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 1 });
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
+      });
+
+      // Wait briefly for spinning to start
+      await page.waitForTimeout(100);
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
+      });
+
+      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      expect(finalValue).toBeGreaterThan(50); // Should have increased
+    });
+
+    test('should start down spin using startdownspin command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 1 });
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('startdownspin');
+      });
+
+      // Wait briefly for spinning to start
+      await page.waitForTimeout(100);
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
+      });
+
+      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      expect(finalValue).toBeLessThan(50); // Should have decreased
+    });
+
+    test('should stop spinning using stopspin command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 1 });
+
+      // Start spinning
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
+      });
+
+      await page.waitForTimeout(100);
+
+      // Stop and capture value
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
+      });
+
+      const stoppedValue = await touchspinHelpers.readInputValue(page, 'test-input');
+
+      // Wait more to ensure it really stopped
+      await page.waitForTimeout(200);
+
+      const finalValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      expect(finalValue).toBe(stoppedValue); // Should not have changed after stop
+    });
+  });
+
+  test.describe('Settings Commands', () => {
+
+    test('should update settings using updatesettings command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('updatesettings', {
+          prefix: '€',
+          step: 10
+        });
+      });
+
+      // Prefix should be updated
+      expect(await page.locator('[data-testid="test-input-prefix"]').textContent()).toBe('€');
+
+      // Step setting should work
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
+    });
+
+    test('should add prefix through settings update', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('updatesettings', {
+          prefix: '$'
+        });
+      });
+
+      // Prefix element should be created
+      expect(await page.locator('[data-testid="test-input-prefix"]').count()).toBe(1);
+      expect(await page.locator('[data-testid="test-input-prefix"]').textContent()).toBe('$');
+    });
+
+    test('should add postfix through settings update', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('updatesettings', {
+          postfix: ' USD'
+        });
+      });
+
+      // Postfix element should be created
+      expect(await page.locator('[data-testid="test-input-postfix"]').count()).toBe(1);
+      expect(await page.locator('[data-testid="test-input-postfix"]').textContent()).toBe(' USD');
+    });
+
+    test('should update button text through settings', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('updatesettings', {
+          buttondown_txt: 'Less',
+          buttonup_txt: 'More'
+        });
+      });
+
+      // Button texts should be updated
+      expect(await page.locator('[data-testid="test-input-down"]').textContent()).toBe('Less');
+      expect(await page.locator('[data-testid="test-input-up"]').textContent()).toBe('More');
+    });
+  });
+
+  test.describe('Destroy Command', () => {
+
+    test('should destroy TouchSpin instance using destroy command', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('destroy');
+      });
+
+      // TouchSpin should be destroyed (no wrapper)
+      expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+
+      // Specific buttons should be removed
+      expect(await page.locator('[data-testid="test-input-up"]').count()).toBe(0);
+      expect(await page.locator('[data-testid="test-input-down"]').count()).toBe(0);
+
+      // Input should still exist
+      expect(await page.locator('[data-testid="test-input"]').count()).toBe(1);
+    });
+
+    test('should allow reinitializing after destroy', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      // Destroy
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('destroy');
+      });
+
+      // Reinitialize with different settings
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
+        prefix: 'NEW',
+        step: 20
+      });
+
+      // Should work with new settings
+      expect(await page.locator('[data-testid="test-input-prefix"]').textContent()).toBe('NEW');
+
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('80'); // 50 + 10 + 20, corrected to step multiple
+    });
+  });
+
+  test.describe('jQuery Integration', () => {
+
+    test('should support jQuery method chaining', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      const isJQuery = await page.evaluate(() => {
+        const result = (window as any).$('[data-testid="test-input"]')
+          .TouchSpin('set', 60)
+          .TouchSpin('uponce');
+        return result instanceof (window as any).$;
+      });
+
+      expect(isJQuery).toBe(true);
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('61'); // 60 + 1
+    });
+
+    test('should handle multiple instances independently', async ({ page }) => {
+      // Create second input
+      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '30' });
+
+      // Initialize both with different settings
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
+      await touchspinHelpers.initializeTouchSpin(page, 'input-2', { step: 3 });
+
+      // Operate on each independently
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+        (window as any).$('[data-testid="input-2"]').TouchSpin('uponce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+      expect(await touchspinHelpers.readInputValue(page, 'input-2')).toBe('33'); // 30 + 3
+    });
+
+    test('should destroy specific instance without affecting others', async ({ page }) => {
+      // Create second input
+      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '30' });
+
+      // Initialize both
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+      await touchspinHelpers.initializeTouchSpin(page, 'input-2', {});
+
+      // Destroy first one
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('destroy');
+      });
+
+      // First should be destroyed, second should still work
+      expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+      expect(await touchspinHelpers.isTouchSpinInitialized(page, 'input-2')).toBe(true);
+
+      // Second instance should still be functional
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="input-2"]').TouchSpin('uponce');
+      });
+
+      expect(await touchspinHelpers.readInputValue(page, 'input-2')).toBe('31'); // 30 + 1
+    });
+  });
+
+  test.describe('Error Handling', () => {
+
+    test('should handle invalid commands gracefully', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+      // Invalid command should not throw error
+      const noError = await page.evaluate(() => {
+        try {
+          (window as any).$('[data-testid="test-input"]').TouchSpin('invalidcommand');
+          return true;
+        } catch {
+          return false;
+        }
+      });
+
+      expect(noError).toBe(true);
+    });
+
+    test('should handle commands on non-initialized inputs gracefully', async ({ page }) => {
+      // Don't initialize TouchSpin - test graceful handling
+      const originalValue = await touchspinHelpers.readInputValue(page, 'test-input');
+
+      const noError = await page.evaluate(() => {
+        try {
+          (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('destroy');
+          return true;
+        } catch {
+          return false;
+        }
+      });
+
+      expect(noError).toBe(true);
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe(originalValue); // Should be unchanged
+    });
+  });
+});

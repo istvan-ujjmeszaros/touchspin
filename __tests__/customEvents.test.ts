@@ -129,11 +129,11 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Value should not change further after stop
       const valueAfterStop = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
-      
+
       // Wait a bit more to ensure spinning really stopped
       // Brief wait for stability
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
-      
+
       // Final value should equal the value when we stopped (no further changes)
       expect(finalValue).toBe(valueAfterStop);
     });
@@ -183,11 +183,11 @@ test.describe('Custom TouchSpin Events Tests', () => {
       await page.evaluate((testId) => {
         const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
-        
+
         // Start up spin then immediately change to down spin
         $input.trigger('touchspin.startupspin');
         $input.trigger('touchspin.startdownspin');
-        
+
         // Stop after a moment
         setTimeout(() => {
           $input.trigger('touchspin.stopspin');
@@ -272,7 +272,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
       await page.evaluate((testId) => {
         const $ = (window as any).jQuery;
         const $input = $(`[data-testid="${testId}"]`);
-        
+
         // Rapid sequence of different events
         $input.trigger('touchspin.uponce');
         $input.trigger('touchspin.stopspin');
@@ -284,10 +284,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
       }, testid);
 
       // Should handle rapid events without errors
-      // Net effect should be: +1 -1 +1 -1 = 0, so should equal initial
+      // Net effect should be: +1 (uponce) -1 (downonce) +1 (uponce) +1 (immediate step on startupspin) -1 (downonce) = +1
       await expect.poll(
-        async () => parseInt(await touchspinHelpers.readInputValue(page, testid) || '50')
-      ).toBe(initialValue);
+        async () => parseInt(await touchspinHelpers.readInputValue(page, testid) || String(initialValue))
+      ).toBe(initialValue + 1);
     });
   });
 });

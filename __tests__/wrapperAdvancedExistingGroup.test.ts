@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 async function testAdvancedExisting(page: any, url: string, ids: { group: string, initBtn: string, destroyBtn: string, input?: string }) {
   await page.goto(url);
@@ -36,6 +38,16 @@ async function testAdvancedExisting(page: any, url: string, ids: { group: string
 }
 
 test.describe('Advanced init on existing Bootstrap input-groups', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'wrapperAdvancedExistingGroup');
+  });
+
   test('BS3 advanced reuses addons and cleans up on destroy', async ({ page }) => {
     await testAdvancedExisting(page, '/__tests__/html-package/index-bs3-wrapper.html', {
       group: 'bs3-adv-group', initBtn: 'btn-adv-init', destroyBtn: 'btn-adv-destroy', input: 'bs3-adv-input'

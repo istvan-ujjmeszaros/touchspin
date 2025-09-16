@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BS5 Renderer Raw Test</title>
   <link href="../html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet">
 </head>
 <body>
   <div class="container mt-5">
@@ -19,7 +19,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       const input = document.getElementById('test-input');
-      
+
       // Initialize TouchSpin with Bootstrap 5 renderer
       const touchspin = TouchSpin(input, {
         renderer: Bootstrap5Renderer,

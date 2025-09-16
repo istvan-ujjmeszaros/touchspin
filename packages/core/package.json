@@ -1,15 +1,65 @@
 {
   "name": "@touchspin/core",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "Core logic for TouchSpin (framework-agnostic)",
   "license": "MIT",
   "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    },
+    "./renderer": {
+      "types": "./dist/renderer.d.ts",
+      "import": "./src/renderer.ts",
+      "require": "./dist/renderer.cjs"
     }
-  }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./renderer": {
+        "types": "./dist/renderer.d.ts",
+        "import": "./dist/renderer.mjs",
+        "require": "./dist/renderer.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "vite dev --port 8866",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.0.0"
+  },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/core#readme"
 }

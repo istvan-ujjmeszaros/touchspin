@@ -55,30 +55,29 @@ test.describe('Uncovered Configuration Options', () => {
       });
 
       // Hold down button for extended time to see if boosting occurs
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'no-booster-test');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mousedown', { bubbles: true }));
         }
-      }, 'no-booster-test');
+      });
 
       await touchspinHelpers.waitForTimeout(1000); // Long enough for boosting
 
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mouseup', { bubbles: true }));
         }
-      }, 'no-booster-test');
+      });
 
       // Should have incremented consistently without acceleration
       // Without booster, increments should be linear (step=1)
       await expect.poll(
         async () => parseInt(await touchspinHelpers.readInputValue(page, 'no-booster-test') || '10')
       ).toBeGreaterThan(10);
-      
+
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'no-booster-test') || '10');
       expect(finalValue).toBeLessThan(30); // Should not have big jumps
     });
@@ -259,7 +258,7 @@ test.describe('Uncovered Configuration Options', () => {
         $('body').append('<input id="custom-buttons-test" type="text" value="50" data-testid="custom-buttons-test">');
         $('#custom-buttons-test').TouchSpin({
           buttondown_class: 'btn btn-danger custom-down',
-          buttonup_class: 'btn btn-success custom-up', 
+          buttonup_class: 'btn btn-success custom-up',
           buttondown_txt: '⬇',
           buttonup_txt: '⬆'
         });
@@ -287,7 +286,7 @@ test.describe('Uncovered Configuration Options', () => {
     test('should preserve user button classes over renderer defaults', async ({ page }) => {
       const customUpClass = 'user-custom-up-btn';
       const customDownClass = 'user-custom-down-btn';
-      
+
       await page.evaluate(({ customUpClass, customDownClass }) => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="precedence-test" type="text" value="50" data-testid="precedence-test">');
@@ -311,7 +310,7 @@ test.describe('Uncovered Configuration Options', () => {
       // Should contain user-provided classes
       expect(result.upClasses).toContain(customUpClass);
       expect(result.downClasses).toContain(customDownClass);
-      
+
       // Should NOT contain Bootstrap 4 renderer defaults since user provided custom classes
       expect(result.upClasses).not.toContain('btn btn-outline-secondary');
       expect(result.downClasses).not.toContain('btn btn-outline-secondary');
@@ -344,7 +343,7 @@ test.describe('Uncovered Configuration Options', () => {
 
     test('should handle mixed user settings and renderer defaults', async ({ page }) => {
       const customUpClass = 'only-up-custom';
-      
+
       await page.evaluate((customUpClass) => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="mixed-test" type="text" value="50" data-testid="mixed-test">');
@@ -367,7 +366,7 @@ test.describe('Uncovered Configuration Options', () => {
       // Up button should have user-provided class
       expect(result.upClasses).toContain(customUpClass);
       expect(result.upClasses).not.toContain('btn btn-outline-secondary');
-      
+
       // Down button should have renderer default since user didn't provide it
       expect(result.downClasses).toContain('btn btn-outline-secondary');
       expect(result.downClasses).not.toContain(customUpClass);
@@ -375,7 +374,7 @@ test.describe('Uncovered Configuration Options', () => {
 
     test('should respect data attribute settings over renderer defaults', async ({ page }) => {
       const dataAttrClass = 'data-attr-custom-class';
-      
+
       await page.evaluate((dataAttrClass) => {
         const $ = (window as any).jQuery;
         const input = $('<input id="data-attr-test" type="text" value="50" data-testid="data-attr-test">');

@@ -15,6 +15,17 @@ tmp/
 # Test results and reports - consolidated under reports/
 reports/
 
+# NYC coverage output
+.nyc_output/
+
+# Build outputs
+dist/
+
+# Obsolete planning/agent docs (ignored for local dev)
+**/*AGENT*.md
+**/*PLAN*.md
+**/TODO*.md
+
 # Playwright browsers (if locally installed)
 .playwright/
 

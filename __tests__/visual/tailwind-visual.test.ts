@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Tailwind TouchSpin Visual Regression', () => {
-  
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/__tests__/visual/tailwind-visual.html');
     // Wait for TouchSpin initialization and Tailwind to apply styles
@@ -152,7 +152,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
     test('at minimum value', async ({ page }) => {
       const spinner = page.locator('[data-testid="at-minimum-wrapper"]');
       await expect(spinner).toHaveScreenshot('minmax-at-minimum.png');
-      
+
       // Visual test captures the state at minimum - button may or may not be disabled
       // depending on TouchSpin implementation
     });
@@ -160,7 +160,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
     test('at maximum value', async ({ page }) => {
       const spinner = page.locator('[data-testid="at-maximum-wrapper"]');
       await expect(spinner).toHaveScreenshot('minmax-at-maximum.png');
-      
+
       // Visual test captures the state at maximum - button may or may not be disabled
       // depending on TouchSpin implementation
     });
@@ -178,7 +178,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
     });
 
     test('full page snapshot', async ({ page }) => {
-      await expect(page).toHaveScreenshot('full-page.png', { 
+      await expect(page).toHaveScreenshot('full-page.png', {
         fullPage: true,
         maxDiffPixels: 100 // Allow small differences for full page
       });
@@ -190,7 +190,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.reload();
       await page.waitForTimeout(500);
-      
+
       const basicSpinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(basicSpinner).toHaveScreenshot('responsive-mobile.png');
     });
@@ -199,7 +199,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
       await page.setViewportSize({ width: 768, height: 1024 });
       await page.reload();
       await page.waitForTimeout(500);
-      
+
       const basicSpinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(basicSpinner).toHaveScreenshot('responsive-tablet.png');
     });
@@ -208,7 +208,7 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.reload();
       await page.waitForTimeout(500);
-      
+
       const basicSpinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(basicSpinner).toHaveScreenshot('responsive-desktop.png');
     });
@@ -218,12 +218,12 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
     test('after increment', async ({ page }) => {
       const spinner = page.locator('[data-testid="basic-default-wrapper"]');
       const upButton = spinner.locator('[data-touchspin-injected="up"]');
-      
+
       await upButton.click();
       await page.waitForTimeout(100);
-      
+
       await expect(spinner).toHaveScreenshot('interactive-after-increment.png');
-      
+
       // Verify value changed
       const input = page.locator('[data-testid="basic-default"]');
       const value = await input.inputValue();
@@ -233,12 +233,12 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
     test('after decrement', async ({ page }) => {
       const spinner = page.locator('[data-testid="basic-default-wrapper"]');
       const downButton = spinner.locator('[data-touchspin-injected="down"]');
-      
+
       await downButton.click();
       await page.waitForTimeout(100);
-      
+
       await expect(spinner).toHaveScreenshot('interactive-after-decrement.png');
-      
+
       // Verify value changed
       const input = page.locator('[data-testid="basic-default"]');
       const value = await input.inputValue();
@@ -247,15 +247,15 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
 
     test('manual value entry', async ({ page }) => {
       const input = page.locator('[data-testid="basic-default"]');
-      
+
       await input.click({ clickCount: 3 }); // Select all
       await input.type('75');
       await input.press('Tab');
       await page.waitForTimeout(100);
-      
+
       const spinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(spinner).toHaveScreenshot('interactive-manual-entry.png');
-      
+
       // Verify value
       const value = await input.inputValue();
       expect(value).toBe('75');
@@ -265,15 +265,15 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
   test.describe('Error States', () => {
     test('invalid manual entry - corrected to max', async ({ page }) => {
       const input = page.locator('[data-testid="basic-default"]');
-      
+
       await input.click({ clickCount: 3 });
       await input.type('999'); // Above max of 100
       await input.press('Tab');
       await page.waitForTimeout(100);
-      
+
       const spinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(spinner).toHaveScreenshot('error-corrected-to-max.png');
-      
+
       // Verify corrected to max
       const value = await input.inputValue();
       expect(value).toBe('100');
@@ -281,15 +281,15 @@ test.describe('Tailwind TouchSpin Visual Regression', () => {
 
     test('invalid manual entry - corrected to min', async ({ page }) => {
       const input = page.locator('[data-testid="basic-default"]');
-      
+
       await input.click({ clickCount: 3 });
       await input.type('-10'); // Below min of 0
       await input.press('Tab');
       await page.waitForTimeout(100);
-      
+
       const spinner = page.locator('[data-testid="basic-default-wrapper"]');
       await expect(spinner).toHaveScreenshot('error-corrected-to-min.png');
-      
+
       // Verify corrected to min
       const value = await input.inputValue();
       expect(value).toBe('0');

@@ -1,7 +1,7 @@
 @touchspin/core
 ==============
 
-**Framework-agnostic TouchSpin core with element-attached architecture.**
+Framework-agnostic TouchSpin core with element-attached architecture.
 
 ## Status: ✅ IMPLEMENTED
 
@@ -22,19 +22,19 @@ The core is fully implemented with modern element-attached architecture.
 
 ### Core Functions
 
-```javascript
-import { TouchSpin, getTouchSpin, RawRenderer } from '@touchspin/core';
+```ts
+import { TouchSpin, getTouchSpin } from '@touchspin/core';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
 // Create/update instance attached to element (renderer required)
-const api = TouchSpin(inputElement, {
-  renderer: Bootstrap5Renderer, // or RawRenderer for minimal UI
+const api = TouchSpin(document.querySelector('input') as HTMLInputElement, {
+  renderer: Bootstrap5Renderer,
   min: 0,
-  max: 100
+  max: 100,
 });
 
 // Get existing instance from element
-const api = getTouchSpin(inputElement);
+const existing = getTouchSpin(document.querySelector('input') as HTMLInputElement);
 ```
 
 ### Instance Methods
@@ -71,35 +71,59 @@ The core attaches event listeners to elements with `data-touchspin-injected` att
 
 ### For Renderer Developers
 
-Renderers must extend `AbstractRenderer` and implement `init()`:
+Renderers extend `AbstractRenderer` and satisfy the `Renderer` interface (init, finalizeWrapperAttributes, optional teardown). Import from the subpath:
 
-```javascript
-// Import AbstractRenderer directly from file path
-import AbstractRenderer from '../core/src/AbstractRenderer.js';
+```ts
+import { AbstractRenderer, type Renderer } from '@touchspin/core/renderer';
 
-class CustomRenderer extends AbstractRenderer {
-  init() {
-    // 1. Build DOM structure around this.input
-    this.wrapper = this.createUI();
-    
-    // 2. Find button elements
+class CustomRenderer extends AbstractRenderer implements Renderer {
+  init(): void {
+    // 1) Build DOM structure around this.input
+    this.wrapper = this.buildUI();
+
+    // 2) Locate elements for event wiring
     const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
     const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
-    
-    // 3. Tell core to attach event handlers
-    this.core.attachUpEvents(upBtn);
-    this.core.attachDownEvents(downBtn);
-    
-    // 4. Observe setting changes (optional)
-    this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+
+    // 3) Delegate events to core
+    this.core.attachUpEvents(upBtn as HTMLElement | null);
+    this.core.attachDownEvents(downBtn as HTMLElement | null);
+
+    // 4) Observe settings as needed
+    this.core.observeSetting('prefix', (v) => this.updatePrefix(v));
   }
 }
 ```
 
-### Available Renderers
+Notes:
+- `AbstractRenderer` already implements `finalizeWrapperAttributes()` and a default `teardown()`.
+- `RendererConstructor` is the type expected in `TouchSpinCoreOptions.renderer`.
 
-- **RawRenderer**: No additional UI elements (imported from core)
-- **Bootstrap5Renderer**: Full Bootstrap 5 input group support
-- **Bootstrap4Renderer**: Bootstrap 4 input group support (planned)
-- **Bootstrap3Renderer**: Bootstrap 3 input group support (planned)
+```ts
+import type { RendererConstructor } from '@touchspin/core/renderer';
 
+declare const MyRenderer: RendererConstructor;
+TouchSpin(input, { renderer: MyRenderer });
+```
+
+### Default Renderer (Global)
+
+You can register a default renderer class (a `RendererConstructor`) that core uses when none is provided in options:
+
+```ts
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+
+// Now this uses Bootstrap5Renderer automatically
+TouchSpin(document.querySelector('input') as HTMLInputElement);
+```
+
+## Renderer Authoring Checklist
+
+- Extend `AbstractRenderer` and implement `Renderer`.
+- Export your renderer class as the default.
+- Provide a matching CSS file (`dist/touchspin-<flavor>.css`).
+- Verify with the examples hub.
+- Add Playwright smoke tests.
+
+For a detailed guide, see [CONTRIBUTING.md](../../CONTRIBUTING.md).

@@ -45,7 +45,9 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(postfix).toBeVisible();
 
       await touchspinHelpers.touchspinClickUp(page, prefixTestid);
-      expect(await touchspinHelpers.readInputValue(page, prefixTestid)).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, prefixTestid)
+      ).toBe('51');
     });
   });
 
@@ -68,7 +70,9 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
       // Test basic functionality in RTL
       await touchspinHelpers.touchspinClickUp(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('51');
 
       // Check Bootstrap 4 specific structure exists
       const hasBS4Structure = await page.evaluate(() => {
@@ -101,10 +105,14 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
       // Test functionality
       await touchspinHelpers.touchspinClickUp(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('51');
 
       await touchspinHelpers.touchspinClickDown(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, testid)
+      ).toBe('50');
     });
 
     test('should handle Bootstrap 5 structure without deprecated classes', async ({ page }) => {
@@ -121,7 +129,9 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(directPrefix).toBeVisible();
 
       await touchspinHelpers.touchspinClickUp(page, prefixTestid);
-      expect(await touchspinHelpers.readInputValue(page, prefixTestid)).toBe('51');
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, prefixTestid)
+      ).toBe('51');
     });
   });
 

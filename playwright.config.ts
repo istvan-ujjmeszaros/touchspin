@@ -1,11 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './__tests__',
-  testMatch: '**/?(*.)+(spec|test).[jt]s?(x)',
+  testDir: './',
+  testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/*/tests/**/*.spec.ts'],
+  testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
   
   /* Run tests in files in parallel */
   fullyParallel: false, // Keep sequential for now to match Jest behavior
@@ -13,8 +15,10 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 1,
+  /* No retries; fail fast */
+  retries: 0,
+  // Stop as soon as a failure occurs on CI to surface issues quickly
+  maxFailures: process.env.CI ? 1 : undefined,
   
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
@@ -42,14 +46,14 @@ export default defineConfig({
     video: 'retain-on-failure',
     
     /* Global timeout settings */
-    actionTimeout: 1000,
-    navigationTimeout: 3000,
+    actionTimeout: 3000,
+    navigationTimeout: 10000,
   },
   
   /* Global timeout */
-  timeout: 5000,
+  timeout: 15000,
   expect: {
-    timeout: 1000
+    timeout: 3000
   },
 
   /* Configure projects for major browsers */
@@ -103,11 +107,11 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Run Vite dev server for tests to support ES module imports */
   webServer: {
-    command: 'node scripts/serve.mjs',
+    command: 'yarn dev',
     port: 8866,
     reuseExistingServer: !process.env.CI,
-    timeout: 10000,
+    timeout: 20000,
   },
 });

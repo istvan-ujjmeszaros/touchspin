@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Wrapper: spin stops at bounds', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'spinBoundariesWrapper');
+  });
+
   test('stops at max and allows downOnce', async ({ page }) => {
     await page.goto('/__tests__/html-minimal-rendering/tailwind-renderer-jquery.html');
 

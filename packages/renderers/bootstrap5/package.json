@@ -1,19 +1,64 @@
 {
   "name": "@touchspin/renderer-bootstrap5",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "Bootstrap 5 renderer for TouchSpin",
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "style": "dist/touchspin-bootstrap5.css",
   "exports": {
     ".": {
-      "import": "./src/Bootstrap5Renderer.js",
-      "require": "./src/Bootstrap5Renderer.js"
-    }
+      "types": "./dist/index.d.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    },
+    "./css": "./dist/touchspin-bootstrap5.css"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "vite dev --port 8866",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch"
   },
   "dependencies": {
-    "@touchspin/core": "file:../../core"
+    "@touchspin/core": "workspace:*"
+  },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/renderers/bootstrap5"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/bootstrap5#readme",
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./css": "./dist/touchspin-bootstrap5.css"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.0.0"
   }
 }
-

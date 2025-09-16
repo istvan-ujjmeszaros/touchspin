@@ -106,7 +106,7 @@ test.describe('Edge Cases and Error Handling', () => {
           return parseInt(value || '10');
         }
       ).toBeGreaterThan(10); // Should have increased
-      
+
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'maxboost-test') || '10');
       expect(finalValue).toBeLessThan(50); // But not too much due to maxboostedstep limit
     });
@@ -129,10 +129,10 @@ test.describe('Edge Cases and Error Handling', () => {
       // This should work without throwing errors
       const input = page.getByTestId('unlimited-boost-test');
       await input.focus();
-      
+
       // Quick test to ensure it works
       await touchspinHelpers.touchspinClickUp(page, 'unlimited-boost-test');
-      
+
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'unlimited-boost-test')
       ).toBe('11'); // Simple increment
@@ -154,7 +154,7 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Should still work without errors
       await touchspinHelpers.touchspinClickUp(page, 'invalid-boost-test');
-      
+
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'invalid-boost-test')
       ).toBe('11');
@@ -205,11 +205,11 @@ test.describe('Edge Cases and Error Handling', () => {
         // Temporarily hide default renderer
         const originalDefault = (globalThis as any).TouchSpinDefaultRenderer;
         delete (globalThis as any).TouchSpinDefaultRenderer;
-        
+
         const $ = (window as any).jQuery;
         $('body').append('<input id="no-renderer-test" type="text" value="50" data-testid="no-renderer-test">');
         $('#no-renderer-test').TouchSpin();
-        
+
         // Restore default renderer
         (globalThis as any).TouchSpinDefaultRenderer = originalDefault;
       });
@@ -251,13 +251,13 @@ test.describe('Edge Cases and Error Handling', () => {
               throw new Error('Renderer constructor failed');
             }
           }
-          
+
           const $ = (window as any).jQuery;
           $('body').append('<input id="renderer-fail-test" type="text" value="50" data-testid="renderer-fail-test">');
           $('#renderer-fail-test').TouchSpin({
             renderer: FailingRenderer
           });
-          
+
           return null;
         } catch (error: any) {
           return error.message;
@@ -340,12 +340,12 @@ test.describe('Edge Cases and Error Handling', () => {
   test.describe('Event Edge Cases', () => {
     test('should handle rapid successive button clicks', async ({ page }) => {
       const testid = 'touchspin-default';
-      
+
       // Perform rapid clicks
       for (let i = 0; i < 5; i++) {
         await touchspinHelpers.touchspinClickUp(page, testid);
       }
-      
+
       // Should handle all clicks without errors
       await expect.poll(
         async () => {
@@ -358,13 +358,13 @@ test.describe('Edge Cases and Error Handling', () => {
     test('should handle mouse wheel on disabled input', async ({ page }) => {
       // Test mousewheel on disabled input
       const input = page.getByTestId('touchspin-disabled');
-      
+
       // Try to scroll on disabled input
       await input.focus();
       await input.evaluate((el) => {
         el.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true }));
       });
-      
+
       // Value should not change (input is disabled)
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'touchspin-disabled')
@@ -378,16 +378,16 @@ test.describe('Edge Cases and Error Handling', () => {
         const $ = (window as any).jQuery;
         $('body').append('<input id="multi-destroy-test" type="text" value="50" data-testid="multi-destroy-test">');
         const $input = $('#multi-destroy-test');
-        
+
         // Initialize TouchSpin
         $input.TouchSpin();
-        
+
         // Call destroy multiple times
         $input.trigger('touchspin.destroy');
         $input.trigger('touchspin.destroy');
         $input.trigger('touchspin.destroy');
       });
-      
+
       // Input should still exist and be functional as regular input
       const input = page.getByTestId('multi-destroy-test');
       await input.fill('123');

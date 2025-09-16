@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../html/assets/bootstrap/bootstrap-3.4.1.min.css">
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <script src="../html/assets/bootstrap/bootstrap-3.4.1.min.js"></script>
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet" type="text/css" media="all">
+  <link href="../../packages/renderers/bootstrap3/dist/touchspin-bootstrap3.css" rel="stylesheet" type="text/css" media="all">
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
     pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
@@ -17,7 +17,7 @@
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap3Renderer from '../../packages/renderers/bootstrap3/src/Bootstrap3Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap3Renderer = Bootstrap3Renderer;
   </script>

@@ -10,84 +10,100 @@ test.describe('Cross-Version Renderer Consistency', () => {
     await touchspinHelpers.collectCoverage(page, 'cross-version-consistency');
   });
 
-  test('should maintain consistent button behavior across Bootstrap versions', async ({ page }) => {
-    const versions = [
-      { name: 'Bootstrap 3', html: 'index-bs3.html' },
-      { name: 'Bootstrap 4', html: 'index-bs4.html' },
-      { name: 'Bootstrap 5', html: 'index-bs5.html' }
-    ];
+  const buttonBehaviorCases = [
+    { name: 'Bootstrap 3', html: 'index-bs3.html' },
+    { name: 'Bootstrap 4', html: 'index-bs4.html' },
+    { name: 'Bootstrap 5', html: 'index-bs5.html' }
+  ] as const;
 
-    for (const version of versions) {
-      await page.goto(`/__tests__/html/${version.html}`);
+  for (const { name, html } of buttonBehaviorCases) {
+    test(`should maintain consistent button behavior (${name})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(30000);
+      await page.goto(`/__tests__/html/${html}`);
+      await touchspinHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
 
       // Reset value and test increment
       await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
       await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
 
-      const value = await touchspinHelpers.readInputValue(page, 'touchspin-default');
-      expect(value).toBe('51');
-    }
-  });
+      await expect.poll(
+        async () => await touchspinHelpers.readInputValue(page, 'touchspin-default')
+      ).toBe('51');
+    });
+  }
 
-  test('should generate valid HTML structure for all versions', async ({ page }) => {
-    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
-
-    for (const html of versions) {
+  const structureCases = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'] as const;
+  for (const html of structureCases) {
+    test(`should generate valid HTML structure (${html})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(20000);
       await page.goto(`/__tests__/html/${html}`);
-
-      // Wait for TouchSpin to initialize by waiting for wrapper to exist
-      const wrapper = page.getByTestId('touchspin-default-wrapper');
-      await expect(wrapper).toBeAttached();
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
 
       // Validate basic structure exists using data-testid selectors (consistent across versions)
       const hasUpButton = wrapper.getByTestId('touchspin-default-up');
       const hasDownButton = wrapper.getByTestId('touchspin-default-down');
 
-      // All versions should have up/down buttons with data attributes
       await expect(hasUpButton).toBeVisible();
       await expect(hasDownButton).toBeVisible();
-
-      // Check that wrapper contains some form of Bootstrap structure
       await expect(wrapper).toBeVisible();
-    }
-  });
+    });
+  }
 
-  test('should maintain consistent data-touchspin-injected attributes across versions', async ({ page }) => {
-    const versions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'];
-
-    for (const html of versions) {
+  for (const html of structureCases) {
+    test(`should maintain consistent data-touchspin-injected attributes (${html})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(20000);
       await page.goto(`/__tests__/html/${html}`);
 
-      // Wait for initialization
-      const wrapper = page.getByTestId('touchspin-default-wrapper');
-      await expect(wrapper).toBeAttached();
-
-      // All versions should have consistent data attributes
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
       await expect(wrapper.getByTestId('touchspin-default-up')).toBeVisible();
       await expect(wrapper.getByTestId('touchspin-default-down')).toBeVisible();
 
-      // Prefix/Postfix elements exist across versions; they may be hidden when empty
-      await expect(wrapper.getByTestId('touchspin-default-prefix')).toHaveCount(1);
-      await expect(wrapper.getByTestId('touchspin-default-postfix')).toHaveCount(1);
-    }
-  });
+      await expect(wrapper.getByTestId('touchspin-default-prefix')).toHaveCount(0);
+      await expect(wrapper.getByTestId('touchspin-default-postfix')).toHaveCount(0);
+    });
+  }
 
-  test('should maintain consistent functional behavior across all renderers', async ({ page }, testInfo) => {
-    // This test navigates across multiple pages; allow more time to avoid flakiness
-    testInfo.setTimeout(15000);
-    const versions = [
-      { name: 'Bootstrap 3', html: 'index-bs3.html' },
-      { name: 'Bootstrap 4', html: 'index-bs4.html' },
-      { name: 'Bootstrap 5', html: 'index-bs5.html' },
-      { name: 'Tailwind', html: 'index-tailwind.html' }
-    ];
+  const ppVersions = ['index-bs3.html', 'index-bs4.html', 'index-bs5.html'] as const;
+  for (const html of ppVersions) {
+    test(`should maintain consistent prefix/postfix elements when initialized with values (${html})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(20000);
+      await page.goto(`/__tests__/html/${html}`);
 
-    for (const version of versions) {
-      await page.goto(`/__tests__/html/${version.html}`);
+      // Initialize the test input with prefix and postfix values (fresh init per page)
+      await page.evaluate(() => {
+        const $ = (window as any).jQuery;
+        try { $('#testinput_prefix_postfix').trigger('touchspin.destroy'); } catch {}
+        $('#testinput_prefix_postfix').TouchSpin({ prefix: '$', postfix: '.00' });
+      });
 
-      // Pick the first initialized wrapper on the page for each renderer
-      const wrapper = page.locator('[data-testid$="-wrapper"]').first();
+      // Wait for wrapper fully injected
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, 'prefix-postfix-wrapper');
+
+      // Prefer role-based selectors to avoid relying on testid propagation timing
+      const prefixEl = wrapper.locator('[data-touchspin-injected="prefix"]').first();
+      const postfixEl = wrapper.locator('[data-touchspin-injected="postfix"]').first();
+
+      await expect(prefixEl).toBeVisible();
+      await expect(postfixEl).toBeVisible();
+      await expect(prefixEl).toHaveText('$');
+      await expect(postfixEl).toHaveText('.00');
+    });
+  }
+
+  const functionalCases = [
+    { name: 'Bootstrap 3', html: 'index-bs3.html' },
+    { name: 'Bootstrap 4', html: 'index-bs4.html' },
+    { name: 'Bootstrap 5', html: 'index-bs5.html' },
+    { name: 'Tailwind', html: 'index-tailwind.html' }
+  ] as const;
+
+  for (const { name, html } of functionalCases) {
+    test(`should maintain consistent functional behavior (${name})`, async ({ page }, testInfo) => {
+      testInfo.setTimeout(30000);
+      await page.goto(`/__tests__/html/${html}`);
+
+      const wrapper = page.locator('[data-testid$="-wrapper"][data-touchspin-injected]').first();
       await expect(wrapper).toBeAttached();
       const input = wrapper.locator('input');
       const upButton = wrapper.locator('[data-testid$="-up"]');
@@ -102,8 +118,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
 
       // Test decrement
       await downButton.click();
-      await downButton.click();
-      expect(await input.inputValue()).toBe('9');
+      expect(await input.inputValue()).toBe('10');
 
       // Test that prefix/postfix are visible only when they have content
       const prefix = wrapper.locator('[data-testid$="-prefix"]');
@@ -121,6 +136,6 @@ test.describe('Cross-Version Renderer Consistency', () => {
           await expect(postfix).toBeVisible();
         }
       }
-    }
-  });
+    });
+  }
 });

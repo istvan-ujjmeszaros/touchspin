@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/test';
+import touchspinHelpers from './helpers/touchspinHelpers';
+
 
 test.describe('Wrapper parity: attribute sync', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
+  });
+
+  test.afterEach(async ({ page }) => {
+    await touchspinHelpers.collectCoverage(page, 'wrapperAttributeSync');
+  });
+
   test('disabled/readonly stop spin and prevent changes', async ({ page }) => {
     await page.goto('/__tests__/html-package/tailwind-renderer-jquery.html');
     await page.click('[data-testid="btn-init"]');

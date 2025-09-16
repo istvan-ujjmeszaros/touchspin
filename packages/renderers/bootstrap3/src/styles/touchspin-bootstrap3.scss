@@ -1,0 +1,114 @@
+/**
+ * TouchSpin styles for Bootstrap 3
+ *
+ * Default Bootstrap 3 values - override these variables before importing for customization
+ */
+
+// Bootstrap 3 variable defaults
+$border-radius-base: 4px !default;
+$font-size-small: 12px !default;
+$font-size-mini: 9px !default;
+$zindex-dropdown: 1000 !default;
+
+/* This SCSS file is unnecessary if you are not using vertical buttons functionality */
+
+/* Ensure input-group takes full width */
+.input-group.bootstrap-touchspin {
+  width: 100%;
+}
+
+.bootstrap-touchspin {
+  .bootstrap-touchspin-vertical-button-wrapper {
+    position: relative;
+    width: 25px;
+    border: none;
+  }
+
+  .input-group-btn-vertical {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: $zindex-dropdown;
+
+    > .btn {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 50%;
+      padding: 0;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .btn {
+      font-size: $font-size-small;
+      line-height: 1;
+    }
+
+    .bootstrap-touchspin-up {
+      border-radius: 0 $border-radius-base 0 0;
+      top: 0;
+    }
+
+    .bootstrap-touchspin-down {
+      border-radius: 0 0 $border-radius-base 0;
+      bottom: 0;
+    }
+
+    i {
+      position: absolute;
+      top: 3px;
+      left: 5px;
+      font-size: $font-size-mini;
+    }
+  }
+
+  .input-group-addon .input-group-btn-vertical .bootstrap-touchspin-up {
+    border-radius: 0 $border-radius-base 0 0;
+    top: 0;
+  }
+
+  .input-group-addon:not(:last-child) .input-group-btn-vertical .bootstrap-touchspin-up,
+  .input-group-addon:not(:last-child) .input-group-btn-vertical .bootstrap-touchspin-down,
+  .input-group-text:not(:last-child) .input-group-btn-vertical .bootstrap-touchspin-up,
+  .input-group-text:not(:last-child) .input-group-btn-vertical .bootstrap-touchspin-down,
+  .input-group-btn:not(:last-child):not(:first-child) .btn {
+    border-radius: 0;
+  }
+}
+
+/* RTL support for vertical buttons */
+.rtl .bootstrap-touchspin {
+  .input-group-btn-vertical {
+    .bootstrap-touchspin-up {
+      border-radius: $border-radius-base 0 0 0;
+    }
+
+    .bootstrap-touchspin-down {
+      border-radius: 0 0 0 $border-radius-base;
+    }
+
+    i {
+      left: auto;
+      right: 5px;
+    }
+  }
+
+  .input-group-addon .input-group-btn-vertical .bootstrap-touchspin-up {
+    border-radius: $border-radius-base 0 0 0;
+  }
+}
+
+/* RTL support: Swap border-radius for up/down buttons in horizontal mode */
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical),
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
+  .bootstrap-touchspin-down {
+    border-radius: 0 $border-radius-base $border-radius-base 0 !important; /* Right side rounded in RTL */
+  }
+
+  .bootstrap-touchspin-up {
+    border-radius: $border-radius-base 0 0 $border-radius-base !important; /* Left side rounded in RTL */
+  }
+}

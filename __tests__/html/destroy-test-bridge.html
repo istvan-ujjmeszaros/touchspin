@@ -9,7 +9,7 @@
   <link href="assets/bootstrap/bootstrap-4.6.2.min.css" rel="stylesheet">
 
   <!-- TouchSpin CSS -->
-  <link href="../../src/jquery.bootstrap-touchspin.css" rel="stylesheet">
+  <link href="../../packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet">
 
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
@@ -183,16 +183,13 @@
   <script type="module">
     import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
     import Bootstrap4Renderer from '../../packages/renderers/bootstrap4/src/Bootstrap4Renderer.js';
-    
+
     installJqueryTouchSpin(window.jQuery);
     window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
   </script>
 
-  <!-- Install bridge as a module (after plugin is loaded) -->
-  <script type="module" src="../../src/wrappers/jquery-bridge.js"></script>
-  <!-- Install modern facade wrapper (LGTM-7a, manual pages only) -->
-  <script type="module" src="../../src/wrappers/modern-facade.js"></script>
+  <!-- Legacy wrappers removed in modern setup; jQuery plugin handles bridging -->
 
   <script>
     (function($) {

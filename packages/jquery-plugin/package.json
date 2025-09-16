@@ -1,18 +1,73 @@
 {
   "name": "@touchspin/jquery-plugin",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "description": "jQuery wrapper for TouchSpin core (delegates to core, preserves API/events)",
   "license": "MIT",
   "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js"
+      "types": "./types/index.d.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
     }
   },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/jquery-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/jquery-plugin#readme",
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "vite dev --port 8866",
+    "build": "vite build && vite build -c vite.legacy.config.ts --mode=bootstrap3 && vite build -c vite.legacy.config.ts --mode=bootstrap4 && vite build -c vite.legacy.config.ts --mode=bootstrap5 && vite build -c vite.legacy.config.ts --mode=tailwind && mkdir -p dist && cp -f types/index.d.ts dist/index.d.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
+    "test:ui": "cd ../.. && playwright test packages/jquery-plugin/tests/ --ui",
+    "test:coverage": "cd ../.. && COVERAGE=1 playwright test packages/jquery-plugin/tests/"
+  },
   "dependencies": {
-    "@touchspin/core": "file:../core"
+    "@touchspin/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "peerDependencies": {
+    "jquery": ">=1.7"
+  },
+  "peerDependenciesMeta": {
+    "jquery": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.0.0"
   }
 }

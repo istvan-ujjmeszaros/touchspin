@@ -1,208 +1,419 @@
-# Bootstrap TouchSpin — Consolidated Architecture Guide
+# Bootstrap TouchSpin Architecture Guide
 
-This guide consolidates the strongest parts of both analyses in `architecture-claude/` and `architecture-openai/` into a single, developer‑focused reference. It emphasizes the current modular architecture (v5) and how to extend it. For historical evolution details, see `HISTORY.md` in this folder.
+A comprehensive guide to the modular architecture of Bootstrap TouchSpin - a framework-agnostic numeric input component with 100% backward compatibility.
 
-## Scope and Principles
+## Architecture Overview
 
-- Focus: current v5 modular design and developer extension points.
-- Tests: the project intentionally uses end‑to‑end Playwright tests only (no unit tests). That fits architectural rewrites by validating behavior, not implementation.
-- Metrics: do not treat line count as a quality signal. The new architecture has more lines due to JSDoc, modular separation, and clearer organization.
+TouchSpin uses a **modular architecture** that separates concerns into focused packages:
 
-## High‑Level Architecture
-
-- Core (`packages/core/`): framework‑agnostic logic and state. Owns value math, constraints, ARIA, native attribute sync, spin timers, event emission, and settings observers.
-- jQuery wrapper (`packages/jquery-plugin/`): thin bridge to core. Forwards commands, forwards core events to jQuery events, manages teardown for its own bridges. Contains no DOM event logic.
-- Renderers (`packages/renderers/*`): framework‑specific DOM presentation (Bootstrap 3/4/5, Tailwind). Build markup, add required data attributes, and call `core.attachUpEvents`/`attachDownEvents`.
-
-### Class Diagram
-
-```mermaid
-classDiagram
-  class TouchSpinCore {
-    +constructor(inputEl, opts)
-    +getValue()
-    +setValue(v)
-    +upOnce()
-    +downOnce()
-    +startUpSpin()
-    +startDownSpin()
-    +stopSpin()
-    +updateSettings(partial)
-    +initDOMEventHandling()
-    +destroy()
-    +on(event, handler)
-    +off(event, handler)
-    +observeSetting(name, cb)
-    +attachUpEvents(el)
-    +attachDownEvents(el)
-  }
-
-  class JQueryWrapper {
-    +installJqueryTouchSpin(jQuery)
-    +TouchSpin(args)
-  }
-
-  class Renderer {
-    +init()
-    +teardown()
-  }
-  <<abstract>> Renderer
-  class Bootstrap3Renderer
-  class Bootstrap4Renderer
-  class Bootstrap5Renderer
-  class TailwindRenderer
-
-  JQueryWrapper --> TouchSpinCore : forwards commands
-  JQueryWrapper ..> TouchSpinCore : bridges events
-  TouchSpinCore --> Renderer : uses
-  Renderer <|-- Bootstrap3Renderer
-  Renderer <|-- Bootstrap4Renderer
-  Renderer <|-- Bootstrap5Renderer
-  Renderer <|-- TailwindRenderer
+```
+packages/
+├── core/              # Framework-agnostic business logic
+├── jquery-plugin/     # jQuery compatibility wrapper  
+└── renderers/         # UI builders for CSS frameworks
+    ├── bootstrap3/    # Bootstrap 3 support
+    ├── bootstrap4/    # Bootstrap 4 support  
+    ├── bootstrap5/    # Bootstrap 5 support
+    └── tailwind/      # Tailwind CSS support
 ```
 
-### Initialization Sequence
+This design enables:
+- **Framework Independence**: Core logic works with any CSS framework
+- **100% Backward Compatibility**: Existing jQuery code works unchanged
+- **Extensibility**: Easy to add new renderers and framework wrappers
+- **Testability**: Each package can be tested in isolation
+- **Modern JavaScript**: Uses contemporary patterns while supporting legacy usage
 
-```mermaid
-sequenceDiagram
-  participant U as User Code
-  participant J as jQuery Wrapper
-  participant C as Core
-  participant R as Renderer
+## Package Responsibilities
 
-  U->>J: $(input).TouchSpin(options)
-  J->>J: create or reuse instance
-  J->>C: TouchSpin(input, options)
-  C->>R: new Renderer(input, settings, core)
-  R->>R: init() build DOM (+ testids)
-  R->>C: attachUpEvents/attachDownEvents
-  C->>C: initDOMEventHandling (input listeners, observers)
-  C-->>J: public API
+### Core Package (`packages/core/`)
+
+**Responsibilities:**
+- Business logic (validation, calculations, state management)
+- Event system (framework-agnostic event emitter)
+- Settings management with comprehensive sanitization
+- Public API for direct usage
+
+**Key Classes:**
+- `TouchSpinCore` - Main business logic class
+- `AbstractRenderer` - Base class for all renderers
+- Factory functions: `TouchSpin()`, `getTouchSpin()`
+
+**Usage:**
+```javascript
+import { TouchSpin } from '@touchspin/core';
+
+const api = TouchSpin(inputElement, {
+    min: 0,
+    max: 100,
+    step: 1
+});
+
+api.on('change', (data) => console.log('Value:', data.newValue));
+api.upOnce();
 ```
 
-## Responsibilities and Contracts
+### Renderer Packages (`packages/renderers/*`)
 
-- Core: single source of truth for state and behavior.
-  - Value math and constraints: min/max, step, decimals, divisibility modes, boosted steps, alignment.
-  - Spin lifecycle: `startUpSpin`/`startDownSpin`/`stopSpin` with delay/interval and boundary stops.
-  - Event emission: min/max, start/stop variants, boostchange.
-  - Input handling: capture phase interception of native `change`, blur/Enter sanitization, native `change` dispatch on real changes.
-  - Accessibility: `aria-valuenow`/`aria-valuetext` updates, button labels.
-  - Native attribute sync: sync min/max/step only for `type="number"` inputs.
-  - Observers: `observeSetting(name, cb)` to support reactive renderer updates.
-  - Element attachment: `attachUpEvents(el)` / `attachDownEvents(el)`; renderers call these after building DOM.
+**Responsibilities:**
+- Framework-specific DOM construction
+- CSS class management
+- Visual element updates (prefix/postfix, button states)
+- Event attachment coordination with core
 
-- jQuery wrapper: API surface and event bridge only.
-  - Installs `$.fn.TouchSpin` with init/command branching and forwards to the core instance.
-  - Bridges core events to jQuery: `touchspin.on.min/max/startspin/...`.
-  - Registers teardown to unhook any wrapper‑level listeners when `destroy()` is called.
-  - Does not attach DOM event listeners to buttons or input; core handles events via data roles.
+**Available Renderers:**
+- `Bootstrap3Renderer` - Bootstrap 3.x support
+- `Bootstrap4Renderer` - Bootstrap 4.x support  
+- `Bootstrap5Renderer` - Bootstrap 5.x support
+- `TailwindRenderer` - Tailwind CSS support
 
-- Renderers: framework presentation and roles.
-  - Build or augment the input group using the target framework’s patterns.
-  - Add data roles: `data-touchspin-injected="wrapper|up|down|prefix|postfix"` (and `vertical-wrapper` when relevant).
-  - Add deterministic testids from `data-testid="{id}"`: `{id}-wrapper|up|down|prefix|postfix`.
-  - Call `core.attachUpEvents/attachDownEvents` for created buttons.
-  - React to setting changes via `core.observeSetting` for prefix/postfix text/classes and vertical buttons.
-  - Implement `teardown()` to remove injected elements cleanly.
-
-## Event Model and Timing
-
-- Core → jQuery wrapper event names:
-  - `min` → `touchspin.on.min`
-  - `max` → `touchspin.on.max`
-  - `startspin` → `touchspin.on.startspin`
-  - `startupspin` → `touchspin.on.startupspin`
-  - `startdownspin` → `touchspin.on.startdownspin`
-  - `stopupspin` → `touchspin.on.stopupspin`
-  - `stopdownspin` → `touchspin.on.stopdownspin`
-  - `stopspin` → `touchspin.on.stopspin`
-  - `boostchange` → `touchspin.on.boostchange` (payload: `{ level, step, capped }`)
-
-- Emission order guarantees:
-  - Spin start: `startspin` then `startupspin`/`startdownspin`.
-  - Boundary events: when a single step hits the exact boundary, emit `min|max` BEFORE setting the display value; holding stops immediately on boundary.
-  - Spin end: directional `stop*` then `stopspin`.
-  - Native `change`: dispatched only when display actually changes; intermediate unsanitized changes are intercepted in capture.
-
-### Hold/Spin Sequence
-
-```mermaid
-sequenceDiagram
-  participant Btn as Up Button
-  participant C as Core
-
-  Btn->>C: mousedown (via attachUpEvents)
-  C->>C: upOnce()
-  C->>C: startUpSpin()
-  loop after delay then interval
-    C->>C: _spinStep('up')
-    alt reached max
-      C->>C: emit('max') and stopSpin()
-    end
-  end
+**Renderer Pattern:**
+```javascript
+class CustomRenderer extends AbstractRenderer {
+    init() {
+        // 1. Build DOM structure
+        this.wrapper = this.buildWrapper();
+        
+        // 2. Find buttons and elements
+        const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+        
+        // 3. Attach core event handlers
+        this.core.attachUpEvents(upButton);
+        
+        // 4. Observe setting changes
+        this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
+    }
+}
 ```
 
-## Options and Data Attributes
+### jQuery Plugin (`packages/jquery-plugin/`)
 
-- min/max: numbers or null (unbounded). Native min/max also influence settings and are synced for `type="number"`.
-- step: >0; divisibility modes `round|floor|ceil|none` affect formatting, not physics.
-- decimals: ≥0 display precision.
-- stepinterval / stepintervaldelay: hold timing.
-- booster / boostat / maxboostedstep: accelerated stepping on hold with cap.
-- mousewheel: active while input is focused.
-- prefix/postfix (+ extra classes): visual affordances; renderers update reactively.
-- verticalbuttons (+ labels/classes): renderer‑specific visuals; core only attaches events.
-- initval / replacementval / firstclickvalueifempty: helpers for empty values.
+**Responsibilities:**
+- Backward compatibility with jQuery-based code
+- Event bridging (core events → jQuery events)
+- Command API support (`TouchSpin('uponce')`)
+- Chainable jQuery interface
 
-## Behavioral Guarantees (Modern Core)
+**Compatibility Layer:**
+```javascript
+// Modern API
+const api = TouchSpin('#spinner', options);
 
-- Proactive boundary prevention: spin cannot start at a boundary; single steps at a boundary are no‑ops.
-- Boundary event ordering: `min|max` fire before display changes when the target equals the boundary.
-- Boost escalation: `2^⌊spincount/boostat⌋ * step` with optional cap by `maxboostedstep`; values align to the boosted grid when capped.
-- Sanitization gates native `change`: intermediate values are not emitted; sanitized values dispatch native `change` only when they differ.
-- Native attribute sync restricted to `type="number"` inputs to avoid unintended browser behaviors.
-
-## Extending the System
-
-### Build a Custom Renderer
-
-1) Implement a class with `init()` and `teardown()`.
-2) Construct markup, assign `data-touchspin-injected` roles, and add derived testids.
-3) Call `core.attachUpEvents(buttonUp)` / `core.attachDownEvents(buttonDown)`.
-4) Subscribe to `core.observeSetting` for prefix/postfix and other reactive updates.
-5) Ensure buttons’ focusability follows `focusablebuttons` (tabindex / ARIA labels).
-
-### Wrap the Core for Another Framework (e.g., Angular)
-
-- Instantiate via a directive/component; keep a reference to the returned API.
-- Translate framework events to the core API and re‑emit as needed (or surface the core API directly).
-- Provide a teardown hook that calls `api.destroy()` when the component unmounts.
-- Avoid attaching DOM listeners directly; rely on the core and renderer data roles.
-
-## Testing Strategy (E2E Only)
-
-- The repository only uses Playwright tests by design: they validate public behavior across renderers and wrappers.
-- Test selectors use deterministic testids derived from `data-testid` on the input: `{id}-wrapper|up|down|prefix|postfix`.
-- The `npm run inspect <path> [json|text]` script can auto‑start the dev server on port 8866 and report console/page/network errors plus TouchSpin init status for diagnostics.
-
-## Destroy/Teardown
-
-```mermaid
-sequenceDiagram
-  participant J as jQuery Wrapper
-  participant C as Core
-  participant R as Renderer
-
-  J->>C: destroy()
-  C->>R: teardown() (remove injected elements)
-  C->>C: detach input listeners, stop timers
-  C->>C: run registered teardowns (wrapper cleanup)
-  C->>C: delete input._touchSpinCore
+// jQuery API (same functionality)
+$('#spinner').TouchSpin(options);
+$('#spinner').TouchSpin('uponce');
+$('#spinner').on('touchspin.on.max', handler);
 ```
 
-## Where to Go Next
+## Core Architecture Details
 
-- See `HISTORY.md` for the three‑stage architectural evolution and migration notes.
-- See `packages/core/` and `packages/renderers/*` for concrete implementations to reference when building your own renderers or wrappers.
+### TouchSpinCore Class
 
+The heart of the system is the `TouchSpinCore` class:
+
+```javascript
+class TouchSpinCore {
+    constructor(inputEl, settings) {
+        this.inputEl = inputEl;
+        this.settings = sanitizeSettings(settings);
+        this.eventEmitter = new Map();
+        this.spinning = false;
+        
+        this.setupEventHandlers();
+        this.initializeValue();
+    }
+    
+    // Public API methods
+    upOnce() { /* Increment by one step */ }
+    downOnce() { /* Decrement by one step */ }
+    startUpSpin() { /* Begin continuous increment */ }
+    stopSpin() { /* Stop continuous operation */ }
+    getValue() { /* Get current numeric value */ }
+    setValue(value) { /* Set value with validation */ }
+    updateSettings(options) { /* Update configuration */ }
+    
+    // Event system
+    on(event, callback) { /* Add event listener */ }
+    off(event, callback) { /* Remove event listener */ }
+    emit(event, data) { /* Emit event */ }
+    
+    // Lifecycle
+    destroy() { /* Clean up instance */ }
+}
+```
+
+### Event System
+
+TouchSpin uses a **framework-agnostic event system** with automatic jQuery bridging:
+
+**Core Events:**
+- `change` - Value changed
+- `min` / `max` - Boundary reached
+- `startspin` / `stopspin` - Spinning state changes
+- `boostchange` - Step size changed during acceleration
+
+**Event Flow:**
+```javascript
+// Core emits framework-agnostic events
+core.emit('max', {value: 100, direction: 'up'});
+
+// jQuery wrapper automatically bridges to legacy events
+$(input).trigger('touchspin.on.max', {value: 100, direction: 'up'});
+```
+
+### Settings Management
+
+Settings undergo **comprehensive sanitization** to ensure valid configurations:
+
+```javascript
+// Input sanitization
+const settings = sanitizeSettings({
+    step: 0,      // Invalid - corrected to 1
+    decimals: -1, // Invalid - corrected to 0
+    min: 'invalid', // Invalid - corrected to null
+    max: 100
+});
+
+// Result: {step: 1, decimals: 0, min: null, max: 100}
+```
+
+**Observer Pattern** for reactive updates:
+```javascript
+// Renderers can observe setting changes
+core.observeSetting('prefix', (newValue) => {
+    this.prefixElement.textContent = newValue;
+});
+```
+
+### Boundary Logic
+
+TouchSpin uses **proactive boundary checking** for optimal performance:
+
+```javascript
+upOnce() {
+    // Check boundary BEFORE operation
+    if (this.getValue() === this.settings.max) {
+        this.emit('max');
+        return; // Prevent unnecessary calculation
+    }
+    
+    // Safe to proceed with increment
+    const nextValue = this._nextValue('up', this.getValue());
+    this._setDisplay(nextValue, true);
+}
+```
+
+This prevents wasted calculations and provides predictable event timing.
+
+## Extending TouchSpin
+
+### Creating Custom Renderers
+
+TouchSpin can support any CSS framework through custom renderers. See the **[Creating Custom Renderers Guide](creating-custom-renderer.md)** for complete details.
+
+**Quick Example:**
+```javascript
+import { AbstractRenderer } from '@touchspin/core';
+
+class MaterialRenderer extends AbstractRenderer {
+    init() {
+        this.wrapper = this.buildMaterialWrapper();
+        const upButton = this.wrapper.querySelector('.mdc-button--up');
+        this.core.attachUpEvents(upButton);
+        
+        // Observe settings for reactive updates
+        this.core.observeSetting('prefix', this.updateMaterialPrefix);
+    }
+    
+    buildMaterialWrapper() {
+        // Material Design HTML structure
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mdc-text-field mdc-text-field--outlined';
+        // ... Material-specific DOM construction
+        return wrapper;
+    }
+}
+```
+
+### Creating Framework Wrappers
+
+TouchSpin can be integrated into any JavaScript framework. See the **[Creating Framework Wrappers Guide](creating-framework-wrapper.md)** for detailed examples.
+
+**Angular Example:**
+```typescript
+@Component({
+    selector: 'app-touchspin',
+    template: '<input [id]="inputId">'
+})
+export class TouchSpinComponent implements OnInit, OnDestroy {
+    @Input() options: TouchSpinOptions = {};
+    @Output() valueChange = new EventEmitter<number>();
+    
+    private api: TouchSpinAPI;
+    
+    ngOnInit() {
+        this.api = TouchSpin(`#${this.inputId}`, this.options);
+        this.api.on('change', (data) => this.valueChange.emit(data.newValue));
+    }
+    
+    ngOnDestroy() {
+        this.api?.destroy();
+    }
+}
+```
+
+**React Hook Example:**
+```javascript
+function useTouchSpin(inputRef, options) {
+    const [value, setValue] = useState(0);
+    const apiRef = useRef(null);
+    
+    useEffect(() => {
+        if (inputRef.current) {
+            apiRef.current = TouchSpin(inputRef.current, options);
+            apiRef.current.on('change', (data) => setValue(data.newValue));
+        }
+        
+        return () => apiRef.current?.destroy();
+    }, [inputRef, options]);
+    
+    return { value, api: apiRef.current };
+}
+```
+
+## API Reference
+
+### Core API Methods
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `getValue()` | none | `number` | Get current numeric value |
+| `setValue(value)` | `number` | `void` | Set value with validation |
+| `upOnce()` | none | `void` | Increment by one step |
+| `downOnce()` | none | `void` | Decrement by one step |
+| `startUpSpin()` | none | `void` | Begin continuous increment |
+| `startDownSpin()` | none | `void` | Begin continuous decrement |
+| `stopSpin()` | none | `void` | Stop any spinning |
+| `updateSettings(opts)` | `object` | `void` | Update configuration |
+| `on(event, callback)` | `string, function` | `void` | Add event listener |
+| `off(event, callback)` | `string, function` | `void` | Remove event listener |
+| `destroy()` | none | `void` | Clean up instance |
+
+### Configuration Options
+
+**Core Settings:**
+- `min` / `max` - Value boundaries
+- `step` - Increment/decrement amount  
+- `decimals` - Display precision
+- `initval` - Initial value if input empty
+
+**UI Settings:**
+- `prefix` / `postfix` - Text before/after input
+- `verticalbuttons` - Button layout
+- `mousewheel` - Mouse wheel support
+
+**Behavior Settings:**
+- `booster` - Step size acceleration
+- `stepinterval` - Spinning speed
+- `forcestepdivisibility` - Step alignment
+
+See **[Options Reference](reference/options-feature-matrix.md)** for complete details.
+
+### Events
+
+**Value Events:**
+- `change` - Value changed: `{oldValue, newValue}`
+- `min` / `max` - Boundary reached: `{value, direction}`
+
+**Interaction Events:**
+- `startspin` / `stopspin` - Spinning state: `{direction}`
+- `startupspin` / `startdownspin` - Direction-specific start
+- `stopupspin` / `stopdownspin` - Direction-specific stop
+
+**Acceleration Events:**
+- `boostchange` - Step size changed: `{step, isCapped, level}`
+
+See **[Event Reference](reference/event-matrix.md)** for timing and data details.
+
+## Getting Started
+
+### Installation
+
+```bash
+npm install @touchspin/core @touchspin/bootstrap5
+```
+
+### Basic Usage
+
+```javascript
+import { TouchSpin } from '@touchspin/core';
+import '@touchspin/bootstrap5'; // Registers Bootstrap 5 renderer
+
+const api = TouchSpin('#my-input', {
+    min: 0,
+    max: 100,
+    step: 1,
+    prefix: '$'
+});
+
+api.on('change', (data) => {
+    console.log(`Value changed to: ${data.newValue}`);
+});
+```
+
+### jQuery Compatibility
+
+```javascript
+// Existing jQuery code works unchanged
+$('#my-input').TouchSpin({
+    min: 0,
+    max: 100,
+    step: 1,
+    prefix: '$'
+});
+
+$('#my-input').on('touchspin.on.change', function(e, data) {
+    console.log(`Value changed to: ${data.newValue}`);
+});
+```
+
+## Documentation Structure
+
+- **[API Quick Reference](reference/api-quick-reference.md)** - Complete API documentation with examples
+- **[Options Reference](reference/options-feature-matrix.md)** - All configuration options
+- **[Event Reference](reference/event-matrix.md)** - Event system details
+- **[Common Patterns](reference/common-patterns.md)** - Implementation examples
+- **[Creating Custom Renderers](creating-custom-renderer.md)** - Build CSS framework support
+- **[Creating Framework Wrappers](creating-framework-wrapper.md)** - Framework integration guide
+- **[Architecture History](HISTORY.md)** - Evolution story and design decisions
+- **[Case Studies](case-study-blog.md)** - Detailed refactoring analysis
+
+## Architecture Principles
+
+### 1. Separation of Concerns
+- **Core**: Business logic only
+- **Renderers**: UI construction only  
+- **Wrappers**: Framework integration only
+
+### 2. Framework Independence
+- Core works with any CSS framework
+- Renderers provide framework-specific UI
+- No framework assumptions in business logic
+
+### 3. Backward Compatibility
+- 100% compatibility with existing jQuery code
+- New features available alongside legacy interface
+- Migration is opt-in, never required
+
+### 4. Extensibility
+- Plugin architecture for renderers
+- Observer pattern for reactive updates
+- Clean interfaces for framework integration
+
+### 5. Modern JavaScript
+- ES6+ classes and modules
+- Comprehensive JSDoc documentation
+- Tree-shakable package structure
+- Native event system with fallbacks
+
+This architecture enables TouchSpin to serve both legacy projects needing stability and modern projects requiring flexibility, all while maintaining the simple, familiar interface that made it popular.

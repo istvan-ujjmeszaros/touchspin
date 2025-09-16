@@ -1,0 +1,36 @@
+{
+  "all": false,
+  "include": [
+    "packages/*/src/**/*.{js,ts}",
+    "packages/renderers/*/src/**/*.{js,ts}"
+  ],
+  "exclude": [
+    "**/*.test.{js,ts}",
+    "**/*.spec.{js,ts}",
+    "**/*.d.ts",
+    "**/dist/**",
+    "**/node_modules/**",
+    "__tests__/**",
+    "scripts/**",
+    "*.config.{js,ts}"
+  ],
+  "reporter": [
+    "text",
+    "html",
+    "lcov",
+    "json"
+  ],
+  "report-dir": "reports/coverage",
+  "temp-dir": ".nyc_output",
+  "check-coverage": false,
+  "lines": 80,
+  "functions": 80,
+  "branches": 80,
+  "statements": 80,
+  "watermarks": {
+    "lines": [80, 95],
+    "functions": [80, 95],
+    "branches": [80, 95],
+    "statements": [80, 95]
+  }
+}

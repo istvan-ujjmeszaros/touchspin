@@ -11,8 +11,7 @@
     <!-- jQuery (will be removed in future) -->
     <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
     
-    <!-- TouchSpin Tailwind Build -->
-    <script src="../../dist/jquery.bootstrap-touchspin-tailwind.js"></script>
+    <!-- TouchSpin will be loaded as ES modules below -->
     
     <!-- Consistent styling for visual tests -->
     <style>
@@ -249,29 +248,46 @@
 
     </div>
 
-    <!-- Initialize TouchSpin on all inputs -->
-    <script>
+    <!-- Load TouchSpin with Tailwind renderer as ES modules -->
+    <script type="module">
+        import { installJqueryTouchSpin } from '../../packages/jquery-plugin/src/index.js';
+        import TailwindRenderer from '../../packages/renderers/tailwind/src/TailwindRenderer.js';
+
+        // Install jQuery plugin
+        installJqueryTouchSpin(window.jQuery);
+
+        // Initialize TouchSpin on all inputs
         $(document).ready(function() {
+            // Set Tailwind renderer as default for all instances
+            const touchSpinOptions = { renderer: TailwindRenderer };
             // Basic states
             $('#basic-default').TouchSpin({
+                ...touchSpinOptions,
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
-            
+
             $('#basic-focus').TouchSpin({
+                ...touchSpinOptions,
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 5
             });
-            
+
             $('#basic-disabled').TouchSpin({
+                ...touchSpinOptions,
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
-            
+
             $('#basic-readonly').TouchSpin({
+                ...touchSpinOptions,
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
@@ -279,24 +295,28 @@
             
             // Size variations - same settings, different CSS classes
             $('#size-small').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
             
             $('#size-default').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
             
             $('#size-large').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
             
             $('#size-xlarge').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
@@ -304,6 +324,7 @@
             
             // Prefix/Postfix
             $('#with-prefix').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 999.99,
                 step: 0.01,
@@ -312,6 +333,7 @@
             });
             
             $('#with-postfix').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1,
@@ -319,6 +341,7 @@
             });
             
             $('#with-both').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1,
@@ -328,12 +351,14 @@
             
             // Button layouts
             $('#horizontal-buttons').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
             
             $('#vertical-buttons').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1,
@@ -343,6 +368,7 @@
             });
             
             $('#custom-buttons').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1,
@@ -352,6 +378,7 @@
             
             // Decimal values
             $('#decimal-2').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 0.01,
@@ -359,6 +386,7 @@
             });
             
             $('#decimal-4').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 1,
                 step: 0.0001,
@@ -367,12 +395,14 @@
             
             // Min/Max states
             $('#at-minimum').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
             
             $('#at-maximum').TouchSpin({
+                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1

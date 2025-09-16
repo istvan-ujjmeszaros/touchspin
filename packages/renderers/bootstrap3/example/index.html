@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Bootstrap 3 Demo</title>
+
+  <!-- Bootstrap 3 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+  <!-- TouchSpin styles (SCSS in dev for HMR) -->
+  <script type="module">import '../src/styles/touchspin-bootstrap3.scss';</script>
+
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .examples-section {
+      min-width: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      grid-column: 1 / -1;
+    }
+
+    .example {
+      background: white;
+      padding: 30px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      margin-bottom: 30px;
+    }
+
+    .example h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .spinner {
+      margin: 15px 0;
+    }
+
+    .code-example {
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
+    /* Control Panel Styles */
+    .control-panel {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .control-panel-header {
+      padding: 20px 20px 15px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      background: white;
+      border-radius: 6px 6px 0 0;
+      z-index: 10;
+    }
+
+    .control-panel-header h2 {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .control-sections {
+      padding: 20px;
+    }
+
+    .control-sections .panel {
+      margin-bottom: 15px;
+    }
+
+    .control-group {
+      padding: 15px;
+    }
+
+    .control-group .form-group {
+      margin-bottom: 15px;
+    }
+
+    .control-group .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+      font-weight: 500;
+    }
+
+    .control-group .form-control {
+      width: 120px;
+      margin-left: 10px;
+    }
+
+    .control-group .checkbox {
+      margin: 0;
+    }
+
+    .control-group .btn {
+      margin: 2px;
+      font-size: 12px;
+    }
+
+    /* Event Log Styles */
+    .event-log {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      padding: 10px;
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 11px;
+    }
+
+    .event-entry {
+      margin-bottom: 5px;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .event-entry.change { background: #d9edf7; }
+    .event-entry.min { background: #fcf8e3; }
+    .event-entry.max { background: #fcf8e3; }
+    .event-entry.spin { background: #f2dede; }
+
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .control-panel {
+        position: relative;
+        top: auto;
+        max-height: none;
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <h1>TouchSpin Bootstrap 3 Demo</h1>
+
+    <div class="examples-section">
+      <div class="example">
+        <h3>Basic Usage</h3>
+        <div class="spinner">
+          <input type="number" id="basic" min="0" max="100" value="50" step="1" class="form-control">
+        </div>
+        <div class="code-example" id="basic-code-example">
+          // Code example will be generated here
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>With Prefix & Postfix</h3>
+        <div class="spinner">
+          <input type="number" id="currency" min="0" max="1000" value="25" step="0.01" class="form-control"
+                 data-bts-prefix="€" data-bts-postfix=".00">
+        </div>
+        <div class="code-example">
+          $('#currency').TouchSpin({<br>
+          &nbsp;&nbsp;prefix: '€',<br>
+          &nbsp;&nbsp;postfix: '.00',<br>
+          &nbsp;&nbsp;step: 0.01<br>
+          });
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>Vertical Buttons</h3>
+        <div class="spinner">
+          <input type="number" id="vertical" min="0" max="100" value="75" step="5" class="form-control"
+                 data-bts-vertical-buttons="true">
+        </div>
+        <div class="code-example">
+          $('#vertical').TouchSpin({<br>
+          &nbsp;&nbsp;verticalbuttons: true<br>
+          });
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>Custom Button Text</h3>
+        <div class="spinner">
+          <input type="number" id="custom-text" min="1" max="10" value="5" class="form-control"
+                 data-bts-button-up-txt="▲" data-bts-button-down-txt="▼">
+        </div>
+        <div class="code-example">
+          $('#custom-text').TouchSpin({<br>
+          &nbsp;&nbsp;buttonup_txt: '▲',<br>
+          &nbsp;&nbsp;buttondown_txt: '▼'<br>
+          });
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>Disabled State</h3>
+        <div class="spinner">
+          <input type="number" id="disabled" min="0" max="100" value="42" class="form-control" disabled>
+        </div>
+        <div class="code-example">
+          $('#disabled').TouchSpin(); // Input disabled via HTML
+        </div>
+      </div>
+
+      <div class="example" dir="rtl">
+        <h3>RTL Support</h3>
+        <p style="margin: 10px 0; color: #666;">
+          Note: Proper RTL rendering requires the Bootstrap RTL CSS file.
+          <a href="#" id="rtl-css-toggle" style="color: #337ab7;">Click here to inject RTL CSS</a>
+        </p>
+        <div class="code-example" id="rtl-css-code" style="margin: 10px 0; font-size: 12px; display: none;">
+          &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.min.css"&gt;
+        </div>
+        <div class="spinner">
+          <input type="number" id="rtl" min="0" max="100" value="33" class="form-control"
+                 data-bts-prefix="₪" data-bts-postfix=" ש״ח">
+        </div>
+        <div class="code-example">
+          &lt;div dir="rtl"&gt;<br>
+          &nbsp;&nbsp;$('#rtl').TouchSpin({<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;prefix: '₪',<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;postfix: ' ש״ח'<br>
+          &nbsp;&nbsp;});<br>
+          &lt;/div&gt;
+        </div>
+      </div>
+
+      <div class="example">
+        <h3>Advanced Input Group</h3>
+        <p style="margin: 10px 0; color: #666;">Input inside an existing Bootstrap input-group with other addons</p>
+        <div class="spinner">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+            <input type="number" id="advanced-group" min="0" max="100" value="25" step="1" class="form-control">
+            <span class="input-group-addon">.00</span>
+          </div>
+        </div>
+        <div class="code-example">
+          &lt;div class="input-group"&gt;<br>
+          &nbsp;&nbsp;&lt;span class="input-group-addon"&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="glyphicon glyphicon-calendar"&gt;&lt;/span&gt;<br>
+          &nbsp;&nbsp;&lt;/span&gt;<br>
+          &nbsp;&nbsp;&lt;input type="number" id="advanced" class="form-control"&gt;<br>
+          &nbsp;&nbsp;&lt;span class="input-group-addon"&gt;.00&lt;/span&gt;<br>
+          &lt;/div&gt;<br><br>
+          $('#advanced').TouchSpin({<br>
+          &nbsp;&nbsp;min: 0,<br>
+          &nbsp;&nbsp;max: 100<br>
+          });
+        </div>
+      </div>
+    </div>
+
+    <div class="control-panel">
+      <div class="control-panel-header">
+        <h2>Interactive Controls</h2>
+        <p style="margin: 0; font-size: 13px; color: #777;">Interact with the basic spinner above</p>
+      </div>
+
+      <div class="control-sections">
+        <!-- Property Controls -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Properties</h4>
+          </div>
+          <div class="panel-body">
+            <div class="control-group">
+              <div class="form-group">
+                <label>
+                  <span>Initial Value</span>
+                  <input type="number" id="control-value" value="50" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Minimum</span>
+                  <input type="number" id="control-min" value="0" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Maximum</span>
+                  <input type="number" id="control-max" value="100" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Step</span>
+                  <input type="number" id="control-step" value="1" step="0.1" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Prefix</span>
+                  <input type="text" id="control-prefix" placeholder="e.g. $" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Postfix</span>
+                  <input type="text" id="control-postfix" placeholder="e.g. .00" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Decimal Places</span>
+                  <input type="number" id="control-decimals" value="0" min="0" max="10" step="1" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Button Up Text</span>
+                  <input type="text" id="control-buttonup-txt" value="+" class="form-control">
+                </label>
+              </div>
+              <div class="form-group">
+                <label>
+                  <span>Button Down Text</span>
+                  <input type="text" id="control-buttondown-txt" value="−" class="form-control">
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- State Controls -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">State Controls</h4>
+          </div>
+          <div class="panel-body">
+            <div class="control-group">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-disabled"> Disabled
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-readonly"> Readonly
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-vertical"> Vertical Buttons
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-focusable"> Focusable Buttons
+                </label>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="control-mousewheel" checked> Mouse Wheel
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method Testing -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Method Testing</h4>
+          </div>
+          <div class="panel-body">
+            <div class="control-group">
+              <button id="test-up-once" class="btn btn-default">upOnce()</button>
+              <button id="test-down-once" class="btn btn-default">downOnce()</button>
+              <br><br>
+              <button id="test-start-up" class="btn btn-default">startUpSpin()</button>
+              <button id="test-start-down" class="btn btn-default">startDownSpin()</button>
+              <button id="test-stop-spin" class="btn btn-default">stopSpin()</button>
+              <br><br>
+              <button id="test-set-random" class="btn btn-default">setValue(random)</button>
+              <button id="test-get-value" class="btn btn-default">getValue()</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Monitor -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Event Monitor</h4>
+          </div>
+          <div class="panel-body">
+            <div class="control-group">
+              <div class="event-log" id="event-log">
+                <div class="event-entry">Waiting for events...</div>
+              </div>
+              <br>
+              <button class="btn btn-danger" id="clear-log">Clear Log</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import TouchSpin core and Bootstrap 3 renderer
+    // Dev: public APIs within workspace
+    import { TouchSpin } from '@touchspin/core';
+    import Bootstrap3Renderer from '@touchspin/renderer-bootstrap3';
+
+    // Initialize all TouchSpin instances
+    const basicSpinner = TouchSpin(document.getElementById('basic'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('currency'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('vertical'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('custom-text'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('disabled'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('rtl'), { renderer: Bootstrap3Renderer });
+    TouchSpin(document.getElementById('advanced-group'), { renderer: Bootstrap3Renderer });
+
+    const basicCodeExample = document.getElementById('basic-code-example');
+
+    // Generate code example from current control values
+    function generateCodeExample() {
+      const attributes = [];
+
+      // Get values from controls
+      const min = controls.min.value;
+      const max = controls.max.value;
+      const value = controls.value.value;
+      const step = controls.step.value;
+
+      // Always include basic HTML attributes
+      attributes.push(`type="number"`);
+      attributes.push(`class="form-control"`);
+      if (min) attributes.push(`min="${min}"`);
+      if (max) attributes.push(`max="${max}"`);
+      if (value) attributes.push(`value="${value}"`);
+      if (step) attributes.push(`step="${step}"`);
+
+      // Add TouchSpin data attributes for optional settings
+      const prefix = controls.prefix.value;
+      if (prefix) {
+        attributes.push(`data-bts-prefix="${prefix}"`);
+      }
+
+      const postfix = controls.postfix.value;
+      if (postfix) {
+        attributes.push(`data-bts-postfix="${postfix}"`);
+      }
+
+      const verticalButtons = controls.vertical.checked;
+      if (verticalButtons) {
+        attributes.push(`data-bts-vertical-buttons="true"`);
+      }
+
+      // Add state attributes
+      const input = document.getElementById('basic');
+      if (input.disabled) {
+        attributes.push(`disabled`);
+      }
+
+      if (input.readOnly) {
+        attributes.push(`readonly`);
+      }
+
+      // Generate the HTML
+      const attributeString = attributes.join(' ');
+      let code = `&lt;input ${attributeString}&gt;\n\n`;
+
+      // Add JavaScript initialization
+      code += `&lt;script type="module"&gt;\n`;
+      code += `  import { TouchSpin } from '@touchspin/core';\n`;
+      code += `  import Bootstrap3Renderer from '@touchspin/bootstrap3-renderer';\n\n`;
+      code += `  TouchSpin(document.getElementById('myInput'), {\n`;
+      code += `    renderer: Bootstrap3Renderer\n`;
+      code += `  });\n`;
+      code += `&lt;/script&gt;`;
+
+      return code;
+    }
+
+    // Update the code example
+    function updateCodeExample() {
+      basicCodeExample.innerHTML = generateCodeExample().replace(/\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;');
+    }
+
+    // Property controls
+    const controls = {
+      value: document.getElementById('control-value'),
+      min: document.getElementById('control-min'),
+      max: document.getElementById('control-max'),
+      step: document.getElementById('control-step'),
+      prefix: document.getElementById('control-prefix'),
+      postfix: document.getElementById('control-postfix'),
+      decimals: document.getElementById('control-decimals'),
+      buttonupTxt: document.getElementById('control-buttonup-txt'),
+      buttondownTxt: document.getElementById('control-buttondown-txt'),
+      disabled: document.getElementById('control-disabled'),
+      readonly: document.getElementById('control-readonly'),
+      vertical: document.getElementById('control-vertical'),
+      focusable: document.getElementById('control-focusable'),
+      mousewheel: document.getElementById('control-mousewheel')
+    };
+
+    // Event log
+    const eventLog = document.getElementById('event-log');
+    let eventCount = 0;
+
+    function logEvent(eventName, detail) {
+      eventCount++;
+      const entry = document.createElement('div');
+      entry.className = `event-entry ${eventName.replace('touchspin.', '')}`;
+      entry.textContent = `${eventCount}. ${eventName}: ${JSON.stringify(detail)}`;
+      eventLog.insertBefore(entry, eventLog.firstChild);
+
+      // Keep only last 20 events
+      while (eventLog.children.length > 20) {
+        eventLog.removeChild(eventLog.lastChild);
+      }
+    }
+
+    // Property change handlers
+    controls.value.addEventListener('input', (e) => {
+      basicSpinner.setValue(e.target.value);
+      updateCodeExample();
+    });
+
+    controls.min.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ min: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.max.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ max: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.step.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ step: parseFloat(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.prefix.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ prefix: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.postfix.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ postfix: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.disabled.addEventListener('change', (e) => {
+      document.getElementById('basic').disabled = e.target.checked;
+      updateCodeExample();
+    });
+
+    controls.readonly.addEventListener('change', (e) => {
+      document.getElementById('basic').readOnly = e.target.checked;
+      updateCodeExample();
+    });
+
+    controls.vertical.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ verticalbuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.focusable.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ focusablebuttons: e.target.checked });
+      updateCodeExample();
+    });
+
+    controls.decimals.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ decimals: parseInt(e.target.value) });
+      updateCodeExample();
+    });
+
+    controls.buttonupTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttonup_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.buttondownTxt.addEventListener('input', (e) => {
+      basicSpinner.updateSettings({ buttondown_txt: e.target.value });
+      updateCodeExample();
+    });
+
+    controls.mousewheel.addEventListener('change', (e) => {
+      basicSpinner.updateSettings({ mousewheel: e.target.checked });
+      updateCodeExample();
+    });
+
+    // Method testing
+    document.getElementById('test-up-once').addEventListener('click', () => {
+      basicSpinner.upOnce();
+      logEvent('method-call', { method: 'upOnce()' });
+    });
+
+    document.getElementById('test-down-once').addEventListener('click', () => {
+      basicSpinner.downOnce();
+      logEvent('method-call', { method: 'downOnce()' });
+    });
+
+    document.getElementById('test-start-up').addEventListener('click', () => {
+      basicSpinner.startUpSpin();
+      logEvent('method-call', { method: 'startUpSpin()' });
+    });
+
+    document.getElementById('test-start-down').addEventListener('click', () => {
+      basicSpinner.startDownSpin();
+      logEvent('method-call', { method: 'startDownSpin()' });
+    });
+
+    document.getElementById('test-stop-spin').addEventListener('click', () => {
+      basicSpinner.stopSpin();
+      logEvent('method-call', { method: 'stopSpin()' });
+    });
+
+    document.getElementById('test-set-random').addEventListener('click', () => {
+      const randomValue = Math.floor(Math.random() * 100);
+      basicSpinner.setValue(randomValue);
+      controls.value.value = randomValue;
+      logEvent('method-call', { method: `setValue(${randomValue})` });
+    });
+
+    document.getElementById('test-get-value').addEventListener('click', () => {
+      const currentValue = basicSpinner.getValue();
+      logEvent('method-call', { method: 'getValue()', result: currentValue });
+    });
+
+    // Clear event log
+    document.getElementById('clear-log').addEventListener('click', () => {
+      eventLog.innerHTML = '<div class="event-entry">Event log cleared...</div>';
+      eventCount = 0;
+    });
+
+    // Event listeners for TouchSpin events
+    const input = document.getElementById('basic');
+
+    input.addEventListener('touchspin.on.min', (e) => {
+      logEvent('touchspin.on.min', { value: e.detail || basicSpinner.getValue() });
+    });
+
+    input.addEventListener('touchspin.on.max', (e) => {
+      logEvent('touchspin.on.max', { value: e.detail || basicSpinner.getValue() });
+    });
+
+    input.addEventListener('touchspin.on.startspin', (e) => {
+      logEvent('touchspin.on.startspin', { value: e.detail || basicSpinner.getValue() });
+    });
+
+    input.addEventListener('touchspin.on.stopspin', (e) => {
+      logEvent('touchspin.on.stopspin', { value: e.detail || basicSpinner.getValue() });
+    });
+
+    input.addEventListener('change', (e) => {
+      logEvent('input.change', { value: e.target.value });
+    });
+
+    // Initialize controls with actual input values
+    const basicInput = document.getElementById('basic');
+    controls.value.value = basicInput.value || '';
+    controls.min.value = basicInput.min || '';
+    controls.max.value = basicInput.max || '';
+    controls.step.value = basicInput.step || '';
+
+    // Initialize code example
+    updateCodeExample();
+
+    // RTL CSS injection toggle
+    let rtlCssLink = null;
+    const rtlToggle = document.getElementById('rtl-css-toggle');
+    const rtlCodeExample = document.getElementById('rtl-css-code');
+
+    rtlToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      if (!rtlCssLink) {
+        // Inject RTL CSS
+        rtlCssLink = document.createElement('link');
+        rtlCssLink.rel = 'stylesheet';
+        rtlCssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.min.css';
+        rtlCssLink.id = 'bootstrap-rtl-css';
+        document.head.appendChild(rtlCssLink);
+
+        rtlToggle.textContent = 'Click here to remove RTL CSS';
+        rtlCodeExample.style.display = 'block';
+      } else {
+        // Remove RTL CSS
+        if (rtlCssLink.parentNode) {
+          rtlCssLink.parentNode.removeChild(rtlCssLink);
+        }
+        rtlCssLink = null;
+
+        rtlToggle.textContent = 'Click here to inject RTL CSS';
+        rtlCodeExample.style.display = 'none';
+      }
+    });
+
+    console.log('✅ TouchSpin Bootstrap 3 Demo initialized');
+    console.log('Basic spinner instance:', basicSpinner);
+  </script>
+</body>
+</html>

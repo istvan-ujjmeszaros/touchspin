@@ -80,25 +80,24 @@ test.describe('TouchSpin Callback Tests', () => {
       ).toBe('$5,499.90');
 
       // Start spinning up (hold down for enough time to reach max)
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mousedown', { bubbles: true }));
         }
-      }, testid);
+      });
 
       // Hold for enough time to reach max value (step is 0.1, so need at least 1 increment)
       await touchspinHelpers.waitForTimeout(800);
 
       // Stop spinning
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mouseup', { bubbles: true }));
         }
-      }, testid);
+      });
 
       // Should reach max value and be properly formatted
       await expect.poll(
@@ -211,25 +210,24 @@ test.describe('TouchSpin Callback Tests', () => {
       ).toBe('$5,499.90');
 
       // Start spinning up
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      await wrapper2.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mousedown', { bubbles: true }));
         }
-      }, testid);
+      });
 
       // Hold long enough to reach max
       await touchspinHelpers.waitForTimeout(800);
 
       // Stop spinning
-      await page.evaluate((testId) => {
-        const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
-        const button = container?.querySelector('.bootstrap-touchspin-up');
+      await wrapper2.evaluate((container) => {
+        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {
           button.dispatchEvent(new Event('mouseup', { bubbles: true }));
         }
-      }, testid);
+      });
 
       // Should reach max value with proper numeral.js formatting
       await expect.poll(
@@ -251,7 +249,7 @@ test.describe('TouchSpin Callback Tests', () => {
       // Start from a known value
       await touchspinHelpers.fillWithValue(page, testid, '100');
       await page.keyboard.press('Tab');
-      
+
       // Wait for value to be formatted
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)

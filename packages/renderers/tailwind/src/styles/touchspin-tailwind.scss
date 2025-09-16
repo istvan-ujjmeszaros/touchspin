@@ -1,0 +1,19 @@
+// Tailwind renderer base stylesheet
+// This file exists to provide a stable CSS artifact for CDN usage.
+// Tailwind utility classes are applied by the renderer; minimal helpers below.
+
+.tailwind-btn {
+  /* Ensure focus ring visible when Tailwind isn't present */
+  outline: none;
+}
+
+.tailwind-btn:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
+}
+
+.tailwind-addon {
+  /* Harmonize with typical Tailwind forms look */
+  line-height: 1.25;
+}
+

@@ -1,0 +1,69 @@
+{
+  "name": "@touchspin/web-component",
+  "version": "1.0.0",
+  "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "vite dev --port 8866",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "number-input",
+    "web-components",
+    "custom-elements",
+    "framework-agnostic"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "workspace:*",
+    "@touchspin/vanilla-renderer": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/web-component"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/web-component#readme"
+}
