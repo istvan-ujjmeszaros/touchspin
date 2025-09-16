@@ -582,7 +582,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
         max: 10,
         step: 0.1,
         decimals: 2,
-        initval: 5.55
+        initval: 5.5
       });
 
       // Increment once
@@ -594,7 +594,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
         return (window as any).$('[data-testid="test-input"]').val();
       });
 
-      expect(value).toBe('5.65');
+      expect(value).toBe('5.60');
     });
 
     test('should initialize with mousewheel support', async ({ page }) => {
@@ -605,6 +605,9 @@ test.describe('jQuery TouchSpin Commands API', () => {
         mousewheel: true,
         initval: 50
       });
+
+      // Focus the input first (required for mousewheel events)
+      await page.focus('[data-testid="test-input"]');
 
       // Simulate mousewheel up
       await page.evaluate(() => {

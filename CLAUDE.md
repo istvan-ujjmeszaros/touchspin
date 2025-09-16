@@ -20,10 +20,15 @@ const wrapper = document.querySelector('[data-touchspin-injected]');
 
 ### 3. Common Test Mistakes to Avoid
 
-#### Step Value Correction
-- **Issue**: TouchSpin automatically corrects values to be divisible by step
-- **Solution**: When initializing with a value, ensure it's divisible by step or expect correction
-- **Example**: Value 20 with step 3 will be corrected to 18 (nearest value divisible by 3)
+#### Step Value Correction (CRITICAL)
+- **Issue**: TouchSpin automatically corrects ALL values to be divisible by step
+- **Default behavior**: `forcestepdivisibility: 'round'` - rounds to NEAREST value divisible by step
+- **This applies to both integers AND decimals!**
+- **Examples with default 'round' behavior**:
+  - Value 20 with step 3 → corrected to 21 (7×3=21, nearest)
+  - Value 5.55 with step 0.1 → corrected to 5.6 (56×0.1=5.6, nearest)
+  - Value 5.55 with step 0.05 → stays 5.55 (111×0.05=5.55, already divisible)
+- **Test Writing Rule**: Always calculate if value is divisible by step, or know what it will round to
 
 #### Spin Test Logic
 - **Issue**: Incorrect expectations about values during spinning
@@ -42,6 +47,17 @@ const wrapper = document.querySelector('[data-touchspin-injected]');
 #### Timing Issues
 - **Issue**: DOM not updated when checking
 - **Solution**: Add `await page.waitForTimeout(100)` after operations that update DOM
+
+#### Focus Requirements (CRITICAL)
+- **Issue**: Mousewheel and keyboard events don't work without focus
+- **Applies to**: Mousewheel scroll, keyboard up/down arrow keys
+- **Solution**: ALWAYS focus the input before testing these events
+- **Example**:
+  ```typescript
+  // Focus the input first
+  await page.focus('[data-testid="test-input"]');
+  // Now mousewheel/keyboard events will work
+  ```
 
 ### 4. Event Log Format
 - **Current format**: `target:value event` (e.g., `test-input:50 touchspin.on.stopspin`)
