@@ -18,7 +18,58 @@ const hasPrefix = await touchspinHelpers.hasPrefix(page, 'test-input', '€');
 const wrapper = document.querySelector('[data-touchspin-injected]');
 ```
 
-### 3. Common Test Mistakes to Avoid
+### 3. Event Log System
+
+#### Event Log Format
+- **Native events**: `[native] target:value eventName` or `[native] target eventName`
+- **TouchSpin events**: `[touchspin] target:value eventName` or `[touchspin] target eventName`
+- Examples:
+  - `[native] test-input:50 change`
+  - `[touchspin] test-input:51 touchspin.on.startspin`
+  - `[native] test-input focus`
+  - `[native] test-input-up-button click`
+
+#### Using Event Log in Tests
+```typescript
+// Clear event log before test
+await touchspinHelpers.clearEventLog(page);
+
+// Perform actions...
+await touchspinHelpers.clickUpButton(page, 'test-input');
+
+// Check for specific events
+expect(await touchspinHelpers.hasEventInLog(page, 'click', 'native')).toBe(true);
+expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+
+// Count events
+const changeCount = await touchspinHelpers.countEventInLog(page, 'change', 'native');
+expect(changeCount).toBe(1);
+
+// Get all TouchSpin events
+const touchspinEvents = await touchspinHelpers.getEventsOfType(page, 'touchspin');
+```
+
+### 4. Strict Element Finding (No More If Checks!)
+
+#### Old Pattern (BAD):
+```typescript
+const upButton = wrapper?.querySelector('.bootstrap-touchspin-up');
+if (upButton) {
+  upButton.click();
+}
+```
+
+#### New Pattern (GOOD):
+```typescript
+// Use strict helpers that throw if element doesn't exist
+await touchspinHelpers.clickUpButton(page, 'test-input');
+
+// Or get all elements with guarantee they exist
+const elements = await touchspinHelpers.getTouchSpinElementsStrict(page, 'test-input');
+await elements.upButton.click(); // No null check needed!
+```
+
+### 5. Common Test Mistakes to Avoid
 
 #### Step Value Correction (CRITICAL)
 - **Issue**: TouchSpin automatically corrects ALL values to be divisible by step
@@ -59,25 +110,39 @@ const wrapper = document.querySelector('[data-touchspin-injected]');
   // Now mousewheel/keyboard events will work
   ```
 
-### 4. Event Log Format
-- **Current format**: `target:value event` (e.g., `test-input:50 touchspin.on.stopspin`)
-- **No timestamps** - Removed for readability
-- **Location**: Single textarea with `id="event-log"` in test fixture
+### 4. Event Log Format (DEPRECATED - See Section 3)
+- **OLD format**: `target:value event`
+- **NEW format**: `[type] target:value event` where type is 'native' or 'touchspin'
+- **See Section 3** for the new event log system with type prefixes
 
 ### 5. Helper Functions Reference
 
-#### Core Helpers
+#### Core Helpers (Updated with New Functions)
 ```typescript
 // Initialization
 startCoverage(page)                          // Start coverage (call first)
 installJqueryPlugin(page)                     // Install plugin with Bootstrap5
 initializeTouchSpin(page, testId, options)   // Initialize on input
 
-// Element Access
+// Element Access (Non-Strict)
 getTouchSpinWrapper(page, testId)            // Get wrapper container
 getTouchSpinElements(page, testId)           // Get all elements
 hasPrefix(page, testId, expectedText?)       // Check prefix
 hasPostfix(page, testId, expectedText?)      // Check postfix
+
+// Element Access (Strict - PREFERRED!)
+getTouchSpinElementsStrict(page, testId)     // Get all elements or throw
+clickUpButton(page, testId)                  // Click up button (strict)
+clickDownButton(page, testId)                // Click down button (strict)
+
+// Event Log Operations (NEW!)
+clearEventLog(page)                          // Clear the event log
+getEventLog(page)                           // Get full event log array
+getEventLogText(page)                       // Get visual log text
+hasEventInLog(page, event, type?)           // Check if event occurred
+countEventInLog(page, event, type?)         // Count event occurrences
+getEventsOfType(page, type)                 // Get all 'native' or 'touchspin' events
+waitForEventInLog(page, event, options?)    // Wait for event to appear
 
 // Dynamic Inputs
 createAdditionalInput(page, testId, options) // Create new input
@@ -85,8 +150,8 @@ clearAdditionalInputs(page)                  // Clear all dynamic inputs
 
 // Value Operations
 readInputValue(page, testId)                 // Read value
-touchspinClickUp(page, testId)              // Click up
-touchspinClickDown(page, testId)            // Click down
+touchspinClickUp(page, testId)              // Click up (old helper)
+touchspinClickDown(page, testId)            // Click down (old helper)
 ```
 
 ### 6. Test File Locations
