@@ -18,7 +18,7 @@ export default defineConfig({
       name: 'TouchSpinBootstrap5Renderer',
       formats: ['es', 'cjs', 'umd'],
       fileName: (format) => (
-        format === 'es' ? 'index.mjs' :
+        format === 'es' ? 'index.js' :
         format === 'cjs' ? 'index.cjs' :
         'touchspin-bootstrap5.umd.js'
       ),

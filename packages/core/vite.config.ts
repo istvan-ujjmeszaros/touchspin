@@ -13,27 +13,24 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: path.resolve(__dirname, 'src/index.ts'),
+        renderer: path.resolve(__dirname, 'src/renderer.ts'),
+      },
       name: 'TouchSpinCore',
       formats: ['es', 'cjs'],
-      fileName: (format: 'es' | 'cjs') => (format === 'es' ? 'index.mjs' : 'index.cjs'),
+      fileName: (format, entryName) => {
+        if (format === 'es') {
+          return entryName === 'renderer' ? 'renderer.js' : 'index.js';
+        } else {
+          return entryName === 'renderer' ? 'renderer.cjs' : 'index.cjs';
+        }
+      },
     },
     sourcemap: true,
     minify: 'esbuild',
     rollupOptions: {
-      // Build an additional entry for renderer typings and CJS/ES
-      input: {
-        index: path.resolve(__dirname, 'src/index.ts'),
-        renderer: path.resolve(__dirname, 'src/renderer.ts'),
-      },
       external: [],
-      output: {
-        inlineDynamicImports: false,
-        entryFileNames: (chunk) => {
-          if (chunk.name === 'renderer') return '[name].' + (chunk.format === 'es' ? 'mjs' : 'cjs');
-          return chunk.format === 'es' ? 'index.mjs' : 'index.cjs';
-        },
-      },
     },
     outDir: 'dist',
     emptyOutDir: true,

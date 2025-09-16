@@ -38,17 +38,31 @@ async function globalTeardown() {
   function toLocalPath(rawUrl: string): string | null {
     try {
       const u = new URL(rawUrl);
-      let p = decodeURIComponent(u.pathname);         // e.g. /packages/jquery-plugin/src/index.js
+      let p = decodeURIComponent(u.pathname);         // e.g. /packages/jquery-plugin/src/index.js or /packages/jquery-plugin/dist/index.js
+
+      // Ignore vite internals
+      if (p.includes('/@id/') || p.includes('/node_modules/.vite/deps/') || p.includes('/@vite/')) {
+        return null;
+      }
+
       const ix = p.indexOf('/packages/');
       if (ix === -1) return null;
 
       p = p.slice(ix + 1);                            // drop leading slash before 'packages'
       p = p.replace(/\\/g, '/');
 
-      // remove dev-server query params (already gone via URL), keep extension
       let abs = path.join(process.cwd(), p);          // /repo/packages/…/index.js
 
-      // prefer TS if JS isn't present
+      // For dist paths, use the built file directly (with sourcemap)
+      if (p.includes('/dist/')) {
+        // For dist files, use as-is if they exist
+        if (fs.existsSync(abs)) {
+          return abs;
+        }
+        return null;
+      }
+
+      // For src paths, prefer TS if JS isn't present
       if (!fs.existsSync(abs) && abs.endsWith('.js')) {
         const tsAbs = abs.replace(/\.js$/, '.ts');
         if (fs.existsSync(tsAbs)) abs = tsAbs;

@@ -462,6 +462,13 @@ async function startCoverage(page: Page): Promise<void> {
       console.error('Failed to start coverage:', error);
     }
   }
+
+  // Set COVERAGE_DIST flag in browser context if environment variable is set
+  if (process.env.COVERAGE_DIST === '1') {
+    await page.evaluate(() => {
+      (window as any).COVERAGE_DIST = true;
+    });
+  }
 }
 
 // jQuery plugin installation AFTER coverage starts
@@ -469,9 +476,21 @@ async function installJqueryPlugin(page: Page): Promise<void> {
   // Install the jQuery plugin with Bootstrap 5 renderer
   // This MUST be called after startCoverage() for accurate coverage
   await page.evaluate(async () => {
+    // Determine if we should use dist or src based on COVERAGE_DIST flag
+    const useDist = !!(window as any).COVERAGE_DIST;
+
+    // Choose appropriate module paths
+    const pluginPath = useDist
+      ? '/packages/jquery-plugin/dist/index.js'
+      : '/packages/jquery-plugin/src/index.js';
+    const rendererPath = useDist
+      ? '/packages/renderers/bootstrap5/dist/index.js'
+      : '/packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
+
     // Import the plugin and renderer
-    const { installWithRenderer } = await import('/packages/jquery-plugin/src/index.js');
-    const { default: Bootstrap5Renderer } = await import('/packages/renderers/bootstrap5/src/Bootstrap5Renderer.js');
+    const { installWithRenderer } = await import(pluginPath);
+    const bootstrapModule = await import(rendererPath);
+    const Bootstrap5Renderer = bootstrapModule.default || bootstrapModule.Bootstrap5Renderer;
 
     // Install with renderer
     installWithRenderer(Bootstrap5Renderer);

@@ -7,7 +7,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'TouchSpinJqueryPlugin',
       formats: ['es', 'cjs', 'umd'],
-      fileName: (format) => (format === 'es' ? 'index.mjs' : format === 'cjs' ? 'index.cjs' : 'index.umd.js'),
+      fileName: (format) => (format === 'es' ? 'index.js' : format === 'cjs' ? 'index.cjs' : 'index.umd.js'),
     },
     sourcemap: true,
     minify: 'esbuild',

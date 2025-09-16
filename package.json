@@ -74,7 +74,7 @@
     "coverage:merge": "nyc merge reports/istanbul-json .nyc_output/coverage.json",
     "coverage:report": "nyc report --reporter=html --reporter=text --reporter=lcov --reporter=json --report-dir reports/coverage --check-coverage=false || true",
     "coverage:open": "wslview reports/coverage/index.html || explorer.exe $(wslpath -w reports/coverage/index.html) || open reports/coverage/index.html",
-    "coverage:build": "yarn workspace @touchspin/jquery-plugin build",
+    "coverage:build": "yarn workspace @touchspin/core build && yarn workspace @touchspin/jquery-plugin build && yarn workspace @touchspin/renderer-bootstrap5 build",
     "coverage:preview": "vite preview --port 8866 --strictPort",
     "dev:bootstrap3": "yarn workspace @touchspin/renderer-bootstrap3 dev",
     "dev:bootstrap4": "yarn workspace @touchspin/renderer-bootstrap4 dev",
@@ -82,7 +82,10 @@
     "dev:tailwind": "yarn workspace @touchspin/renderer-tailwind dev",
     "dev:vanilla": "yarn workspace @touchspin/vanilla-renderer dev",
     "dev:web-component": "yarn workspace @touchspin/web-component dev",
-    "coverage:check": "nyc check-coverage --lines=80 --functions=80 --branches=80 --statements=80"
+    "coverage:check": "nyc check-coverage --lines=80 --functions=80 --branches=80 --statements=80",
+    "coverage:all": "node scripts/coverage-all.mjs",
+    "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
+    "coverage:all:dev": "node scripts/coverage-all.mjs --dev"
   },
   "workspaces": [
     "packages/*",

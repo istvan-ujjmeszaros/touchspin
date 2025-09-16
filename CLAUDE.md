@@ -642,93 +642,62 @@ yarn exec playwright test --headed
 
 ---
 
-## 📊 Coverage Collection & Merge Process
+## 📊 Coverage (Build-Mode First)
 
-### How Coverage Works
-Our coverage system uses **V8 coverage** collected by Playwright, converted to **Istanbul format**, and merged using Istanbul's official API.
+### Why Build-Mode Coverage?
+Our coverage system prioritizes **build-mode by default** to eliminate sourcemap drift from dev server/HMR that causes comments to be flagged as uncovered statements.
 
 #### Coverage Flow:
-1. **Start Coverage**: `touchspinHelpers.startCoverage(page)` in test beforeEach
-2. **Run Tests**: Browser executes TouchSpin code with coverage instrumentation
-3. **Collect Coverage**: `touchspinHelpers.collectCoverage(page, testName)` in test afterEach
-4. **Convert to Istanbul**: `coverage.teardown.ts` converts V8 → individual Istanbul JSON files
-5. **Merge**: `nyc merge` combines all Istanbul files into `.nyc_output/coverage.json`
-6. **Generate Reports**: `nyc report` produces HTML/LCOV/JSON reports
-
-#### Professional NYC Pipeline (Fixed!)
-Previously, our manual merge used custom logic which caused inconsistent coverage reports. Switch cases and callable event handlers would appear "not covered" depending on test run order.
-
-**NEW**: We now use NYC's official `nyc merge` command with individual Istanbul JSON files - no custom merging logic anywhere.
+V8 → per-file Istanbul JSON → `nyc merge` → `nyc report` → HTML
 
 ### Running Coverage
 
-#### Development Mode (Quick Testing):
+#### Build-Mode (Default - Recommended):
 ```bash
-# jQuery plugin only
-yarn coverage packages/jquery-plugin/tests/
-yarn coverage:merge
-yarn coverage:report
+# All packages with stable TS mappings
+yarn coverage:all packages/jquery-plugin/tests/
 
-# Core package only
-yarn coverage packages/core/tests/
-yarn coverage:merge
-yarn coverage:report
-
-# Single test file
-yarn coverage packages/jquery-plugin/tests/callable-events.spec.ts
-yarn coverage:merge
-yarn coverage:report
+# Run specific test paths
+yarn coverage:all packages/jquery-plugin/tests/callable-events.spec.ts
 ```
 
-#### Build Mode (CI/Accurate Line Mapping):
-For production-like coverage that avoids sourcemap drift from dev server:
-
+#### CI Mode:
 ```bash
-# Build the assets first
-yarn coverage:build
-
-# Run coverage against built bundle
-yarn coverage packages/jquery-plugin/tests/
-yarn coverage:merge
-yarn coverage:report
+yarn coverage:all:ci
+yarn coverage:check
 ```
 
-#### View Reports:
+#### Dev HMR Mode (Only if needed):
 ```bash
-# Open HTML report
-yarn coverage:open
+# Opt-in to dev server (may have sourcemap drift)
+yarn coverage:all:dev packages/jquery-plugin/tests/
 ```
 
-#### All Packages:
-```bash
-# Run across all packages (when they have tests)
-yarn coverage
-yarn coverage:merge
-yarn coverage:report
-```
+### Technical Details
 
-### Coverage Output
-- **Individual Files**: `reports/istanbul-json/*.istanbul.json` (one per test run)
-- **Merged Data**: `.nyc_output/coverage.json` (created by `nyc merge`)
-- **HTML Report**: `reports/coverage/index.html`
-- **LCOV**: `reports/coverage/lcov.info`
-- **JSON Summary**: `reports/coverage/coverage-summary.json`
+**Build-mode** (default):
+- Sets `COVERAGE_DIST=1` → loads from `packages/.../dist/index.js` (built with sourcemaps)
+- Builds: `@touchspin/core`, `@touchspin/jquery-plugin`, `@touchspin/renderer-bootstrap5`
+- Maps: `http://localhost:8866/packages/.../dist/index.js` → local built file with sourcemap
+- Result: Precise TS line mapping, no comment lines flagged
 
-### Coverage Pipeline Details
-The professional NYC-based pipeline works as follows:
+**Dev-mode** (opt-in):
+- Loads from `packages/.../src/index.ts` (dev server/HMR)
+- Maps: dev URLs → TypeScript source files directly
+- Risk: HMR changes can cause sourcemap drift
 
-1. **V8 Collection**: Playwright collects V8 coverage per test
-2. **Individual Conversion**: Each V8 file converts to separate Istanbul JSON
-3. **Official Merge**: `nyc merge` combines all Istanbul files properly
-4. **Report Generation**: `nyc report` produces all output formats
+### Coverage Pipeline
+1. **Build** (if dist mode): `yarn coverage:build`
+2. **Test**: `yarn coverage` with `COVERAGE_DIST=1` env
+3. **Convert**: V8 → individual Istanbul JSON per source file
+4. **Merge**: `nyc merge reports/istanbul-json .nyc_output/coverage.json`
+5. **Report**: `nyc report` → HTML/LCOV/JSON
+6. **Open**: HTML report automatically opens
 
-This eliminates race conditions and ensures switch cases and callable event handlers show proper coverage regardless of test execution order.
-
-### Coverage Tips
-- **Always run coverage after code changes** to verify new lines are covered
-- **Check both switch cases AND event handlers** - both are now properly merged
-- **Use path arguments** to target specific packages during development
-- **100% coverage is the goal** - red lines in HTML report show what needs tests
+### Troubleshooting
+- **Comments flagged as uncovered**: Use build-mode (default)
+- **Missing source files**: Check that packages built successfully
+- **Empty coverage**: Verify `COVERAGE_DIST` flag is set correctly
 
 ---
 
