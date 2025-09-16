@@ -18,7 +18,96 @@ const hasPrefix = await touchspinHelpers.hasPrefix(page, 'test-input', '€');
 const wrapper = document.querySelector('[data-touchspin-injected]');
 ```
 
-### 3. Event Log System
+### 3. Test Coverage Reference (CRITICAL - Read This First!)
+
+#### The Old Test Suite is the Specification
+The `__tests__/` directory contains **44 test files with ~346 individual tests** that were all passing previously. These tests represent:
+- Years of bug fixes and edge case discoveries
+- Nearly 100% coverage of expected TouchSpin behaviors
+- The **definitive specification** of how TouchSpin should work
+
+**IMPORTANT**: When writing tests to cover a behavior, **ALWAYS** check the old tests first! They are the source of truth.
+
+#### Key Test Files for Reference
+
+| Feature Area | Reference Test Files | What They Cover |
+|-------------|---------------------|-----------------|
+| **Core Functionality** | `basicOperations.test.ts`, `events.test.ts` | Basic increment/decrement, events, change handling |
+| **Advanced Features** | `advancedFeatures.test.ts` | Callbacks, step validation, complex configurations |
+| **Edge Cases** | `edgeCasesAndErrors.test.ts`, `uncoveredConfigurations.test.ts` | Error handling, boundary conditions |
+| **Renderers** | `bs3Renderer.test.ts`, `bs4Renderer.test.ts`, `bs5Renderer.test.ts`, `tailwindRenderer.test.ts` | Bootstrap/Tailwind specific markup |
+| **Lifecycle** | `destroyAndReinitialize.test.ts`, `coreLifecycle.test.ts` | Initialization, destruction, reinit |
+| **User Input** | `keyboardAccessibility.test.ts`, `browserNativeSpinners.test.ts` | Keyboard, mouse wheel, native behaviors |
+| **Configuration** | `settingsPrecedence.test.ts`, `verticalButtons.test.ts` | Settings priority, special configs |
+| **jQuery Specific** | `callbackTests.test.ts`, `apiMethods.test.ts` | jQuery plugin API, methods |
+
+#### Coverage Gaps in New Tests
+The following behaviors are tested in old tests but **NOT YET** in the new jQuery plugin tests:
+
+1. **`forcestepdivisibility` options**
+   - Old tests cover: 'none', 'floor', 'ceil', 'round'
+   - New tests only cover: 'round' (default)
+   - See: `uncoveredConfigurations.test.ts`, `edgeCasesAndErrors.test.ts`
+
+2. **Vertical buttons configuration**
+   - `verticalbuttons`, `verticalupclass`, `verticaldownclass`
+   - See: `verticalButtons.test.ts`
+
+3. **Callback functions**
+   - `callback_before_calculation`, `callback_after_calculation`
+   - See: `advancedFeatures.test.ts`, `callbackTests.test.ts`
+
+4. **Advanced features not yet tested**
+   - RTL support (`rtlSupport.test.ts`)
+   - Replacement text feature
+   - Button text customization
+   - Mousewheel configuration details
+   - Native attribute synchronization
+
+5. **Complex scenarios**
+   - Multiple destroy calls
+   - Settings precedence rules
+   - Cross-API lifecycle interactions
+   - Event cleanup verification
+
+#### How to Use Old Tests as Reference
+
+1. **Before writing a new test**, search `__tests__/` for related tests:
+   ```bash
+   grep -r "feature_name" __tests__/
+   ```
+
+2. **Copy the test logic** but adapt to new patterns:
+   - Use event log instead of custom counters
+   - Use strict helpers instead of querySelector
+   - Keep the same assertions and expected values
+
+3. **Example migration**:
+   ```typescript
+   // OLD TEST (from __tests__/events.test.ts)
+   test('should fire change event once', async ({ page }) => {
+     await touchspinHelpers.touchspinClickUp(page, testid);
+     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
+   });
+
+   // NEW TEST (migrated pattern)
+   test('should fire change event once', async ({ page }) => {
+     await touchspinHelpers.clearEventLog(page);
+     await touchspinHelpers.clickUpButton(page, 'test-input');
+     expect(await touchspinHelpers.countEventInLog(page, 'change', 'native')).toBe(1);
+   });
+   ```
+
+#### Migration Priority
+Focus on migrating tests for:
+1. Missing configuration options (forcestepdivisibility, vertical buttons)
+2. Callback functions
+3. Complex lifecycle scenarios
+4. Any bug that gets reported - check if there's an existing old test
+
+Remember: **The old tests passed, so TouchSpin should behave exactly as they specify!**
+
+### 4. Event Log System
 
 #### Event Log Format
 - **Native events**: `[native] target:value eventName` or `[native] target eventName`
@@ -49,7 +138,7 @@ expect(changeCount).toBe(1);
 const touchspinEvents = await touchspinHelpers.getEventsOfType(page, 'touchspin');
 ```
 
-### 4. Strict Element Finding (No More If Checks!)
+### 5. Strict Element Finding (No More If Checks!)
 
 #### Old Pattern (BAD):
 ```typescript
@@ -69,7 +158,7 @@ const elements = await touchspinHelpers.getTouchSpinElementsStrict(page, 'test-i
 await elements.upButton.click(); // No null check needed!
 ```
 
-### 5. Common Test Mistakes to Avoid
+### 6. Common Test Mistakes to Avoid
 
 #### Step Value Correction (CRITICAL)
 - **Issue**: TouchSpin automatically corrects ALL values to be divisible by step
@@ -110,12 +199,12 @@ await elements.upButton.click(); // No null check needed!
   // Now mousewheel/keyboard events will work
   ```
 
-### 4. Event Log Format (DEPRECATED - See Section 3)
+### 7. Event Log Format (DEPRECATED - See Section 4)
 - **OLD format**: `target:value event`
 - **NEW format**: `[type] target:value event` where type is 'native' or 'touchspin'
-- **See Section 3** for the new event log system with type prefixes
+- **See Section 4** for the new event log system with type prefixes
 
-### 5. Helper Functions Reference
+### 8. Helper Functions Reference
 
 #### Core Helpers (Updated with New Functions)
 ```typescript
@@ -154,12 +243,12 @@ touchspinClickUp(page, testId)              // Click up (old helper)
 touchspinClickDown(page, testId)            // Click down (old helper)
 ```
 
-### 6. Test File Locations
+### 9. Test File Locations
 - **Test files**: `/packages/jquery-plugin/tests/*.spec.ts`
 - **Test fixture**: `/packages/jquery-plugin/tests/html/test-fixture.html`
 - **Helpers**: `/__tests__/helpers/touchspinHelpers.ts`
 
-### 7. Coverage Collection & Analysis
+### 10. Coverage Collection & Analysis
 
 #### Running Coverage
 - Tests start coverage before page load
@@ -198,7 +287,7 @@ npx serve reports/coverage
 3. Add tests for edge cases and error conditions
 4. Focus on critical business logic first
 
-### 8. Standard Test Setup
+### 11. Standard Test Setup
 ```typescript
 test.beforeEach(async ({ page }) => {
   await touchspinHelpers.startCoverage(page);
@@ -213,7 +302,7 @@ test.afterEach(async ({ page }) => {
 });
 ```
 
-### 9. Key Lessons from Conversation
+### 12. Key Lessons from Conversation
 1. **User found tests failing with wrong expectations** - Always verify test logic matches actual behavior
 2. **Event log was not working** - Fixed by using global `logEvent` function and document-level listeners
 3. **Clear Log button wasn't working** - Fixed with proper event handling
@@ -221,7 +310,7 @@ test.afterEach(async ({ page }) => {
 5. **TypeScript null safety** - Always check `querySelector` results before using
 6. **ESLint configuration** - Test files must be included in tsconfig.json
 
-### 10. Running Tests
+### 13. Running Tests
 
 ```bash
 # Single test
@@ -240,13 +329,13 @@ yarn exec playwright test --ui
 yarn exec playwright test --headed
 ```
 
-### 11. Important Files Modified
+### 14. Important Files Modified
 - All test files converted to single-input pattern
 - Test fixture simplified to single input with event log
 - Helpers extended with TouchSpin-specific functions
 - Coverage setup automated with directory cleaning and HTML generation
 
-### 12. Test Philosophy
+### 15. Test Philosophy
 - **Simplicity**: One input, one test, clear expectations
 - **Reliability**: Use helpers, not brittle selectors
 - **Debuggability**: Event log, clear test names, Playwright UI friendly
