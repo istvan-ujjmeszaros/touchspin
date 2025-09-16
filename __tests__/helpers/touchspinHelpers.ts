@@ -795,6 +795,34 @@ async function getEventLogText(page: Page): Promise<string> {
 // All helper functions automatically wait for the wrapper to exist.
 // For manual wrapper access, use: page.getByTestId(inputTestId + '-wrapper')
 
+// Check if TouchSpin is initialized on an element
+async function isTouchSpinInitialized(page: Page, testId: string): Promise<boolean> {
+  const wrapper = page.locator(`[data-testid="${testId}-wrapper"][data-touchspin-injected]`);
+  return (await wrapper.count()) > 0;
+}
+
+// Expect TouchSpin to be initialized, throwing clear error if not
+async function expectTouchSpinInitialized(page: Page, testId: string): Promise<void> {
+  const isInitialized = await isTouchSpinInitialized(page, testId);
+  if (!isInitialized) {
+    throw new Error(`TouchSpin not initialized on element with testId: ${testId}. Expected wrapper with data-testid="${testId}-wrapper" and data-touchspin-injected attribute.`);
+  }
+}
+
+// Check if TouchSpin is destroyed (no wrapper exists)
+async function isTouchSpinDestroyed(page: Page, testId: string): Promise<boolean> {
+  const wrapper = page.locator(`[data-testid="${testId}-wrapper"][data-touchspin-injected]`);
+  return (await wrapper.count()) === 0;
+}
+
+// Expect TouchSpin to be destroyed, throwing clear error if still initialized
+async function expectTouchSpinDestroyed(page: Page, testId: string): Promise<void> {
+  const isDestroyed = await isTouchSpinDestroyed(page, testId);
+  if (!isDestroyed) {
+    throw new Error(`TouchSpin still initialized on element with testId: ${testId}. Expected no wrapper with data-testid="${testId}-wrapper".`);
+  }
+}
+
 export default {
   getWrapperInstanceWhenReady,
   waitForTimeout,
@@ -835,5 +863,9 @@ export default {
   countEventInLog,
   waitForEventInLog,
   getEventLogText,
+  isTouchSpinInitialized,
+  expectTouchSpinInitialized,
+  isTouchSpinDestroyed,
+  expectTouchSpinDestroyed,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

@@ -152,6 +152,153 @@ test('should round value to nearest step multiple on initialization', async ({ p
 });
 ```
 
+## 🎯 Writing Human-Readable Tests
+
+### The Golden Rule: No Hidden Assertions
+
+Every test should be readable by a developer who has never seen the code before. They should understand what's being tested just by reading the assertions.
+
+### ❌ Bad Examples (Don't Do This)
+
+#### Hidden Results in Variables
+```typescript
+// BAD: What is eventValid? How was it calculated?
+test('should emit correct events', async ({ page }) => {
+  const eventValid = await page.evaluate(() => {
+    let hasEventObject = false;
+    let hasType = false;
+    // ... complex setup
+    return hasEventObject && hasType;
+  });
+  expect(eventValid).toBe(true); // What does this even mean?
+});
+
+// BAD: Multiple behaviors hidden behind variables
+test('should handle boundaries', async ({ page }) => {
+  const result = await testBoundaries(); // What boundaries? What result?
+  expect(result.min).toBe('correct');
+  expect(result.max).toBe('correct'); // What is "correct"?
+});
+```
+
+#### Complex Variable Assignments
+```typescript
+// BAD: Makes developer trace through assignments
+test('should increment properly', async ({ page }) => {
+  const initialValue = await touchspinHelpers.readInputValue(page, 'test-input');
+  await touchspinHelpers.clickUpButton(page, 'test-input');
+  const newValue = await touchspinHelpers.readInputValue(page, 'test-input');
+  expect(parseInt(newValue)).toBe(parseInt(initialValue) + 5); // Why +5? Where did 5 come from?
+});
+```
+
+#### Custom Event Listeners Instead of Event Log
+```typescript
+// BAD: Custom promise-based setup when event log exists
+test('should fire min event', async ({ page }) => {
+  const eventFired = await page.evaluate(() => {
+    return new Promise((resolve) => {
+      let fired = false;
+      $input.on('touchspin.on.min', () => { fired = true; });
+      // ... trigger action
+      setTimeout(() => resolve(fired), 100);
+    });
+  });
+  expect(eventFired).toBe(true); // Event log would be clearer
+});
+```
+
+### ✅ Good Examples (Do This)
+
+#### Direct, Clear Assertions
+```typescript
+// GOOD: Expected value is immediately clear
+test('should increment by step amount when clicking up button', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
+
+  await touchspinHelpers.clickUpButton(page, 'test-input');
+
+  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+});
+
+// GOOD: No variable hiding what we're testing
+test('should create wrapper with buttons after initialization', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+  // TouchSpin should be properly initialized - direct check
+  expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+  expect(await page.locator('[data-testid="test-input-up"]').count()).toBe(1);
+  expect(await page.locator('[data-testid="test-input-down"]').count()).toBe(1);
+});
+```
+
+#### Use Event Log for All Events
+```typescript
+// GOOD: Event log provides clear verification
+test('should emit min event when at minimum boundary', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
+  await touchspinHelpers.clearEventLog(page);
+
+  await touchspinHelpers.clickDownButton(page, 'test-input');
+
+  // Clear what we're checking - event log entry
+  expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+});
+```
+
+#### Clear Expected Values with Comments
+```typescript
+// GOOD: Comments explain the calculation
+test('should clamp value to maximum boundary', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
+
+  await page.evaluate(() => {
+    (window as any).$('[data-testid="test-input"]').TouchSpin('set', 150);
+  });
+
+  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('100'); // Clamped to max
+});
+```
+
+#### One Clear Behavior Per Test
+```typescript
+// GOOD: Test name tells exactly what it tests
+test('should support jQuery method chaining', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
+
+  const isJQuery = await page.evaluate(() => {
+    const result = (window as any).$('[data-testid="test-input"]')
+      .TouchSpin('set', 60)
+      .TouchSpin('uponce');
+    return result instanceof (window as any).$;
+  });
+
+  expect(isJQuery).toBe(true);
+  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('61'); // 60 + 1
+});
+```
+
+### Human-Readable Test Principles
+
+1. **Immediate Clarity** - Anyone reading the test understands what it's testing
+2. **No Detective Work** - Don't make developers trace through variable assignments
+3. **Expected Values Clear** - Use comments like `'55' // 50 + 5` when helpful
+4. **Event Log Over Custom** - Use the centralized event log, not custom listeners
+5. **Direct Assertions** - Check exactly what the test name promises
+6. **Meaningful Test Names** - Name describes the exact behavior being tested
+
+### When Variables Are OK
+
+Variables are acceptable when they:
+- **Reduce repetition** of complex selectors: `const upButton = page.locator('.bootstrap-touchspin-up')`
+- **Store configuration** for readability: `const config = { min: 0, max: 100, step: 5 }`
+- **Hold complex setup data** that's reused: `const elements = await getTouchSpinElementsStrict(page, 'test-input')`
+
+Variables are NOT OK when they:
+- Hide what's being tested
+- Store boolean results just to assert them
+- Make the assertion less clear than a direct check
+
 ## 🔄 Migration Strategy: From Complex to Clean
 
 ### Identifying Complex Tests in Old Suite
@@ -280,6 +427,104 @@ Focus on one uncovered section at a time:
 ## 📚 jQuery Plugin Testing Reference
 
 *[Sections below contain specific jQuery plugin testing details that have been established during Phase 1]*
+
+### TouchSpin DOM Structure and Test IDs
+
+#### Data Attributes Reference
+
+TouchSpin uses `data-touchspin-injected` attributes to mark all elements it creates. These attributes serve two purposes:
+1. **Event wiring** - Core uses these to find and attach event listeners
+2. **Test identification** - Tests can reliably find TouchSpin elements
+
+**Standard `data-touchspin-injected` Values:**
+- **`wrapper`** - Basic wrapper around input and buttons
+- **`wrapper-advanced`** - Advanced wrapper (Bootstrap input groups)
+- **`up`** - Increment button
+- **`down`** - Decrement button
+- **`prefix`** - Prefix text element (when configured)
+- **`postfix`** - Postfix text element (when configured)
+- **`vertical-wrapper`** - Container for vertical buttons (when `verticalbuttons: true`)
+
+#### Test ID Pattern
+
+When TouchSpin initializes on an input with `data-testid="my-input"`, it creates:
+- **Wrapper**: `data-testid="my-input-wrapper"`
+- **Up Button**: `data-testid="my-input-up"`
+- **Down Button**: `data-testid="my-input-down"`
+- **Prefix**: `data-testid="my-input-prefix"` (if configured)
+- **Postfix**: `data-testid="my-input-postfix"` (if configured)
+
+#### Checking for Initialization
+
+**❌ WRONG - Don't do this:**
+```typescript
+// BAD: Returns all injected elements, not just the wrapper
+expect(await page.locator('[data-touchspin-injected]').count()).toBe(1);
+
+// BAD: Doesn't specify which injected element
+const initialized = await page.locator('[data-touchspin-injected]').count() > 0;
+```
+
+**✅ CORRECT - Use these patterns:**
+```typescript
+// GOOD: Check specifically for wrapper
+expect(await page.locator('[data-testid="test-input-wrapper"][data-touchspin-injected]').count()).toBe(1);
+
+// GOOD: Use helper function
+expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+
+// GOOD: For assertions that should throw on failure
+await touchspinHelpers.expectTouchSpinInitialized(page, 'test-input');
+```
+
+#### Checking for Destroy
+
+```typescript
+// Check that TouchSpin was properly destroyed
+expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+
+// Or assert it was destroyed (throws if still initialized)
+await touchspinHelpers.expectTouchSpinDestroyed(page, 'test-input');
+```
+
+#### DOM Structure Examples
+
+**Basic Horizontal Layout:**
+```html
+<div class="input-group bootstrap-touchspin"
+     data-testid="my-input-wrapper"
+     data-touchspin-injected="wrapper-advanced">
+  <button data-touchspin-injected="down" data-testid="my-input-down">−</button>
+  <input data-testid="my-input" value="50">
+  <button data-touchspin-injected="up" data-testid="my-input-up">+</button>
+</div>
+```
+
+**With Prefix/Postfix:**
+```html
+<div class="input-group bootstrap-touchspin"
+     data-testid="my-input-wrapper"
+     data-touchspin-injected="wrapper-advanced">
+  <button data-touchspin-injected="down" data-testid="my-input-down">−</button>
+  <span data-touchspin-injected="prefix" data-testid="my-input-prefix">$</span>
+  <input data-testid="my-input" value="50">
+  <span data-touchspin-injected="postfix" data-testid="my-input-postfix">.00</span>
+  <button data-touchspin-injected="up" data-testid="my-input-up">+</button>
+</div>
+```
+
+**Vertical Buttons:**
+```html
+<div class="input-group bootstrap-touchspin"
+     data-testid="my-input-wrapper"
+     data-touchspin-injected="wrapper-advanced">
+  <input data-testid="my-input" value="50">
+  <span data-touchspin-injected="vertical-wrapper">
+    <button data-touchspin-injected="up" data-testid="my-input-up">+</button>
+    <button data-touchspin-injected="down" data-testid="my-input-down">−</button>
+  </span>
+</div>
+```
 
 ### Event Log System
 
