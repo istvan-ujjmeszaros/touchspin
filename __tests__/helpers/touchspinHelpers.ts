@@ -568,6 +568,48 @@ async function initializeTouchSpin(page: Page, testId: string, options: any = {}
   }, { id: testId, opts: options });
 }
 
+// Get the TouchSpin wrapper for a given test ID
+async function getTouchSpinWrapper(page: Page, testId: string) {
+  return page.locator(`[data-testid="${testId}"]`).locator('xpath=..');
+}
+
+// Get TouchSpin elements for a given test ID
+async function getTouchSpinElements(page: Page, testId: string) {
+  const wrapper = await getTouchSpinWrapper(page, testId);
+  return {
+    wrapper,
+    input: page.locator(`[data-testid="${testId}"]`),
+    upButton: wrapper.locator('.bootstrap-touchspin-up').first(),
+    downButton: wrapper.locator('.bootstrap-touchspin-down').first(),
+    prefix: wrapper.locator('.bootstrap-touchspin-prefix').first(),
+    postfix: wrapper.locator('.bootstrap-touchspin-postfix').first()
+  };
+}
+
+// Check if TouchSpin has prefix
+async function hasPrefix(page: Page, testId: string, expectedText?: string): Promise<boolean> {
+  const elements = await getTouchSpinElements(page, testId);
+  const exists = await elements.prefix.count() > 0;
+  if (!exists) return false;
+  if (expectedText !== undefined) {
+    const text = await elements.prefix.textContent();
+    return text === expectedText;
+  }
+  return true;
+}
+
+// Check if TouchSpin has postfix
+async function hasPostfix(page: Page, testId: string, expectedText?: string): Promise<boolean> {
+  const elements = await getTouchSpinElements(page, testId);
+  const exists = await elements.postfix.count() > 0;
+  if (!exists) return false;
+  if (expectedText !== undefined) {
+    const text = await elements.postfix.textContent();
+    return text === expectedText;
+  }
+  return true;
+}
+
 async function collectCoverage(page: Page, testName: string): Promise<void> {
   // Only collect coverage when running with coverage config
   if (process.env.COVERAGE === '1') {
@@ -647,5 +689,9 @@ export default {
   createAdditionalInput,
   clearAdditionalInputs,
   initializeTouchSpin,
+  getTouchSpinWrapper,
+  getTouchSpinElements,
+  hasPrefix,
+  hasPostfix,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

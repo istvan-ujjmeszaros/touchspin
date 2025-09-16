@@ -154,8 +154,16 @@ test.describe('jQuery TouchSpin Callable Events', () => {
     });
 
     test('should handle switching between up and down spin', async ({ page }) => {
-      // Initialize TouchSpin on the default test input
-      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 200, step: 10 });
+      // Initialize TouchSpin on the default test input with initial value
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
+        min: 0,
+        max: 200,
+        step: 10,
+        initval: 50
+      });
+
+      const initialValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      expect(initialValue).toBe('50');
 
       // Start up spin
       await page.evaluate(() => {
@@ -164,12 +172,14 @@ test.describe('jQuery TouchSpin Callable Events', () => {
 
       await touchspinHelpers.waitForTimeout(400);
 
+      // Get value after up spin (should be higher than initial)
+      const valueAfterUp = await touchspinHelpers.readInputValue(page, 'test-input');
+      expect(parseInt(valueAfterUp)).toBeGreaterThan(parseInt(initialValue));
+
       // Switch to down spin (should stop up and start down)
       await page.evaluate(() => {
         (window as any).$('[data-testid="test-input"]').trigger('touchspin.startdownspin');
       });
-
-      const valueBefore = await touchspinHelpers.readInputValue(page, 'test-input');
 
       await touchspinHelpers.waitForTimeout(400);
 
@@ -178,8 +188,9 @@ test.describe('jQuery TouchSpin Callable Events', () => {
         (window as any).$('[data-testid="test-input"]').trigger('touchspin.stopspin');
       });
 
-      const valueAfter = await touchspinHelpers.readInputValue(page, 'test-input');
-      expect(parseInt(valueAfter)).toBeLessThan(parseInt(valueBefore));
+      const finalValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      // Final value should be less than after up spin but could be equal or greater than initial
+      expect(parseInt(finalValue)).toBeLessThan(parseInt(valueAfterUp));
     });
   });
 
@@ -228,23 +239,16 @@ test.describe('jQuery TouchSpin Callable Events', () => {
         }]);
       });
 
-      // Check prefix
-      const hasPrefix = await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]');
-        const wrapper = input?.closest('[data-touchspin-injected]');
-        return wrapper?.querySelector('.bootstrap-touchspin-prefix')?.textContent === '€';
-      });
+      // Wait for DOM update
+      await page.waitForTimeout(100);
 
-      expect(hasPrefix).toBe(true);
+      // Check prefix using helper
+      const hasPrefixResult = await touchspinHelpers.hasPrefix(page, 'test-input', '€');
+      expect(hasPrefixResult).toBe(true);
 
-      // Check postfix
-      const hasPostfix = await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]');
-        const wrapper = input?.closest('[data-touchspin-injected]');
-        return wrapper?.querySelector('.bootstrap-touchspin-postfix')?.textContent === ' EUR';
-      });
-
-      expect(hasPostfix).toBe(true);
+      // Check postfix using helper
+      const hasPostfixResult = await touchspinHelpers.hasPostfix(page, 'test-input', ' EUR');
+      expect(hasPostfixResult).toBe(true);
     });
 
     test('should handle empty settings object', async ({ page }) => {
