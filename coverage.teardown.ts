@@ -35,6 +35,33 @@ async function globalTeardown() {
   const istanbulJsonDir = path.join(process.cwd(), 'reports', 'istanbul-json');
   fs.mkdirSync(istanbulJsonDir, { recursive: true });
 
+  function toLocalPath(rawUrl: string): string | null {
+    try {
+      const u = new URL(rawUrl);
+      let p = decodeURIComponent(u.pathname);         // e.g. /packages/jquery-plugin/src/index.js
+      const ix = p.indexOf('/packages/');
+      if (ix === -1) return null;
+
+      p = p.slice(ix + 1);                            // drop leading slash before 'packages'
+      p = p.replace(/\\/g, '/');
+
+      // remove dev-server query params (already gone via URL), keep extension
+      let abs = path.join(process.cwd(), p);          // /repo/packages/…/index.js
+
+      // prefer TS if JS isn't present
+      if (!fs.existsSync(abs) && abs.endsWith('.js')) {
+        const tsAbs = abs.replace(/\.js$/, '.ts');
+        if (fs.existsSync(tsAbs)) abs = tsAbs;
+      }
+
+      // only accept if it exists; otherwise skip
+      if (!fs.existsSync(abs)) return null;
+      return abs;
+    } catch {
+      return null;
+    }
+  }
+
   let filesProcessed = 0;
 
   for (const file of coverageFiles) {
@@ -44,35 +71,41 @@ async function globalTeardown() {
       const coverage = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
       for (const entry of coverage) {
-        // Skip non-source files
-        if (!entry.url || !entry.url.includes('/packages/') || entry.url.includes('node_modules')) {
+        const localPath = toLocalPath(entry.url);
+        console.log(`🔍 Processing URL: ${entry.url} → ${localPath || 'SKIPPED'}`);
+        if (!localPath) {
+          // skip non-project modules (vite deps, etc.)
           continue;
         }
 
-        // Extract the file path from URL
-        const match = entry.url.match(/packages\/(.+\.(?:js|ts))$/);
-        if (!match) continue;
+        try {
+          // Create converter for the local file path.
+          // Let v8-to-istanbul load the file & sourcemap by itself.
+          const converter = v8toIstanbul(localPath, 0, {});
 
-        const relativePath = match[0];
-        const absolutePath = path.join(process.cwd(), relativePath);
-
-        // Map to source file if it's a JS file from a TS source
-        const sourcePath = absolutePath.replace(/\.js$/, '.ts');
-        const finalPath = fs.existsSync(sourcePath) ? sourcePath : absolutePath;
-
-        if (fs.existsSync(finalPath)) {
-          const converter = v8toIstanbul(finalPath, 0, { source: entry.source });
+          // Important: await load so sourcemap can be read from disk
           await converter.load();
+
+          // Apply the raw V8 function ranges
           converter.applyCoverage(entry.functions);
 
+          // Convert to Istanbul and write ONE .istanbul.json PER INPUT COVERAGE FILE
           const istanbulData = converter.toIstanbul();
+          console.log(`✅ Converted ${localPath}, got ${Object.keys(istanbulData).length} files`);
 
-          // Write each converted Istanbul JSON to its own file
+          fs.mkdirSync(istanbulJsonDir, { recursive: true });
+
+          // Create unique output file name for each source file
           const base = path.basename(file, '.json');
-          const outFile = path.join(istanbulJsonDir, `${base}.istanbul.json`);
-          fs.writeFileSync(outFile, JSON.stringify(istanbulData));
+          // Create a unique identifier from the path to avoid collisions
+          const relativePath = path.relative(process.cwd(), localPath);
+          const uniqueId = relativePath.replace(/[/\\]/g, '_').replace(/\./g, '_');
+          const outFile = path.join(istanbulJsonDir, `${base}_${uniqueId}.istanbul.json`);
 
+          fs.writeFileSync(outFile, JSON.stringify(istanbulData));
           filesProcessed++;
+        } catch (conversionError) {
+          console.warn(`❌ Failed to convert ${localPath}:`, conversionError.message);
         }
       }
     } catch (error) {

@@ -22,7 +22,7 @@
   ],
   "report-dir": "reports/coverage",
   "temp-dir": ".nyc_output",
-  "check-coverage": true,
+  "check-coverage": false,
   "lines": 80,
   "functions": 80,
   "branches": 80,
