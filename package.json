@@ -73,6 +73,7 @@
     "coverage": "COVERAGE=1 playwright test --config=playwright-coverage.config.ts && yarn coverage:report",
     "coverage:report": "nyc report --reporter=html --reporter=text --reporter=lcov --reporter=json",
     "coverage:summary": "node scripts/coverage-summary.mjs",
+    "coverage:open": "wslview reports/coverage/index.html || explorer.exe $(wslpath -w reports/coverage/index.html) || open reports/coverage/index.html",
     "dev:bootstrap3": "yarn workspace @touchspin/renderer-bootstrap3 dev",
     "dev:bootstrap4": "yarn workspace @touchspin/renderer-bootstrap4 dev",
     "dev:bootstrap5": "yarn workspace @touchspin/renderer-bootstrap5 dev",
