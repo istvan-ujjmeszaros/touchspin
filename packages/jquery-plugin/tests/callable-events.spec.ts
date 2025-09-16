@@ -230,7 +230,8 @@ test.describe('jQuery TouchSpin Callable Events', () => {
 
       // Check prefix
       const hasPrefix = await page.evaluate(() => {
-        const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
+        const input = document.querySelector('[data-testid="test-input"]');
+        const wrapper = input?.closest('[data-touchspin-injected]');
         return wrapper?.querySelector('.bootstrap-touchspin-prefix')?.textContent === '€';
       });
 
@@ -238,7 +239,8 @@ test.describe('jQuery TouchSpin Callable Events', () => {
 
       // Check postfix
       const hasPostfix = await page.evaluate(() => {
-        const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
+        const input = document.querySelector('[data-testid="test-input"]');
+        const wrapper = input?.closest('[data-touchspin-injected]');
         return wrapper?.querySelector('.bootstrap-touchspin-postfix')?.textContent === ' EUR';
       });
 

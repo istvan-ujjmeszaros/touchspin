@@ -631,7 +631,8 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
           });
 
           // Click the up button
-          const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
+          const input = document.querySelector('[data-testid="test-input"]');
+          const wrapper = input?.closest('[data-touchspin-injected]');
           const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
           if (upButton) {
             upButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
@@ -664,7 +665,8 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
           });
 
           // Click the up button
-          const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
+          const input = document.querySelector('[data-testid="test-input"]');
+          const wrapper = input?.closest('[data-touchspin-injected]');
           const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
           if (upButton) {
             upButton.click();
