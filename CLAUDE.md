@@ -94,10 +94,44 @@ touchspinClickDown(page, testId)            // Click down
 - **Test fixture**: `/packages/jquery-plugin/tests/html/test-fixture.html`
 - **Helpers**: `/__tests__/helpers/touchspinHelpers.ts`
 
-### 7. Coverage Collection
+### 7. Coverage Collection & Analysis
+
+#### Running Coverage
 - Tests start coverage before page load
 - Coverage collected in afterEach
 - Run with: `COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts`
+
+#### Analyzing Coverage Reports
+- **HTML Report Location**: `reports/coverage/index.html`
+- **View specific file coverage**: Navigate to individual files to see line-by-line coverage
+- **Coverage highlights**:
+  - Green lines: Covered by tests
+  - Red lines: Not covered by tests
+  - Yellow lines: Partially covered (e.g., branch not taken)
+
+#### Finding Uncovered Code
+```bash
+# Generate coverage report
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
+
+# Open HTML report in browser
+open reports/coverage/index.html
+
+# Or serve it locally
+npx serve reports/coverage
+```
+
+#### Coverage Metrics
+- **Statement coverage**: % of statements executed
+- **Branch coverage**: % of if/else branches taken
+- **Function coverage**: % of functions called
+- **Line coverage**: % of lines executed
+
+#### Improving Coverage
+1. Look for red (uncovered) lines in HTML report
+2. Identify which conditions/branches aren't tested
+3. Add tests for edge cases and error conditions
+4. Focus on critical business logic first
 
 ### 8. Standard Test Setup
 ```typescript
