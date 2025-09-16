@@ -369,12 +369,14 @@ test.describe('jQuery TouchSpin Callable Events', () => {
   test.describe('Multiple Instances', () => {
 
     test('should handle events on multiple instances independently', async ({ page }) => {
-      // Create additional input
-      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '20' });
+      // Create additional input with value that's divisible by step
+      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '21' });
 
       // Initialize both inputs
       await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100, step: 2, initval: 10 });
       await touchspinHelpers.initializeTouchSpin(page, 'input-2', { min: 0, max: 100, step: 3 });
+
+      // Note: input-2 value of 21 is already divisible by step 3, so no correction needed
 
       // Trigger events on first input
       await page.evaluate(() => {
@@ -390,7 +392,7 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       const value2 = await touchspinHelpers.readInputValue(page, 'input-2');
 
       expect(value1).toBe('12'); // 10 + 2
-      expect(value2).toBe('17'); // 20 - 3
+      expect(value2).toBe('18'); // 21 - 3
     });
 
     test('should handle same event on multiple instances', async ({ page }) => {

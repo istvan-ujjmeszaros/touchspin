@@ -20,6 +20,11 @@ const wrapper = document.querySelector('[data-touchspin-injected]');
 
 ### 3. Common Test Mistakes to Avoid
 
+#### Step Value Correction
+- **Issue**: TouchSpin automatically corrects values to be divisible by step
+- **Solution**: When initializing with a value, ensure it's divisible by step or expect correction
+- **Example**: Value 20 with step 3 will be corrected to 18 (nearest value divisible by 3)
+
 #### Spin Test Logic
 - **Issue**: Incorrect expectations about values during spinning
 - **Solution**: Track values at each stage:
