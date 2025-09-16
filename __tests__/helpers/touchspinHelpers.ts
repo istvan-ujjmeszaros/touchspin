@@ -459,11 +459,8 @@ async function startCoverage(page: Page): Promise<void> {
         resetOnNavigation: false
       });
     } catch (error) {
-      // Ignore coverage errors in non-chromium browsers
-      // Ignore
+      console.error('Failed to start coverage:', error);
     }
-  } else {
-    // Coverage not enabled
   }
 }
 
@@ -579,20 +576,21 @@ async function collectCoverage(page: Page, testName: string): Promise<void> {
       const coverage = await page.coverage.stopJSCoverage();
       await saveCoverageData(coverage, testName);
     } catch (error) {
-      // Ignore coverage errors in non-chromium browsers
-      // Ignore
+      // Log the error so we can see what's happening
+      console.error(`Coverage collection error for ${testName}:`, error);
     }
   }
 }
 
 async function saveCoverageData(coverage: any[], testName: string): Promise<void> {
-  const fs = require('fs');
-  const path = require('path');
+  const fs = await import('fs');
+  const path = await import('path');
 
   const coverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
   if (!fs.existsSync(coverageDir)) {
     fs.mkdirSync(coverageDir, { recursive: true });
   }
+
 
   // Filter coverage to include source files from packages
   const sourceCoverage = coverage.filter(entry => {
@@ -600,14 +598,15 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
     return url.includes('/packages/') &&
            url.includes('/src/') &&
            !url.includes('node_modules') &&
-           !url.includes('dist/');
+           !url.includes('dist/') &&
+           !url.includes('@vite/client');
   });
 
   if (sourceCoverage.length > 0) {
     // Save raw V8 coverage for processing in teardown
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     const filePath = path.join(coverageDir, fileName);
-    fs.writeFileSync(filePath, JSON.stringify(sourceCoverage, null, 2));
+    await fs.promises.writeFile(filePath, JSON.stringify(sourceCoverage, null, 2));
   } else {
     // No source files found in coverage
   }
