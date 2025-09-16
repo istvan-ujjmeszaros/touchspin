@@ -16,6 +16,7 @@
             margin: 0 auto;
         }
         #event-log {
+            width: 100%;
             height: 200px;
             font-family: monospace;
             font-size: 12px;
@@ -24,9 +25,18 @@
             border: 1px solid #ddd;
             padding: 10px;
             overflow-y: auto;
+            resize: vertical;
         }
         .input-wrapper {
             margin-bottom: 20px;
+        }
+        .event-log-section {
+            margin-top: 30px;
+        }
+        .event-log-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
         /* Style for additional injected inputs */
         .injected-input-container {
@@ -58,9 +68,9 @@
         <div id="additional-inputs" class="injected-input-container" style="display: none;"></div>
 
         <!-- Event log -->
-        <div class="mt-4">
-            <label>Event Log:</label>
-            <textarea id="event-log" data-testid="event-log" readonly></textarea>
+        <div class="event-log-section">
+            <label class="event-log-label" for="event-log">Event Log:</label>
+            <textarea id="event-log" data-testid="event-log" class="form-control" readonly></textarea>
             <button id="clear-log" class="btn btn-sm btn-secondary mt-2">Clear Log</button>
         </div>
 
@@ -85,10 +95,25 @@
             }
         };
 
-        // Clear log button
-        document.getElementById('clear-log').addEventListener('click', function() {
+        // Clear log button functionality
+        window.clearEventLog = function() {
             window.eventLog = [];
-            document.getElementById('event-log').value = '';
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                logElement.value = '';
+            }
+        };
+
+        // Set up clear log button click handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearButton = document.getElementById('clear-log');
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.clearEventLog();
+                    console.log('Event log cleared');
+                });
+            }
         });
 
         // Helper to create additional inputs
