@@ -1,317 +1,287 @@
 # Bootstrap TouchSpin - Testing Strategy & Agent Reference
 
-## 🎯 Overall Testing Mission
+## 🎯 PRIMARY MISSION: Achieve 100% Test Coverage with Clean Behavioral Tests
 
-### Why We're Rewriting Tests
-- **Problem**: Old tests in `/__tests__/` are overcomplicated and test multiple behaviors per test
-- **Solution**: Writing clean, focused tests FROM SCRATCH for each package
-- **Goal**: Achieve 100% test coverage with maintainable, readable tests
-- **Philosophy**: One behavior per test, fail fast, use event log for verification
+### The Testing Revolution
+We are **rewriting ALL tests from scratch** to create a maintainable, clean test suite that achieves 100% coverage.
 
-### Coverage Goals & Priority Order
-1. **`packages/jquery-plugin`** (~90% complete)
-   - Status: Almost done, finishing touches and refining patterns
-   - Focus: Clean test patterns that will be used as template for other packages
+#### Why We're Starting Over
+- **Problem with old tests** (`/__tests__/`):
+  - Overcomplicated with multiple behaviors per test
+  - Hard to understand what's actually being tested
+  - Difficult to debug when they fail
+  - Mix unit testing with behavioral testing
 
-2. **`packages/core`** (0% - NEXT PRIORITY)
-   - Status: Will start after jQuery plugin is complete
-   - Focus: Core logic, value handling, state management
+- **Our new approach**:
+  - **ONE behavior per test** - if the test name has "and" in it, split it
+  - **NO UNIT TESTS** - only Playwright behavioral tests
+  - **Event log for everything** - single source of truth
+  - **Fail fast** - no silent failures with conditional checks
+  - **Minimal test fixtures** - reuse simple HTML across tests
 
-3. **`packages/renderers`** (0%)
-   - `renderers/bootstrap5/` - Bootstrap 5 renderer
-   - `renderers/material/` - Material Design renderer
-   - `renderers/tailwind/` - Tailwind CSS renderer
-   - Status: After core package
-
-4. **Remaining packages** (0%)
-   - Integration tests
-   - End-to-end tests
-
-### Test Organization Structure
+### Testing Philosophy
 ```
-packages/
-  jquery-plugin/
-    tests/          ✓ Clean, focused tests (in progress)
-    src/            - Source code
-
-  core/
-    tests/          ⚠ To be created next
-    src/            - Core logic
-
-  renderers/
-    bootstrap5/
-      tests/        ⚠ To be created
-    material/
-      tests/        ⚠ To be created
-    tailwind/
-      tests/        ⚠ To be created
+Clean Tests = Maintainable Code = Happy Developers
 ```
 
-## 📋 Key Testing Principles
+Every test should be so simple that a junior developer can:
+1. Read the test name and know what it tests
+2. Read the test code and understand how it works
+3. Fix it when the behavior changes
 
-### Single Responsibility
-- Each test verifies ONE specific behavior
-- No mixing of concerns
-- If test name has "and" in it, split into two tests
+## 📊 Coverage Roadmap: Journey to 100%
 
-### Self-Contained Tests
-- Tests should not depend on other tests
-- Each test sets up its own state
-- Use `beforeEach` for common setup, not shared state
+### Phase 1: jQuery Plugin Package ✅ (~95% Complete)
+- **Status**: Almost done, refining patterns
+- **Focus**: Establishing clean patterns for other packages
+- **Location**: `packages/jquery-plugin/tests/`
+- **Coverage Target**: 100%
+- **Remaining Work**:
+  - Cover `forcestepdivisibility` options (floor, ceil, none)
+  - Test vertical button configurations
+  - Add callback function tests
+  - Complete edge cases
 
-### Clear Test Structure (AAA Pattern)
+### Phase 2: Core Package 🚀 (NEXT - 0%)
+- **Status**: Starting after jQuery plugin completion
+- **Focus**: Core logic, state management, value calculations
+- **Location**: `packages/core/tests/`
+- **Coverage Target**: 100%
+- **Special Role**: Will house shared test infrastructure
+- **What to test**:
+  - Value normalization and validation
+  - Step calculations and rounding
+  - Min/max boundary enforcement
+  - Decimal precision handling
+  - State management
+  - Configuration merging
+
+### Phase 3: Renderer Packages 📅 (Future - 0%)
+- **Status**: After core package
+- **Coverage Target**: 100% each
+- **Packages**:
+  - `packages/renderers/bootstrap5/tests/` - Bootstrap 5 markup
+  - `packages/renderers/material/tests/` - Material Design
+  - `packages/renderers/tailwind/tests/` - Tailwind CSS
+- **What to test**:
+  - Framework-specific DOM structure
+  - CSS class application
+  - ARIA attributes
+  - Theme integration
+
+### Phase 4: Integration & E2E 🔄 (Final - 0%)
+- **Status**: After individual packages
+- **Focus**: Cross-package integration
+- **Coverage Target**: Key user workflows
+
+## 🏗️ Shared Test Infrastructure Strategy
+
+### Why Core Package Houses Shared Resources
+Since `@touchspin/core` is a dependency for ALL other packages, it's the perfect location for shared test infrastructure.
+
+### Planned Shared Resources in Core
+```
+packages/core/
+  src/               # Core logic
+  tests/             # Core package tests
+  test-helpers/      # Shared helpers for ALL packages
+    fixtures/        # Reusable HTML fixtures
+      minimal.html   # Simplest possible fixture
+      multi.html     # Multiple inputs fixture
+    helpers/         # Shared helper functions
+      common.ts      # Cross-package helpers
+      events.ts      # Event log helpers
+      coverage.ts    # Coverage utilities
+```
+
+### Principles for Shared Resources
+1. **HTML fixtures must be minimal** - just enough DOM to test
+2. **Fixtures should be parameter-driven** - not hardcoded
+3. **Helpers should be composable** - small functions that combine
+4. **No package-specific logic** - keep it generic
+
+## 📈 Why Clean Tests Matter
+
+### Readability
+- **Bad**: "should handle increment and decrement with callbacks and update display"
+- **Good**: "should increment value by step amount"
+- A developer should understand the test from its name alone
+
+### Maintainability
+- Simple tests = easy updates
+- When TouchSpin behavior changes, update one test, not untangle complex logic
+- New developers can contribute immediately
+
+### Debuggability
+- Playwright UI shows exactly what failed
+- Event log provides complete interaction history
+- No mysterious failures from complex test setup
+
+### Coverage Achievement
+- Focused tests make it obvious what's not covered
+- Easy to add test for specific branch or condition
+- No accidentally testing the same thing multiple times
+
+## ✅ Test Quality Checklist
+
+Every test MUST meet these criteria:
+
+- [ ] **Tests exactly ONE behavior** - split complex tests
+- [ ] **Uses event log for verification** - not custom listeners
+- [ ] **No conditional element checks** - use strict helpers
+- [ ] **Clear descriptive test name** - behavior, not implementation
+- [ ] **Follows AAA pattern** - Arrange, Act, Assert
+- [ ] **Reuses shared fixtures** - don't create custom HTML
+- [ ] **Cleans up after itself** - no side effects for next test
+
+### Example of a Perfect Test
 ```typescript
-test('should increment value by step', async ({ page }) => {
-  // Arrange - Set up initial state
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
+test('should round value to nearest step multiple on initialization', async ({ page }) => {
+  // Arrange - clear state and initialize
+  await touchspinHelpers.clearEventLog(page);
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
+    step: 3,
+    initval: 20  // Will round to 21 (nearest multiple of 3)
+  });
 
-  // Act - Perform the action
-  await touchspinHelpers.clickUpButton(page, 'test-input');
+  // Act - read the value
+  const value = await touchspinHelpers.readInputValue(page, 'test-input');
 
-  // Assert - Verify the result
-  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55');
+  // Assert - verify rounding occurred
+  expect(value).toBe('21');
 });
 ```
 
-### Event Log First
-- Use event log for verification whenever possible
-- Avoid custom event listeners
-- Event log provides complete interaction history
+## 🔄 Migration Strategy: From Complex to Clean
 
-### Strict Helpers & Fail Fast
-- No `if (element)` checks
-- Use strict helpers that throw on missing elements
-- Better to fail immediately than have silent failures
+### Identifying Complex Tests in Old Suite
+Look for tests that:
+- Have multiple `expect()` statements testing different things
+- Use words like "and", "with", "also" in the name
+- Set up complex state before testing
+- Test implementation details not behavior
 
-## 📚 Lessons Learned from jQuery Plugin Testing
+### Splitting Complex Tests Example
 
-1. **Event Log System is Powerful**
-   - `[native]` vs `[touchspin]` prefixes enable easy filtering
-   - Complete interaction history in one place
-
-2. **Single Input Pattern Works Best**
-   - One input per test fixture
-   - Reload page for each test
-
-3. **Step Value Correction is Critical**
-   - TouchSpin rounds values to nearest step multiple
-   - Must account for this in ALL value tests
-
-4. **Focus Requirements**
-   - Mousewheel and keyboard events require focus
-
-5. **Strict Element Finding Prevents Bugs**
-   - Throws immediately if element missing
-   - No silent failures
-
-## 🔮 Core Package Testing Strategy (Next Phase)
-
-### What We'll Test:
-- Value normalization and validation
-- Step calculations and rounding
-- Min/max boundary enforcement
-- Decimal precision handling
-- State management
-- Event emission logic
-- Configuration options
-- Public API methods
-
-## 🎨 Renderer Testing Strategy (Future)
-
-### What We'll Test:
-- DOM structure per framework
-- CSS class application
-- ARIA attributes
-- Theme-specific styling
-- Framework integration
-
-## 📝 Standard Test Template
+#### Old Complex Test:
 ```typescript
-test.describe('[Package] [Feature]', () => {
+test('should handle min/max with events and callbacks', async ({ page }) => {
+  // Sets up callbacks
+  // Tests min boundary
+  // Tests max boundary
+  // Verifies events
+  // Checks callback execution
+  // 50+ lines of code
+});
+```
+
+#### New Clean Tests:
+```typescript
+test('should not decrement below minimum value', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
+  await touchspinHelpers.clickDownButton(page, 'test-input');
+  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('0');
+});
+
+test('should emit touchspin.on.min event at minimum boundary', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
+  await touchspinHelpers.clearEventLog(page);
+  await touchspinHelpers.clickDownButton(page, 'test-input');
+  expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+});
+
+test('should execute callback before calculation', async ({ page }) => {
+  // Separate test for callback behavior
+});
+```
+
+## 📋 Standard Test Structure Template
+
+```typescript
+import { test, expect } from '@playwright/test';
+import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+
+test.describe('[Package] [Feature Area]', () => {
   test.beforeEach(async ({ page }) => {
+    // 1. Start coverage collection
     await touchspinHelpers.startCoverage(page);
-    await page.goto('test-fixture.html');
+
+    // 2. Load test fixture
+    await page.goto('http://localhost:8866/path/to/fixture.html');
+
+    // 3. Initialize package/plugin
     await touchspinHelpers.installJqueryPlugin(page);
+
+    // 4. Clear event log for clean state
     await touchspinHelpers.clearEventLog(page);
   });
 
+  test.afterEach(async ({ page }) => {
+    // Collect coverage data
+    await touchspinHelpers.collectCoverage(page, 'test-name');
+  });
+
   test('should [specific behavior]', async ({ page }) => {
-    // Arrange
-    // Act
-    // Assert
+    // Arrange - Set up initial state
+
+    // Act - Perform the action
+
+    // Assert - Verify the result
   });
 });
 ```
 
-## 📊 Coverage Workflow to Reach 100%
+## 🎯 Coverage Strategy: Achieving 100%
 
-### Step 1: Run Coverage
+### The 100% Coverage Workflow
+
+#### Step 1: Establish Baseline
 ```bash
-# For specific package
-COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
+# Run all tests with coverage
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/[package]/tests/
 
-# For specific test file
-COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/commands.spec.ts
-```
-
-### Step 2: Analyze Report
-```bash
-# Open in browser
+# View report
 open reports/coverage/index.html
-
-# Or serve locally
-npx serve reports/coverage
 ```
 
-### Step 3: Identify Gaps
-- **Red lines**: Not covered at all - write tests for these
-- **Yellow lines**: Partially covered - missing branch coverage
-- **Look for patterns**:
-  - Error handling paths
-  - Edge cases
-  - Configuration options
-  - Conditional logic
+#### Step 2: Identify Gaps
+- **Red lines** = Not covered at all → Write new test
+- **Yellow lines** = Branch not taken → Add test for other branch
+- **0% functions** = Untested feature → Create feature tests
 
-### Step 4: Write Targeted Tests
-```typescript
-// Example: Found uncovered error handling
-test('should handle invalid step value', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: -1 });
-  // Verify it defaults to 1 or throws error
-});
+#### Step 3: Write Targeted Tests
+Focus on one uncovered section at a time:
+1. Identify the behavior that code implements
+2. Write a test that exercises that behavior
+3. Verify coverage improved
+4. Repeat until 100%
 
-// Example: Found uncovered branch
-test('should handle max value when incrementing', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
-    max: 10,
-    initval: 10
-  });
-  await touchspinHelpers.clickUpButton(page, 'test-input');
-  // Verify it stays at 10
-});
-```
+#### Step 4: Monitor Continuously
+- Run coverage with every PR
+- Never let coverage decrease
+- Add tests with every bug fix
 
-### Step 5: Iterate
-- Re-run coverage after adding tests
-- Check if new tests revealed more uncovered paths
-- Continue until 100%
+### Coverage Tips for 100%
+- **Error paths matter** - Test invalid inputs
+- **Edge cases are critical** - Boundaries reveal bugs
+- **Configuration options** - Test every option value
+- **Conditional branches** - Both if and else paths
+- **Default values** - Test with and without options
 
-### Coverage Tips
-- **Don't chase 100% blindly** - Focus on meaningful coverage
-- **Test behavior, not implementation** - Coverage is a tool, not a goal
-- **Edge cases matter** - Boundary conditions often reveal bugs
-- **Error paths are critical** - Users will hit these
+### What 100% Coverage Means
+- Every line of code has been executed
+- Every branch has been taken
+- Every function has been called
+- Every edge case has been considered
+- **BUT**: It's still just a tool - focus on behavior!
 
 ---
 
-## Critical Testing Principles (jQuery Plugin Specific)
+## 📚 jQuery Plugin Testing Reference
 
-### 1. Test Structure
-- **Single input per test**: Each test uses `data-testid="test-input"` as the primary input
-- **Page reload between tests**: Ensures clean state, makes debugging easier in Playwright UI
-- **Dynamic input creation**: Use `createAdditionalInput()` when multiple inputs are needed
+*[Sections below contain specific jQuery plugin testing details that have been established during Phase 1]*
 
-### 2. Finding TouchSpin Elements
-**ALWAYS use helper functions to find TouchSpin elements:**
-```typescript
-// CORRECT - Using helpers
-const elements = await touchspinHelpers.getTouchSpinElements(page, 'test-input');
-const hasPrefix = await touchspinHelpers.hasPrefix(page, 'test-input', '€');
-
-// WRONG - Direct DOM queries
-const wrapper = document.querySelector('[data-touchspin-injected]');
-```
-
-### 3. Test Coverage Reference (CRITICAL - Read This First!)
-
-#### The Old Test Suite is the Specification
-The `__tests__/` directory contains **44 test files with ~346 individual tests** that were all passing previously. These tests represent:
-- Years of bug fixes and edge case discoveries
-- Nearly 100% coverage of expected TouchSpin behaviors
-- The **definitive specification** of how TouchSpin should work
-
-**IMPORTANT**: When writing tests to cover a behavior, **ALWAYS** check the old tests first! They are the source of truth.
-
-#### Key Test Files for Reference
-
-| Feature Area | Reference Test Files | What They Cover |
-|-------------|---------------------|-----------------|
-| **Core Functionality** | `basicOperations.test.ts`, `events.test.ts` | Basic increment/decrement, events, change handling |
-| **Advanced Features** | `advancedFeatures.test.ts` | Callbacks, step validation, complex configurations |
-| **Edge Cases** | `edgeCasesAndErrors.test.ts`, `uncoveredConfigurations.test.ts` | Error handling, boundary conditions |
-| **Renderers** | `bs3Renderer.test.ts`, `bs4Renderer.test.ts`, `bs5Renderer.test.ts`, `tailwindRenderer.test.ts` | Bootstrap/Tailwind specific markup |
-| **Lifecycle** | `destroyAndReinitialize.test.ts`, `coreLifecycle.test.ts` | Initialization, destruction, reinit |
-| **User Input** | `keyboardAccessibility.test.ts`, `browserNativeSpinners.test.ts` | Keyboard, mouse wheel, native behaviors |
-| **Configuration** | `settingsPrecedence.test.ts`, `verticalButtons.test.ts` | Settings priority, special configs |
-| **jQuery Specific** | `callbackTests.test.ts`, `apiMethods.test.ts` | jQuery plugin API, methods |
-
-#### Coverage Gaps in New Tests
-The following behaviors are tested in old tests but **NOT YET** in the new jQuery plugin tests:
-
-1. **`forcestepdivisibility` options**
-   - Old tests cover: 'none', 'floor', 'ceil', 'round'
-   - New tests only cover: 'round' (default)
-   - See: `uncoveredConfigurations.test.ts`, `edgeCasesAndErrors.test.ts`
-
-2. **Vertical buttons configuration**
-   - `verticalbuttons`, `verticalupclass`, `verticaldownclass`
-   - See: `verticalButtons.test.ts`
-
-3. **Callback functions**
-   - `callback_before_calculation`, `callback_after_calculation`
-   - See: `advancedFeatures.test.ts`, `callbackTests.test.ts`
-
-4. **Advanced features not yet tested**
-   - RTL support (`rtlSupport.test.ts`)
-   - Replacement text feature
-   - Button text customization
-   - Mousewheel configuration details
-   - Native attribute synchronization
-
-5. **Complex scenarios**
-   - Multiple destroy calls
-   - Settings precedence rules
-   - Cross-API lifecycle interactions
-   - Event cleanup verification
-
-#### How to Use Old Tests as Reference
-
-1. **Before writing a new test**, search `__tests__/` for related tests:
-   ```bash
-   grep -r "feature_name" __tests__/
-   ```
-
-2. **Copy the test logic** but adapt to new patterns:
-   - Use event log instead of custom counters
-   - Use strict helpers instead of querySelector
-   - Keep the same assertions and expected values
-
-3. **Example migration**:
-   ```typescript
-   // OLD TEST (from __tests__/events.test.ts)
-   test('should fire change event once', async ({ page }) => {
-     await touchspinHelpers.touchspinClickUp(page, testid);
-     expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-   });
-
-   // NEW TEST (migrated pattern)
-   test('should fire change event once', async ({ page }) => {
-     await touchspinHelpers.clearEventLog(page);
-     await touchspinHelpers.clickUpButton(page, 'test-input');
-     expect(await touchspinHelpers.countEventInLog(page, 'change', 'native')).toBe(1);
-   });
-   ```
-
-#### Migration Priority
-Focus on migrating tests for:
-1. Missing configuration options (forcestepdivisibility, vertical buttons)
-2. Callback functions
-3. Complex lifecycle scenarios
-4. Any bug that gets reported - check if there's an existing old test
-
-Remember: **The old tests passed, so TouchSpin should behave exactly as they specify!**
-
-### 4. Event Log System
+### Event Log System
 
 #### Event Log Format
 - **Native events**: `[native] target:value eventName` or `[native] target eventName`
@@ -337,12 +307,9 @@ expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'tou
 // Count events
 const changeCount = await touchspinHelpers.countEventInLog(page, 'change', 'native');
 expect(changeCount).toBe(1);
-
-// Get all TouchSpin events
-const touchspinEvents = await touchspinHelpers.getEventsOfType(page, 'touchspin');
 ```
 
-### 5. Strict Element Finding (No More If Checks!)
+### Strict Element Finding (No More If Checks!)
 
 #### Old Pattern (BAD):
 ```typescript
@@ -362,66 +329,30 @@ const elements = await touchspinHelpers.getTouchSpinElementsStrict(page, 'test-i
 await elements.upButton.click(); // No null check needed!
 ```
 
-### 6. Common Test Mistakes to Avoid
+### Common jQuery Plugin Pitfalls
 
 #### Step Value Correction (CRITICAL)
-- **Issue**: TouchSpin automatically corrects ALL values to be divisible by step
-- **Default behavior**: `forcestepdivisibility: 'round'` - rounds to NEAREST value divisible by step
-- **This applies to both integers AND decimals!**
-- **Examples with default 'round' behavior**:
-  - Value 20 with step 3 → corrected to 21 (7×3=21, nearest)
-  - Value 5.55 with step 0.1 → corrected to 5.6 (56×0.1=5.6, nearest)
-  - Value 5.55 with step 0.05 → stays 5.55 (111×0.05=5.55, already divisible)
-- **Test Writing Rule**: Always calculate if value is divisible by step, or know what it will round to
+- TouchSpin automatically corrects ALL values to be divisible by step
+- Default: `forcestepdivisibility: 'round'` - rounds to NEAREST
+- Examples:
+  - Value 20 with step 3 → corrected to 21 (nearest)
+  - Value 5.55 with step 0.1 → corrected to 5.6 (nearest)
 
-#### Spin Test Logic
-- **Issue**: Incorrect expectations about values during spinning
-- **Solution**: Track values at each stage:
-  1. Get initial value
-  2. Start spin, wait, get value after spin
-  3. Compare with appropriate reference points
-- **Example**: When switching from up to down spin, final value should be less than after-up value, not necessarily less than initial
+#### Focus Requirements
+- Mousewheel and keyboard events require focus
+- Always focus before testing these events:
+```typescript
+await page.focus('[data-testid="test-input"]');
+// Now mousewheel/keyboard events will work
+```
 
-#### Selector Issues
-- **Issue**: Using wrong selectors for TouchSpin elements
-- **Solution**: The wrapper is the parent of the input, use helpers:
-  - `getTouchSpinWrapper(page, testId)` - Gets wrapper
-  - `getTouchSpinElements(page, testId)` - Gets all elements
+### Helper Functions Reference
 
-#### Timing Issues
-- **Issue**: DOM not updated when checking
-- **Solution**: Add `await page.waitForTimeout(100)` after operations that update DOM
-
-#### Focus Requirements (CRITICAL)
-- **Issue**: Mousewheel and keyboard events don't work without focus
-- **Applies to**: Mousewheel scroll, keyboard up/down arrow keys
-- **Solution**: ALWAYS focus the input before testing these events
-- **Example**:
-  ```typescript
-  // Focus the input first
-  await page.focus('[data-testid="test-input"]');
-  // Now mousewheel/keyboard events will work
-  ```
-
-### 7. Event Log Format (DEPRECATED - See Section 4)
-- **OLD format**: `target:value event`
-- **NEW format**: `[type] target:value event` where type is 'native' or 'touchspin'
-- **See Section 4** for the new event log system with type prefixes
-
-### 8. Helper Functions Reference
-
-#### Core Helpers (Updated with New Functions)
 ```typescript
 // Initialization
 startCoverage(page)                          // Start coverage (call first)
 installJqueryPlugin(page)                     // Install plugin with Bootstrap5
 initializeTouchSpin(page, testId, options)   // Initialize on input
-
-// Element Access (Non-Strict)
-getTouchSpinWrapper(page, testId)            // Get wrapper container
-getTouchSpinElements(page, testId)           // Get all elements
-hasPrefix(page, testId, expectedText?)       // Check prefix
-hasPostfix(page, testId, expectedText?)      // Check postfix
 
 // Element Access (Strict - PREFERRED!)
 getTouchSpinElementsStrict(page, testId)     // Get all elements or throw
@@ -431,90 +362,21 @@ clickDownButton(page, testId)                // Click down button (strict)
 // Event Log Operations (NEW!)
 clearEventLog(page)                          // Clear the event log
 getEventLog(page)                           // Get full event log array
-getEventLogText(page)                       // Get visual log text
 hasEventInLog(page, event, type?)           // Check if event occurred
 countEventInLog(page, event, type?)         // Count event occurrences
 getEventsOfType(page, type)                 // Get all 'native' or 'touchspin' events
 waitForEventInLog(page, event, options?)    // Wait for event to appear
 
-// Dynamic Inputs
-createAdditionalInput(page, testId, options) // Create new input
-clearAdditionalInputs(page)                  // Clear all dynamic inputs
-
 // Value Operations
 readInputValue(page, testId)                 // Read value
-touchspinClickUp(page, testId)              // Click up (old helper)
-touchspinClickDown(page, testId)            // Click down (old helper)
 ```
 
-### 9. Test File Locations
-- **Test files**: `/packages/jquery-plugin/tests/*.spec.ts`
-- **Test fixture**: `/packages/jquery-plugin/tests/html/test-fixture.html`
-- **Helpers**: `/__tests__/helpers/touchspinHelpers.ts`
+### Test File Locations
+- **jQuery Plugin Tests**: `/packages/jquery-plugin/tests/*.spec.ts`
+- **Test Fixture**: `/packages/jquery-plugin/tests/html/test-fixture.html`
+- **Shared Helpers**: `/__tests__/helpers/touchspinHelpers.ts` (will move to core)
 
-### 10. Coverage Collection & Analysis
-
-#### Running Coverage
-- Tests start coverage before page load
-- Coverage collected in afterEach
-- Run with: `COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts`
-
-#### Analyzing Coverage Reports
-- **HTML Report Location**: `reports/coverage/index.html`
-- **View specific file coverage**: Navigate to individual files to see line-by-line coverage
-- **Coverage highlights**:
-  - Green lines: Covered by tests
-  - Red lines: Not covered by tests
-  - Yellow lines: Partially covered (e.g., branch not taken)
-
-#### Finding Uncovered Code
-```bash
-# Generate coverage report
-COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
-
-# Open HTML report in browser
-open reports/coverage/index.html
-
-# Or serve it locally
-npx serve reports/coverage
-```
-
-#### Coverage Metrics
-- **Statement coverage**: % of statements executed
-- **Branch coverage**: % of if/else branches taken
-- **Function coverage**: % of functions called
-- **Line coverage**: % of lines executed
-
-#### Improving Coverage
-1. Look for red (uncovered) lines in HTML report
-2. Identify which conditions/branches aren't tested
-3. Add tests for edge cases and error conditions
-4. Focus on critical business logic first
-
-### 11. Standard Test Setup
-```typescript
-test.beforeEach(async ({ page }) => {
-  await touchspinHelpers.startCoverage(page);
-  await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
-  await page.waitForFunction(() => (window as any).testPageReady === true);
-  await touchspinHelpers.installJqueryPlugin(page);
-  await page.waitForFunction(() => (window as any).touchSpinReady === true);
-});
-
-test.afterEach(async ({ page }) => {
-  await touchspinHelpers.collectCoverage(page, 'test-name');
-});
-```
-
-### 12. Key Lessons from Conversation
-1. **User found tests failing with wrong expectations** - Always verify test logic matches actual behavior
-2. **Event log was not working** - Fixed by using global `logEvent` function and document-level listeners
-3. **Clear Log button wasn't working** - Fixed with proper event handling
-4. **Test IDs were outdated** - Migrated from hardcoded IDs to single `test-input`
-5. **TypeScript null safety** - Always check `querySelector` results before using
-6. **ESLint configuration** - Test files must be included in tsconfig.json
-
-### 13. Running Tests
+### Running Tests
 
 ```bash
 # Single test
@@ -533,14 +395,36 @@ yarn exec playwright test --ui
 yarn exec playwright test --headed
 ```
 
-### 14. Important Files Modified
-- All test files converted to single-input pattern
-- Test fixture simplified to single input with event log
-- Helpers extended with TouchSpin-specific functions
-- Coverage setup automated with directory cleaning and HTML generation
+---
 
-### 15. Test Philosophy
-- **Simplicity**: One input, one test, clear expectations
-- **Reliability**: Use helpers, not brittle selectors
-- **Debuggability**: Event log, clear test names, Playwright UI friendly
-- **Isolation**: Page reload between tests, no shared state
+## 📖 Reference: Old Test Suite Analysis
+
+### The Old Tests Are Our Specification
+The `__tests__/` directory contains **44 test files with ~346 tests** representing years of bug fixes. They are the **definitive specification** of TouchSpin behavior.
+
+### Coverage Gaps to Address
+
+#### Not Yet Covered in New Tests:
+1. **`forcestepdivisibility` options** - floor, ceil, none (only round tested)
+2. **Vertical buttons configuration** - `verticalbuttons`, custom classes
+3. **Callback functions** - before/after calculation callbacks
+4. **Advanced features**:
+   - RTL support
+   - Replacement text
+   - Button text customization
+   - Native attribute synchronization
+
+### Key Reference Files
+
+| Feature | Old Test File | What It Covers |
+|---------|--------------|----------------|
+| Core | `basicOperations.test.ts` | Basic increment/decrement |
+| Events | `events.test.ts` | All event scenarios |
+| Edge Cases | `edgeCasesAndErrors.test.ts` | Boundary conditions |
+| Lifecycle | `destroyAndReinitialize.test.ts` | Init/destroy cycles |
+| Keyboard | `keyboardAccessibility.test.ts` | Keyboard interactions |
+| Config | `settingsPrecedence.test.ts` | Configuration priority |
+
+---
+
+*End of Testing Strategy Document - Let's achieve 100% coverage with clean, maintainable tests!*
