@@ -16,29 +16,35 @@ function run(cmd, args, extraEnv = {}) {
     shell: process.platform === "win32",
     env: { ...process.env, ...extraEnv },
   });
-  if (r.status !== 0) process.exit(r.status ?? 1);
+  return r.status ?? 1;
+}
+
+function runAndExit(cmd, args, extraEnv = {}) {
+  const status = run(cmd, args, extraEnv);
+  if (status !== 0) process.exit(status);
 }
 
 console.log(`🎯 Running coverage in ${dist ? 'build' : 'dev'} mode${open ? ' (will open)' : ''}`);
 
 if (dist) {
   console.log('📦 Building packages...');
-  run("yarn", ["coverage:build"]);
+  runAndExit("yarn", ["coverage:build"]);
 }
 
 console.log('🧪 Running tests with coverage...');
-run("yarn", ["coverage", ...passThrough], dist ? { COVERAGE_DIST: "1" } : {});
+const testStatus = run("yarn", ["coverage", ...passThrough], dist ? { COVERAGE_DIST: "1" } : {});
 
 console.log('🔀 Merging coverage files...');
-run("yarn", ["coverage:merge"]);
+runAndExit("yarn", ["coverage:merge"]);
 
 console.log('📊 Generating reports...');
-run("yarn", ["coverage:report"]);
+runAndExit("yarn", ["coverage:report"]);
 
 if (open) {
   console.log('🌐 Opening coverage report...');
-  run("yarn", ["coverage:open"]);
+  runAndExit("yarn", ["coverage:open"]);
 }
 
 console.log('✅ Coverage pipeline complete!');
-// optional: run("yarn", ["coverage:check"]); // only in CI
+// Exit with test status so CI still sees failures
+process.exit(testStatus);

@@ -468,6 +468,75 @@ async function startCoverage(page: Page): Promise<void> {
     await page.evaluate(() => {
       (window as any).COVERAGE_DIST = true;
     });
+
+    // Add import map for bare module specifiers when in dist mode
+    await page.addInitScript(() => {
+      const importMap = {
+        imports: {
+          '@touchspin/core': '/packages/core/dist/index.js',
+          '@touchspin/renderer-bootstrap5': '/packages/renderers/bootstrap5/dist/index.js'
+        }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'importmap';
+      script.textContent = JSON.stringify(importMap);
+      document.head.appendChild(script);
+    });
+  }
+
+  // Enforce dist assets in coverage mode: serve files directly from filesystem
+  if (process.env.COVERAGE_DIST === '1') {
+    const fs = await import('fs');
+    const path = await import('path');
+
+    // Handle any request to /packages/**/src/** by translating to equivalent /dist/ path
+    await page.route('**/packages/**/src/**', async (route) => {
+      const orig = new URL(route.request().url());
+      const distPath = orig.pathname
+        .replace('/src/', '/dist/')
+        .replace(/\.ts$/, '.js');
+
+      // Convert URL path to local filesystem path
+      const pathIndex = distPath.indexOf('/packages/');
+      if (pathIndex === -1) {
+        await route.abort();
+        return;
+      }
+
+      const relativePath = distPath.slice(pathIndex + 1); // Remove leading slash
+      const localPath = path.join(process.cwd(), relativePath);
+
+      if (fs.existsSync(localPath)) {
+        console.warn(`[COVERAGE_DIST] fulfill (src→dist): ${route.request().url()} → ${localPath}`);
+        await route.fulfill({ path: localPath });
+      } else {
+        console.error(`[COVERAGE_DIST] dist file not found: ${localPath}`);
+        await route.abort();
+      }
+    });
+
+    // Also handle direct requests to /packages/**/dist/** from filesystem
+    await page.route('**/packages/**/dist/**', async (route) => {
+      const orig = new URL(route.request().url());
+      const pathIndex = orig.pathname.indexOf('/packages/');
+      if (pathIndex === -1) {
+        await route.abort();
+        return;
+      }
+
+      const relativePath = orig.pathname.slice(pathIndex + 1); // Remove leading slash
+      const localPath = path.join(process.cwd(), relativePath);
+
+      if (fs.existsSync(localPath)) {
+        console.warn(`[COVERAGE_DIST] fulfill (dist): ${route.request().url()} → ${localPath}`);
+        await route.fulfill({ path: localPath });
+      } else {
+        console.error(`[COVERAGE_DIST] dist file not found: ${localPath}`);
+        await route.abort();
+      }
+    });
+
   }
 }
 

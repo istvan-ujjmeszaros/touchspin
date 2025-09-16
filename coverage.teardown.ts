@@ -53,19 +53,21 @@ async function globalTeardown() {
 
       let abs = path.join(process.cwd(), p);          // /repo/packages/…/index.js
 
-      // For dist paths, use the built file directly (with sourcemap)
+      // Handle both /src/… and /dist/… paths
       if (p.includes('/dist/')) {
-        // For dist files, use as-is if they exist
+        // For dist files, return the built file path as-is if it exists (we rely on sourcemaps)
         if (fs.existsSync(abs)) {
           return abs;
         }
         return null;
       }
 
-      // For src paths, prefer TS if JS isn't present
-      if (!fs.existsSync(abs) && abs.endsWith('.js')) {
-        const tsAbs = abs.replace(/\.js$/, '.ts');
-        if (fs.existsSync(tsAbs)) abs = tsAbs;
+      if (p.includes('/src/')) {
+        // For src paths, prefer TS if JS doesn't exist
+        if (!fs.existsSync(abs) && abs.endsWith('.js')) {
+          const tsAbs = abs.replace(/\.js$/, '.ts');
+          if (fs.existsSync(tsAbs)) abs = tsAbs;
+        }
       }
 
       // only accept if it exists; otherwise skip
