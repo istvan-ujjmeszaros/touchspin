@@ -1360,6 +1360,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"

@@ -70,7 +70,7 @@
     "test:headed": "playwright test --project=chromium --headed",
     "test:ui": "playwright test --project=chromium --ui",
     "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed",
-    "coverage": "COVERAGE=1 playwright test --config=playwright-coverage.config.ts && yarn coverage:report",
+    "coverage": "COVERAGE=1 playwright test --config=playwright-coverage.config.ts",
     "coverage:report": "nyc report --reporter=html --reporter=text --reporter=lcov --reporter=json",
     "coverage:summary": "node scripts/coverage-summary.mjs",
     "coverage:open": "wslview reports/coverage/index.html || explorer.exe $(wslpath -w reports/coverage/index.html) || open reports/coverage/index.html",
