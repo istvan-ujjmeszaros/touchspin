@@ -1,6 +1,210 @@
-# TouchSpin Testing Agent File
+# Bootstrap TouchSpin - Testing Strategy & Agent Reference
 
-## Critical Testing Principles
+## 🎯 Overall Testing Mission
+
+### Why We're Rewriting Tests
+- **Problem**: Old tests in `/__tests__/` are overcomplicated and test multiple behaviors per test
+- **Solution**: Writing clean, focused tests FROM SCRATCH for each package
+- **Goal**: Achieve 100% test coverage with maintainable, readable tests
+- **Philosophy**: One behavior per test, fail fast, use event log for verification
+
+### Coverage Goals & Priority Order
+1. **`packages/jquery-plugin`** (~90% complete)
+   - Status: Almost done, finishing touches and refining patterns
+   - Focus: Clean test patterns that will be used as template for other packages
+
+2. **`packages/core`** (0% - NEXT PRIORITY)
+   - Status: Will start after jQuery plugin is complete
+   - Focus: Core logic, value handling, state management
+
+3. **`packages/renderers`** (0%)
+   - `renderers/bootstrap5/` - Bootstrap 5 renderer
+   - `renderers/material/` - Material Design renderer
+   - `renderers/tailwind/` - Tailwind CSS renderer
+   - Status: After core package
+
+4. **Remaining packages** (0%)
+   - Integration tests
+   - End-to-end tests
+
+### Test Organization Structure
+```
+packages/
+  jquery-plugin/
+    tests/          ✓ Clean, focused tests (in progress)
+    src/            - Source code
+
+  core/
+    tests/          ⚠ To be created next
+    src/            - Core logic
+
+  renderers/
+    bootstrap5/
+      tests/        ⚠ To be created
+    material/
+      tests/        ⚠ To be created
+    tailwind/
+      tests/        ⚠ To be created
+```
+
+## 📋 Key Testing Principles
+
+### Single Responsibility
+- Each test verifies ONE specific behavior
+- No mixing of concerns
+- If test name has "and" in it, split into two tests
+
+### Self-Contained Tests
+- Tests should not depend on other tests
+- Each test sets up its own state
+- Use `beforeEach` for common setup, not shared state
+
+### Clear Test Structure (AAA Pattern)
+```typescript
+test('should increment value by step', async ({ page }) => {
+  // Arrange - Set up initial state
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
+
+  // Act - Perform the action
+  await touchspinHelpers.clickUpButton(page, 'test-input');
+
+  // Assert - Verify the result
+  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55');
+});
+```
+
+### Event Log First
+- Use event log for verification whenever possible
+- Avoid custom event listeners
+- Event log provides complete interaction history
+
+### Strict Helpers & Fail Fast
+- No `if (element)` checks
+- Use strict helpers that throw on missing elements
+- Better to fail immediately than have silent failures
+
+## 📚 Lessons Learned from jQuery Plugin Testing
+
+1. **Event Log System is Powerful**
+   - `[native]` vs `[touchspin]` prefixes enable easy filtering
+   - Complete interaction history in one place
+
+2. **Single Input Pattern Works Best**
+   - One input per test fixture
+   - Reload page for each test
+
+3. **Step Value Correction is Critical**
+   - TouchSpin rounds values to nearest step multiple
+   - Must account for this in ALL value tests
+
+4. **Focus Requirements**
+   - Mousewheel and keyboard events require focus
+
+5. **Strict Element Finding Prevents Bugs**
+   - Throws immediately if element missing
+   - No silent failures
+
+## 🔮 Core Package Testing Strategy (Next Phase)
+
+### What We'll Test:
+- Value normalization and validation
+- Step calculations and rounding
+- Min/max boundary enforcement
+- Decimal precision handling
+- State management
+- Event emission logic
+- Configuration options
+- Public API methods
+
+## 🎨 Renderer Testing Strategy (Future)
+
+### What We'll Test:
+- DOM structure per framework
+- CSS class application
+- ARIA attributes
+- Theme-specific styling
+- Framework integration
+
+## 📝 Standard Test Template
+```typescript
+test.describe('[Package] [Feature]', () => {
+  test.beforeEach(async ({ page }) => {
+    await touchspinHelpers.startCoverage(page);
+    await page.goto('test-fixture.html');
+    await touchspinHelpers.installJqueryPlugin(page);
+    await touchspinHelpers.clearEventLog(page);
+  });
+
+  test('should [specific behavior]', async ({ page }) => {
+    // Arrange
+    // Act
+    // Assert
+  });
+});
+```
+
+## 📊 Coverage Workflow to Reach 100%
+
+### Step 1: Run Coverage
+```bash
+# For specific package
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
+
+# For specific test file
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/commands.spec.ts
+```
+
+### Step 2: Analyze Report
+```bash
+# Open in browser
+open reports/coverage/index.html
+
+# Or serve locally
+npx serve reports/coverage
+```
+
+### Step 3: Identify Gaps
+- **Red lines**: Not covered at all - write tests for these
+- **Yellow lines**: Partially covered - missing branch coverage
+- **Look for patterns**:
+  - Error handling paths
+  - Edge cases
+  - Configuration options
+  - Conditional logic
+
+### Step 4: Write Targeted Tests
+```typescript
+// Example: Found uncovered error handling
+test('should handle invalid step value', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: -1 });
+  // Verify it defaults to 1 or throws error
+});
+
+// Example: Found uncovered branch
+test('should handle max value when incrementing', async ({ page }) => {
+  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
+    max: 10,
+    initval: 10
+  });
+  await touchspinHelpers.clickUpButton(page, 'test-input');
+  // Verify it stays at 10
+});
+```
+
+### Step 5: Iterate
+- Re-run coverage after adding tests
+- Check if new tests revealed more uncovered paths
+- Continue until 100%
+
+### Coverage Tips
+- **Don't chase 100% blindly** - Focus on meaningful coverage
+- **Test behavior, not implementation** - Coverage is a tool, not a goal
+- **Edge cases matter** - Boundary conditions often reveal bugs
+- **Error paths are critical** - Users will hit these
+
+---
+
+## Critical Testing Principles (jQuery Plugin Specific)
 
 ### 1. Test Structure
 - **Single input per test**: Each test uses `data-testid="test-input"` as the primary input
