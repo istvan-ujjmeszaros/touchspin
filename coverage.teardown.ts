@@ -63,7 +63,72 @@ async function globalTeardown() {
           converter.applyCoverage(entry.functions);
 
           const istanbulData = converter.toIstanbul();
-          Object.assign(istanbulCoverage, istanbulData);
+
+          // Properly merge coverage data instead of overwriting
+          Object.keys(istanbulData).forEach(file => {
+            if (istanbulCoverage[file]) {
+              // Merge coverage for existing file
+              const existing = istanbulCoverage[file];
+              const newData = istanbulData[file];
+
+              // Merge statement counts
+              Object.keys(newData.s).forEach(stmt => {
+                existing.s[stmt] = (existing.s[stmt] || 0) + (newData.s[stmt] || 0);
+              });
+
+              // Merge branch counts
+              Object.keys(newData.b).forEach(branch => {
+                if (!existing.b[branch]) {
+                  existing.b[branch] = [...newData.b[branch]];
+                } else {
+                  // Ensure branch arrays are the same length
+                  const maxLength = Math.max(existing.b[branch].length, newData.b[branch].length);
+                  for (let i = 0; i < maxLength; i++) {
+                    if (i >= existing.b[branch].length) {
+                      existing.b[branch][i] = 0;
+                    }
+                    if (i >= newData.b[branch].length) {
+                      // Don't add anything
+                      continue;
+                    }
+                    existing.b[branch][i] = (existing.b[branch][i] || 0) + (newData.b[branch][i] || 0);
+                  }
+                }
+              });
+
+              // Merge function counts
+              Object.keys(newData.f).forEach(func => {
+                existing.f[func] = (existing.f[func] || 0) + (newData.f[func] || 0);
+              });
+
+              // Merge branch maps (metadata)
+              Object.keys(newData.branchMap || {}).forEach(branch => {
+                if (!existing.branchMap) existing.branchMap = {};
+                if (!existing.branchMap[branch]) {
+                  existing.branchMap[branch] = newData.branchMap[branch];
+                }
+              });
+
+              // Merge statement maps (metadata)
+              Object.keys(newData.statementMap || {}).forEach(stmt => {
+                if (!existing.statementMap) existing.statementMap = {};
+                if (!existing.statementMap[stmt]) {
+                  existing.statementMap[stmt] = newData.statementMap[stmt];
+                }
+              });
+
+              // Merge function maps (metadata)
+              Object.keys(newData.fnMap || {}).forEach(func => {
+                if (!existing.fnMap) existing.fnMap = {};
+                if (!existing.fnMap[func]) {
+                  existing.fnMap[func] = newData.fnMap[func];
+                }
+              });
+            } else {
+              // Add new file
+              istanbulCoverage[file] = istanbulData[file];
+            }
+          });
           filesProcessed++;
         }
       }
