@@ -78,6 +78,26 @@ async function globalTeardown() {
     fs.writeFileSync(outputFile, JSON.stringify(istanbulCoverage, null, 2));
     console.log(`✅ Processed coverage for ${filesProcessed} source files`);
     console.log(`📁 Coverage saved to ${outputFile}`);
+
+    // Generate HTML report automatically
+    console.log('\n📊 Generating HTML coverage report...');
+    const { execSync } = await import('child_process');
+    try {
+      const output = execSync('yarn nyc report --reporter=html --reporter=text', {
+        encoding: 'utf-8',
+        stdio: ['ignore', 'pipe', 'pipe']
+      });
+      console.log(output);
+      console.log('📈 HTML coverage report generated at reports/coverage/index.html');
+    } catch (error: any) {
+      // NYC exits with non-zero if coverage thresholds aren't met, but report is still generated
+      if (error.stdout) {
+        console.log(error.stdout);
+        console.log('📈 HTML coverage report generated at reports/coverage/index.html');
+      } else {
+        console.error('Failed to generate coverage report:', error.message);
+      }
+    }
   } else {
     console.log('⚠️  No source coverage collected');
   }

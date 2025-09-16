@@ -569,6 +569,41 @@ async function installJqueryPlugin(page: Page): Promise<void> {
   });
 }
 
+// Helper to create additional test inputs dynamically
+async function createAdditionalInput(page: Page, testId: string, options: {
+  value?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  readonly?: boolean;
+  label?: string;
+} = {}): Promise<void> {
+  await page.evaluate(({ id, opts }) => {
+    // Use the page's helper function to create input
+    (window as any).createTestInput(id, opts);
+  }, { id: testId, opts: options });
+}
+
+// Helper to clear all additional inputs
+async function clearAdditionalInputs(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    (window as any).clearAdditionalInputs();
+  });
+}
+
+// Initialize TouchSpin on a specific input
+async function initializeTouchSpin(page: Page, testId: string, options: any = {}): Promise<void> {
+  await page.evaluate(({ id, opts }) => {
+    const $input = $(`[data-testid="${id}"]`);
+    // If initval is specified, set the input value before initializing TouchSpin
+    if (opts.initval !== undefined) {
+      $input.val(opts.initval);
+    }
+    $input.TouchSpin(opts);
+  }, { id: testId, opts: options });
+}
+
 async function collectCoverage(page: Page, testName: string): Promise<void> {
   // Only collect coverage when running with coverage config
   if (process.env.COVERAGE === '1') {
@@ -645,5 +680,8 @@ export default {
   startCoverage,
   installJqueryPlugin,
   collectCoverage,
+  createAdditionalInput,
+  clearAdditionalInputs,
+  initializeTouchSpin,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

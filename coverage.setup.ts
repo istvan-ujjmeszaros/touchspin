@@ -5,25 +5,28 @@ async function globalSetup() {
   // Clean up old coverage data
   const coverageDir = path.join(process.cwd(), '.nyc_output');
   const playwrightCoverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
+  const htmlCoverageDir = path.join(process.cwd(), 'reports', 'coverage');
 
-  // Create directories if they don't exist
-  if (!fs.existsSync(coverageDir)) {
-    fs.mkdirSync(coverageDir, { recursive: true });
-  }
-
-  if (!fs.existsSync(playwrightCoverageDir)) {
-    fs.mkdirSync(playwrightCoverageDir, { recursive: true });
-  }
-
-  // Clean existing coverage files
-  const files = fs.readdirSync(coverageDir);
-  for (const file of files) {
-    if (file.endsWith('.json')) {
-      fs.unlinkSync(path.join(coverageDir, file));
+  // Clean all coverage directories
+  [coverageDir, playwrightCoverageDir, htmlCoverageDir].forEach(dir => {
+    if (fs.existsSync(dir)) {
+      // Remove all files in the directory
+      fs.readdirSync(dir).forEach(file => {
+        const filePath = path.join(dir, file);
+        if (fs.statSync(filePath).isDirectory()) {
+          fs.rmSync(filePath, { recursive: true });
+        } else {
+          fs.unlinkSync(filePath);
+        }
+      });
     }
-  }
+    // Ensure directory exists
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
 
-  console.log('✅ Coverage directories prepared');
+  console.log('✅ Coverage directories cleaned and prepared');
 }
 
 export default globalSetup;

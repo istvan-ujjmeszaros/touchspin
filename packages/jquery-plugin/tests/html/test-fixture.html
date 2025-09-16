@@ -1,476 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>jQuery TouchSpin Test Fixture</title>
-
-  <!-- jQuery -->
-  <script src="../../../../__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
-
-  <!-- Bootstrap 5 -->
-  <link href="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
-  <script src="../../../../__tests__/html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
-
-  <!-- TouchSpin CSS -->
-  <link href="../../../renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet">
-
-  <!-- IMPORTANT: NO AUTO-INITIALIZATION - Coverage must start first! -->
-  <!-- The jQuery plugin will be installed by tests after coverage starts -->
-
-  <style>
-    .test-section {
-      background-color: #f8f9fa;
-      margin-bottom: 30px;
-      padding: 20px;
-      border-radius: 5px;
-    }
-
-    .test-input-group {
-      margin-bottom: 15px;
-      padding: 10px;
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 3px;
-    }
-
-    textarea[readonly] {
-      cursor: default;
-      resize: vertical;
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      line-height: 1.3;
-      background-color: #f8f9fa;
-    }
-
-    body {
-      padding-bottom: 100px;
-    }
-
-    .input-label {
-      font-weight: 600;
-      color: #495057;
-      margin-bottom: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery TouchSpin Test Fixture</title>
+    <link rel="stylesheet" href="/__tests__/html/assets/bootstrap/bootstrap-5.3.2.min.css">
+    <script src="/__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/__tests__/html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #event-log {
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .input-wrapper {
+            margin-bottom: 20px;
+        }
+        /* Style for additional injected inputs */
+        .injected-input-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+        }
+    </style>
 </head>
 <body>
-  <div class="container-fluid mt-3">
-    <h1 class="mb-4">jQuery TouchSpin Test Fixture - All Test Inputs</h1>
+    <div class="test-container">
+        <h3>TouchSpin Test</h3>
 
-    <!-- Commands Test Inputs (29 tests) -->
-    <div class="test-section">
-      <h3>Command Tests (29 inputs)</h3>
-      <div class="row">
-        <!-- cmd-1 through cmd-29 -->
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-1</div>
-          <input type="text" id="cmd-1" class="form-control mb-2" value="50" data-testid="cmd-1">
-          <textarea id="cmd-1-log" class="form-control" rows="5" readonly></textarea>
+        <!-- Primary test input -->
+        <div class="input-wrapper">
+            <label for="test-input">Test Input:</label>
+            <input
+                type="text"
+                id="test-input"
+                data-testid="test-input"
+                class="form-control"
+                value="50"
+                name="test-input"
+            />
         </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-2</div>
-          <input type="text" id="cmd-2" class="form-control mb-2" value="50" data-testid="cmd-2">
-          <textarea id="cmd-2-log" class="form-control" rows="5" readonly></textarea>
+
+        <!-- Container for dynamically injected inputs -->
+        <div id="additional-inputs" class="injected-input-container" style="display: none;"></div>
+
+        <!-- Event log -->
+        <div class="mt-4">
+            <label>Event Log:</label>
+            <textarea id="event-log" data-testid="event-log" readonly></textarea>
+            <button id="clear-log" class="btn btn-sm btn-secondary mt-2">Clear Log</button>
         </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-3</div>
-          <input type="text" id="cmd-3" class="form-control mb-2" value="50" data-testid="cmd-3">
-          <textarea id="cmd-3-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-4</div>
-          <input type="text" id="cmd-4" class="form-control mb-2" value="50" data-testid="cmd-4">
-          <textarea id="cmd-4-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-5</div>
-          <input type="text" id="cmd-5" class="form-control mb-2" value="50" data-testid="cmd-5">
-          <textarea id="cmd-5-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-6</div>
-          <input type="text" id="cmd-6" class="form-control mb-2" value="50" data-testid="cmd-6">
-          <textarea id="cmd-6-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-7</div>
-          <input type="text" id="cmd-7" class="form-control mb-2" value="50" data-testid="cmd-7">
-          <textarea id="cmd-7-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-8</div>
-          <input type="text" id="cmd-8" class="form-control mb-2" value="50" data-testid="cmd-8">
-          <textarea id="cmd-8-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-9</div>
-          <input type="text" id="cmd-9" class="form-control mb-2" value="50" data-testid="cmd-9">
-          <textarea id="cmd-9-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-10</div>
-          <input type="text" id="cmd-10" class="form-control mb-2" value="50" data-testid="cmd-10">
-          <textarea id="cmd-10-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-11</div>
-          <input type="text" id="cmd-11" class="form-control mb-2" value="50" data-testid="cmd-11">
-          <textarea id="cmd-11-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-12</div>
-          <input type="text" id="cmd-12" class="form-control mb-2" value="50" data-testid="cmd-12">
-          <textarea id="cmd-12-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-13</div>
-          <input type="text" id="cmd-13" class="form-control mb-2" value="50" data-testid="cmd-13">
-          <textarea id="cmd-13-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-14</div>
-          <input type="text" id="cmd-14" class="form-control mb-2" value="50" data-testid="cmd-14">
-          <textarea id="cmd-14-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-15</div>
-          <input type="text" id="cmd-15" class="form-control mb-2" value="50" data-testid="cmd-15">
-          <textarea id="cmd-15-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-16</div>
-          <input type="text" id="cmd-16" class="form-control mb-2" value="50" data-testid="cmd-16">
-          <textarea id="cmd-16-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-17</div>
-          <input type="text" id="cmd-17" class="form-control mb-2" value="50" data-testid="cmd-17">
-          <textarea id="cmd-17-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-18</div>
-          <input type="text" id="cmd-18" class="form-control mb-2" value="50" data-testid="cmd-18">
-          <textarea id="cmd-18-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-19</div>
-          <input type="text" id="cmd-19" class="form-control mb-2" value="50" data-testid="cmd-19">
-          <textarea id="cmd-19-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-20</div>
-          <input type="text" id="cmd-20" class="form-control mb-2" value="50" data-testid="cmd-20">
-          <textarea id="cmd-20-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-21</div>
-          <input type="text" id="cmd-21" class="form-control mb-2" value="50" data-testid="cmd-21">
-          <textarea id="cmd-21-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-22</div>
-          <input type="text" id="cmd-22" class="form-control mb-2" value="50" data-testid="cmd-22">
-          <textarea id="cmd-22-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-23</div>
-          <input type="text" id="cmd-23" class="form-control mb-2" value="50" data-testid="cmd-23">
-          <textarea id="cmd-23-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-24</div>
-          <input type="text" id="cmd-24" class="form-control mb-2" value="50" data-testid="cmd-24">
-          <textarea id="cmd-24-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-25</div>
-          <input type="text" id="cmd-25" class="form-control mb-2" value="50" data-testid="cmd-25">
-          <textarea id="cmd-26-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-26</div>
-          <input type="text" id="cmd-26" class="form-control mb-2" value="50" data-testid="cmd-26">
-          <textarea id="cmd-26-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-27</div>
-          <input type="text" id="cmd-27" class="form-control mb-2" value="50" data-testid="cmd-27">
-          <textarea id="cmd-27-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-28</div>
-          <input type="text" id="cmd-28" class="form-control mb-2" value="50" data-testid="cmd-28">
-          <textarea id="cmd-28-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">cmd-29</div>
-          <input type="text" id="cmd-29" class="form-control mb-2" value="50" data-testid="cmd-29">
-          <textarea id="cmd-29-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-      </div>
+
+        <!-- Hidden element for blur testing -->
+        <input type="hidden" id="blur-target" data-testid="blur-target" />
     </div>
 
-    <!-- Callable Event Tests (19 tests, 2 need multiple inputs) -->
-    <div class="test-section">
-      <h3>Callable Event Tests (21 inputs)</h3>
-      <div class="row">
-        <!-- call-1 through call-19, plus call-16b and call-17b for tests needing 2 inputs -->
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-1</div>
-          <input type="text" id="call-1" class="form-control mb-2" value="50" data-testid="call-1">
-          <textarea id="call-1-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-2</div>
-          <input type="text" id="call-2" class="form-control mb-2" value="50" data-testid="call-2">
-          <textarea id="call-2-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-3</div>
-          <input type="text" id="call-3" class="form-control mb-2" value="50" data-testid="call-3">
-          <textarea id="call-3-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-4</div>
-          <input type="text" id="call-4" class="form-control mb-2" value="50" data-testid="call-4">
-          <textarea id="call-4-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-5</div>
-          <input type="text" id="call-5" class="form-control mb-2" value="50" data-testid="call-5">
-          <textarea id="call-5-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-6</div>
-          <input type="text" id="call-6" class="form-control mb-2" value="50" data-testid="call-6">
-          <textarea id="call-6-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-7</div>
-          <input type="text" id="call-7" class="form-control mb-2" value="50" data-testid="call-7">
-          <textarea id="call-7-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-8</div>
-          <input type="text" id="call-8" class="form-control mb-2" value="50" data-testid="call-8">
-          <textarea id="call-8-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-9</div>
-          <input type="text" id="call-9" class="form-control mb-2" value="50" data-testid="call-9">
-          <textarea id="call-9-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-10</div>
-          <input type="text" id="call-10" class="form-control mb-2" value="50" data-testid="call-10">
-          <textarea id="call-10-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-11</div>
-          <input type="text" id="call-11" class="form-control mb-2" value="50" data-testid="call-11">
-          <textarea id="call-11-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-12</div>
-          <input type="text" id="call-12" class="form-control mb-2" value="50" data-testid="call-12">
-          <textarea id="call-12-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-13</div>
-          <input type="text" id="call-13" class="form-control mb-2" value="50" data-testid="call-13">
-          <textarea id="call-13-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-14</div>
-          <input type="text" id="call-14" class="form-control mb-2" value="50" data-testid="call-14">
-          <textarea id="call-14-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-15</div>
-          <input type="text" id="call-15" class="form-control mb-2" value="50" data-testid="call-15">
-          <textarea id="call-15-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-16a</div>
-          <input type="text" id="call-16a" class="form-control mb-2" value="50" data-testid="call-16a">
-          <textarea id="call-16a-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-16b</div>
-          <input type="text" id="call-16b" class="form-control mb-2" value="100" data-testid="call-16b">
-          <textarea id="call-16b-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-17a</div>
-          <input type="text" id="call-17a" class="form-control mb-2" value="50" data-testid="call-17a">
-          <textarea id="call-17a-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-17b</div>
-          <input type="text" id="call-17b" class="form-control mb-2" value="100" data-testid="call-17b">
-          <textarea id="call-17b-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-18</div>
-          <input type="text" id="call-18" class="form-control mb-2" value="50" data-testid="call-18">
-          <textarea id="call-18-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">call-19</div>
-          <input type="text" id="call-19" class="form-control mb-2" value="50" data-testid="call-19">
-          <textarea id="call-19-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-      </div>
-    </div>
+    <script type="module">
+        // Event logging setup
+        window.eventLog = [];
 
-    <!-- Emitted Event Tests (25 tests) -->
-    <div class="test-section">
-      <h3>Emitted Event Tests (25 inputs)</h3>
-      <div class="row">
-        <!-- emit-1 through emit-25 -->
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-1</div>
-          <input type="text" id="emit-1" class="form-control mb-2" value="50" data-testid="emit-1">
-          <textarea id="emit-1-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-2</div>
-          <input type="text" id="emit-2" class="form-control mb-2" value="50" data-testid="emit-2">
-          <textarea id="emit-2-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-3</div>
-          <input type="text" id="emit-3" class="form-control mb-2" value="50" data-testid="emit-3">
-          <textarea id="emit-3-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-4</div>
-          <input type="text" id="emit-4" class="form-control mb-2" value="50" data-testid="emit-4">
-          <textarea id="emit-4-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-5</div>
-          <input type="text" id="emit-5" class="form-control mb-2" value="50" data-testid="emit-5">
-          <textarea id="emit-5-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-6</div>
-          <input type="text" id="emit-6" class="form-control mb-2" value="50" data-testid="emit-6">
-          <textarea id="emit-6-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-7</div>
-          <input type="text" id="emit-7" class="form-control mb-2" value="50" data-testid="emit-7">
-          <textarea id="call-7-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-8</div>
-          <input type="text" id="emit-8" class="form-control mb-2" value="50" data-testid="emit-8">
-          <textarea id="emit-8-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-9</div>
-          <input type="text" id="emit-9" class="form-control mb-2" value="50" data-testid="emit-9">
-          <textarea id="emit-9-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-10</div>
-          <input type="text" id="emit-10" class="form-control mb-2" value="50" data-testid="emit-10">
-          <textarea id="emit-10-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-11</div>
-          <input type="text" id="emit-11" class="form-control mb-2" value="50" data-testid="emit-11">
-          <textarea id="emit-11-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-12</div>
-          <input type="text" id="emit-12" class="form-control mb-2" value="50" data-testid="emit-12">
-          <textarea id="emit-12-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-13</div>
-          <input type="text" id="emit-13" class="form-control mb-2" value="50" data-testid="emit-13">
-          <textarea id="emit-13-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-14</div>
-          <input type="text" id="emit-14" class="form-control mb-2" value="50" data-testid="emit-14">
-          <textarea id="emit-14-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-15</div>
-          <input type="text" id="emit-15" class="form-control mb-2" value="50" data-testid="emit-15">
-          <textarea id="emit-15-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-16</div>
-          <input type="text" id="emit-16" class="form-control mb-2" value="50" data-testid="emit-16">
-          <textarea id="emit-16-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-17</div>
-          <input type="text" id="emit-17" class="form-control mb-2" value="50" data-testid="emit-17">
-          <textarea id="emit-17-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-18</div>
-          <input type="text" id="emit-18" class="form-control mb-2" value="50" data-testid="emit-18">
-          <textarea id="emit-18-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-19</div>
-          <input type="text" id="emit-19" class="form-control mb-2" value="50" data-testid="emit-19">
-          <textarea id="emit-19-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-20</div>
-          <input type="text" id="emit-20" class="form-control mb-2" value="50" data-testid="emit-20">
-          <textarea id="emit-20-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-21</div>
-          <input type="text" id="emit-21" class="form-control mb-2" value="50" data-testid="emit-21">
-          <textarea id="emit-21-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-22</div>
-          <input type="text" id="emit-22" class="form-control mb-2" value="50" data-testid="emit-22">
-          <textarea id="emit-22-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-23</div>
-          <input type="text" id="emit-23" class="form-control mb-2" value="50" data-testid="emit-23">
-          <textarea id="emit-23-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-24</div>
-          <input type="text" id="emit-24" class="form-control mb-2" value="50" data-testid="emit-24">
-          <textarea id="emit-24-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-        <div class="col-md-6 col-lg-4 test-input-group">
-          <div class="input-label">emit-25</div>
-          <input type="text" id="emit-25" class="form-control mb-2" value="50" data-testid="emit-25">
-          <textarea id="emit-25-log" class="form-control" rows="5" readonly></textarea>
-        </div>
-      </div>
-    </div>
+        window.logEvent = function(event, detail = {}) {
+            const timestamp = new Date().toISOString();
+            const logEntry = { timestamp, event, ...detail };
+            window.eventLog.push(logEntry);
 
-    <!-- Test status area -->
-    <div class="alert alert-info mt-4">
-      <h5>Test Information</h5>
-      <p>This page contains all test inputs pre-created for optimal test performance:</p>
-      <ul>
-        <li>29 inputs for command tests (cmd-1 to cmd-29)</li>
-        <li>21 inputs for callable event tests (call-1 to call-19, plus call-16a/b and call-17a/b for multi-input tests)</li>
-        <li>25 inputs for emitted event tests (emit-1 to emit-25)</li>
-        <li>Each input has its own event log textarea for debugging</li>
-        <li><strong>jQuery plugin installation happens AFTER coverage starts for accurate coverage</strong></li>
-      </ul>
-    </div>
-  </div>
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                const logText = `[${timestamp}] ${event}: ${JSON.stringify(detail)}\n`;
+                logElement.value += logText;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        };
 
-  <!-- NO SCRIPT INITIALIZATION - Coverage must start first! -->
+        // Clear log button
+        document.getElementById('clear-log').addEventListener('click', function() {
+            window.eventLog = [];
+            document.getElementById('event-log').value = '';
+        });
+
+        // Helper to create additional inputs
+        window.createTestInput = function(id, options = {}) {
+            const container = document.getElementById('additional-inputs');
+            container.style.display = 'block';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'input-wrapper';
+
+            const label = document.createElement('label');
+            label.textContent = options.label || `Input ${id}:`;
+            label.setAttribute('for', id);
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = id;
+            input.setAttribute('data-testid', id);
+            input.className = 'form-control';
+            input.value = options.value || '50';
+            input.name = id;
+
+            // Apply any additional attributes
+            if (options.min !== undefined) input.min = options.min;
+            if (options.max !== undefined) input.max = options.max;
+            if (options.step !== undefined) input.step = options.step;
+            if (options.disabled) input.disabled = true;
+            if (options.readonly) input.readOnly = true;
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+            container.appendChild(wrapper);
+
+            return input;
+        };
+
+        // Helper to clear additional inputs
+        window.clearAdditionalInputs = function() {
+            const container = document.getElementById('additional-inputs');
+            container.innerHTML = '';
+            container.style.display = 'none';
+        };
+
+        // Mark page as ready
+        window.testPageReady = true;
+    </script>
 </body>
 </html>
