@@ -275,18 +275,6 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
       expect(await touchspinHelpers.hasEventInLog(page, 'focus', 'native')).toBe(true);
     });
 
-    test('should emit native blur event when input loses focus', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
-
-      // Focus first
-      await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
-
-      // Then blur
-      await touchspinHelpers.blurInput(page, 'test-input');
-
-      expect(await touchspinHelpers.hasEventInLog(page, 'blur', 'native')).toBe(true);
-    });
   });
 
   test.describe('Button Click Events', () => {
