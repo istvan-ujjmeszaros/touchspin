@@ -2,24 +2,27 @@ import { defineConfig } from 'vite';
 import path from 'node:path';
 
 export default defineConfig({
+  resolve: {
+    preserveSymlinks: true,
+    alias: {
+      '@touchspin/core': path.resolve(__dirname, '../core/src/index.ts'),
+    },
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'TouchSpinJqueryPlugin',
-      formats: ['es', 'cjs', 'umd'],
-      fileName: (format) => (format === 'es' ? 'index.js' : format === 'cjs' ? 'index.cjs' : 'index.umd.js'),
+      formats: ['es', 'cjs'],
+      fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     sourcemap: true,
     minify: 'esbuild',
     rollupOptions: {
-      external: ['jquery', '@touchspin/core'],
-      output: {
-        globals: {
-          jquery: 'jQuery',
-          '@touchspin/core': 'TouchSpinCore',
-        },
-        exports: 'named',
-      },
+      external: (id) => id === 'jquery', // keep jquery external only
+      output: [
+        { format: 'es', exports: 'named', entryFileNames: 'index.js', inlineDynamicImports: false, sourcemap: true },
+        { format: 'cjs', exports: 'named', entryFileNames: 'index.cjs', inlineDynamicImports: false, sourcemap: true }
+      ],
     },
     outDir: 'dist',
     emptyOutDir: true,
