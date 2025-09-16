@@ -83,13 +83,21 @@
         window.eventLog = [];
 
         window.logEvent = function(event, detail = {}) {
-            const timestamp = new Date().toISOString();
-            const logEntry = { timestamp, event, ...detail };
+            const logEntry = { event, ...detail };
             window.eventLog.push(logEntry);
 
             const logElement = document.getElementById('event-log');
             if (logElement) {
-                const logText = `[${timestamp}] ${event}: ${JSON.stringify(detail)}\n`;
+                // Format: target:value event
+                let logText = '';
+                if (detail.target && detail.value !== undefined) {
+                    logText = `${detail.target}:${detail.value} ${event}\n`;
+                } else if (detail.target) {
+                    logText = `${detail.target} ${event}\n`;
+                } else {
+                    logText = `${event}\n`;
+                }
+
                 logElement.value += logText;
                 logElement.scrollTop = logElement.scrollHeight;
             }
