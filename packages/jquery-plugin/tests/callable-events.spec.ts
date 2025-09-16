@@ -281,22 +281,20 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Verify it's initialized
-      let hasWrapper = await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]');
-        return input?.closest('[data-touchspin-injected]') !== null;
-      });
-
-      expect(hasWrapper).toBe(true);
+      // Verify TouchSpin is initialized (wrapper exists)
+      const wrapper = await touchspinHelpers.getTouchSpinWrapper(page, 'test-input');
+      expect(await wrapper.count()).toBe(1);
 
       // Trigger destroy event
       await page.evaluate(() => {
         (window as any).$('[data-testid="test-input"]').trigger('touchspin.destroy');
       });
 
-      // Verify it's destroyed
-      hasWrapper = await page.evaluate(() => {
+      // Verify it's destroyed (wrapper no longer has data-touchspin-injected)
+      const hasWrapper = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]');
-        return input?.closest('[data-touchspin-injected]') !== null;
+        // After destroy, the wrapper loses its data-touchspin-injected attribute
+        return input!.closest('[data-touchspin-injected]') !== null;
       });
 
       expect(hasWrapper).toBe(false);

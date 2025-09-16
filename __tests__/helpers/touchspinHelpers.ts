@@ -503,30 +503,53 @@ async function installJqueryPlugin(page: Page): Promise<void> {
         });
       });
 
-      // Log change events
-      $(document).on('change', 'input[data-testid]', function(e: any) {
-        const target = e.target as HTMLElement;
-        const testId = target.getAttribute('data-testid') || 'unknown';
-        const value = (target as HTMLInputElement).value;
-        (window as any).logEvent('change', { target: testId, value });
+      // Define all native events to log
+      const nativeEvents = [
+        // Form events
+        'change', 'input', 'submit', 'reset', 'select',
+        // Focus events
+        'focus', 'blur', 'focusin', 'focusout',
+        // Keyboard events
+        'keydown', 'keyup', 'keypress',
+        // Mouse events
+        'click', 'dblclick', 'mousedown', 'mouseup',
+        'mouseenter', 'mouseleave', 'mouseover', 'mouseout', 'mousemove',
+        // Other interaction events
+        'wheel', 'contextmenu'
+      ];
+
+      // Log native events on inputs
+      nativeEvents.forEach(eventName => {
+        $(document).on(eventName, 'input[data-testid]', function(e: any) {
+          const target = e.target as HTMLElement;
+          const testId = target.getAttribute('data-testid') || 'unknown';
+          const detail: any = { target: testId };
+
+          // Include value for events where it makes sense
+          if (['change', 'input', 'keydown', 'keyup', 'keypress', 'select'].includes(eventName)) {
+            detail.value = (target as HTMLInputElement).value;
+          }
+
+          (window as any).logEvent(eventName, detail);
+        });
       });
 
-      // Log input events
-      $(document).on('input', 'input[data-testid]', function(e: any) {
-        const target = e.target as HTMLElement;
-        const testId = target.getAttribute('data-testid') || 'unknown';
-        const value = (target as HTMLInputElement).value;
-        (window as any).logEvent('input', { target: testId, value });
+      // Also log events on TouchSpin buttons (they have class bootstrap-touchspin-up/down)
+      const buttonEvents = ['click', 'mousedown', 'mouseup', 'mouseenter', 'mouseleave'];
+      buttonEvents.forEach(eventName => {
+        $(document).on(eventName, '.bootstrap-touchspin-up, .bootstrap-touchspin-down', function(e: any) {
+          const button = e.currentTarget as HTMLElement;
+          const isUp = button.classList.contains('bootstrap-touchspin-up');
+          const input = button.closest('.bootstrap-touchspin')?.querySelector('input[data-testid]') as HTMLElement;
+          const testId = input?.getAttribute('data-testid') || 'unknown';
+          const detail = {
+            target: `${testId}-${isUp ? 'up' : 'down'}-button`
+          };
+          (window as any).logEvent(eventName, detail);
+        });
       });
 
-      // Log focus/blur events
-      $(document).on('focus blur', 'input[data-testid]', function(e: any) {
-        const target = e.target as HTMLElement;
-        const testId = target.getAttribute('data-testid') || 'unknown';
-        (window as any).logEvent(e.type, { target: testId });
-      });
-
-      console.log('Event logging initialized for all TouchSpin events');
+      console.log('Event logging initialized for all TouchSpin and native events');
     } else {
       console.warn('Global logEvent function not found - event logging disabled');
     }
@@ -658,6 +681,115 @@ async function blurAway(page: Page): Promise<void> {
   await page.click('#blur-target');
 }
 
+// Strict version of getTouchSpinElements that throws if elements don't exist
+async function getTouchSpinElementsStrict(page: Page, testId: string) {
+  const wrapper = await getTouchSpinWrapper(page, testId);
+  const elements = {
+    wrapper,
+    input: page.locator(`[data-testid="${testId}"]`),
+    upButton: wrapper.locator('.bootstrap-touchspin-up').first(),
+    downButton: wrapper.locator('.bootstrap-touchspin-down').first(),
+    prefix: wrapper.locator('.bootstrap-touchspin-prefix').first(),
+    postfix: wrapper.locator('.bootstrap-touchspin-postfix').first()
+  };
+
+  // Verify all critical elements exist
+  if (await elements.input.count() === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+  if (await elements.upButton.count() === 0) {
+    throw new Error(`Up button not found for testId: ${testId}`);
+  }
+  if (await elements.downButton.count() === 0) {
+    throw new Error(`Down button not found for testId: ${testId}`);
+  }
+
+  return elements;
+}
+
+// Click the up button (strict - throws if not found)
+async function clickUpButton(page: Page, testId: string): Promise<void> {
+  const elements = await getTouchSpinElementsStrict(page, testId);
+  await elements.upButton.click();
+}
+
+// Click the down button (strict - throws if not found)
+async function clickDownButton(page: Page, testId: string): Promise<void> {
+  const elements = await getTouchSpinElementsStrict(page, testId);
+  await elements.downButton.click();
+}
+
+// Get the full event log as an array
+async function getEventLog(page: Page): Promise<Array<{type: string, event: string, target?: string, value?: string}>> {
+  return await page.evaluate(() => {
+    return (window as any).eventLog || [];
+  });
+}
+
+// Clear the event log
+async function clearEventLog(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    if ((window as any).clearEventLog) {
+      (window as any).clearEventLog();
+    } else {
+      (window as any).eventLog = [];
+      const logElement = document.getElementById('event-log');
+      if (logElement) {
+        (logElement as HTMLTextAreaElement).value = '';
+      }
+    }
+  });
+}
+
+// Check if a specific event is in the log
+async function hasEventInLog(page: Page, eventName: string, eventType?: 'native' | 'touchspin'): Promise<boolean> {
+  const log = await getEventLog(page);
+  return log.some(entry => {
+    const matchesEvent = entry.event === eventName;
+    const matchesType = !eventType || entry.type === eventType;
+    return matchesEvent && matchesType;
+  });
+}
+
+// Get all events of a specific type
+async function getEventsOfType(page: Page, eventType: 'native' | 'touchspin'): Promise<Array<any>> {
+  const log = await getEventLog(page);
+  return log.filter(entry => entry.type === eventType);
+}
+
+// Count occurrences of a specific event
+async function countEventInLog(page: Page, eventName: string, eventType?: 'native' | 'touchspin'): Promise<number> {
+  const log = await getEventLog(page);
+  return log.filter(entry => {
+    const matchesEvent = entry.event === eventName;
+    const matchesType = !eventType || entry.type === eventType;
+    return matchesEvent && matchesType;
+  }).length;
+}
+
+// Wait for an event to appear in the log
+async function waitForEventInLog(page: Page, eventName: string, options?: { eventType?: 'native' | 'touchspin', timeout?: number }): Promise<boolean> {
+  const timeout = options?.timeout || 5000;
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    if (await hasEventInLog(page, eventName, options?.eventType)) {
+      return true;
+    }
+    await page.waitForTimeout(100);
+  }
+
+  return false;
+}
+
+// Get the visual event log text
+async function getEventLogText(page: Page): Promise<string> {
+  return await page.evaluate(() => {
+    const logElement = document.getElementById('event-log');
+    return logElement ? (logElement as HTMLTextAreaElement).value : '';
+  });
+}
+
 // NOTE: waitForTouchSpinReady is no longer needed!
 // TouchSpin now automatically creates wrapper testids as: {inputTestId}-wrapper
 // All helper functions automatically wait for the wrapper to exist.
@@ -691,7 +823,17 @@ export default {
   initializeTouchSpin,
   getTouchSpinWrapper,
   getTouchSpinElements,
+  getTouchSpinElementsStrict,
   hasPrefix,
   hasPostfix,
+  clickUpButton,
+  clickDownButton,
+  getEventLog,
+  clearEventLog,
+  hasEventInLog,
+  getEventsOfType,
+  countEventInLog,
+  waitForEventInLog,
+  getEventLogText,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

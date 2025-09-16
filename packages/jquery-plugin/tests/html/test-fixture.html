@@ -83,19 +83,27 @@
         window.eventLog = [];
 
         window.logEvent = function(event, detail = {}) {
-            const logEntry = { event, ...detail };
+            // Determine event type (native vs touchspin)
+            const eventType = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+
+            const logEntry = {
+                type: eventType,
+                event,
+                ...detail
+            };
             window.eventLog.push(logEntry);
 
             const logElement = document.getElementById('event-log');
             if (logElement) {
-                // Format: target:value event
+                // Format: [type] target:value event or [type] target event
+                const prefix = `[${eventType}]`;
                 let logText = '';
                 if (detail.target && detail.value !== undefined) {
-                    logText = `${detail.target}:${detail.value} ${event}\n`;
+                    logText = `${prefix} ${detail.target}:${detail.value} ${event}\n`;
                 } else if (detail.target) {
-                    logText = `${detail.target} ${event}\n`;
+                    logText = `${prefix} ${detail.target} ${event}\n`;
                 } else {
-                    logText = `${event}\n`;
+                    logText = `${prefix} ${event}\n`;
                 }
 
                 logElement.value += logText;

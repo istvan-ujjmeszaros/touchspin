@@ -607,24 +607,29 @@ test.describe('jQuery TouchSpin Commands API', () => {
       });
 
       // Focus the input first (required for mousewheel events)
-      await page.focus('[data-testid="test-input"]');
+      const elements = await touchspinHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      await elements.input.focus();
+
+      // Clear event log to track only this test's events
+      await touchspinHelpers.clearEventLog(page);
 
       // Simulate mousewheel up
       await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]') as HTMLElement;
+        const input = document.querySelector('[data-testid="test-input"]');
+        // No need for null check - getTouchSpinElementsStrict already verified it exists
         const event = new WheelEvent('wheel', {
           deltaY: -1,
           bubbles: true
         });
-        input.dispatchEvent(event);
+        input!.dispatchEvent(event);
       });
 
       await page.waitForTimeout(100);
 
-      const value = await page.evaluate(() => {
-        return (window as any).$('[data-testid="test-input"]').val();
-      });
+      // Verify wheel event was logged
+      expect(await touchspinHelpers.hasEventInLog(page, 'wheel', 'native')).toBe(true);
 
+      const value = await touchspinHelpers.readInputValue(page, 'test-input');
       expect(parseInt(value)).toBeGreaterThanOrEqual(51);
     });
   });

@@ -627,59 +627,53 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
       // Initialize TouchSpin
       await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
-      // Set up event listener
-      const eventFired = await page.evaluate(() => {
-        return new Promise((resolve) => {
-          let fired = false;
+      // Clear event log to track only this test's events
+      await touchspinHelpers.clearEventLog(page);
 
-          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startspin', () => {
-            fired = true;
-          });
+      // Get elements using strict helper (will throw if not found)
+      const elements = await touchspinHelpers.getTouchSpinElementsStrict(page, 'test-input');
 
-          // Click the up button
-          const input = document.querySelector('[data-testid="test-input"]');
-          const wrapper = input?.closest('[data-touchspin-injected]');
-          const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
-          if (upButton) {
-            upButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-            setTimeout(() => {
-              upButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-            }, 100);
-          }
-
-          setTimeout(() => resolve(fired), 200);
-        });
+      // Simulate mousedown and mouseup on up button
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]');
+        const wrapper = input!.closest('[data-touchspin-injected]');
+        const upButton = wrapper!.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+        // No need for if check - getTouchSpinElementsStrict already verified elements exist
+        upButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        setTimeout(() => {
+          upButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+        }, 100);
       });
 
-      expect(eventFired).toBe(true);
+      // Wait for events to be processed
+      await page.waitForTimeout(200);
+
+      // Check event log for TouchSpin events
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+
+      // Also verify native mouse events were logged
+      expect(await touchspinHelpers.hasEventInLog(page, 'mousedown', 'native')).toBe(true);
+      expect(await touchspinHelpers.hasEventInLog(page, 'mouseup', 'native')).toBe(true);
     });
 
     test('should emit min/max events when clicking buttons at boundaries', async ({ page }) => {
       // Initialize TouchSpin at max
       await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 30, max: 40, initval: 40 });
 
-      // Try to click up when already at max
-      const maxEventFired = await page.evaluate(() => {
-        return new Promise((resolve) => {
-          let fired = false;
+      // Clear event log to track only this test's events
+      await touchspinHelpers.clearEventLog(page);
 
-          (window as any).$('[data-testid="test-input"]').on('touchspin.on.max', () => {
-            fired = true;
-          });
+      // Click up button when already at max (using strict helper)
+      await touchspinHelpers.clickUpButton(page, 'test-input');
 
-          // Click the up button when already at max
-          const input = document.querySelector('[data-testid="test-input"]');
-          const wrapper = input?.closest('[data-touchspin-injected]');
-          const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
-          if (upButton) {
-            upButton.click();
-          }
+      // Wait for event processing
+      await page.waitForTimeout(100);
 
-          setTimeout(() => resolve(fired), 100);
-        });
-      });
+      // Verify max event was emitted
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
 
-      expect(maxEventFired).toBe(true);
+      // Also verify the click event was logged
+      expect(await touchspinHelpers.hasEventInLog(page, 'click', 'native')).toBe(true);
     });
   });
 
