@@ -479,34 +479,8 @@ async function installJqueryPlugin(page: Page): Promise<void> {
     // Mark as ready for tests
     (window as any).touchSpinReady = true;
 
-    // Set up event logging for all inputs
-    const setupEventLogging = (inputId: string) => {
-      const $input = (window as any).$(`#${inputId}`);
-      const $textarea = (window as any).$(`#${inputId}-log`);
-
-      if (!$textarea.length) {
-        console.warn(`No log textarea found for ${inputId}`);
-        return;
-      }
-
-      // Helper to log events
-      const logEvent = (eventName: string, details = '') => {
-        const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
-        const currentLog = $textarea.val();
-        const newEntry = `[${timestamp}] ${eventName}${details ? ': ' + details : ''}`;
-        const lines = currentLog ? currentLog.split('\n') : [];
-        lines.push(newEntry);
-
-        // Keep last 50 lines for performance
-        if (lines.length > 50) {
-          lines.shift();
-        }
-
-        $textarea.val(lines.join('\n'));
-        // Auto-scroll to bottom
-        $textarea[0].scrollTop = $textarea[0].scrollHeight;
-      };
-
+    // Set up event logging using the global logEvent function from test-fixture.html
+    if ((window as any).logEvent) {
       // Log all TouchSpin events
       const touchspinEvents = [
         'touchspin.on.min',
@@ -519,52 +493,42 @@ async function installJqueryPlugin(page: Page): Promise<void> {
         'touchspin.on.stopdownspin'
       ];
 
+      // Set up event listeners on document level to catch all TouchSpin events
       touchspinEvents.forEach(eventName => {
-        $input.on(eventName, function(e: any) {
-          logEvent(eventName);
+        $(document).on(eventName, function(e: any) {
+          const target = e.target as HTMLElement;
+          const testId = target.getAttribute('data-testid') || target.id || 'unknown';
+          const value = (target as HTMLInputElement).value;
+          (window as any).logEvent(eventName, { target: testId, value });
         });
       });
 
-      // Log value changes
-      $input.on('change', function(e: any) {
-        logEvent('change', `value=${(this as any).value}`);
+      // Log change events
+      $(document).on('change', 'input[data-testid]', function(e: any) {
+        const target = e.target as HTMLElement;
+        const testId = target.getAttribute('data-testid') || 'unknown';
+        const value = (target as HTMLInputElement).value;
+        (window as any).logEvent('change', { target: testId, value });
       });
 
       // Log input events
-      $input.on('input', function(e: any) {
-        logEvent('input', `value=${(this as any).value}`);
+      $(document).on('input', 'input[data-testid]', function(e: any) {
+        const target = e.target as HTMLElement;
+        const testId = target.getAttribute('data-testid') || 'unknown';
+        const value = (target as HTMLInputElement).value;
+        (window as any).logEvent('input', { target: testId, value });
       });
 
-      // Log focus events
-      $input.on('focus blur', function(e: any) {
-        logEvent(e.type);
+      // Log focus/blur events
+      $(document).on('focus blur', 'input[data-testid]', function(e: any) {
+        const target = e.target as HTMLElement;
+        const testId = target.getAttribute('data-testid') || 'unknown';
+        (window as any).logEvent(e.type, { target: testId });
       });
 
-      // Log initialization
-      logEvent('Event logging initialized');
-    };
-
-    // Setup logging for all test inputs
-    // Command test inputs
-    for (let i = 1; i <= 29; i++) {
-      setupEventLogging(`cmd-${i}`);
-    }
-
-    // Callable event test inputs
-    for (let i = 1; i <= 15; i++) {
-      setupEventLogging(`call-${i}`);
-    }
-    // Special multi-input tests
-    setupEventLogging('call-16a');
-    setupEventLogging('call-16b');
-    setupEventLogging('call-17a');
-    setupEventLogging('call-17b');
-    setupEventLogging('call-18');
-    setupEventLogging('call-19');
-
-    // Emitted event test inputs
-    for (let i = 1; i <= 25; i++) {
-      setupEventLogging(`emit-${i}`);
+      console.log('Event logging initialized for all TouchSpin events');
+    } else {
+      console.warn('Global logEvent function not found - event logging disabled');
     }
   });
 }
