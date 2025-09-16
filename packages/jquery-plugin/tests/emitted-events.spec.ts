@@ -6,7 +6,9 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
   test.beforeEach(async ({ page }) => {
     await touchspinHelpers.startCoverage(page);
+    // Reload page for each test to ensure clean state
     await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
+    await page.waitForFunction(() => (window as any).testPageReady === true);
     await touchspinHelpers.installJqueryPlugin(page);
     await page.waitForFunction(() => (window as any).touchSpinReady === true);
   });
@@ -18,115 +20,99 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Boundary Events', () => {
 
     test('should emit touchspin.on.min when minimum value is reached', async ({ page }) => {
-      const testId = 'emit-1';
-
       // Initialize TouchSpin with value near min
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100, step: 1 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100, step: 1 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.min', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.min', () => {
             fired = true;
           });
 
           // Try to decrement below min
-          (window as any).$(`#${id}`).TouchSpin('downonce');
-          (window as any).$(`#${id}`).TouchSpin('downonce');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('downonce');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('downonce');
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
 
       // Verify value is at min
-      const value = await touchspinHelpers.readInputValue(page, testId);
+      const value = await touchspinHelpers.readInputValue(page, 'test-input');
       expect(value).toBe('0');
     });
 
     test('should emit touchspin.on.max when maximum value is reached', async ({ page }) => {
-      const testId = 'emit-2';
-
       // Initialize TouchSpin with value near max
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100, step: 1 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100, step: 1 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.max', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.max', () => {
             fired = true;
           });
 
           // Try to increment above max
-          (window as any).$(`#${id}`).TouchSpin('uponce');
-          (window as any).$(`#${id}`).TouchSpin('uponce');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('uponce');
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
 
       // Verify value is at max
-      const value = await touchspinHelpers.readInputValue(page, testId);
+      const value = await touchspinHelpers.readInputValue(page, 'test-input');
       expect(value).toBe('100');
     });
 
     test('should emit min event when setting value to minimum', async ({ page }) => {
-      const testId = 'emit-3';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 10, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 10, max: 100 });
 
       // Set up event listener and set to min
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.min', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.min', () => {
             fired = true;
           });
 
           // Set value to min
-          (window as any).$(`#${id}`).TouchSpin('set', 10);
+          (window as any).$('[data-testid="test-input"]').TouchSpin('set', 10);
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit max event when setting value to maximum', async ({ page }) => {
-      const testId = 'emit-4';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener and set to max
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.max', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.max', () => {
             fired = true;
           });
 
           // Set value to max
-          (window as any).$(`#${id}`).TouchSpin('set', 100);
+          (window as any).$('[data-testid="test-input"]').TouchSpin('set', 100);
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
@@ -135,105 +121,93 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Start Spin Events', () => {
 
     test('should emit touchspin.on.startspin when any spinning starts', async ({ page }) => {
-      const testId = 'emit-5';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Test up spin triggers startspin
-      let eventFired = await page.evaluate((id) => {
+      let eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.startspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startspin', () => {
             fired = true;
           });
 
-          (window as any).$(`#${id}`).TouchSpin('startupspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
-            (window as any).$(`#${id}`).off('touchspin.on.startspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').off('touchspin.on.startspin');
             resolve(fired);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
 
       // Test down spin also triggers startspin
-      eventFired = await page.evaluate((id) => {
+      eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.startspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startspin', () => {
             fired = true;
           });
 
-          (window as any).$(`#${id}`).TouchSpin('startdownspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startdownspin');
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             resolve(fired);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit touchspin.on.startupspin when increment spinning starts', async ({ page }) => {
-      const testId = 'emit-6';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.startupspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startupspin', () => {
             fired = true;
           });
 
-          (window as any).$(`#${id}`).TouchSpin('startupspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             resolve(fired);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit touchspin.on.startdownspin when decrement spinning starts', async ({ page }) => {
-      const testId = 'emit-7';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
-          (window as any).$(`#${id}`).on('touchspin.on.startdownspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startdownspin', () => {
             fired = true;
           });
 
-          (window as any).$(`#${id}`).TouchSpin('startdownspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startdownspin');
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             resolve(fired);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
@@ -242,88 +216,76 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Stop Spin Events', () => {
 
     test('should emit touchspin.on.stopspin when any spinning stops', async ({ page }) => {
-      const testId = 'emit-8';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Test stopping up spin
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          (window as any).$(`#${id}`).TouchSpin('startupspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
 
-          (window as any).$(`#${id}`).on('touchspin.on.stopspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.stopspin', () => {
             fired = true;
           });
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             setTimeout(() => resolve(fired), 50);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit touchspin.on.stopupspin when increment spinning stops', async ({ page }) => {
-      const testId = 'emit-9';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          (window as any).$(`#${id}`).TouchSpin('startupspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startupspin');
 
-          (window as any).$(`#${id}`).on('touchspin.on.stopupspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.stopupspin', () => {
             fired = true;
           });
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             setTimeout(() => resolve(fired), 50);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit touchspin.on.stopdownspin when decrement spinning stops', async ({ page }) => {
-      const testId = 'emit-10';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          (window as any).$(`#${id}`).TouchSpin('startdownspin');
+          (window as any).$('[data-testid="test-input"]').TouchSpin('startdownspin');
 
-          (window as any).$(`#${id}`).on('touchspin.on.stopdownspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.stopdownspin', () => {
             fired = true;
           });
 
           setTimeout(() => {
-            (window as any).$(`#${id}`).TouchSpin('stopspin');
+            (window as any).$('[data-testid="test-input"]').TouchSpin('stopspin');
             setTimeout(() => resolve(fired), 50);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
@@ -332,19 +294,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('All Spin Events Together', () => {
 
     test('should emit correct sequence of events during spin cycle', async ({ page }) => {
-      const testId = 'emit-11';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Track event sequence
-      const eventSequence = await page.evaluate((id) => {
+      const eventSequence = await page.evaluate(() => {
         return new Promise((resolve) => {
           const events: string[] = [];
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.startspin', () => events.push('startspin'));
           $input.on('touchspin.on.startupspin', () => events.push('startupspin'));
@@ -363,7 +321,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 300);
         });
-      }, testId);
+      });
 
       // Should have start events followed by stop events
       expect(eventSequence).toContain('startspin');
@@ -373,19 +331,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit events when switching spin direction', async ({ page }) => {
-      const testId = 'emit-12';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Track events when switching direction
-      const events = await page.evaluate((id) => {
+      const events = await page.evaluate(() => {
         return new Promise((resolve) => {
           const eventList: string[] = [];
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.startupspin', () => eventList.push('startupspin'));
           $input.on('touchspin.on.stopupspin', () => eventList.push('stopupspin'));
@@ -409,7 +363,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 200);
           }, 200);
         });
-      }, testId);
+      });
 
       // Should stop up before starting down
       expect(events).toContain('startupspin');
@@ -422,21 +376,17 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Order', () => {
 
     test('should fire events in correct order', async ({ page }) => {
-      const testId = 'emit-13';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Test that start events fire before stop events
-      const orderCorrect = await page.evaluate((id) => {
+      const orderCorrect = await page.evaluate(() => {
         return new Promise((resolve) => {
           let startFired = false;
           let stopFired = false;
           let orderOk = true;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.startspin', () => {
             startFired = true;
@@ -458,7 +408,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(orderCorrect).toBe(true);
     });
@@ -467,21 +417,17 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Multiple Listeners', () => {
 
     test('should support multiple listeners for the same event', async ({ page }) => {
-      const testId = 'emit-14';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Add multiple listeners
-      const counts = await page.evaluate((id) => {
+      const counts = await page.evaluate(() => {
         return new Promise<{ count1: number; count2: number; count3: number }>((resolve) => {
           let count1 = 0;
           let count2 = 0;
           let count3 = 0;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Add three listeners for the same event
           $input.on('touchspin.on.startspin', () => count1++);
@@ -496,7 +442,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             resolve({ count1, count2, count3 });
           }, 100);
         });
-      }, testId);
+      });
 
       // All listeners should have been called
       expect(counts.count1).toBe(1);
@@ -505,19 +451,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should handle listener for multiple events', async ({ page }) => {
-      const testId = 'emit-15';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Add listener for multiple events
-      const eventsFired = await page.evaluate((id) => {
+      const eventsFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           const events: string[] = [];
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Listen to multiple events with single handler
           $input.on('touchspin.on.startspin touchspin.on.stopspin', (e) => {
@@ -534,7 +476,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(eventsFired).toContain('startspin');
       expect(eventsFired).toContain('stopspin');
@@ -544,19 +486,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Removal', () => {
 
     test('should allow removing event listeners', async ({ page }) => {
-      const testId = 'emit-16';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Add and remove listener
-      const counts = await page.evaluate((id) => {
+      const counts = await page.evaluate(() => {
         return new Promise((resolve) => {
           let count = 0;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Add listener
           const handler = () => count++;
@@ -582,26 +520,22 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 100);
         });
-      }, testId);
+      });
 
       // Should have only counted once
       expect(counts).toBe(1);
     });
 
     test('should support removing all listeners with off()', async ({ page }) => {
-      const testId = 'emit-17';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Add listeners then remove all
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Add multiple listeners
           $input.on('touchspin.on.startspin', () => fired = true);
@@ -621,7 +555,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 200);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(false);
     });
@@ -630,19 +564,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Native Change Event', () => {
 
     test('should fire native change event when value changes', async ({ page }) => {
-      const testId = 'emit-18';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Listen for native change event
-      const changeFired = await page.evaluate((id) => {
+      const changeFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Listen to native change event
           $input.on('change', () => {
@@ -654,25 +584,21 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(changeFired).toBe(true);
     });
 
     test('should fire change event when setting value', async ({ page }) => {
-      const testId = 'emit-19';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Track change events
-      const changeCount = await page.evaluate((id) => {
+      const changeCount = await page.evaluate(() => {
         return new Promise((resolve) => {
           let count = 0;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('change', () => count++);
 
@@ -683,7 +609,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
           setTimeout(() => resolve(count), 100);
         });
-      }, testId);
+      });
 
       expect(changeCount).toBeGreaterThan(0);
     });
@@ -692,24 +618,20 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Button Click Events', () => {
 
     test('should emit events when clicking spinner buttons', async ({ page }) => {
-      const testId = 'emit-20';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Set up event listener
-      const eventFired = await page.evaluate((id) => {
+      const eventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          (window as any).$(`#${id}`).on('touchspin.on.startspin', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.startspin', () => {
             fired = true;
           });
 
           // Click the up button
-          const wrapper = document.querySelector(`#${id}`).closest('[data-touchspin-injected]');
+          const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
           const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
           if (upButton) {
             upButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
@@ -720,32 +642,29 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
           setTimeout(() => resolve(fired), 200);
         });
-      }, testId);
+      });
 
       expect(eventFired).toBe(true);
     });
 
     test('should emit min/max events when clicking buttons at boundaries', async ({ page }) => {
-      const testId = 'emit-21';
-
       // Initialize TouchSpin at max
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`)
-          .TouchSpin({ min: 30, max: 40 })
-          .TouchSpin('set', 40);
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 30, max: 40 });
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').TouchSpin('set', 40);
+      });
 
       // Try to click up at max
-      const maxEventFired = await page.evaluate((id) => {
+      const maxEventFired = await page.evaluate(() => {
         return new Promise((resolve) => {
           let fired = false;
 
-          (window as any).$(`#${id}`).on('touchspin.on.max', () => {
+          (window as any).$('[data-testid="test-input"]').on('touchspin.on.max', () => {
             fired = true;
           });
 
           // Click the up button
-          const wrapper = document.querySelector(`#${id}`).closest('[data-touchspin-injected]');
+          const wrapper = document.querySelector('[data-testid="test-input"]').closest('[data-touchspin-injected]');
           const upButton = wrapper?.querySelector('.bootstrap-touchspin-up') as HTMLElement;
           if (upButton) {
             upButton.click();
@@ -753,7 +672,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
           setTimeout(() => resolve(fired), 100);
         });
-      }, testId);
+      });
 
       expect(maxEventFired).toBe(true);
     });
@@ -762,15 +681,11 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Combined Events', () => {
 
     test('should handle multiple event types together', async ({ page }) => {
-      const testId = 'emit-22';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 40, max: 50, step: 5 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 40, max: 50, step: 5 });
 
       // Track various events
-      const eventData = await page.evaluate((id) => {
+      const eventData = await page.evaluate(() => {
         return new Promise<{ min: number; max: number; startspin: number; stopspin: number; change: number }>((resolve) => {
           const events = {
             min: 0,
@@ -780,7 +695,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             change: 0
           };
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.min', () => events.min++);
           $input.on('touchspin.on.max', () => events.max++);
@@ -800,7 +715,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 100);
           }, 200);
         });
-      }, testId);
+      });
 
       // Should have triggered various events
       expect(eventData.min).toBeGreaterThan(0);
@@ -811,19 +726,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit events during complex interaction sequence', async ({ page }) => {
-      const testId = 'emit-23';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100, step: 10 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100, step: 10 });
 
       // Complex interaction with event tracking
-      const eventLog = await page.evaluate((id) => {
+      const eventLog = await page.evaluate(() => {
         return new Promise((resolve) => {
           const log: string[] = [];
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           // Set up all event listeners
           $input.on('touchspin.on.min', () => log.push('min'));
@@ -850,7 +761,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             }, 200);
           }, 200);
         });
-      }, testId);
+      });
 
       // Should have a rich event log
       expect(eventLog).toContain('min');
@@ -865,19 +776,15 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Context', () => {
 
     test('should provide correct context (this) in event handlers', async ({ page }) => {
-      const testId = 'emit-24';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Check event context
-      const contextCorrect = await page.evaluate((id) => {
+      const contextCorrect = await page.evaluate(() => {
         return new Promise((resolve) => {
           let isCorrect = false;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.startspin', function() {
             // 'this' should be the input element
@@ -891,26 +798,22 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             resolve(isCorrect);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(contextCorrect).toBe(true);
     });
 
     test('should pass jQuery event object to handlers', async ({ page }) => {
-      const testId = 'emit-25';
-
       // Initialize TouchSpin
-      await page.evaluate((id) => {
-        (window as any).$(`#${id}`).TouchSpin({ min: 0, max: 100 });
-      }, testId);
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
 
       // Check event object
-      const eventValid = await page.evaluate((id) => {
+      const eventValid = await page.evaluate(() => {
         return new Promise((resolve) => {
           let hasEventObject = false;
           let correctType = false;
 
-          const $input = (window as any).$(`#${id}`);
+          const $input = (window as any).$('[data-testid="test-input"]');
 
           $input.on('touchspin.on.startspin', (e) => {
             hasEventObject = e !== undefined;
@@ -924,7 +827,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
             resolve(hasEventObject && correctType);
           }, 100);
         });
-      }, testId);
+      });
 
       expect(eventValid).toBe(true);
     });
