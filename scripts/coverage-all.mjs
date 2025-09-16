@@ -32,7 +32,7 @@ if (dist) {
 }
 
 console.log('🧪 Running tests with coverage...');
-const testStatus = run("yarn", ["coverage", ...passThrough], dist ? { COVERAGE_DIST: "1" } : {});
+const testStatus = run("yarn", ["coverage", ...passThrough], dist ? { COVERAGE: "1", COVERAGE_DIST: "1" } : { COVERAGE: "1" });
 
 console.log('🔀 Merging coverage files...');
 runAndExit("yarn", ["coverage:merge"]);

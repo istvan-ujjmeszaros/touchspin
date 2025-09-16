@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
+import '../../../__tests__/coverage.hooks';
 
 test.describe('jQuery TouchSpin Commands API', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
     // Reload page for each test to ensure clean state
     await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
     await page.waitForFunction(() => (window as any).testPageReady === true);
     await touchspinHelpers.installJqueryPlugin(page);
     await page.waitForFunction(() => (window as any).touchSpinReady === true);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'jquery-commands');
   });
 
   test.describe('Plugin Initialization', () => {

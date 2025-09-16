@@ -1,4 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Standard timeout constants
 const TOUCHSPIN_EVENT_WAIT = 700;
@@ -455,33 +457,35 @@ async function startCoverage(page: Page): Promise<void> {
   // Only collect coverage when running with coverage config
   if (process.env.COVERAGE === '1') {
     try {
-      await page.coverage.startJSCoverage({
-        resetOnNavigation: false
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Profiler.enable');
+      await cdp.send('Profiler.startPreciseCoverage', {
+        callCount: true,
+        detailed: true
       });
+      // Store CDP session on page for later use
+      (page as any).__cdpSession = cdp;
     } catch (error) {
-      console.error('Failed to start coverage:', error);
+      console.error('Failed to start CDP coverage:', error);
     }
   }
 
   // Set COVERAGE_DIST flag in browser context if environment variable is set
   if (process.env.COVERAGE_DIST === '1') {
-    await page.evaluate(() => {
-      (window as any).COVERAGE_DIST = true;
-    });
-
-    // Add import map for bare module specifiers when in dist mode
+    // make the flag available before any page.evaluate runs
     await page.addInitScript(() => {
+      (window as any).COVERAGE_DIST = true;
+      // (optional) import map – harmless if bundling removed bare imports
       const importMap = {
         imports: {
           '@touchspin/core': '/packages/core/dist/index.js',
-          '@touchspin/renderer-bootstrap5': '/packages/renderers/bootstrap5/dist/index.js'
-        }
+          '@touchspin/renderer-bootstrap5': '/packages/renderers/bootstrap5/dist/index.js',
+        },
       };
-
-      const script = document.createElement('script');
-      script.type = 'importmap';
-      script.textContent = JSON.stringify(importMap);
-      document.head.appendChild(script);
+      const s = document.createElement('script');
+      s.type = 'importmap';
+      s.textContent = JSON.stringify(importMap);
+      document.head.appendChild(s);
     });
   }
 
@@ -492,28 +496,36 @@ async function startCoverage(page: Page): Promise<void> {
 
     // Handle any request to /packages/**/src/** by translating to equivalent /dist/ path
     await page.route('**/packages/**/src/**', async (route) => {
-      const orig = new URL(route.request().url());
-      const distPath = orig.pathname
-        .replace('/src/', '/dist/')
-        .replace(/\.ts$/, '.js');
+      const fs = await import('fs');
+      const path = await import('path');
 
-      // Convert URL path to local filesystem path
-      const pathIndex = distPath.indexOf('/packages/');
-      if (pathIndex === -1) {
-        await route.abort();
+      const url = new URL(route.request().url());
+      let p = url.pathname; // e.g. /packages/renderers/bootstrap5/src/Bootstrap5Renderer.js
+
+      // Special-case: any renderer src file → its dist/index.js
+      //   /packages/renderers/<name>/src/<anything>.js  →  /packages/renderers/<name>/dist/index.js
+      const m = p.match(/^\/packages\/renderers\/([^/]+)\/src\/[^/]+\.js$/);
+      if (m) {
+        const rel = `/packages/renderers/${m[1]}/dist/index.js`;
+        const local = path.join(process.cwd(), rel.slice(1));
+        if (fs.existsSync(local)) {
+          console.warn(`[COVERAGE_DIST] fulfill (renderer src→dist): ${p} → ${local}`);
+          await route.fulfill({ path: local });
+          return;
+        }
+      }
+
+      // Generic mapping: /src/ → /dist/ and .ts → .js (works for jquery-plugin, core, etc.)
+      const distPath = p.replace('/src/', '/dist/').replace(/\.ts$/, '.js');
+      const local = path.join(process.cwd(), distPath.replace(/^\//, ''));
+      if (fs.existsSync(local)) {
+        console.warn(`[COVERAGE_DIST] fulfill (src→dist): ${p} → ${local}`);
+        await route.fulfill({ path: local });
         return;
       }
 
-      const relativePath = distPath.slice(pathIndex + 1); // Remove leading slash
-      const localPath = path.join(process.cwd(), relativePath);
-
-      if (fs.existsSync(localPath)) {
-        console.warn(`[COVERAGE_DIST] fulfill (src→dist): ${route.request().url()} → ${localPath}`);
-        await route.fulfill({ path: localPath });
-      } else {
-        console.error(`[COVERAGE_DIST] dist file not found: ${localPath}`);
-        await route.abort();
-      }
+      // Fallback to dev server if file not found
+      await route.continue();
     });
 
     // Also handle direct requests to /packages/**/dist/** from filesystem
@@ -725,8 +737,13 @@ async function collectCoverage(page: Page, testName: string): Promise<void> {
   // Only collect coverage when running with coverage config
   if (process.env.COVERAGE === '1') {
     try {
-      const coverage = await page.coverage.stopJSCoverage();
-      await saveCoverageData(coverage, testName);
+      const cdp = (page as any).__cdpSession;
+      if (cdp) {
+        const { result } = await cdp.send('Profiler.takePreciseCoverage');
+        await saveCoverageData(result, testName);
+      } else {
+        console.warn(`No CDP session found for test: ${testName}`);
+      }
     } catch (error) {
       // Log the error so we can see what's happening
       console.error(`Coverage collection error for ${testName}:`, error);
@@ -748,9 +765,8 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
   const sourceCoverage = coverage.filter(entry => {
     const url = entry.url || '';
     return url.includes('/packages/') &&
-           url.includes('/src/') &&
+           (url.includes('/src/') || url.includes('/dist/')) &&
            !url.includes('node_modules') &&
-           !url.includes('dist/') &&
            !url.includes('@vite/client');
   });
 
@@ -759,8 +775,6 @@ async function saveCoverageData(coverage: any[], testName: string): Promise<void
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     const filePath = path.join(coverageDir, fileName);
     await fs.promises.writeFile(filePath, JSON.stringify(sourceCoverage, null, 2));
-  } else {
-    // No source files found in coverage
   }
 }
 
