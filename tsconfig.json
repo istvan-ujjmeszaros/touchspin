@@ -7,7 +7,10 @@
   "include": [
     "packages/core/**/*.ts",
     "packages/vanilla-renderer/**/*.ts",
-    "packages/web-component/**/*.ts"
+    "packages/web-component/**/*.ts",
+    "packages/jquery-plugin/**/*.ts",
+    "packages/renderers/**/*.ts",
+    "__tests__/**/*.ts"
   ],
   "exclude": [
     "node_modules",
