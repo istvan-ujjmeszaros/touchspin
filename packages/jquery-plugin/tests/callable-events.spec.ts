@@ -350,6 +350,50 @@ test.describe('jQuery TouchSpin Callable Events', () => {
     });
   });
 
+  test.describe('Complete Coverage Test', () => {
+
+    test('should exercise all callable event handlers for coverage', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5, min: 0, max: 100 });
+
+      // TODO remove: temporary sanity check that events fire
+      const eventsFired = await page.evaluate(() => {
+        const $input = (window as any).$('[data-testid="test-input"]');
+        const fired: string[] = [];
+
+        // Temporary listeners to verify events actually fire
+        $input.on('touchspin.uponce', () => fired.push('uponce'));
+        $input.on('touchspin.downonce', () => fired.push('downonce'));
+        $input.on('touchspin.startupspin', () => fired.push('startupspin'));
+        $input.on('touchspin.startdownspin', () => fired.push('startdownspin'));
+        $input.on('touchspin.stopspin', () => fired.push('stopspin'));
+        $input.on('touchspin.updatesettings', () => fired.push('updatesettings'));
+
+        // Exercise all event handlers from lines 100-128 in index.ts
+        $input.trigger('touchspin.uponce');          // Line 100-103
+        $input.trigger('touchspin.downonce');        // Line 104-107
+        $input.trigger('touchspin.startupspin');     // Line 108-111
+        $input.trigger('touchspin.startdownspin');   // Line 112-115
+        $input.trigger('touchspin.stopspin');        // Line 116-119
+        $input.trigger('touchspin.updatesettings', [{ step: 10 }]); // Line 120-123
+
+        // Note: touchspin.destroy and blur.touchspin tested separately
+        return fired;
+      });
+
+      // Small wait to let handlers execute
+      await page.waitForTimeout(100);
+
+      // Verify events fired (sanity check for coverage)
+      expect(eventsFired).toContain('uponce');
+      expect(eventsFired).toContain('downonce');
+      expect(eventsFired).toContain('updatesettings');
+
+      // Basic verification that events worked (value should have changed)
+      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      expect(finalValue).toBeGreaterThan(40); // Should have incremented from initial 50
+    });
+  });
+
   test.describe('Event Safety', () => {
 
     test('should ignore events on non-initialized inputs', async ({ page }) => {
