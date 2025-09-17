@@ -80,6 +80,7 @@ async function globalTeardown() {
 
   let filesProcessed = 0;
   const loggedUrls = new Set<string>();
+  const loggedPaths = new Set<string>();
   const urlCounts = new Map<string, number>();
 
   for (const file of coverageFiles) {
@@ -118,7 +119,12 @@ async function globalTeardown() {
 
           // Convert to Istanbul and write ONE .istanbul.json PER INPUT COVERAGE FILE
           const istanbulData = converter.toIstanbul();
-          console.log(`✅ Converted ${localPath}, got ${Object.keys(istanbulData).length} files`);
+
+          // Only log conversion success once per unique path
+          if (!loggedPaths.has(localPath)) {
+            console.log(`✅ Converted ${localPath}, got ${Object.keys(istanbulData).length} files`);
+            loggedPaths.add(localPath);
+          }
 
           fs.mkdirSync(istanbulJsonDir, { recursive: true });
 
