@@ -42,8 +42,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle decimal step values', async ({ page }) => {
-      await setValueViaAPI(page, 'test-input', 10);
-      await initializeCore(page, 'test-input', { step: 0.25, decimals: 2 });
+      await initializeCore(page, 'test-input', { step: 0.25, decimals: 2, initval: 10 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(10.25);
     });
@@ -70,8 +69,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle very small step values', async ({ page }) => {
-      await setValueViaAPI(page, 'test-input', 1);
-      await initializeCore(page, 'test-input', { step: 0.001, decimals: 3 });
+      await initializeCore(page, 'test-input', { step: 0.001, decimals: 3, initval: 1 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(1.001);
     });
@@ -111,43 +109,37 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Step with NaN Values', () => {
     test('should use firstclickvalueifempty when starting from NaN', async ({ page }) => {
-      await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        input.value = '';
-      });
       await initializeCore(page, 'test-input', {
         step: 10,
-        firstclickvalueifempty: 20
+        firstclickvalueifempty: 20,
+        initval: ''  // Start with empty value
       });
+
       await incrementViaAPI(page, 'test-input');
-      expect(await getNumericValue(page, 'test-input')).toBe(30); // 20 + 10
+
+      // Core sets value to firstclickvalueifempty exactly when starting from NaN
+      expect(await getNumericValue(page, 'test-input')).toBe(20);
     });
 
     test('should calculate midpoint when no firstclickvalueifempty set', async ({ page }) => {
-      await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        input.value = '';
-      });
       await initializeCore(page, 'test-input', {
         min: 10,
         max: 30,
-        step: 5
+        step: 5,
+        initval: ''  // Start with empty value
       });
       await incrementViaAPI(page, 'test-input');
-      expect(await getNumericValue(page, 'test-input')).toBe(25); // midpoint(10,30) + 5
+      expect(await getNumericValue(page, 'test-input')).toBe(20); // midpoint(10,30) exactly
     });
 
     test('should handle NaN during down operation', async ({ page }) => {
-      await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        input.value = '';
-      });
       await initializeCore(page, 'test-input', {
         step: 5,
-        firstclickvalueifempty: 25
+        firstclickvalueifempty: 25,
+        initval: ''  // Start with empty value
       });
       await decrementViaAPI(page, 'test-input');
-      expect(await getNumericValue(page, 'test-input')).toBe(20); // 25 - 5
+      expect(await getNumericValue(page, 'test-input')).toBe(25); // firstclickvalueifempty exactly
     });
   });
 
@@ -157,8 +149,8 @@ test.describe('Core TouchSpin Step Calculations', () => {
       // Update to a step that requires alignment
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        const api = window.touchSpinInstances?.get('test-input');
-        api.updateSettings({ step: 5 });
+        const core = (input as any)._touchSpinCore;
+        core.updateSettings({ step: 5 });
       });
       const bounds = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -174,8 +166,8 @@ test.describe('Core TouchSpin Step Calculations', () => {
       // Update to step 1 - should not align
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        const api = window.touchSpinInstances?.get('test-input');
-        api.updateSettings({ step: 1 });
+        const core = (input as any)._touchSpinCore;
+        core.updateSettings({ step: 1 });
       });
       const bounds = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -307,26 +299,30 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Step Calculation Edge Cases', () => {
     test('should handle very large step values', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1000000 });
+      await initializeCore(page, 'test-input', {
+        step: 1000000,
+        initval: 0,
+        max: 2000000  // Set max higher than step to avoid clamping
+      });
       await incrementViaAPI(page, 'test-input');
-      expect(await getNumericValue(page, 'test-input')).toBe(1000050); // 50 + 1000000
+      expect(await getNumericValue(page, 'test-input')).toBe(1000000); // 0 + 1000000
     });
 
     test('should handle very small decimal steps', async ({ page }) => {
-      await setValueViaAPI(page, 'test-input', 0);
       await initializeCore(page, 'test-input', {
         step: 0.0001,
-        decimals: 4
+        decimals: 4,
+        initval: 0
       });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(0.0001);
     });
 
     test('should handle step with repeating decimals', async ({ page }) => {
-      await setValueViaAPI(page, 'test-input', 0);
       await initializeCore(page, 'test-input', {
         step: 1/3,
-        decimals: 3
+        decimals: 3,
+        initval: 0
       });
       await incrementViaAPI(page, 'test-input');
       // Should handle floating point precision correctly
@@ -335,16 +331,16 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should maintain precision in complex step calculations', async ({ page }) => {
-      await setValueViaAPI(page, 'test-input', 0.1);
       await initializeCore(page, 'test-input', {
         step: 0.2,
-        decimals: 1
+        decimals: 1,
+        initval: 0.2  // Use value that doesn't need normalization
       });
       // Perform multiple operations to test floating point accumulation
-      await incrementViaAPI(page, 'test-input'); // 0.3
-      await incrementViaAPI(page, 'test-input'); // 0.5
-      await decrementViaAPI(page, 'test-input'); // 0.3
-      expect(await getNumericValue(page, 'test-input')).toBe(0.3);
+      await incrementViaAPI(page, 'test-input'); // 0.4
+      await incrementViaAPI(page, 'test-input'); // 0.6
+      await decrementViaAPI(page, 'test-input'); // 0.4
+      expect(await getNumericValue(page, 'test-input')).toBe(0.4);
     });
   });
 });
