@@ -85,7 +85,8 @@
     "coverage:check": "nyc check-coverage --lines=80 --functions=80 --branches=80 --statements=80",
     "coverage:all": "node scripts/coverage-all.mjs",
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
-    "coverage:all:dev": "node scripts/coverage-all.mjs --dev"
+    "coverage:all:dev": "node scripts/coverage-all.mjs --dev",
+    "guard:no-src-in-tests": "bash -c '! git grep -nE \"from.*packages/.*/src/.*\\\\.(js|ts)\" -- __tests__ packages || (echo \"❌ No src imports allowed in tests. Use dist/index.js instead.\" && exit 1)'"
   },
   "workspaces": [
     "packages/*",

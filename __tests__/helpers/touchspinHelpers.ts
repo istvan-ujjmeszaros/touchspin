@@ -469,111 +469,15 @@ async function startCoverage(page: Page): Promise<void> {
       console.error('Failed to start CDP coverage:', error);
     }
   }
-
-  // Set COVERAGE_DIST flag in browser context if environment variable is set
-  if (process.env.COVERAGE_DIST === '1') {
-    // make the flag available before any page.evaluate runs
-    await page.addInitScript(() => {
-      (window as any).COVERAGE_DIST = true;
-      // (optional) import map – harmless if bundling removed bare imports
-      const importMap = {
-        imports: {
-          '@touchspin/core': '/packages/core/dist/index.js',
-          '@touchspin/renderer-bootstrap5': '/packages/renderers/bootstrap5/dist/index.js',
-        },
-      };
-      const s = document.createElement('script');
-      s.type = 'importmap';
-      s.textContent = JSON.stringify(importMap);
-      document.head.appendChild(s);
-    });
-  }
-
-  // Enforce dist assets in coverage mode: serve files directly from filesystem
-  if (process.env.COVERAGE_DIST === '1') {
-    const fs = await import('fs');
-    const path = await import('path');
-
-    // Handle any request to /packages/**/src/** by translating to equivalent /dist/ path
-    await page.route('**/packages/**/src/**', async (route) => {
-      const fs = await import('fs');
-      const path = await import('path');
-
-      const url = new URL(route.request().url());
-      let p = url.pathname; // e.g. /packages/renderers/bootstrap5/src/Bootstrap5Renderer.js
-
-      // Special-case: any renderer src file → its dist/index.js
-      //   /packages/renderers/<name>/src/<anything>.js  →  /packages/renderers/<name>/dist/index.js
-      const m = p.match(/^\/packages\/renderers\/([^/]+)\/src\/[^/]+\.js$/);
-      if (m) {
-        const rel = `/packages/renderers/${m[1]}/dist/index.js`;
-        const local = path.join(process.cwd(), rel.slice(1));
-        if (fs.existsSync(local)) {
-          console.warn(`[COVERAGE_DIST] fulfill (renderer src→dist): ${p} → ${local}`);
-          await route.fulfill({ path: local });
-          return;
-        }
-      }
-
-      // Generic mapping: /src/ → /dist/ and .ts → .js (works for jquery-plugin, core, etc.)
-      const distPath = p.replace('/src/', '/dist/').replace(/\.ts$/, '.js');
-      const local = path.join(process.cwd(), distPath.replace(/^\//, ''));
-      if (fs.existsSync(local)) {
-        console.warn(`[COVERAGE_DIST] fulfill (src→dist): ${p} → ${local}`);
-        await route.fulfill({ path: local });
-        return;
-      }
-
-      // Fallback to dev server if file not found
-      await route.continue();
-    });
-
-    // Also handle direct requests to /packages/**/dist/** from filesystem
-    await page.route('**/packages/**/dist/**', async (route) => {
-      const orig = new URL(route.request().url());
-      const pathIndex = orig.pathname.indexOf('/packages/');
-      if (pathIndex === -1) {
-        await route.abort();
-        return;
-      }
-
-      const relativePath = orig.pathname.slice(pathIndex + 1); // Remove leading slash
-      const localPath = path.join(process.cwd(), relativePath);
-
-      if (fs.existsSync(localPath)) {
-        console.warn(`[COVERAGE_DIST] fulfill (dist): ${route.request().url()} → ${localPath}`);
-        await route.fulfill({ path: localPath });
-      } else {
-        console.error(`[COVERAGE_DIST] dist file not found: ${localPath}`);
-        await route.abort();
-      }
-    });
-
-  }
 }
 
 // jQuery plugin installation AFTER coverage starts
 async function installJqueryPlugin(page: Page): Promise<void> {
-  // Install the jQuery plugin with Bootstrap 5 renderer
-  // This MUST be called after startCoverage() for accurate coverage
+  // Install the jQuery plugin with Bootstrap 5 renderer from built artifacts
   await page.evaluate(async () => {
-    // Determine if we should use dist or src based on COVERAGE_DIST flag
-    const useDist = !!(window as any).COVERAGE_DIST;
-
-    // Choose appropriate module paths
-    const pluginPath = useDist
-      ? '/packages/jquery-plugin/dist/index.js'
-      : '/packages/jquery-plugin/src/index.js';
-    const rendererPath = useDist
-      ? '/packages/renderers/bootstrap5/dist/index.js'
-      : '/packages/renderers/bootstrap5/src/Bootstrap5Renderer.js';
-
-    // Import the plugin and renderer
-    const { installWithRenderer } = await import(pluginPath);
-    const bootstrapModule = await import(rendererPath);
-    const Bootstrap5Renderer = bootstrapModule.default || bootstrapModule.Bootstrap5Renderer;
-
-    // Install with renderer
+    const { installWithRenderer } = await import('/packages/jquery-plugin/dist/index.js');
+    const rendererMod = await import('/packages/renderers/bootstrap5/dist/index.js');
+    const Bootstrap5Renderer = (rendererMod as any).default || (rendererMod as any).Bootstrap5Renderer;
     installWithRenderer(Bootstrap5Renderer);
 
     // Mark as ready for tests

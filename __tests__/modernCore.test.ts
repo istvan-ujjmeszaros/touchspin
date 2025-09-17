@@ -24,7 +24,7 @@ test.describe('Modern Core Unit Tests (TDD)', () => {
       input.disabled = true;
 
       // Import and create core instance
-      return import('../../packages/core/src/index.js').then(({ createPublicApi }) => {
+      return import('../../packages/core/dist/index.js').then(({ createPublicApi }) => {
         const api = createPublicApi(input);
         const beforeValue = api.getValue();
 
@@ -47,7 +47,7 @@ test.describe('Modern Core Unit Tests (TDD)', () => {
       const input = document.getElementById('core-input');
       const eventsCollected = [];
 
-      return import('../../packages/core/src/index.js').then(({ createPublicApi }) => {
+      return import('../../packages/core/dist/index.js').then(({ createPublicApi }) => {
         const api = createPublicApi(input, { min: 0, max: 10 });
 
         // Listen to core events
@@ -77,7 +77,7 @@ test.describe('Modern Core Unit Tests (TDD)', () => {
     const result = await page.evaluate(() => {
       const input = document.getElementById('core-input');
 
-      return import('../../packages/core/src/index.js').then(({ createPublicApi }) => {
+      return import('../../packages/core/dist/index.js').then(({ createPublicApi }) => {
         const api = createPublicApi(input, {
           step: 5,
           min: 0,

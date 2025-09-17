@@ -1,12 +1,10 @@
 import { spawnSync } from "node:child_process";
 
 let open = true;
-let dist = true; // default to build-mode for stable mappings
 const passThrough = [];
 
 for (const a of process.argv.slice(2)) {
   if (a === "--no-open") open = false;
-  else if (a === "--dev") dist = false; // opt-in to dev (HMR) if really needed
   else passThrough.push(a);
 }
 
@@ -24,15 +22,16 @@ function runAndExit(cmd, args, extraEnv = {}) {
   if (status !== 0) process.exit(status);
 }
 
-console.log(`🎯 Running coverage in ${dist ? 'build' : 'dev'} mode${open ? ' (will open)' : ''}`);
+console.log(`🎯 Running coverage in build mode${open ? ' (will open)' : ''}`);
 
-if (dist) {
-  console.log('📦 Building packages...');
-  runAndExit("yarn", ["coverage:build"]);
-}
+console.log('📦 Building packages...');
+runAndExit("yarn", ["coverage:build"]);
+
+console.log('🔍 Checking for src imports in tests...');
+runAndExit("yarn", ["guard:no-src-in-tests"]);
 
 console.log('🧪 Running tests with coverage...');
-const testStatus = run("yarn", ["coverage", ...passThrough], dist ? { COVERAGE: "1", COVERAGE_DIST: "1" } : { COVERAGE: "1" });
+const testStatus = run("yarn", ["coverage", ...passThrough], { COVERAGE: "1" });
 
 console.log('🔀 Merging coverage files...');
 runAndExit("yarn", ["coverage:merge"]);
