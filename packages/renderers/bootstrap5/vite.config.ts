@@ -31,8 +31,8 @@ export default defineConfig({
     rollupOptions: {
       external: () => false, // bundle all dependencies
       output: [
-        { format: 'es', exports: 'named', entryFileNames: 'index.js', inlineDynamicImports: false, sourcemap: true },
-        { format: 'cjs', exports: 'named', entryFileNames: 'index.cjs', inlineDynamicImports: false, sourcemap: true }
+        { format: 'es', exports: 'named', entryFileNames: 'index.js', inlineDynamicImports: false },
+        { format: 'cjs', exports: 'named', entryFileNames: 'index.cjs', inlineDynamicImports: false }
       ],
     },
     outDir: 'dist',

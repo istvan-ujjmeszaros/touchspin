@@ -930,7 +930,20 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
+
+## Testing & Coverage
+
+- Tests load only built artifacts (`/dist/index.js`). Loading `/src/` is forbidden.
+- Guard: `yarn guard:no-src-in-tests`
+- Coverage run:
+  ```bash
+  yarn coverage:build
+  yarn coverage:all packages/jquery-plugin/tests/ --no-open
+  ```
+- Coverage report: `reports/coverage/index.html`
+
+---
 ## Architecture and Roadmap
 
-- See `ARCHITECTURE.md` for the target multi‑package layout (core, renderers, wrappers).  
+- See `ARCHITECTURE.md` for the target multi‑package layout (core, renderers, wrappers).
 - See `ROADMAP.md` for milestones (core extraction, renderer packages, React/Angular/Web Component wrappers) and planned artifact naming.

@@ -475,6 +475,13 @@ async function startCoverage(page: Page): Promise<void> {
 async function installJqueryPlugin(page: Page): Promise<void> {
   // Install the jQuery plugin with Bootstrap 5 renderer from built artifacts
   await page.evaluate(async () => {
+    // Fail fast: if any fixture HTML sneaks in /src/ scripts
+    const offenders = Array.from(document.querySelectorAll('script[src*="/src/"]'))
+      .map(s => (s as HTMLScriptElement).src);
+    if (offenders.length) {
+      throw new Error("Tests must not load /src/. Use /dist/index.js. Offenders:\n" + offenders.join("\n"));
+    }
+
     const { installWithRenderer } = await import('/packages/jquery-plugin/dist/index.js');
     const rendererMod = await import('/packages/renderers/bootstrap5/dist/index.js');
     const Bootstrap5Renderer = (rendererMod as any).default || (rendererMod as any).Bootstrap5Renderer;

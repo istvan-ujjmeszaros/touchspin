@@ -48,7 +48,8 @@
     "typescript-eslint": "^8.43.0",
     "v8-to-istanbul": "^9.3.0",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "^4.2.3"
+    "vite-plugin-dts": "^4.2.3",
+    "husky": "^8.0.0"
   },
   "scripts": {
     "dev": "vite --port 8866 --strictPort",
@@ -86,7 +87,8 @@
     "coverage:all": "node scripts/coverage-all.mjs",
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
     "coverage:all:dev": "node scripts/coverage-all.mjs --dev",
-    "guard:no-src-in-tests": "bash -c '! git grep -nE \"from.*packages/.*/src/.*\\\\.(js|ts)\" -- __tests__ packages || (echo \"❌ No src imports allowed in tests. Use dist/index.js instead.\" && exit 1)'"
+    "guard:no-src-in-tests": "node scripts/guard-no-src-in-tests.mjs",
+    "postinstall": "husky install"
   },
   "workspaces": [
     "packages/*",
