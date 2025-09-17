@@ -105,12 +105,17 @@ Every test should be so simple that a junior developer can:
 **Test Helpers Strategy**:
 ```typescript
 // packages/core/test-helpers/core-adapter.ts
+export async function initializeCore(page, testId, options)  // Creates TouchSpinCore instance directly
 export async function incrementViaAPI(page, testId)    // Uses core.upOnce()
 export async function decrementViaAPI(page, testId)    // Uses core.downOnce()
 export async function incrementViaKeyboard(page, testId) // ArrowUp key
 export async function decrementViaKeyboard(page, testId) // ArrowDown key
 export async function incrementViaWheel(page, testId)  // Mouse wheel up
 export async function decrementViaWheel(page, testId)  // Mouse wheel down
+export async function setValueViaAPI(page, testId, value)  // Uses core.setValue()
+export async function getNumericValue(page, testId)   // Gets numeric value from input
+export async function destroyCore(page, testId)       // Destroys Core instance
+export async function isCoreInitialized(page, testId) // Checks if Core is initialized
 ```
 
 **DO NOT use button helpers in Core tests**:
@@ -173,6 +178,62 @@ expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
 - `step: 5` → Multiples of 5 (5, 10, 15, 20, 25, 30...)
 - `step: 0.1` → One decimal place (0.1, 0.2, 0.3...)
 - `step: 0.25` → Quarter values (0.25, 0.5, 0.75, 1.0...)
+
+#### Core vs jQuery Helper Functions
+
+**CRITICAL: Use the Right Helper for the Right Test Type**
+
+There are two distinct initialization functions for different test scenarios:
+
+**1. Core Tests (Renderer-Independent)**
+```typescript
+// packages/core/test-helpers/core-adapter.ts
+import { initializeCore } from '../test-helpers/core-adapter';
+
+await initializeCore(page, 'test-input', {
+  step: 3,
+  min: 0,
+  max: 100,
+  initval: 48  // Set initial value during initialization
+});
+```
+
+**2. jQuery Plugin Tests (With Renderer)**
+```typescript
+// Uses existing jQuery-based helpers
+import touchspinHelpers from '../test-helpers';
+
+await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {
+  step: 3,
+  min: 0,
+  max: 100
+});
+```
+
+**✅ CORRECT Core Test Pattern:**
+```typescript
+// Use initval option instead of separate setValue call
+await initializeCore(page, 'test-input', {
+  step: 0.25,
+  decimals: 2,
+  initval: 10  // Sets value before Core initialization
+});
+await incrementViaAPI(page, 'test-input');
+expect(await getNumericValue(page, 'test-input')).toBe(10.25);
+```
+
+**❌ WRONG Core Test Pattern:**
+```typescript
+// This will fail because _touchSpinCore doesn't exist yet
+await setValueViaAPI(page, 'test-input', 10);  // FAILS!
+await initializeCore(page, 'test-input', { step: 0.25, decimals: 2 });
+```
+
+**Key Differences:**
+- **`initializeCore`**: Creates `new TouchSpinCore()` directly, stores on `input._touchSpinCore`
+- **`initializeTouchSpinJQuery`**: Uses jQuery wrapper, creates renderer UI elements
+- **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
+- **Core helpers work without renderer**: No buttons created, API/keyboard/wheel only
 
 ### Phase 3: Renderer Packages 📅 (Future - 0%)
 
@@ -449,6 +510,33 @@ When initialized with `data-testid="my-input"`, creates:
 ```typescript
 expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
 ```
+
+### CRITICAL: TouchSpin Initialization Detection
+
+**For Core Package Tests Only** (jQuery plugin uses different pattern):
+
+- **Initialization Signal**: Core sets `data-touchspin-injected` attribute **on the input element** when fully initialized
+- **What "fully initialized" means**:
+  1. DOM structure built (wrapper, buttons created)
+  2. Event handlers attached
+  3. Mutation observer active
+  4. Component ready for interaction
+
+**IMPORTANT**: The `initializeCore` helper automatically waits for this attribute before returning. Tests should never manually check for initialization - the helper guarantees the Core is ready.
+
+```typescript
+// ✅ CORRECT - initializeCore waits for full initialization
+await initializeCore(page, 'test-input', { step: 5 });
+// Core is guaranteed to be fully ready here
+
+// ❌ WRONG - Don't manually check, helper does this
+await initializeCore(page, 'test-input', { step: 5 });
+await page.waitForSelector('[data-testid="test-input"][data-touchspin-injected]'); // Redundant!
+```
+
+**Key Difference from jQuery Plugin**:
+- **jQuery Plugin**: Sets `data-touchspin-injected` on the **wrapper element**
+- **Core Package**: Sets `data-touchspin-injected` on the **input element** (updated in Core source)
 
 ### Checking for Destroy
 
