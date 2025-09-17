@@ -6,9 +6,10 @@ async function globalSetup() {
   const coverageDir = path.join(process.cwd(), '.nyc_output');
   const playwrightCoverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
   const htmlCoverageDir = path.join(process.cwd(), 'reports', 'coverage');
+  const istanbulJsonDir = path.join(process.cwd(), 'reports', 'istanbul-json');
 
   // Clean all coverage directories
-  [coverageDir, playwrightCoverageDir, htmlCoverageDir].forEach(dir => {
+  [coverageDir, playwrightCoverageDir, htmlCoverageDir, istanbulJsonDir].forEach(dir => {
     if (fs.existsSync(dir)) {
       // Remove all files in the directory
       fs.readdirSync(dir).forEach(file => {
