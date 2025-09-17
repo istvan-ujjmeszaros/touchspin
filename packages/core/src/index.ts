@@ -99,6 +99,7 @@ export class TouchSpinCore {
   private _spinDelayTimeout: ReturnType<typeof setTimeout> | null = null;
   private _spinIntervalTimer: ReturnType<typeof setInterval> | null = null;
   private _upButton: (HTMLElement & { disabled?: boolean }) | null = null;
+  private _originalInputType: string | null = null;
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
   private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
@@ -347,6 +348,53 @@ export class TouchSpinCore {
     // stepintervaldelay
     const sid = Number(this.settings.stepintervaldelay);
     if (!isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
+
+    // Validate callbacks and handle input type conversion if needed
+    this._validateCallbacks();
+  }
+
+  /**
+   * Validate callbacks and automatically convert number inputs to text inputs
+   * when formatting callbacks that add non-numeric characters are detected.
+   * @private
+   */
+  _validateCallbacks(): void {
+    // Only validate for number inputs
+    const currentType = this.input.getAttribute('type');
+    if (currentType !== 'number') return;
+
+    // Only check if callbacks are set (not default)
+    const defaultCallback = (v: string) => v;
+    if (!this.settings.callback_after_calculation ||
+        this.settings.callback_after_calculation.toString() === defaultCallback.toString()) return;
+
+    // Test the callback with a sample value
+    const testValue = "123.45";
+    const afterResult = this.settings.callback_after_calculation(testValue);
+
+    // Check if result contains non-numeric characters
+    // Allow: optional minus, digits, optional decimal point and digits
+    if (!/^-?\d*\.?\d*$/.test(afterResult)) {
+      console.warn(
+        'TouchSpin: Detected formatting callback that adds non-numeric characters. ' +
+        'Converting input from type="number" to type="text" to support formatting like "' + afterResult + '". ' +
+        'This ensures compatibility with custom formatting while maintaining full TouchSpin functionality. ' +
+        'The original type will be restored when TouchSpin is destroyed.'
+      );
+
+      // Store original type if not already stored
+      if (this._originalInputType === null) {
+        this._originalInputType = 'number';
+      }
+
+      // Convert input type to text to support formatting
+      this.input.setAttribute('type', 'text');
+
+      // Remove number-specific native attributes since they only work on number inputs
+      this.input.removeAttribute('min');
+      this.input.removeAttribute('max');
+      this.input.removeAttribute('step');
+    }
   }
 
   /**
@@ -662,6 +710,19 @@ export class TouchSpinCore {
     // Clear button references
     this._upButton = null;
     this._downButton = null;
+
+    // Restore original input type if it was changed
+    if (this._originalInputType !== null) {
+      // Before converting back to number input, strip formatting from the current value
+      const currentValue = this.input.value;
+      if (currentValue && this.settings.callback_before_calculation) {
+        const numericValue = this.settings.callback_before_calculation(currentValue);
+        this.input.value = numericValue;
+      }
+
+      this.input.setAttribute('type', this._originalInputType);
+      this._originalInputType = null;
+    }
 
     // Remove instance from element
     if (this.input[INSTANCE_KEY] === this) {
