@@ -271,6 +271,8 @@ export class TouchSpinCore {
     if (this.renderer) {
       this.renderer.finalizeWrapperAttributes();
     }
+
+    this.input.setAttribute('data-touchspin-injected', 'input');
   }
 
   /**
