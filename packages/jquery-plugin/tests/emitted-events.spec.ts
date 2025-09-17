@@ -271,6 +271,27 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
       expect(await touchspinHelpers.hasEventInLog(page, 'focus', 'native')).toBe(true);
     });
 
+    test('should invoke value validation on jQuery-triggered blur', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
+
+      // Set value above maximum to test validation correction
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.value = '150'; // Above max of 100
+      });
+
+      await touchspinHelpers.clearEventLog(page);
+
+      // Trigger jQuery blur event (compatibility path)
+      await page.evaluate(() => {
+        (window as any).$('[data-testid="test-input"]').trigger('blur');
+      });
+
+      // Value should be corrected to maximum
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('100'); // Clamped to max
+      expect(await touchspinHelpers.hasEventInLog(page, 'blur', 'native')).toBe(true);
+    });
+
   });
 
   test.describe('Button Click Events', () => {
