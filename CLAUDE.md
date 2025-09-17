@@ -93,6 +93,38 @@ Every test should be so simple that a junior developer can:
   * State management
   * Configuration merging
 
+#### Core Testing Strategy: Renderer-Independent
+
+**CRITICAL DISCOVERY**: TouchSpin Core without a renderer provides only keyboard/wheel functionality - **no buttons are created**. This is the intended behavior for pure Core testing.
+
+**Core-Only Architecture**:
+- Core package manages state, calculations, boundaries, validation
+- Without renderer: Only supports keyboard (ArrowUp/ArrowDown) and mouse wheel events
+- Console warning: "TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work..."
+
+**Test Helpers Strategy**:
+```typescript
+// packages/core/test-helpers/core-adapter.ts
+export async function incrementViaAPI(page, testId)    // Uses core.upOnce()
+export async function decrementViaAPI(page, testId)    // Uses core.downOnce()
+export async function incrementViaKeyboard(page, testId) // ArrowUp key
+export async function decrementViaKeyboard(page, testId) // ArrowDown key
+export async function incrementViaWheel(page, testId)  // Mouse wheel up
+export async function decrementViaWheel(page, testId)  // Mouse wheel down
+```
+
+**DO NOT use button helpers in Core tests**:
+- `clickUpButton()` and `clickDownButton()` will fail - no buttons exist
+- These helpers are for renderer integration tests only
+- Core tests should use API or keyboard/wheel methods
+
+**Core Test File Status** (All syntax errors fixed):
+- `boundary-enforcement.spec.ts` - Placeholder tests for min/max enforcement
+- `step-calculations.spec.ts` - ✅ Updated to use API methods (incrementViaAPI/decrementViaAPI)
+- `value-normalization.spec.ts` - Complete implementation, tests getValue/setValue methods
+- `value-operations.spec.ts` - Placeholder tests for core operations
+- All other test files - Clean placeholders awaiting implementation
+
 ### Phase 3: Renderer Packages 📅 (Future - 0%)
 
 * **Status**: After core package
