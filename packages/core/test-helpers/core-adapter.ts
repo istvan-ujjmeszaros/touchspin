@@ -123,3 +123,39 @@ export async function decrementViaWheel(page: Page, testId: string): Promise<voi
   await input.hover();
   await page.mouse.wheel(0, 100); // Positive deltaY = down
 }
+
+// Start up spin via Core API
+export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.startUpSpin();
+  }, { testId });
+}
+
+// Start down spin via Core API
+export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.startDownSpin();
+  }, { testId });
+}
+
+// Stop spin via Core API
+export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.stopSpin();
+  }, { testId });
+}

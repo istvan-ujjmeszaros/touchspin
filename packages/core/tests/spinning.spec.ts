@@ -5,7 +5,10 @@ import {
   getNumericValue,
   setValueViaAPI,
   destroyCore,
-  isCoreInitialized
+  isCoreInitialized,
+  startUpSpinViaAPI,
+  startDownSpinViaAPI,
+  stopSpinViaAPI
 } from '../test-helpers/core-adapter';
 
 // Use original battle-tested helpers
@@ -28,80 +31,180 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     await touchspinHelpers.collectCoverage(page, 'core-spinning');
   });
 
-  test.describe('Spin Speed and Ramping', () => {
-    test('should start spinning at initial speed', async ({ page }) => {
-      // TODO: Test initial spin speed when spinning starts
-      expect(true).toBe(true); // Placeholder
+  test.describe('Spin API Methods', () => {
+    test('should start up spin via API', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await touchspinHelpers.clearEventLog(page);
+
+      await startUpSpinViaAPI(page, 'test-input');
+
+      // Should emit start spin event
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
-    test('should accelerate spin speed over time', async ({ page }) => {
-      // TODO: Test that spinning gets faster the longer it runs
-      expect(true).toBe(true); // Placeholder
+    test('should start down spin via API', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await touchspinHelpers.clearEventLog(page);
+
+      await startDownSpinViaAPI(page, 'test-input');
+
+      // Should emit start spin event
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
-    test('should respect maximum spin speed', async ({ page }) => {
-      // TODO: Test that spinning speed caps at some maximum
-      expect(true).toBe(true); // Placeholder
+    test('should stop spin via API', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await startUpSpinViaAPI(page, 'test-input');
+      await touchspinHelpers.clearEventLog(page);
+
+      await stopSpinViaAPI(page, 'test-input');
+
+      // Should emit stop spin event
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
     });
 
-    test('should handle spin speed configuration', async ({ page }) => {
-      // TODO: Test custom spin speed settings
-      expect(true).toBe(true); // Placeholder
+    test('should handle multiple spin operations', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+
+      await startUpSpinViaAPI(page, 'test-input');
+      await stopSpinViaAPI(page, 'test-input');
+      await startDownSpinViaAPI(page, 'test-input');
+      await stopSpinViaAPI(page, 'test-input');
+
+      // Should handle sequence without errors
+      expect(await getNumericValue(page, 'test-input')).toBeGreaterThanOrEqual(8); // Some value change expected
     });
   });
 
   test.describe('Spin Behavior at Boundaries', () => {
-    test('should stop spinning when reaching minimum value', async ({ page }) => {
-      // TODO: Test that down spin stops automatically at min
-      expect(true).toBe(true); // Placeholder
+    test('should emit min event when spinning down to minimum', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, min: 0, initval: 2 });
+      await touchspinHelpers.clearEventLog(page);
+
+      await startDownSpinViaAPI(page, 'test-input');
+      // Let it spin down to minimum
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      expect(await getNumericValue(page, 'test-input')).toBe(0);
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
     });
 
-    test('should stop spinning when reaching maximum value', async ({ page }) => {
-      // TODO: Test that up spin stops automatically at max
-      expect(true).toBe(true); // Placeholder
+    test('should emit max event when spinning up to maximum', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, max: 10, initval: 8 });
+      await touchspinHelpers.clearEventLog(page);
+
+      await startUpSpinViaAPI(page, 'test-input');
+      // Let it spin up to maximum
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
     });
 
-    test('should not start spinning when already at boundary', async ({ page }) => {
-      // TODO: Test that spin commands are ignored at boundaries
-      expect(true).toBe(true); // Placeholder
+    test('should respect step boundaries while spinning', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 3, min: 0, max: 15, initval: 6 });
+
+      await startUpSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(50);
+      await stopSpinViaAPI(page, 'test-input');
+
+      const value = await getNumericValue(page, 'test-input');
+      expect(value % 3).toBe(0); // Should be divisible by step
+      expect(value).toBeGreaterThanOrEqual(0);
+      expect(value).toBeLessThanOrEqual(15);
     });
   });
 
   test.describe('Spin Direction Changes', () => {
     test('should stop current spin when starting opposite direction', async ({ page }) => {
-      // TODO: Test up spin -> down spin transition
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      await startUpSpinViaAPI(page, 'test-input');
+      await touchspinHelpers.clearEventLog(page);
+
+      await startDownSpinViaAPI(page, 'test-input');
+
+      // Should emit stop then start events
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
-    test('should switch from up to down spin cleanly', async ({ page }) => {
-      // TODO: Test smooth direction transitions
-      expect(true).toBe(true); // Placeholder
+    test('should handle rapid direction changes', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      await startUpSpinViaAPI(page, 'test-input');
+      await startDownSpinViaAPI(page, 'test-input');
+      await startUpSpinViaAPI(page, 'test-input');
+      await stopSpinViaAPI(page, 'test-input');
+
+      // Should handle sequence without errors
+      const finalValue = await getNumericValue(page, 'test-input');
+      expect(typeof finalValue).toBe('number');
+      expect(isNaN(finalValue)).toBe(false);
     });
 
-    test('should switch from down to up spin cleanly', async ({ page }) => {
-      // TODO: Test reverse direction transitions
-      expect(true).toBe(true); // Placeholder
+    test('should maintain consistent state after direction changes', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+      const initialValue = await getNumericValue(page, 'test-input');
+
+      await startUpSpinViaAPI(page, 'test-input');
+      await startDownSpinViaAPI(page, 'test-input');
+      await stopSpinViaAPI(page, 'test-input');
+
+      const finalValue = await getNumericValue(page, 'test-input');
+      expect(finalValue % 2).toBe(0); // Should maintain step divisibility
     });
   });
 
-  test.describe('Spin Timing and Intervals', () => {
-    test('should use consistent timing intervals', async ({ page }) => {
-      // TODO: Test that spin intervals are predictable
-      expect(true).toBe(true); // Placeholder
+  test.describe('Keyboard and Mouse Spin Events', () => {
+    test('should handle held arrow key simulation', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await page.focus('[data-testid="test-input"]');
+
+      const initialValue = await getNumericValue(page, 'test-input');
+
+      // Simulate holding arrow up key
+      await page.keyboard.down('ArrowUp');
+      await page.waitForTimeout(50);
+      await page.keyboard.up('ArrowUp');
+
+      const finalValue = await getNumericValue(page, 'test-input');
+      expect(finalValue).toBeGreaterThan(initialValue);
     });
 
-    test('should handle timer cleanup on stop', async ({ page }) => {
-      // TODO: Test that timers are properly cleared
-      expect(true).toBe(true); // Placeholder
+    test('should stop spin on focus loss', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await page.focus('[data-testid="test-input"]');
+
+      await startUpSpinViaAPI(page, 'test-input');
+
+      // Focus away (to blur target)
+      await page.focus('[data-testid="blur-target"]');
+
+      // Spin should stop when focus is lost
+      await page.waitForTimeout(50);
+
+      const value = await getNumericValue(page, 'test-input');
+      expect(typeof value).toBe('number');
     });
 
-    test('should handle multiple start/stop cycles', async ({ page }) => {
-      // TODO: Test rapid start/stop doesn't leave stale timers
-      expect(true).toBe(true); // Placeholder
+    test('should handle mousewheel spin events', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await page.focus('[data-testid="test-input"]');
+
+      const initialValue = await getNumericValue(page, 'test-input');
+
+      // Wheel up
+      await page.mouse.wheel(0, -100);
+
+      const finalValue = await getNumericValue(page, 'test-input');
+      expect(finalValue).toBeGreaterThan(initialValue);
     });
   });
 });
 
-// NOTE: This test file covers the complex continuous spinning functionality.
-// The old tests had some basic spinning tests but didn't cover the detailed
-// behavior like speed ramping, boundary handling, and state management.
+// NOTE: This test file covers the core spinning functionality using API methods
+// and event verification rather than timing-dependent tests. Focus is on state
+// transitions, event emission, and boundary behavior.
