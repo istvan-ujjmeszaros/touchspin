@@ -62,37 +62,6 @@ Every test should be so simple that a junior developer can:
 * **Do not modify** `__tests__/helpers/touchspinHelpers.ts` or configs unless absolutely necessary
 * **Keep it stable** - these are shared across all test packages
 
-## 🛠️ Helper Usage Policy
-
-### Single Source of Truth
-
-* The **canonical helpers** already exist under `__tests__/helpers/`.
-* These are **battle-tested** and must be treated as the single source of truth.
-
-### Core Package Helpers
-
-* For `@touchspin/core`, we **do not reimplement helpers**.
-* Instead, we:
-
-  1. **Copy** the canonical helpers into `packages/core/test-helpers/`.
-  2. Add a thin **adapter layer** (`core-adapter.ts`) for Core-specific logic (e.g. initialization without jQuery).
-  3. Re-export everything via `packages/core/test-helpers/index.ts`.
-
-### Strict Rules
-
-1. ❌ Do **not** create parallel helpers like `core-helpers.ts`, `events.ts`, or `coverage.ts` — this causes duplication and inconsistency.
-2. ✅ Always import from:
-
-  * `../test-helpers` → shared `touchspinHelpers` (copied from `__tests__/helpers/`).
-  * `../test-helpers/core-adapter` → only for Core-specific APIs.
-3. ✅ All new tests must rely on these helpers, never bypass them.
-
-### Why This Matters
-
-* Keeps the test suite **consistent and maintainable**.
-* Prevents duplication of logic.
-* Ensures that bugfixes to helpers automatically benefit all packages.
-
 ## 📊 Coverage Roadmap: Journey to 100%
 
 ### Phase 1: jQuery Plugin Package ✅ (\~95% Complete)
@@ -166,6 +135,7 @@ packages/core/
       common.ts      # Cross-package helpers
       events.ts      # Event log helpers
       coverage.ts    # Coverage utilities
+      core-adapter.ts # Adapter functions for Core API
 ```
 
 ### Principles for Shared Resources
@@ -175,264 +145,154 @@ packages/core/
 3. **Helpers should be composable** - small functions that combine
 4. **No package-specific logic** - keep it generic
 
+## 🔒 Helper Usage Policy
+
+1. **Canonical Helpers**: The single source of truth is `__tests__/helpers/touchspinHelpers.ts`.
+2. **Core Adapter Layer**: In `packages/core/test-helpers/core-adapter.ts`, only lightweight adapter functions may be added to bridge Core logic and the canonical helpers.
+3. **No Duplicate Helpers**: Never rewrite helpers under `packages/core/test-helpers/helpers/`. Always import from the canonical location.
+4. **Allowed Additions**: Only extend via adapter if Core requires access to API-level methods (`upOnce`, `downOnce`, etc.).
+5. **Import Pattern**:
+
+   ```typescript
+   import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+   import { initializeCore } from '../test-helpers/core-adapter';
+   ```
+
+### ✅ Do
+
+```typescript
+import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+import { initializeCore } from '../test-helpers/core-adapter';
+```
+
+### ❌ Don’t
+
+```typescript
+// WRONG: reimplemented helpers
+import { clickUpButton } from '../test-helpers/helpers/core-helpers';
+```
+
+## 🖼️ Renderer Usage in Core Tests
+
+### Problem
+
+* Core without a renderer creates **no buttons** (only supports keyboard/wheel events and API methods).
+* Button-based helpers (`clickUpButton`, `clickDownButton`) only work if a renderer is attached.
+
+### Policy
+
+1. **Pure Core Tests**: Use API methods (`upOnce`, `downOnce`) or keyboard events (ArrowUp/ArrowDown).
+2. **UI-Oriented Tests**: If buttons are needed, explicitly initialize Core with a renderer (default: Bootstrap5Renderer).
+3. **Hybrid Approach**: Prefer API methods for Core logic, renderer-based tests only when verifying integration with renderers.
+
+### Adapter Extension
+
+In `core-adapter.ts`, provide unified methods:
+
+```typescript
+// API-based increment/decrement
+export async function incrementViaAPI(page, testId) { /* ... */ }
+export async function decrementViaAPI(page, testId) { /* ... */ }
+
+// Keyboard-based
+export async function incrementViaKeyboard(page, testId) { /* ... */ }
+export async function decrementViaKeyboard(page, testId) { /* ... */ }
+
+// Renderer-based (optional)
+export async function incrementViaButton(page, testId) { /* ... */ }
+export async function decrementViaButton(page, testId) { /* ... */ }
+```
+
+### Expected Usage
+
+* **Core Logic Tests** → API/keyboard
+* **Renderer Integration Tests** → Renderer + button clicks
+
+---
+
 ## 📈 Why Clean Tests Matter
 
 ### Readability
 
 * **Bad**: "should handle increment and decrement with callbacks and update display"
 * **Good**: "should increment value by step amount"
-* A developer should understand the test from its name alone
 
 ### Maintainability
 
 * Simple tests = easy updates
-* When TouchSpin behavior changes, update one test, not untangle complex logic
-* New developers can contribute immediately
+* Update one test per behavior change
 
 ### Debuggability
 
-* Playwright UI shows exactly what failed
+* Playwright UI shows failures clearly
 * Event log provides complete interaction history
-* No mysterious failures from complex test setup
 
 ### Coverage Achievement
 
-* Focused tests make it obvious what's not covered
-* Easy to add test for specific branch or condition
-* No accidentally testing the same thing multiple times
+* Focused tests highlight gaps
+* Easy to add specific missing cases
 
 ## ✅ Test Quality Checklist
 
-Every test MUST meet these criteria:
-
-* [ ] **Tests exactly ONE behavior** - split complex tests
-* [ ] **Uses event log for verification** - not custom listeners
-* [ ] **No conditional element checks** - use strict helpers
-* [ ] **Clear descriptive test name** - behavior, not implementation
-* [ ] **Follows AAA pattern** - Arrange, Act, Assert
-* [ ] **Reuses shared fixtures** - don't create custom HTML
-* [ ] **Cleans up after itself** - no side effects for next test
+* [ ] **Tests exactly ONE behavior**
+* [ ] **Uses event log for verification**
+* [ ] **No conditional element checks**
+* [ ] **Clear descriptive test name**
+* [ ] **Follows AAA pattern**
+* [ ] **Reuses shared fixtures**
+* [ ] **Cleans up after itself**
 
 ### Example of a Perfect Test
 
 ```typescript
 test('should round value to nearest step multiple on initialization', async ({ page }) => {
-  // Arrange - clear state and initialize
   await touchspinHelpers.clearEventLog(page);
   await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
     step: 3,
-    initval: 20  // Will round to 21 (nearest multiple of 3)
+    initval: 20
   });
-
-  // Act - read the value
   const value = await touchspinHelpers.readInputValue(page, 'test-input');
-
-  // Assert - verify rounding occurred
   expect(value).toBe('21');
 });
 ```
 
 ## 🎯 Writing Human-Readable Tests
 
-### The Golden Rule: No Hidden Assertions
-
-Every test should be readable by a developer who has never seen the code before. They should understand what's being tested just by reading the assertions.
-
-### ❌ Bad Examples (Don't Do This)
-
-#### Hidden Results in Variables
-
-```typescript
-// BAD: What is eventValid? How was it calculated?
-test('should emit correct events', async ({ page }) => {
-  const eventValid = await page.evaluate(() => {
-    let hasEventObject = false;
-    let hasType = false;
-    // ... complex setup
-    return hasEventObject && hasType;
-  });
-  expect(eventValid).toBe(true); // What does this even mean?
-});
-
-// BAD: Multiple behaviors hidden behind variables
-test('should handle boundaries', async ({ page }) => {
-  const result = await testBoundaries(); // What boundaries? What result?
-  expect(result.min).toBe('correct');
-  expect(result.max).toBe('correct'); // What is "correct"?
-});
-```
-
-#### Complex Variable Assignments
-
-```typescript
-// BAD: Makes developer trace through assignments
-test('should increment properly', async ({ page }) => {
-  const initialValue = await touchspinHelpers.readInputValue(page, 'test-input');
-  await touchspinHelpers.clickUpButton(page, 'test-input');
-  const newValue = await touchspinHelpers.readInputValue(page, 'test-input');
-  expect(parseInt(newValue)).toBe(parseInt(initialValue) + 5); // Why +5? Where did 5 come from?
-});
-```
-
-#### Custom Event Listeners Instead of Event Log
-
-```typescript
-// BAD: Custom promise-based setup when event log exists
-test('should fire min event', async ({ page }) => {
-  const eventFired = await page.evaluate(() => {
-    return new Promise((resolve) => {
-      let fired = false;
-      $input.on('touchspin.on.min', () => { fired = true; });
-      // ... trigger action
-      setTimeout(() => resolve(fired), 100);
-    });
-  });
-  expect(eventFired).toBe(true); // Event log would be clearer
-});
-```
-
-### ✅ Good Examples (Do This)
-
-#### Direct, Clear Assertions
-
-```typescript
-// GOOD: Expected value is immediately clear
-test('should increment by step amount when clicking up button', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { step: 5 });
-
-  await touchspinHelpers.clickUpButton(page, 'test-input');
-
-  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
-});
-
-// GOOD: No variable hiding what we're testing
-test('should create wrapper with buttons after initialization', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
-
-  // TouchSpin should be properly initialized - direct check
-  expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
-  expect(await page.locator('[data-testid="test-input-up"]').count()).toBe(1);
-  expect(await page.locator('[data-testid="test-input-down"]').count()).toBe(1);
-});
-```
-
-#### Use Event Log for All Events
-
-```typescript
-// GOOD: Event log provides clear verification
-test('should emit min event when at minimum boundary', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
-  await touchspinHelpers.clearEventLog(page);
-
-  await touchspinHelpers.clickDownButton(page, 'test-input');
-
-  // Clear what we're checking - event log entry
-  expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
-});
-```
-
-#### Clear Expected Values with Comments
-
-```typescript
-// GOOD: Comments explain the calculation
-test('should clamp value to maximum boundary', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, max: 100 });
-
-  await page.evaluate(() => {
-    (window as any).$('[data-testid="test-input"]').TouchSpin('set', 150);
-  });
-
-  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('100'); // Clamped to max
-});
-```
-
-#### One Clear Behavior Per Test
-
-```typescript
-// GOOD: Test name tells exactly what it tests
-test('should support jQuery method chaining', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {});
-
-  const isJQuery = await page.evaluate(() => {
-    const result = (window as any).$('[data-testid="test-input"]')
-      .TouchSpin('set', 60)
-      .TouchSpin('uponce');
-    return result instanceof (window as any).$;
-  });
-
-  expect(isJQuery).toBe(true);
-  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('61'); // 60 + 1
-});
-```
-
-### Human-Readable Test Principles
-
-1. **Immediate Clarity** - Anyone reading the test understands what it's testing
-2. **No Detective Work** - Don't make developers trace through variable assignments
-3. **Expected Values Clear** - Use comments like `'55' // 50 + 5` when helpful
-4. **Event Log Over Custom** - Use the centralized event log, not custom listeners
-5. **Direct Assertions** - Check exactly what the test name promises
-6. **Meaningful Test Names** - Name describes the exact behavior being tested
+* **Immediate Clarity**
+* **No Detective Work**
+* **Expected Values Clear**
+* **Event Log Over Custom**
+* **Direct Assertions**
+* **Meaningful Test Names**
 
 ### When Variables Are OK
 
-Variables are acceptable when they:
+* Reduce repetition of selectors
+* Store configuration for readability
+* Hold complex setup data reused across tests
 
-* **Reduce repetition** of complex selectors: `const upButton = page.locator('.bootstrap-touchspin-up')`
-* **Store configuration** for readability: `const config = { min: 0, max: 100, step: 5 }`
-* **Hold complex setup data** that's reused: `const elements = await getTouchSpinElementsStrict(page, 'test-input')`
-
-Variables are NOT OK when they:
+NOT OK when they:
 
 * Hide what's being tested
-* Store boolean results just to assert them
+* Store boolean results just to assert
 * Make the assertion less clear than a direct check
 
 ## 🔄 Migration Strategy: From Complex to Clean
 
-### Identifying Complex Tests in Old Suite
-
-Look for tests that:
-
-* Have multiple `expect()` statements testing different things
-* Use words like "and", "with", "also" in the name
-* Set up complex state before testing
-* Test implementation details not behavior
-
-### Splitting Complex Tests Example
-
-#### Old Complex Test:
+### Old Complex Test:
 
 ```typescript
 test('should handle min/max with events and callbacks', async ({ page }) => {
-  // Sets up callbacks
-  // Tests min boundary
-  // Tests max boundary
-  // Verifies events
-  // Checks callback execution
-  // 50+ lines of code
+  // multiple behaviors in one
 });
 ```
 
-#### New Clean Tests:
+### New Clean Tests:
 
 ```typescript
-test('should not decrement below minimum value', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
-  await touchspinHelpers.clickDownButton(page, 'test-input');
-  expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('0');
-});
-
-test('should emit touchspin.on.min event at minimum boundary', async ({ page }) => {
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', { min: 0, initval: 0 });
-  await touchspinHelpers.clearEventLog(page);
-  await touchspinHelpers.clickDownButton(page, 'test-input');
-  expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
-});
-
-test('should execute callback before calculation', async ({ page }) => {
-  // Separate test for callback behavior
-});
+test('should not decrement below minimum value', async ({ page }) => { /* ... */ });
+test('should emit touchspin.on.min event at minimum boundary', async ({ page }) => { /* ... */ });
+test('should execute callback before calculation', async ({ page }) => { /* ... */ });
 ```
 
 ## 📋 Standard Test Structure Template
@@ -443,32 +303,188 @@ import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
 
 test.describe('[Package] [Feature Area]', () => {
   test.beforeEach(async ({ page }) => {
-    // 1. Start coverage collection
     await touchspinHelpers.startCoverage(page);
-
-    // 2. Load test fixture
     await page.goto('http://localhost:8866/path/to/fixture.html');
-
-    // 3. Initialize package/plugin
     await touchspinHelpers.installJqueryPlugin(page);
-
-    // 4. Clear event log for clean state
     await touchspinHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    // Collect coverage data
     await touchspinHelpers.collectCoverage(page, 'test-name');
   });
 
   test('should [specific behavior]', async ({ page }) => {
-    // Arrange - Set up initial state
-
-    // Act - Perform the action
-
-    // Assert - Verify the result
+    // Arrange
+    // Act
+    // Assert
   });
 });
 ```
 
-## 🎯 Coverage Strategy:
+## 🎯 Coverage Strategy: Achieving 100%
+
+### Workflow
+
+1. **Baseline**: run all tests with coverage
+2. **Identify Gaps**: check red/yellow lines
+3. **Targeted Tests**: add missing cases
+4. **Monitor**: enforce coverage in PRs
+
+### Coverage Tips
+
+* Test error paths
+* Cover edge cases
+* Cover all config options
+* Both if/else branches
+* Defaults explicitly
+
+### What 100% Coverage Means
+
+* Every line executed
+* Every branch covered
+* Every function called
+* Every edge case handled
+
+---
+
+## 📚 jQuery Plugin Testing Reference
+
+### Data Attributes Reference
+
+* `wrapper`, `wrapper-advanced`, `up`, `down`, `prefix`, `postfix`, `vertical-wrapper`
+
+### Test ID Pattern
+
+When initialized with `data-testid="my-input"`, creates:
+
+* `my-input-wrapper`
+* `my-input-up`
+* `my-input-down`
+* `my-input-prefix`
+* `my-input-postfix`
+
+### Checking for Initialization
+
+```typescript
+expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+```
+
+### Checking for Destroy
+
+```typescript
+expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+```
+
+### DOM Structure Examples
+
+* Basic Horizontal Layout
+* With Prefix/Postfix
+* Vertical Buttons
+
+### Event Log System
+
+* Format: `[native] target:value eventName`, `[touchspin] target:value eventName`
+* Helpers: clearEventLog, hasEventInLog, countEventInLog
+
+### Strict Element Finding
+
+* BAD: optional chaining
+* GOOD: strict helpers that throw if missing
+
+### Common Pitfalls
+
+* Step value correction
+* Focus required for keyboard/mousewheel
+
+### Helper Functions Reference
+
+```typescript
+startCoverage(page)
+installJqueryPlugin(page)
+initializeTouchSpin(page, testId, options)
+getTouchSpinElementsStrict(page, testId)
+clickUpButton(page, testId)
+clickDownButton(page, testId)
+clearEventLog(page)
+getEventLog(page)
+hasEventInLog(page, event, type?)
+countEventInLog(page, event, type?)
+getEventsOfType(page, type)
+waitForEventInLog(page, event, options?)
+readInputValue(page, testId)
+```
+
+### Test File Locations
+
+* jQuery Plugin Tests: `/packages/jquery-plugin/tests/*.spec.ts`
+* Fixture: `/packages/jquery-plugin/tests/html/test-fixture.html`
+* Shared Helpers: `/__tests__/helpers/touchspinHelpers.ts`
+
+### Running Tests
+
+```bash
+# Single test
+yarn exec playwright test packages/jquery-plugin/tests/commands.spec.ts:22
+
+# All tests
+yarn exec playwright test packages/jquery-plugin/tests/
+
+# With coverage
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
+
+# Debug UI
+yarn exec playwright test --ui
+
+# Headed mode
+yarn exec playwright test --headed
+```
+
+---
+
+## 📊 Coverage (Build-Mode First)
+
+* Build-mode eliminates sourcemap drift
+* Coverage flow: V8 → Istanbul JSON → merge → report
+
+### Running Coverage
+
+```bash
+yarn coverage:all packages/jquery-plugin/tests/
+yarn coverage:all packages/jquery-plugin/tests/callable-events.spec.ts
+yarn coverage:all:ci
+yarn coverage:check
+```
+
+### Troubleshooting
+
+* Comments flagged → use build-mode
+* Missing sources → ensure build success
+* Empty coverage → check `COVERAGE_DIST`
+
+---
+
+## 📖 Reference: Old Test Suite Analysis
+
+* Old suite: 44 files, \~346 tests = definitive spec
+
+### Coverage Gaps
+
+1. forcestepdivisibility options
+2. Vertical buttons
+3. Callback functions
+4. Advanced features: RTL, replacement text, button text customization, native attribute sync
+
+### Key Reference Files
+
+| Feature   | Old Test File                  | What It Covers            |
+| --------- | ------------------------------ | ------------------------- |
+| Core      | basicOperations.test.ts        | Basic increment/decrement |
+| Events    | events.test.ts                 | Event scenarios           |
+| Edge      | edgeCasesAndErrors.test.ts     | Boundaries                |
+| Lifecycle | destroyAndReinitialize.test.ts | Init/destroy cycles       |
+| Keyboard  | keyboardAccessibility.test.ts  | Keyboard interactions     |
+| Config    | settingsPrecedence.test.ts     | Config priority           |
+
+---
+
+*End of Testing Strategy Document - Let's achieve 100% coverage with clean, maintainable tests!*
