@@ -685,4 +685,30 @@ yarn coverage:check
 
 ---
 
+## 🔧 Important Development Workflow
+
+### CRITICAL: Always Rebuild After Source Changes
+
+**⚠️ NEVER FORGET**: After making ANY changes to source files (`/src/`), you MUST rebuild before running tests:
+
+```bash
+yarn build
+```
+
+**Why this is critical:**
+- Tests run against built artifacts in `/dist/` folders
+- Source changes don't take effect until rebuilt
+- Forgetting to rebuild leads to confusing test failures
+- This is the #1 cause of "my fix doesn't work" issues
+
+**Workflow:**
+1. Edit source files (`packages/*/src/`)
+2. **ALWAYS run `yarn build`**
+3. Run tests
+4. Repeat
+
+**Add this to your muscle memory** - every source change requires a rebuild!
+
+---
+
 *End of Testing Strategy Document - Let's achieve 100% coverage with clean, maintainable tests!*
