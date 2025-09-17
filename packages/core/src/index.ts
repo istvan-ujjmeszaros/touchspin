@@ -99,7 +99,10 @@ export class TouchSpinCore {
   private _spinDelayTimeout: ReturnType<typeof setTimeout> | null = null;
   private _spinIntervalTimer: ReturnType<typeof setInterval> | null = null;
   private _upButton: (HTMLElement & { disabled?: boolean }) | null = null;
-  private _originalInputType: string | null = null;
+  private _originalAttributes: {
+    type: string | null;
+    attributes: Map<string, string | null>;
+  } | null = null;
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
   private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
@@ -281,6 +284,9 @@ export class TouchSpinCore {
    * @private
    */
   _initializeInput(): void {
+    // Capture original attributes before TouchSpin modifies anything
+    this._captureOriginalAttributes();
+
     // Set initial value if specified and input is empty
     const initVal = this.settings.initval ?? '';
     if (initVal !== '' && this.input.value === '') {
@@ -382,10 +388,8 @@ export class TouchSpinCore {
         'The original type will be restored when TouchSpin is destroyed.'
       );
 
-      // Store original type if not already stored
-      if (this._originalInputType === null) {
-        this._originalInputType = 'number';
-      }
+      // Capture original attributes before making any changes
+      this._captureOriginalAttributes();
 
       // Convert input type to text to support formatting
       this.input.setAttribute('type', 'text');
@@ -395,6 +399,67 @@ export class TouchSpinCore {
       this.input.removeAttribute('max');
       this.input.removeAttribute('step');
     }
+  }
+
+  /**
+   * Capture the original attributes of the input before TouchSpin modifies them.
+   * This ensures complete transparency - the input can be restored to its exact original state.
+   * @private
+   */
+  _captureOriginalAttributes(): void {
+    if (this._originalAttributes !== null) return; // Already captured
+
+    const attributesToTrack = [
+      'role', 'aria-valuemin', 'aria-valuemax',
+      'aria-valuenow', 'aria-valuetext',
+      'min', 'max', 'step'
+    ];
+
+    this._originalAttributes = {
+      type: this.input.getAttribute('type'),
+      attributes: new Map()
+    };
+
+    // Store original values (null if attribute didn't exist)
+    attributesToTrack.forEach(attr => {
+      this._originalAttributes!.attributes.set(attr, this.input.getAttribute(attr));
+    });
+  }
+
+  /**
+   * Restore the input to its original state by restoring all original attributes.
+   * This ensures complete transparency - the input returns to its exact original state.
+   * @private
+   */
+  _restoreOriginalAttributes(): void {
+    if (this._originalAttributes === null) return; // Nothing to restore
+
+    // Strip formatting from value if converting back to number
+    const currentValue = this.input.value;
+    if (currentValue && this.settings.callback_before_calculation &&
+        this._originalAttributes.type === 'number' &&
+        this.input.getAttribute('type') === 'text') {
+      const numericValue = this.settings.callback_before_calculation(currentValue);
+      this.input.value = numericValue;
+    }
+
+    // Restore original type
+    if (this._originalAttributes.type) {
+      this.input.setAttribute('type', this._originalAttributes.type);
+    }
+
+    // Restore all original attributes
+    this._originalAttributes.attributes.forEach((originalValue, attrName) => {
+      if (originalValue === null) {
+        // Attribute didn't exist originally, remove it
+        this.input.removeAttribute(attrName);
+      } else {
+        // Restore original value
+        this.input.setAttribute(attrName, originalValue);
+      }
+    });
+
+    this._originalAttributes = null;
   }
 
   /**
@@ -711,18 +776,8 @@ export class TouchSpinCore {
     this._upButton = null;
     this._downButton = null;
 
-    // Restore original input type if it was changed
-    if (this._originalInputType !== null) {
-      // Before converting back to number input, strip formatting from the current value
-      const currentValue = this.input.value;
-      if (currentValue && this.settings.callback_before_calculation) {
-        const numericValue = this.settings.callback_before_calculation(currentValue);
-        this.input.value = numericValue;
-      }
-
-      this.input.setAttribute('type', this._originalInputType);
-      this._originalInputType = null;
-    }
+    // Restore all original attributes
+    this._restoreOriginalAttributes();
 
     // Remove instance from element
     if (this.input[INSTANCE_KEY] === this) {
