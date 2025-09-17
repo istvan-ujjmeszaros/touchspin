@@ -102,8 +102,11 @@
         <h6 class="mb-2 mt-3"><strong>jQuery/Native Methods</strong></h6>
         <button onclick="$('#orig-input').val(75)" class="btn btn-info btn-sm" data-testid="orig-set">Set Value (75)</button>
         <button onclick="var v=$('#orig-input').val(); window.origLog.innerHTML+='[' + new Date().toISOString().split('T')[1].replace('Z','') + '] getValue: ' + JSON.stringify(v) + '\n'; window.origLog.scrollTop = window.origLog.scrollHeight;" class="btn btn-success btn-sm" data-testid="orig-get">Get Value</button>
-        <br>
+        <button onclick="$('#orig-input').attr('type', 'text')" class="btn btn-secondary btn-sm" data-testid="orig-set-text">Set to type="text"</button>
+
+        <h6 class="mb-2 mt-3"><strong>Callbacks</strong></h6>
         <button onclick="$('#orig-input').trigger('touchspin.updatesettings', [{ callback_before_calculation: function(v) { return v.replace(/[$\s]/g, '').replace('USD', ''); }, callback_after_calculation: function(v) { return '$' + v + ' USD'; } }])" class="btn btn-warning btn-sm" data-testid="orig-set-callback">Set $ USD Format</button>
+        <button onclick="$('#orig-input').trigger('touchspin.updatesettings', [{ callback_before_calculation: function(v) { return String(parseFloat(v) * 2); } }])" class="btn btn-info btn-sm" data-testid="orig-double-callback">Double Value</button>
       </div>
 
       <h6 class="mt-3">Event Log:</h6>
@@ -133,12 +136,14 @@
         <button onclick="$('#wrap-input').TouchSpin('downonce')" class="btn btn-outline-secondary btn-sm" data-testid="wrap-down">Down Once</button>
         <button onclick="$('#wrap-input').TouchSpin('set', 75)" class="btn btn-info btn-sm" data-testid="wrap-set-api">Set Value (75)</button>
         <button onclick="var v=$('#wrap-input').TouchSpin('get'); window.wrapLog.innerHTML+='[' + new Date().toISOString().split('T')[1].replace('Z','') + '] getValue: ' + JSON.stringify(v) + '\n'; window.wrapLog.scrollTop = window.wrapLog.scrollHeight;" class="btn btn-success btn-sm" data-testid="wrap-get-api">Get Value</button>
-        <br>
-        <button onclick="$('#wrap-input').TouchSpin('updatesettings', { callback_before_calculation: function(v) { return v.replace(/[$\s]/g, '').replace('USD', ''); }, callback_after_calculation: function(v) { return '$' + v + ' USD'; } })" class="btn btn-warning btn-sm" data-testid="wrap-set-callback">Set $ USD Format</button>
 
         <h6 class="mb-2 mt-3"><strong>jQuery/Native Methods</strong></h6>
         <button onclick="$('#wrap-input').val(75)" class="btn btn-info btn-sm" data-testid="wrap-set">Set Value (75)</button>
         <button onclick="var v=$('#wrap-input').val(); window.wrapLog.innerHTML+='[' + new Date().toISOString().split('T')[1].replace('Z','') + '] getValue: ' + JSON.stringify(v) + '\n'; window.wrapLog.scrollTop = window.wrapLog.scrollHeight;" class="btn btn-success btn-sm" data-testid="wrap-get">Get Value</button>
+
+        <h6 class="mb-2 mt-3"><strong>Callbacks</strong></h6>
+        <button onclick="$('#wrap-input').TouchSpin('updatesettings', { callback_before_calculation: function(v) { return v.replace(/[$\s]/g, '').replace('USD', ''); }, callback_after_calculation: function(v) { return '$' + v + ' USD'; } })" class="btn btn-warning btn-sm" data-testid="wrap-set-callback">Set $ USD Format</button>
+        <button onclick="$('#wrap-input').TouchSpin('updatesettings', { callback_before_calculation: function(v) { return String(parseFloat(v) * 2); } })" class="btn btn-info btn-sm" data-testid="wrap-double-callback">Double Value</button>
       </div>
 
       <h6 class="mt-3">Event Log:</h6>

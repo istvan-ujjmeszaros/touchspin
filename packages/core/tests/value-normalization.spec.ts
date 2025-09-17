@@ -22,6 +22,20 @@ test.describe('Core TouchSpin Value Normalization', () => {
     await touchspinHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/test-helpers/fixtures/minimal.html');
     await page.waitForFunction(() => (window as any).coreTestReady === true);
+
+    // Set up event logging for Core tests (no jQuery needed)
+    await page.evaluate(() => {
+      if ((window as any).logEvent) {
+        // Listen for change events on all inputs with data-testid
+        document.addEventListener('change', (e) => {
+          const target = e.target as HTMLInputElement;
+          if (target.getAttribute('data-testid')) {
+            const testId = target.getAttribute('data-testid');
+            (window as any).logEvent('change', { target: testId, value: target.value });
+          }
+        });
+      }
+    });
   });
 
   test.afterEach(async ({ page }) => {
@@ -71,21 +85,6 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await fillWithValue(page, 'test-input', '-42');
       const value = await getNumericValue(page, 'test-input');
       expect(value).toBe(-42);
-    });
-
-    test('should apply before calculation callback', async ({ page }) => {
-      await page.evaluate(async () => {
-        const { TouchSpinCore } = await import('http://localhost:8866/packages/core/dist/index.js');
-        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        input.value = '100';
-        const core = new TouchSpinCore(input, {
-          callback_before_calculation: (v) => String(parseFloat(v) * 2) // Double the value
-        });
-        input._touchSpinCore = core;
-        core.initDOMEventHandling();
-      });
-      const value = await getNumericValue(page, 'test-input');
-      expect(value).toBe(200); // 100 * 2
     });
 
     test('should handle callback that returns non-numeric value', async ({ page }) => {
@@ -177,7 +176,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
       expect(await getNumericValue(page, 'test-input')).toBe(25); // 23 rounded to nearest step (25)
     });
 
-    test('should trigger change event', async ({ page }) => {
+    test('should NOT trigger change event when programmatic value is not sanitized', async ({ page }) => {
       await initializeCore(page, 'test-input', {});
       // Clear event log
       await page.evaluate(() => window.clearEventLog());
@@ -188,7 +187,22 @@ test.describe('Core TouchSpin Value Normalization', () => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;
       });
-      expect(changeEventCount).toBeGreaterThanOrEqual(1);
+      expect(changeEventCount).toBe(0); // No change event when value is accepted as-is
+    });
+
+    test('should trigger change event when programmatic value is sanitized', async ({ page }) => {
+      await initializeCore(page, 'test-input', { max: 60 });
+      // Clear event log
+      await page.evaluate(() => window.clearEventLog());
+      await setValueViaAPI(page, 'test-input', 80); // Will be clamped to 60
+      // Wait a moment for events to be processed
+      await page.waitForTimeout(50);
+      const changeEventCount = await page.evaluate(() => {
+        const log = window.eventLog || [];
+        return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;
+      });
+      expect(changeEventCount).toBeGreaterThanOrEqual(1); // Change event when sanitization alters value
+      expect(await readInputValue(page, 'test-input')).toBe('60'); // Value was clamped
     });
   });
 
@@ -317,8 +331,9 @@ test.describe('Core TouchSpin Value Normalization', () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         input.value = '123';
       });
-      // Trigger blur
-      await page.focus('[data-testid="blur-target"]');
+      // Trigger blur by pressing Tab to focus away
+      await page.focus('[data-testid="test-input"]');
+      await page.keyboard.press('Tab');
       // Wait for blur processing
       await page.waitForTimeout(50);
       // Value should be corrected
@@ -333,15 +348,16 @@ test.describe('Core TouchSpin Value Normalization', () => {
         input.value = '75';
         window.clearEventLog();
       });
-      // Trigger blur
-      await page.focus('[data-testid="blur-target"]');
+      // Trigger blur by pressing Tab to focus away
+      await page.focus('[data-testid="test-input"]');
+      await page.keyboard.press('Tab');
       // Wait for blur processing and events
       await page.waitForTimeout(100);
       const changeEvents = await page.evaluate(() => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;
       });
-      expect(changeEvents).toBeGreaterThanOrEqual(0); // May or may not fire depending on implementation
+      expect(changeEvents).toBeGreaterThanOrEqual(1); // Should fire when value is corrected
       expect(await readInputValue(page, 'test-input')).toBe('50'); // Corrected value
     });
 
@@ -351,8 +367,9 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await fillWithValue(page, 'test-input', '50');
       // Clear event log after setting value
       await page.evaluate(() => window.clearEventLog());
-      // Trigger blur
-      await page.focus('[data-testid="blur-target"]');
+      // Trigger blur by pressing Tab to focus away
+      await page.focus('[data-testid="test-input"]');
+      await page.keyboard.press('Tab');
       const changeEvents = await page.evaluate(() => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;

@@ -80,6 +80,18 @@
             />
         </div>
 
+        <!-- Blur target for testing -->
+        <div class="input-wrapper">
+            <label for="blur-target">Blur Target:</label>
+            <input
+                type="text"
+                id="blur-target"
+                data-testid="blur-target"
+                value=""
+                placeholder="Focus target for blur tests"
+            />
+        </div>
+
         <!-- Event log -->
         <div class="event-log-section">
             <label for="event-log">Event Log:</label>
@@ -87,8 +99,6 @@
             <button id="clear-log" class="btn btn-secondary" style="margin-top: 8px;">Clear Log</button>
         </div>
 
-        <!-- Hidden element for blur testing -->
-        <input type="hidden" id="blur-target" data-testid="blur-target" />
     </div>
 
     <script type="module">
