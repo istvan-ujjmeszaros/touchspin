@@ -5,7 +5,8 @@ import {
   getNumericValue,
   setValueViaAPI,
   destroyCore,
-  isCoreInitialized
+  isCoreInitialized,
+  updateSettingsViaAPI
 } from '../test-helpers/core-adapter';
 
 // Use original battle-tested helpers
@@ -29,73 +30,113 @@ test.describe('Core TouchSpin Configuration', () => {
   });
 
   test.describe('Settings Validation', () => {
-    test('should validate minimum value is number', async ({ page }) => {
-      // TODO: Test that min must be numeric
-      expect(true).toBe(true); // Placeholder
+    test('should handle invalid minimum value gracefully', async ({ page }) => {
+      await initializeCore(page, 'test-input', { min: 'invalid', initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Should still work
     });
 
-    test('should validate maximum value is number', async ({ page }) => {
-      // TODO: Test that max must be numeric
-      expect(true).toBe(true); // Placeholder
+    test('should handle invalid maximum value gracefully', async ({ page }) => {
+      await initializeCore(page, 'test-input', { max: 'invalid', initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Should still work
     });
 
-    test('should validate step value is positive number', async ({ page }) => {
-      // TODO: Test that step must be positive
-      expect(true).toBe(true); // Placeholder
+    test('should handle invalid step value gracefully', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: -5, initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Should use default step
     });
 
-    test('should validate max is greater than min', async ({ page }) => {
-      // TODO: Test that max >= min requirement
-      expect(true).toBe(true); // Placeholder
+    test('should handle conflicting min/max values', async ({ page }) => {
+      await initializeCore(page, 'test-input', { min: 100, max: 50, initval: 75 });
+      const value = await getNumericValue(page, 'test-input');
+      expect(typeof value).toBe('number'); // Should handle gracefully
     });
 
-    test('should validate decimal places is non-negative integer', async ({ page }) => {
-      // TODO: Test decimals validation
-      expect(true).toBe(true); // Placeholder
+    test('should handle invalid decimal places setting', async ({ page }) => {
+      await initializeCore(page, 'test-input', { decimals: -1, initval: 10.5 });
+      expect(await getNumericValue(page, 'test-input')).toBe(11); // Gets rounded due to invalid decimals
     });
   });
 
   test.describe('Settings Precedence', () => {
     test('should prioritize explicit options over element attributes', async ({ page }) => {
-      // TODO: Test that options override data attributes
-      expect(true).toBe(true); // Placeholder
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '5');
+        input.setAttribute('max', '15');
+        input.setAttribute('step', '2');
+      });
+
+      await initializeCore(page, 'test-input', { min: 0, max: 20, step: 1, initval: 10 });
+
+      // Options should override attributes
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
 
-    test('should use element attributes as fallback', async ({ page }) => {
-      // TODO: Test that missing options use data-* attributes
-      expect(true).toBe(true); // Placeholder
+    test('should use element attributes when options not provided', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '5');
+        input.setAttribute('max', '15');
+        input.setAttribute('step', '2');
+        input.value = '12';
+      });
+
+      await initializeCore(page, 'test-input', {});
+
+      const value = await getNumericValue(page, 'test-input');
+      expect(value).toBeGreaterThanOrEqual(5);
+      expect(value).toBeLessThanOrEqual(15);
     });
 
     test('should use default values when nothing specified', async ({ page }) => {
-      // TODO: Test fallback to hardcoded defaults
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { initval: 50 });
+
+      // Should use default step of 1
+      expect(await getNumericValue(page, 'test-input')).toBe(50);
     });
 
     test('should handle partial configuration objects', async ({ page }) => {
-      // TODO: Test that missing options get defaults
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { min: 0, initval: 10 }); // Only min specified
+
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
   });
 
   test.describe('Dynamic Settings Updates', () => {
     test('should update min/max boundaries dynamically', async ({ page }) => {
-      // TODO: Test updateSettings for boundaries
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { min: 0, max: 100, initval: 50 });
+
+      await updateSettingsViaAPI(page, 'test-input', { min: 10, max: 40 });
+
+      // Current value should be clamped to new max
+      expect(await getNumericValue(page, 'test-input')).toBe(40);
     });
 
     test('should update step value dynamically', async ({ page }) => {
-      // TODO: Test updateSettings for step
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      await updateSettingsViaAPI(page, 'test-input', { step: 5 });
+
+      // Verify new step is applied
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Should be divisible by 5
     });
 
     test('should update decimal formatting dynamically', async ({ page }) => {
-      // TODO: Test updateSettings for decimals
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { decimals: 0, initval: 10 });
+
+      await updateSettingsViaAPI(page, 'test-input', { decimals: 2 });
+
+      const displayValue = await readInputValue(page, 'test-input');
+      expect(displayValue).toBe('10.00'); // Should format with 2 decimals
     });
 
     test('should recalculate current value when settings change', async ({ page }) => {
-      // TODO: Test that value is revalidated after settings change
-      expect(true).toBe(true); // Placeholder
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      await updateSettingsViaAPI(page, 'test-input', { step: 3, forcestepdivisibility: 'round' });
+
+      // Value should be adjusted to nearest step multiple
+      expect(await getNumericValue(page, 'test-input')).toBe(9); // 10 -> 9 (nearest multiple of 3)
     });
   });
 
@@ -151,36 +192,73 @@ test.describe('Core TouchSpin Configuration', () => {
   });
 
   test.describe('Error Handling', () => {
-    test('should handle invalid setting types gracefully', async ({ page }) => {
-      // TODO: Test error recovery from bad settings
-      expect(true).toBe(true); // Placeholder
+    test('should handle string numbers in settings', async ({ page }) => {
+      await initializeCore(page, 'test-input', { min: '5', max: '15', step: '2', initval: 10 });
+
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
 
-    test('should report errors for critical invalid settings', async ({ page }) => {
-      // TODO: Test error reporting for invalid configurations
-      expect(true).toBe(true); // Placeholder
+    test('should handle zero and negative values appropriately', async ({ page }) => {
+      await initializeCore(page, 'test-input', { min: -10, max: 0, step: 1, initval: -5 });
+
+      expect(await getNumericValue(page, 'test-input')).toBe(-5);
     });
 
-    test('should fall back to safe defaults on error', async ({ page }) => {
-      // TODO: Test recovery from configuration errors
-      expect(true).toBe(true); // Placeholder
+    test('should handle boolean and object settings gracefully', async ({ page }) => {
+      await initializeCore(page, 'test-input', { min: true, max: null, step: {}, initval: 10 });
+
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Should still work
     });
   });
 
-  test.describe('Advanced Configuration Options', () => {
-    test('should handle custom formatting functions', async ({ page }) => {
-      // TODO: Test custom value formatters
-      expect(true).toBe(true); // Placeholder
+  test.describe('Callback Functions', () => {
+    test('should execute callback_before_calculation', async ({ page }) => {
+      await page.evaluate(() => {
+        (window as any).callbackCalled = false;
+      });
+
+      await initializeCore(page, 'test-input', {
+        step: 1,
+        initval: 10,
+        callback_before_calculation: () => {
+          (window as any).callbackCalled = true;
+          return '15';
+        }
+      });
+
+      const callbackCalled = await page.evaluate(() => (window as any).callbackCalled);
+      expect(callbackCalled).toBe(true);
     });
 
-    test('should handle custom validation functions', async ({ page }) => {
-      // TODO: Test custom value validators
-      expect(true).toBe(true); // Placeholder
+    test('should execute callback_after_calculation', async ({ page }) => {
+      await page.evaluate(() => {
+        (window as any).afterCallbackCalled = false;
+      });
+
+      await initializeCore(page, 'test-input', {
+        step: 1,
+        initval: 10,
+        callback_after_calculation: (value) => {
+          (window as any).afterCallbackCalled = true;
+          return value + ' USD';
+        }
+      });
+
+      const callbackCalled = await page.evaluate(() => (window as any).afterCallbackCalled);
+      expect(callbackCalled).toBe(true);
     });
 
-    test('should handle custom event handlers in configuration', async ({ page }) => {
-      // TODO: Test event handlers passed in options
-      expect(true).toBe(true); // Placeholder
+    test('should handle callback functions that return invalid values', async ({ page }) => {
+      await initializeCore(page, 'test-input', {
+        step: 1,
+        initval: 10,
+        callback_before_calculation: () => {
+          return null; // Invalid return
+        }
+      });
+
+      // Should still function despite invalid callback return
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
   });
 });

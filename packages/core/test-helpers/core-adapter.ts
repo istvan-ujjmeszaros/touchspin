@@ -159,3 +159,15 @@ export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> 
     core.stopSpin();
   }, { testId });
 }
+
+// Update settings via Core API
+export async function updateSettingsViaAPI(page: Page, testId: string, newSettings: any): Promise<void> {
+  await page.evaluate(({ testId, newSettings }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.updateSettings(newSettings);
+  }, { testId, newSettings });
+}
