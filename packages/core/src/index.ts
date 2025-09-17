@@ -627,6 +627,9 @@ export class TouchSpinCore {
 
   /** Cleanup and destroy the TouchSpin instance */
   destroy(): void {
+    // Remove the data-touchspin-injected attribute first to signal plugin is no longer ready
+    this.input.removeAttribute('data-touchspin-injected');
+
     this.stopSpin();
 
     // Renderer cleans up its added elements
