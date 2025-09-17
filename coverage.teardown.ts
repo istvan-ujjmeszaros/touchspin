@@ -79,6 +79,8 @@ async function globalTeardown() {
   }
 
   let filesProcessed = 0;
+  const loggedUrls = new Set<string>();
+  const urlCounts = new Map<string, number>();
 
   for (const file of coverageFiles) {
     const filePath = path.join(playwrightCoverageDir, file);
@@ -88,7 +90,16 @@ async function globalTeardown() {
 
       for (const entry of coverage) {
         const localPath = toLocalPath(entry.url);
-        console.log(`🔍 Processing URL: ${entry.url} → ${localPath || 'SKIPPED'}`);
+
+        // Track URL frequency
+        urlCounts.set(entry.url, (urlCounts.get(entry.url) || 0) + 1);
+
+        // Only log unique URLs
+        if (!loggedUrls.has(entry.url)) {
+          console.log(`🔍 Processing URL: ${entry.url} → ${localPath || 'SKIPPED'}`);
+          loggedUrls.add(entry.url);
+        }
+
         if (!localPath) {
           // skip non-project modules (vite deps, etc.)
           continue;
@@ -130,7 +141,17 @@ async function globalTeardown() {
   }
 
   if (filesProcessed > 0) {
-    console.log(`✅ Processed coverage for ${filesProcessed} source files`);
+    console.log(`✅ Processed coverage for ${loggedUrls.size} unique source URLs`);
+
+    // Show top-5 most frequent URLs
+    const topUrls = Array.from(urlCounts.entries())
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5);
+    if (topUrls.length > 1) {
+      const topUrlsStr = topUrls.map(([url, count]) => `${path.basename(url)}(${count}x)`).join(', ');
+      console.log(`📊 Most frequent: ${topUrlsStr}`);
+    }
+
     console.log(`📁 Individual Istanbul JSON files saved to ${istanbulJsonDir}`);
     console.log('💡 Run "yarn coverage:merge && yarn coverage:report" to generate final reports');
   } else {
