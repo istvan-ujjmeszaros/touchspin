@@ -12,14 +12,14 @@ jobs:
       fail-fast: false
       matrix:
         pkg:
-          - @touchspin/core
-          - @touchspin/renderer-bootstrap3
-          - @touchspin/renderer-bootstrap4
-          - @touchspin/renderer-bootstrap5
-          - @touchspin/renderer-tailwind
-          - @touchspin/vanilla-renderer
-          - @touchspin/web-component
-          - @touchspin/jquery-plugin
+          - "@touchspin/core"
+          - "@touchspin/renderer-bootstrap3"
+          - "@touchspin/renderer-bootstrap4"
+          - "@touchspin/renderer-bootstrap5"
+          - "@touchspin/renderer-tailwind"
+          - "@touchspin/vanilla-renderer"
+          - "@touchspin/web-component"
+          - "@touchspin/jquery-plugin"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
