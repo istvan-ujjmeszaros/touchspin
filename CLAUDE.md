@@ -93,6 +93,35 @@ Every test should be so simple that a junior developer can:
   * State management
   * Configuration merging
 
+#### 🔍 Core Value Handling Behavior
+
+**IMPORTANT**: Core has different value handling than the original jQuery plugin:
+
+**Empty Values**:
+- **Internal**: `core.getValue()` returns `NaN` for empty inputs
+- **Display**: Input element shows empty string `""`
+- **Test Pattern**: Use `readInputValue()` to check display, not `getNumericValue()`
+
+**Non-Numeric Values**:
+- **Internal**: `core.getValue()` returns `NaN` for invalid input
+- **Display**: HTML5 `type="number"` inputs automatically clear invalid values to empty string
+- **Test Pattern**: Check display value, expect empty string for invalid input
+
+**Callback Effects**:
+- `callback_before_calculation` can return non-numeric strings
+- Core preserves display value even when callback returns invalid data
+- Internal `getValue()` may return `NaN` while display shows original
+
+```typescript
+// ✅ CORRECT - Test display behavior
+const displayValue = await readInputValue(page, 'test-input');
+expect(displayValue).toBe(''); // Empty string, not NaN
+
+// ❌ WRONG - Don't test internal NaN state
+const numericValue = await getNumericValue(page, 'test-input');
+expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
+```
+
 #### Core Testing Strategy: Renderer-Independent
 
 **CRITICAL DISCOVERY**: TouchSpin Core without a renderer provides only keyboard/wheel functionality - **no buttons are created**. This is the intended behavior for pure Core testing.
