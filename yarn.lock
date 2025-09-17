@@ -1432,6 +1432,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
+  version: 0.0.0-use.local
+  resolution: "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla"
+  languageName: unknown
+  linkType: soft
+
 "@touchspin/vanilla-renderer@workspace:*, @touchspin/vanilla-renderer@workspace:packages/vanilla-renderer":
   version: 0.0.0-use.local
   resolution: "@touchspin/vanilla-renderer@workspace:packages/vanilla-renderer"
@@ -2083,6 +2089,7 @@ __metadata:
     eslint: "npm:^9.33.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.31.0"
+    husky: "npm:^8.0.0"
     jiti: "npm:2.5.1"
     nyc: "npm:^17.1.0"
     playwright: "npm:^1.54.2"
@@ -3638,6 +3645,15 @@ __metadata:
   bin:
     human-id: dist/cli.js
   checksum: 10c0/9a9a18130fb7d6bc707054bacc32cb328289be0de47ba5669fd04995435e7e59931b87c644a223d68473c450221d104175a5fefe93d77f3522822ead8945def8
+  languageName: node
+  linkType: hard
+
+"husky@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "husky@npm:8.0.3"
+  bin:
+    husky: lib/bin.js
+  checksum: 10c0/6722591771c657b91a1abb082e07f6547eca79144d678e586828ae806499d90dce2a6aee08b66183fd8b085f19d20e0990a2ad396961746b4c8bd5bdb619d668
   languageName: node
   linkType: hard
 

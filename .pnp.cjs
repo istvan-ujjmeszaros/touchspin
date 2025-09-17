@@ -39,6 +39,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/renderers/tailwind"\
     },\
     {\
+      "name": "@touchspin/renderer-vanilla",\
+      "reference": "workspace:packages/renderers/vanilla"\
+    },\
+    {\
       "name": "@touchspin/vanilla-renderer",\
       "reference": "workspace:packages/vanilla-renderer"\
     },\
@@ -57,6 +61,7 @@ const RAW_RUNTIME_STATE =
     ["@touchspin/renderer-bootstrap4", ["workspace:packages/renderers/bootstrap4"]],\
     ["@touchspin/renderer-bootstrap5", ["workspace:packages/renderers/bootstrap5"]],\
     ["@touchspin/renderer-tailwind", ["workspace:packages/renderers/tailwind"]],\
+    ["@touchspin/renderer-vanilla", ["workspace:packages/renderers/vanilla"]],\
     ["@touchspin/vanilla-renderer", ["workspace:packages/vanilla-renderer"]],\
     ["@touchspin/web-component", ["workspace:packages/web-component"]],\
     ["bootstrap-touchspin", ["workspace:."]]\
@@ -81,6 +86,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.35.0"],\
           ["eslint-config-prettier", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.1.2"],\
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
+          ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
@@ -1773,6 +1779,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@touchspin/renderer-vanilla", [\
+      ["workspace:packages/renderers/vanilla", {\
+        "packageLocation": "./packages/renderers/vanilla/",\
+        "packageDependencies": [\
+          ["@touchspin/renderer-vanilla", "workspace:packages/renderers/vanilla"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@touchspin/vanilla-renderer", [\
       ["workspace:packages/vanilla-renderer", {\
         "packageLocation": "./packages/vanilla-renderer/",\
@@ -2613,6 +2628,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.35.0"],\
           ["eslint-config-prettier", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:9.1.2"],\
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
+          ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
@@ -4346,6 +4362,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../home/styu/.yarn/berry/cache/human-id-npm-4.1.1-7078fe4166-10c0.zip/node_modules/human-id/",\
         "packageDependencies": [\
           ["human-id", "npm:4.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["husky", [\
+      ["npm:8.0.3", {\
+        "packageLocation": "../../home/styu/.yarn/berry/cache/husky-npm-8.0.3-b0b59c5127-10c0.zip/node_modules/husky/",\
+        "packageDependencies": [\
+          ["husky", "npm:8.0.3"]\
         ],\
         "linkType": "HARD"\
       }]\

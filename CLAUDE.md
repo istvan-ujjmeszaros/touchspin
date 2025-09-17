@@ -13,6 +13,8 @@ We are **rewriting ALL tests from scratch** to create a maintainable, clean test
   - Mix unit testing with behavioral testing
 
 - **Our new approach**:
+  - **DIST-ONLY TESTS** - tests must import built artifacts (`/dist/index.js`), never `/src/`
+  - **TESTID SELECTORS** - use `data-testid` selectors in all tests for reliability
   - **ONE behavior per test** - if the test name has "and" in it, split it
   - **NO UNIT TESTS** - only Playwright behavioral tests
   - **Event log for everything** - single source of truth
@@ -28,6 +30,27 @@ Every test should be so simple that a junior developer can:
 1. Read the test name and know what it tests
 2. Read the test code and understand how it works
 3. Fix it when the behavior changes
+
+## 🔧 Testing Requirements
+
+### Dist-Only Rule
+- **Tests must load built artifacts** (`/dist/index.js`) only - never `/src/`
+- **Guard script**: `yarn guard:no-src-in-tests` enforces this rule
+- **Runtime guard**: Tests throw if any `/src/` script sneaks into fixtures
+
+### Selectors Standard
+- **Use `data-testid` selectors** in all tests - TouchSpin auto-generates these
+- **Never use CSS classes** or DOM structure for test selectors
+
+### Coverage (CDP-Based)
+- **Build first**: `yarn coverage:build`
+- **Run coverage**: `yarn coverage:all <path> --no-open`
+- **View report**: `reports/coverage/index.html`
+- **Coverage hooks**: Auto-imported in each spec - don't duplicate in tests
+
+### Helper/Config Policy
+- **Do not modify** `__tests__/helpers/touchspinHelpers.ts` or configs unless absolutely necessary
+- **Keep it stable** - these are shared across all test packages
 
 ## 📊 Coverage Roadmap: Journey to 100%
 
@@ -667,11 +690,6 @@ yarn coverage:all:ci
 yarn coverage:check
 ```
 
-#### Dev HMR Mode (Only if needed):
-```bash
-# Opt-in to dev server (may have sourcemap drift)
-yarn coverage:all:dev packages/jquery-plugin/tests/
-```
 
 ### Technical Details
 

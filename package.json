@@ -39,6 +39,7 @@
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
+    "husky": "^8.0.0",
     "jiti": "2.5.1",
     "nyc": "^17.1.0",
     "playwright": "^1.54.2",
@@ -48,8 +49,7 @@
     "typescript-eslint": "^8.43.0",
     "v8-to-istanbul": "^9.3.0",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "^4.2.3",
-    "husky": "^8.0.0"
+    "vite-plugin-dts": "^4.2.3"
   },
   "scripts": {
     "dev": "vite --port 8866 --strictPort",
@@ -86,7 +86,6 @@
     "coverage:check": "nyc check-coverage --lines=80 --functions=80 --branches=80 --statements=80",
     "coverage:all": "node scripts/coverage-all.mjs",
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
-    "coverage:all:dev": "node scripts/coverage-all.mjs --dev",
     "guard:no-src-in-tests": "node scripts/guard-no-src-in-tests.mjs",
     "postinstall": "husky install"
   },
