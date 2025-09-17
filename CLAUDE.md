@@ -125,6 +125,55 @@ export async function decrementViaWheel(page, testId)  // Mouse wheel down
 - `value-operations.spec.ts` - Placeholder tests for core operations
 - All other test files - Clean placeholders awaiting implementation
 
+#### Core Package Testing Guidelines
+
+**⚠️ CRITICAL: Step Normalization Behavior**
+
+TouchSpin automatically normalizes all values to the nearest multiple of the step size during initialization. This affects test expectations:
+
+**The Problem:**
+- HTML fixture has `value="50"` by default
+- When `step: 3` is configured, TouchSpin normalizes 50 → 51 (nearest multiple of 3)
+- Subsequent decrement produces 48, not the expected 47
+
+**✅ SOLUTION: Use Step-Divisible Initial Values**
+
+When writing tests involving `step` values, always choose an `initval` that is divisible by the step size:
+
+```typescript
+// ❌ BAD: Will cause normalization (50 → 51 when step=3)
+await initializeCore(page, 'test-input', { step: 3 });
+await decrementViaAPI(page, 'test-input');
+expect(await getNumericValue(page, 'test-input')).toBe(47); // FAILS: Actually 48
+
+// ✅ GOOD: Use divisible initial value
+await initializeCore(page, 'test-input', { step: 3, initval: 48 });
+await decrementViaAPI(page, 'test-input');
+expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
+
+// ✅ GOOD: Use setValueViaAPI to ensure exact value before testing
+await setValueViaAPI(page, 'test-input', 48);
+await initializeCore(page, 'test-input', { step: 3 });
+await decrementViaAPI(page, 'test-input');
+expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
+```
+
+**Test Separation Rule:**
+
+1. **Basic Operations**: Use step-divisible values to avoid normalization confusion
+   - Examples: `step: 5 → initval: 50`, `step: 3 → initval: 48`
+
+2. **Normalization Tests**: Test rounding behavior separately in dedicated tests
+   - Examples: "should normalize 50 to 51 when step=3", "should round to nearest step multiple"
+
+**Common Step-Divisible Values:**
+- `step: 1` → Any integer (1, 2, 3, 4, 5...)
+- `step: 2` → Even numbers (2, 4, 6, 8, 10...)
+- `step: 3` → Multiples of 3 (3, 6, 9, 12, 15, 18, 21...)
+- `step: 5` → Multiples of 5 (5, 10, 15, 20, 25, 30...)
+- `step: 0.1` → One decimal place (0.1, 0.2, 0.3...)
+- `step: 0.25` → Quarter values (0.25, 0.5, 0.75, 1.0...)
+
 ### Phase 3: Renderer Packages 📅 (Future - 0%)
 
 * **Status**: After core package
