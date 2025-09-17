@@ -704,7 +704,8 @@ export class TouchSpinCore {
     const parsed = Number(v);
     if (!isFinite(parsed)) return;
     const adjusted = this._applyConstraints(parsed);
-    this._setDisplay(adjusted, true);
+    const wasSanitized = parsed !== adjusted;
+    this._setDisplay(adjusted, true, wasSanitized, true);
   }
 
   /**
@@ -1090,12 +1091,16 @@ export class TouchSpinCore {
   }
 
   /** Format and write to input, optionally emit change if different. */
-  _setDisplay(num: number, mayTriggerChange: boolean): string {
+  _setDisplay(num: number, mayTriggerChange: boolean, forceTrigger: boolean = false, onlyTriggerIfSanitized: boolean = false): string {
     const prev = String(this.input.value ?? '');
     const next = this._formatDisplay(num);
     this.input.value = next;
     this._updateAriaAttributes();
-    if (mayTriggerChange && prev !== next) {
+
+    // Emit change based on context:
+    // - For programmatic setValue: only if sanitized (forceTrigger)
+    // - For user interactions: if sanitized OR display changed
+    if (mayTriggerChange && (onlyTriggerIfSanitized ? forceTrigger : (forceTrigger || prev !== next))) {
       // mirror plugin behavior: trigger a native change event
       this.input.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -1123,7 +1128,8 @@ export class TouchSpinCore {
     const v = this.getValue();
     if (!isFinite(v)) return;
     const adjusted = this._applyConstraints(v);
-    this._setDisplay(adjusted, !!mayTriggerChange);
+    const wasSanitized = v !== adjusted;
+    this._setDisplay(adjusted, !!mayTriggerChange, wasSanitized);
   }
 
   _updateAriaAttributes(): void {
