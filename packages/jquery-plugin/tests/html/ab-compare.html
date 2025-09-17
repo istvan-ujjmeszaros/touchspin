@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery TouchSpin A/B Compare (Original v4.7.3 vs New Wrapper)</title>
+  <link rel="stylesheet" href="/__tests__/html/assets/bootstrap/bootstrap-5.3.2.min.css">
+  <script src="/__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
+  <script src="/__tests__/html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
+  <style>
+    body { padding: 20px; }
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      background-color: #f8f9fa;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .event-log {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      height: 200px;
+      overflow: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    .controls {
+      margin: 15px 0;
+    }
+    .controls button {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 8px;
+      background: #e9ecef;
+      border-radius: 0.25rem;
+      font-size: 14px;
+    }
+    .value-display {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+    h2 { color: #495057; }
+    .original-side { border-left: 4px solid #dc3545; }
+    .wrapper-side { border-left: 4px solid #198754; }
+  </style>
+
+  <!-- Load original jQuery TouchSpin v4.7.3 -->
+  <script src="/__tests__/html/assets/jquery.bootstrap-touchspin-v4.7.3-original.js"></script>
+  <!-- Preserve original plugin under a different name before installing wrapper -->
+  <script>
+    (function($){
+      if ($ && $.fn && $.fn.TouchSpin) {
+        $.fn.OriginalTouchSpin = $.fn.TouchSpin;
+        delete $.fn.TouchSpin; // Clear so new version can install
+      }
+    })(window.jQuery);
+  </script>
+</head>
+<body class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">jQuery TouchSpin A/B Comparison</h1>
+      <div class="alert alert-info">
+        <strong>Testing backwards compatibility:</strong> Original plugin (v4.7.3) vs New jQuery wrapper with Bootstrap5 renderer
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Original Plugin Side -->
+    <div class="test-section original-side">
+      <h2 class="h5">🔴 Original TouchSpin v4.7.3</h2>
+
+      <div class="mb-3">
+        <label class="form-label">Test Input:</label>
+        <input id="orig-input" type="number" value="50" class="form-control" data-testid="ab-orig">
+      </div>
+
+      <div class="status">
+        Status: <span id="orig-status" class="value-display">Not initialized</span>
+      </div>
+
+      <div class="controls">
+        <button onclick="initOriginal()" class="btn btn-primary btn-sm" data-testid="orig-init">Initialize</button>
+        <button onclick="destroyOriginal()" class="btn btn-danger btn-sm" data-testid="orig-destroy">Destroy</button>
+        <br>
+        <button onclick="upOriginal()" class="btn btn-outline-secondary btn-sm" data-testid="orig-up">Up Once</button>
+        <button onclick="downOriginal()" class="btn btn-outline-secondary btn-sm" data-testid="orig-down">Down Once</button>
+        <button onclick="setValueOriginal()" class="btn btn-outline-info btn-sm" data-testid="orig-set">Set Value (75)</button>
+        <button onclick="getValueOriginal()" class="btn btn-outline-success btn-sm" data-testid="orig-get">Get Value</button>
+      </div>
+
+      <h6 class="mt-3">Event Log:</h6>
+      <div class="event-log" id="orig-log"></div>
+      <button onclick="clearOriginalLog()" class="btn btn-outline-warning btn-sm mt-2">Clear Log</button>
+    </div>
+
+    <!-- New Wrapper Side -->
+    <div class="test-section wrapper-side">
+      <h2 class="h5">🟢 New jQuery Wrapper</h2>
+
+      <div class="mb-3">
+        <label class="form-label">Test Input:</label>
+        <input id="wrap-input" type="number" value="50" class="form-control" data-testid="ab-wrap">
+      </div>
+
+      <div class="status">
+        Status: <span id="wrap-status" class="value-display">Not initialized</span>
+      </div>
+
+      <div class="controls">
+        <button onclick="initWrapper()" class="btn btn-primary btn-sm" data-testid="wrap-init">Initialize</button>
+        <button onclick="destroyWrapper()" class="btn btn-danger btn-sm" data-testid="wrap-destroy">Destroy</button>
+        <br>
+        <button onclick="upWrapper()" class="btn btn-outline-secondary btn-sm" data-testid="wrap-up">Up Once</button>
+        <button onclick="downWrapper()" class="btn btn-outline-secondary btn-sm" data-testid="wrap-down">Down Once</button>
+        <button onclick="setValueWrapper()" class="btn btn-outline-info btn-sm" data-testid="wrap-set">Set Value (75)</button>
+        <button onclick="getValueWrapper()" class="btn btn-outline-success btn-sm" data-testid="wrap-get">Get Value</button>
+      </div>
+
+      <h6 class="mt-3">Event Log:</h6>
+      <div class="event-log" id="wrap-log"></div>
+      <button onclick="clearWrapperLog()" class="btn btn-outline-warning btn-sm mt-2">Clear Log</button>
+    </div>
+  </div>
+
+  <!-- Load the new jQuery TouchSpin wrapper -->
+  <script src="../../dist/jquery.touchspin-bootstrap5.umd.js"></script>
+
+  <script>
+    (function(){
+      const $ = window.jQuery;
+      const $orig = $('#orig-input');
+      const $wrap = $('#wrap-input');
+      const origLog = document.getElementById('orig-log');
+      const wrapLog = document.getElementById('wrap-log');
+      const origStatus = document.getElementById('orig-status');
+      const wrapStatus = document.getElementById('wrap-status');
+
+      // Logging functionality
+      function addLog(logEl, msg) {
+        const ts = new Date().toISOString().split('T')[1].replace('Z','').slice(0, -4);
+        logEl.textContent += `[${ts}] ${msg}\n`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function bindEventLog($input, logEl, label) {
+        const touchspinEvents = [
+          'touchspin.on.min', 'touchspin.on.max', 'touchspin.on.startspin', 'touchspin.on.stopspin',
+          'touchspin.on.startupspin', 'touchspin.on.startdownspin', 'touchspin.on.stopupspin', 'touchspin.on.stopdownspin'
+        ];
+
+        touchspinEvents.forEach(eventName => {
+          $input.on(eventName, function(e) {
+            addLog(logEl, `${label} ${eventName} (value: ${this.value})`);
+          });
+        });
+
+        $input.on('change', function(e) {
+          addLog(logEl, `${label} change (value: ${this.value})`);
+        });
+
+        $input.on('input', function(e) {
+          addLog(logEl, `${label} input (value: ${this.value})`);
+        });
+      }
+
+      // Bind event logging for both inputs
+      bindEventLog($orig, origLog, '[ORIG]');
+      bindEventLog($wrap, wrapLog, '[WRAP]');
+
+      // Update status functions
+      function updateOriginalStatus() {
+        const hasWrapper = $orig.parent().hasClass('bootstrap-touchspin');
+        origStatus.textContent = hasWrapper ? 'Initialized' : 'Not initialized';
+        origStatus.className = hasWrapper ? 'value-display text-success' : 'value-display text-muted';
+      }
+
+      function updateWrapperStatus() {
+        const hasWrapper = $wrap.parent().hasClass('bootstrap-touchspin') || $wrap.attr('data-touchspin-injected') !== undefined;
+        wrapStatus.textContent = hasWrapper ? 'Initialized' : 'Not initialized';
+        wrapStatus.className = hasWrapper ? 'value-display text-success' : 'value-display text-muted';
+      }
+
+      // Check status periodically
+      setInterval(() => {
+        updateOriginalStatus();
+        updateWrapperStatus();
+      }, 500);
+
+      // Global functions for button handlers
+      window.initOriginal = function() {
+        try {
+          $orig.OriginalTouchSpin({
+            min: 0,
+            max: 100,
+            step: 5,
+            decimals: 0
+          });
+          addLog(origLog, '[INIT] TouchSpin initialized with options: min=0, max=100, step=5');
+          updateOriginalStatus();
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to initialize: ' + e.message);
+        }
+      };
+
+      window.destroyOriginal = function() {
+        try {
+          $orig.trigger('touchspin.destroy');
+          addLog(origLog, '[DESTROY] TouchSpin destroyed');
+          updateOriginalStatus();
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to destroy: ' + e.message);
+        }
+      };
+
+      window.upOriginal = function() {
+        try {
+          $orig.trigger('touchspin.uponce');
+          addLog(origLog, '[CMD] uponce triggered');
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to trigger uponce: ' + e.message);
+        }
+      };
+
+      window.downOriginal = function() {
+        try {
+          $orig.trigger('touchspin.downonce');
+          addLog(origLog, '[CMD] downonce triggered');
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to trigger downonce: ' + e.message);
+        }
+      };
+
+      window.setValueOriginal = function() {
+        try {
+          $orig.val(75);
+          addLog(origLog, '[CMD] Set value to 75 via .val()');
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to set value: ' + e.message);
+        }
+      };
+
+      window.getValueOriginal = function() {
+        try {
+          const value = $orig.val();
+          addLog(origLog, '[CMD] Get value: ' + value);
+        } catch (e) {
+          addLog(origLog, '[ERROR] Failed to get value: ' + e.message);
+        }
+      };
+
+      window.initWrapper = function() {
+        try {
+          $wrap.TouchSpin({
+            min: 0,
+            max: 100,
+            step: 5,
+            decimals: 0
+          });
+          addLog(wrapLog, '[INIT] TouchSpin initialized with options: min=0, max=100, step=5');
+          updateWrapperStatus();
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to initialize: ' + e.message);
+        }
+      };
+
+      window.destroyWrapper = function() {
+        try {
+          $wrap.TouchSpin('destroy');
+          addLog(wrapLog, '[DESTROY] TouchSpin destroyed');
+          updateWrapperStatus();
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to destroy: ' + e.message);
+        }
+      };
+
+      window.upWrapper = function() {
+        try {
+          $wrap.TouchSpin('uponce');
+          addLog(wrapLog, '[CMD] uponce called');
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to call uponce: ' + e.message);
+        }
+      };
+
+      window.downWrapper = function() {
+        try {
+          $wrap.TouchSpin('downonce');
+          addLog(wrapLog, '[CMD] downonce called');
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to call downonce: ' + e.message);
+        }
+      };
+
+      window.setValueWrapper = function() {
+        try {
+          $wrap.val(75);
+          addLog(wrapLog, '[CMD] Set value to 75 via .val()');
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to set value: ' + e.message);
+        }
+      };
+
+      window.getValueWrapper = function() {
+        try {
+          const value = $wrap.val();
+          addLog(wrapLog, '[CMD] Get value: ' + value);
+        } catch (e) {
+          addLog(wrapLog, '[ERROR] Failed to get value: ' + e.message);
+        }
+      };
+
+      window.clearOriginalLog = function() {
+        origLog.textContent = '';
+      };
+
+      window.clearWrapperLog = function() {
+        wrapLog.textContent = '';
+      };
+
+      // Initial status update
+      updateOriginalStatus();
+      updateWrapperStatus();
+
+      // Add a welcome message
+      addLog(origLog, 'Original TouchSpin v4.7.3 ready for testing');
+      addLog(wrapLog, 'New jQuery wrapper ready for testing');
+
+    })();
+  </script>
+</body>
+</html>

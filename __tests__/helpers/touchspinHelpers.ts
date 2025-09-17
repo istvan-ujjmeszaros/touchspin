@@ -591,7 +591,7 @@ async function clearAdditionalInputs(page: Page): Promise<void> {
 }
 
 // Initialize TouchSpin on a specific input
-async function initializeTouchSpin(page: Page, testId: string, options: any = {}): Promise<void> {
+async function initializeTouchSpinJQuery(page: Page, testId: string, options: any = {}): Promise<void> {
   await page.evaluate(({ id, opts }) => {
     const $input = $(`[data-testid="${id}"]`);
     // If initval is specified, set the input value before initializing TouchSpin
@@ -861,7 +861,7 @@ export default {
   collectCoverage,
   createAdditionalInput,
   clearAdditionalInputs,
-  initializeTouchSpin,
+  initializeTouchSpinJQuery,
   getTouchSpinWrapper,
   getTouchSpinElements,
   getTouchSpinElementsStrict,
