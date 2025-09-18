@@ -18,10 +18,7 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-data-attributes';
       await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '30');
-      await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid),
-        { timeout: 2000 }
-      ).toBe('40');
+      await touchspinHelpers.expectValueToBe(page, testid, '40', 2000);
     });
 
     test('should clamp to max via data-bts-max', async ({ page }) => {
@@ -30,10 +27,7 @@ test.describe('Advanced Features', () => {
       // reset to a known baseline then exceed max
       await touchspinHelpers.fillWithValue(page, testid, '50');
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '70');
-      await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid),
-        { timeout: 2000 }
-      ).toBe('60');
+      await touchspinHelpers.expectValueToBe(page, testid, '60', 2000);
     });
 
     test('should apply step from data-bts-step', async ({ page }) => {
@@ -41,10 +35,7 @@ test.describe('Advanced Features', () => {
       await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await touchspinHelpers.fillWithValue(page, testid, '50');
       await touchspinHelpers.clickUpButton(page, testid);
-      await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid),
-        { timeout: 2000 }
-      ).toBe('52');
+      await touchspinHelpers.expectValueToBe(page, testid, '52', 2000);
     });
   });
 
@@ -89,9 +80,7 @@ test.describe('Advanced Features', () => {
       const valueAfterStop = await touchspinHelpers.readInputValue(page, testid);
 
       // Verify spinning has stopped by checking value doesn't change
-      await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
-      ).toBe(valueAfterStop); // Should not continue incrementing
+      await touchspinHelpers.expectValueToBe(page, testid, valueAfterStop); // Should not continue incrementing
     });
   });
 
@@ -109,9 +98,7 @@ test.describe('Advanced Features', () => {
         }, 100);
       });
 
-      await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
-      ).toBe('51');
+      await touchspinHelpers.expectValueToBe(page, testid, '51');
     });
   });
 

@@ -755,6 +755,107 @@ async function checkAppendExists(page: Page): Promise<boolean> {
   return (await append.count()) > 0;
 }
 
+// ============ Polled Expectation Helpers ============
+// One-line assertions with built-in polling
+
+// Expect value to be a specific value (with polling)
+async function expectValueToBe(page: Page, testId: string, expected: string, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, expected }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    return input && input.value === expected;
+  }, { testId, expected }, { timeout });
+}
+
+// Expect value to change from one value to another (with polling)
+async function expectValueToChange(page: Page, testId: string, from: string, to: string, timeout: number = 3000): Promise<void> {
+  // First ensure we're at the 'from' value
+  await expectValueToBe(page, testId, from, timeout);
+  // Then wait for it to change to the 'to' value
+  await expectValueToBe(page, testId, to, timeout);
+}
+
+// Expect value to be greater than a specific number (with polling)
+async function expectValueToBeGreaterThan(page: Page, testId: string, value: number, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, value }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    return input && parseFloat(input.value || '0') > value;
+  }, { testId, value }, { timeout });
+}
+
+// Expect value to be less than a specific number (with polling)
+async function expectValueToBeLessThan(page: Page, testId: string, value: number, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, value }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    return input && parseFloat(input.value || '0') < value;
+  }, { testId, value }, { timeout });
+}
+
+// Expect value to be between two numbers (with polling)
+async function expectValueToBeBetween(page: Page, testId: string, min: number, max: number, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, min, max }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) return false;
+    const val = parseFloat(input.value || '0');
+    return val >= min && val <= max;
+  }, { testId, min, max }, { timeout });
+}
+
+// Expect button to be disabled (with polling)
+async function expectButtonToBeDisabled(page: Page, testId: string, buttonType: 'up' | 'down', timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, buttonType }) => {
+    const wrapper = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+    if (!wrapper) return false;
+    const button = wrapper.querySelector(`.bootstrap-touchspin-${buttonType}`) as HTMLElement;
+    return button && button.classList.contains('disabled');
+  }, { testId, buttonType }, { timeout });
+}
+
+// Expect button to be enabled (with polling)
+async function expectButtonToBeEnabled(page: Page, testId: string, buttonType: 'up' | 'down', timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ testId, buttonType }) => {
+    const wrapper = document.querySelector(`[data-testid="${testId}-wrapper"]`);
+    if (!wrapper) return false;
+    const button = wrapper.querySelector(`.bootstrap-touchspin-${buttonType}`) as HTMLElement;
+    return button && !button.classList.contains('disabled');
+  }, { testId, buttonType }, { timeout });
+}
+
+// Expect a specific event to be fired (with polling)
+async function expectEventFired(page: Page, eventName: string, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction((eventName) => {
+    const eventLog = (window as any).eventLog || [];
+    return eventLog.some((entry: any) => entry.event === eventName);
+  }, eventName, { timeout });
+}
+
+// Expect no specific event to be fired (with polling check)
+async function expectNoEvent(page: Page, eventName: string, timeout: number = 1000): Promise<void> {
+  try {
+    await page.waitForFunction((eventName) => {
+      const eventLog = (window as any).eventLog || [];
+      return eventLog.some((entry: any) => entry.event === eventName);
+    }, eventName, { timeout });
+    // If we get here, the event was found, which is unexpected
+    throw new Error(`Expected event '${eventName}' not to be fired, but it was found in the event log`);
+  } catch (error) {
+    // If we timeout, that's good - the event wasn't fired
+    if (error.message.includes('Timeout')) {
+      return; // Success - event was not fired
+    }
+    // Re-throw other errors
+    throw error;
+  }
+}
+
+// Expect a specific number of events to be fired (with polling)
+async function expectEventCount(page: Page, eventName: string, count: number, timeout: number = 3000): Promise<void> {
+  await page.waitForFunction(({ eventName, count }) => {
+    const eventLog = (window as any).eventLog || [];
+    const eventCount = eventLog.filter((entry: any) => entry.event === eventName).length;
+    return eventCount === count;
+  }, { eventName, count }, { timeout });
+}
+
 export default {
   getWrapperInstanceWhenReady,
   waitForTimeout,
@@ -811,5 +912,15 @@ export default {
   getDownButtonElement,
   checkPrependExists,
   checkAppendExists,
+  expectValueToBe,
+  expectValueToChange,
+  expectValueToBeGreaterThan,
+  expectValueToBeLessThan,
+  expectValueToBeBetween,
+  expectButtonToBeDisabled,
+  expectButtonToBeEnabled,
+  expectEventFired,
+  expectNoEvent,
+  expectEventCount,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };
