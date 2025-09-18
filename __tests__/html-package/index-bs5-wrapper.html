@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../html/assets/bootstrap/bootstrap-5.3.2.min.css">
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <script src="../html/assets/bootstrap/bootstrap-5.3.2.bundle.min.js"></script>
-  <link href="../../packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
+  <link href="/packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
     pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
@@ -15,8 +15,8 @@
 
   <!-- Install the core-backed jQuery wrapper with Bootstrap 5 renderer -->
   <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.js';
-    import Bootstrap5Renderer from '../../packages/renderers/bootstrap5/dist/index.js';
+    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
+    import Bootstrap5Renderer from '/packages/renderers/bootstrap5/dist/index.js';
 
     installJqueryTouchSpin(window.jQuery);
 

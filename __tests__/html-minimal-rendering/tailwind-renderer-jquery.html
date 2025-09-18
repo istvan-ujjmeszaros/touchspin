@@ -13,7 +13,7 @@
   <script src="../html/assets/tailwind/tailwind.min.js"></script>
 
   <!-- TouchSpin CSS -->
-  <link href="../../packages/renderers/bootstrap3/dist/touchspin-bootstrap3.css" rel="stylesheet">
+  <link href="/packages/renderers/bootstrap3/dist/touchspin-bootstrap3.css" rel="stylesheet">
 </head>
 <body>
   <div class="container mx-auto p-8">
@@ -26,8 +26,8 @@
   </div>
 
   <script type="module">
-    import { installJqueryTouchSpin } from '../../packages/jquery-plugin/dist/index.js';
-    import TailwindRenderer from '../../packages/renderers/tailwind/dist/index.js';
+    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
+    import TailwindRenderer from '/packages/renderers/tailwind/dist/index.mjs';
 
     installJqueryTouchSpin(window.jQuery);
 
