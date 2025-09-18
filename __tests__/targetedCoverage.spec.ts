@@ -48,7 +48,7 @@ test.describe('Targeted Coverage Tests', () => {
       ).toBe(true);
 
       // Should still work normally after reinitialization
-      await touchspinHelpers.touchspinClickUp(page, 'double-init-test');
+      await touchspinHelpers.clickUpButton(page, 'double-init-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'double-init-test')
       ).toBe('51');
@@ -95,7 +95,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.touchspinClickUp(page, 'step-zero-test');
+      await touchspinHelpers.clickUpButton(page, 'step-zero-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'step-zero-test')
       ).toBe('51'); // 50 + 1
@@ -115,7 +115,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.touchspinClickUp(page, 'step-invalid-test');
+      await touchspinHelpers.clickUpButton(page, 'step-invalid-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'step-invalid-test')
       ).toBe('51'); // 50 + 1
@@ -135,7 +135,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.touchspinClickUp(page, 'step-negative-test');
+      await touchspinHelpers.clickUpButton(page, 'step-negative-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'step-negative-test')
       ).toBe('51'); // 50 + 1
@@ -314,13 +314,13 @@ test.describe('Targeted Coverage Tests', () => {
       }).toBe(true);
 
       // Test functionality - should work normally
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('43'); // 42 + 1
 
       // Test down click
-      await touchspinHelpers.touchspinClickDown(page, testid);
+      await touchspinHelpers.clickDownButton(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('42'); // back to original

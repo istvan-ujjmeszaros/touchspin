@@ -37,11 +37,11 @@ export class DualTestHelpers {
     const initialValue = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Test increment
-    await touchspinHelpers.touchspinClickUp(this.page, testid);
+    await touchspinHelpers.clickUpButton(this.page, testid);
     const afterIncrement = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Test decrement
-    await touchspinHelpers.touchspinClickDown(this.page, testid);
+    await touchspinHelpers.clickDownButton(this.page, testid);
     const afterDecrement = await touchspinHelpers.readInputValue(this.page, testid);
 
     return {
@@ -122,8 +122,8 @@ export class DualTestHelpers {
     });
 
     // Perform some actions
-    await touchspinHelpers.touchspinClickUp(this.page, testid);
-    await touchspinHelpers.touchspinClickDown(this.page, testid);
+    await touchspinHelpers.clickUpButton(this.page, testid);
+    await touchspinHelpers.clickDownButton(this.page, testid);
 
     // Get logged events
     const events = await this.page.evaluate(() => {
@@ -154,10 +154,10 @@ export class DualTestHelpers {
     const nearMax = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Try to go beyond max
-    await touchspinHelpers.touchspinClickUp(this.page, testid);
+    await touchspinHelpers.clickUpButton(this.page, testid);
     const atMax = await touchspinHelpers.readInputValue(this.page, testid);
 
-    await touchspinHelpers.touchspinClickUp(this.page, testid);
+    await touchspinHelpers.clickUpButton(this.page, testid);
     const beyondMax = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Set to near min
@@ -174,10 +174,10 @@ export class DualTestHelpers {
     const nearMin = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Try to go beyond min
-    await touchspinHelpers.touchspinClickDown(this.page, testid);
+    await touchspinHelpers.clickDownButton(this.page, testid);
     const atMin = await touchspinHelpers.readInputValue(this.page, testid);
 
-    await touchspinHelpers.touchspinClickDown(this.page, testid);
+    await touchspinHelpers.clickDownButton(this.page, testid);
     const beyondMin = await touchspinHelpers.readInputValue(this.page, testid);
 
     return {
@@ -197,10 +197,10 @@ export class DualTestHelpers {
     const initialValue = await touchspinHelpers.readInputValue(this.page, testid);
 
     // Try to click buttons - should not change value
-    await touchspinHelpers.touchspinClickUp(this.page, testid);
+    await touchspinHelpers.clickUpButton(this.page, testid);
     const afterUpClick = await touchspinHelpers.readInputValue(this.page, testid);
 
-    await touchspinHelpers.touchspinClickDown(this.page, testid);
+    await touchspinHelpers.clickDownButton(this.page, testid);
     const afterDownClick = await touchspinHelpers.readInputValue(this.page, testid);
 
     return {

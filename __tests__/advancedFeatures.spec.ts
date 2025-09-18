@@ -40,7 +40,7 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-data-attributes';
       await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
       await touchspinHelpers.fillWithValue(page, testid, '50');
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid),
         { timeout: 2000 }
@@ -159,7 +159,7 @@ test.describe('Advanced Features', () => {
       }, testid);
 
       // Test that plugin still works with callbacks
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       const value = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       expect(value).toBeGreaterThan(50);
     });

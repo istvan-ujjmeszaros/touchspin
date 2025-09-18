@@ -33,7 +33,7 @@ test.describe('TouchSpin Callback Tests', () => {
       expect(initialValue).toBe('$5,000.00');
 
       // Click up button
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       // Should increment by step (0.1) and format as currency
       await expect.poll(
@@ -46,7 +46,7 @@ test.describe('TouchSpin Callback Tests', () => {
       expect(initialValue).toBe('$5,000.00');
 
       // Click down button
-      await touchspinHelpers.touchspinClickDown(page, testid);
+      await touchspinHelpers.clickDownButton(page, testid);
 
       // Should decrement by step (0.1) and format as currency
       await expect.poll(
@@ -166,7 +166,7 @@ test.describe('TouchSpin Callback Tests', () => {
       expect(initialValue).toBe('$5,000.00');
 
       // Click up button
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       // Should increment by step (0.1) and format with numeral.js
       await expect.poll(
@@ -179,7 +179,7 @@ test.describe('TouchSpin Callback Tests', () => {
       expect(initialValue).toBe('$5,000.00');
 
       // Click down button
-      await touchspinHelpers.touchspinClickDown(page, testid);
+      await touchspinHelpers.clickDownButton(page, testid);
 
       // Should decrement by step (0.1) and format with numeral.js
       await expect.poll(
@@ -264,7 +264,7 @@ test.describe('TouchSpin Callback Tests', () => {
 
       // Perform multiple up clicks
       for (let i = 0; i < 3; i++) {
-        await touchspinHelpers.touchspinClickUp(page, testid);
+        await touchspinHelpers.clickUpButton(page, testid);
       }
 
       // Should have multiple change events, all with decorated values (currency format)

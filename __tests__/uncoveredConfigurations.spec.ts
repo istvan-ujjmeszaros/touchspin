@@ -220,7 +220,7 @@ test.describe('Uncovered Configuration Options', () => {
       expect(hasCustomClasses).toBe(true);
 
       // Should still function correctly
-      await touchspinHelpers.touchspinClickUp(page, 'custom-vertical-test');
+      await touchspinHelpers.clickUpButton(page, 'custom-vertical-test');
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'custom-vertical-test')
       ).toBe('51');

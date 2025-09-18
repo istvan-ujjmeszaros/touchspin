@@ -107,7 +107,7 @@ test.describe('Focus and Outside Click Behavior', () => {
     expect(await page.evaluate(() => (window as any).chg)).toBe(1);
 
     // Button click SHOULD add one more
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     expect(await page.evaluate(() => (window as any).chg)).toBe(2);
   });
 

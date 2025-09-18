@@ -26,13 +26,13 @@ test.describe('Core functionality', () => {
     await expect(downButton).toBeVisible();
 
     // Test increment
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
     ).toBe('51');
 
     // Test decrement
-    await touchspinHelpers.touchspinClickDown(page, testid);
+    await touchspinHelpers.clickDownButton(page, testid);
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
     ).toBe('50');
@@ -43,14 +43,14 @@ test.describe('Core functionality', () => {
 
     // Test disabled input
     await touchspinHelpers.setInputAttr(page, testid, 'disabled', true);
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
 
     // Reset and test readonly
     await touchspinHelpers.setInputAttr(page, testid, 'disabled', false);
     await touchspinHelpers.setInputAttr(page, testid, 'readonly', true);
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
     expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
   });
@@ -70,13 +70,13 @@ test.describe('Core functionality', () => {
     expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
 
     // Increment should increase by step amount (3)
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
     ).toBe('54');
 
     // Additional increments
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
     ).toBe('57');
@@ -93,7 +93,7 @@ test.describe('Core functionality', () => {
 
     // Multiple clicks should eventually hit the max
     for (let i = 0; i < 5; i++) {
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
     }
 
     const finalMaxEvents = await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max');
@@ -153,7 +153,7 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-decimals';
 
     // Test decimal increment
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
     ).toBe('50.01');

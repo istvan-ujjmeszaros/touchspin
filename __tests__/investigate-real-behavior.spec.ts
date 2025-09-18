@@ -91,7 +91,7 @@ test.describe('Real Behavior Investigation', () => {
     await touchspinHelpers.fillWithValue(page, testid, '15');
 
     // Click a button
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
 
     // Get final change event analysis
     const finalAnalysis = await page.evaluate(() => {

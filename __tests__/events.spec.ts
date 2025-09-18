@@ -17,7 +17,7 @@ test.describe('Events', () => {
     const testid: string = 'touchspin-default';
 
     // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
 
     await expect.poll(
       async () => await touchspinHelpers.readInputValue(page, testid)
@@ -28,7 +28,7 @@ test.describe('Events', () => {
     const testid: string = 'touchspin-default';
 
     // Trigger the TouchSpin button
-    await touchspinHelpers.touchspinClickUp(page, testid);
+    await touchspinHelpers.clickUpButton(page, testid);
 
     // Wait for change event to fire
     await expect.poll(

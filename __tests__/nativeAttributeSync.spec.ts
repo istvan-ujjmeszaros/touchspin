@@ -28,7 +28,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       }, testid);
 
       // Click up button and verify it increments by the step amount
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       // Should increment by step (5), so 50 + 5 = 55
       await expect.poll(
@@ -45,7 +45,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       }, testid);
 
       // Click up button and verify it increments by the new step amount
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       // Should increment by new step (10), so 60 + 10 = 70
       await expect.poll(
@@ -67,7 +67,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       }, testid);
 
       // Verify step=5 works
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('55');
@@ -82,7 +82,7 @@ test.describe('Native Attribute Synchronization Tests', () => {
       }, testid);
 
       // Should now increment by 1 (default step)
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, testid)
       ).toBe('61');

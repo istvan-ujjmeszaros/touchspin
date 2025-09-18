@@ -31,7 +31,7 @@ test.describe('Edge Cases and Error Handling', () => {
       expect(await input.inputValue()).toBe('');
 
       // Click the up button on empty input
-      await touchspinHelpers.touchspinClickUp(page, 'firstclick-test');
+      await touchspinHelpers.clickUpButton(page, 'firstclick-test');
 
       // Should use firstclickvalueifempty value
       await expect.poll(
@@ -52,7 +52,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Click the up button on empty input
-      await touchspinHelpers.touchspinClickUp(page, 'midpoint-test');
+      await touchspinHelpers.clickUpButton(page, 'midpoint-test');
 
       // Should use midpoint between min and max (10+30)/2 = 20
       await expect.poll(
@@ -132,7 +132,7 @@ test.describe('Edge Cases and Error Handling', () => {
       await input.focus();
 
       // Quick test to ensure it works
-      await touchspinHelpers.touchspinClickUp(page, 'unlimited-boost-test');
+      await touchspinHelpers.clickUpButton(page, 'unlimited-boost-test');
 
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'unlimited-boost-test')
@@ -154,7 +154,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Should still work without errors
-      await touchspinHelpers.touchspinClickUp(page, 'invalid-boost-test');
+      await touchspinHelpers.clickUpButton(page, 'invalid-boost-test');
 
       await expect.poll(
         async () => touchspinHelpers.readInputValue(page, 'invalid-boost-test')
@@ -176,7 +176,7 @@ test.describe('Edge Cases and Error Handling', () => {
       await page.evaluate(() => {
         const $ = (window as any).jQuery;
         $('body').append(`
-          <input id="conflict-test" type="text" value="50" 
+          <input id="conflict-test" type="text" value="50"
                  data-bts-min="10" min="20"
                  data-bts-max="90" max="80"
                  data-testid="conflict-test">
@@ -344,7 +344,7 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Perform rapid clicks
       for (let i = 0; i < 5; i++) {
-        await touchspinHelpers.touchspinClickUp(page, testid);
+        await touchspinHelpers.clickUpButton(page, testid);
       }
 
       // Should handle all clicks without errors

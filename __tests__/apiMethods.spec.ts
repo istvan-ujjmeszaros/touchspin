@@ -195,7 +195,7 @@ test.describe('API Methods', () => {
       await touchspinHelpers.fillWithValueAndBlur(page, testid, '10');
 
       // Click up once
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid)
@@ -227,7 +227,7 @@ test.describe('API Methods', () => {
       // After destroy, clicking up button should fail because buttons are removed
       let clickFailed = false;
       try {
-        await touchspinHelpers.touchspinClickUp(page, testid);
+        await touchspinHelpers.clickUpButton(page, testid);
       } catch (error) {
         clickFailed = true;
       }
@@ -272,7 +272,7 @@ test.describe('API Methods', () => {
       }, testid);
 
       // TouchSpin should still work with new value
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
 
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid)

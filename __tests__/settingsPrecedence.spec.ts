@@ -100,7 +100,7 @@ test.describe('Settings Precedence System', () => {
       const testId = 'test-custom-step';
       const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
 
-      await touchspinHelpers.touchspinClickUp(page, testId);
+      await touchspinHelpers.clickUpButton(page, testId);
       const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
 
       // Should increment by custom step (3), not default (1)
@@ -117,7 +117,7 @@ test.describe('Settings Precedence System', () => {
       // Test decimal formatting
       const testId = 'test-decimals';
 
-      await touchspinHelpers.touchspinClickUp(page, testId);
+      await touchspinHelpers.clickUpButton(page, testId);
       const afterUpValue = await touchspinHelpers.readInputValue(page, testId);
 
       // Should increment by 0.25 and maintain 2 decimal places
@@ -135,7 +135,7 @@ test.describe('Settings Precedence System', () => {
       const testId = 'test-min-max';
       const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '10');
 
-      await touchspinHelpers.touchspinClickUp(page, testId);
+      await touchspinHelpers.clickUpButton(page, testId);
       const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
 
       // Should increment by custom step (3)
@@ -164,7 +164,7 @@ test.describe('Settings Precedence System', () => {
       // Test data attribute step functionality
       const testId = 'test-data-attrs';
       const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
-      await touchspinHelpers.touchspinClickUp(page, testId);
+      await touchspinHelpers.clickUpButton(page, testId);
       const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
 
       // Should increment by data-bts-step="5"
@@ -188,7 +188,7 @@ test.describe('Settings Precedence System', () => {
       // Test JS step override
       const testId = 'test-js-override';
       const initialValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
-      await touchspinHelpers.touchspinClickUp(page, testId);
+      await touchspinHelpers.clickUpButton(page, testId);
       const afterUpValue = parseInt((await touchspinHelpers.readInputValue(page, testId)) || '0');
 
       // Should increment by JS step (10), not data attribute step (1)

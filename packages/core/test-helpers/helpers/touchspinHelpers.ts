@@ -111,7 +111,7 @@ async function checkTouchspinUpIsDisabled(page: Page, inputTestId: string): Prom
   return false; // If no button found, assume not disabled
 }
 
-async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> {
+async function clickUpButton(page: Page, inputTestId: string): Promise<void> {
   const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
@@ -232,7 +232,7 @@ async function touchspinClickUp(page: Page, inputTestId: string): Promise<void> 
   // If change is not expected (disabled/readonly/at boundary), don't wait and don't warn
 }
 
-async function touchspinClickDown(page: Page, inputTestId: string): Promise<void> {
+async function clickDownButton(page: Page, inputTestId: string): Promise<void> {
   const wrapper = await getWrapperInstanceWhenReady(page, inputTestId);
   // Get the initial state to determine if change is expected
   const initialState = await page.evaluate((testId) => {
@@ -843,8 +843,8 @@ export default {
   readInputValue,
   setInputAttr,
   checkTouchspinUpIsDisabled,
-  touchspinClickUp,
-  touchspinClickDown,
+  clickUpButton,
+  clickDownButton,
   changeEventCounter,
   countEvent,
   countChangeWithValue,

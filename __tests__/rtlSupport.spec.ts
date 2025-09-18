@@ -25,16 +25,16 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(htmlDir === 'rtl' || bodyDir === 'rtl' || rtlClass).toBe(true);
 
       // Check that TouchSpin buttons are rendered and functional
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
 
-      await touchspinHelpers.touchspinClickDown(page, testid);
+      await touchspinHelpers.clickDownButton(page, testid);
       expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
     });
 
     test('should handle vertical buttons and prefix/postfix in RTL', async ({ page }) => {
       const verticalTestid = 'touchspin-rtl-vertical';
-      await touchspinHelpers.touchspinClickUp(page, verticalTestid);
+      await touchspinHelpers.clickUpButton(page, verticalTestid);
       expect(await touchspinHelpers.readInputValue(page, verticalTestid)).toBe('51');
 
       const prefixTestid = 'touchspin-rtl-group-sm';
@@ -45,7 +45,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
 
-      await touchspinHelpers.touchspinClickUp(page, prefixTestid);
+      await touchspinHelpers.clickUpButton(page, prefixTestid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, prefixTestid)
       ).toBe('51');
@@ -70,7 +70,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(htmlDir).toBe('rtl');
 
       // Test basic functionality in RTL
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid)
       ).toBe('51');
@@ -105,12 +105,12 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(rtlCSS).toBeAttached();
 
       // Test functionality
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid)
       ).toBe('51');
 
-      await touchspinHelpers.touchspinClickDown(page, testid);
+      await touchspinHelpers.clickDownButton(page, testid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, testid)
       ).toBe('50');
@@ -129,7 +129,7 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const directPrefix = page.locator(`[data-testid="${prefixTestid}-prefix"].input-group-text`);
       await expect(directPrefix).toBeVisible();
 
-      await touchspinHelpers.touchspinClickUp(page, prefixTestid);
+      await touchspinHelpers.clickUpButton(page, prefixTestid);
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, prefixTestid)
       ).toBe('51');

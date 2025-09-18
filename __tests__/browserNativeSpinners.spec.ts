@@ -84,7 +84,7 @@ test.describe('Browser Native Spinner Controls', () => {
       await input.focus();
 
       // Test with TouchSpin button - should use native step=3
-      await touchspinHelpers.touchspinClickUp(page, testid);
+      await touchspinHelpers.clickUpButton(page, testid);
       const buttonResult = await touchspinHelpers.readInputValue(page, testid);
 
       // Note: Expected 8 (5 + 3) but getting 9 - investigating if this is expected behavior
@@ -395,11 +395,11 @@ test.describe('Browser Native Spinner Controls', () => {
       const textInputTestid = 'touchspin-text-input';
 
       // Test TouchSpin up button on number input
-      await touchspinHelpers.touchspinClickUp(page, numberInputTestid);
+      await touchspinHelpers.clickUpButton(page, numberInputTestid);
       const numberResult = await touchspinHelpers.readInputValue(page, numberInputTestid);
 
       // Test TouchSpin up button on text input
-      await touchspinHelpers.touchspinClickUp(page, textInputTestid);
+      await touchspinHelpers.clickUpButton(page, textInputTestid);
       const textResult = await touchspinHelpers.readInputValue(page, textInputTestid);
 
       // Both should behave identically (8 + 1 = 9) with TouchSpin buttons
@@ -523,7 +523,7 @@ test.describe('Browser Native Spinner Controls', () => {
 
       // Use TouchSpin buttons repeatedly to trigger booster
       for (let i = 0; i < 5; i++) {
-        await touchspinHelpers.touchspinClickUp(page, testid);
+        await touchspinHelpers.clickUpButton(page, testid);
       }
 
       // Note: Booster functionality requires sustained clicking to activate (boostat: 3)

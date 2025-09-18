@@ -25,7 +25,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
 
       // Reset value and test increment
       await touchspinHelpers.fillWithValue(page, 'touchspin-default', '50');
-      await touchspinHelpers.touchspinClickUp(page, 'touchspin-default');
+      await touchspinHelpers.clickUpButton(page, 'touchspin-default');
 
       await expect.poll(
         async () => await touchspinHelpers.readInputValue(page, 'touchspin-default')

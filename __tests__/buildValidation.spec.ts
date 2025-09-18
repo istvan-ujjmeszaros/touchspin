@@ -24,7 +24,7 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.touchspinClickUp(page, 'build-test');
+    await touchspinHelpers.clickUpButton(page, 'build-test');
     const value = await touchspinHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
@@ -41,7 +41,7 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.touchspinClickUp(page, 'build-test');
+    await touchspinHelpers.clickUpButton(page, 'build-test');
     const value = await touchspinHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
@@ -58,7 +58,7 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.touchspinClickUp(page, 'build-test');
+    await touchspinHelpers.clickUpButton(page, 'build-test');
     const value = await touchspinHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
@@ -75,7 +75,7 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.touchspinClickUp(page, 'build-test');
+    await touchspinHelpers.clickUpButton(page, 'build-test');
     const value = await touchspinHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
