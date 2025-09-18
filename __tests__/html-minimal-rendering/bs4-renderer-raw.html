@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bootstrap 4 Renderer - Raw Core</title>
+  <title>Bootstrap 4 Renderer - jQuery Plugin</title>
 
   <!-- Bootstrap 4 CSS -->
   <link href="../html/assets/bootstrap/bootstrap-4.6.2.min.css" rel="stylesheet">
 
-  <!-- TouchSpin CSS -->
-  <link href="/packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>Bootstrap 4 Renderer - Raw Core Test</h1>
+    <h1>Bootstrap 4 Renderer - jQuery Plugin Test</h1>
 
     <div class="form-group">
       <label for="test-input">Test Input:</label>
@@ -21,15 +21,15 @@
     </div>
   </div>
 
-  <script type="module">
-    import { TouchSpin } from '/packages/core/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
+  <!-- TouchSpin jQuery Plugin with Bootstrap 4 Renderer -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 
-    const input = document.getElementById('test-input');
-    TouchSpin(input, {
-      renderer: Bootstrap4Renderer,
-      min: 0,
-      max: 100
+  <script>
+    $(document).ready(function() {
+      $('#test-input').TouchSpin({
+        min: 0,
+        max: 100
+      });
     });
   </script>
 </body>

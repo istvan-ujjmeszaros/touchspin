@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Simple TouchSpin Core Test</title>
+  <title>Simple TouchSpin Core Test (jQuery UMD Plugin)</title>
   <link href="../html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <style>
     .container { max-width: 600px; margin-top: 50px; }
     .btn { margin: 2px; }
@@ -13,7 +14,7 @@
 <body>
   <div class="container">
     <h1>Simple TouchSpin Core Test</h1>
-    <p>Clean, minimal test with actual Bootstrap UI.</p>
+    <p>Testing core functionality via jQuery TouchSpin UMD plugin with Bootstrap UI.</p>
 
     <!-- Simple TouchSpin input with Bootstrap styling -->
     <div class="mb-4">
@@ -23,23 +24,23 @@
 
     <!-- API Test Buttons -->
     <div class="mb-3">
-      <button class="btn btn-primary" onclick="getApi()?.upOnce()">Up Once</button>
-      <button class="btn btn-primary" onclick="getApi()?.downOnce()">Down Once</button>
-      <button class="btn btn-secondary" onclick="getApi()?.startUpSpin()">Start Up Spin</button>
-      <button class="btn btn-secondary" onclick="getApi()?.startDownSpin()">Start Down Spin</button>
-      <button class="btn btn-danger" onclick="getApi()?.stopSpin()">Stop Spin</button>
+      <button class="btn btn-primary" onclick="getCoreInstance()?.upOnce()">Up Once</button>
+      <button class="btn btn-primary" onclick="getCoreInstance()?.downOnce()">Down Once</button>
+      <button class="btn btn-secondary" onclick="getCoreInstance()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-secondary" onclick="getCoreInstance()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-danger" onclick="getCoreInstance()?.stopSpin()">Stop Spin</button>
     </div>
 
     <div class="mb-3">
-      <button class="btn btn-info" onclick="alert('Value: ' + (getApi()?.getValue() ?? 'Not initialized'))">Get Value</button>
-      <button class="btn btn-info" onclick="getApi()?.setValue(100)">Set to 100</button>
-      <button class="btn btn-warning" onclick="getApi()?.updateSettings({step: 10})">Set Step=10</button>
-      <button class="btn btn-warning" onclick="getApi()?.updateSettings({step: 1})">Set Step=1</button>
+      <button class="btn btn-info" onclick="alert('Value: ' + (getCoreInstance()?.getValue() ?? 'Not initialized'))">Get Value</button>
+      <button class="btn btn-info" onclick="getCoreInstance()?.setValue(100)">Set to 100</button>
+      <button class="btn btn-warning" onclick="getCoreInstance()?.updateSettings({step: 10})">Set Step=10</button>
+      <button class="btn btn-warning" onclick="getCoreInstance()?.updateSettings({step: 1})">Set Step=1</button>
     </div>
 
     <div class="mb-3">
       <button class="btn btn-success" onclick="initTouchSpin()">Initialize</button>
-      <button class="btn btn-outline-danger" onclick="getApi()?.destroy()">Destroy</button>
+      <button class="btn btn-outline-danger" onclick="destroyTouchSpin()">Destroy</button>
     </div>
 
     <div class="mt-4">
@@ -54,23 +55,29 @@
     </div>
   </div>
 
-  <script type="module">
-    import { TouchSpin, getTouchSpin } from '/packages/core/dist/index.js';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
-    // Helper to get current API instance from the input
-    window.getApi = function() {
+  <script>
+    // Helper to get current core instance from the input
+    window.getCoreInstance = function() {
       const input = document.getElementById('simple-input');
-      return getTouchSpin(input);
+      return input._touchSpinCore;
     };
 
-    // One-line initialization - TouchSpin attaches directly to the input element
+    // jQuery TouchSpin initialization
     window.initTouchSpin = function() {
       const input = document.getElementById('simple-input');
-      TouchSpin(input, { 
-        min: 0, 
-        max: 200, 
-        step: 1 
+      $(input).TouchSpin({
+        min: 0,
+        max: 200,
+        step: 1
       });
+    };
+
+    // Destroy TouchSpin
+    window.destroyTouchSpin = function() {
+      const input = document.getElementById('simple-input');
+      $(input).TouchSpin('destroy');
     };
 
     // Auto-initialize on page load

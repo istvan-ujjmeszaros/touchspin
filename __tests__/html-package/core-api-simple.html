@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TouchSpin Core API Test (No jQuery)</title>
+  <title>TouchSpin Core API Test (jQuery UMD Plugin)</title>
   <link href="../html/assets/bootstrap/bootstrap-5.3.2.min.css" rel="stylesheet">
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <style>
     .container { max-width: 1000px; margin-top: 50px; }
     .btn:not(.input-group .btn) { margin: 2px; }
@@ -12,8 +13,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>TouchSpin Core API Test (No jQuery)</h1>
-    <p>Testing the modern TouchSpin core API directly without jQuery dependency.</p>
+    <h1>TouchSpin Core API Test (jQuery UMD Plugin)</h1>
+    <p>Testing core API functionality via jQuery TouchSpin plugin with Bootstrap renderer.</p>
 
     <!-- Simple TouchSpin input with Bootstrap styling -->
     <div class="mb-4">
@@ -23,34 +24,34 @@
 
     <!-- Core API Test Buttons -->
     <div class="mb-3">
-      <button class="btn btn-primary" onclick="getSimpleApi()?.upOnce()">Up Once</button>
-      <button class="btn btn-primary" onclick="getSimpleApi()?.downOnce()">Down Once</button>
-      <button class="btn btn-secondary" onclick="getSimpleApi()?.startUpSpin()">Start Up Spin</button>
-      <button class="btn btn-secondary" onclick="getSimpleApi()?.startDownSpin()">Start Down Spin</button>
-      <button class="btn btn-danger" onclick="getSimpleApi()?.stopSpin()">Stop Spin</button>
+      <button class="btn btn-primary" onclick="getSimpleCoreInstance()?.upOnce()">Up Once</button>
+      <button class="btn btn-primary" onclick="getSimpleCoreInstance()?.downOnce()">Down Once</button>
+      <button class="btn btn-secondary" onclick="getSimpleCoreInstance()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-secondary" onclick="getSimpleCoreInstance()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-danger" onclick="getSimpleCoreInstance()?.stopSpin()">Stop Spin</button>
     </div>
 
     <div class="mb-3">
-      <button class="btn btn-info" onclick="alert('Value: ' + (getSimpleApi()?.getValue() ?? 'Not initialized'))">Get Value</button>
-      <button class="btn btn-info" onclick="getSimpleApi()?.setValue(100)">Set to 100</button>
-      <button class="btn btn-warning" onclick="getSimpleApi()?.updateSettings({step: 10})">Set Step=10</button>
-      <button class="btn btn-warning" onclick="getSimpleApi()?.updateSettings({step: 1})">Set Step=1</button>
+      <button class="btn btn-info" onclick="alert('Value: ' + (getSimpleCoreInstance()?.getValue() ?? 'Not initialized'))">Get Value</button>
+      <button class="btn btn-info" onclick="getSimpleCoreInstance()?.setValue(100)">Set to 100</button>
+      <button class="btn btn-warning" onclick="getSimpleCoreInstance()?.updateSettings({step: 10})">Set Step=10</button>
+      <button class="btn btn-warning" onclick="getSimpleCoreInstance()?.updateSettings({step: 1})">Set Step=1</button>
     </div>
 
     <!-- Prefix/Postfix Test Buttons -->
     <div class="mb-3">
       <h6>Prefix/Postfix Tests:</h6>
-      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '$'})">Add Prefix ($)</button>
-      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({postfix: 'USD'})">Add Postfix (USD)</button>
-      <button class="btn btn-outline-success btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: ''})">Clear Prefix</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({postfix: ''})">Clear Postfix</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleApi()?.updateSettings({prefix: '', postfix: ''})">Clear Both</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({prefix: '$'})">Add Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({postfix: 'USD'})">Add Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({prefix: ''})">Clear Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({postfix: ''})">Clear Postfix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getSimpleCoreInstance()?.updateSettings({prefix: '', postfix: ''})">Clear Both</button>
     </div>
 
     <div class="mb-3">
       <button class="btn btn-success" onclick="initSimpleTouchSpin()">Initialize</button>
-      <button class="btn btn-outline-danger" onclick="getSimpleApi()?.destroy()">Destroy</button>
+      <button class="btn btn-outline-danger" onclick="destroySimpleTouchSpin()">Destroy</button>
     </div>
 
     <!-- Event Listener Test -->
@@ -77,80 +78,79 @@
     <!-- Advanced Input Group Controls -->
     <div class="mb-3">
       <button class="btn btn-success" onclick="initAdvancedTouchSpin()">Initialize Advanced</button>
-      <button class="btn btn-outline-danger" onclick="getAdvancedApi()?.destroy()">Destroy Advanced</button>
+      <button class="btn btn-outline-danger" onclick="destroyAdvancedTouchSpin()">Destroy Advanced</button>
     </div>
 
     <!-- Advanced Prefix/Postfix Test Buttons -->
     <div class="mb-3">
       <h6>Advanced Prefix/Postfix Tests:</h6>
-      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: '$'})">Add TouchSpin Prefix ($)</button>
-      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({postfix: 'USD'})">Add TouchSpin Postfix (USD)</button>
-      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.updateSettings({prefix: ''})">Clear TouchSpin Prefix</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.updateSettings({postfix: ''})">Clear TouchSpin Postfix</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedCoreInstance()?.updateSettings({prefix: '$'})">Add TouchSpin Prefix ($)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedCoreInstance()?.updateSettings({postfix: 'USD'})">Add TouchSpin Postfix (USD)</button>
+      <button class="btn btn-outline-success btn-sm" onclick="getAdvancedCoreInstance()?.updateSettings({prefix: '€', postfix: 'EUR'})">Set € EUR</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedCoreInstance()?.updateSettings({prefix: ''})">Clear TouchSpin Prefix</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedCoreInstance()?.updateSettings({postfix: ''})">Clear TouchSpin Postfix</button>
     </div>
 
     <!-- Advanced Core API Test -->
     <div class="mb-3">
       <h6>Advanced Input - Core API:</h6>
-      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedApi()?.upOnce()">Up Once</button>
-      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedApi()?.downOnce()">Down Once</button>
-      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedApi()?.startUpSpin()">Start Up Spin</button>
-      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedApi()?.startDownSpin()">Start Down Spin</button>
-      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedApi()?.stopSpin()">Stop Spin</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedCoreInstance()?.upOnce()">Up Once</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="getAdvancedCoreInstance()?.downOnce()">Down Once</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedCoreInstance()?.startUpSpin()">Start Up Spin</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="getAdvancedCoreInstance()?.startDownSpin()">Start Down Spin</button>
+      <button class="btn btn-outline-danger btn-sm" onclick="getAdvancedCoreInstance()?.stopSpin()">Stop Spin</button>
     </div>
 
     <div class="mt-4">
       <p><strong>Instructions:</strong></p>
       <ul>
-        <li>Click "Initialize" to set up TouchSpin via Core API</li>
+        <li>Click "Initialize" to set up TouchSpin via jQuery plugin UMD</li>
         <li><strong>Focus the input and use arrow keys (↑↓)</strong></li>
         <li><strong>Focus the input and use mouse wheel</strong></li>
-        <li>Test Core API methods directly (no jQuery wrapper)</li>
+        <li>Test Core API methods via jQuery wrapper</li>
         <li>Test event subscriptions and observe event log</li>
         <li>Compare with advanced input group integration</li>
       </ul>
     </div>
   </div>
 
-  <script type="module">
-    import { TouchSpin, getTouchSpin } from '/packages/core/dist/index.js';
-    import Bootstrap5Renderer from '/packages/renderers/bootstrap5/dist/index.js';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
+  <script>
     let eventUnsubscribers = [];
 
-    // Helper to get simple input core API instance
-    window.getSimpleApi = function() {
+    // Helper to get simple input core instance
+    window.getSimpleCoreInstance = function() {
       const input = document.getElementById('simple-input');
-      return getTouchSpin(input);
+      return input._touchSpinCore;
     };
 
-    // Helper to get advanced input core API instance
-    window.getAdvancedApi = function() {
+    // Helper to get advanced input core instance
+    window.getAdvancedCoreInstance = function() {
       const input = document.getElementById('advanced-input');
-      return getTouchSpin(input);
+      return input._touchSpinCore;
     };
 
     // Simple input initialization
     window.initSimpleTouchSpin = function() {
       const input = document.getElementById('simple-input');
-      
-      // Initialize TouchSpin via Core API directly
-      TouchSpin(input, {
-        renderer: Bootstrap5Renderer, // Required: specify renderer
+      $(input).TouchSpin({
         min: 0,
         max: 200,
         step: 1
       });
     };
 
+    // Destroy simple TouchSpin
+    window.destroySimpleTouchSpin = function() {
+      const input = document.getElementById('simple-input');
+      $(input).TouchSpin('destroy');
+    };
+
     // Advanced input group initialization
     window.initAdvancedTouchSpin = function() {
       const input = document.getElementById('advanced-input');
-      
-      // Initialize TouchSpin on input that's already in an input-group
-      TouchSpin(input, {
-        renderer: Bootstrap5Renderer, // Required: specify renderer
+      $(input).TouchSpin({
         min: 0,
         max: 500,
         step: 5,
@@ -159,10 +159,16 @@
       });
     };
 
+    // Destroy advanced TouchSpin
+    window.destroyAdvancedTouchSpin = function() {
+      const input = document.getElementById('advanced-input');
+      $(input).TouchSpin('destroy');
+    };
+
     // Event logging functionality
     window.subscribeToEvents = function() {
-      const api = getSimpleApi();
-      if (!api) {
+      const core = getSimpleCoreInstance();
+      if (!core) {
         alert('Initialize TouchSpin first!');
         return;
       }
@@ -175,14 +181,14 @@
       };
 
       // Subscribe to core events
-      eventUnsubscribers.push(api.on('min', logEvent('min')));
-      eventUnsubscribers.push(api.on('max', logEvent('max')));
-      eventUnsubscribers.push(api.on('startspin', logEvent('startspin')));
-      eventUnsubscribers.push(api.on('startupspin', logEvent('startupspin')));
-      eventUnsubscribers.push(api.on('startdownspin', logEvent('startdownspin')));
-      eventUnsubscribers.push(api.on('stopspin', logEvent('stopspin')));
-      eventUnsubscribers.push(api.on('stopupspin', logEvent('stopupspin')));
-      eventUnsubscribers.push(api.on('stopdownspin', logEvent('stopdownspin')));
+      eventUnsubscribers.push(core.on('min', logEvent('min')));
+      eventUnsubscribers.push(core.on('max', logEvent('max')));
+      eventUnsubscribers.push(core.on('startspin', logEvent('startspin')));
+      eventUnsubscribers.push(core.on('startupspin', logEvent('startupspin')));
+      eventUnsubscribers.push(core.on('startdownspin', logEvent('startdownspin')));
+      eventUnsubscribers.push(core.on('stopspin', logEvent('stopspin')));
+      eventUnsubscribers.push(core.on('stopupspin', logEvent('stopupspin')));
+      eventUnsubscribers.push(core.on('stopdownspin', logEvent('stopdownspin')));
 
       logEvent('system')('Event listeners subscribed');
     };
@@ -192,7 +198,7 @@
         try { unsub(); } catch {}
       });
       eventUnsubscribers = [];
-      
+
       const eventLog = document.getElementById('event-log');
       const timestamp = new Date().toLocaleTimeString();
       eventLog.innerHTML += `[${timestamp}] system: Event listeners unsubscribed\n`;

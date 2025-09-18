@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TouchSpin Core Smoke Test (ESM, no jQuery)</title>
+  <title>TouchSpin Core Smoke Test (jQuery UMD Plugin)</title>
   <script src="../html/assets/tailwind/tailwind.min.js"></script>
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
     .control-buttons button { margin: 4px; }
@@ -14,7 +15,7 @@
 <body>
   <div class="max-w-3xl mx-auto mt-6">
     <h1 class="text-2xl font-semibold">TouchSpin Core Smoke Test</h1>
-    <p class="text-gray-700">Standalone core via ESM; no jQuery and no renderer.</p>
+    <p class="text-gray-700">Using jQuery TouchSpin plugin to test core functionality via UMD build.</p>
 
     <div class="test-section">
       <div class="mb-2">
@@ -42,14 +43,13 @@
     </div>
   </div>
 
-  <script type="module">
-    import { createPublicApi, CORE_EVENTS } from '/packages/core/dist/index.js';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
+  <script>
     const input = document.getElementById('core-input');
     const status = document.getElementById('status');
     const log = document.getElementById('log');
-    /** @type {ReturnType<typeof createPublicApi>|null} */
-    let api = null;
+    let isInitialized = false;
     const unsubs = [];
 
     function addLog(msg) {
@@ -58,36 +58,44 @@
       log.scrollTop = log.scrollHeight;
     }
 
-    function subEvents(inst) {
+    function getCoreInstance() {
+      return input._touchSpinCore;
+    }
+
+    function subEvents(core) {
       const events = [
-        CORE_EVENTS.MIN,
-        CORE_EVENTS.MAX,
-        CORE_EVENTS.START_SPIN,
-        CORE_EVENTS.START_UP,
-        CORE_EVENTS.START_DOWN,
-        CORE_EVENTS.STOP_SPIN,
-        CORE_EVENTS.STOP_UP,
-        CORE_EVENTS.STOP_DOWN,
+        'min',
+        'max',
+        'startspin',
+        'startupspin',
+        'startdownspin',
+        'stopspin',
+        'stopupspin',
+        'stopdownspin',
       ];
       for (const ev of events) {
-        unsubs.push(inst.on(ev, () => addLog(`core:${ev}`)));
+        unsubs.push(core.on(ev, () => addLog(`core:${ev}`)));
       }
     }
 
     function init() {
-      if (api) { try { destroy(); } catch {} }
-      api = createPublicApi(input, { min: 0, max: 100, step: 1 });
-      subEvents(api);
-      status.textContent = 'Initialized (min 0, max 100, step 1)';
-      // Log native change events explicitly
-      input.addEventListener('change', () => addLog('change[' + input.value + ']'));
+      if (isInitialized) { try { destroy(); } catch {} }
+      $(input).TouchSpin({ min: 0, max: 100, step: 1 });
+      const core = getCoreInstance();
+      if (core) {
+        subEvents(core);
+        isInitialized = true;
+        status.textContent = 'Initialized (min 0, max 100, step 1)';
+        // Log native change events explicitly
+        input.addEventListener('change', () => addLog('change[' + input.value + ']'));
+      }
     }
 
     function destroy() {
-      if (!api) return;
+      if (!isInitialized) return;
       for (const u of unsubs.splice(0)) try { u(); } catch {}
-      api.destroy();
-      api = null;
+      $(input).TouchSpin('destroy');
+      isInitialized = false;
       status.textContent = 'Destroyed';
     }
 
@@ -95,19 +103,47 @@
     document.getElementById('btn-destroy').addEventListener('click', destroy);
     document.getElementById('btn-reinit').addEventListener('click', () => {
       destroy();
-      api = createPublicApi(input, { min: 5, max: 50, step: 5 });
-      subEvents(api);
-      status.textContent = 'Reinitialized (min 5, max 50, step 5)';
+      $(input).TouchSpin({ min: 5, max: 50, step: 5 });
+      const core = getCoreInstance();
+      if (core) {
+        subEvents(core);
+        isInitialized = true;
+        status.textContent = 'Reinitialized (min 5, max 50, step 5)';
+      }
     });
 
-    document.getElementById('btn-uponce').addEventListener('click', () => api && api.upOnce());
-    document.getElementById('btn-downonce').addEventListener('click', () => api && api.downOnce());
-    document.getElementById('btn-startup').addEventListener('click', () => api && api.startUpSpin());
-    document.getElementById('btn-startdown').addEventListener('click', () => api && api.startDownSpin());
-    document.getElementById('btn-stop').addEventListener('click', () => api && api.stopSpin());
-    document.getElementById('btn-get').addEventListener('click', () => api && addLog('getValue()=' + api.getValue()));
-    document.getElementById('btn-set').addEventListener('click', () => api && api.setValue(64));
-    document.getElementById('btn-update').addEventListener('click', () => api && api.updateSettings({ step: 10 }));
+    document.getElementById('btn-uponce').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.upOnce();
+    });
+    document.getElementById('btn-downonce').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.downOnce();
+    });
+    document.getElementById('btn-startup').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.startUpSpin();
+    });
+    document.getElementById('btn-startdown').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.startDownSpin();
+    });
+    document.getElementById('btn-stop').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.stopSpin();
+    });
+    document.getElementById('btn-get').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && addLog('getValue()=' + core.getValue());
+    });
+    document.getElementById('btn-set').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.setValue(64);
+    });
+    document.getElementById('btn-update').addEventListener('click', () => {
+      const core = getCoreInstance();
+      core && core.updateSettings({ step: 10 });
+    });
   </script>
 </body>
 </html>

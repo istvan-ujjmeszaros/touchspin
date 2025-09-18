@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tailwind Renderer - Raw Core</title>
+  <title>Tailwind Renderer - jQuery Plugin</title>
 
   <!-- Tailwind CSS -->
   <script src="../html/assets/tailwind/tailwind.min.js"></script>
 
+  <!-- jQuery -->
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
 </head>
 <body>
   <div class="container mx-auto p-8">
-    <h1 class="text-3xl font-bold mb-6">Tailwind Renderer - Raw Core Test</h1>
+    <h1 class="text-3xl font-bold mb-6">Tailwind Renderer - jQuery Plugin Test</h1>
 
     <div class="mb-4">
       <label for="test-input" class="block text-sm font-medium text-gray-700 mb-2">Test Input:</label>
@@ -19,15 +21,15 @@
     </div>
   </div>
 
-  <script type="module">
-    import { TouchSpin } from '/packages/core/dist/index.js';
-    import TailwindRenderer from '/packages/renderers/tailwind/dist/index.mjs';
+  <!-- TouchSpin jQuery Plugin with Tailwind Renderer -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-tailwind.umd.js"></script>
 
-    const input = document.getElementById('test-input');
-    TouchSpin(input, {
-      renderer: TailwindRenderer,
-      min: 0,
-      max: 100
+  <script>
+    $(document).ready(function() {
+      $('#test-input').TouchSpin({
+        min: 0,
+        max: 100
+      });
     });
   </script>
 </body>

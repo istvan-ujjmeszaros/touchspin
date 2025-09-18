@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Core Events Test - Simple</title>
+  <title>Core Events Test - Simple (jQuery UMD Plugin)</title>
+  <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,21 +36,43 @@
 <body>
   <div class="container">
     <h1>Core DOM Events Test</h1>
-    <p>Simple test for core TouchSpin DOM event management (no renderer).</p>
-    
+    <p>Testing core TouchSpin DOM event management via jQuery TouchSpin UMD plugin.</p>
+
     <div>
       <label for="core-input">Test Input:</label>
       <input id="core-input" type="text" value="50" />
     </div>
-    
-    <p><em>Note: This input uses core-only TouchSpin with no visual UI. Events are managed internally.</em></p>
+
+    <p><em>Note: This input uses jQuery TouchSpin plugin with Bootstrap renderer for visual UI.</em></p>
   </div>
 
-  <script type="module">
-    import { TouchSpin, getTouchSpin } from '/packages/core/dist/index.js';
-    
-    // Expose core functions globally for test access
-    window.TouchSpinExports = { TouchSpin, getTouchSpin };
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
+
+  <script>
+    // Initialize TouchSpin via jQuery plugin
+    $(document).ready(function() {
+      $('#core-input').TouchSpin({
+        min: 0,
+        max: 100,
+        step: 1
+      });
+    });
+
+    // Expose core instance globally for test access
+    window.getCoreInstance = function() {
+      const input = document.getElementById('core-input');
+      return input._touchSpinCore;
+    };
+
+    // Expose jQuery plugin functions for test access
+    window.TouchSpinJQuery = {
+      init: function(options) {
+        $('#core-input').TouchSpin(options || { min: 0, max: 100, step: 1 });
+      },
+      destroy: function() {
+        $('#core-input').TouchSpin('destroy');
+      }
+    };
   </script>
 </body>
 </html>
