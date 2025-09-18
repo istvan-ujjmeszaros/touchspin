@@ -711,4 +711,58 @@ yarn build
 
 ---
 
+## 🎛️ Core Event Model
+
+### API vs User Input Events
+
+**IMPORTANT**: API spin methods do not emit `touchspin.on.startspin/stopspin` events. For these events, **use keyboard or wheel** in tests. API-based tests should assert **no start/stop** events.
+
+**Event Sources**:
+- **User Input** (keyboard, mousewheel): Emits `startspin`/`stopspin` events
+- **API Methods** (`startUpSpin()`, `stopSpin()`, etc.): Do NOT emit `startspin`/`stopspin` events
+
+**Testing Implications**:
+```typescript
+// ✅ CORRECT - Test keyboard events
+await page.keyboard.down('ArrowUp');
+expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+
+// ✅ CORRECT - Test API methods don't emit start/stop
+await incrementViaAPI(page, 'test-input');
+expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+```
+
+---
+
+## 🔄 Callback Functions
+
+### Callback Behavior Specifications
+
+**`callback_before_calculation`**:
+- May return **numeric** (number or numeric string) → Core normalizes & clamps as usual
+- If it returns **non-numeric**, Core **rejects the callback return** and preserves the original value
+- Use `readInputValue()` for display assertions and `getNumericValue()` for internal state
+
+**`callback_after_calculation`**:
+- Takes the final computed value and may return a **string for display** (e.g., `"10 USD"`)
+- Core applies formatter to display but **maintains internal numeric value**
+- Display shows formatted string, but `getNumericValue()` returns the underlying number
+
+**Testing Implications**:
+```typescript
+// ✅ Test before_calculation with numeric string
+expect(await getNumericValue(page, 'test-input')).toBe(51);  // Normalized
+expect(await readInputValue(page, 'test-input')).toBe('51'); // Display
+
+// ✅ Test before_calculation with non-numeric (rejected)
+expect(await readInputValue(page, 'test-input')).toBe('50'); // Original preserved
+expect(await getNumericValue(page, 'test-input')).toBe(50);  // Original preserved
+
+// ✅ Test after_calculation formatting
+expect(await readInputValue(page, 'test-input')).toBe('10 USD'); // Formatted display
+expect(await getNumericValue(page, 'test-input')).toBe(10);      // Internal numeric preserved
+```
+
+---
+
 *End of Testing Strategy Document - Let's achieve 100% coverage with clean, maintainable tests!*

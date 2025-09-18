@@ -6,7 +6,9 @@ import {
   setValueViaAPI,
   destroyCore,
   isCoreInitialized,
-  updateSettingsViaAPI
+  updateSettingsViaAPI,
+  readInputValue as readInputValueViaAdapter,
+  initializeCoreWithCallbacks
 } from '../test-helpers/core-adapter';
 
 // Use original battle-tested helpers
@@ -212,53 +214,41 @@ test.describe('Core TouchSpin Configuration', () => {
   });
 
   test.describe('Callback Functions', () => {
-    test('should execute callback_before_calculation', async ({ page }) => {
-      await page.evaluate(() => {
-        (window as any).callbackCalled = false;
+    test('before_calculation: numeric string overrides value and then normalizes', async ({ page }) => {
+      // step 3, use divisible init to avoid incidental rounding
+      await initializeCoreWithCallbacks(page, 'test-input', {
+        step: 3,
+        initval: 48,
+        callbackType: 'before_numeric'
       });
 
-      await initializeCore(page, 'test-input', {
-        step: 1,
-        initval: 10,
-        callback_before_calculation: () => {
-          (window as any).callbackCalled = true;
-          return '15';
-        }
-      });
-
-      const callbackCalled = await page.evaluate(() => (window as any).callbackCalled);
-      expect(callbackCalled).toBe(true);
+      // 51 is already a multiple of 3 → remains 51
+      expect(await getNumericValue(page, 'test-input')).toBe(51);
+      expect(await readInputValueViaAdapter(page, 'test-input')).toBe('51');
     });
 
-    test('should execute callback_after_calculation', async ({ page }) => {
-      await page.evaluate(() => {
-        (window as any).afterCallbackCalled = false;
+    test('before_calculation: non-numeric return is rejected and preserves original value', async ({ page }) => {
+      await initializeCoreWithCallbacks(page, 'test-input', {
+        step: 5,
+        initval: 50,
+        callbackType: 'before_nonnumeric'
       });
 
-      await initializeCore(page, 'test-input', {
-        step: 1,
-        initval: 10,
-        callback_after_calculation: (value) => {
-          (window as any).afterCallbackCalled = true;
-          return value + ' USD';
-        }
-      });
-
-      const callbackCalled = await page.evaluate(() => (window as any).afterCallbackCalled);
-      expect(callbackCalled).toBe(true);
+      // Core rejects non-numeric callback returns and preserves original value
+      expect(await readInputValueViaAdapter(page, 'test-input')).toBe('50');
+      expect(await getNumericValue(page, 'test-input')).toBe(50);
     });
 
-    test('should handle callback functions that return invalid values', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+    test('after_calculation: formatter changes display but preserves internal numeric value', async ({ page }) => {
+      await initializeCoreWithCallbacks(page, 'test-input', {
         step: 1,
         initval: 10,
-        callback_before_calculation: () => {
-          return null; // Invalid return
-        }
+        callbackType: 'after_format'
       });
 
-      // Should still function despite invalid callback return
-      expect(await getNumericValue(page, 'test-input')).toBe(10);
+      // Core applies formatter to display but maintains internal numeric value
+      expect(await readInputValueViaAdapter(page, 'test-input')).toBe('10 USD');
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Internal value preserved
     });
   });
 });

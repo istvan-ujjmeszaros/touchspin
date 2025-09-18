@@ -20,6 +20,26 @@ export async function initializeCore(page: Page, testId: string, options: any = 
     // Create Core instance directly and store on element
     const core = new TouchSpinCore(input, options);
     input._touchSpinCore = core;
+
+    // Set up Core event listeners for event log
+    const coreEvents = ['min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'];
+    coreEvents.forEach(eventName => {
+      core.on(eventName, () => {
+        (window as any).logEvent(`touchspin.on.${eventName}`, {
+          target: testId,
+          value: input.value
+        });
+      });
+    });
+
+    // Listen for change events on the input
+    input.addEventListener('change', () => {
+      (window as any).logEvent('change', {
+        target: testId,
+        value: input.value
+      });
+    });
+
     // Initialize DOM event handling
     core.initDOMEventHandling();
   }, { testId, options });
@@ -170,4 +190,82 @@ export async function updateSettingsViaAPI(page: Page, testId: string, newSettin
     }
     core.updateSettings(newSettings);
   }, { testId, newSettings });
+}
+
+// Read input value as string (convenience wrapper)
+export async function readInputValue(page: Page, testId: string): Promise<string> {
+  const touchspinHelpers = (await import('./helpers/touchspinHelpers')).default;
+  return await touchspinHelpers.readInputValue(page, testId);
+}
+
+// Get public API surface for testing
+export async function getPublicAPI(page: Page, testId: string): Promise<any> {
+  return await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    return core.toPublicApi();
+  }, { testId });
+}
+
+// Initialize Core TouchSpin with callback functions (requires different approach)
+export async function initializeCoreWithCallbacks(page: Page, testId: string, options: any = {}): Promise<void> {
+  await page.evaluate(async ({ testId, options }) => {
+    const { TouchSpinCore } = await import('http://localhost:8866/packages/core/dist/index.js');
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) {
+      throw new Error(`Input with testId "${testId}" not found`);
+    }
+
+    // Set initial value if specified
+    if (options.initval !== undefined) {
+      input.value = String(options.initval);
+    }
+
+    // Handle callback functions by recreating them in the browser context
+    const coreOptions = { ...options };
+    if (options.callbackType === 'before_numeric') {
+      coreOptions.callback_before_calculation = () => '51';
+    } else if (options.callbackType === 'before_nonnumeric') {
+      coreOptions.callback_before_calculation = () => 'abc';
+    } else if (options.callbackType === 'after_format') {
+      coreOptions.callback_after_calculation = (v: string | number) => `${v} USD`;
+    }
+
+    // Remove our custom property
+    delete coreOptions.callbackType;
+
+    // Create Core instance directly and store on element
+    const core = new TouchSpinCore(input, coreOptions);
+    input._touchSpinCore = core;
+
+    // Set up Core event listeners for event log
+    const coreEvents = ['min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'];
+    coreEvents.forEach(eventName => {
+      core.on(eventName, () => {
+        (window as any).logEvent(`touchspin.on.${eventName}`, {
+          target: testId,
+          value: input.value
+        });
+      });
+    });
+
+    // Listen for change events on the input
+    input.addEventListener('change', () => {
+      (window as any).logEvent('change', {
+        target: testId,
+        value: input.value
+      });
+    });
+
+    // Initialize DOM event handling
+    core.initDOMEventHandling();
+  }, { testId, options });
+
+  // Wait for Core to be fully initialized by checking for data-touchspin-injected attribute
+  await page.waitForSelector(`[data-testid="${testId}"][data-touchspin-injected]`, {
+    timeout: 5000
+  });
 }
