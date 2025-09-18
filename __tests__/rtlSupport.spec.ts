@@ -76,10 +76,8 @@ test.describe('RTL (Right-to-Left) Support', () => {
       ).toBe('51');
 
       // Check Bootstrap 4 specific structure exists
-      const hasBS4Structure = await page.evaluate(() => {
-        return document.querySelector('.input-group-prepend') !== null ||
-               document.querySelector('.input-group-append') !== null;
-      });
+      const hasBS4Structure = await touchspinHelpers.checkPrependExists(page) ||
+                              await touchspinHelpers.checkAppendExists(page);
       expect(hasBS4Structure).toBe(true);
     });
   });
@@ -118,10 +116,8 @@ test.describe('RTL (Right-to-Left) Support', () => {
 
     test('should handle Bootstrap 5 structure without deprecated classes', async ({ page }) => {
       // Verify no deprecated prepend/append classes exist
-      const hasDeprecatedClasses = await page.evaluate(() => {
-        return document.querySelector('.input-group-prepend') !== null ||
-               document.querySelector('.input-group-append') !== null;
-      });
+      const hasDeprecatedClasses = await touchspinHelpers.checkPrependExists(page) ||
+                                   await touchspinHelpers.checkAppendExists(page);
       expect(hasDeprecatedClasses).toBe(false);
 
       const prefixTestid = 'touchspin-rtl-group-sm';

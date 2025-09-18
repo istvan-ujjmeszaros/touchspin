@@ -74,19 +74,7 @@ test.describe('Advanced Features', () => {
       const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
 
       // Hold mousedown for longer than stepintervaldelay (500ms)
-      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
-      await wrapper.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      });
-
-      // Wait for spin to start and continue
-      await touchspinHelpers.waitForTimeout(800);
-
-      await wrapper.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      });
+      await touchspinHelpers.holdUpButton(page, testid, 800);
 
       const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
       expect(finalValue).toBeGreaterThan(initialValue + 1); // Should have spun multiple times
@@ -95,20 +83,8 @@ test.describe('Advanced Features', () => {
     test('should stop spinning on mouseup', async ({ page }) => {
       const testid = 'touchspin-default';
 
-      // Start spinning
-      const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
-      await wrapper2.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      });
-
-      await touchspinHelpers.waitForTimeout(200); // Short hold
-
-      // Stop spinning
-      await wrapper2.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      });
+      // Start spinning and stop after short hold
+      await touchspinHelpers.holdUpButton(page, testid, 200);
 
       const valueAfterStop = await touchspinHelpers.readInputValue(page, testid);
 

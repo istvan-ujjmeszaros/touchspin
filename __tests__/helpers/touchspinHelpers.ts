@@ -594,6 +594,167 @@ async function expectTouchSpinDestroyed(page: Page, testId: string): Promise<voi
   }
 }
 
+// Wait for TouchSpin to be ready/initialized
+async function waitForTouchSpinReady(page: Page, testId: string, timeout: number = 5000): Promise<void> {
+  try {
+    // Wait for INPUT element to have data-touchspin-injected attribute (set last during init)
+    await page.waitForSelector(`[data-testid="${testId}"][data-touchspin-injected]`, { timeout });
+  } catch (error) {
+    throw new Error(`TouchSpin failed to initialize within ${timeout}ms for testId: ${testId}`);
+  }
+}
+
+// Hold up button for specified duration
+async function holdUpButton(page: Page, testId: string, duration: number): Promise<void> {
+  const button = page.locator(`[data-testid="${testId}-up"]`);
+  const count = await button.count();
+  if (count === 0) {
+    throw new Error(`TouchSpin up button not found for testId: ${testId}`);
+  }
+
+  await button.dispatchEvent('mousedown');
+  await page.waitForTimeout(duration);
+  await button.dispatchEvent('mouseup');
+}
+
+// Hold down button for specified duration
+async function holdDownButton(page: Page, testId: string, duration: number): Promise<void> {
+  const button = page.locator(`[data-testid="${testId}-down"]`);
+  const count = await button.count();
+  if (count === 0) {
+    throw new Error(`TouchSpin down button not found for testId: ${testId}`);
+  }
+
+  await button.dispatchEvent('mousedown');
+  await page.waitForTimeout(duration);
+  await button.dispatchEvent('mouseup');
+}
+
+// Press ArrowUp key once on input
+async function pressUpArrowKeyOnInput(page: Page, testId: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.press('ArrowUp');
+}
+
+// Press ArrowDown key once on input
+async function pressDownArrowKeyOnInput(page: Page, testId: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.press('ArrowDown');
+}
+
+// Hold ArrowUp key for specified duration
+async function holdUpArrowKeyOnInput(page: Page, testId: string, duration: number): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.down('ArrowUp');
+  await page.waitForTimeout(duration);
+  await page.keyboard.up('ArrowUp');
+}
+
+// Hold ArrowDown key for specified duration
+async function holdDownArrowKeyOnInput(page: Page, testId: string, duration: number): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.down('ArrowDown');
+  await page.waitForTimeout(duration);
+  await page.keyboard.up('ArrowDown');
+}
+
+// Type text in input
+async function typeInInput(page: Page, testId: string, text: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.type(text);
+}
+
+// Select all text in input (Ctrl+A)
+async function selectAllInInput(page: Page, testId: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.keyboard.press('Control+a');
+}
+
+// Get input group addon texts from wrapper
+async function getInputGroupAddons(page: Page, testId: string): Promise<string[]> {
+  const wrapper = page.locator(`[data-testid="${testId}-wrapper"]`);
+  const count = await wrapper.count();
+  if (count === 0) {
+    throw new Error(`TouchSpin wrapper not found for testId: ${testId}`);
+  }
+
+  return await wrapper.evaluate((el) =>
+    Array.from(el.querySelectorAll('.input-group-addon, .input-group-text'))
+      .map(n => (n.textContent || '').trim())
+      .filter(Boolean)
+  );
+}
+
+// Get up button DOM element
+async function getUpButtonElement(page: Page, testId: string): Promise<any> {
+  return await page.evaluate((testId) => {
+    const button = document.querySelector(`[data-testid="${testId}-up"]`);
+    if (!button) {
+      throw new Error(`TouchSpin up button not found for testId: ${testId}`);
+    }
+    return button;
+  }, testId);
+}
+
+// Get down button DOM element
+async function getDownButtonElement(page: Page, testId: string): Promise<any> {
+  return await page.evaluate((testId) => {
+    const button = document.querySelector(`[data-testid="${testId}-down"]`);
+    if (!button) {
+      throw new Error(`TouchSpin down button not found for testId: ${testId}`);
+    }
+    return button;
+  }, testId);
+}
+
+// Check if input group prepend exists
+async function checkPrependExists(page: Page): Promise<boolean> {
+  const prepend = page.locator('.input-group-prepend');
+  return (await prepend.count()) > 0;
+}
+
+// Check if input group append exists
+async function checkAppendExists(page: Page): Promise<boolean> {
+  const append = page.locator('.input-group-append');
+  return (await append.count()) > 0;
+}
+
 export default {
   getWrapperInstanceWhenReady,
   waitForTimeout,
@@ -636,5 +797,19 @@ export default {
   expectTouchSpinInitialized,
   isTouchSpinDestroyed,
   expectTouchSpinDestroyed,
+  waitForTouchSpinReady,
+  holdUpButton,
+  holdDownButton,
+  pressUpArrowKeyOnInput,
+  pressDownArrowKeyOnInput,
+  holdUpArrowKeyOnInput,
+  holdDownArrowKeyOnInput,
+  typeInInput,
+  selectAllInInput,
+  getInputGroupAddons,
+  getUpButtonElement,
+  getDownButtonElement,
+  checkPrependExists,
+  checkAppendExists,
   TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
 };

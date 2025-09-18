@@ -3,9 +3,8 @@
  * Shared test infrastructure for all packages
  */
 
-// Re-export shared helpers from the copied helpers directory
-export { default as touchspinHelpers } from './helpers/touchspinHelpers';
-export { default as dualTestHelpers } from './helpers/dualTestHelpers';
+// Re-export canonical helpers from the main helpers directory
+export { default as touchspinHelpers } from '../../../__tests__/helpers/touchspinHelpers';
 
 // Default export uses touchspinHelpers as the main helper
-export { default } from './helpers/touchspinHelpers';
+export { default } from '../../../__tests__/helpers/touchspinHelpers';

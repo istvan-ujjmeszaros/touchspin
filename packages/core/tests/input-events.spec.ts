@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../test-helpers';
+import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
 import {
   initializeCore,
   getNumericValue,
