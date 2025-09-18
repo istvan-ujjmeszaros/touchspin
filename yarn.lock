@@ -1367,7 +1367,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/jquery-plugin@workspace:packages/jquery-plugin":
+"@touchspin/jquery-plugin@workspace:*, @touchspin/jquery-plugin@workspace:packages/jquery-plugin":
   version: 0.0.0-use.local
   resolution: "@touchspin/jquery-plugin@workspace:packages/jquery-plugin"
   dependencies:
@@ -2080,6 +2080,7 @@ __metadata:
     "@changesets/cli": "npm:^2.27.7"
     "@eslint/js": "npm:^9.33.0"
     "@playwright/test": "npm:^1.54.2"
+    "@touchspin/jquery-plugin": "workspace:*"
     "@types/jquery": "npm:^3.5.30"
     "@types/node": "npm:^22.7.4"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.1"

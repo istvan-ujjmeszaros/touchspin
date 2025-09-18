@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
+import { TouchSpinEmittedEvent } from '@touchspin/jquery-plugin';
 
 // Standard timeout constants
 const TOUCHSPIN_EVENT_WAIT = 700;
@@ -252,14 +253,14 @@ async function installJqueryPlugin(page: Page): Promise<void> {
     if ((window as any).logEvent) {
       // Log all TouchSpin events
       const touchspinEvents = [
-        'touchspin.on.min',
-        'touchspin.on.max',
-        'touchspin.on.startspin',
-        'touchspin.on.startupspin',
-        'touchspin.on.startdownspin',
-        'touchspin.on.stopspin',
-        'touchspin.on.stopupspin',
-        'touchspin.on.stopdownspin'
+        TouchSpinEmittedEvent.ON_MIN,
+        TouchSpinEmittedEvent.ON_MAX,
+        TouchSpinEmittedEvent.ON_START_SPIN,
+        TouchSpinEmittedEvent.ON_START_UP_SPIN,
+        TouchSpinEmittedEvent.ON_START_DOWN_SPIN,
+        TouchSpinEmittedEvent.ON_STOP_SPIN,
+        TouchSpinEmittedEvent.ON_STOP_UP_SPIN,
+        TouchSpinEmittedEvent.ON_STOP_DOWN_SPIN
       ];
 
       // Set up event listeners on document level to catch all TouchSpin events

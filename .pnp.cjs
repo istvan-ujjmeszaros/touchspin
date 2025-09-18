@@ -56,7 +56,7 @@ const RAW_RUNTIME_STATE =
   "pnpZipBackend": "libzip",\
   "fallbackExclusionList": [\
     ["@touchspin/core", ["workspace:packages/core"]],\
-    ["@touchspin/jquery-plugin", ["workspace:packages/jquery-plugin"]],\
+    ["@touchspin/jquery-plugin", ["virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin", "workspace:packages/jquery-plugin"]],\
     ["@touchspin/renderer-bootstrap3", ["workspace:packages/renderers/bootstrap3"]],\
     ["@touchspin/renderer-bootstrap4", ["workspace:packages/renderers/bootstrap4"]],\
     ["@touchspin/renderer-bootstrap5", ["workspace:packages/renderers/bootstrap5"]],\
@@ -76,6 +76,7 @@ const RAW_RUNTIME_STATE =
           ["@changesets/cli", "npm:2.29.7"],\
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
+          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
           ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
@@ -1407,10 +1408,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:5.3.0", {\
-        "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-1ebf507b69/3/home/styu/.yarn/berry/cache/@rollup-pluginutils-npm-5.3.0-41141e497e-10c0.zip/node_modules/@rollup/pluginutils/",\
+      ["virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0", {\
+        "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-6b71eedabd/3/home/styu/.yarn/berry/cache/@rollup-pluginutils-npm-5.3.0-41141e497e-10c0.zip/node_modules/@rollup/pluginutils/",\
         "packageDependencies": [\
-          ["@rollup/pluginutils", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
           ["@types/estree", "npm:1.0.8"],\
           ["@types/rollup", null],\
           ["estree-walker", "npm:2.0.2"],\
@@ -1710,6 +1711,28 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@touchspin/jquery-plugin", [\
+      ["virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin", {\
+        "packageLocation": "./.yarn/__virtual__/@touchspin-jquery-plugin-virtual-2d4e82ce69/1/packages/jquery-plugin/",\
+        "packageDependencies": [\
+          ["@playwright/test", "npm:1.55.0"],\
+          ["@touchspin/core", "workspace:packages/core"],\
+          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
+          ["@touchspin/renderer-bootstrap3", "workspace:packages/renderers/bootstrap3"],\
+          ["@touchspin/renderer-bootstrap4", "workspace:packages/renderers/bootstrap4"],\
+          ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
+          ["@touchspin/renderer-tailwind", "workspace:packages/renderers/tailwind"],\
+          ["@types/jquery", "npm:3.5.33"],\
+          ["jquery", null],\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+        ],\
+        "packagePeers": [\
+          "@types/jquery",\
+          "jquery"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["workspace:packages/jquery-plugin", {\
         "packageLocation": "./packages/jquery-plugin/",\
         "packageDependencies": [\
@@ -2212,14 +2235,14 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:2.2.0", {\
-        "packageLocation": "./.yarn/__virtual__/@vue-language-core-virtual-7df39be7bf/3/home/styu/.yarn/berry/cache/@vue-language-core-npm-2.2.0-451bd2aafd-10c0.zip/node_modules/@vue/language-core/",\
+      ["virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0", {\
+        "packageLocation": "./.yarn/__virtual__/@vue-language-core-virtual-970432c1da/3/home/styu/.yarn/berry/cache/@vue-language-core-npm-2.2.0-451bd2aafd-10c0.zip/node_modules/@vue/language-core/",\
         "packageDependencies": [\
           ["@types/typescript", null],\
           ["@volar/language-core", "npm:2.4.23"],\
           ["@vue/compiler-dom", "npm:3.5.21"],\
           ["@vue/compiler-vue2", "npm:2.7.16"],\
-          ["@vue/language-core", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
           ["@vue/shared", "npm:3.5.21"],\
           ["alien-signals", "npm:0.4.14"],\
           ["minimatch", "npm:9.0.5"],\
@@ -2618,6 +2641,7 @@ const RAW_RUNTIME_STATE =
           ["@changesets/cli", "npm:2.29.7"],\
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
+          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
           ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
@@ -7221,11 +7245,11 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/vite-plugin-dts-virtual-c36b407a39/3/home/styu/.yarn/berry/cache/vite-plugin-dts-npm-4.5.4-2445647687-10c0.zip/node_modules/vite-plugin-dts/",\
         "packageDependencies": [\
           ["@microsoft/api-extractor", "npm:7.52.12"],\
-          ["@rollup/pluginutils", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
           ["@types/typescript", null],\
           ["@types/vite", null],\
           ["@volar/typescript", "npm:2.4.23"],\
-          ["@vue/language-core", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
           ["compare-versions", "npm:6.1.1"],\
           ["debug", "virtual:643ed7cc338bcf145a82d8b05b3bef6bcf150ca545df386225596f10ce53cc90b88b3ca83e348ade1ccea5f3f8e76c92d2f0e2ba544da60d40aff9921c56872d#npm:4.4.1"],\
           ["kolorist", "npm:1.8.0"],\
@@ -7247,11 +7271,11 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/vite-plugin-dts-virtual-0043a2886e/3/home/styu/.yarn/berry/cache/vite-plugin-dts-npm-4.5.4-2445647687-10c0.zip/node_modules/vite-plugin-dts/",\
         "packageDependencies": [\
           ["@microsoft/api-extractor", "npm:7.52.12"],\
-          ["@rollup/pluginutils", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
           ["@types/typescript", null],\
           ["@types/vite", null],\
           ["@volar/typescript", "npm:2.4.23"],\
-          ["@vue/language-core", "virtual:0043a2886e5752dc5704ac3caa02bbd99150c46cca72f3ce3d45e4eb29c6e809394c5a7e3acaa017dd4d911b7dca869048eb115c74b8e5179f29ed6f9bcec151#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
           ["compare-versions", "npm:6.1.1"],\
           ["debug", "virtual:643ed7cc338bcf145a82d8b05b3bef6bcf150ca545df386225596f10ce53cc90b88b3ca83e348ade1ccea5f3f8e76c92d2f0e2ba544da60d40aff9921c56872d#npm:4.4.1"],\
           ["kolorist", "npm:1.8.0"],\

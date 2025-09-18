@@ -1,6 +1,11 @@
 import type { JQueryStatic } from 'jquery';
 import { TouchSpin, getTouchSpin, CORE_EVENTS } from '@touchspin/core';
 import type { TSRenderer } from '@touchspin/core/renderer';
+import { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './types/events';
+
+// Export event types for external use
+export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './types/events';
+export type { TouchSpinUpdateSettingsData } from './types/events';
 
 /**
  * Install a minimal jQuery plugin wrapper that just forwards everything to core.
@@ -60,14 +65,14 @@ export function installJqueryTouchSpin($: JQueryStatic) {
 
       // Bridge core events to jQuery events (minimal event forwarding only)
       const evMap: Record<string, string> = {
-        [CORE_EVENTS.MIN]: 'touchspin.on.min',
-        [CORE_EVENTS.MAX]: 'touchspin.on.max',
-        [CORE_EVENTS.START_SPIN]: 'touchspin.on.startspin',
-        [CORE_EVENTS.START_UP]: 'touchspin.on.startupspin',
-        [CORE_EVENTS.START_DOWN]: 'touchspin.on.startdownspin',
-        [CORE_EVENTS.STOP_SPIN]: 'touchspin.on.stopspin',
-        [CORE_EVENTS.STOP_UP]: 'touchspin.on.stopupspin',
-        [CORE_EVENTS.STOP_DOWN]: 'touchspin.on.stopdownspin',
+        [CORE_EVENTS.MIN]: TouchSpinEmittedEvent.ON_MIN,
+        [CORE_EVENTS.MAX]: TouchSpinEmittedEvent.ON_MAX,
+        [CORE_EVENTS.START_SPIN]: TouchSpinEmittedEvent.ON_START_SPIN,
+        [CORE_EVENTS.START_UP]: TouchSpinEmittedEvent.ON_START_UP_SPIN,
+        [CORE_EVENTS.START_DOWN]: TouchSpinEmittedEvent.ON_START_DOWN_SPIN,
+        [CORE_EVENTS.STOP_SPIN]: TouchSpinEmittedEvent.ON_STOP_SPIN,
+        [CORE_EVENTS.STOP_UP]: TouchSpinEmittedEvent.ON_STOP_UP_SPIN,
+        [CORE_EVENTS.STOP_DOWN]: TouchSpinEmittedEvent.ON_STOP_DOWN_SPIN,
       };
 
       // Store unsubscribe functions for cleanup
@@ -87,7 +92,7 @@ export function installJqueryTouchSpin($: JQueryStatic) {
         });
         // Clean up ONLY the jQuery events that THIS plugin explicitly added
         // Based on lines 93-125 in this file: 8 explicit jQuery events
-        $input.off('touchspin.uponce touchspin.downonce touchspin.startupspin touchspin.startdownspin touchspin.stopspin touchspin.updatesettings touchspin.destroy blur.touchspin');
+        $input.off(`${TouchSpinCallableEvent.UP_ONCE} ${TouchSpinCallableEvent.DOWN_ONCE} ${TouchSpinCallableEvent.START_UP_SPIN} ${TouchSpinCallableEvent.START_DOWN_SPIN} ${TouchSpinCallableEvent.STOP_SPIN} ${TouchSpinCallableEvent.UPDATE_SETTINGS} ${TouchSpinCallableEvent.DESTROY} blur.touchspin`);
 
         // If the core is adding additional jQuery events, they would need to be cleaned up by the core itself
         // or added to the list above. Currently there are 2 unaccounted events that are not being cleaned up.
@@ -97,31 +102,31 @@ export function installJqueryTouchSpin($: JQueryStatic) {
       inst.registerTeardown(jqueryTeardown);
 
       // Callable events - forward to core (core manages lifecycle)
-      $input.on('touchspin.uponce', () => {
+      $input.on(TouchSpinCallableEvent.UP_ONCE, () => {
         const api = getTouchSpin(inputEl);
         if (api) api.upOnce();
       });
-      $input.on('touchspin.downonce', () => {
+      $input.on(TouchSpinCallableEvent.DOWN_ONCE, () => {
         const api = getTouchSpin(inputEl);
         if (api) api.downOnce();
       });
-      $input.on('touchspin.startupspin', () => {
+      $input.on(TouchSpinCallableEvent.START_UP_SPIN, () => {
         const api = getTouchSpin(inputEl);
         if (api) api.startUpSpin();
       });
-      $input.on('touchspin.startdownspin', () => {
+      $input.on(TouchSpinCallableEvent.START_DOWN_SPIN, () => {
         const api = getTouchSpin(inputEl);
         if (api) api.startDownSpin();
       });
-      $input.on('touchspin.stopspin', () => {
+      $input.on(TouchSpinCallableEvent.STOP_SPIN, () => {
         const api = getTouchSpin(inputEl);
         if (api) api.stopSpin();
       });
-      $input.on('touchspin.updatesettings', (_e, o) => {
+      $input.on(TouchSpinCallableEvent.UPDATE_SETTINGS, (_e, o) => {
         const api = getTouchSpin(inputEl);
         if (api) api.updateSettings(o || {});
       });
-      $input.on('touchspin.destroy', () => {
+      $input.on(TouchSpinCallableEvent.DESTROY, () => {
         // Forward destroy to core (core will call registered teardown callbacks)
         const api = getTouchSpin(inputEl);
         if (api) api.destroy();
