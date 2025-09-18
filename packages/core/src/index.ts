@@ -6,6 +6,10 @@ export type ForceStepDivisibility = 'none' | 'floor' | 'round' | 'ceil';
 
 export type TouchSpinCalcCallback = (value: string) => string;
 
+// Export event types
+export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events';
+export type { TouchSpinUpdateSettingsData } from './events';
+
 import type { Renderer, RendererConstructor } from './renderer';
 
 export interface TouchSpinCoreOptions {

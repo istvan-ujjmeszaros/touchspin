@@ -1,6 +1,6 @@
 /**
- * TouchSpin jQuery Event Types
- * Provides type safety for event names used in TouchSpin jQuery plugin
+ * TouchSpin Event Types
+ * Provides type safety for event names used throughout TouchSpin ecosystem
  */
 
 /**

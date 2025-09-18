@@ -56,7 +56,7 @@ const RAW_RUNTIME_STATE =
   "pnpZipBackend": "libzip",\
   "fallbackExclusionList": [\
     ["@touchspin/core", ["workspace:packages/core"]],\
-    ["@touchspin/jquery-plugin", ["virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin", "workspace:packages/jquery-plugin"]],\
+    ["@touchspin/jquery-plugin", ["workspace:packages/jquery-plugin"]],\
     ["@touchspin/renderer-bootstrap3", ["workspace:packages/renderers/bootstrap3"]],\
     ["@touchspin/renderer-bootstrap4", ["workspace:packages/renderers/bootstrap4"]],\
     ["@touchspin/renderer-bootstrap5", ["workspace:packages/renderers/bootstrap5"]],\
@@ -76,7 +76,7 @@ const RAW_RUNTIME_STATE =
           ["@changesets/cli", "npm:2.29.7"],\
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
-          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
+          ["@touchspin/core", "workspace:packages/core"],\
           ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
@@ -1711,28 +1711,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@touchspin/jquery-plugin", [\
-      ["virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin", {\
-        "packageLocation": "./.yarn/__virtual__/@touchspin-jquery-plugin-virtual-2d4e82ce69/1/packages/jquery-plugin/",\
-        "packageDependencies": [\
-          ["@playwright/test", "npm:1.55.0"],\
-          ["@touchspin/core", "workspace:packages/core"],\
-          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
-          ["@touchspin/renderer-bootstrap3", "workspace:packages/renderers/bootstrap3"],\
-          ["@touchspin/renderer-bootstrap4", "workspace:packages/renderers/bootstrap4"],\
-          ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
-          ["@touchspin/renderer-tailwind", "workspace:packages/renderers/tailwind"],\
-          ["@types/jquery", "npm:3.5.33"],\
-          ["jquery", null],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
-        ],\
-        "packagePeers": [\
-          "@types/jquery",\
-          "jquery"\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["workspace:packages/jquery-plugin", {\
         "packageLocation": "./packages/jquery-plugin/",\
         "packageDependencies": [\
@@ -2641,7 +2619,7 @@ const RAW_RUNTIME_STATE =
           ["@changesets/cli", "npm:2.29.7"],\
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
-          ["@touchspin/jquery-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#workspace:packages/jquery-plugin"],\
+          ["@touchspin/core", "workspace:packages/core"],\
           ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\

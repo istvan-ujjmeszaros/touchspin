@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-import { TouchSpinEmittedEvent } from '@touchspin/jquery-plugin';
+import { TouchSpinEmittedEvent } from '@touchspin/core';
 
 // Standard timeout constants
 const TOUCHSPIN_EVENT_WAIT = 700;

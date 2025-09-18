@@ -1,11 +1,10 @@
 import type { JQueryStatic } from 'jquery';
-import { TouchSpin, getTouchSpin, CORE_EVENTS } from '@touchspin/core';
+import { TouchSpin, getTouchSpin, CORE_EVENTS, TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
 import type { TSRenderer } from '@touchspin/core/renderer';
-import { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './types/events';
 
-// Export event types for external use
-export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './types/events';
-export type { TouchSpinUpdateSettingsData } from './types/events';
+// Re-export event types for external use
+export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
+export type { TouchSpinUpdateSettingsData } from '@touchspin/core';
 
 /**
  * Install a minimal jQuery plugin wrapper that just forwards everything to core.
