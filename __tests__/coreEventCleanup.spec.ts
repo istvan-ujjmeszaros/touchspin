@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import './coverage.hooks';
-import touchspinHelpers from './helpers/touchspinHelpers';
+import touchspinHelpers from './helpers/touchspinApiHelpers';
 
 
 test.describe('Core DOM Event Cleanup', () => {

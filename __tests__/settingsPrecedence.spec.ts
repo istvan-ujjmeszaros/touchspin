@@ -11,7 +11,7 @@ import './coverage.hooks';
  */
 
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinHelpers';
+import touchspinHelpers from './helpers/touchspinApiHelpers';
 
 test.describe('Settings Precedence System', () => {
 

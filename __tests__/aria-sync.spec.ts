@@ -1,4 +1,4 @@
-import touchspinHelpers from './helpers/touchspinHelpers';
+import touchspinHelpers from './helpers/touchspinApiHelpers';
 
 import './coverage.hooks';
 import { test, expect } from '@playwright/test'

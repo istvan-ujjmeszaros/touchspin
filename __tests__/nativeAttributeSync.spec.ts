@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinHelpers';
+import touchspinHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Native Attribute Synchronization Tests', () => {

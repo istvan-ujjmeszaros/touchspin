@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
+import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import '../../../__tests__/coverage.hooks';
 
 test.describe('jQuery TouchSpin Callable Events', () => {

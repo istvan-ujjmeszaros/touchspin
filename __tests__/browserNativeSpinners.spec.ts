@@ -15,7 +15,7 @@ import './coverage.hooks';
  */
 
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinHelpers';
+import touchspinHelpers from './helpers/touchspinApiHelpers';
 
 const TEST_TIMEOUT = 50000;
 

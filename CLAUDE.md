@@ -59,7 +59,7 @@ Every test should be so simple that a junior developer can:
 
 ### Helper/Config Policy
 
-* **Do not modify** `__tests__/helpers/touchspinHelpers.ts` or configs unless absolutely necessary
+* **Do not modify** `__tests__/helpers/touchspinApiHelpers.ts` or configs unless absolutely necessary
 * **Keep it stable** - these are shared across all test packages
 
 ## 📊 Coverage Roadmap: Journey to 100%
@@ -318,7 +318,7 @@ packages/core/
 
 ## 🔒 Helper Usage Policy
 
-1. **Canonical Helpers**: The single source of truth is `__tests__/helpers/touchspinHelpers.ts`.
+1. **Canonical Helpers**: The single source of truth is `__tests__/helpers/touchspinApiHelpers.ts`.
 2. **Core Adapter Layer**: In `packages/core/test-helpers/core-adapter.ts`, only lightweight adapter functions may be added to bridge Core logic and the canonical helpers.
 3. **No Duplicate Helpers**: Never rewrite helpers under `packages/core/test-helpers/helpers/`. Always import from the canonical location.
 4. **Allowed Additions**: Only extend via adapter if Core requires access to API-level methods (`upOnce`, `downOnce`, etc.).
@@ -616,7 +616,7 @@ readInputValue(page, testId)
 
 * jQuery Plugin Tests: `/packages/jquery-plugin/tests/*.spec.ts`
 * Fixture: `/packages/jquery-plugin/tests/html/test-fixture.html`
-* Shared Helpers: `/__tests__/helpers/touchspinHelpers.ts`
+* Shared Helpers: `/__tests__/helpers/touchspinApiHelpers.ts`
 
 ### Running Tests
 

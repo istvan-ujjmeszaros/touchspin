@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinHelpers';
+import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Bootstrap5 Renderer Core Integration', () => {
   test.beforeEach(async ({ page }) => {
