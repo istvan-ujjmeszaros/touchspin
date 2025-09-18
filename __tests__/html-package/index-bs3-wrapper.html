@@ -13,14 +13,8 @@
     pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
   </style>
 
-  <!-- Install the core-backed jQuery wrapper -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap3Renderer from '/packages/renderers/bootstrap3/dist/index.mjs';
-
-    installJqueryTouchSpin(window.jQuery);
-    window.Bootstrap3Renderer = Bootstrap3Renderer;
-  </script>
+  <!-- Install the core-backed jQuery wrapper with Bootstrap 3 renderer -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap3.umd.js"></script>
 </head>
 <body class="container">
   <h1 class="h5">TouchSpin Wrapper (Core) — Bootstrap 3</h1>
@@ -75,7 +69,7 @@
       $input.on(evs, function(e){ const ns=(e.namespace||''); const sub = ns.replace(/^on\./,'')||e.type; addLog('core:' + sub); });
       $input.on('change', function(){ addLog('change[' + this.value + ']'); });
 
-      function init(opts){ try { destroy(); } catch {} $input.TouchSpin({renderer: Bootstrap3Renderer, ...opts}); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
+      function init(opts){ try { destroy(); } catch {} $input.TouchSpin(opts); status.textContent = `Initialized (min ${opts.min}, max ${opts.max}, step ${opts.step})`; }
       function destroy(){ $input.trigger('touchspin.destroy'); status.textContent = 'Destroyed'; }
 
       document.getElementById('btn-init').addEventListener('click', () => init({ min:0, max:100, step:1 }));
@@ -93,7 +87,7 @@
       const $adv = $('#bs3-adv-input');
       document.getElementById('btn-adv-init').addEventListener('click', () => {
         try { $adv.trigger('touchspin.destroy'); } catch {}
-        $adv.TouchSpin({ renderer: Bootstrap3Renderer, min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
+        $adv.TouchSpin({ min: 0, max: 50, step: 1, prefix: '$', postfix: 'pcs' });
       });
       document.getElementById('btn-adv-destroy').addEventListener('click', () => { $adv.trigger('touchspin.destroy'); });
     })();

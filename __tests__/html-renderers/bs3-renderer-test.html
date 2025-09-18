@@ -56,21 +56,14 @@
     }
   </style>
 
-  <!-- Install the core-backed jQuery wrapper -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap3Renderer from '/packages/renderers/bootstrap3/dist/index.mjs';
+  <!-- Install the core-backed jQuery wrapper with UMD build -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap3.umd.js"></script>
 
-    installJqueryTouchSpin(window.jQuery);
-
-    // Set global default renderer
-    globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
-
-    // Keep for backwards compatibility with tests
-    window.Bootstrap3Renderer = Bootstrap3Renderer;
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
 
     // Initialize all TouchSpin instances after plugin is loaded
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
       const $ = window.jQuery;
 
       // Initialize inputs

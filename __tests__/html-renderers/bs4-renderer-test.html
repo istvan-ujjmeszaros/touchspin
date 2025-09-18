@@ -52,20 +52,13 @@
     }
   </style>
 
-  <!-- Install the core-backed jQuery wrapper -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
+  <!-- Load TouchSpin UMD build -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 
-    installJqueryTouchSpin(window.jQuery);
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
 
-    // Set global default renderer
-    globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-
-    // Keep for backwards compatibility with tests
-    window.Bootstrap4Renderer = Bootstrap4Renderer;
-
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
       const $ = window.jQuery;
 
       // Initialize inputs

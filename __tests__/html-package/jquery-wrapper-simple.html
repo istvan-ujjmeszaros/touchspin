@@ -127,33 +127,27 @@
   <!-- jQuery -->
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   
-  <!-- Install the jQuery plugin wrapper (core-based) -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import { getTouchSpin } from '/packages/core/dist/index.js';
-    import Bootstrap5Renderer from '/packages/renderers/bootstrap5/dist/index.js';
-    
-    // Install jQuery plugin
-    installJqueryTouchSpin(window.jQuery);
-
-    // Set global default renderer - no need to specify on each TouchSpin call
-    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+  <!-- Install the jQuery plugin wrapper with Bootstrap 5 renderer -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
+  <script>
+    // UMD build already installs the plugin and sets default renderer
 
     // Helper to get direct core API instance from the input (for comparison)
     window.getDirectApi = function() {
       const input = document.getElementById('simple-input');
-      return getTouchSpin(input);
+      // Note: getTouchSpin is not available in UMD builds, would need to access through window.TouchSpinExports if needed
+      return input._touchSpinCore || null;
     };
 
     // One-line jQuery initialization
     window.initTouchSpin = function() {
       const $input = $('#simple-input');
       
-      // Initialize via jQuery wrapper with global default renderer
-      $input.TouchSpin({ 
-        min: 0, 
-        max: 200, 
-        step: 1 
+      // Initialize via jQuery wrapper (renderer already set by UMD build)
+      $input.TouchSpin({
+        min: 0,
+        max: 200,
+        step: 1
       });
     };
 
@@ -167,7 +161,7 @@
         max: 500,
         step: 5,
         prefix: '', // Start with no TouchSpin prefix
-        postfix: ''  // Start with no TouchSpin postfix  
+        postfix: ''  // Start with no TouchSpin postfix
       });
     };
 

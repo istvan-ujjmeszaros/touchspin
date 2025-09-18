@@ -248,21 +248,16 @@
 
     </div>
 
-    <!-- Load TouchSpin with Tailwind renderer as ES modules -->
-    <script type="module">
-        import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-        import TailwindRenderer from '/packages/renderers/tailwind/dist/index.mjs';
+    <!-- Load TouchSpin UMD build -->
+    <script src="/packages/jquery-plugin/dist/jquery.touchspin-tailwind.umd.js"></script>
 
-        // Install jQuery plugin
-        installJqueryTouchSpin(window.jQuery);
-
+    <script>
         // Initialize TouchSpin on all inputs
         $(document).ready(function() {
-            // Set Tailwind renderer as default for all instances
-            const touchSpinOptions = { renderer: TailwindRenderer };
+            // UMD build sets default renderer automatically
+            const touchSpinOptions = {};
             // Basic states
             $('#basic-default').TouchSpin({
-                ...touchSpinOptions,
                 ...touchSpinOptions,
                 min: 0,
                 max: 100,
@@ -271,7 +266,6 @@
 
             $('#basic-focus').TouchSpin({
                 ...touchSpinOptions,
-                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 5
@@ -279,14 +273,12 @@
 
             $('#basic-disabled').TouchSpin({
                 ...touchSpinOptions,
-                ...touchSpinOptions,
                 min: 0,
                 max: 100,
                 step: 1
             });
 
             $('#basic-readonly').TouchSpin({
-                ...touchSpinOptions,
                 ...touchSpinOptions,
                 min: 0,
                 max: 100,

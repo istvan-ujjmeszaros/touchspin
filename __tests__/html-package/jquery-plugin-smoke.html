@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TouchSpin jQuery Plugin Smoke Test (Core-only, same as core-smoke)</title>
+  <title>TouchSpin jQuery Plugin Smoke Test (Bootstrap 5)</title>
   <script src="../html/assets/tailwind/tailwind.min.js"></script>
   <style>
     .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
@@ -14,7 +14,7 @@
 <body>
   <div class="max-w-3xl mx-auto mt-6">
     <h1 class="text-2xl font-semibold">TouchSpin jQuery Plugin Smoke Test</h1>
-    <p class="text-gray-700">Core-only behavior via jQuery wrapper; no renderer. Matches core-smoke.</p>
+    <p class="text-gray-700">jQuery wrapper with Bootstrap 5 renderer for testing plugin functionality.</p>
 
     <div class="test-section">
       <div class="mb-2">
@@ -45,15 +45,7 @@
   <!-- jQuery (local) -->
   <script src="../html/assets/jquery/jquery-3.7.1.min.js"></script>
   <!-- Install the jQuery plugin wrapper (core-based) -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import { getTouchSpin, TouchSpin } from '/packages/core/dist/index.js';
-
-    installJqueryTouchSpin(window.jQuery);
-
-    // Expose core API for cross-API testing
-    window.TouchSpinExports = { getTouchSpin, TouchSpin };
-  </script>
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
   <script>
     (function(){

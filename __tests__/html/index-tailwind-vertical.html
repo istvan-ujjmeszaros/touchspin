@@ -12,23 +12,14 @@
 
   <script src="assets/numeral/numeral-2.0.6.min.js"></script>
 
-  <!-- Load modern TouchSpin packages directly -->
-    <script type="module">
-      import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-      import TailwindRenderer from '/packages/renderers/tailwind/dist/index.mjs';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-tailwind.umd.js"></script>
 
-    // Install jQuery plugin
-    installJqueryTouchSpin(window.jQuery);
-
-    // Set global default renderer - no need to specify on each TouchSpin call
-    globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
-
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
     // Keep for backwards compatibility with tests
-    window.TailwindRenderer = TailwindRenderer;
     window.modernTouchSpinInstalled = true;
 
-    // Initialize all TouchSpin instances after plugin is loaded
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
       $("#testinput_vertical").TouchSpin({
         verticalbuttons: true,
       });

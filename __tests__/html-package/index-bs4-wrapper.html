@@ -13,14 +13,8 @@
     pre { background:#f8f9fa; padding:10px; height: 220px; overflow:auto; }
   </style>
 
-  <!-- Install the core-backed jQuery wrapper -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
-
-    installJqueryTouchSpin(window.jQuery);
-    window.Bootstrap4Renderer = Bootstrap4Renderer;
-  </script>
+  <!-- Load TouchSpin UMD build -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 </head>
 <body class="container py-4">
   <h1 class="h5">TouchSpin Wrapper (Core) — Bootstrap 4</h1>

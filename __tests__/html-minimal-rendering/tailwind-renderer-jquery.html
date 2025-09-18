@@ -25,15 +25,11 @@
     </div>
   </div>
 
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import TailwindRenderer from '/packages/renderers/tailwind/dist/index.mjs';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-tailwind.umd.js"></script>
 
-    installJqueryTouchSpin(window.jQuery);
-
+  <script>
     $(document).ready(function() {
       $('#test-input').TouchSpin({
-        renderer: TailwindRenderer,
         min: 0,
         max: 100
       });

@@ -25,15 +25,11 @@
     </div>
   </div>
 
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 
-    installJqueryTouchSpin(window.jQuery);
-
+  <script>
     $(document).ready(function() {
       $('#test-input').TouchSpin({
-        renderer: Bootstrap4Renderer,
         min: 0,
         max: 100
       });

@@ -16,23 +16,14 @@
   <!-- Load source CSS -->
   <link href="/packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css" rel="stylesheet" type="text/css" media="all">
 
-  <!-- Load main TouchSpin source file -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap5Renderer from '/packages/renderers/bootstrap5/dist/index.js';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
-    // Install jQuery plugin
-    installJqueryTouchSpin(window.jQuery);
-
-    // Set global default renderer - no need to specify on each TouchSpin call
-    globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
-
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
     // Keep for backwards compatibility with tests
-    window.Bootstrap5Renderer = Bootstrap5Renderer;
     window.modernTouchSpinInstalled = true;
 
-    // Initialize all TouchSpin instances after plugin is loaded
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
       $("#testinput_default").TouchSpin();
       $("#testinput_decimals").TouchSpin({
         decimals: 2,

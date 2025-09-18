@@ -15,23 +15,17 @@
 
   <!-- Load source CSS -->
   <link href="/packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet" type="text/css" media="all">
-  <!-- Load modern TouchSpin packages directly -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
 
-    // Install jQuery plugin
-    installJqueryTouchSpin(window.jQuery);
+  <!-- Load TouchSpin UMD build -->
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 
-    // Set global default renderer - no need to specify on each TouchSpin call
-    globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
     // Keep for backwards compatibility with tests
-    window.Bootstrap4Renderer = Bootstrap4Renderer;
     window.modernTouchSpinInstalled = true;
 
-    // Initialize all TouchSpin instances after plugin is loaded
-    document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all TouchSpin instances after DOM is ready
+    $(document).ready(function() {
       $("#testinput_vertical").TouchSpin({
         verticalbuttons: true,
       });

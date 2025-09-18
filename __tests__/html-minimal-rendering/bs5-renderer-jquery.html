@@ -15,19 +15,14 @@
     <input id="test-input" type="number" value="50" class="form-control" style="width: 200px;">
   </div>
 
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap5Renderer from '/packages/renderers/bootstrap5/dist/index.js';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap5.umd.js"></script>
 
-    // Install jQuery plugin
-    installJqueryTouchSpin(window.jQuery);
-
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
       const $input = $('#test-input');
 
-      // Initialize TouchSpin via jQuery wrapper with renderer
+      // Initialize TouchSpin via jQuery wrapper
       $input.TouchSpin({
-        renderer: Bootstrap5Renderer, // Required: specify renderer
         min: 0,
         max: 200,
         step: 1

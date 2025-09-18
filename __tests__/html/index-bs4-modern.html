@@ -16,16 +16,11 @@
   <!-- Load source CSS -->
   <link href="/packages/renderers/bootstrap4/dist/touchspin-bootstrap4.css" rel="stylesheet" type="text/css" media="all">
 
-  <!-- Load modern packages as ES modules -->
-  <script type="module">
-    import { installJqueryTouchSpin } from '/packages/jquery-plugin/dist/index.js';
-    import Bootstrap4Renderer from '/packages/renderers/bootstrap4/dist/index.mjs';
+  <script src="/packages/jquery-plugin/dist/jquery.touchspin-bootstrap4.umd.js"></script>
 
-    // Install the modern jQuery wrapper
-    installJqueryTouchSpin(window.jQuery);
-    window.Bootstrap4Renderer = Bootstrap4Renderer;
-
-    // Make it available for tests
+  <script>
+    // UMD build auto-installs jQuery plugin and sets default renderer
+    // Keep for backwards compatibility with tests
     window.modernTouchSpinInstalled = true;
   </script>
 
@@ -109,7 +104,6 @@ $(document).ready(function() {
 
   // Initialize default TouchSpin
   $("#testinput_default").TouchSpin({
-    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -117,7 +111,6 @@ $(document).ready(function() {
 
   // Initialize vertical TouchSpin
   $("#testinput_vertical").TouchSpin({
-    renderer: Bootstrap4Renderer,
     verticalbuttons: true,
     min: 0,
     max: 100,
@@ -126,7 +119,6 @@ $(document).ready(function() {
 
   // Initialize disabled TouchSpin
   $("#testinput_disabled").TouchSpin({
-    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -134,7 +126,6 @@ $(document).ready(function() {
 
   // Initialize readonly TouchSpin
   $("#testinput_readonly").TouchSpin({
-    renderer: Bootstrap4Renderer,
     min: 0,
     max: 100,
     step: 1
@@ -142,7 +133,6 @@ $(document).ready(function() {
 
   // Initialize callbacks TouchSpin with currency formatting
   $("#testinput_callbacks").TouchSpin({
-    renderer: Bootstrap4Renderer,
     min: 0,
     max: 5500,
     step: 0.1,
