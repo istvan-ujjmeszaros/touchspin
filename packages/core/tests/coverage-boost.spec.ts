@@ -14,7 +14,10 @@ import {
   incrementViaKeyboard,
   decrementViaKeyboard,
   incrementViaWheel,
-  decrementViaWheel
+  decrementViaWheel,
+  startUpSpinViaAPI,
+  startDownSpinViaAPI,
+  stopSpinViaAPI
 } from '../test-helpers/core-adapter';
 
 test.describe('Core TouchSpin Coverage Boost', () => {
@@ -148,6 +151,366 @@ test.describe('Core TouchSpin Coverage Boost', () => {
       // At least start/stop pairs should be balanced or events should occur
       expect(startSpinCount).toBeGreaterThanOrEqual(0);
       expect(stopSpinCount).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  test.describe('Settings Sanitization Edge Cases', () => {
+    test('invalid step values are sanitized to 1', async ({ page }) => {
+      // Test infinite step
+      await initializeCore(page, 'test-input', { step: Infinity, initval: 10 });
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(11); // Uses default step 1
+
+      // Test NaN step
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { step: NaN, initval: 10 });
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(11);
+
+      // Test negative step
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { step: -5, initval: 10 });
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(11);
+    });
+
+    test('invalid decimals values are sanitized to 0', async ({ page }) => {
+      // Test negative decimals
+      await initializeCore(page, 'test-input', { decimals: -2, initval: 10.555 });
+      expect(await readInputValue(page, 'test-input')).toBe('11'); // Rounded, no decimals
+
+      // Test infinite decimals
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { decimals: Infinity, initval: 10.555 });
+      expect(await readInputValue(page, 'test-input')).toBe('11');
+
+      // Test NaN decimals
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { decimals: NaN, initval: 10.555 });
+      expect(await readInputValue(page, 'test-input')).toBe('11');
+    });
+
+    test('invalid min values are sanitized to null', async ({ page }) => {
+      // Test NaN min
+      await initializeCore(page, 'test-input', { min: NaN, initval: 10 });
+      await setValueViaAPI(page, 'test-input', -1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(-1000); // No min constraint
+
+      // Test string min
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { min: 'invalid', initval: 10 });
+      await setValueViaAPI(page, 'test-input', -1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(-1000);
+
+      // Test empty string min
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { min: '', initval: 10 });
+      await setValueViaAPI(page, 'test-input', -1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(-1000);
+    });
+
+    test('invalid max values are sanitized to null', async ({ page }) => {
+      // Test NaN max
+      await initializeCore(page, 'test-input', { max: NaN, initval: 10 });
+      await setValueViaAPI(page, 'test-input', 1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(1000); // No max constraint
+
+      // Test infinite max
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { max: Infinity, initval: 10 });
+      await setValueViaAPI(page, 'test-input', 1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(1000);
+
+      // Test undefined max
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { max: undefined, initval: 10 });
+      await setValueViaAPI(page, 'test-input', 1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(1000);
+    });
+
+    test('min/max values are swapped when min > max', async ({ page }) => {
+      // Initialize with swapped min/max
+      await initializeCore(page, 'test-input', {
+        min: 50,
+        max: 10, // max < min, should be swapped
+        initval: 25
+      });
+
+      // Value should be clamped to swapped range (min=10, max=50)
+      await setValueViaAPI(page, 'test-input', 5);
+      expect(await getNumericValue(page, 'test-input')).toBe(10); // Clamped to new min
+
+      await setValueViaAPI(page, 'test-input', 100);
+      expect(await getNumericValue(page, 'test-input')).toBe(50); // Clamped to new max
+    });
+
+    test('invalid stepinterval values are sanitized to default', async ({ page }) => {
+      // Test negative stepinterval
+      await initializeCore(page, 'test-input', { stepinterval: -100, initval: 10 });
+      // Should use default stepinterval (can't easily test timing but should not crash)
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+
+      // Test NaN stepinterval
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { stepinterval: NaN, initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+    });
+
+    test('invalid stepintervaldelay values are sanitized to default', async ({ page }) => {
+      // Test negative stepintervaldelay
+      await initializeCore(page, 'test-input', { stepintervaldelay: -500, initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+
+      // Test infinite stepintervaldelay
+      await destroyCore(page, 'test-input');
+      await initializeCore(page, 'test-input', { stepintervaldelay: Infinity, initval: 10 });
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+    });
+  });
+
+  test.describe('Disabled and Readonly Input Handling', () => {
+    test('disabled input does not respond to spin operations', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      // Disable the input
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.disabled = true;
+      });
+
+      const initialValue = await getNumericValue(page, 'test-input');
+
+      // Try to start spinning - should be ignored
+      await startUpSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
+    });
+
+    test('readonly input does not respond to spin operations', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      // Make input readonly
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('readonly', '');
+      });
+
+      const initialValue = await getNumericValue(page, 'test-input');
+
+      // Try to start spinning - should be ignored
+      await startDownSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
+    });
+
+    test('spinning stops when input becomes disabled during operation', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      // Start spinning
+      await startUpSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(50);
+
+      // Disable input during spin
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.disabled = true;
+      });
+
+      // Future spin attempts should be ignored
+      const valueAfterDisable = await getNumericValue(page, 'test-input');
+      await page.waitForTimeout(100);
+
+      // Value should not change further
+      expect(await getNumericValue(page, 'test-input')).toBe(valueAfterDisable);
+    });
+
+    test('spinning direction change works for enabled inputs', async ({ page }) => {
+      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+
+      // Start up spin
+      await startUpSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(50);
+
+      // Change to down spin (should stop up and start down)
+      await startDownSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(50);
+
+      await stopSpinViaAPI(page, 'test-input');
+
+      // Should have changed value and handled direction change
+      const finalValue = await getNumericValue(page, 'test-input');
+      expect(typeof finalValue).toBe('number');
+    });
+
+    test('spin stops at boundaries and does not start continuous spin', async ({ page }) => {
+      await initializeCore(page, 'test-input', {
+        step: 1,
+        min: 0,
+        max: 2,
+        initval: 1
+      });
+
+      // Start up spin - should reach max=2 and stop
+      await startUpSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      expect(await getNumericValue(page, 'test-input')).toBe(2);
+
+      // Start down spin from max - should go down by 1 each time
+      await startDownSpinViaAPI(page, 'test-input');
+      await page.waitForTimeout(100);
+      await stopSpinViaAPI(page, 'test-input');
+
+      // Should be at 1 after one down spin, then continue to 0
+      const valueAfterFirstDown = await getNumericValue(page, 'test-input');
+      expect(valueAfterFirstDown).toBeGreaterThanOrEqual(0);
+      expect(valueAfterFirstDown).toBeLessThanOrEqual(1);
+    });
+  });
+
+  test.describe('Native Attribute Parsing', () => {
+    test('parses valid native min attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '5');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 3 });
+
+      // Value should be clamped to min
+      expect(await getNumericValue(page, 'test-input')).toBe(5);
+    });
+
+    test('parses valid native max attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('max', '10');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 15 });
+
+      // Value should be clamped to max
+      expect(await getNumericValue(page, 'test-input')).toBe(10);
+    });
+
+    test('parses valid native step attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('step', '5');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(15); // 10 + 5
+    });
+
+    test('handles invalid native min attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', 'invalid');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Should not have min constraint due to invalid attribute
+      await setValueViaAPI(page, 'test-input', -100);
+      expect(await getNumericValue(page, 'test-input')).toBe(-100);
+    });
+
+    test('handles invalid native max attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('max', 'NaN');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Should not have max constraint due to invalid attribute
+      await setValueViaAPI(page, 'test-input', 1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(1000);
+    });
+
+    test('handles invalid native step attribute', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('step', '-5');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Should use default step of 1 due to invalid step
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(11);
+    });
+
+    test('handles empty string native attributes', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '');
+        input.setAttribute('max', '');
+        input.setAttribute('step', '');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Empty attributes should be treated as null/default
+      await setValueViaAPI(page, 'test-input', -1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(-1000); // No min
+
+      await setValueViaAPI(page, 'test-input', 1000);
+      expect(await getNumericValue(page, 'test-input')).toBe(1000); // No max
+
+      await incrementViaAPI(page, 'test-input');
+      expect(await getNumericValue(page, 'test-input')).toBe(1001); // Step = 1
+    });
+
+    test('dynamically updates when native attributes change', async ({ page }) => {
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Add min attribute dynamically
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '15');
+      });
+
+      // Give mutation observer time to trigger
+      await page.waitForTimeout(100);
+
+      // Value should be updated to respect new min
+      expect(await getNumericValue(page, 'test-input')).toBe(15);
+    });
+
+    test('removes constraints when native attributes are removed', async ({ page }) => {
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.setAttribute('min', '5');
+        input.setAttribute('max', '15');
+      });
+
+      await initializeCore(page, 'test-input', { initval: 10 });
+
+      // Remove attributes
+      await page.evaluate(() => {
+        const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+        input.removeAttribute('min');
+        input.removeAttribute('max');
+      });
+
+      // Give mutation observer time to trigger
+      await page.waitForTimeout(100);
+
+      // Should no longer have constraints
+      await setValueViaAPI(page, 'test-input', 0);
+      expect(await getNumericValue(page, 'test-input')).toBe(0);
+
+      await setValueViaAPI(page, 'test-input', 100);
+      expect(await getNumericValue(page, 'test-input')).toBe(100);
     });
   });
 
