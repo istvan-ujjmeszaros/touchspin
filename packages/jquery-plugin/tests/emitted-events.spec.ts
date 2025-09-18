@@ -249,7 +249,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
       expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('51'); // 50 + 1
     });
 
-    test('should emit native change event when setting value', async ({ page }) => {
+    test('should NOT emit native change event when setting value via API', async ({ page }) => {
       await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
       await touchspinHelpers.clearEventLog(page);
 
@@ -257,8 +257,8 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
         (window as any).$('[data-testid="test-input"]').TouchSpin('set', 75);
       });
 
-      // Change event should be emitted when value is set
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      // Programmatic set → no native change
+      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(false);
       expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('75');
     });
 
@@ -306,28 +306,27 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
       expect(await touchspinHelpers.hasEventInLog(page, 'click', 'native')).toBe(true);
     });
 
-    test('should emit mousedown and mouseup events on button interaction', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+    test('should update value with mouse wheel and emit only native change (no start/stopspin)', async ({ page }) => {
+      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1, initval: 50 });
       await touchspinHelpers.clearEventLog(page);
 
-      // Simulate mousedown and mouseup on up button
-      await page.evaluate(() => {
-        const input = document.querySelector('[data-testid="test-input"]');
-        const wrapper = input!.closest('[data-touchspin-injected]');
-        const upButton = wrapper!.querySelector('.bootstrap-touchspin-up') as HTMLElement;
+      const input = page.locator('[data-testid="test-input"]');
+      await input.focus();
+      await input.hover();
 
-        upButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      // Wheel up → increment
+      await page.mouse.wheel(0, -100);
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('51');
 
-        setTimeout(() => {
-          upButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-        }, 50);
-      });
+      // Wheel down → decrement
+      await page.mouse.wheel(0, 100);
+      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('50');
 
-      await page.waitForTimeout(100);
+      // There should be no spin events on mouse scroll
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(false);
 
-      // Both mouse events should be logged
-      expect(await touchspinHelpers.hasEventInLog(page, 'mousedown', 'native')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'mouseup', 'native')).toBe(true);
+      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('should emit events when clicking at boundaries', async ({ page }) => {
