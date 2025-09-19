@@ -20,7 +20,7 @@ const {
 test.describe('Core TouchSpin Value Normalization', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
-    await page.goto('http://localhost:8866/packages/core/test-helpers/fixtures/minimal.html');
+    await page.goto('http://localhost:8866/packages/core/tests/html/minimal.html');
     await apiHelpers.waitForCoreTestReady(page);
 
     // Set up event logging for Core tests (no jQuery needed)

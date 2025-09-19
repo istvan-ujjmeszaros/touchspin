@@ -944,6 +944,235 @@ async function clickElement(page: Page, testId: string): Promise<void> {
   await element.click();
 }
 
+// ============ Core TouchSpin Functions ============
+
+// Initialize Core TouchSpin directly (no renderer)
+async function initializeCore(page: Page, testId: string, options: any = {}): Promise<void> {
+  await page.evaluate(async ({ testId, options }) => {
+    const { TouchSpinCore } = await import('http://localhost:8866/packages/core/dist/index.js');
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) {
+      throw new Error(`Input with testId "${testId}" not found`);
+    }
+    // Set initial value if specified
+    if (options.initval !== undefined) {
+      input.value = String(options.initval);
+    }
+    // Create Core instance directly and store on element
+    const core = new TouchSpinCore(input, options);
+    input._touchSpinCore = core;
+
+    // Set up Core event listeners for event log
+    const coreEvents = ['min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'];
+    coreEvents.forEach(eventName => {
+      core.on(eventName, () => {
+        (window as any).logEvent(`touchspin.on.${eventName}`, {
+          target: testId,
+          value: input.value
+        });
+      });
+    });
+
+    // Listen for change events on the input
+    input.addEventListener('change', () => {
+      (window as any).logEvent('change', {
+        target: testId,
+        value: input.value
+      });
+    });
+
+    // Initialize DOM event handling
+    core.initDOMEventHandling();
+  }, { testId, options });
+
+  // Wait for Core to be fully initialized
+  await page.waitForSelector(`[data-testid="${testId}"][data-touchspin-injected]`, {
+    timeout: 5000
+  });
+}
+
+// Get numeric value from input
+async function getNumericValue(page: Page, testId: string): Promise<number> {
+  const value = await readInputValue(page, testId);
+  return parseFloat(value) || 0;
+}
+
+// Set value programmatically via Core API
+async function setValueViaAPI(page: Page, testId: string, value: number | string): Promise<void> {
+  await page.evaluate(({ testId, value }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.setValue(value);
+  }, { testId, value });
+}
+
+// Destroy Core instance
+async function destroyCore(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.destroy();
+  }, { testId });
+}
+
+// Check if Core is initialized
+async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
+  return await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    return !!(input as any)._touchSpinCore;
+  }, { testId });
+}
+
+// Increment value via Core API
+async function incrementViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.upOnce();
+  }, { testId });
+}
+
+// Decrement value via Core API
+async function decrementViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.downOnce();
+  }, { testId });
+}
+
+// Start up spin via Core API
+async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.startUpSpin();
+  }, { testId });
+}
+
+// Start down spin via Core API
+async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.startDownSpin();
+  }, { testId });
+}
+
+// Stop spin via Core API
+async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.stopSpin();
+  }, { testId });
+}
+
+// Update settings via Core API
+async function updateSettingsViaAPI(page: Page, testId: string, newSettings: any): Promise<void> {
+  await page.evaluate(({ testId, newSettings }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    core.updateSettings(newSettings);
+  }, { testId, newSettings });
+}
+
+// Get public API surface for testing
+async function getPublicAPI(page: Page, testId: string): Promise<any> {
+  return await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    const core = (input as any)._touchSpinCore;
+    if (!core) {
+      throw new Error(`TouchSpinCore not found on element with testId "${testId}"`);
+    }
+    return core.toPublicApi();
+  }, { testId });
+}
+
+// Initialize Core TouchSpin with callback functions
+async function initializeCoreWithCallbacks(page: Page, testId: string, options: any = {}): Promise<void> {
+  await page.evaluate(async ({ testId, options }) => {
+    const { TouchSpinCore } = await import('http://localhost:8866/packages/core/dist/index.js');
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+    if (!input) {
+      throw new Error(`Input with testId "${testId}" not found`);
+    }
+
+    // Set initial value if specified
+    if (options.initval !== undefined) {
+      input.value = String(options.initval);
+    }
+
+    // Handle callback functions by recreating them in the browser context
+    const coreOptions = { ...options };
+    if (options.callbackType === 'before_numeric') {
+      coreOptions.callback_before_calculation = () => '51';
+    } else if (options.callbackType === 'before_nonnumeric') {
+      coreOptions.callback_before_calculation = () => 'abc';
+    } else if (options.callbackType === 'after_format') {
+      coreOptions.callback_after_calculation = (v: string | number) => `${v} USD`;
+    }
+
+    // Remove our custom property
+    delete coreOptions.callbackType;
+
+    // Create Core instance and store on element
+    const core = new TouchSpinCore(input, coreOptions);
+    input._touchSpinCore = core;
+
+    // Set up Core event listeners for event log
+    const coreEvents = ['min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'];
+    coreEvents.forEach(eventName => {
+      core.on(eventName, () => {
+        (window as any).logEvent(`touchspin.on.${eventName}`, {
+          target: testId,
+          value: input.value
+        });
+      });
+    });
+
+    // Listen for change events on the input
+    input.addEventListener('change', () => {
+      (window as any).logEvent('change', {
+        target: testId,
+        value: input.value
+      });
+    });
+
+    // Initialize DOM event handling
+    core.initDOMEventHandling();
+  }, { testId, options });
+
+  // Wait for Core to be fully initialized
+  await page.waitForSelector(`[data-testid="${testId}"][data-touchspin-injected]`, {
+    timeout: 5000
+  });
+}
+
 export {
   getWrapperInstanceWhenReady,
   waitForTimeout,
@@ -1019,5 +1248,19 @@ export {
   getElement,
   expectElementToHaveValue,
   clickElement,
+  // Core TouchSpin functions
+  initializeCore,
+  getNumericValue,
+  setValueViaAPI,
+  destroyCore,
+  isCoreInitialized,
+  incrementViaAPI,
+  decrementViaAPI,
+  startUpSpinViaAPI,
+  startDownSpinViaAPI,
+  stopSpinViaAPI,
+  updateSettingsViaAPI,
+  getPublicAPI,
+  initializeCoreWithCallbacks,
   TOUCHSPIN_EVENT_WAIT
 };
