@@ -56,8 +56,8 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
-    "build": "yarn run build:types && yarn run build:js",
-    "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --clean --target es2020 --tsconfig tsconfig.build.json",
+    "build": "rm -rf dist && yarn run build:types && yarn run build:js",
+    "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit"
