@@ -110,7 +110,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
       const prefixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
       const postfixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
-      
+
       if (prefixWrapper) {
         // Insert after prefix
         if (wrapper) (wrapper as HTMLElement).insertBefore(this.input, (prefixWrapper as HTMLElement).nextSibling);
@@ -134,7 +134,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
-    
+
     // Mark this as an advanced wrapper
     this.wrapperType = 'wrapper-advanced';
 

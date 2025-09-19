@@ -379,7 +379,7 @@ export class TouchSpinCore {
         this.settings.callback_after_calculation.toString() === defaultCallback.toString()) return;
 
     // Test the callback with a sample value
-    const testValue = "123.45";
+    const testValue = '123.45';
     const afterResult = this.settings.callback_after_calculation(testValue);
 
     // Check if result contains non-numeric characters

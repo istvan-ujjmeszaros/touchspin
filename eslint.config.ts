@@ -6,6 +6,8 @@ export default [
   {
     ignores: [
       'dist/**',
+      '**/dist/**',
+      '**/build/**',
       'reports/**',
       'tmp/**',
       'node_modules/**',
