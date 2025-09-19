@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -20,49 +20,49 @@ const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
   setInputAttr        // was: setInputAttribute
-} = touchspinHelpers;
+} = apiHelpers;
 
 test.describe('Core TouchSpin Continuous Spinning', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
+    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-spinning');
+    await apiHelpers.collectCoverage(page, 'core-spinning');
   });
 
   test.describe('Spin API Methods', () => {
     test('should start up spin via API', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await startUpSpinViaAPI(page, 'test-input');
 
       // Should emit start spin event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
     test('should start down spin via API', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await startDownSpinViaAPI(page, 'test-input');
 
       // Should emit start spin event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
     test('should stop spin via API', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
       await startUpSpinViaAPI(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await stopSpinViaAPI(page, 'test-input');
 
       // Should emit stop spin event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
     });
 
     test('should handle multiple spin operations', async ({ page }) => {
@@ -81,33 +81,33 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
   test.describe('Spin Behavior at Boundaries', () => {
     test('should emit min event when value reaches minimum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, min: 0, initval: 1 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Use API decrement to reach minimum directly
       await decrementViaAPI(page, 'test-input');
 
       const finalValue = await getNumericValue(page, 'test-input');
       expect(finalValue).toBe(0); // Should be at minimum
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
     });
 
     test('should emit max event when value reaches maximum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, max: 10, initval: 9 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Use API increment to reach maximum directly
       await incrementViaAPI(page, 'test-input');
 
       const finalValue = await getNumericValue(page, 'test-input');
       expect(finalValue).toBe(10); // Should be at maximum
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
     });
 
     test('should respect step boundaries while spinning', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 3, min: 0, max: 15, initval: 6 });
 
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       await stopSpinViaAPI(page, 'test-input');
 
       const value = await getNumericValue(page, 'test-input');
@@ -122,13 +122,13 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await startDownSpinViaAPI(page, 'test-input');
 
       // Should emit stop then start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
     });
 
     test('should handle rapid direction changes', async ({ page }) => {
@@ -167,7 +167,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
 
       // Simulate holding arrow up key
       await page.keyboard.down('ArrowUp');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       await page.keyboard.up('ArrowUp');
 
       const finalValue = await getNumericValue(page, 'test-input');
@@ -184,7 +184,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
       await page.focus('[data-testid="blur-target"]');
 
       // Spin should stop when focus is lost
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       const value = await getNumericValue(page, 'test-input');
       expect(typeof value).toBe('number');
@@ -193,12 +193,12 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     test('should handle mousewheel events with focus', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Multiple wheel events to ensure change
-      await page.mouse.wheel(0, -100);
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(100);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(100);
 
       const finalValue = await getNumericValue(page, 'test-input');
       // Either value changes or no change is fine - we test functionality exists

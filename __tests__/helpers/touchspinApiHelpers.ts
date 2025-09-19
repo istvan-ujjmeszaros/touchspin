@@ -241,7 +241,7 @@ async function installJqueryPlugin(page: Page): Promise<void> {
       throw new Error("Tests must not load /src/. Use /dist/index.js. Offenders:\n" + offenders.join("\n"));
     }
 
-    const { installWithRenderer } = await import('/packages/jquery-plugin/dist/index.js');
+    const { installWithRenderer, TouchSpinEmittedEvent } = await import('/packages/jquery-plugin/dist/index.js');
     const rendererMod = await import('/packages/renderers/bootstrap5/dist/index.js');
     const Bootstrap5Renderer = (rendererMod as any).default || (rendererMod as any).Bootstrap5Renderer;
     installWithRenderer(Bootstrap5Renderer);
@@ -857,7 +857,94 @@ async function expectEventCount(page: Page, eventName: string, count: number, ti
   }, { eventName, count }, { timeout });
 }
 
-export default {
+// ============ Mouse Wheel Helpers ============
+
+// Mouse wheel up on input (for touchspin interactions)
+async function wheelUpOnInput(page: Page, testId: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.mouse.wheel(0, -100);
+}
+
+// Mouse wheel down on input (for touchspin interactions)
+async function wheelDownOnInput(page: Page, testId: string): Promise<void> {
+  const input = page.locator(`[data-testid="${testId}"]`);
+  const count = await input.count();
+  if (count === 0) {
+    throw new Error(`Input element not found for testId: ${testId}`);
+  }
+
+  await input.focus();
+  await page.mouse.wheel(0, 100);
+}
+
+// ============ Page Ready Helpers ============
+
+// Wait for page ready flags commonly used in tests
+async function waitForPageReady(page: Page, readyFlag: string = 'testPageReady', timeout: number = 5000): Promise<void> {
+  await page.waitForFunction(
+    (flag) => (window as any)[flag] === true,
+    readyFlag,
+    { timeout }
+  );
+}
+
+// Wait for TouchSpin plugin to be ready after installation
+async function waitForTouchSpinPluginReady(page: Page, timeout: number = 5000): Promise<void> {
+  await page.waitForFunction(
+    () => (window as any).touchSpinReady === true,
+    {},
+    { timeout }
+  );
+}
+
+// Wait for core test ready flag
+async function waitForCoreTestReady(page: Page, timeout: number = 5000): Promise<void> {
+  await page.waitForFunction(
+    () => (window as any).coreTestReady === true,
+    {},
+    { timeout }
+  );
+}
+
+// ============ Attribute Helpers ============
+
+// Get input attribute value
+async function getInputAttribute(page: Page, testId: string, attributeName: string): Promise<string | null> {
+  await waitForInputOrWrapper(page, testId);
+  const input = page.locator(`[data-testid="${testId}"]`);
+  return await input.getAttribute(attributeName);
+}
+
+// Generic element getter to replace page.getByTestId()
+async function getElement(page: Page, testId: string) {
+  return page.locator(`[data-testid="${testId}"]`);
+}
+
+// Helper for value assertions to replace expect().toHaveValue()
+async function expectElementToHaveValue(page: Page, testId: string, expectedValue: string): Promise<void> {
+  const actualValue = await readInputValue(page, testId);
+  if (actualValue !== expectedValue) {
+    throw new Error(`Expected element ${testId} to have value "${expectedValue}", but got "${actualValue}"`);
+  }
+}
+
+// Generic element click helper
+async function clickElement(page: Page, testId: string): Promise<void> {
+  const element = page.locator(`[data-testid="${testId}"]`);
+  const count = await element.count();
+  if (count === 0) {
+    throw new Error(`Element not found for testId: ${testId}`);
+  }
+  await element.click();
+}
+
+export {
   getWrapperInstanceWhenReady,
   waitForTimeout,
   cleanupTimeouts,
@@ -923,5 +1010,14 @@ export default {
   expectEventFired,
   expectNoEvent,
   expectEventCount,
-  TOUCHSPIN_EVENT_WAIT: TOUCHSPIN_EVENT_WAIT
+  wheelUpOnInput,
+  wheelDownOnInput,
+  waitForPageReady,
+  waitForTouchSpinPluginReady,
+  waitForCoreTestReady,
+  getInputAttribute,
+  getElement,
+  expectElementToHaveValue,
+  clickElement,
+  TOUCHSPIN_EVENT_WAIT
 };

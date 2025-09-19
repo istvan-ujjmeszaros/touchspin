@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
@@ -32,8 +32,8 @@ async function initBoth(page, opts: any) {
 
 async function getVals(page) {
   const [orig, wrap] = await Promise.all([
-    page.getByTestId('ab-orig').inputValue(),
-    page.getByTestId('ab-wrap').inputValue(),
+    apiHelpers.readInputValue(page, 'ab-orig'),
+    apiHelpers.readInputValue(page, 'ab-wrap'),
   ]);
   return {orig: Number(orig), wrap: Number(wrap)};
 }
@@ -41,12 +41,12 @@ async function getVals(page) {
 test.describe('A/B parity sequences', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'abParitySequences');
+    await apiHelpers.collectCoverage(page, 'abParitySequences');
   });
 
   test('boundary hold and disabled parity', async ({page}, testInfo) => {
@@ -74,8 +74,8 @@ test.describe('A/B parity sequences', () => {
       }, 800);
     });
     // Wait for boundary clamp to 100 on both using testids (robust in CI)
-    await expect(page.getByTestId('ab-orig')).toHaveValue('100', {timeout: 6000});
-    await expect(page.getByTestId('ab-wrap')).toHaveValue('100', {timeout: 6000});
+    await expect(await apiHelpers.readInputValue(page, 'ab-orig')).toBe('100');
+    await expect(await apiHelpers.readInputValue(page, 'ab-wrap')).toBe('100');
 
     // Disable both and ensure ArrowUp does not change values
     await page.evaluate(() => {
@@ -86,10 +86,12 @@ test.describe('A/B parity sequences', () => {
       $w.attr('disabled', '');
     });
     const before = await getVals(page);
-    await page.getByTestId('ab-orig').focus();
-    await page.keyboard.press('ArrowUp');
-    await page.getByTestId('ab-wrap').focus();
-    await page.keyboard.press('ArrowUp');
+    const abOrigElement = await apiHelpers.getElement(page, 'ab-orig');
+    await abOrigElement.focus();
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'ab-orig');
+    const abWrapElement = await apiHelpers.getElement(page, 'ab-wrap');
+    await abWrapElement.focus();
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'ab-wrap');
     const after = await getVals(page);
     expect(after.orig).toBe(before.orig);
     expect(after.wrap).toBe(before.wrap);

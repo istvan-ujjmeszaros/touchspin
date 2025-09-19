@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('RTL (Right-to-Left) Support', () => {
 
   test.describe('Bootstrap 3 RTL', () => {
     test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
+      await apiHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs3.html');
     });
 
     test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
+      await apiHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -25,17 +25,17 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(htmlDir === 'rtl' || bodyDir === 'rtl' || rtlClass).toBe(true);
 
       // Check that TouchSpin buttons are rendered and functional
-      await touchspinHelpers.clickUpButton(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+      await apiHelpers.clickUpButton(page, testid);
+      expect(await apiHelpers.readInputValue(page, testid)).toBe('51');
 
-      await touchspinHelpers.clickDownButton(page, testid);
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
+      await apiHelpers.clickDownButton(page, testid);
+      expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
     });
 
     test('should handle vertical buttons and prefix/postfix in RTL', async ({ page }) => {
       const verticalTestid = 'touchspin-rtl-vertical';
-      await touchspinHelpers.clickUpButton(page, verticalTestid);
-      expect(await touchspinHelpers.readInputValue(page, verticalTestid)).toBe('51');
+      await apiHelpers.clickUpButton(page, verticalTestid);
+      expect(await apiHelpers.readInputValue(page, verticalTestid)).toBe('51');
 
       const prefixTestid = 'touchspin-rtl-group-sm';
       // Target prefix/postfix from the specific input that has them configured
@@ -45,21 +45,21 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
 
-      await touchspinHelpers.clickUpButton(page, prefixTestid);
+      await apiHelpers.clickUpButton(page, prefixTestid);
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, prefixTestid)
+        async () => await apiHelpers.readInputValue(page, prefixTestid)
       ).toBe('51');
     });
   });
 
   test.describe('Bootstrap 4 RTL', () => {
     test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
+      await apiHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs4.html');
     });
 
     test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
+      await apiHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -70,26 +70,26 @@ test.describe('RTL (Right-to-Left) Support', () => {
       expect(htmlDir).toBe('rtl');
 
       // Test basic functionality in RTL
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('51');
 
       // Check Bootstrap 4 specific structure exists
-      const hasBS4Structure = await touchspinHelpers.checkPrependExists(page) ||
-                              await touchspinHelpers.checkAppendExists(page);
+      const hasBS4Structure = await apiHelpers.checkPrependExists(page) ||
+                              await apiHelpers.checkAppendExists(page);
       expect(hasBS4Structure).toBe(true);
     });
   });
 
   test.describe('Bootstrap 5 RTL', () => {
     test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
+      await apiHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs5.html');
     });
 
     test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
+      await apiHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should render and function correctly in RTL layout', async ({ page }) => {
@@ -103,21 +103,21 @@ test.describe('RTL (Right-to-Left) Support', () => {
       await expect(rtlCSS).toBeAttached();
 
       // Test functionality
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('51');
 
-      await touchspinHelpers.clickDownButton(page, testid);
+      await apiHelpers.clickDownButton(page, testid);
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('50');
     });
 
     test('should handle Bootstrap 5 structure without deprecated classes', async ({ page }) => {
       // Verify no deprecated prepend/append classes exist
-      const hasDeprecatedClasses = await touchspinHelpers.checkPrependExists(page) ||
-                                   await touchspinHelpers.checkAppendExists(page);
+      const hasDeprecatedClasses = await apiHelpers.checkPrependExists(page) ||
+                                   await apiHelpers.checkAppendExists(page);
       expect(hasDeprecatedClasses).toBe(false);
 
       const prefixTestid = 'touchspin-rtl-group-sm';
@@ -125,38 +125,38 @@ test.describe('RTL (Right-to-Left) Support', () => {
       const directPrefix = page.locator(`[data-testid="${prefixTestid}-prefix"].input-group-text`);
       await expect(directPrefix).toBeVisible();
 
-      await touchspinHelpers.clickUpButton(page, prefixTestid);
+      await apiHelpers.clickUpButton(page, prefixTestid);
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, prefixTestid)
+        async () => await apiHelpers.readInputValue(page, prefixTestid)
       ).toBe('51');
     });
   });
 
   test.describe('RTL Text Input Handling', () => {
     test.beforeEach(async ({ page }) => {
-      await touchspinHelpers.startCoverage(page);
+      await apiHelpers.startCoverage(page);
       await page.goto('/__tests__/html/rtl-bs4.html');
     });
 
     test.afterEach(async ({ page }) => {
-      await touchspinHelpers.collectCoverage(page, 'rtlSupport');
+      await apiHelpers.collectCoverage(page, 'rtlSupport');
     });
 
     test('should handle manual text input correctly in RTL', async ({ page }) => {
       const testid = 'touchspin-rtl-default';
 
       // Test manual input of values
-      await touchspinHelpers.fillWithValue(page, testid, '42');
+      await apiHelpers.fillWithValue(page, testid, '42');
       await page.keyboard.press('Tab');
 
-      expect(await touchspinHelpers.readInputValue(page, testid)).toBe('42');
+      expect(await apiHelpers.readInputValue(page, testid)).toBe('42');
 
       // Test decimal values in RTL
       const decimalTestid = 'touchspin-rtl-decimals';
-      await touchspinHelpers.fillWithValue(page, decimalTestid, '12.34');
+      await apiHelpers.fillWithValue(page, decimalTestid, '12.34');
       await page.keyboard.press('Tab');
 
-      expect(await touchspinHelpers.readInputValue(page, decimalTestid)).toBe('12.34');
+      expect(await apiHelpers.readInputValue(page, decimalTestid)).toBe('12.34');
     });
   });
 });

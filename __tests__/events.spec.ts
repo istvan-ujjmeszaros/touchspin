@@ -1,26 +1,26 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Events', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'events');
+    await apiHelpers.collectCoverage(page, 'events');
   });
 
   test('should increase value by 1 when clicking the + button', async ({ page }) => {
     const testid: string = 'touchspin-default';
 
     // We have to use the mousedown and mouseup events because the plugin is not handling the click event.
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
 
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
   });
 
@@ -28,25 +28,25 @@ test.describe('Events', () => {
     const testid: string = 'touchspin-default';
 
     // Trigger the TouchSpin button
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
 
     // Wait for change event to fire
     await expect.poll(
-      async () => touchspinHelpers.changeEventCounter(page)
+      async () => apiHelpers.changeEventCounter(page)
     ).toBe(1);
   });
 
   test('should fire the change event exactly once when entering a proper value and pressing TAB', async ({ page }) => {
     const testid: string = 'touchspin-default';
 
-    await touchspinHelpers.fillWithValue(page, testid, '67');
+    await apiHelpers.fillWithValue(page, testid, '67');
 
     // Press the TAB key to move out of the input field
     await page.keyboard.press('Tab');
 
     // Wait for change event to fire
     await expect.poll(
-      async () => touchspinHelpers.changeEventCounter(page)
+      async () => apiHelpers.changeEventCounter(page)
     ).toBe(1);
   });
 
@@ -72,12 +72,12 @@ test.describe('Events', () => {
 
     // TAB should trigger sanitization and fire change event
     await expect.poll(
-      async () => touchspinHelpers.changeEventCounter(page)
+      async () => apiHelpers.changeEventCounter(page)
     ).toBe(1);
 
     // Verify the value has been sanitized (step=10, so 67 rounds to 70)
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('70');
   });
 
@@ -103,7 +103,7 @@ test.describe('Events', () => {
 
     // Wait for change event to fire
     await expect.poll(
-      async () => touchspinHelpers.changeEventCounter(page)
+      async () => apiHelpers.changeEventCounter(page)
     ).toBe(1);
   });
 
@@ -128,12 +128,12 @@ test.describe('Events', () => {
     await page.keyboard.press('Tab');
 
     // Wait for a short period to ensure all events are processed
-    await touchspinHelpers.waitForTimeout(500);
+    await apiHelpers.waitForTimeout(500);
 
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-    expect(await touchspinHelpers.countChangeWithValue(page, '100')).toBe(1);
+    expect(await apiHelpers.changeEventCounter(page)).toBe(1);
+    expect(await apiHelpers.countChangeWithValue(page, '100')).toBe(1);
   });
 
   test('Should not fire change event when already at min value and entering a lower value', async ({ page }) => {
@@ -157,33 +157,33 @@ test.describe('Events', () => {
     await page.keyboard.press('Tab');
 
     // Wait for a short period to ensure all events are processed
-    await touchspinHelpers.waitForTimeout(500);
+    await apiHelpers.waitForTimeout(500);
 
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
-    expect(await touchspinHelpers.changeEventCounter(page)).toBe(1);
-    expect(await touchspinHelpers.countChangeWithValue(page, '0')).toBe(1);
+    expect(await apiHelpers.changeEventCounter(page)).toBe(1);
+    expect(await apiHelpers.countChangeWithValue(page, '0')).toBe(1);
   });
 
   test('Should use the callback on the initial value', async ({ page }) => {
     const testid: string = 'touchspin-callbacks';
 
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('$5,000.00');
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('$5,000.00');
   });
 
   test('Should have the decorated value when firing the change event', async ({ page }) => {
     const testid: string = 'touchspin-callbacks';
 
-    await touchspinHelpers.fillWithValue(page, testid, '1000');
+    await apiHelpers.fillWithValue(page, testid, '1000');
 
     await page.keyboard.press('Tab');
 
-    await touchspinHelpers.waitForTimeout(500);
+    await apiHelpers.waitForTimeout(500);
 
     // FIXME: Currently firing 2 change events with decorated value instead of 1
     // This may be due to double processing in _checkValue or callback chains
     // For now, accepting the current behavior to focus on core contract fixes
-    expect(await touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
+    expect(await apiHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
   test('Should have the decorated value on blur', async ({ page }) => {
@@ -208,34 +208,34 @@ test.describe('Events', () => {
     await otherInput.click({ clickCount: 1 });
 
     // Allow the deferred focusout commit to run
-    await page.waitForTimeout(0);
+    await apiHelpers.waitForTimeout(0);
 
     // Raw '1000' should NOT be the committed value
-    expect(await touchspinHelpers.countChangeWithValue(page, '1000')).toBe(0);
+    expect(await apiHelpers.countChangeWithValue(page, '1000')).toBe(0);
 
     // Decorated value should be committed with change event
-    await expect.poll(() => touchspinHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
+    await expect.poll(() => apiHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
   test('The touchspin.on.min and touchspin.on.max events should fire as soon as the value reaches the minimum or maximum value', async ({ page }) => {
     const testid: string = 'touchspin-default';
-    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+    const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
-    await touchspinHelpers.fillWithValue(page, testid, '1');
-    await page.keyboard.press('ArrowDown');
-    expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.min')).toBe(1);
+    await apiHelpers.fillWithValue(page, testid, '1');
+    await apiHelpers.pressDownArrowKeyOnInput(page, testid);
+    expect(await apiHelpers.countEvent(page, elementId, 'touchspin.on.min')).toBe(1);
 
-    await touchspinHelpers.fillWithValue(page, testid, '99');
-    await page.keyboard.press('ArrowUp');
-    expect(await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max')).toBe(1);
+    await apiHelpers.fillWithValue(page, testid, '99');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
+    expect(await apiHelpers.countEvent(page, elementId, 'touchspin.on.max')).toBe(1);
   });
 
   test('should fire exactly one touchspin.on.startupspin when holding ArrowUp to spin', async ({ page }) => {
     const testid: string = 'touchspin-default';
-    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+    const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
     // Ensure ready and isolate events for this test
-    await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+    await apiHelpers.getWrapperInstanceWhenReady(page, testid);
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
     // Focus the input and hold ArrowUp to initiate spinning
@@ -246,22 +246,22 @@ test.describe('Events', () => {
     await page.keyboard.down('ArrowUp');
     await page.keyboard.down('ArrowUp');
     await page.keyboard.down('ArrowUp');
-    await touchspinHelpers.waitForTimeout(100); // hold longer than stepintervaldelay
+    await apiHelpers.waitForTimeout(100); // hold longer than stepintervaldelay
     await page.keyboard.up('ArrowUp');
-    await touchspinHelpers.waitForTimeout(50);
+    await apiHelpers.waitForTimeout(50);
 
     // Exactly one startupspin event should have been fired for this element
     await expect.poll(
-      async () => touchspinHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
+      async () => apiHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
     ).toBe(1);
   });
 
   test('should fire exactly one touchspin.on.startupspin when holding Space on Up button', async ({ page }) => {
     const testid: string = 'touchspin-default';
-    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+    const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
     // Ensure ready and isolate events for this test
-    const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+    const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -273,12 +273,12 @@ test.describe('Events', () => {
     await page.keyboard.down(' ');
     await page.keyboard.down(' ');
     await page.keyboard.down(' ');
-    await touchspinHelpers.waitForTimeout(100);
+    await apiHelpers.waitForTimeout(100);
     await page.keyboard.up(' ');
-    await touchspinHelpers.waitForTimeout(50);
+    await apiHelpers.waitForTimeout(50);
 
     await expect.poll(
-      async () => touchspinHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
+      async () => apiHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')
     ).toBe(1);
   });
 
@@ -297,7 +297,7 @@ test.describe('Events', () => {
     const testid = 'rapid-test';
 
     // Get initial value (should be 50)
-    const initialValue = await touchspinHelpers.readInputValue(page, testid);
+    const initialValue = await apiHelpers.readInputValue(page, testid);
     expect(initialValue).toBe('50');
 
     // Execute 100 upOnce() calls rapidly without any delays
@@ -314,7 +314,7 @@ test.describe('Events', () => {
     // Value should have increased by 100 (50 + 100 = 150)
     // Using expect.poll() to wait for the value to update
     await expect.poll(
-      async () => touchspinHelpers.readInputValue(page, testid)
+      async () => apiHelpers.readInputValue(page, testid)
     ).toBe('150');
   });
 

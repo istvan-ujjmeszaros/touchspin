@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -10,14 +10,14 @@ import {
 
 test.describe('Core TouchSpin Mousewheel Handling', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-mousewheel');
+    await apiHelpers.collectCoverage(page, 'core-mousewheel');
   });
 
   test.describe('Mousewheel Configuration', () => {
@@ -32,15 +32,15 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       const initialValue = await getNumericValue(page, 'test-input');
 
       // Try wheel up
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Value should not change
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
 
       // Try wheel down
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Value should still not change
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
@@ -57,15 +57,15 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       const initialValue = await getNumericValue(page, 'test-input');
 
       // Wheel up (negative deltaY)
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       const afterWheelUp = await getNumericValue(page, 'test-input');
       expect(afterWheelUp).toBeGreaterThan(initialValue);
 
       // Wheel down (positive deltaY)
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       const afterWheelDown = await getNumericValue(page, 'test-input');
       expect(afterWheelDown).toBeLessThan(afterWheelUp);
@@ -82,16 +82,16 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       const initialValue = await getNumericValue(page, 'test-input');
 
       // Try wheel without focus
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Value should not change without focus
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
 
       // Now focus and try again
       await page.focus('[data-testid="test-input"]');
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Now it should work
       expect(await getNumericValue(page, 'test-input')).toBeGreaterThan(initialValue);
@@ -147,17 +147,17 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       });
 
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Wheel up (negative deltaY)
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should increment by step amount
       expect(await getNumericValue(page, 'test-input')).toBe(12);
 
       // Should emit appropriate events
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('positive deltaY triggers downOnce', async ({ page }) => {
@@ -168,17 +168,17 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       });
 
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Wheel down (positive deltaY)
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should decrement by step amount
       expect(await getNumericValue(page, 'test-input')).toBe(12);
 
       // Should emit appropriate events
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('zero deltaY is ignored', async ({ page }) => {
@@ -202,7 +202,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
         input.dispatchEvent(wheelEvent);
       });
 
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should not change
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
@@ -219,23 +219,23 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       });
 
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Wheel down to reach minimum
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(0);
 
       // Try to go below minimum
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should stay at minimum
       expect(await getNumericValue(page, 'test-input')).toBe(0);
 
       // Should emit min event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
     });
 
     test('mousewheel respects max boundary', async ({ page }) => {
@@ -247,23 +247,23 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       });
 
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Wheel up to reach maximum
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(10);
 
       // Try to go above maximum
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should stay at maximum
       expect(await getNumericValue(page, 'test-input')).toBe(10);
 
       // Should emit max event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
     });
   });
 
@@ -279,15 +279,15 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       await page.focus('[data-testid="test-input"]');
 
       // Wheel up
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(10.5);
       expect(await readInputValue(page, 'test-input')).toBe('10.5');
 
       // Wheel down
-      await page.mouse.wheel(0, 100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelDownOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(10.0);
       expect(await readInputValue(page, 'test-input')).toBe('10.0');
@@ -307,8 +307,8 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       expect(await getNumericValue(page, 'test-input')).toBe(9);
 
       // Wheel up should maintain step divisibility
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(12);
     });
@@ -326,7 +326,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       await page.mouse.wheel(0, -50);
       await page.mouse.wheel(0, -50);
       await page.mouse.wheel(0, -50);
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Should handle all events
       const finalValue = await getNumericValue(page, 'test-input');
@@ -344,14 +344,14 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       await page.focus('[data-testid="test-input"]');
 
       // Verify mousewheel works before destroy
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
       expect(await getNumericValue(page, 'test-input')).toBe(11);
 
       // Destroy and try again
       await destroyCore(page, 'test-input');
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should not change after destroy
       expect(await getNumericValue(page, 'test-input')).toBe(11);
@@ -374,15 +374,15 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
       });
 
       await page.focus('[data-testid="test-input"]');
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       expect(await getNumericValue(page, 'test-input')).toBe(11);
 
       // Focus away and try wheel
       await page.focus('#other-input');
-      await page.mouse.wheel(0, -100);
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');
+      await apiHelpers.waitForTimeout(50);
 
       // Should not change when not focused
       expect(await getNumericValue(page, 'test-input')).toBe(11);

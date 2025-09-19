@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as jqueryHelpers from '../../../__tests__/helpers/touchspinJqueryHelpers';
 import '../../../__tests__/coverage.hooks';
 
 test.describe('jQuery TouchSpin Callable Events', () => {
@@ -8,154 +9,125 @@ test.describe('jQuery TouchSpin Callable Events', () => {
   test.beforeEach(async ({ page }) => {
     // Reload page for each test to ensure clean state
     await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).testPageReady === true);
-    await touchspinHelpers.installJqueryPlugin(page);
-    await page.waitForFunction(() => (window as any).touchSpinReady === true);
+    await apiHelpers.waitForPageReady(page, 'testPageReady');
+    await apiHelpers.installJqueryPlugin(page);
+    await apiHelpers.waitForTouchSpinPluginReady(page);
   });
 
   test.describe('Increment/Decrement Events', () => {
 
     test('should increment when touchspin.uponce is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
     });
 
     test('should decrement when touchspin.downonce is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 3 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 3 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.downonce');
-      });
+      await jqueryHelpers.triggerTouchspinDownOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('48'); // 50 - 3, rounded to step
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('48'); // 50 - 3, rounded to step
     });
 
     test('should handle multiple uponce events in sequence', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 2 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 2 });
 
-      await page.evaluate(() => {
-        const $input = (window as any).$('[data-testid="test-input"]');
-        $input.trigger('touchspin.uponce');
-        $input.trigger('touchspin.uponce');
-        $input.trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('56'); // 50 + 2 + 2 + 2
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('56'); // 50 + 2 + 2 + 2
     });
 
     test('should respect maximum boundary with uponce event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 0, max: 52, step: 5, initval: 50 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 0, max: 52, step: 5, initval: 50 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('52'); // Clamped to max
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('52'); // Clamped to max
     });
 
     test('should respect minimum boundary with downonce event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 48, max: 100, step: 5, initval: 50 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 48, max: 100, step: 5, initval: 50 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.downonce');
-      });
+      await jqueryHelpers.triggerTouchspinDownOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('48'); // Clamped to min
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('48'); // Clamped to min
     });
   });
 
   test.describe('Continuous Spinning Events', () => {
 
     test('should start up spin when touchspin.startupspin is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.startupspin');
-      });
+      await jqueryHelpers.triggerTouchspinStartUpSpin(page, 'test-input');
 
       // Wait briefly for spinning to start
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.stopspin');
-      });
+      await jqueryHelpers.triggerTouchspinStopSpin(page, 'test-input');
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
       expect(finalValue).toBeGreaterThan(50); // Should have increased from initial value
     });
 
     test('should start down spin when touchspin.startdownspin is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.startdownspin');
-      });
+      await jqueryHelpers.triggerTouchspinStartDownSpin(page, 'test-input');
 
       // Wait briefly for spinning to start
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.stopspin');
-      });
+      await jqueryHelpers.triggerTouchspinStopSpin(page, 'test-input');
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
       expect(finalValue).toBeLessThan(50); // Should have decreased from initial value
     });
 
     test('should stop spinning when touchspin.stopspin is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
       // Start spinning
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.startupspin');
-      });
+      await jqueryHelpers.triggerTouchspinStartUpSpin(page, 'test-input');
 
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
       // Stop and capture value
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.stopspin');
-      });
+      await jqueryHelpers.triggerTouchspinStopSpin(page, 'test-input');
 
-      const stoppedValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      const stoppedValue = await apiHelpers.readInputValue(page, 'test-input');
 
       // Wait to ensure it really stopped
-      await page.waitForTimeout(300);
+      await apiHelpers.waitForTimeout(300);
 
-      const finalValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      const finalValue = await apiHelpers.readInputValue(page, 'test-input');
       expect(finalValue).toBe(stoppedValue); // Should not have changed after stop
     });
 
     test('should switch from up to down spin', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10, initval: 50 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10, initval: 50 });
 
       // Start up spin
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.startupspin');
-      });
+      await jqueryHelpers.triggerTouchspinStartUpSpin(page, 'test-input');
 
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
-      const valueAfterUp = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      const valueAfterUp = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
 
       // Switch to down spin
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.startdownspin');
-      });
+      await jqueryHelpers.triggerTouchspinStartDownSpin(page, 'test-input');
 
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
       // Stop spinning
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.stopspin');
-      });
+      await jqueryHelpers.triggerTouchspinStopSpin(page, 'test-input');
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
 
       expect(valueAfterUp).toBeGreaterThan(50); // Up spin worked
       expect(finalValue).toBeLessThan(valueAfterUp); // Down spin worked
@@ -165,131 +137,115 @@ test.describe('jQuery TouchSpin Callable Events', () => {
   test.describe('Settings Update Event', () => {
 
     test('should update settings when touchspin.updatesettings is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{
-          step: 10
-        }]);
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {
+        step: 10
       });
 
       // Test that new step setting works
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
     });
 
     test('should update minimum value through settings event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{
-          min: 40
-        }]);
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {
+        min: 40
       });
 
       // Try to set below new minimum
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').TouchSpin('set', 30);
-      });
+      await jqueryHelpers.jQuerySetValue(page, 'test-input', 30);
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('40'); // Clamped to new min
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('40'); // Clamped to new min
     });
 
     test('should update maximum value through settings event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{
-          max: 60
-        }]);
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {
+        max: 60
       });
 
       // Try to set above new maximum
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').TouchSpin('set', 80);
-      });
+      await jqueryHelpers.jQuerySetValue(page, 'test-input', 80);
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('60'); // Clamped to new max
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('60'); // Clamped to new max
     });
 
     test('should add prefix through settings event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{
-          prefix: '€'
-        }]);
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {
+        prefix: '€'
       });
 
       // Wait for DOM update
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Prefix element should be created
-      expect(await page.locator('[data-testid="test-input-prefix"]').count()).toBe(1);
-      expect(await page.locator('[data-testid="test-input-prefix"]').textContent()).toBe('€');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+      expect(await elements.prefix.count()).toBe(1);
+      expect(await elements.prefix.textContent()).toBe('€');
     });
 
     test('should add postfix through settings event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
 
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{
-          postfix: ' EUR'
-        }]);
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {
+        postfix: ' EUR'
       });
 
       // Wait for DOM update
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Postfix element should be created
-      expect(await page.locator('[data-testid="test-input-postfix"]').count()).toBe(1);
-      expect(await page.locator('[data-testid="test-input-postfix"]').textContent()).toBe(' EUR');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+      expect(await elements.postfix.count()).toBe(1);
+      expect(await elements.postfix.textContent()).toBe(' EUR');
     });
 
     test('should handle empty settings object gracefully', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
-      const valueBefore = await touchspinHelpers.readInputValue(page, 'test-input');
+      const valueBefore = await apiHelpers.readInputValue(page, 'test-input');
 
       // Update with empty settings should not break
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.updatesettings', [{}]);
-      });
+      await jqueryHelpers.triggerTouchspinUpdateSettings(page, 'test-input', {});
 
       // Should still work normally
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
     });
   });
 
   test.describe('Destroy Event', () => {
 
     test('should destroy instance when touchspin.destroy is triggered', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
 
       // Verify it's initialized
-      expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+      expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
 
       await page.evaluate(() => {
         (window as any).$('[data-testid="test-input"]').trigger('touchspin.destroy');
       });
 
       // TouchSpin should be destroyed
-      expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+      expect(await apiHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
 
       // Specific buttons should be removed
-      expect(await page.locator('[data-testid="test-input-up"]').count()).toBe(0);
-      expect(await page.locator('[data-testid="test-input-down"]').count()).toBe(0);
+      const upButtonCount = await page.getByTestId('test-input-up').count();
+      const downButtonCount = await page.getByTestId('test-input-down').count();
+      expect(upButtonCount).toBe(0);
+      expect(downButtonCount).toBe(0);
     });
 
     test('should allow reinitializing after destroy event', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
       // Destroy via event
       await page.evaluate(() => {
@@ -297,14 +253,12 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       });
 
       // Reinitialize with different settings
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 10 });
 
       // Should work with new settings
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
     });
   });
 
@@ -312,44 +266,42 @@ test.describe('jQuery TouchSpin Callable Events', () => {
 
     test('should handle events on multiple instances independently', async ({ page }) => {
       // Create additional input
-      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '21' });
+      await apiHelpers.createAdditionalInput(page, 'input-2', { value: '21' });
 
       // Initialize both inputs with different steps
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 2, initval: 10 });
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'input-2', { step: 3 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 2, initval: 10 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'input-2', { step: 3 });
 
       // Trigger events on each independently
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-        (window as any).$('[data-testid="input-2"]').trigger('touchspin.downonce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
+      await jqueryHelpers.triggerTouchspinDownOnce(page, 'input-2');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('12'); // 10 + 2
-      expect(await touchspinHelpers.readInputValue(page, 'input-2')).toBe('18'); // 21 - 3
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('12'); // 10 + 2
+      expect(await apiHelpers.readInputValue(page, 'input-2')).toBe('18'); // 21 - 3
     });
 
     test('should trigger events on multiple instances with same selector', async ({ page }) => {
       // Create additional input
-      await touchspinHelpers.createAdditionalInput(page, 'input-2', { value: '20' });
+      await apiHelpers.createAdditionalInput(page, 'input-2', { value: '20' });
 
       // Initialize both inputs with same step
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5, initval: 10 });
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'input-2', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5, initval: 10 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'input-2', { step: 5 });
 
-      // Trigger event on both using combined selector
+      // Trigger event on both using combined selector - use direct evaluate since jqueryHelpers is single target
       await page.evaluate(() => {
         (window as any).$('[data-testid="test-input"], [data-testid="input-2"]').trigger('touchspin.uponce');
       });
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('15'); // 10 + 5
-      expect(await touchspinHelpers.readInputValue(page, 'input-2')).toBe('25'); // 20 + 5
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('15'); // 10 + 5
+      expect(await apiHelpers.readInputValue(page, 'input-2')).toBe('25'); // 20 + 5
     });
   });
 
   test.describe('Complete Coverage Test', () => {
 
     test('should exercise all callable event handlers for coverage', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5, min: 0, max: 100 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5, min: 0, max: 100 });
 
       // TODO remove: temporary sanity check that events fire
       const eventsFired = await page.evaluate(() => {
@@ -377,7 +329,7 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       });
 
       // Small wait to let handlers execute
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Verify events fired (sanity check for coverage)
       expect(eventsFired).toContain('uponce');
@@ -385,7 +337,7 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       expect(eventsFired).toContain('updatesettings');
 
       // Basic verification that events worked (value should have changed)
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'test-input'));
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
       expect(finalValue).toBeGreaterThan(40); // Should have incremented from initial 50
     });
   });
@@ -394,7 +346,7 @@ test.describe('jQuery TouchSpin Callable Events', () => {
 
     test('should ignore events on non-initialized inputs', async ({ page }) => {
       // Don't initialize TouchSpin
-      const originalValue = await touchspinHelpers.readInputValue(page, 'test-input');
+      const originalValue = await apiHelpers.readInputValue(page, 'test-input');
 
       // Trigger events should be ignored
       await page.evaluate(() => {
@@ -405,11 +357,11 @@ test.describe('jQuery TouchSpin Callable Events', () => {
         $input.trigger('touchspin.destroy');
       });
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe(originalValue); // Unchanged
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe(originalValue); // Unchanged
     });
 
     test('should handle invalid settings parameters gracefully', async ({ page }) => {
-      await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
 
       // Try events with invalid parameters
       await page.evaluate(() => {
@@ -421,11 +373,9 @@ test.describe('jQuery TouchSpin Callable Events', () => {
       });
 
       // Should still work normally after invalid attempts
-      await page.evaluate(() => {
-        (window as any).$('[data-testid="test-input"]').trigger('touchspin.uponce');
-      });
+      await jqueryHelpers.triggerTouchspinUpOnce(page, 'test-input');
 
-      expect(await touchspinHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
+      expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
     });
   });
 });

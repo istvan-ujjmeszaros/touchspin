@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('API Methods', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'apiMethods');
+    await apiHelpers.collectCoverage(page, 'apiMethods');
   });
 
   test.describe('TouchSpin Interface Events', () => {
@@ -23,7 +23,7 @@ test.describe('API Methods', () => {
       }, testid);
 
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('51');
     });
 
@@ -36,13 +36,13 @@ test.describe('API Methods', () => {
       }, testid);
 
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('49');
     });
 
     test('should respond to touchspin.startupspin event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
+      const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // Start up spin
       await page.evaluate((testId) => {
@@ -51,7 +51,7 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Wait for spin to work
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
+      await apiHelpers.waitForTimeout(apiHelpers.TOUCHSPIN_EVENT_WAIT);
 
       // Stop spin
       await page.evaluate((testId) => {
@@ -59,7 +59,7 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '0');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '0');
       const originalValue = parseInt(initialValue || '0');
 
       expect(finalValue).toBeGreaterThan(originalValue);
@@ -67,7 +67,7 @@ test.describe('API Methods', () => {
 
     test('should respond to touchspin.startdownspin event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
+      const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // Start down spin
       await page.evaluate((testId) => {
@@ -76,7 +76,7 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Wait for spin to work
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
+      await apiHelpers.waitForTimeout(apiHelpers.TOUCHSPIN_EVENT_WAIT);
 
       // Stop spin
       await page.evaluate((testId) => {
@@ -84,7 +84,7 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '0');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '0');
       const originalValue = parseInt(initialValue || '0');
 
       expect(finalValue).toBeLessThan(originalValue);
@@ -99,7 +99,7 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.startupspin');
       }, testid);
 
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
+      await apiHelpers.waitForTimeout(apiHelpers.TOUCHSPIN_EVENT_WAIT);
 
       // Stop spin
       await page.evaluate((testId) => {
@@ -107,11 +107,11 @@ test.describe('API Methods', () => {
         (window as any).$(input).trigger('touchspin.stopspin');
       }, testid);
 
-      const valueAfterStop = await touchspinHelpers.readInputValue(page, testid);
+      const valueAfterStop = await apiHelpers.readInputValue(page, testid);
 
       // Wait and verify spinning has stopped
-      await touchspinHelpers.waitForTimeout(touchspinHelpers.TOUCHSPIN_EVENT_WAIT);
-      const finalValue = await touchspinHelpers.readInputValue(page, testid);
+      await apiHelpers.waitForTimeout(apiHelpers.TOUCHSPIN_EVENT_WAIT);
+      const finalValue = await apiHelpers.readInputValue(page, testid);
 
       expect(valueAfterStop).toBe(finalValue);
     });
@@ -165,18 +165,18 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Check if current value was immediately clamped after updatesettings
-      console.log('Value immediately after updatesettings:', await touchspinHelpers.readInputValue(page, testid));
+      console.log('Value immediately after updatesettings:', await apiHelpers.readInputValue(page, testid));
 
       // Try to set below new min
-      await touchspinHelpers.fillWithValueAndBlur(page, testid, '5');
+      await apiHelpers.fillWithValueAndBlur(page, testid, '5');
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('10');
 
       // Try to set above new max
-      await touchspinHelpers.fillWithValueAndBlur(page, testid, '25');
+      await apiHelpers.fillWithValueAndBlur(page, testid, '25');
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('20');
     });
 
@@ -192,13 +192,13 @@ test.describe('API Methods', () => {
       }, testid);
 
       // Reset to known value
-      await touchspinHelpers.fillWithValueAndBlur(page, testid, '10');
+      await apiHelpers.fillWithValueAndBlur(page, testid, '10');
 
       // Click up once
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
 
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('15');
     });
   });
@@ -222,12 +222,12 @@ test.describe('API Methods', () => {
       await expect(upButton).not.toBeVisible();
 
       // Verify TouchSpin functionality is disabled (buttons should not respond)
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
+      const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // After destroy, clicking up button should fail because buttons are removed
       let clickFailed = false;
       try {
-        await touchspinHelpers.clickUpButton(page, testid);
+        await apiHelpers.clickUpButton(page, testid);
       } catch (error) {
         clickFailed = true;
       }
@@ -255,7 +255,7 @@ test.describe('API Methods', () => {
 
       // Value should not change since TouchSpin is destroyed
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('50');
     });
   });
@@ -272,10 +272,10 @@ test.describe('API Methods', () => {
       }, testid);
 
       // TouchSpin should still work with new value
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
 
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('76');
     });
 
@@ -291,7 +291,7 @@ test.describe('API Methods', () => {
 
       // Should be constrained to max value
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('100');
     });
 
@@ -307,7 +307,7 @@ test.describe('API Methods', () => {
 
       // Should be formatted to correct decimal places
       await expect.poll(
-        async () => await touchspinHelpers.readInputValue(page, testid)
+        async () => await apiHelpers.readInputValue(page, testid)
       ).toBe('12.35');
     });
   });
@@ -324,7 +324,7 @@ test.describe('API Methods', () => {
 
       // Buttons should become disabled after mutation observer processes the change
       await expect.poll(
-        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+        async () => apiHelpers.checkTouchspinUpIsDisabled(page, testid)
       ).toBe(true);
     });
 
@@ -339,7 +339,7 @@ test.describe('API Methods', () => {
 
       // Buttons should become disabled after mutation observer processes the change
       await expect.poll(
-        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+        async () => apiHelpers.checkTouchspinUpIsDisabled(page, testid)
       ).toBe(true);
     });
 
@@ -347,7 +347,7 @@ test.describe('API Methods', () => {
       const testid = 'touchspin-disabled';
 
       // Initially should be disabled
-      expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
+      expect(await apiHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
 
       // Remove disabled attribute
       await page.evaluate((testId) => {
@@ -357,7 +357,7 @@ test.describe('API Methods', () => {
 
       // Buttons should become enabled after mutation observer processes the change
       await expect.poll(
-        async () => touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)
+        async () => apiHelpers.checkTouchspinUpIsDisabled(page, testid)
       ).toBe(false);
     });
   });

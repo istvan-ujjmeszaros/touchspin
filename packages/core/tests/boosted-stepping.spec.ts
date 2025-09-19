@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -13,14 +13,14 @@ import {
 
 test.describe('Core TouchSpin Boosted Stepping', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-boosted-stepping');
+    await apiHelpers.collectCoverage(page, 'core-boosted-stepping');
   });
 
   test.describe('Booster Configuration', () => {
@@ -263,7 +263,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
 
       // Start spinning and let booster effect kick in
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(300); // Let several spin cycles occur
+      await apiHelpers.waitForTimeout(300); // Let several spin cycles occur
       await stopSpinViaAPI(page, 'test-input');
 
       const finalValue = await getNumericValue(page, 'test-input');
@@ -283,7 +283,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
       });
 
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(400); // Long enough for many boost cycles
+      await apiHelpers.waitForTimeout(400); // Long enough for many boost cycles
       await stopSpinViaAPI(page, 'test-input');
 
       const finalValue = await getNumericValue(page, 'test-input');

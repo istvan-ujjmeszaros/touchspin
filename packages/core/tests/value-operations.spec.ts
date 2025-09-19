@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -19,19 +19,19 @@ const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
   setInputAttr        // was: setInputAttribute
-} = touchspinHelpers;
+} = apiHelpers;
 
 test.describe('Core TouchSpin Value Operations', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     // Load core test fixture
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
+    await apiHelpers.waitForCoreTestReady(page);
     // Core tests will use TouchSpin core directly, not through jQuery plugin
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-value-operations');
+    await apiHelpers.collectCoverage(page, 'core-value-operations');
   });
 
   test.describe('API Value Operations', () => {

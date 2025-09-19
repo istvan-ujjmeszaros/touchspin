@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
 test.describe('A/B parity: original src vs wrapper', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'abCompare');
+    await apiHelpers.collectCoverage(page, 'abCompare');
   });
 
   test('ArrowUp once produces same events pattern and value step', async ({ page }) => {
@@ -29,9 +29,9 @@ test.describe('A/B parity: original src vs wrapper', () => {
 
     // Press ArrowUp once on each side
     await page.focus('#orig-input');
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     await page.focus('#wrap-input');
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
 
     const origAfter = Number(await getVal('#orig-input'));
     const wrapAfter = Number(await getVal('#wrap-input'));

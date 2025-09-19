@@ -1,18 +1,18 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import './coverage.hooks';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 
 
 test.describe('Core Lifecycle (Direct)', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'coreLifecycle');
+    await apiHelpers.collectCoverage(page, 'coreLifecycle');
   });
 
   test('should not respond to commands after destroy (core-only)', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -15,17 +15,17 @@ const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
   setInputAttr        // was: setInputAttribute
-} = touchspinHelpers;
+} = apiHelpers;
 
 test.describe('Core TouchSpin Step Calculations', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/test-helpers/fixtures/minimal.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
+    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-step-calculations');
+    await apiHelpers.collectCoverage(page, 'core-step-calculations');
   });
 
   test.describe('Basic Step Operations', () => {

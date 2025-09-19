@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Bootstrap5 Renderer Core Integration', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-renderer-bootstrap5');
+    await apiHelpers.collectCoverage(page, 'core-renderer-bootstrap5');
   });
 
   test.describe('Renderer UI Components', () => {

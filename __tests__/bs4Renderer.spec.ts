@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Bootstrap 4 Renderer', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html-renderers/bs4-renderer-test.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'bs4-renderer');
+    await apiHelpers.collectCoverage(page, 'bs4-renderer');
   });
 
   test.describe('Basic Rendering', () => {

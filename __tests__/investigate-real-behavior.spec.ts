@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 /**
@@ -8,28 +8,28 @@ import './coverage.hooks';
  */
 test.describe('Real Behavior Investigation', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'investigate-real-behavior');
+    await apiHelpers.collectCoverage(page, 'investigate-real-behavior');
   });
 
   test('Is there actually a document listener problem?', async ({ page }) => {
     const testid = 'touchspin-default';
 
     // Step 1: Check what happens with outside clicks
-    await touchspinHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.fillWithValue(page, testid, '3');
     await page.click('body', { position: { x: 100, y: 100 } }); // Click far from widget
-    const valueAfterBodyClick = await touchspinHelpers.readInputValue(page, testid);
+    const valueAfterBodyClick = await apiHelpers.readInputValue(page, testid);
 
     console.log('After body click:', valueAfterBodyClick);
 
     // Step 2: Check if there's unwanted sanitization happening
-    await touchspinHelpers.fillWithValue(page, testid, '7'); // Should be sanitized to 5 or 10 if step=5
+    await apiHelpers.fillWithValue(page, testid, '7'); // Should be sanitized to 5 or 10 if step=5
     await page.click('.container'); // Click on container div
-    const valueAfterContainerClick = await touchspinHelpers.readInputValue(page, testid);
+    const valueAfterContainerClick = await apiHelpers.readInputValue(page, testid);
 
     console.log('After container click:', valueAfterContainerClick);
 
@@ -64,7 +64,7 @@ test.describe('Real Behavior Investigation', () => {
     await page.click('.container');
     await page.keyboard.press('Tab'); // This should trigger blur
 
-    const finalValue = await touchspinHelpers.readInputValue(page, testid);
+    const finalValue = await apiHelpers.readInputValue(page, testid);
     console.log('Final value after all interactions:', finalValue);
 
     // Document our findings
@@ -88,10 +88,10 @@ test.describe('Real Behavior Investigation', () => {
     }, testid);
 
     // Type a value manually
-    await touchspinHelpers.fillWithValue(page, testid, '15');
+    await apiHelpers.fillWithValue(page, testid, '15');
 
     // Click a button
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
 
     // Get final change event analysis
     const finalAnalysis = await page.evaluate(() => {

@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Keyboard Accessibility Tests', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'keyboardAccessibility');
+    await apiHelpers.collectCoverage(page, 'keyboardAccessibility');
   });
 
   test.describe('Button Keyboard Events', () => {
@@ -19,7 +19,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the up button and press Enter
-      const wrapper = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (upButton) {
@@ -31,7 +31,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
       // Value should increment once
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('51');
     });
 
@@ -39,7 +39,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the down button and press Space
-      const wrapper2 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper2 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper2.evaluate((container) => {
         const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
@@ -51,7 +51,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
       // Value should decrement once
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('49');
 
 
@@ -62,7 +62,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the down button and press Enter
-      const wrapper3 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper3 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper3.evaluate((container) => {
         const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
@@ -74,7 +74,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
       // Value should decrement once
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('49');
 
 
@@ -85,7 +85,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Hold Space key on up button to trigger spinning
-      const wrapper4 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper4 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper4.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
@@ -103,11 +103,11 @@ test.describe('Keyboard Accessibility Tests', () => {
       // Brief wait for spin processing
 
       // Should have incremented multiple times
-      const value = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const value = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
       expect(value).toBeGreaterThan(50);
 
       // Wait briefly for spinning effect
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Brief wait for event processing
     });
@@ -116,7 +116,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Test that preventDefault is called
-      const wrapper5 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper5 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       const preventDefaultCalled = await wrapper5.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         let preventDefaultWasCalled = false;
@@ -138,10 +138,10 @@ test.describe('Keyboard Accessibility Tests', () => {
 
     test('should ignore other keys on buttons', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
+      const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // Press various other keys that should not trigger actions
-      const wrapper6 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper6 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper6.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
@@ -155,7 +155,7 @@ test.describe('Keyboard Accessibility Tests', () => {
 
       // Value should remain unchanged
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe(initialValue);
     });
 
@@ -163,7 +163,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Rapidly press and release Space key multiple times
-      const wrapper7 = await touchspinHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper7 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
       await wrapper7.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
@@ -180,7 +180,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       // Brief wait for rapid events
 
       // Should handle rapid events without errors
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
       expect(finalValue).toBeGreaterThanOrEqual(50);
     });
   });

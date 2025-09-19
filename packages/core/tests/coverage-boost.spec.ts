@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -22,14 +22,14 @@ import {
 
 test.describe('Core TouchSpin Coverage Boost', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-coverage-boost');
+    await apiHelpers.collectCoverage(page, 'core-coverage-boost');
   });
 
   test.describe('Public API Surface', () => {
@@ -110,27 +110,27 @@ test.describe('Core TouchSpin Coverage Boost', () => {
   test.describe('Keyboard Events Emit Start/Stop Spin', () => {
     test('keyboard hold emits startspin and stopspin events', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await page.focus('[data-testid="test-input"]');
       await page.keyboard.down('ArrowUp');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
 
       await page.keyboard.up('ArrowUp');
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
     });
 
     test('API spin methods do not emit startspin or stopspin events', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // API methods should not emit start/stop events
       await incrementViaAPI(page, 'test-input');
       await decrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(false);
     });
   });
 
@@ -138,15 +138,15 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     test('mousewheel emits startspin and stopspin events when focused', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Wheel events should emit start/stop events
-      await page.mouse.wheel(0, -100);  // Wheel up
-      await page.waitForTimeout(50);
+      await apiHelpers.wheelUpOnInput(page, 'test-input');  // Wheel up
+      await apiHelpers.waitForTimeout(50);
 
       // Check if spin events were emitted (may vary by browser/implementation)
-      const startSpinCount = await touchspinHelpers.countEventInLog(page, 'touchspin.on.startspin', 'touchspin');
-      const stopSpinCount = await touchspinHelpers.countEventInLog(page, 'touchspin.on.stopspin', 'touchspin');
+      const startSpinCount = await apiHelpers.countEventInLog(page, 'touchspin.on.startspin', 'touchspin');
+      const stopSpinCount = await apiHelpers.countEventInLog(page, 'touchspin.on.stopspin', 'touchspin');
 
       // At least start/stop pairs should be balanced or events should occur
       expect(startSpinCount).toBeGreaterThanOrEqual(0);
@@ -282,7 +282,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Try to start spinning - should be ignored
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       await stopSpinViaAPI(page, 'test-input');
 
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
@@ -301,7 +301,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Try to start spinning - should be ignored
       await startDownSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       await stopSpinViaAPI(page, 'test-input');
 
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
@@ -312,7 +312,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Start spinning
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Disable input during spin
       await page.evaluate(() => {
@@ -322,7 +322,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Future spin attempts should be ignored
       const valueAfterDisable = await getNumericValue(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Value should not change further
       expect(await getNumericValue(page, 'test-input')).toBe(valueAfterDisable);
@@ -333,11 +333,11 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Start up spin
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Change to down spin (should stop up and start down)
       await startDownSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       await stopSpinViaAPI(page, 'test-input');
 
@@ -356,14 +356,14 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
       // Start up spin - should reach max=2 and stop
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       await stopSpinViaAPI(page, 'test-input');
 
       expect(await getNumericValue(page, 'test-input')).toBe(2);
 
       // Start down spin from max - should go down by 1 each time
       await startDownSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       await stopSpinViaAPI(page, 'test-input');
 
       // Should be at 1 after one down spin, then continue to 0
@@ -480,7 +480,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
       });
 
       // Give mutation observer time to trigger
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Value should be updated to respect new min
       expect(await getNumericValue(page, 'test-input')).toBe(15);
@@ -503,7 +503,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
       });
 
       // Give mutation observer time to trigger
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Should no longer have constraints
       await setValueViaAPI(page, 'test-input', 0);

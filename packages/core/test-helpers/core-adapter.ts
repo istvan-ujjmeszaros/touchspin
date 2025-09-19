@@ -53,7 +53,7 @@ export async function initializeCore(page: Page, testId: string, options: any = 
 
 // Get numeric value (convenience wrapper around readInputValue)
 export async function getNumericValue(page: Page, testId: string): Promise<number> {
-  const touchspinHelpers = (await import('../../../__tests__/helpers/touchspinApiHelpers')).default;
+  const touchspinHelpers = await import('../../../__tests__/helpers/touchspinApiHelpers');
   const value = await touchspinHelpers.readInputValue(page, testId);
   return parseFloat(value) || 0;
 }
@@ -194,7 +194,7 @@ export async function updateSettingsViaAPI(page: Page, testId: string, newSettin
 
 // Read input value as string (convenience wrapper)
 export async function readInputValue(page: Page, testId: string): Promise<string> {
-  const touchspinHelpers = (await import('../../../__tests__/helpers/touchspinApiHelpers')).default;
+  const touchspinHelpers = await import('../../../__tests__/helpers/touchspinApiHelpers');
   return await touchspinHelpers.readInputValue(page, testId);
 }
 

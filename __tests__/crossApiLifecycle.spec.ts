@@ -1,18 +1,18 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import './coverage.hooks';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 
 
 test.describe('Cross-API Lifecycle Management', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'crossApiLifecycle');
+    await apiHelpers.collectCoverage(page, 'crossApiLifecycle');
   });
 
   test('should handle jQuery init → core destroy cleanly', async ({ page }) => {

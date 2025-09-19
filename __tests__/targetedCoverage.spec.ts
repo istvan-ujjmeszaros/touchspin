@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Targeted Coverage Tests', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'targetedCoverage');
+    await apiHelpers.collectCoverage(page, 'targetedCoverage');
   });
 
   test.describe('Double Initialization Detection', () => {
@@ -48,9 +48,9 @@ test.describe('Targeted Coverage Tests', () => {
       ).toBe(true);
 
       // Should still work normally after reinitialization
-      await touchspinHelpers.clickUpButton(page, 'double-init-test');
+      await apiHelpers.clickUpButton(page, 'double-init-test');
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'double-init-test')
+        async () => apiHelpers.readInputValue(page, 'double-init-test')
       ).toBe('51');
     });
   });
@@ -95,9 +95,9 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.clickUpButton(page, 'step-zero-test');
+      await apiHelpers.clickUpButton(page, 'step-zero-test');
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'step-zero-test')
+        async () => apiHelpers.readInputValue(page, 'step-zero-test')
       ).toBe('51'); // 50 + 1
     });
 
@@ -115,9 +115,9 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.clickUpButton(page, 'step-invalid-test');
+      await apiHelpers.clickUpButton(page, 'step-invalid-test');
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'step-invalid-test')
+        async () => apiHelpers.readInputValue(page, 'step-invalid-test')
       ).toBe('51'); // 50 + 1
     });
 
@@ -135,9 +135,9 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should fallback to step=1 and work normally
-      await touchspinHelpers.clickUpButton(page, 'step-negative-test');
+      await apiHelpers.clickUpButton(page, 'step-negative-test');
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'step-negative-test')
+        async () => apiHelpers.readInputValue(page, 'step-negative-test')
       ).toBe('51'); // 50 + 1
     });
   });
@@ -157,12 +157,12 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should allow going below what would normally be min (since min becomes null)
-      await touchspinHelpers.fillWithValue(page, 'invalid-min-test', '-999');
+      await apiHelpers.fillWithValue(page, 'invalid-min-test', '-999');
       await page.keyboard.press('Tab');
 
       // Should accept the negative value (no min constraint)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'invalid-min-test')
+        async () => apiHelpers.readInputValue(page, 'invalid-min-test')
       ).toBe('-999');
     });
 
@@ -180,12 +180,12 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should allow going above what would normally be max (since max becomes null)
-      await touchspinHelpers.fillWithValue(page, 'invalid-max-test', '9999');
+      await apiHelpers.fillWithValue(page, 'invalid-max-test', '9999');
       await page.keyboard.press('Tab');
 
       // Should accept the high value (no max constraint)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'invalid-max-test')
+        async () => apiHelpers.readInputValue(page, 'invalid-max-test')
       ).toBe('9999');
     });
 
@@ -203,10 +203,10 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should work without limits
-      await touchspinHelpers.fillWithValue(page, 'nan-limits-test', '12345');
+      await apiHelpers.fillWithValue(page, 'nan-limits-test', '12345');
       await page.keyboard.press('Tab');
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'nan-limits-test')
+        async () => apiHelpers.readInputValue(page, 'nan-limits-test')
       ).toBe('12345');
     });
   });
@@ -233,7 +233,7 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should show integer (no decimals)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'invalid-decimals-test')
+        async () => apiHelpers.readInputValue(page, 'invalid-decimals-test')
       ).toBe('50');
     });
 
@@ -258,7 +258,7 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should show integer (no decimals)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'negative-decimals-test')
+        async () => apiHelpers.readInputValue(page, 'negative-decimals-test')
       ).toBe('50');
     });
 
@@ -283,7 +283,7 @@ test.describe('Targeted Coverage Tests', () => {
 
       // Should show integer (no decimals)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'nan-decimals-test')
+        async () => apiHelpers.readInputValue(page, 'nan-decimals-test')
       ).toBe('51'); // rounded to integer
     });
   });
@@ -297,7 +297,7 @@ test.describe('Targeted Coverage Tests', () => {
       const testid = 'test-target';
 
       // Should render and work with TestRenderer
-      await touchspinHelpers.waitForTimeout(500); // Let page load
+      await apiHelpers.waitForTimeout(500); // Let page load
 
       // Check that custom TestRenderer was used by looking for test-specific classes
       await expect.poll(async () => {
@@ -314,15 +314,15 @@ test.describe('Targeted Coverage Tests', () => {
       }).toBe(true);
 
       // Test functionality - should work normally
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('43'); // 42 + 1
 
       // Test down click
-      await touchspinHelpers.clickDownButton(page, testid);
+      await apiHelpers.clickDownButton(page, testid);
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('42'); // back to original
 
       // Verify TestRenderer specific elements are present
@@ -422,12 +422,12 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Test precision handling
-      await touchspinHelpers.fillWithValue(page, 'extreme-decimals-test', '0.123456789123456789');
+      await apiHelpers.fillWithValue(page, 'extreme-decimals-test', '0.123456789123456789');
       await page.keyboard.press('Tab');
 
       // Should be limited to specified decimal places
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'extreme-decimals-test')
+        async () => apiHelpers.readInputValue(page, 'extreme-decimals-test')
       ).toMatch(/^0\.\d{10}$/);
     });
 
@@ -444,12 +444,12 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Test with large number
-      await touchspinHelpers.fillWithValue(page, 'large-numbers-test', '999999999999999');
+      await apiHelpers.fillWithValue(page, 'large-numbers-test', '999999999999999');
       await page.keyboard.press('Tab');
 
       await expect.poll(
         async () => {
-          const value = await touchspinHelpers.readInputValue(page, 'large-numbers-test');
+          const value = await apiHelpers.readInputValue(page, 'large-numbers-test');
           return parseFloat(value || '0');
         }
       ).toBeCloseTo(999999999999999, -3); // Allow for floating point precision

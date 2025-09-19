@@ -1,22 +1,22 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Custom TouchSpin Events Tests', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'customEvents');
+    await apiHelpers.collectCoverage(page, 'customEvents');
   });
 
   test.describe('Programmatic Event Triggers', () => {
     test('should handle touchspin.uponce event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger the uponce event programmatically
       await page.evaluate((testId) => {
@@ -27,13 +27,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should increment by one step
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe((initialValue + 1).toString());
     });
 
     test('should handle touchspin.downonce event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger the downonce event programmatically
       await page.evaluate((testId) => {
@@ -44,13 +44,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should decrement by one step
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe((initialValue - 1).toString());
     });
 
     test('should handle touchspin.startupspin event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger the startupspin event programmatically
       await page.evaluate((testId) => {
@@ -60,10 +60,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
       }, testid);
 
       // Wait longer for spinning to occur (spinning has delays before starting)
-      await touchspinHelpers.waitForTimeout(800);
+      await apiHelpers.waitForTimeout(800);
 
       // Should have incremented at least once due to spinning
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
       expect(finalValue).toBeGreaterThanOrEqual(initialValue + 1);
 
       // Stop the spinning
@@ -78,7 +78,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
     test('should handle touchspin.startdownspin event', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger the startdownspin event programmatically
       await page.evaluate((testId) => {
@@ -88,10 +88,10 @@ test.describe('Custom TouchSpin Events Tests', () => {
       }, testid);
 
       // Wait longer for spinning to occur (spinning has delays before starting)
-      await touchspinHelpers.waitForTimeout(800);
+      await apiHelpers.waitForTimeout(800);
 
       // Should have decremented at least once due to spinning
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
       expect(finalValue).toBeLessThanOrEqual(initialValue - 1);
 
       // Stop the spinning
@@ -117,7 +117,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
       // No additional wait needed after stop
 
       // Get value after spinning starts
-      const valueAfterStart = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const valueAfterStart = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Stop spinning
       await page.evaluate((testId) => {
@@ -129,11 +129,11 @@ test.describe('Custom TouchSpin Events Tests', () => {
       // Brief wait for stability
 
       // Value should not change further after stop
-      const valueAfterStop = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const valueAfterStop = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Wait a bit more to ensure spinning really stopped
       // Brief wait for stability
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Final value should equal the value when we stopped (no further changes)
       expect(finalValue).toBe(valueAfterStop);
@@ -141,7 +141,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
     test('should handle multiple uponce events in sequence', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger multiple uponce events
       await page.evaluate((testId) => {
@@ -154,13 +154,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should increment by 3 steps
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe((initialValue + 3).toString());
     });
 
     test('should handle multiple downonce events in sequence', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Trigger multiple downonce events
       await page.evaluate((testId) => {
@@ -173,7 +173,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should decrement by 3 steps
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe((initialValue - 3).toString());
     });
 
@@ -205,7 +205,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
       // Should still work normally after spin direction changes
       await expect.poll(
         async () => {
-          const value = await touchspinHelpers.readInputValue(page, testid);
+          const value = await apiHelpers.readInputValue(page, testid);
           return parseInt(value || '50');
         }
       ).toBeGreaterThanOrEqual(50);
@@ -223,7 +223,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should increment by step amount (10)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('10');
 
       // Test downonce to go back to min
@@ -235,13 +235,13 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Should be back at minimum (0)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe('0');
     });
 
     test('should handle events on disabled input gracefully', async ({ page }) => {
       const testid = 'touchspin-disabled';
-      const initialValue = await touchspinHelpers.readInputValue(page, testid);
+      const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // Try to trigger events on disabled input
       await page.evaluate((testId) => {
@@ -254,7 +254,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
       // Value should remain unchanged for disabled input
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, testid)
+        async () => apiHelpers.readInputValue(page, testid)
       ).toBe(initialValue);
 
       // Stop any potential spinning
@@ -267,7 +267,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
 
     test('should handle rapid event triggering', async ({ page }) => {
       const testid = 'touchspin-default';
-      const initialValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+      const initialValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
 
       // Rapidly trigger mixed events
       await page.evaluate((testId) => {
@@ -287,7 +287,7 @@ test.describe('Custom TouchSpin Events Tests', () => {
       // Should handle rapid events without errors
       // Net effect should be: +1 (uponce) -1 (downonce) +1 (uponce) +1 (immediate step on startupspin) -1 (downonce) = +1
       await expect.poll(
-        async () => parseInt(await touchspinHelpers.readInputValue(page, testid) || String(initialValue))
+        async () => parseInt(await apiHelpers.readInputValue(page, testid) || String(initialValue))
       ).toBe(initialValue + 1);
     });
   });

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -15,13 +15,13 @@ const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
   setInputAttr        // was: setInputAttribute
-} = touchspinHelpers;
+} = apiHelpers;
 
 test.describe('Core TouchSpin Value Normalization', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/test-helpers/fixtures/minimal.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
+    await apiHelpers.waitForCoreTestReady(page);
 
     // Set up event logging for Core tests (no jQuery needed)
     await page.evaluate(() => {
@@ -39,7 +39,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-value-normalization');
+    await apiHelpers.collectCoverage(page, 'core-value-normalization');
   });
 
   test.describe('getValue Method', () => {
@@ -182,7 +182,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await page.evaluate(() => window.clearEventLog());
       await setValueViaAPI(page, 'test-input', 80);
       // Wait a moment for events to be processed
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       const changeEventCount = await page.evaluate(() => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;
@@ -196,7 +196,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await page.evaluate(() => window.clearEventLog());
       await setValueViaAPI(page, 'test-input', 80); // Will be clamped to 60
       // Wait a moment for events to be processed
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       const changeEventCount = await page.evaluate(() => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;
@@ -335,7 +335,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await page.focus('[data-testid="test-input"]');
       await page.keyboard.press('Tab');
       // Wait for blur processing
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       // Value should be corrected
       expect(await readInputValue(page, 'test-input')).toBe('100'); // Clamped to max
     });
@@ -352,7 +352,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
       await page.focus('[data-testid="test-input"]');
       await page.keyboard.press('Tab');
       // Wait for blur processing and events
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       const changeEvents = await page.evaluate(() => {
         const log = window.eventLog || [];
         return log.filter((entry: any) => entry.event === 'change' && entry.type === 'native').length;

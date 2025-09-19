@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
 test.describe('Web Component Smoke', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'webcomponent.smoke');
+    await apiHelpers.collectCoverage(page, 'webcomponent.smoke');
   });
 
   test('renders and injects controls', async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe('Web Component Smoke', () => {
     await expect(elements.first()).toBeVisible();
 
     // Wait briefly for internal wiring
-    await page.waitForTimeout(200);
+    await apiHelpers.waitForTimeout(200);
 
     // Controls should be injected
     const upButtons = page.locator('[data-touchspin-injected="up"]');

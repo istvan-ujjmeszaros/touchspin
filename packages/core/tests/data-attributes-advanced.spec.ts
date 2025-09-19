@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -10,14 +10,14 @@ import {
 
 test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-data-attributes-advanced');
+    await apiHelpers.collectCoverage(page, 'core-data-attributes-advanced');
   });
 
   test.describe('Native Attribute Restoration', () => {
@@ -419,7 +419,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
       });
 
       // Give MutationObserver time to process
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Test that new constraints are applied
       await setValueViaAPI(page, 'test-input', 10);
@@ -444,7 +444,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         input.setAttribute('data-bts-max', '70');
       });
 
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Original constraints should still apply
       await setValueViaAPI(page, 'test-input', -10);
@@ -466,7 +466,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         input.disabled = true;
       });
 
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Test that disabled state affects behavior (buttons should be updated)
       const buttonState = await page.evaluate(() => {
@@ -503,7 +503,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         }
       });
 
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
 
       // Final constraint check
       await setValueViaAPI(page, 'test-input', -10);

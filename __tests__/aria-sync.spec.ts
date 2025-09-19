@@ -1,4 +1,4 @@
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 
 import './coverage.hooks';
 import { test, expect } from '@playwright/test'
@@ -6,12 +6,12 @@ import { test, expect } from '@playwright/test'
 test.describe('ARIA sync and vertical buttons semantics', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'aria-sync');
+    await apiHelpers.collectCoverage(page, 'aria-sync');
   });
 
   test('aria attributes update on value change and settings updates', async ({ page }) => {

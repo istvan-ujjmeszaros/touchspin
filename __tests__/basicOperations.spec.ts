@@ -1,18 +1,18 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Core functionality', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(1000); // Give TouchSpin time to initialize
+    await apiHelpers.waitForTimeout(1000); // Give TouchSpin time to initialize
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'basicOperations');
+    await apiHelpers.collectCoverage(page, 'basicOperations');
   });
 
   test('should render TouchSpin buttons and handle basic increment/decrement', async ({ page }) => {
@@ -26,15 +26,15 @@ test.describe('Core functionality', () => {
     await expect(downButton).toBeVisible();
 
     // Test increment
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
 
     // Test decrement
-    await touchspinHelpers.clickDownButton(page, testid);
+    await apiHelpers.clickDownButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('50');
   });
 
@@ -42,43 +42,43 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-default';
 
     // Test disabled input
-    await touchspinHelpers.setInputAttr(page, testid, 'disabled', true);
-    await touchspinHelpers.clickUpButton(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
+    await apiHelpers.setInputAttr(page, testid, 'disabled', true);
+    await apiHelpers.clickUpButton(page, testid);
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
+    expect(await apiHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
 
     // Reset and test readonly
-    await touchspinHelpers.setInputAttr(page, testid, 'disabled', false);
-    await touchspinHelpers.setInputAttr(page, testid, 'readonly', true);
-    await touchspinHelpers.clickUpButton(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
+    await apiHelpers.setInputAttr(page, testid, 'disabled', false);
+    await apiHelpers.setInputAttr(page, testid, 'readonly', true);
+    await apiHelpers.clickUpButton(page, testid);
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
+    expect(await apiHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
   });
 
   test('should initialize with correct disabled state for pre-disabled inputs', async ({ page }) => {
     const disabledTestid = 'touchspin-disabled';
     const readonlyTestid = 'touchspin-readonly';
 
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, disabledTestid)).toBe(true);
-    expect(await touchspinHelpers.checkTouchspinUpIsDisabled(page, readonlyTestid)).toBe(true);
+    expect(await apiHelpers.checkTouchspinUpIsDisabled(page, disabledTestid)).toBe(true);
+    expect(await apiHelpers.checkTouchspinUpIsDisabled(page, readonlyTestid)).toBe(true);
   });
 
   test('should handle custom step values correctly', async ({ page }) => {
     const testid = 'touchspin-individual-props';
 
     // The initial value should be corrected to align with step=3
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('51');
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('51');
 
     // Increment should increase by step amount (3)
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('54');
 
     // Additional increments
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('57');
   });
 
@@ -86,17 +86,17 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-individual-props';
 
     // Get element ID for event counting (events are logged with element ID, not testid)
-    const elementId = await touchspinHelpers.getElementIdFromTestId(page, testid);
+    const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
     // Test reaching max value triggers event
-    const initialMaxEvents = await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max');
+    const initialMaxEvents = await apiHelpers.countEvent(page, elementId, 'touchspin.on.max');
 
     // Multiple clicks should eventually hit the max
     for (let i = 0; i < 5; i++) {
-      await touchspinHelpers.clickUpButton(page, testid);
+      await apiHelpers.clickUpButton(page, testid);
     }
 
-    const finalMaxEvents = await touchspinHelpers.countEvent(page, elementId, 'touchspin.on.max');
+    const finalMaxEvents = await apiHelpers.countEvent(page, elementId, 'touchspin.on.max');
     expect(finalMaxEvents).toBeGreaterThan(initialMaxEvents);
   });
 
@@ -105,14 +105,14 @@ test.describe('Core functionality', () => {
 
     const input = page.getByTestId(testid);
     await input.focus();
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
 
-    await page.keyboard.press('ArrowDown');
+    await apiHelpers.pressDownArrowKeyOnInput(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('50');
   });
 
@@ -132,7 +132,7 @@ test.describe('Core functionality', () => {
       }
     }, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
 
     // Simulate wheel down event (should decrement)
@@ -145,7 +145,7 @@ test.describe('Core functionality', () => {
       }
     }, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('50');
   });
 
@@ -153,16 +153,16 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-decimals';
 
     // Test decimal increment
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('50.01');
 
     // Test manual decimal input
-    await touchspinHelpers.fillWithValue(page, testid, '12.34');
+    await apiHelpers.fillWithValue(page, testid, '12.34');
     await page.keyboard.press('Tab');
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('12.34');
   });
 });

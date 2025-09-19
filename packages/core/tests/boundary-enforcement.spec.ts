@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -19,17 +19,17 @@ const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
   setInputAttr        // was: setInputAttribute
-} = touchspinHelpers;
+} = apiHelpers;
 
 test.describe('Core TouchSpin Boundary Enforcement', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
+    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-boundary-enforcement');
+    await apiHelpers.collectCoverage(page, 'core-boundary-enforcement');
   });
 
   test.describe('Minimum Boundary Enforcement', () => {
@@ -43,21 +43,21 @@ test.describe('Core TouchSpin Boundary Enforcement', () => {
 
     test('should emit min event when at minimum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { min: 0, step: 1, initval: 0 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await decrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
       expect(await getNumericValue(page, 'test-input')).toBe(0);
     });
 
     test('should emit min event when reaching minimum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { min: 5, step: 1, initval: 6 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await decrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
       expect(await getNumericValue(page, 'test-input')).toBe(5);
     });
 
@@ -89,21 +89,21 @@ test.describe('Core TouchSpin Boundary Enforcement', () => {
 
     test('should emit max event when at maximum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { max: 10, step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await incrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
       expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
 
     test('should emit max event when reaching maximum boundary', async ({ page }) => {
       await initializeCore(page, 'test-input', { max: 15, step: 1, initval: 14 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await incrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
       expect(await getNumericValue(page, 'test-input')).toBe(15);
     });
 
@@ -155,14 +155,14 @@ test.describe('Core TouchSpin Boundary Enforcement', () => {
 
     test('should not emit boundary events when boundaries are null', async ({ page }) => {
       await initializeCore(page, 'test-input', { min: null, max: null, step: 1, initval: 0 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await decrementViaAPI(page, 'test-input');
       await incrementViaAPI(page, 'test-input');
       await incrementViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(false);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(false);
     });
   });
 

@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Vertical Buttons', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'verticalButtons');
+    await apiHelpers.collectCoverage(page, 'verticalButtons');
   });
 
   test('should render vertical button structure correctly', async ({ page }) => {
@@ -33,23 +33,23 @@ test.describe('Vertical Buttons', () => {
     const testid = 'touchspin-vertical';
 
     // Test increment
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
 
     // Test decrement
-    await touchspinHelpers.clickDownButton(page, testid);
+    await apiHelpers.clickDownButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('50');
   });
 
   test('should work with size variations and prefix/postfix', async ({ page }) => {
     const testid = 'touchspin-group-sm-vertical';
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
 
     // Verify prefix/postfix exist using specific testids
@@ -71,16 +71,16 @@ test.describe('Vertical Buttons', () => {
     expect(existingPrefix).toBe(true);
 
     // Should still function correctly
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     await expect.poll(
-      async () => await touchspinHelpers.readInputValue(page, testid)
+      async () => await apiHelpers.readInputValue(page, testid)
     ).toBe('51');
   });
 
   test('should handle disabled state for vertical buttons', async ({ page }) => {
     const testid = 'touchspin-vertical';
 
-    await touchspinHelpers.setInputAttr(page, testid, 'disabled', true);
+    await apiHelpers.setInputAttr(page, testid, 'disabled', true);
 
     // Buttons should be disabled
     const upButtonDisabled = await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
@@ -90,8 +90,8 @@ test.describe('Vertical Buttons', () => {
     expect(upButtonDisabled).toBe(true);
 
     // Functionality should be disabled
-    await touchspinHelpers.clickUpButton(page, testid);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('50');
+    await apiHelpers.clickUpButton(page, testid);
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
   });
 
   test('should support long press spinning for vertical buttons', async ({ page }) => {
@@ -103,14 +103,14 @@ test.describe('Vertical Buttons', () => {
     });
 
     // Wait longer than the default stepintervaldelay (500ms) to trigger spinning
-    await touchspinHelpers.waitForTimeout(700);
+    await apiHelpers.waitForTimeout(700);
 
     await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
       button.dispatchEvent(new Event('mouseup', { bubbles: true }));
     });
 
     // Should have incremented multiple times due to spinning
-    const finalValue = parseInt(await touchspinHelpers.readInputValue(page, testid) || '50');
+    const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
     expect(finalValue).toBeGreaterThan(51);
   });
 });

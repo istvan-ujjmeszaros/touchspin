@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Build Validation Tests', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'buildValidation');
+    await apiHelpers.collectCoverage(page, 'buildValidation');
   });
 
   test('Bootstrap 3 UMD build should work', async ({ page }) => {
@@ -24,8 +24,8 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.clickUpButton(page, 'build-test');
-    const value = await touchspinHelpers.readInputValue(page, 'build-test');
+    await apiHelpers.clickUpButton(page, 'build-test');
+    const value = await apiHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
 
@@ -41,8 +41,8 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.clickUpButton(page, 'build-test');
-    const value = await touchspinHelpers.readInputValue(page, 'build-test');
+    await apiHelpers.clickUpButton(page, 'build-test');
+    const value = await apiHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
 
@@ -58,8 +58,8 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.clickUpButton(page, 'build-test');
-    const value = await touchspinHelpers.readInputValue(page, 'build-test');
+    await apiHelpers.clickUpButton(page, 'build-test');
+    const value = await apiHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
 
@@ -75,8 +75,8 @@ test.describe('Build Validation Tests', () => {
     expect(touchSpinExists).toBe(true);
 
     // Test basic functionality
-    await touchspinHelpers.clickUpButton(page, 'build-test');
-    const value = await touchspinHelpers.readInputValue(page, 'build-test');
+    await apiHelpers.clickUpButton(page, 'build-test');
+    const value = await apiHelpers.readInputValue(page, 'build-test');
     expect(parseInt(value)).toBe(51);
   });
 

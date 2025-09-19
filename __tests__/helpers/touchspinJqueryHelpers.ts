@@ -302,7 +302,7 @@ async function jQueryInitialize(page: Page, testId: string, options: any = {}): 
   }, { testId, options });
 }
 
-export default {
+export {
   // ============ Triggerable Events (Commands) ============
   triggerTouchspinUpdateSettings,
   triggerTouchspinUpOnce,

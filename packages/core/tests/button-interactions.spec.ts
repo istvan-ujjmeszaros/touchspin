@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -10,14 +10,14 @@ import {
 
 test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-button-interactions');
+    await apiHelpers.collectCoverage(page, 'core-button-interactions');
   });
 
   test.describe('Up Button Mouse Events', () => {
@@ -28,18 +28,18 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const upButton = page.locator('[data-testid="test-input-up"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Mouse down on up button
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should increment immediately
       expect(await getNumericValue(page, 'test-input')).toBe(11);
 
       // Should emit start spin events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
 
       // Clean up
       await upButton.dispatchEvent('mouseup');
@@ -86,21 +86,21 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Start spinning
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(150); // Let it spin a few times
+      await apiHelpers.waitForTimeout(150); // Let it spin a few times
 
       const valueBeforeStop = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Stop spinning
       await upButton.dispatchEvent('mouseup');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should emit stop spin events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
 
       // Should stop changing value
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       expect(await getNumericValue(page, 'test-input')).toBe(valueBeforeStop);
     });
 
@@ -115,10 +115,10 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Start spinning
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       const valueBeforeLeave = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Simulate mouse leave document
       await page.evaluate(() => {
@@ -128,13 +128,13 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         });
         document.dispatchEvent(mouseleaveEvent);
       });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should stop spinning
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
 
       // Should stop changing value
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       expect(await getNumericValue(page, 'test-input')).toBe(valueBeforeLeave);
     });
 
@@ -150,7 +150,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Hold mouse down for continuous spinning
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(200); // Let it spin multiple times
+      await apiHelpers.waitForTimeout(200); // Let it spin multiple times
 
       const finalValue = await getNumericValue(page, 'test-input');
       await upButton.dispatchEvent('mouseup');
@@ -168,18 +168,18 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const downButton = page.locator('[data-testid="test-input-down"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Mouse down on down button
       await downButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should decrement immediately
       expect(await getNumericValue(page, 'test-input')).toBe(18); // 20 - 2
 
       // Should emit start spin events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
 
       // Clean up
       await downButton.dispatchEvent('mouseup');
@@ -226,21 +226,21 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Start spinning down
       await downButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(150);
+      await apiHelpers.waitForTimeout(150);
 
       const valueBeforeStop = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Stop spinning
       await downButton.dispatchEvent('mouseup');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should emit stop spin events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
 
       // Should stop changing value
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       expect(await getNumericValue(page, 'test-input')).toBe(valueBeforeStop);
     });
   });
@@ -253,17 +253,17 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const upButton = page.locator('[data-testid="test-input-up"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Dispatch touchstart event
       await upButton.dispatchEvent('touchstart', { touches: [{ clientX: 0, clientY: 0 }] });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should increment
       expect(await getNumericValue(page, 'test-input')).toBe(16);
 
       // Should emit start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
 
       // Clean up
       await upButton.dispatchEvent('touchend');
@@ -320,17 +320,17 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const downButton = page.locator('[data-testid="test-input-down"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Dispatch touchstart event
       await downButton.dispatchEvent('touchstart', { touches: [{ clientX: 0, clientY: 0 }] });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should decrement
       expect(await getNumericValue(page, 'test-input')).toBe(27); // 30 - 3
 
       // Should emit start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
 
       // Clean up
       await downButton.dispatchEvent('touchend');
@@ -347,10 +347,10 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Start touch spinning
       await upButton.dispatchEvent('touchstart', { touches: [{ clientX: 0, clientY: 0 }] });
-      await page.waitForTimeout(150);
+      await apiHelpers.waitForTimeout(150);
 
       const valueBeforeStop = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // End touch
       await page.evaluate(() => {
@@ -360,13 +360,13 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         });
         document.dispatchEvent(touchEvent);
       });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should emit stop events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
 
       // Should stop changing value
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       expect(await getNumericValue(page, 'test-input')).toBe(valueBeforeStop);
     });
   });
@@ -382,17 +382,17 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const upButton = page.locator('[data-testid="test-input-up"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Start spinning up
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(200); // Let it hit boundary and potentially try to continue
+      await apiHelpers.waitForTimeout(200); // Let it hit boundary and potentially try to continue
 
       const finalValue = await getNumericValue(page, 'test-input');
       expect(finalValue).toBe(2); // Should stop at max
 
       // Should emit max event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
 
       // Clean up
       await upButton.dispatchEvent('mouseup');
@@ -408,17 +408,17 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       });
 
       const downButton = page.locator('[data-testid="test-input-down"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Start spinning down
       await downButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(200); // Let it hit boundary
+      await apiHelpers.waitForTimeout(200); // Let it hit boundary
 
       const finalValue = await getNumericValue(page, 'test-input');
       expect(finalValue).toBe(0); // Should stop at min
 
       // Should emit min event
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
 
       // Clean up
       await downButton.dispatchEvent('mouseup');
@@ -437,20 +437,20 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         input.disabled = true;
       });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       const upButton = page.locator('[data-testid="test-input-up"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Try to click disabled input's button
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should not change when input is disabled
       expect(await getNumericValue(page, 'test-input')).toBe(10);
 
       // No spin events should be emitted
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
     });
 
     test('multiple rapid button clicks are handled correctly', async ({ page }) => {
@@ -464,15 +464,15 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       // Rapid fire clicks
       await upButton.dispatchEvent('mousedown');
       await upButton.dispatchEvent('mouseup');
-      await page.waitForTimeout(10);
+      await apiHelpers.waitForTimeout(10);
 
       await upButton.dispatchEvent('mousedown');
       await upButton.dispatchEvent('mouseup');
-      await page.waitForTimeout(10);
+      await apiHelpers.waitForTimeout(10);
 
       await upButton.dispatchEvent('mousedown');
       await upButton.dispatchEvent('mouseup');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should handle all clicks (at least 3 increments)
       expect(await getNumericValue(page, 'test-input')).toBeGreaterThanOrEqual(13);
@@ -489,7 +489,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       const upButton1 = page.locator('[data-testid="test-input-up"]');
       await upButton1.dispatchEvent('mousedown');
       await upButton1.dispatchEvent('mouseup');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       expect(await getNumericValue(page, 'test-input')).toBe(11);
 
       // Change settings to trigger DOM rebuild
@@ -498,13 +498,13 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         const core = (input as any)._touchSpinCore;
         core.updateSettings({ verticalbuttons: true });
       });
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Click should still work after DOM rebuild
       const upButton2 = page.locator('[data-testid="test-input-up"]');
       await upButton2.dispatchEvent('mousedown');
       await upButton2.dispatchEvent('mouseup');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       expect(await getNumericValue(page, 'test-input')).toBe(12);
     });
 
@@ -518,7 +518,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
       // Start spinning
       await upButton.dispatchEvent('mousedown');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Destroy TouchSpin
       await page.evaluate(() => {
@@ -533,7 +533,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       await page.evaluate(() => {
         document.dispatchEvent(new MouseEvent('mouseup'));
       });
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should remain the same (no spinning stopped)
       expect(await getNumericValue(page, 'test-input')).toBe(valueAfterDestroy);

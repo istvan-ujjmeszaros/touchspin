@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Edge Cases and Error Handling', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'edgeCasesAndErrors');
+    await apiHelpers.collectCoverage(page, 'edgeCasesAndErrors');
   });
 
   test.describe('firstclickvalueifempty Configuration', () => {
@@ -31,11 +31,11 @@ test.describe('Edge Cases and Error Handling', () => {
       expect(await input.inputValue()).toBe('');
 
       // Click the up button on empty input
-      await touchspinHelpers.clickUpButton(page, 'firstclick-test');
+      await apiHelpers.clickUpButton(page, 'firstclick-test');
 
       // Should use firstclickvalueifempty value
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'firstclick-test')
+        async () => apiHelpers.readInputValue(page, 'firstclick-test')
       ).toBe('42');
     });
 
@@ -52,11 +52,11 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Click the up button on empty input
-      await touchspinHelpers.clickUpButton(page, 'midpoint-test');
+      await apiHelpers.clickUpButton(page, 'midpoint-test');
 
       // Should use midpoint between min and max (10+30)/2 = 20
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'midpoint-test')
+        async () => apiHelpers.readInputValue(page, 'midpoint-test')
       ).toBe('20');
     });
   });
@@ -90,7 +90,7 @@ test.describe('Edge Cases and Error Handling', () => {
       }, 'maxboost-test');
 
       // Hold long enough to trigger boosting
-      await touchspinHelpers.waitForTimeout(800);
+      await apiHelpers.waitForTimeout(800);
 
       await page.evaluate((testId) => {
         const container = document.querySelector(`[data-testid="${testId}-wrapper"]`);
@@ -103,12 +103,12 @@ test.describe('Edge Cases and Error Handling', () => {
       // Verify boosting occurred but was limited
       await expect.poll(
         async () => {
-          const value = await touchspinHelpers.readInputValue(page, 'maxboost-test');
+          const value = await apiHelpers.readInputValue(page, 'maxboost-test');
           return parseInt(value || '10');
         }
       ).toBeGreaterThan(10); // Should have increased
 
-      const finalValue = parseInt(await touchspinHelpers.readInputValue(page, 'maxboost-test') || '10');
+      const finalValue = parseInt(await apiHelpers.readInputValue(page, 'maxboost-test') || '10');
       expect(finalValue).toBeLessThan(50); // But not too much due to maxboostedstep limit
     });
 
@@ -132,10 +132,10 @@ test.describe('Edge Cases and Error Handling', () => {
       await input.focus();
 
       // Quick test to ensure it works
-      await touchspinHelpers.clickUpButton(page, 'unlimited-boost-test');
+      await apiHelpers.clickUpButton(page, 'unlimited-boost-test');
 
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'unlimited-boost-test')
+        async () => apiHelpers.readInputValue(page, 'unlimited-boost-test')
       ).toBe('11'); // Simple increment
     });
 
@@ -154,10 +154,10 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Should still work without errors
-      await touchspinHelpers.clickUpButton(page, 'invalid-boost-test');
+      await apiHelpers.clickUpButton(page, 'invalid-boost-test');
 
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'invalid-boost-test')
+        async () => apiHelpers.readInputValue(page, 'invalid-boost-test')
       ).toBe('11');
     });
   });
@@ -284,12 +284,12 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Enter a value that doesn't align with step
-      await touchspinHelpers.fillWithValue(page, 'step-edge-test', '5');
+      await apiHelpers.fillWithValue(page, 'step-edge-test', '5');
       await page.keyboard.press('Tab');
 
       // Should round up to next step multiple (6)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'step-edge-test')
+        async () => apiHelpers.readInputValue(page, 'step-edge-test')
       ).toBe('6');
     });
 
@@ -311,7 +311,7 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Should use replacement value
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'replacement-test')
+        async () => apiHelpers.readInputValue(page, 'replacement-test')
       ).toBe('25');
     });
 
@@ -333,7 +333,7 @@ test.describe('Edge Cases and Error Handling', () => {
       await input.blur();
 
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'decimal-edge-test')
+        async () => apiHelpers.readInputValue(page, 'decimal-edge-test')
       ).toBe('2.0');
     });
   });
@@ -344,13 +344,13 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Perform rapid clicks
       for (let i = 0; i < 5; i++) {
-        await touchspinHelpers.clickUpButton(page, testid);
+        await apiHelpers.clickUpButton(page, testid);
       }
 
       // Should handle all clicks without errors
       await expect.poll(
         async () => {
-          const value = await touchspinHelpers.readInputValue(page, testid);
+          const value = await apiHelpers.readInputValue(page, testid);
           return parseInt(value || '50');
         }
       ).toBeGreaterThanOrEqual(55); // 50 + 5 clicks
@@ -368,7 +368,7 @@ test.describe('Edge Cases and Error Handling', () => {
 
       // Value should not change (input is disabled)
       await expect.poll(
-        async () => touchspinHelpers.readInputValue(page, 'touchspin-disabled')
+        async () => apiHelpers.readInputValue(page, 'touchspin-disabled')
       ).toBe('0');
     });
   });

@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
 test.describe('Wrapper parity: keyboard and mouse wheel', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'wrapperKeyboardWheel');
+    await apiHelpers.collectCoverage(page, 'wrapperKeyboardWheel');
   });
 
   test('ArrowUp emits change and spin start/stop; wheel emits change only', async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('Wrapper parity: keyboard and mouse wheel', () => {
     // Focus input and press ArrowUp
     await page.focus('[data-testid="jq-input"]');
     const before = await page.inputValue('[data-testid="jq-input"]');
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
 
     // Read log
     const log = await page.locator('[data-testid="log"]').textContent();

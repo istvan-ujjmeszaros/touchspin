@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -10,14 +10,14 @@ import {
 
 test.describe('Core TouchSpin Input Event Handling', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-input-events');
+    await apiHelpers.collectCoverage(page, 'core-input-events');
   });
 
   test.describe('Input Change Event Interception', () => {
@@ -29,7 +29,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
         initval: 50
       });
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Manually set a valid value and trigger change event
       await page.evaluate(() => {
@@ -41,10 +41,10 @@ test.describe('Core TouchSpin Input Event Handling', () => {
         input.dispatchEvent(changeEvent);
       });
 
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Change event should propagate normally
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
       expect(await readInputValue(page, 'test-input')).toBe('75');
     });
 
@@ -211,17 +211,17 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       // Set invalid value and trigger blur
       await page.fill('[data-testid="test-input"]', '73'); // Not divisible by step=5
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Trigger blur event
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should be sanitized to nearest step multiple
       expect(await readInputValue(page, 'test-input')).toBe('75'); // Nearest multiple of 5
 
       // Should emit change event after sanitization
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('blur event with valid value does not trigger sanitization', async ({ page }) => {
@@ -235,17 +235,17 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       // Set valid value
       await page.fill('[data-testid="test-input"]', '75'); // Already divisible by step=5
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Trigger blur event
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should remain the same
       expect(await readInputValue(page, 'test-input')).toBe('75');
 
       // No additional change event should be emitted for already-valid value
-      expect(await touchspinHelpers.countEventInLog(page, 'change', 'native')).toBe(0);
+      expect(await apiHelpers.countEventInLog(page, 'change', 'native')).toBe(0);
     });
 
     test('blur event handles empty input correctly', async ({ page }) => {
@@ -260,7 +260,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       await page.fill('[data-testid="test-input"]', '');
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should handle empty input appropriately
       const finalValue = await readInputValue(page, 'test-input');
@@ -278,11 +278,11 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       // Set invalid (NaN) value
       await page.fill('[data-testid="test-input"]', 'not-a-number');
       await page.focus('[data-testid="test-input"]');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Trigger blur event
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Should sanitize to a valid number
       const finalValue = await readInputValue(page, 'test-input');
@@ -290,7 +290,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       expect(isNaN(Number(finalValue))).toBe(false);
 
       // Should emit change event after sanitization
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('blur event with boundary violation triggers correction', async ({ page }) => {
@@ -305,14 +305,14 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       await page.fill('[data-testid="test-input"]', '5');
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       expect(await getNumericValue(page, 'test-input')).toBe(10); // Clamped to min
 
       // Test above maximum
       await page.fill('[data-testid="test-input"]', '95');
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       expect(await getNumericValue(page, 'test-input')).toBe(90); // Clamped to max
     });
   });
@@ -326,7 +326,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
         initval: 50
       });
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Set invalid value that would trigger both change interception and blur sanitization
       await page.evaluate(() => {
@@ -340,19 +340,19 @@ test.describe('Core TouchSpin Input Event Handling', () => {
         input.dispatchEvent(changeEvent);
       });
 
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Change event should be intercepted (no change event in log yet)
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(false);
 
       // Now trigger blur (should sanitize and emit proper change event)
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Blur should trigger sanitization and proper change event
       expect(await readInputValue(page, 'test-input')).toBe('70'); // Sanitized to step boundary
-      expect(await touchspinHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'change', 'native')).toBe(true);
     });
 
     test('input event handlers are properly attached and detached', async ({ page }) => {
@@ -365,7 +365,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       await page.fill('[data-testid="test-input"]', 'invalid');
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       const valueBeforeDestroy = await readInputValue(page, 'test-input');
       expect(valueBeforeDestroy).not.toBe('invalid'); // Should be sanitized
@@ -378,13 +378,13 @@ test.describe('Core TouchSpin Input Event Handling', () => {
       });
 
       // Clear event log and try to trigger events after destroy
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Set invalid value and blur - should not be sanitized anymore
       await page.fill('[data-testid="test-input"]', 'after-destroy');
       await page.focus('[data-testid="test-input"]');
       await page.blur('[data-testid="test-input"]');
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
 
       // Value should remain unchanged (handlers are detached)
       expect(await readInputValue(page, 'test-input')).toBe('after-destroy');

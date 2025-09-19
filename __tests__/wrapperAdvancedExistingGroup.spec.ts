@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
@@ -41,12 +41,12 @@ async function testAdvancedExisting(page: any, url: string, ids: { group: string
 test.describe('Advanced init on existing Bootstrap input-groups', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'wrapperAdvancedExistingGroup');
+    await apiHelpers.collectCoverage(page, 'wrapperAdvancedExistingGroup');
   });
 
   test('BS3 advanced reuses addons and cleans up on destroy', async ({ page }) => {

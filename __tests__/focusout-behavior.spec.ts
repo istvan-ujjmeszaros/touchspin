@@ -1,25 +1,25 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 test.describe('Focus and Outside Click Behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html');
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'focusout-behavior');
+    await apiHelpers.collectCoverage(page, 'focusout-behavior');
   });
 
   test('clicking body without leaving widget does not sanitize', async ({ page }) => {
     const testid = 'touchspin-default';
 
-    await touchspinHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.fillWithValue(page, testid, '3');
 
     // Clicking the document body should not sanitize since focus remains on the input
     await page.click('body');
-    const finalValue = await touchspinHelpers.readInputValue(page, testid);
+    const finalValue = await apiHelpers.readInputValue(page, testid);
     expect(finalValue).toBe('3');
   });
 
@@ -42,13 +42,13 @@ test.describe('Focus and Outside Click Behavior', () => {
     const testid = 'touchspin-default';
 
     // Type invalid value
-    await touchspinHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.fillWithValue(page, testid, '3');
 
     // Focus the up button explicitly (within the same widget)
-    await touchspinHelpers.focusUpButton(page, testid);
+    await apiHelpers.focusUpButton(page, testid);
 
     // Should NOT sanitize because we're still within the widget
-    const valueAfterFocusButton = await touchspinHelpers.readInputValue(page, testid);
+    const valueAfterFocusButton = await apiHelpers.readInputValue(page, testid);
     expect(valueAfterFocusButton).toBe('3'); // Should stay unsanitized
   });
 
@@ -56,10 +56,10 @@ test.describe('Focus and Outside Click Behavior', () => {
     const testid = 'touchspin-default';
 
     // Type invalid value
-    await touchspinHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.fillWithValue(page, testid, '3');
 
     // Focus outside the widget
-    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
+    await apiHelpers.focusOutside(page, 'touchspin-group-lg');
 
     // Compute expected sanitized value based on runtime step
     const { step, decimals, divisibility } = await page.evaluate(() => {
@@ -81,7 +81,7 @@ test.describe('Focus and Outside Click Behavior', () => {
     })();
 
     // Use expect.poll for async sanitization timing
-    await expect.poll(async () => touchspinHelpers.readInputValue(page, testid)).toBe(expected);
+    await expect.poll(async () => apiHelpers.readInputValue(page, testid)).toBe(expected);
   });
 
   test('BEHAVIOR: change fires for button spins and sanitize, not updatesettings', async ({ page }) => {
@@ -95,8 +95,8 @@ test.describe('Focus and Outside Click Behavior', () => {
     }, testid);
 
     // Sanitization (outside focus) SHOULD count now
-    await touchspinHelpers.fillWithValue(page, testid, '3');
-    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
+    await apiHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.focusOutside(page, 'touchspin-group-lg');
     await expect.poll(() => page.evaluate(() => (window as any).chg)).toBe(1);
 
     // updatesettings should NOT count
@@ -107,7 +107,7 @@ test.describe('Focus and Outside Click Behavior', () => {
     expect(await page.evaluate(() => (window as any).chg)).toBe(1);
 
     // Button click SHOULD add one more
-    await touchspinHelpers.clickUpButton(page, testid);
+    await apiHelpers.clickUpButton(page, testid);
     expect(await page.evaluate(() => (window as any).chg)).toBe(2);
   });
 
@@ -122,10 +122,10 @@ test.describe('Focus and Outside Click Behavior', () => {
     }, testid);
 
     // After destroy, outside clicks should NOT trigger sanitization
-    await touchspinHelpers.fillWithValue(page, testid, '3');
+    await apiHelpers.fillWithValue(page, testid, '3');
     await page.click('body');
 
-    const valueAfterDestroy = await touchspinHelpers.readInputValue(page, testid);
+    const valueAfterDestroy = await apiHelpers.readInputValue(page, testid);
     expect(valueAfterDestroy).toBe('3'); // Should stay unchanged
   });
 
@@ -147,12 +147,12 @@ test.describe('Focus and Outside Click Behavior', () => {
     // Focus the input first, then focus outside to trigger focusout
     const input = page.getByTestId(testid);
     await input.focus();
-    await touchspinHelpers.focusOutside(page, 'touchspin-group-lg');
+    await apiHelpers.focusOutside(page, 'touchspin-group-lg');
 
     // Allow the deferred focusout commit to run
-    await page.waitForTimeout(0);
+    await apiHelpers.waitForTimeout(0);
 
     await expect.poll(() => page.evaluate(() => (window as any).chg)).toBe(1);
-    expect(await touchspinHelpers.readInputValue(page, testid)).toBe('0');
+    expect(await apiHelpers.readInputValue(page, testid)).toBe('0');
   });
 });

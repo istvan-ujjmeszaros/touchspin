@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from './helpers/touchspinApiHelpers';
+import * as apiHelpers from './helpers/touchspinApiHelpers';
 import './coverage.hooks';
 
 
 test.describe('Wrapper parity: attribute sync', () => {
 
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('/__tests__/html/index-bs4.html'); // Update URL as needed
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'wrapperAttributeSync');
+    await apiHelpers.collectCoverage(page, 'wrapperAttributeSync');
   });
 
   test('disabled/readonly stop spin and prevent changes', async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('Wrapper parity: attribute sync', () => {
       const $ = (window as any).jQuery; $('[data-testid="jq-input"]').attr('disabled', '');
     });
     const before = await page.inputValue('[data-testid="jq-input"]');
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     const after = await page.inputValue('[data-testid="jq-input"]');
     expect(after).toBe(before);
 
@@ -32,7 +32,7 @@ test.describe('Wrapper parity: attribute sync', () => {
     await page.evaluate(() => {
       const $ = (window as any).jQuery; $('[data-testid="jq-input"]').removeAttr('disabled').attr('readonly', '');
     });
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     const after2 = await page.inputValue('[data-testid="jq-input"]');
     expect(after2).toBe(before);
   });
@@ -50,7 +50,7 @@ test.describe('Wrapper parity: attribute sync', () => {
       el.attr('min', String(v));
     });
     const before = await page.inputValue('[data-testid="jq-input"]');
-    await page.keyboard.press('ArrowUp');
+    await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     const after = await page.inputValue('[data-testid="jq-input"]');
     expect(Number(after)).toBe(Number(before) + 2);
   });

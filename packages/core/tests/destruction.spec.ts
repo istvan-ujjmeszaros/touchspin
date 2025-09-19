@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   destroyCore,
@@ -15,14 +15,14 @@ import {
 
 test.describe('Core TouchSpin Destruction', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-destruction');
+    await apiHelpers.collectCoverage(page, 'core-destruction');
   });
 
   test('removes initialization marker and instance', async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('Core TouchSpin Destruction', () => {
   test('keyboard input becomes a no-op after destroy (no value change, no events)', async ({ page }) => {
     await initializeCore(page, 'test-input', { step: 2, initval: 10 });
     await destroyCore(page, 'test-input');
-    await touchspinHelpers.clearEventLog(page); // Clear after destroy
+    await apiHelpers.clearEventLog(page); // Clear after destroy
 
     await page.focus('[data-testid="test-input"]');
     await page.keyboard.press('ArrowUp');
@@ -49,20 +49,20 @@ test.describe('Core TouchSpin Destruction', () => {
     expect(await getNumericValue(page, 'test-input')).toBe(10);
     // Native change events may still occur since we don't prevent browser default behavior
     // The key test is that TouchSpin events are not generated
-    expect(await touchspinHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
+    expect(await apiHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
   });
 
   test('mouse wheel becomes a no-op after destroy', async ({ page }) => {
     await initializeCore(page, 'test-input', { step: 1, initval: 5 });
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.clearEventLog(page);
     await destroyCore(page, 'test-input');
 
     await page.focus('[data-testid="test-input"]');
-    await page.mouse.wheel(0, -100);
-    await page.mouse.wheel(0, 100);
+    await apiHelpers.wheelUpOnInput(page, 'test-input');
+    await apiHelpers.wheelDownOnInput(page, 'test-input');
 
     expect(await getNumericValue(page, 'test-input')).toBe(5);
-    expect(await touchspinHelpers.countEventInLog(page, 'change', 'native')).toBe(0);
+    expect(await apiHelpers.countEventInLog(page, 'change', 'native')).toBe(0);
   });
 
   test('double destroy is idempotent', async ({ page }) => {
@@ -96,12 +96,12 @@ test.describe('Core TouchSpin Destruction', () => {
     await page.keyboard.down('ArrowUp');
     // Immediately destroy; any internal timers/handlers must not tick after this.
     await destroyCore(page, 'test-input');
-    await touchspinHelpers.clearEventLog(page); // Clear events that occurred before/during destroy
+    await apiHelpers.clearEventLog(page); // Clear events that occurred before/during destroy
 
     // Minimal, deterministic delay to assert "no more ticks" (justify in comment)
     // This 30ms wait is required to confirm absence of timer ticks that could continue
     // after destroy. Without this wait, we cannot verify that ongoing operations stopped.
-    await page.waitForTimeout(30);
+    await apiHelpers.waitForTimeout(30);
 
     await page.keyboard.up('ArrowUp');
     const value = await getNumericValue(page, 'test-input');
@@ -109,7 +109,7 @@ test.describe('Core TouchSpin Destruction', () => {
     // Assert it does not keep increasing post-destroy:
     expect(typeof value).toBe('number');
     // No touchspin events after destroy:
-    expect(await touchspinHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
+    expect(await apiHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
   });
 
   test('restores original input attributes on destroy', async ({ page }) => {
@@ -168,7 +168,7 @@ test.describe('Core TouchSpin Destruction', () => {
 
   test('clearing event handlers prevents residual native events', async ({ page }) => {
     await initializeCore(page, 'test-input', { step: 1, initval: 8 });
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.clearEventLog(page);
     await destroyCore(page, 'test-input');
 
     // Test that native change events aren't triggered by simulated input changes
@@ -179,7 +179,7 @@ test.describe('Core TouchSpin Destruction', () => {
     });
 
     // Core's change event handler should be removed, so no filtering should occur
-    const changeEvents = await touchspinHelpers.countEventInLog(page, 'change', 'native');
+    const changeEvents = await apiHelpers.countEventInLog(page, 'change', 'native');
     expect(changeEvents).toBe(1); // Native change should go through normally after destroy
   });
 
@@ -296,7 +296,7 @@ test.describe('Core TouchSpin Destruction', () => {
       await expect(page.locator('[data-testid="test-input"][data-touchspin-injected]')).toHaveCount(0);
 
       // Keyboard is a no-op post-destroy
-      await touchspinHelpers.clearEventLog(page); // Clear destroy-related events
+      await apiHelpers.clearEventLog(page); // Clear destroy-related events
 
       // Verify core instance is destroyed
       const coreDestroyed = await page.evaluate(() => {
@@ -313,7 +313,7 @@ test.describe('Core TouchSpin Destruction', () => {
       const finalValue = await getNumericValue(page, 'test-input');
 
       // The value may change due to native browser behavior, but no TouchSpin events should occur
-      expect(await touchspinHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
+      expect(await apiHelpers.getEventsOfType(page, 'touchspin')).toHaveLength(0);
     });
   });
 });

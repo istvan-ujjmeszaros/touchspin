@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -15,14 +15,14 @@ import {
 
 test.describe('Core TouchSpin Advanced Spinning', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-advanced-spinning');
+    await apiHelpers.collectCoverage(page, 'core-advanced-spinning');
   });
 
   test.describe('Disabled Input Spin Blocking', () => {
@@ -36,14 +36,14 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
       });
 
       const initialValue = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Try to start spinning - should be blocked
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // No spin events should be emitted
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
     });
 
@@ -57,14 +57,14 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
       });
 
       const initialValue = await getNumericValue(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Try to start spinning - should be blocked
       await startDownSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // No spin events should be emitted
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
       expect(await getNumericValue(page, 'test-input')).toBe(initialValue);
     });
   });
@@ -72,17 +72,17 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
   test.describe('Spin Direction Management', () => {
     test('starting same direction spin is idempotent', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Start up spin
       await startUpSpinViaAPI(page, 'test-input');
 
       // Clear log and start up spin again
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
       await startUpSpinViaAPI(page, 'test-input');
 
       // Should not emit another start event (idempotent)
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
 
       await stopSpinViaAPI(page, 'test-input');
     });
@@ -92,14 +92,14 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
 
       // Start up spin
       await startUpSpinViaAPI(page, 'test-input');
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Switch to down spin
       await startDownSpinViaAPI(page, 'test-input');
 
       // Should emit stop then start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
 
       await stopSpinViaAPI(page, 'test-input');
     });
@@ -109,13 +109,13 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
 
       // Start up spin and let it run to build spin count
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(200); // Let some spin cycles occur
+      await apiHelpers.waitForTimeout(200); // Let some spin cycles occur
 
       // Switch direction - should reset counter
       await startDownSpinViaAPI(page, 'test-input');
 
       // The spin counter reset is internal, but we can verify the direction change worked
-      await page.waitForTimeout(50);
+      await apiHelpers.waitForTimeout(50);
       await stopSpinViaAPI(page, 'test-input');
 
       // Test passes if no errors occur and direction changes work
@@ -132,11 +132,11 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
         initval: 10 // Start at max
       });
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Try to spin up from max - should not start continuous spin
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // May emit start event but should not continue spinning
       const value = await getNumericValue(page, 'test-input');
@@ -153,11 +153,11 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
         initval: 0 // Start at min
       });
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Try to spin down from min - should not start continuous spin
       await startDownSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // May emit start event but should not continue spinning
       const value = await getNumericValue(page, 'test-input');
@@ -174,17 +174,17 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
         initval: 1
       });
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       // Start spinning up - should stop when reaching max
       await startUpSpinViaAPI(page, 'test-input');
-      await page.waitForTimeout(200); // Give time to reach boundary
+      await apiHelpers.waitForTimeout(200); // Give time to reach boundary
 
       const finalValue = await getNumericValue(page, 'test-input');
       expect(finalValue).toBe(2); // Should stop at max
 
       // Ensure spin stopped automatically
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
       expect(await getNumericValue(page, 'test-input')).toBe(2); // Should not change further
 
       await stopSpinViaAPI(page, 'test-input');
@@ -204,7 +204,7 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
       await startUpSpinViaAPI(page, 'test-input');
 
       // Wait for multiple spin cycles
-      await page.waitForTimeout(300);
+      await apiHelpers.waitForTimeout(300);
       await stopSpinViaAPI(page, 'test-input');
 
       const finalValue = await getNumericValue(page, 'test-input');
@@ -228,7 +228,7 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
       await stopSpinViaAPI(page, 'test-input');
 
       // Wait longer than the interval to ensure no more changes
-      await page.waitForTimeout(200);
+      await apiHelpers.waitForTimeout(200);
       const valueAfterStop = await getNumericValue(page, 'test-input');
 
       // Value should not change after stop
@@ -256,62 +256,62 @@ test.describe('Core TouchSpin Advanced Spinning', () => {
   test.describe('Spin Event Emission Patterns', () => {
     test('emits correct events for up spin lifecycle', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await startUpSpinViaAPI(page, 'test-input');
 
       // Should emit start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
       await stopSpinViaAPI(page, 'test-input');
 
       // Should emit stop events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
     });
 
     test('emits correct events for down spin lifecycle', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
 
       await startDownSpinViaAPI(page, 'test-input');
 
       // Should emit start events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
 
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
       await stopSpinViaAPI(page, 'test-input');
 
       // Should emit stop events
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
     });
 
     test('direction events are specific to direction', async ({ page }) => {
       await initializeCore(page, 'test-input', { step: 1, initval: 10 });
 
       // Test up direction specificity
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
       await startUpSpinViaAPI(page, 'test-input');
       await stopSpinViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(false);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(false);
 
       // Test down direction specificity
-      await touchspinHelpers.clearEventLog(page);
+      await apiHelpers.clearEventLog(page);
       await startDownSpinViaAPI(page, 'test-input');
       await stopSpinViaAPI(page, 'test-input');
 
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(false);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
-      expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(false);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin')).toBe(true);
+      expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(false);
     });
   });
 

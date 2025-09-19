@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
   initializeCore,
   getNumericValue,
@@ -10,14 +10,14 @@ import {
 
 test.describe('Core TouchSpin Attribute Parsing', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
+    await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await page.waitForFunction(() => (window as any).coreTestReady === true);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.waitForCoreTestReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'core-attribute-parsing');
+    await apiHelpers.collectCoverage(page, 'core-attribute-parsing');
   });
 
   test.describe('Data Attribute Coercion', () => {
@@ -259,7 +259,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
       });
 
       // Give MutationObserver time to process
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Value should be updated to respect new min
       await setValueViaAPI(page, 'test-input', 10);
@@ -282,7 +282,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.removeAttribute('max');
       });
 
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // Should no longer have constraints
       await setValueViaAPI(page, 'test-input', 10);
@@ -306,7 +306,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('step', '5');
       });
 
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // New step should be applied to value alignment
       await setValueViaAPI(page, 'test-input', 13);
@@ -322,7 +322,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.disabled = true;
       });
 
-      await page.waitForTimeout(100);
+      await apiHelpers.waitForTimeout(100);
 
       // This test mainly ensures the mutation observer processes the change
       // without throwing errors. The actual button state update would need
