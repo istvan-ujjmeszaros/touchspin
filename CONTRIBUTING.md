@@ -92,6 +92,18 @@ Notes:
 - Adheres to canonical `Renderer` interface; extends `AbstractRenderer`.
 - Minimal DOM side effects; only use `data-touchspin-injected` for event wiring.
 
+## Build & Types Rules
+
+- **ESM-only.** No CJS/`require`. jQuery plugin ships an extra IIFE file for script-tag users; it is not exported.
+- **Dual-build:**
+  - Prod: `tsup` JS + `tsc --emitDeclarationOnly` for `.d.ts`.
+  - Tests/Coverage: plain `tsc` → `devdist` with `sourceMap + inlineSources`.
+- **Topological builds:** Always run `yarn build:types:all` then `yarn build:js:all`. Never parallelize types.
+- **Type resolution:** Consumers use `moduleResolution: "Bundler"`; do **not** use `tsconfig.paths` to reach `core`.
+- **Exports:** For every public subpath, declare `{ types, import }` in `package.json#exports`. Core exposes `"."` and `"./renderer"`.
+- **Tests:** Use `PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json` and `TS_BUILD_TARGET=dev`.
+- **Coverage:** `yarn coverage` runs run+merge+report+open; always uses `devdist`.
+
 ## Porting Policy (Parity with Source)
 
 When porting behavior between the legacy jQuery plugin (`src/jquery.bootstrap-touchspin.js`) and the new core/wrapper packages:
