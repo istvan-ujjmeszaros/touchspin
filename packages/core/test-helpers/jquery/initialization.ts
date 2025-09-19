@@ -11,6 +11,16 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
   await installDomHelpers(page);
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await page.evaluate(async () => {
+    // Ensure jQuery is present; load from local test asset if missing
+    if (!(window as unknown as { jQuery?: unknown }).jQuery && !(window as unknown as { $?: unknown }).$) {
+      await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/__tests__/html/assets/jquery/jquery-3.7.1.min.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load jQuery'));
+        document.head.appendChild(script);
+      });
+    }
     const offenders = Array.from(document.querySelectorAll('script[src*="/src/"]')).map(
       (s) => (s as HTMLScriptElement).src
     );

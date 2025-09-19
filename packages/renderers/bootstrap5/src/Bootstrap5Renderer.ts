@@ -60,6 +60,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.core.observeSetting('focusablebuttons', (newValue) => this.updateButtonFocusability(newValue));
   }
 
+  private refreshOpts(): void {
+    this.opts = this.projectRendererOptions(schema);
+  }
+
   teardown(): void {
     // Remove form-control class only if we added it
     if (this._formControlAdded) {
@@ -83,6 +87,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   buildBasicInputGroup(): HTMLElement {
+    this.refreshOpts();
     const inputGroupSize = this._detectInputGroupSize();
 
     let html;
@@ -154,6 +159,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
+    this.refreshOpts();
     // Add bootstrap-touchspin class to existing input-group
     existingInputGroup.classList.add('bootstrap-touchspin');
 
@@ -306,6 +312,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   buildVerticalButtons(): string {
+    this.refreshOpts();
     // Bootstrap 5: Return complete wrapper since there's no outer wrapper in the calling code
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
