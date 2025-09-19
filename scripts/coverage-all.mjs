@@ -25,13 +25,23 @@ function runAndExit(cmd, args, extraEnv = {}) {
 console.log(`🎯 Running coverage in build mode${open ? ' (will open)' : ''}`);
 
 console.log('📦 Building packages...');
-runAndExit('yarn', ['coverage:build']);
+// Topological: types first, then JS (ensures core d.ts exist before consumers).
+runAndExit('yarn', ['build:prod']);
 
 console.log('🔍 Checking for src imports in tests...');
 runAndExit('yarn', ['guard:no-src-in-tests']);
 
 console.log('🧪 Running tests with coverage...');
-const testStatus = run('yarn', ['coverage', ...passThrough], { COVERAGE: '1' });
+// Always test against devdist, enable coverage pathing.
+const testStatus = run(
+  'yarn',
+  ['coverage:run', ...passThrough],
+  {
+    PW_COVERAGE: '1',
+    TS_BUILD_TARGET: 'dev',
+    PLAYWRIGHT_TSCONFIG: 'tsconfig.playwright.json'
+  }
+);
 
 console.log('🔀 Merging coverage files...');
 runAndExit('yarn', ['coverage:merge']);
