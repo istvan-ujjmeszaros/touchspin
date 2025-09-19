@@ -77,7 +77,6 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
-          ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
           ["@typescript-eslint/parser", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
@@ -89,7 +88,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
           ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
-          ["jquery", "npm:3.7.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
@@ -2625,7 +2623,6 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.35.0"],\
           ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
-          ["@types/jquery", "npm:3.5.33"],\
           ["@types/node", "npm:22.18.1"],\
           ["@typescript-eslint/eslint-plugin", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
           ["@typescript-eslint/parser", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:8.43.0"],\
@@ -2637,7 +2634,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
           ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
-          ["jquery", "npm:3.7.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
