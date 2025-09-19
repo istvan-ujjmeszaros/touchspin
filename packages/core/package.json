@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "@types/jquery": "^3.5.30",
     "jquery": "^3.7.1",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
