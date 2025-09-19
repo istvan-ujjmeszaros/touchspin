@@ -19,17 +19,7 @@ export async function setupLogging(page: Page): Promise<void> {
     if (window.__tsLoggingSetup) return;
     window.__tsLoggingSetup = true;
 
-    // Install a centralized helper to get the core instance by testId
-    if (!window.__tsGetCoreByTestId) {
-      window.__tsGetCoreByTestId = (id: string): TouchSpinCorePublicAPI => {
-        type WithCore = HTMLInputElement & { _touchSpinCore?: unknown };
-        const input = document.querySelector(`[data-testid="${id}"]`) as HTMLInputElement | null;
-        if (!input) throw new Error(`Input with testId "${id}" not found`);
-        const core = (input as WithCore)._touchSpinCore as unknown;
-        if (!core) throw new Error(`TouchSpinCore not found for "${id}"`);
-        return core as TouchSpinCorePublicAPI;
-      };
-    }
+    // (DOM helpers are installed via installDomHelpers; logging remains here)
 
     const logEvent =
       window.logEvent ||

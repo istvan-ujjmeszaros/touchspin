@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
 import { inputById } from './selectors';
 import { setupLogging } from '../events/setup';
+import { installDomHelpers } from '../runtime/installDomHelpers';
 
 /* ──────────────────────────
  * Core (direct) API initialization
@@ -12,6 +13,7 @@ export async function initializeTouchspin(
   testId: string,
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
+  await installDomHelpers(page);
   await setupLogging(page);
   await page.evaluate(async ({ testId, options }) => {
     const url = 'http://localhost:8866/packages/core/dist/index.js';
@@ -34,7 +36,12 @@ export async function initializeTouchspin(
 
 export async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
   return page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    return !!(input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']);
+    if (!window.__ts) return false;
+    try {
+      window.__ts.requireCoreByTestId(testId);
+      return true;
+    } catch {
+      return false;
+    }
   }, { testId });
 }

@@ -36,6 +36,10 @@ export type InjectedRole = 'up' | 'down' | 'prefix' | 'postfix';
 /** Window interface augmentation for TouchSpin test environment */
 declare global {
   interface Window {
+    __ts?: {
+      requireInputByTestId(id: string): HTMLInputElement;
+      requireCoreByTestId(id: string): TouchSpinCorePublicAPI;
+    };
     __tsLoggingSetup?: boolean;
     eventLog?: EventLogEntry[];
     logEvent?: (name: string, detail?: Partial<EventLogEntry>) => void;
@@ -45,8 +49,6 @@ declare global {
     clearEventLog?: () => void;
     /** Optional readiness flag used by wait helpers */
     testPageReady?: boolean;
-    /** Helper installed by setupLogging to fetch core by testId inside page context */
-    __tsGetCoreByTestId?: (id: string) => TouchSpinCorePublicAPI;
   }
 }
 

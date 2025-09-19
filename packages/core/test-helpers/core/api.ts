@@ -22,105 +22,56 @@ export async function setValueViaAPI(
   value: number | string
 ): Promise<void> {
   await page.evaluate(({ testId, value }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.setValue(value);
   }, { testId, value });
 }
 
 export async function destroyCore(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.destroy();
   }, { testId });
 }
 
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.upOnce();
   }, { testId });
 }
 
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.downOnce();
   }, { testId });
 }
 
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.startUpSpin();
   }, { testId });
 }
 
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.startDownSpin();
   }, { testId });
 }
 
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.stopSpin();
   }, { testId });
 }
@@ -131,30 +82,15 @@ export async function updateSettingsViaAPI(
   newSettings: Partial<TouchSpinCoreOptions>
 ): Promise<void> {
   await page.evaluate(({ testId, newSettings }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    const core = window.__ts.requireCoreByTestId(testId);
     core.updateSettings(newSettings);
   }, { testId, newSettings });
 }
 
 export async function getPublicAPI(page: Page, testId: string): Promise<TouchSpinCorePublicAPI | null> {
   return page.evaluate(({ testId }) => {
-    const core = window.__tsGetCoreByTestId
-      ? window.__tsGetCoreByTestId(testId)
-      : (() => {
-          const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-          if (!input) throw new Error(`Input with testId "${testId}" not found`);
-          const c = (input as HTMLInputElement & { _touchSpinCore?: unknown })._touchSpinCore;
-          if (!c) throw new Error(`TouchSpinCore not found for "${testId}"`);
-          return c as TouchSpinCorePublicAPI;
-        })();
-    return core;
+    if (!window.__ts) throw new Error('__ts namespace not installed');
+    return window.__ts.requireCoreByTestId(testId);
   }, { testId });
 }
