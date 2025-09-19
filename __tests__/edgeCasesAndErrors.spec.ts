@@ -27,7 +27,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Input should be empty initially
-      const input = page.getByTestId('firstclick-test');
+      const input = await apiHelpers.getElement(page, 'firstclick-test');
       expect(await input.inputValue()).toBe('');
 
       // Click the up button on empty input
@@ -77,7 +77,7 @@ test.describe('Edge Cases and Error Handling', () => {
         });
       });
 
-      const input = page.getByTestId('maxboost-test');
+      const input = await apiHelpers.getElement(page, 'maxboost-test');
       await input.focus();
 
       // Hold down to trigger boosting
@@ -128,7 +128,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // This should work without throwing errors
-      const input = page.getByTestId('unlimited-boost-test');
+      const input = await apiHelpers.getElement(page, 'unlimited-boost-test');
       await input.focus();
 
       // Quick test to ensure it works
@@ -305,7 +305,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Focus and blur empty input
-      const input = page.getByTestId('replacement-test');
+      const input = await apiHelpers.getElement(page, 'replacement-test');
       await input.focus();
       await input.blur();
 
@@ -328,7 +328,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Value should be formatted to 1 decimal place
-      const input = page.getByTestId('decimal-edge-test');
+      const input = await apiHelpers.getElement(page, 'decimal-edge-test');
       await input.focus();
       await input.blur();
 
@@ -358,7 +358,7 @@ test.describe('Edge Cases and Error Handling', () => {
 
     test('should handle mouse wheel on disabled input', async ({ page }) => {
       // Test mousewheel on disabled input
-      const input = page.getByTestId('touchspin-disabled');
+      const input = await apiHelpers.getElement(page, 'touchspin-disabled');
 
       // Try to scroll on disabled input
       await input.focus();
@@ -390,7 +390,7 @@ test.describe('Edge Cases and Error Handling', () => {
       });
 
       // Input should still exist and be functional as regular input
-      const input = page.getByTestId('multi-destroy-test');
+      const input = await apiHelpers.getElement(page, 'multi-destroy-test');
       await input.fill('123');
       await expect.poll(async () => input.inputValue()).toBe('123');
     });

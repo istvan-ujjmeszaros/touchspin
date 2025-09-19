@@ -121,7 +121,7 @@ test.describe('TouchSpin Callback Tests', () => {
       ).toBe('$1.00');
 
       // Focus the input and use arrow keys to spin down to minimum
-      const input = page.getByTestId(testid);
+      const input = await apiHelpers.getElement(page, testid);
       await input.focus();
 
       // Hold down the Down arrow key to spin to minimum (10 decrements of 0.1 each)

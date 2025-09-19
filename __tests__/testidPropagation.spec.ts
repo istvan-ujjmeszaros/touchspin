@@ -42,11 +42,11 @@ test.describe('TestID Propagation Behavior', () => {
     const expectedWrapperTestId = 'test-input-1-wrapper';
 
     // Verify the input exists with its testid
-    const input = page.getByTestId(inputTestId);
+    const input = await apiHelpers.getElement(page, inputTestId);
     await expect(input).toBeAttached();
 
     // Verify TouchSpin created a wrapper with the propagated testid
-    const wrapper = page.getByTestId(expectedWrapperTestId);
+    const wrapper = await apiHelpers.getElement(page, expectedWrapperTestId);
     await expect(wrapper).toBeAttached();
 
     // Verify wrapper has TouchSpin classes
@@ -69,11 +69,11 @@ test.describe('TestID Propagation Behavior', () => {
     const expectedWrapperTestId = 'test-input-2-wrapper';
 
     // Verify the input exists with its testid
-    const input = page.getByTestId(inputTestId);
+    const input = await apiHelpers.getElement(page, inputTestId);
     await expect(input).toBeAttached();
 
     // Verify the existing input-group now has the propagated testid
-    const wrapper = page.getByTestId(expectedWrapperTestId);
+    const wrapper = await apiHelpers.getElement(page, expectedWrapperTestId);
     await expect(wrapper).toBeAttached();
 
     // Verify it's the same input-group that existed before (has pre/postfix)
@@ -91,11 +91,11 @@ test.describe('TestID Propagation Behavior', () => {
     const expectedWrapperTestId = 'test-input-3-wrapper';
 
     // Verify the input exists
-    const input = page.getByTestId(inputTestId);
+    const input = await apiHelpers.getElement(page, inputTestId);
     await expect(input).toBeAttached();
 
     // Verify wrapper with propagated testid exists
-    const wrapper = page.getByTestId(expectedWrapperTestId);
+    const wrapper = await apiHelpers.getElement(page, expectedWrapperTestId);
     await expect(wrapper).toBeAttached();
 
     // Verify vertical buttons structure
@@ -127,7 +127,7 @@ test.describe('TestID Propagation Behavior', () => {
     const inputTestId = 'test-input-1';
     const wrapperTestId = 'test-input-1-wrapper';
 
-    const wrapper = page.getByTestId(wrapperTestId);
+    const wrapper = await apiHelpers.getElement(page, wrapperTestId);
     const input = wrapper.locator('input');
     const upButton = wrapper.locator('.bootstrap-touchspin-up');
 

@@ -227,7 +227,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should format with 0 decimal places (fallback)
-      const input = page.getByTestId('invalid-decimals-test');
+      const input = await apiHelpers.getElement(page, 'invalid-decimals-test');
       await input.focus();
       await input.blur();
 
@@ -252,7 +252,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should format with 0 decimal places (fallback)
-      const input = page.getByTestId('negative-decimals-test');
+      const input = await apiHelpers.getElement(page, 'negative-decimals-test');
       await input.focus();
       await input.blur();
 
@@ -277,7 +277,7 @@ test.describe('Targeted Coverage Tests', () => {
       });
 
       // Should format with 0 decimal places (fallback)
-      const input = page.getByTestId('nan-decimals-test');
+      const input = await apiHelpers.getElement(page, 'nan-decimals-test');
       await input.focus();
       await input.blur();
 

@@ -16,10 +16,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
   });
 
   test('Test 1: New Container Creation - destroy and reinitialize', async ({ page }) => {
-    const input = page.getByTestId('test-input-new');
-    const initBtn = page.getByTestId('init-new-btn');
-    const destroyBtn = page.getByTestId('destroy-new-btn');
-    const reinitBtn = page.getByTestId('reinit-new-btn');
+    const input = await apiHelpers.getElement(page, 'test-input-new');
+    const initBtn = await apiHelpers.getElement(page, 'init-new-btn');
+    const destroyBtn = await apiHelpers.getElement(page, 'destroy-new-btn');
+    const reinitBtn = await apiHelpers.getElement(page, 'reinit-new-btn');
     const status = page.locator('#status-new');
 
     // Initial state
@@ -77,10 +77,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
   });
 
   test('Test 2: Existing Container Enhancement - destroy and reinitialize', async ({ page }) => {
-    const input = page.getByTestId('test-input-existing');
-    const initBtn = page.getByTestId('init-existing-btn');
-    const destroyBtn = page.getByTestId('destroy-existing-btn');
-    const reinitBtn = page.getByTestId('reinit-existing-btn');
+    const input = await apiHelpers.getElement(page, 'test-input-existing');
+    const initBtn = await apiHelpers.getElement(page, 'init-existing-btn');
+    const destroyBtn = await apiHelpers.getElement(page, 'destroy-existing-btn');
+    const reinitBtn = await apiHelpers.getElement(page, 'reinit-existing-btn');
     const status = page.locator('#status-existing');
 
     // Use ID selector instead of testid since testid might change
@@ -154,10 +154,10 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
   });
 
   test('Test 3: Vertical Buttons - destroy and reinitialize', async ({ page }) => {
-    const input = page.getByTestId('test-input-vertical');
-    const initBtn = page.getByTestId('init-vertical-btn');
-    const destroyBtn = page.getByTestId('destroy-vertical-btn');
-    const reinitBtn = page.getByTestId('reinit-vertical-btn');
+    const input = await apiHelpers.getElement(page, 'test-input-vertical');
+    const initBtn = await apiHelpers.getElement(page, 'init-vertical-btn');
+    const destroyBtn = await apiHelpers.getElement(page, 'destroy-vertical-btn');
+    const reinitBtn = await apiHelpers.getElement(page, 'reinit-vertical-btn');
     const status = page.locator('#status-vertical');
 
     // Initial state
@@ -217,9 +217,9 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
   });
 
   test('Event handlers are properly cleaned up after destroy', async ({ page }) => {
-    const input = page.getByTestId('test-input-new');
-    const initBtn = page.getByTestId('init-new-btn');
-    const destroyBtn = page.getByTestId('destroy-new-btn');
+    const input = await apiHelpers.getElement(page, 'test-input-new');
+    const initBtn = await apiHelpers.getElement(page, 'init-new-btn');
+    const destroyBtn = await apiHelpers.getElement(page, 'destroy-new-btn');
 
     // Initialize TouchSpin
     await initBtn.click();
@@ -244,9 +244,9 @@ test.describe('TouchSpin Destroy and Reinitialize', () => {
   });
 
   test('Multiple destroy calls should not cause errors', async ({ page }) => {
-    const input = page.getByTestId('test-input-new');
-    const initBtn = page.getByTestId('init-new-btn');
-    const destroyBtn = page.getByTestId('destroy-new-btn');
+    const input = await apiHelpers.getElement(page, 'test-input-new');
+    const initBtn = await apiHelpers.getElement(page, 'init-new-btn');
+    const destroyBtn = await apiHelpers.getElement(page, 'destroy-new-btn');
 
     // Initialize TouchSpin
     await initBtn.click();
