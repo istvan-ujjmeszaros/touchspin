@@ -1,7 +1,7 @@
 @touchspin/core
 ==============
 
-Framework-agnostic TouchSpin core with element-attached architecture.
+Framework-agnostic TouchSpin core with element-attached architecture. Core is strictly jQuery-free; any jQuery integration lives in the `@touchspin/jquery-plugin` package (including test helpers).
 
 ## Status: ✅ IMPLEMENTED
 
