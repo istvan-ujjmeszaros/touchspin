@@ -20,8 +20,7 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
       }
 
       // Import jQuery from node_modules
-      const jq = (await import('jquery')) as unknown as { default: unknown };
-      const $ = (jq as { default: unknown }).default as unknown;
+      const $ = await (new Function('return import("jquery")')() as Promise<{ default?: unknown }>).then(m => m.default ?? (m as unknown));
       const w = window as unknown as Record<string, unknown>;
       if (!w['jQuery']) w['jQuery'] = $;
       if (!w['$']) w['$'] = $;
