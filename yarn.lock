@@ -1509,6 +1509,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/vanilla-renderer": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown
@@ -1525,6 +1526,7 @@ __metadata:
     "@touchspin/renderer-bootstrap5": "workspace:*"
     "@touchspin/renderer-tailwind": "workspace:*"
     "@types/jquery": "npm:^3.5.30"
+    "@types/node": "npm:^22.7.4"
     jquery: "npm:^3.7.1"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
@@ -1542,7 +1544,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
@@ -1554,7 +1558,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
@@ -1568,6 +1574,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     bootstrap: "npm:^5.3.3"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
@@ -1582,6 +1589,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
@@ -1592,6 +1600,9 @@ __metadata:
 "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla"
+  dependencies:
+    "@playwright/test": "npm:^1.54.2"
+    "@types/node": "npm:^22.7.4"
   languageName: unknown
   linkType: soft
 
@@ -1601,6 +1612,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
@@ -1612,8 +1624,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/web-component@workspace:packages/web-component"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     "@touchspin/vanilla-renderer": "workspace:*"
+    "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown
