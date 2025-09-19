@@ -30,7 +30,9 @@
   },
   "typesVersions": {
     "*": {
-      "renderer": ["./dist/renderer.d.ts"]
+      "renderer": [
+        "./dist/renderer.d.ts"
+      ]
     }
   },
   "files": [
