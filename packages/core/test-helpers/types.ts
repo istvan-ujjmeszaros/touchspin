@@ -1,4 +1,5 @@
 import type { Locator } from '@playwright/test';
+import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../src/index';
 
 /** Event log entry shape emitted by test fixtures */
 export type EventLogType = 'native' | 'touchspin';
@@ -26,19 +27,8 @@ export interface TouchSpinElements {
   postfix: Locator;
 }
 
-/** TouchSpin Core API interface for better type safety */
-export interface TouchSpinCore {
-  setValue(value: number | string): void;
-  upOnce(): void;
-  downOnce(): void;
-  startUpSpin(): void;
-  startDownSpin(): void;
-  stopSpin(): void;
-  updateSettings(settings: Record<string, unknown>): void;
-  toPublicApi(): unknown;
-  initDOMEventHandling(): void;
-  destroy(): void;
-}
+// Re-export Core types for test helpers to use
+export type { TouchSpinCoreOptions, TouchSpinCorePublicAPI };
 
 /** Injected element roles for renderer-agnostic selectors */
 export type InjectedRole = 'up' | 'down' | 'prefix' | 'postfix';
@@ -50,7 +40,7 @@ declare global {
     eventLog?: EventLogEntry[];
     logEvent?: (name: string, detail?: Partial<EventLogEntry>) => void;
     touchSpinReady?: boolean;
-    createTestInput?: (id: string, opts?: Record<string, unknown>) => void;
+    createTestInput?: (id: string, opts?: Partial<TouchSpinCoreOptions>) => void;
     clearAdditionalInputs?: () => void;
     clearEventLog?: () => void;
   }

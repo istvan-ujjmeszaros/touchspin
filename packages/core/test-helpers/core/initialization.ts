@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import type { TouchSpinCoreOptions } from '../types';
 import { inputById } from './selectors';
 import { setupLogging } from '../events/setup';
 
@@ -9,14 +10,14 @@ import { setupLogging } from '../events/setup';
 export async function initializeTouchspin(
   page: Page,
   testId: string,
-  options: Record<string, unknown> = {}
+  options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await setupLogging(page);
   await page.evaluate(async ({ testId, options }) => {
     const { TouchSpinCore } = await import('http://localhost:8866/packages/core/dist/index.js');
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
     if (!input) throw new Error(`Input with testId "${testId}" not found`);
-    if ((options as any).initval !== undefined) input.value = String((options as any).initval);
+    if (options.initval !== undefined) input.value = String(options.initval);
 
     const core = new TouchSpinCore(input, options);
     (input as any)._touchSpinCore = core;

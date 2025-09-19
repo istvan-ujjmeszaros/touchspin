@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import type { TouchSpinCoreOptions } from '../types';
 import { setupLogging } from '../events/setup';
 
 /* ──────────────────────────
@@ -33,13 +34,13 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
 export async function initializeTouchspinJQuery(
   page: Page,
   testId: string,
-  options: Record<string, unknown> = {}
+  options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await setupLogging(page);
   await page.evaluate(({ id, opts }) => {
     const $ = (window as any).$;
     const $input = $.call ? $.call(null, `[data-testid="${id}"]`) : $(`[data-testid="${id}"]`);
-    if ((opts as any).initval !== undefined) $input.val((opts as any).initval);
+    if (opts.initval !== undefined) $input.val(opts.initval);
     $input.TouchSpin(opts);
   }, { id: testId, opts: options });
 }
