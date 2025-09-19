@@ -107,11 +107,11 @@ export default defineConfig({
     // },
   ],
 
-  /* Run Vite dev server for tests to support ES module imports */
+  /* Serve repository statically for tests (no HMR/bundling) */
   webServer: {
-    command: 'yarn dev',
+    command: 'node scripts/static-server.mjs',
     port: 8866,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 20000,
   },
 });

@@ -51,10 +51,11 @@
     "vite-plugin-dts": "^4.2.3"
   },
   "scripts": {
-    "dev": "vite --port 8866 --strictPort",
+    "dev": "node scripts/static-server.mjs",
     "dev:force": "node scripts/dev-force.mjs",
-    "preview": "vite preview --port 8866 --strictPort",
-    "build": "npm run -ws --if-present build",
+    "preview": "node scripts/static-server.mjs",
+    "build": "yarn workspaces foreach -p -A run build",
+    "build:test": "yarn workspaces foreach -p -A run build:test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -63,7 +64,7 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "inspect": "node scripts/inspect.mjs",
-    "test": "playwright test --project=chromium --reporter=list",
+    "test": "yarn build:test && TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
     "test:watch": "playwright test --project=chromium --ui",
     "test:dev": "concurrently -k -s first -n dev,test \"yarn dev\" \"yarn test:watch\"",
     "dev:test": "yarn test:dev",

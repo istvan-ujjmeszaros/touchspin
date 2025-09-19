@@ -1,3 +1,4 @@
 import { defineSharedRendererTests } from '@touchspin/core/test-helpers/renderers';
+import { rendererClassUrlFor } from '@touchspin/core/test-helpers';
 
-defineSharedRendererTests('tailwind', '/packages/renderers/tailwind/dist/index.mjs');
+defineSharedRendererTests('tailwind', rendererClassUrlFor('tailwind'));

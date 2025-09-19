@@ -37,6 +37,7 @@ export * from './test-utilities/coverage';
 export * from './test-utilities/fixtures';
 export * from './test-utilities/wait';
 export * from './runtime/installDomHelpers';
+export * from './runtime/paths';
 
 // Deprecated (Bootstrap-specific)
 export * from './deprecated/bootstrap-specific';

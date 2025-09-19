@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
 import { inputById } from './selectors';
 import { setupLogging } from '../events/setup';
+import { coreUrl as coreRuntimeUrl, vanillaRendererClassUrl } from '../runtime/paths';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 
 /* ──────────────────────────
@@ -17,8 +18,8 @@ export async function initializeTouchspin(
   // Early DX check: ensure namespace exists
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
-  await page.evaluate(async ({ testId, options }) => {
-    const url = 'http://localhost:8866/packages/core/dist/index.js';
+  await page.evaluate(async ({ testId, options, coreUrl }) => {
+    const url = 'http://localhost:8866' + coreUrl;
     const { TouchSpinCore } = (await import(url)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
@@ -31,7 +32,7 @@ export async function initializeTouchspin(
 
     // No per-instance listeners here: core will dispatch DOM CustomEvents
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-  }, { testId, options });
+  }, { testId, options, coreUrl: coreRuntimeUrl });
 
   const sel = [
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
@@ -66,13 +67,11 @@ export async function initializeTouchspinWithVanilla(
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await setupLogging(page);
-  await page.evaluate(async ({ testId, options }) => {
-    const coreUrl = 'http://localhost:8866/packages/core/dist/index.js';
-    const rendererUrl = 'http://localhost:8866/packages/vanilla-renderer/dist/index.mjs';
-    const { TouchSpinCore } = (await import(coreUrl)) as unknown as {
+  await page.evaluate(async ({ testId, options, coreUrl, rendererUrl }) => {
+    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
-    const rendererMod = (await import(rendererUrl)) as unknown as { default?: unknown };
+    const rendererMod = (await import('http://localhost:8866' + rendererUrl)) as unknown as { default?: unknown };
     const VanillaRenderer = rendererMod.default as unknown;
 
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
@@ -82,7 +81,7 @@ export async function initializeTouchspinWithVanilla(
     const core = new TouchSpinCore(input, { ...options, renderer: VanillaRenderer } as Partial<TouchSpinCoreOptions>);
     (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-  }, { testId, options });
+  }, { testId, options, coreUrl: coreRuntimeUrl, rendererUrl: vanillaRendererClassUrl });
 
   const sel2 = [
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,

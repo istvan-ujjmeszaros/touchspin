@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
-import { setupLogging } from '@touchspin/core/test-helpers';
+import { setupLogging, coreUrl as coreRuntimeUrl, rendererClassUrlFor } from '@touchspin/core/test-helpers';
 
 export async function initializeTouchspinWithBootstrap5(
   page: Page,
@@ -8,13 +8,11 @@ export async function initializeTouchspinWithBootstrap5(
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await setupLogging(page);
-  await page.evaluate(async ({ testId, options }) => {
-    const coreUrl = 'http://localhost:8866/packages/core/dist/index.js';
-    const rendererUrl = 'http://localhost:8866/packages/renderers/bootstrap5/dist/index.js';
-    const { TouchSpinCore } = (await import(coreUrl)) as unknown as {
+  await page.evaluate(async ({ testId, options, coreUrl, rendererUrl }) => {
+    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
-    const rendererMod = (await import(rendererUrl)) as unknown as { default?: unknown; Bootstrap5Renderer?: unknown };
+    const rendererMod = (await import('http://localhost:8866' + rendererUrl)) as unknown as { default?: unknown; Bootstrap5Renderer?: unknown };
     const Bootstrap5Renderer = (rendererMod.default ?? rendererMod.Bootstrap5Renderer) as unknown;
 
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
@@ -24,7 +22,7 @@ export async function initializeTouchspinWithBootstrap5(
     const core = new TouchSpinCore(input, { ...options, renderer: Bootstrap5Renderer } as Partial<TouchSpinCoreOptions>);
     (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-  }, { testId, options });
+  }, { testId, options, coreUrl: coreRuntimeUrl, rendererUrl: rendererClassUrlFor('bootstrap5') });
 
   const sel2 = [
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,

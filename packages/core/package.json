@@ -54,8 +54,9 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "dev": "vite dev --port 8866",
-    "build": "vite build",
+    "dev": "node ../../scripts/static-server.mjs",
+    "build": "echo 'Use root build:prod'",
+    "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
