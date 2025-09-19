@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
-import { setupLogging } from '@touchspin/core/test-helpers/events/setup';
+import { setupLogging } from '@touchspin/core/test-helpers';
 
 export async function initializeTouchspinWithBootstrap5(
   page: Page,
@@ -32,4 +32,3 @@ export async function initializeTouchspinWithBootstrap5(
   ].join(', ');
   await page.locator(sel2).first().waitFor({ timeout: 5000 });
 }
-
