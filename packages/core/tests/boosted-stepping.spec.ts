@@ -261,10 +261,8 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
         initval: 10
       });
 
-      // Start spinning and let booster effect kick in
-      await startUpSpinViaAPI(page, 'test-input');
-      await apiHelpers.waitForTimeout(300); // Let several spin cycles occur
-      await stopSpinViaAPI(page, 'test-input');
+      // Start spinning and let booster effect kick in (300ms)
+      await apiHelpers.holdUpButton(page, 'test-input', 300);
 
       const finalValue = await getNumericValue(page, 'test-input');
 
