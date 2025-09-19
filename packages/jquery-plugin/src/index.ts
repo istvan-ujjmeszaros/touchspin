@@ -1,4 +1,14 @@
-import type { JQueryStatic } from 'jquery';
+// Minimal local jQuery types to avoid hard module dependency at typecheck time
+type JQueryInst = {
+  each: (cb: (this: Element) => void) => JQueryInst;
+  on: (...args: unknown[]) => JQueryInst;
+  off: (...args: unknown[]) => JQueryInst;
+  trigger: (...args: unknown[]) => JQueryInst;
+};
+type JQueryStatic = {
+  fn: Record<string, unknown> & { TouchSpin?: (options?: unknown, arg?: unknown) => unknown };
+  (selector: Element | string): JQueryInst;
+};
 import { TouchSpin, getTouchSpin, CORE_EVENTS, TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
 import type { TSRenderer } from '@touchspin/core/renderer';
 
@@ -13,13 +23,14 @@ export type { TouchSpinUpdateSettingsData } from '@touchspin/core';
  * @param {import('jquery').JQueryStatic} $
  */
 export function installJqueryTouchSpin($: JQueryStatic) {
-  $.fn.TouchSpin = function(options, arg) {
+  // Define the plugin with typed params and jQuery context
+  $.fn.TouchSpin = function(this: JQueryInst, options?: unknown, arg?: unknown): unknown {
     // Command API - forward to core (core manages instance lifecycle)
     if (typeof options === 'string') {
       const cmd = String(options).toLowerCase();
       let ret: unknown;
-      this.each(function() {
-        const inputEl = (this as unknown as HTMLInputElement);
+      this.each(function(this: Element) {
+        const inputEl = this as HTMLInputElement;
         const api = getTouchSpin(inputEl);
 
         // Handle get/getvalue specially - fall back to raw input value if no instance
@@ -42,17 +53,17 @@ export function installJqueryTouchSpin($: JQueryStatic) {
           case 'startupspin': api.startUpSpin(); break;
           case 'startdownspin': api.startDownSpin(); break;
           case 'stopspin': api.stopSpin(); break;
-          case 'updatesettings': api.updateSettings(arg || {}); break;
-          case 'setvalue': case 'set': api.setValue(arg); break;
+          case 'updatesettings': api.updateSettings((arg as Record<string, unknown>) || {}); break;
+          case 'setvalue': case 'set': api.setValue(arg as number | string); break;
         }
       });
       return ret === undefined ? this : (ret as unknown);
     }
 
     // Initialize - forward to core
-    return this.each(function() {
-      const $input = $(this);
-      const inputEl = (this as unknown as HTMLInputElement);
+    return this.each(function(this: Element) {
+      const $input = $(this as Element);
+      const inputEl = this as HTMLInputElement;
 
       // Create TouchSpin instance (core handles non-input validation)
       const inst = TouchSpin(inputEl, (options as Partial<Record<string, unknown>>) || {});
@@ -121,7 +132,7 @@ export function installJqueryTouchSpin($: JQueryStatic) {
         const api = getTouchSpin(inputEl);
         if (api) api.stopSpin();
       });
-      $input.on(TouchSpinCallableEvent.UPDATE_SETTINGS, (_e, o) => {
+      $input.on(TouchSpinCallableEvent.UPDATE_SETTINGS, (_e: unknown, o: unknown) => {
         const api = getTouchSpin(inputEl);
         if (api) api.updateSettings(o || {});
       });

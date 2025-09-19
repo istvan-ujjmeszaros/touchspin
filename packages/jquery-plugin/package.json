@@ -66,6 +66,8 @@
     "@touchspin/renderer-bootstrap4": "workspace:*",
     "@touchspin/renderer-bootstrap5": "workspace:*",
     "@touchspin/renderer-tailwind": "workspace:*",
+    "@types/jquery": "^3.5.30",
+    "jquery": "^3.7.1",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
