@@ -161,36 +161,24 @@ export async function isCoreInitialized(page, testId) // Checks if Core is initi
 
 #### Core Package Testing Guidelines
 
-**⚠️ CRITICAL: Step Normalization Behavior**
+**⚠️ CRITICAL: Step Normalization Gotcha**
 
-TouchSpin automatically normalizes all values to the nearest multiple of the step size during initialization. This affects test expectations:
-
-**The Problem:**
-- HTML fixture has `value="50"` by default
-- When `step: 3` is configured, TouchSpin normalizes 50 → 51 (nearest multiple of 3)
-- Subsequent decrement produces 48, not the expected 47
-
-**✅ SOLUTION: Use Step-Divisible Initial Values**
-
-When writing tests involving `step` values, always choose an `initval` that is divisible by the step size:
+> TouchSpin normalizes the initial value to the nearest multiple of `step` during initialization.
 
 ```typescript
-// ❌ BAD: Will cause normalization (50 → 51 when step=3)
-await initializeTouchspin(page, 'test-input', { step: 3 });
-await decrementViaAPI(page, 'test-input');
-expect(await getNumericValue(page, 'test-input')).toBe(47); // FAILS: Actually 48
+// ❌ Pitfall: fixture value 50 with step 3 may become 51 during init
+await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3 });
 
-// ✅ GOOD: Use divisible initial value
-await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
-await decrementViaAPI(page, 'test-input');
-expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
-
-// ✅ GOOD: Use setValueViaAPI to ensure exact value before testing
-await setValueViaAPI(page, 'test-input', 48);
-await initializeTouchspin(page, 'test-input', { step: 3 });
-await decrementViaAPI(page, 'test-input');
-expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
+// ✅ Prefer supplying a divisible init value
+await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
 ```
+
+**Rule of thumb (from Handbook):**
+- `step: 1` → any integer
+- `step: 2` → even numbers
+- `step: 3` → multiples of 3
+- `step: 5` → multiples of 5
+- `step: 0.1` → one decimal steps, ensure string inputs use `.`
 
 **Test Separation Rule:**
 
@@ -230,9 +218,9 @@ await initializeTouchspin(page, 'test-input', {
 **2. jQuery Plugin Tests (With Renderer)**
 ```typescript
 // Uses existing jQuery-based helpers
-import touchspinHelpers from '../test-helpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 
-await touchspinHelpers.initializeTouchspinJQuery(page, 'test-input', {
+await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
   step: 3,
   min: 0,
   max: 100
@@ -325,14 +313,14 @@ packages/core/
 5. **Import Pattern**:
 
    ```typescript
-   import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+   import * as apiHelpers from '@touchspin/core/test-helpers';
    import { initializeTouchspin } from '../test-helpers/core-adapter';
    ```
 
 ### ✅ Do
 
 ```typescript
-import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspin } from '../test-helpers/core-adapter';
 ```
 
@@ -381,116 +369,67 @@ export async function decrementViaButton(page, testId) { /* ... */ }
 
 ---
 
-## 📈 Why Clean Tests Matter
+## 📖 Testing Methodology & Guidelines
 
-### Readability
+> **📋 Quick Reference**: See [TEST_HELPERS_CHEATSHEET.md](packages/core/TEST_HELPERS_CHEATSHEET.md)
+> **📚 Comprehensive Guide**: See [TEST_CONTRIBUTOR_HANDBOOK.md](packages/core/TEST_CONTRIBUTOR_HANDBOOK.md)
 
-* **Bad**: "should handle increment and decrement with callbacks and update display"
-* **Good**: "should increment value by step amount"
+### 🎯 Golden Rules (from Handbook)
 
-### Maintainability
+* **Helpers-first**: All interactions and checks go through `apiHelpers` / `jqueryHelpers`
+* **Renderer-agnostic**: Use `data-touchspin-injected="up|down|prefix|postfix"` — never Bootstrap classes
+* **Centralized logging**: Logging is wired by initializers — do **not** add listeners in tests
+* **Deterministic waits**: Use `waitForTouchspinInitialized`, `waitForSanitization`, or `expect*` helpers (no arbitrary sleeps)
+* **AAA + one behavior per test**: Arrange–Act–Assert; descriptive titles; keep tests focused
 
-* Simple tests = easy updates
-* Update one test per behavior change
-
-### Debuggability
-
-* Playwright UI shows failures clearly
-* Event log provides complete interaction history
-
-### Coverage Achievement
-
-* Focused tests highlight gaps
-* Easy to add specific missing cases
-
-## ✅ Test Quality Checklist
-
-* [ ] **Tests exactly ONE behavior**
-* [ ] **Uses event log for verification**
-* [ ] **No conditional element checks**
-* [ ] **Clear descriptive test name**
-* [ ] **Follows AAA pattern**
-* [ ] **Reuses shared fixtures**
-* [ ] **Cleans up after itself**
-
-### Example of a Perfect Test
-
-```typescript
-test('should round value to nearest step multiple on initialization', async ({ page }) => {
-  await touchspinHelpers.clearEventLog(page);
-  await touchspinHelpers.initializeTouchSpin(page, 'test-input', {
-    step: 3,
-    initval: 20
-  });
-  const value = await touchspinHelpers.readInputValue(page, 'test-input');
-  expect(value).toBe('21');
-});
-```
-
-## 🎯 Writing Human-Readable Tests
-
-* **Immediate Clarity**
-* **No Detective Work**
-* **Expected Values Clear**
-* **Event Log Over Custom**
-* **Direct Assertions**
-* **Meaningful Test Names**
-
-### When Variables Are OK
-
-* Reduce repetition of selectors
-* Store configuration for readability
-* Hold complex setup data reused across tests
-
-NOT OK when they:
-
-* Hide what's being tested
-* Store boolean results just to assert
-* Make the assertion less clear than a direct check
-
-## 🔄 Migration Strategy: From Complex to Clean
-
-### Old Complex Test:
-
-```typescript
-test('should handle min/max with events and callbacks', async ({ page }) => {
-  // multiple behaviors in one
-});
-```
-
-### New Clean Tests:
-
-```typescript
-test('should not decrement below minimum value', async ({ page }) => { /* ... */ });
-test('should emit touchspin.on.min event at minimum boundary', async ({ page }) => { /* ... */ });
-test('should execute callback before calculation', async ({ page }) => { /* ... */ });
-```
-
-## 📋 Standard Test Structure Template
+### 📋 Standard Test Template
 
 ```typescript
 import { test, expect } from '@playwright/test';
-import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 
-test.describe('[Package] [Feature Area]', () => {
+test.describe('TouchSpin: [feature]', () => {
   test.beforeEach(async ({ page }) => {
-    await touchspinHelpers.startCoverage(page);
-    await page.goto('http://localhost:8866/path/to/fixture.html');
-    await touchspinHelpers.installJqueryPlugin(page);
-    await touchspinHelpers.clearEventLog(page);
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+    await apiHelpers.clearEventLog(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await touchspinHelpers.collectCoverage(page, 'test-name');
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
   });
 
   test('should [specific behavior]', async ({ page }) => {
     // Arrange
+    await apiHelpers.initializeTouchspin(page, 'qty', { step: 3, initval: 9 });
+    await apiHelpers.expectTouchSpinInitialized(page, 'qty');
+
     // Act
+    await apiHelpers.clickUpButton(page, 'qty');
+
     // Assert
+    await apiHelpers.expectValueToBe(page, 'qty', '12');
+    await apiHelpers.expectEventFired(page, 'change');
   });
 });
 ```
+
+### 🚫 Anti-patterns (from Handbook)
+
+* Direct DOM ops on TouchSpin controls (`page.locator(...).click()`) → **use helpers**
+* Adding listeners in tests (`addEventListener`, `$(document).on(...)`) → **logging is centralized**
+* Bootstrap class selectors → **use injected roles**
+* Arbitrary `waitForTimeout` → **use deterministic waits/expectations**
+* Mixing Core and jQuery init in the same test file → keep them in separate suites
+
+### ✅ Review Checklist (from Handbook)
+
+* [ ] Only `apiHelpers` / `jqueryHelpers` used for TouchSpin interactions
+* [ ] Renderer-agnostic locators (no Bootstrap classes)
+* [ ] No raw sleeps; expectations/waits are deterministic
+* [ ] No test-level event listeners; logging relies on central setup
+* [ ] Test names describe behavior ("should …"), one behavior per test
+* [ ] If helpers were edited, examples/cheatsheet updated accordingly
 
 ## 🎯 Coverage Strategy: Achieving 100%
 
@@ -537,7 +476,7 @@ When initialized with `data-testid="my-input"`, creates:
 ### Checking for Initialization
 
 ```typescript
-expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
 ```
 
 ### CRITICAL: TouchSpin Initialization Detection
@@ -570,7 +509,7 @@ await page.waitForSelector('[data-testid="test-input"][data-touchspin-injected]'
 ### Checking for Destroy
 
 ```typescript
-expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
+expect(await apiHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
 ```
 
 ### DOM Structure Examples
@@ -850,11 +789,11 @@ yarn build
 ```typescript
 // ✅ CORRECT - Test keyboard events
 await page.keyboard.down('ArrowUp');
-expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
+expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
 
 // ✅ CORRECT - Test API methods don't emit start/stop
-await incrementViaAPI(page, 'test-input');
-expect(await touchspinHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+await apiHelpers.incrementViaAPI(page, 'test-input');
+expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
 ```
 
 ---
