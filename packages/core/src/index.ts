@@ -47,11 +47,6 @@ export interface TouchSpinCoreOptions {
   buttondown_txt?: string;
 }
 
-declare global {
-  interface HTMLInputElement {
-    _touchSpinCore?: TouchSpinCore;
-  }
-}
 
 const DEFAULTS: Required<Omit<TouchSpinCoreOptions, 'renderer'>> & { renderer: null } = {
   min: 0,
@@ -791,7 +786,7 @@ export class TouchSpinCore {
     // Remove instance from element (type-safe guard)
     type WithCore = HTMLInputElement & { [INSTANCE_KEY]?: TouchSpinCore };
     const inst = (this.input as WithCore)[INSTANCE_KEY];
-    if (inst === this) {
+    if (inst && inst === this) {
       delete (this.input as WithCore)[INSTANCE_KEY];
     }
   }
