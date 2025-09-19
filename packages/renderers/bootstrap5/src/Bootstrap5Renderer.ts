@@ -265,7 +265,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
         prefixEl.textContent = value;
         prefixEl.style.display = '';
         // Update classes in case prefix_extraclass changed
-        prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+        prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}`.trim();
       } else {
         // Element doesn't exist, need to rebuild DOM
         this.rebuildDOM();
@@ -285,7 +285,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
         postfixEl.textContent = value;
         postfixEl.style.display = '';
         // Update classes in case postfix_extraclass changed
-        postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+        postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}`.trim();
       } else {
         // Element doesn't exist, need to rebuild DOM
         this.rebuildDOM();
@@ -309,8 +309,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.verticalup || '+'}</button>
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.verticaldown || '−'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttonup_class || 'btn btn-outline-secondary'} ${this.opts.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.verticalup || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttondown_class || 'btn btn-outline-secondary'} ${this.opts.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.verticaldown || '−'}</button>
         </span>
       </span>
     `;
@@ -318,13 +318,17 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
     if (!this.wrapper) return;
+    this.refreshOpts();
     const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
     if (verticalWrapper) {
       const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
       if (button) {
-        // Update the vertical-specific class while preserving base classes
-        const baseClasses = this.settings.buttonup_class || this.settings.buttondown_class || 'btn btn-outline-secondary';
-        button.className = `${baseClasses} ${className || 'btn btn-outline-secondary'} bootstrap-touchspin-${type}`;
+        // Preserve the correct base class per button kind, then apply the vertical override
+        const base =
+          type === 'up'
+            ? (this.opts.buttonup_class ?? 'btn btn-outline-secondary')
+            : (this.opts.buttondown_class ?? 'btn btn-outline-secondary');
+        button.className = `${base} ${className ?? 'btn btn-outline-secondary'} bootstrap-touchspin-${type}`;
       }
     }
   }
@@ -351,14 +355,14 @@ class Bootstrap5Renderer extends AbstractRenderer {
   updatePrefixClasses(): void {
     const prefixEl = this.prefixEl;
     if (prefixEl) {
-      prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}`.trim();
+      prefixEl.className = `input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}`.trim();
     }
   }
 
   updatePostfixClasses(): void {
     const postfixEl = this.postfixEl;
     if (postfixEl) {
-      postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}`.trim();
+      postfixEl.className = `input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}`.trim();
     }
   }
 
