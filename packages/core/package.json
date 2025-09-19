@@ -18,6 +18,10 @@
       "types": "./dist/renderer.d.ts",
       "import": "./src/renderer.ts",
       "require": "./dist/renderer.cjs"
+    },
+    "./test-helpers": {
+      "types": "./test-helpers/index.ts",
+      "import": "./test-helpers/index.ts"
     }
   },
   "files": [

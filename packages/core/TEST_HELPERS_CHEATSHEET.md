@@ -6,7 +6,7 @@ Quick reference for writing clean, focused TouchSpin tests.
 
 ```typescript
 import { test, expect } from '@playwright/test';
-import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('My Feature', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,10 +31,10 @@ test.describe('My Feature', () => {
 
 ```typescript
 // Specific imports for cleaner code
-import { clickUpButton, holdDownButton } from '../../../__tests__/helpers/interactions/buttons';
-import { expectValueToBe } from '../../../__tests__/helpers/assertions/values';
-import { setupLogging, clearEventLog } from '../../../__tests__/helpers/events';
-import { initializeTouchspin } from '../../../__tests__/helpers/core/initialization';
+import { clickUpButton, holdDownButton } from '@touchspin/core/test-helpers/interactions/buttons';
+import { expectValueToBe } from '@touchspin/core/test-helpers/assertions/values';
+import { setupLogging, clearEventLog } from '@touchspin/core/test-helpers/events';
+import { initializeTouchspin } from '@touchspin/core/test-helpers/core/initialization';
 ```
 
 ## 🎯 Common Test Patterns
@@ -244,7 +244,7 @@ const nativeEvents = await apiHelpers.getEventsOfType(page, 'native');
 
 ```typescript
 import { test, expect } from '@playwright/test';
-import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('Feature Name', () => {
   test.beforeEach(async ({ page }) => {

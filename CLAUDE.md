@@ -596,18 +596,18 @@ expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(tru
 
 ### Helper Functions Reference
 
-The test helpers are now organized into focused modules for better maintainability:
+The test helpers are organized into focused modules in the core package for better maintainability:
 
 #### Import Options
 
 ```typescript
-// Option 1: Import everything (backward compatible)
-import * as apiHelpers from '__tests__/helpers/touchspinApiHelpers';
+// Option 1: Import everything (recommended)
+import * as apiHelpers from '@touchspin/core/test-helpers';
 
-// Option 2: Import specific modules (recommended for new tests)
-import { clickUpButton, holdDownButton } from '__tests__/helpers/interactions/buttons';
-import { expectValueToBe } from '__tests__/helpers/assertions/values';
-import { setupLogging, clearEventLog } from '__tests__/helpers/events';
+// Option 2: Import specific modules (for focused usage)
+import { clickUpButton, holdDownButton } from '@touchspin/core/test-helpers/interactions/buttons';
+import { expectValueToBe } from '@touchspin/core/test-helpers/assertions/values';
+import { setupLogging, clearEventLog } from '@touchspin/core/test-helpers/events';
 ```
 
 #### Core Functionality
@@ -717,21 +717,28 @@ interface TouchSpinElements {
 
 ### Test File Locations
 
-* jQuery Plugin Tests: `/packages/jquery-plugin/tests/*.spec.ts`
-* Fixture: `/packages/jquery-plugin/tests/html/test-fixture.html`
-* Shared Helpers: `/__tests__/helpers/touchspinApiHelpers.ts`
+**New Test Structure:**
+* Test Helpers: `packages/core/test-helpers/` (shared across all packages)
+* Test Cheatsheet: `packages/core/TEST_HELPERS_CHEATSHEET.md`
+* New Tests: `packages/*/tests/*.spec.ts` (when written)
 
-### Running Tests
+**Archived Tests (for reference only):**
+* Deprecated Tests: `__tests__/*.spec.deprecated.ts` (legacy tests for edge case reference)
+
+### Running New Tests
 
 ```bash
-# Single test
-yarn exec playwright test packages/jquery-plugin/tests/commands.spec.ts:22
+# Core package tests (when written)
+yarn exec playwright test packages/core/tests/
 
-# All tests
+# jQuery plugin tests (when written)
 yarn exec playwright test packages/jquery-plugin/tests/
 
+# All new tests
+yarn exec playwright test packages/
+
 # With coverage
-COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/jquery-plugin/tests/
+COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/
 
 # Debug UI
 yarn exec playwright test --ui
@@ -750,8 +757,9 @@ yarn exec playwright test --headed
 ### Running Coverage
 
 ```bash
+# Coverage for new tests
+yarn coverage:all packages/core/tests/
 yarn coverage:all packages/jquery-plugin/tests/
-yarn coverage:all packages/jquery-plugin/tests/callable-events.spec.ts
 yarn coverage:all:ci
 yarn coverage:check
 ```
@@ -764,31 +772,31 @@ yarn coverage:check
 
 ---
 
-## 📖 Reference: Old Test Suite Analysis
+## 📖 Reference: Archived Test Suite
 
-* Old suite: 44 files, \~346 tests = definitive spec
+All legacy tests have been archived to `__tests__/*.spec.deprecated.ts` for reference when identifying edge cases during new test development.
 
-### Coverage Gaps
+**Key archived tests for reference:**
+- `value-normalization.spec.deprecated.ts` - Value handling edge cases
+- `boundary-enforcement.spec.deprecated.ts` - Min/max behavior
+- `callbacks.spec.deprecated.ts` - Callback function patterns
+- `mousewheel.spec.deprecated.ts` - Mouse wheel interaction edge cases
+- `step-calculations.spec.deprecated.ts` - Step calculation behaviors
+- And 25+ more archived test files
 
-1. forcestepdivisibility options
-2. Vertical buttons
-3. Callback functions
-4. Advanced features: RTL, replacement text, button text customization, native attribute sync
-
-### Key Reference Files
-
-| Feature   | Old Test File                  | What It Covers            |
-| --------- | ------------------------------ | ------------------------- |
-| Core      | basicOperations.test.ts        | Basic increment/decrement |
-| Events    | events.test.ts                 | Event scenarios           |
-| Edge      | edgeCasesAndErrors.test.ts     | Boundaries                |
-| Lifecycle | destroyAndReinitialize.test.ts | Init/destroy cycles       |
-| Keyboard  | keyboardAccessibility.test.ts  | Keyboard interactions     |
-| Config    | settingsPrecedence.test.ts     | Config priority           |
+**Usage**: Consult archived tests when implementing new tests to ensure edge cases are covered, but do not run or maintain the deprecated tests.
 
 ---
 
 ## 📁 Project Structure Notes
+
+### Test Infrastructure
+
+**Test helpers location**: All test helpers are in `packages/core/test-helpers/` and can be imported as `@touchspin/core/test-helpers`.
+
+**Archived tests**: Legacy tests are in `__tests__/*.spec.deprecated.ts` for reference only - do not run or maintain these.
+
+**New tests**: Write new tests in `packages/*/tests/` directories using the helper infrastructure.
 
 ### Temporary Files and Documentation
 
