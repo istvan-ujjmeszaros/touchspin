@@ -27,8 +27,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
   declare wrapper: HTMLElement | null;
 
   init(): void {
-    // Project a typed view of options used by this renderer
-    this.opts = this.projectRendererOptions(schema);
+    // Schema keys are read via `opts` (typed projection). Live values update via `settings`.
+    // Rebuild paths call refreshOpts() to keep the projection fresh.
+    this.refreshOpts();
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
