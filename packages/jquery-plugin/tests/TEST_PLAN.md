@@ -36,12 +36,10 @@ Helpers used:
   - Pseudocode:
     1) page.evaluate: `$(input).trigger('blur')` after value edit → expect sanitization/checkValue applied
 
-- [ ] change event emission — edge cases via plugin
-  - Purpose: ensure plugin does not introduce duplicate 'change' events on boundary/rounding cases.
+- [ ] change event emission
+  - Purpose: plugin should reflect core semantics; core edge cases are already covered in core tests, so only a single smoke checks that jQuery `.on('change')` receives exactly one event per change.
   - Pseudocode:
-    1) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, initval: 95 }); clickUpButton twice → expectEventCount('change', 1)
-    2) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, forcestepdivisibility: 'none', initval: 97 }); clickUpButton twice → expectEventCount('change', 1)
-    3) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, initval: 100 }); clickUpButton → expectEventCount('change', 0)
+    1) initializeTouchspinJQuery('qty', { step: 1 }); attach `$(input).on('change', handler)`; clickUpButton once → handler count === 1
 
 - [ ] destroy/uninitialize
   - Purpose: plugin cleanup, idempotent destroy.
