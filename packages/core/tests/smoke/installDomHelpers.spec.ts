@@ -6,11 +6,12 @@ test.describe('installDomHelpers smoke', () => {
     await page.goto('/');
     await installDomHelpers(page);
     await page.evaluate(() => {
-      if (!window.__ts) throw new Error('missing __ts');
-      if (typeof window.__ts.requireInputByTestId !== 'function') {
+      const ts = window.__ts!;
+      if (!ts) throw new Error('missing __ts');
+      if (typeof ts.requireInputByTestId !== 'function') {
         throw new Error('missing requireInputByTestId');
       }
-      if (typeof window.__ts.requireCoreByTestId !== 'function') {
+      if (typeof ts.requireCoreByTestId !== 'function') {
         throw new Error('missing requireCoreByTestId');
       }
     });
