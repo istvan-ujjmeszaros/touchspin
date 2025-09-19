@@ -30,7 +30,7 @@
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
     "build": "yarn run build:types && yarn run build:js && yarn run build:iife",
-    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2018 --dts false",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2018",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --clean --target es2018",
     "typecheck": "tsc --noEmit",

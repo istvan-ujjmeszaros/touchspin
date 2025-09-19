@@ -25,7 +25,7 @@
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
     "build": "yarn run build:types && yarn run build:js",
-    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2020",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --source-map --watch"
