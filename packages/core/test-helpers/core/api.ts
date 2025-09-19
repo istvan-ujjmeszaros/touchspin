@@ -22,56 +22,49 @@ export async function setValueViaAPI(
   value: number | string
 ): Promise<void> {
   await page.evaluate(({ testId, value }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.setValue(value);
   }, { testId, value });
 }
 
 export async function destroyCore(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.destroy();
   }, { testId });
 }
 
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.upOnce();
   }, { testId });
 }
 
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.downOnce();
   }, { testId });
 }
 
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.startUpSpin();
   }, { testId });
 }
 
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.startDownSpin();
   }, { testId });
 }
 
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.stopSpin();
   }, { testId });
 }
@@ -82,15 +75,13 @@ export async function updateSettingsViaAPI(
   newSettings: Partial<TouchSpinCoreOptions>
 ): Promise<void> {
   await page.evaluate(({ testId, newSettings }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    const core = window.__ts.requireCoreByTestId(testId);
+    const core = window.__ts!.requireCoreByTestId(testId);
     core.updateSettings(newSettings);
   }, { testId, newSettings });
 }
 
 export async function getPublicAPI(page: Page, testId: string): Promise<TouchSpinCorePublicAPI | null> {
   return page.evaluate(({ testId }) => {
-    if (!window.__ts) throw new Error('__ts namespace not installed');
-    return window.__ts.requireCoreByTestId(testId);
+    return window.__ts!.requireCoreByTestId(testId);
   }, { testId });
 }

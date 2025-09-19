@@ -25,6 +25,7 @@ export async function installDomHelpers(page: Page): Promise<void> {
           return core as TouchSpinCorePublicAPI;
         },
       };
+      Object.freeze(window.__ts);
     };
     install();
   });
@@ -47,6 +48,7 @@ export async function installDomHelpers(page: Page): Promise<void> {
           return core as TouchSpinCorePublicAPI;
         },
       };
+      Object.freeze(window.__ts);
     };
     install();
   });
