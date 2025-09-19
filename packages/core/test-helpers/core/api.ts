@@ -23,9 +23,9 @@ export async function setValueViaAPI(
 ): Promise<void> {
   await page.evaluate(({ testId, value }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.setValue(value);
   }, { testId, value });
@@ -34,9 +34,9 @@ export async function setValueViaAPI(
 export async function destroyCore(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.destroy();
   }, { testId });
@@ -45,9 +45,9 @@ export async function destroyCore(page: Page, testId: string): Promise<void> {
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.upOnce();
   }, { testId });
@@ -56,9 +56,9 @@ export async function incrementViaAPI(page: Page, testId: string): Promise<void>
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.downOnce();
   }, { testId });
@@ -67,9 +67,9 @@ export async function decrementViaAPI(page: Page, testId: string): Promise<void>
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.startUpSpin();
   }, { testId });
@@ -78,9 +78,9 @@ export async function startUpSpinViaAPI(page: Page, testId: string): Promise<voi
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.startDownSpin();
   }, { testId });
@@ -89,9 +89,9 @@ export async function startDownSpinViaAPI(page: Page, testId: string): Promise<v
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.stopSpin();
   }, { testId });
@@ -104,9 +104,9 @@ export async function updateSettingsViaAPI(
 ): Promise<void> {
   await page.evaluate(({ testId, newSettings }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     core.updateSettings(newSettings);
   }, { testId, newSettings });
@@ -115,9 +115,9 @@ export async function updateSettingsViaAPI(
 export async function getPublicAPI(page: Page, testId: string): Promise<TouchSpinCorePublicAPI | null> {
   return page.evaluate(({ testId }) => {
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    const core = (input && (input as HTMLInputElement & Record<string, unknown>)['_touchSpinCore']) as
-      | TouchSpinCorePublicAPI
-      | undefined;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    type WithCore = HTMLInputElement & { _touchSpinCore?: TouchSpinCorePublicAPI };
+    const core = (input as WithCore)._touchSpinCore;
     if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
     return core;
   }, { testId });
