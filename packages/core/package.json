@@ -22,6 +22,14 @@
     "./test-helpers": {
       "types": "./test-helpers/index.ts",
       "import": "./test-helpers/index.ts"
+    },
+    "./test-helpers/*": {
+      "types": "./test-helpers/*",
+      "import": "./test-helpers/*"
+    },
+    "./test-helpers/renderers": {
+      "types": "./test-helpers/renderers/index.ts",
+      "import": "./test-helpers/renderers/index.ts"
     }
   },
   "files": [

@@ -1,0 +1,2 @@
+export { defineSharedRendererTests } from './shared';
+

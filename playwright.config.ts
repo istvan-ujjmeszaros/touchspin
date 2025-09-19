@@ -6,7 +6,7 @@ import path from 'path';
  */
 export default defineConfig({
   testDir: './',
-  testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/*/tests/**/*.spec.ts'],
+  testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/**/tests/**/*.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
 
   /* Run tests in files in parallel */

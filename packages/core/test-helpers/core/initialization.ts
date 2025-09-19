@@ -68,7 +68,7 @@ export async function initializeTouchspinWithVanilla(
   await setupLogging(page);
   await page.evaluate(async ({ testId, options }) => {
     const coreUrl = 'http://localhost:8866/packages/core/dist/index.js';
-    const rendererUrl = 'http://localhost:8866/packages/vanilla-renderer/dist/index.js';
+    const rendererUrl = 'http://localhost:8866/packages/vanilla-renderer/dist/index.mjs';
     const { TouchSpinCore } = (await import(coreUrl)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
@@ -89,4 +89,40 @@ export async function initializeTouchspinWithVanilla(
     `[data-testid=\"${testId}\"][data-touchspin-injected]`,
   ].join(', ');
   await page.locator(sel2).first().waitFor({ timeout: 5000 });
+}
+
+/* ──────────────────────────
+ * Generic renderer initializer (by URL)
+ * ────────────────────────── */
+
+export async function initializeTouchspinWithRenderer(
+  page: Page,
+  testId: string,
+  rendererUrl: string,
+  options: Partial<TouchSpinCoreOptions> = {},
+  exportName?: string
+): Promise<void> {
+  await setupLogging(page);
+  await page.evaluate(async ({ testId, options, rendererUrl, exportName }) => {
+    const coreUrl = 'http://localhost:8866/packages/core/dist/index.js';
+    const { TouchSpinCore } = (await import(coreUrl)) as unknown as {
+      TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
+    };
+    const mod = (await import(rendererUrl)) as unknown as Record<string, unknown> & { default?: unknown };
+    const Renderer = (exportName ? (mod[exportName] as unknown) : (mod.default as unknown)) ?? mod.default;
+
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+    if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
+
+    const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as Partial<TouchSpinCoreOptions>);
+    (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
+    (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+  }, { testId, options, rendererUrl, exportName });
+
+  const sel = [
+    `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
+    `[data-testid=\"${testId}\"][data-touchspin-injected]`,
+  ].join(', ');
+  await page.locator(sel).first().waitFor({ timeout: 5000 });
 }

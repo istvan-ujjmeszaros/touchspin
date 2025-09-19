@@ -58,6 +58,24 @@ export async function fillWithValueAndBlur(
   }
 }
 
+/** Set the input value without dispatching input/change events (direct property set), then blur. */
+export async function setValueSilentlyAndBlur(
+  page: Page,
+  testId: string,
+  value: string
+): Promise<void> {
+  await waitForTouchspinInitialized(page, testId);
+  // Focus input so that a subsequent Tab will blur it
+  const input = inputById(page, testId);
+  if ((await input.count()) === 0) throw new Error(`Input not found for "${testId}".`);
+  await input.focus();
+  await page.evaluate(({ testId, value }) => {
+    const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+    if (el) el.value = value;
+  }, { testId, value });
+  await page.keyboard.press('Tab');
+}
+
 export async function focusOutside(page: Page, outsideTestId: string): Promise<void> {
   await inputById(page, outsideTestId).focus();
 }

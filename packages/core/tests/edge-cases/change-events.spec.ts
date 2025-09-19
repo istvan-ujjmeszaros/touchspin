@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { startCoverage, collectCoverage } from '../../test-helpers/test-utilities/coverage';
 import { initializeTouchspinWithVanilla } from '../../test-helpers/core/initialization';
 import { clickUpButton, clickDownButton } from '../../test-helpers/interactions/buttons';
-import { fillWithValueAndBlur } from '../../test-helpers/interactions/input';
+import { setValueSilentlyAndBlur } from '../../test-helpers/interactions/input';
 import { clearEventLog, countEventInLog } from '../../test-helpers/events/log';
 import { expectValueToBe } from '../../test-helpers/assertions/values';
 
@@ -54,14 +54,13 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
     test.expect(c2).toBe(0);
   });
 
-  test('blur sanitization: fill 96 with step=5 => exactly one change to 95', async ({ page }) => {
+  test('blur sanitization: raw 96 with step=5 => exactly one change to 95', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 90 });
     await clearEventLog(page);
-    await fillWithValueAndBlur(page, 'test-input', '96');
+    await setValueSilentlyAndBlur(page, 'test-input', '96');
     await expectValueToBe(page, 'test-input', '95');
     const count = await countEventInLog(page, 'change');
     test.expect(count).toBe(1);
   });
 });
-
