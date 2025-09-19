@@ -29,6 +29,10 @@ export default [
       'quotes': ['error', 'single'],
       'eqeqeq': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' }],
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
@@ -47,6 +51,10 @@ export default [
       'quotes': ['error', 'single'],
       'eqeqeq': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' }],
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
@@ -68,4 +76,3 @@ export default [
     },
   },
 ];
-
