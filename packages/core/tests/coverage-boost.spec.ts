@@ -18,7 +18,7 @@ import {
   startUpSpinViaAPI,
   startDownSpinViaAPI,
   stopSpinViaAPI
-} from '../test-helpers/core-adapter';
+} from '../../..__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Coverage Boost', () => {
   test.beforeEach(async ({ page }) => {

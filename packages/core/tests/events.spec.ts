@@ -15,7 +15,7 @@ import {
   startUpSpinViaAPI,
   startDownSpinViaAPI,
   stopSpinViaAPI
-} from '../test-helpers/core-adapter';
+} from '../../..__tests__/helpers/touchspinApiHelpers';
 
 // Use original battle-tested helpers
 const {

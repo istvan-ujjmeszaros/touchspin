@@ -6,7 +6,7 @@ import {
   setValueViaAPI,
   destroyCore,
   readInputValue
-} from '../test-helpers/core-adapter';
+} from '../../..__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Button Keyboard Interaction', () => {
   test.beforeEach(async ({ page }) => {

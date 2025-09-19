@@ -9,7 +9,7 @@ import {
   updateSettingsViaAPI,
   readInputValue as readInputValueViaAdapter,
   initializeCoreWithCallbacks
-} from '../test-helpers/core-adapter';
+} from '../../..__tests__/helpers/touchspinApiHelpers';
 
 // Use original battle-tested helpers
 const {
