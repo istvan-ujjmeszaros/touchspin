@@ -8,7 +8,7 @@ export type {
 
 // Canonical Renderer interface and constructor type for TouchSpin
 // Exposed under the subpath '@touchspin/core/renderer'
-import type { TouchSpinCoreOptions, TouchSpinCore } from './index';
+import type { TouchSpinCoreOptions } from './index';
 
 // Minimal instance surface used by core. Renderers may implement more.
 export interface Renderer {
@@ -18,10 +18,16 @@ export interface Renderer {
 }
 
 // Constructor signature for renderer classes
+export type CoreFacade = {
+  attachUpEvents: (el: HTMLElement | null) => void;
+  attachDownEvents: (el: HTMLElement | null) => void;
+  observeSetting: (key: string, cb: (value: unknown) => void) => () => void;
+};
+
 export type RendererConstructor = new (
   inputEl: HTMLInputElement,
-  settings: Readonly<TouchSpinCoreOptions>,
-  core: unknown
+  settings: Readonly<Record<string, unknown>>,
+  core: CoreFacade
 ) => Renderer;
 
 // Optionally exposed element bag type for renderer implementations

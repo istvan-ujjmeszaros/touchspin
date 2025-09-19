@@ -10,7 +10,6 @@ type JQueryStatic = {
   (selector: Element | string): JQueryInst;
 };
 import { TouchSpin, getTouchSpin, CORE_EVENTS, TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
-import type { TSRenderer } from '@touchspin/core/renderer';
 
 // Re-export event types for external use
 export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
@@ -145,10 +144,10 @@ export function installJqueryTouchSpin($: JQueryStatic) {
       // Handle jQuery-triggered blur events for backward compatibility
       // jQuery's .trigger('blur') doesn't fire native addEventListener('blur')
       $input.on('blur.touchspin', () => {
-        const core = inputEl._touchSpinCore;
-        if (core && core._checkValue) {
-          core._checkValue(true);
-        }
+        const core = (inputEl as unknown as Record<string, unknown>)['_touchSpinCore'] as
+          | { _checkValue?: (finalize: boolean) => void }
+          | undefined;
+        core?._checkValue?.(true);
       });
     });
   };
@@ -159,9 +158,15 @@ export function installJqueryTouchSpin($: JQueryStatic) {
  * Uses global window.jQuery if available; otherwise, requires manual
  * install via installJqueryTouchSpin($).
  */
-export function installWithRenderer(renderer: TSRenderer): void {
+type TSRenderer = new (
+  inputEl: HTMLInputElement,
+  settings: Readonly<Record<string, unknown>>,
+  core: unknown
+) => unknown;
+
+export function installWithRenderer(renderer: unknown): void {
   // Set the global default renderer consumed by core if no renderer is provided in options
-  (globalThis as unknown as { TouchSpinDefaultRenderer?: TSRenderer }).TouchSpinDefaultRenderer = renderer;
+  (globalThis as unknown as { TouchSpinDefaultRenderer?: unknown }).TouchSpinDefaultRenderer = renderer;
 
   const $ = (globalThis as unknown as { jQuery?: JQueryStatic }).jQuery;
   if ($) {

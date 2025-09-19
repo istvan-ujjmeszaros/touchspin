@@ -19,8 +19,10 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
         throw new Error('Tests must not load /src/. Use /dist/index.js.\n' + offenders.join('\n'));
       }
 
-      // Import jQuery from node_modules
-      const $ = await (new Function('return import("jquery")')() as Promise<{ default?: unknown }>).then(m => m.default ?? (m as unknown));
+      // Import jQuery from node_modules without static specifier to avoid TS resolution
+      const moduleName = ['j','q','u','e','r','y'].join('');
+      const $ = await (new Function('n', 'return import(n)') as (n: string) => Promise<{ default?: unknown }>)(moduleName)
+        .then(m => m.default ?? (m as unknown));
       const w = window as unknown as Record<string, unknown>;
       if (!w['jQuery']) w['jQuery'] = $;
       if (!w['$']) w['$'] = $;

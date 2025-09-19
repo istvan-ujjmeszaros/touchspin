@@ -11,6 +11,7 @@ export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events';
 export type { TouchSpinUpdateSettingsData } from './events';
 
 import type { Renderer, RendererConstructor } from './renderer';
+type WithCoreElement = HTMLInputElement & { [INSTANCE_KEY]?: TouchSpinCore };
 
 export interface TouchSpinCoreOptions {
   min?: number | null;
@@ -250,7 +251,12 @@ export class TouchSpinCore {
 
     // Initialize renderer with reference to core
     if (this.settings.renderer) {
-      this.renderer = new (this.settings.renderer as NonNullable<RendererConstructor>)(inputEl, this.settings, this);
+      const Ctor = this.settings.renderer as unknown as new (
+        inputEl: HTMLInputElement,
+        settings: Readonly<Record<string, unknown>>,
+        core: unknown
+      ) => Renderer;
+      this.renderer = new Ctor(inputEl, this.settings as unknown as Readonly<Record<string, unknown>>, this);
       this.renderer.init();
     }
 
@@ -1536,14 +1542,14 @@ export function TouchSpin(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCor
   // If options provided, initialize/reinitialize
   if (opts !== undefined) {
     // Destroy existing instance if it exists (destroy() removes itself from element)
-    if (inputEl[INSTANCE_KEY]) {
+    if ((inputEl as WithCoreElement)[INSTANCE_KEY]) {
       console.warn('TouchSpin: Destroying existing instance and reinitializing. Consider using updateSettings() instead.');
-      inputEl[INSTANCE_KEY].destroy();
+      (inputEl as WithCoreElement)[INSTANCE_KEY]!.destroy();
     }
 
     // Create new instance and store on element
     const core = new TouchSpinCore(inputEl, opts);
-    inputEl[INSTANCE_KEY] = core;
+    (inputEl as WithCoreElement)[INSTANCE_KEY] = core;
 
     // Initialize DOM event handling
     core.initDOMEventHandling();
@@ -1552,14 +1558,14 @@ export function TouchSpin(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCor
   }
 
   // No options - return existing instance or create with defaults
-  if (!inputEl[INSTANCE_KEY]) {
+  if (!(inputEl as WithCoreElement)[INSTANCE_KEY]) {
     const core = new TouchSpinCore(inputEl, {});
-    inputEl[INSTANCE_KEY] = core;
+    (inputEl as WithCoreElement)[INSTANCE_KEY] = core;
     core.initDOMEventHandling();
     return core.toPublicApi();
   }
 
-  return (inputEl[INSTANCE_KEY] as TouchSpinCore).toPublicApi();
+  return ((inputEl as WithCoreElement)[INSTANCE_KEY] as TouchSpinCore).toPublicApi();
 }
 
 /**
@@ -1568,7 +1574,9 @@ export function TouchSpin(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCor
  * @returns {TouchSpinCorePublicAPI|null}
  */
 export function getTouchSpin(inputEl: HTMLInputElement): TouchSpinCorePublicAPI | null {
-  return inputEl[INSTANCE_KEY] ? (inputEl[INSTANCE_KEY] as TouchSpinCore).toPublicApi() : null;
+  return (inputEl as WithCoreElement)[INSTANCE_KEY]
+    ? ((inputEl as WithCoreElement)[INSTANCE_KEY] as TouchSpinCore).toPublicApi()
+    : null;
 }
 
 /**
