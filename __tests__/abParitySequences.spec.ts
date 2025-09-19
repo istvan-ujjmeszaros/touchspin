@@ -86,10 +86,10 @@ test.describe('A/B parity sequences', () => {
       $w.attr('disabled', '');
     });
     const before = await getVals(page);
-    const abOrigElement = await apiHelpers.getElement(page, 'ab-orig');
+    const abOrigElement = apiHelpers.getElement(page, 'ab-orig');
     await abOrigElement.focus();
     await apiHelpers.pressUpArrowKeyOnInput(page, 'ab-orig');
-    const abWrapElement = await apiHelpers.getElement(page, 'ab-wrap');
+    const abWrapElement = apiHelpers.getElement(page, 'ab-wrap');
     await abWrapElement.focus();
     await apiHelpers.pressUpArrowKeyOnInput(page, 'ab-wrap');
     const after = await getVals(page);

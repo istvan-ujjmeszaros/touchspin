@@ -15,7 +15,7 @@ test.describe('Bootstrap 3 Renderer', () => {
 
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
 
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
@@ -39,15 +39,15 @@ test.describe('Bootstrap 3 Renderer', () => {
     });
 
     test('should use input-group-addon class for prefix and postfix', async ({ page }) => {
-      const prefixClasses = await await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]').evaluate(el => el.className);
-      const postfixClasses = await await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]').evaluate(el => el.className);
+      const prefixClasses = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]').evaluate(el => el.className);
+      const postfixClasses = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]').evaluate(el => el.className);
 
       expect(prefixClasses).toContain('input-group-addon');
       expect(postfixClasses).toContain('input-group-addon');
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
@@ -66,8 +66,8 @@ test.describe('Bootstrap 3 Renderer', () => {
 
     test('should display initial prefix/postfix', async ({ page }) => {
       // Look for inputs with prefix/postfix in the test page
-      const prefix = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Bootstrap 3 Renderer', () => {
 
     test('should handle vertical layout', async ({ page }) => {
       // Test vertical button configuration if available in test page
-      const verticalWrapper = await apiHelpers.getElement(page, 'vertical-container').locator('[data-touchspin-injected="vertical-wrapper"]');
+      const verticalWrapper = apiHelpers.getElement(page, 'vertical-container').locator('[data-touchspin-injected="vertical-wrapper"]');
       const count = await verticalWrapper.count();
 
       if (count > 0) {
@@ -96,8 +96,8 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="basic-update-prefix"]');
       await page.click('[data-testid="basic-update-postfix"]');
 
-      const prefix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toHaveText('$');
       await expect(postfix).toHaveText('.00');
@@ -116,7 +116,7 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="basic-update-up-text"]');
       await page.click('[data-testid="basic-update-down-text"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -132,7 +132,7 @@ test.describe('Bootstrap 3 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_class: 'custom-up-class', buttondown_class: 'custom-down-class' }]);
       });
 
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -150,8 +150,8 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="basic-update-prefix-class"]');
       await page.click('[data-testid="basic-update-postfix-class"]');
 
-      const prefix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
 
       // Class updates applied
       const prefixClass = await prefix.evaluate(el => el.className);
@@ -178,7 +178,7 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="vertical-update-up-class"]');
       await page.click('[data-testid="vertical-update-down-class"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'vertical-container');
+      const wrapper = apiHelpers.getElement(page, 'vertical-container');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -195,7 +195,7 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="vertical-update-up-text"]');
       await page.click('[data-testid="vertical-update-down-text"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'vertical-container');
+      const wrapper = apiHelpers.getElement(page, 'vertical-container');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -209,7 +209,7 @@ test.describe('Bootstrap 3 Renderer', () => {
     test('should not overwrite existing data-testid on advanced container', async ({ page }) => {
       // The advanced container starts with data-testid="advanced-container".
       // TouchSpin should enhance without changing this attribute.
-      const advanced = await apiHelpers.getElement(page, 'advanced-container');
+      const advanced = apiHelpers.getElement(page, 'advanced-container');
       await expect(advanced).toBeVisible();
       await expect(advanced).toHaveAttribute('data-testid', 'advanced-container');
       // Sanity: it should also be marked as an enhanced wrapper
@@ -220,8 +220,8 @@ test.describe('Bootstrap 3 Renderer', () => {
       await page.click('[data-testid="advanced-update-prefix"]');
       await page.click('[data-testid="advanced-update-postfix"]');
 
-      const prefix = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toHaveText('$');
       await expect(postfix).toHaveText('USD');
@@ -229,8 +229,8 @@ test.describe('Bootstrap 3 Renderer', () => {
 
     test('should preserve existing container structure', async ({ page }) => {
       // Verify original elements are still present in advanced container
-      const originalPrefix = await apiHelpers.getElement(page, 'advanced-container').locator('.input-group-addon').first();
-      const originalPostfix = await apiHelpers.getElement(page, 'advanced-container').locator('.input-group-addon').last();
+      const originalPrefix = apiHelpers.getElement(page, 'advanced-container').locator('.input-group-addon').first();
+      const originalPostfix = apiHelpers.getElement(page, 'advanced-container').locator('.input-group-addon').last();
 
       await expect(originalPrefix).toBeVisible();
       await expect(originalPostfix).toBeVisible();
@@ -260,7 +260,7 @@ test.describe('Bootstrap 3 Renderer', () => {
 
     test('should remove all data-touchspin-injected elements', async ({ page }) => {
       // Verify elements are present in advanced container
-      const injectedElements = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected]');
+      const injectedElements = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected]');
       expect(await injectedElements.count()).toBeGreaterThan(0);
 
       // Destroy via API
@@ -282,7 +282,7 @@ test.describe('Bootstrap 3 Renderer', () => {
     });
 
     test('should generate correct Bootstrap 3 markup structure', async ({ page }) => {
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
 
       // Test buttons have correct classes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');

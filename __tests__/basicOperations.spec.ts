@@ -19,7 +19,7 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-default';
 
     // Check buttons exist - scope to TouchSpin wrapper
-    const spin = await apiHelpers.getElement(page, testid + '-wrapper');
+    const spin = apiHelpers.getElement(page, testid + '-wrapper');
     const upButton = spin.locator('.bootstrap-touchspin-up');
     const downButton = spin.locator('.bootstrap-touchspin-down');
     await expect(upButton).toBeVisible();
@@ -103,8 +103,6 @@ test.describe('Core functionality', () => {
   test('should support keyboard navigation', async ({ page }) => {
     const testid = 'touchspin-default';
 
-    const input = await apiHelpers.getElement(page, testid);
-    await input.focus();
     await apiHelpers.pressUpArrowKeyOnInput(page, testid);
     await expect.poll(
       async () => await apiHelpers.readInputValue(page, testid)
@@ -119,7 +117,7 @@ test.describe('Core functionality', () => {
   test('should support mousewheel interaction', async ({ page }) => {
     const testid = 'touchspin-default';
 
-    const input = await apiHelpers.getElement(page, testid);
+    const input = apiHelpers.getElement(page, testid);
     await input.focus();
 
     // Simulate wheel up event (should increment)

@@ -25,7 +25,7 @@ test.describe('Uncovered Configuration Options', () => {
         });
       });
 
-      const input = await apiHelpers.getElement(page, 'no-mousewheel-test');
+      const input = apiHelpers.getElement(page, 'no-mousewheel-test');
       await input.focus();
 
       // Try mousewheel event
@@ -412,7 +412,7 @@ test.describe('Uncovered Configuration Options', () => {
       });
 
       // Should truncate decimals
-      const input = await apiHelpers.getElement(page, 'zero-decimals-test');
+      const input = apiHelpers.getElement(page, 'zero-decimals-test');
       await input.focus();
       await input.blur();
 
@@ -434,7 +434,7 @@ test.describe('Uncovered Configuration Options', () => {
       });
 
       // Should format to 5 decimal places
-      const input = await apiHelpers.getElement(page, 'high-decimals-test');
+      const input = apiHelpers.getElement(page, 'high-decimals-test');
       await input.focus();
       await input.blur();
 

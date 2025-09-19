@@ -204,7 +204,7 @@ test.describe('Events', () => {
     }, testid);
 
     // Click on another element to trigger focusout - using a different TouchSpin element
-    const otherInput = await apiHelpers.getElement(page, 'touchspin-group-lg');
+    const otherInput = apiHelpers.getElement(page, 'touchspin-group-lg');
     await otherInput.click({ clickCount: 1 });
 
     // Allow the deferred focusout commit to run
@@ -239,7 +239,7 @@ test.describe('Events', () => {
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
     // Focus the input and hold ArrowUp to initiate spinning
-    const input = await apiHelpers.getElement(page, testid);
+    const input = apiHelpers.getElement(page, testid);
     await input.focus();
     await page.keyboard.down('ArrowUp');
     await page.keyboard.down('ArrowUp');

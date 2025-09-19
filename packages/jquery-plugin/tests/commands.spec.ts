@@ -215,13 +215,13 @@ test.describe('jQuery TouchSpin Commands API', () => {
       expect(await apiHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
 
       // Specific buttons should be removed
-      const upButtonCount = await await apiHelpers.getElement(page, 'test-input-up').count();
-      const downButtonCount = await await apiHelpers.getElement(page, 'test-input-down').count();
+      const upButtonCount = await apiHelpers.getElement(page, 'test-input-up').count();
+      const downButtonCount = await apiHelpers.getElement(page, 'test-input-down').count();
       expect(upButtonCount).toBe(0);
       expect(downButtonCount).toBe(0);
 
       // Input should still exist
-      const inputCount = await await apiHelpers.getElement(page, 'test-input').count();
+      const inputCount = await apiHelpers.getElement(page, 'test-input').count();
       expect(inputCount).toBe(1);
     });
 

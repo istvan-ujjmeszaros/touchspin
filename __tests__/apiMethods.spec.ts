@@ -208,7 +208,7 @@ test.describe('API Methods', () => {
       const testid = 'touchspin-default';
 
       // Verify TouchSpin is active
-      const spin = await apiHelpers.getElement(page, testid + '-wrapper');
+      const spin = apiHelpers.getElement(page, testid + '-wrapper');
       const upButton = spin.locator('.bootstrap-touchspin-up');
       await expect(upButton).toBeVisible();
 
@@ -234,7 +234,7 @@ test.describe('API Methods', () => {
       expect(clickFailed).toBe(true); // Click should fail because TouchSpin is destroyed
 
       // Verify original input is preserved
-      const input = await apiHelpers.getElement(page, testid);
+      const input = apiHelpers.getElement(page, testid);
       await expect(input).toBeVisible();
     });
 

@@ -145,7 +145,7 @@ test.describe('Focus and Outside Click Behavior', () => {
     }, testid);
 
     // Focus the input first, then focus outside to trigger focusout
-    const input = await apiHelpers.getElement(page, testid);
+    const input = apiHelpers.getElement(page, testid);
     await input.focus();
     await apiHelpers.focusOutside(page, 'touchspin-group-lg');
 

@@ -60,7 +60,7 @@ test.describe('ARIA sync and vertical buttons semantics', () => {
   test('vertical buttons do not alter change emission semantics', async ({ page }) => {
     await page.goto('/__tests__/html/index-bs5.html')
 
-    const input = await apiHelpers.getElement(page, 'touchspin-vertical')
+    const input = apiHelpers.getElement(page, 'touchspin-vertical')
 
     // Ensure known starting state
     await input.evaluate((el: HTMLInputElement) => { el.value = '0' })

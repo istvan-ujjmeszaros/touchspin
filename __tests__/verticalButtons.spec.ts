@@ -15,7 +15,7 @@ test.describe('Vertical Buttons', () => {
 
   test('should render vertical button structure correctly', async ({ page }) => {
     const testid = 'touchspin-vertical';
-    const wrapper = await apiHelpers.getElement(page, testid + '-wrapper');
+    const wrapper = apiHelpers.getElement(page, testid + '-wrapper');
 
     // Check for vertical wrapper within the specific TouchSpin
     const verticalWrapper = wrapper.locator('.bootstrap-touchspin-vertical-button-wrapper');

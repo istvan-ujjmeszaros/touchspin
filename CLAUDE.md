@@ -685,6 +685,20 @@ yarn coverage:check
 
 ---
 
+## 📁 Project Structure Notes
+
+### Temporary Files and Documentation
+
+**Project tmp folder**: Use `/apps/bootstrap-touchspin-openai/tmp/` (not system `/tmp/`) for:
+- Temporary documentation files
+- Progress tracking files
+- Work-in-progress notes
+- Any temporary files that should be accessible within the project context
+
+This folder is part of the project structure and should be used instead of system tmp directories.
+
+---
+
 ## 🔧 Important Development Workflow
 
 ### CRITICAL: Always Rebuild After Source Changes

@@ -15,7 +15,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
 
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
@@ -36,7 +36,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should work without any Bootstrap CSS dependencies', async ({ page }) => {
       // Verify TouchSpin still functions correctly
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
 
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -72,7 +72,7 @@ test.describe('Tailwind CSS Renderer', () => {
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
@@ -91,8 +91,8 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should display initial prefix/postfix', async ({ page }) => {
       // Look for inputs with prefix/postfix in the test page
-      const prefix = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'prefixed-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toBeVisible();
       await expect(postfix).toBeVisible();
@@ -100,7 +100,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should handle vertical layout', async ({ page }) => {
       // Test vertical button configuration if available in test page
-      const verticalWrapper = await apiHelpers.getElement(page, 'vertical-container').locator('[data-touchspin-injected="vertical-wrapper"]');
+      const verticalWrapper = apiHelpers.getElement(page, 'vertical-container').locator('[data-touchspin-injected="vertical-wrapper"]');
       const count = await verticalWrapper.count();
 
       if (count > 0) {
@@ -121,8 +121,8 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="basic-update-prefix"]');
       await page.click('[data-testid="basic-update-postfix"]');
 
-      const prefix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toHaveText('$');
       await expect(postfix).toHaveText('.00');
@@ -141,7 +141,7 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="basic-update-up-text"]');
       await page.click('[data-testid="basic-update-down-text"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -157,7 +157,7 @@ test.describe('Tailwind CSS Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_class: 'custom-up-class', buttondown_class: 'custom-down-class' }]);
       });
 
-      const wrapper = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="wrapper"]');
+      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -175,8 +175,8 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="basic-update-prefix-class"]');
       await page.click('[data-testid="basic-update-postfix-class"]');
 
-      const prefix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'basic-container').locator('[data-touchspin-injected="postfix"]');
 
       // Class updates applied
       const prefixClass = await prefix.evaluate(el => el.className);
@@ -203,7 +203,7 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="vertical-update-up-class"]');
       await page.click('[data-testid="vertical-update-down-class"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'vertical-container');
+      const wrapper = apiHelpers.getElement(page, 'vertical-container');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -220,7 +220,7 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="vertical-update-up-text"]');
       await page.click('[data-testid="vertical-update-down-text"]');
 
-      const wrapper = await apiHelpers.getElement(page, 'vertical-container');
+      const wrapper = apiHelpers.getElement(page, 'vertical-container');
       const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
       const upButton = verticalWrapper.locator('[data-touchspin-injected="up"]');
       const downButton = verticalWrapper.locator('[data-touchspin-injected="down"]');
@@ -232,7 +232,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
   test.describe('Dynamic Settings Updates - Advanced Container', () => {
     test('should not overwrite existing data-testid on advanced container', async ({ page }) => {
-      const advanced = await apiHelpers.getElement(page, 'advanced-container');
+      const advanced = apiHelpers.getElement(page, 'advanced-container');
       await expect(advanced).toBeVisible();
       await expect(advanced).toHaveAttribute('data-testid', 'advanced-container');
       await expect(advanced).toHaveAttribute('data-touchspin-injected', 'wrapper-advanced');
@@ -243,8 +243,8 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="advanced-update-prefix"]');
       await page.click('[data-testid="advanced-update-postfix"]');
 
-      const prefix = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="prefix"]');
-      const postfix = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="postfix"]');
+      const prefix = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="prefix"]');
+      const postfix = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected="postfix"]');
 
       await expect(prefix).toHaveText('$');
       await expect(postfix).toHaveText('USD');
@@ -252,7 +252,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should preserve existing container structure', async ({ page }) => {
       // Verify original elements are still present in advanced container
-      const originalElements = await apiHelpers.getElement(page, 'advanced-container').locator('.text-gray-600');
+      const originalElements = apiHelpers.getElement(page, 'advanced-container').locator('.text-gray-600');
       expect(await originalElements.count()).toBeGreaterThan(0);
 
       // Verify TouchSpin buttons are also present
@@ -280,7 +280,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should remove all data-touchspin-injected elements', async ({ page }) => {
       // Verify elements are present in advanced container
-      const injectedElements = await apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected]');
+      const injectedElements = apiHelpers.getElement(page, 'advanced-container').locator('[data-touchspin-injected]');
       expect(await injectedElements.count()).toBeGreaterThan(0);
 
       // Destroy via API
