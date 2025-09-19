@@ -26,6 +26,9 @@ dist/
 **/*PLAN*.md
 **/TODO*.md
 
+# Allow package test plans to be tracked
+!packages/**/tests/TEST_PLAN.md
+
 # Playwright browsers (if locally installed)
 .playwright/
 
