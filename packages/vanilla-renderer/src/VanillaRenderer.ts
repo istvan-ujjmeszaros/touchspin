@@ -268,8 +268,8 @@ class VanillaRenderer extends AbstractRenderer {
    * Apply theme via CSS custom properties
    * @param {Object} theme - Theme object with CSS property values
    */
-  // TODO: refine type
-  setTheme(theme: Record<string, string>): void {
+  // Accept any record of CSS custom property values (read-only for clarity)
+  setTheme(theme: Readonly<Record<string, string>>): void {
     const wrapper = this.wrapper;
     if (!wrapper || !theme) return;
 

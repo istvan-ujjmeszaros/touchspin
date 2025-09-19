@@ -8,7 +8,7 @@
  * @returns {string} - TouchSpin setting name (e.g. 'verticalbuttons')
  */
 export function attributeToSetting(attrName: string): string {
-  const mapping: Record<string, string> = {
+  const mapping = {
     'vertical-buttons': 'verticalbuttons',
     'vertical-up': 'verticalup',
     'vertical-down': 'verticaldown',
@@ -29,7 +29,7 @@ export function attributeToSetting(attrName: string): string {
     'init-val': 'initval',
     'replacement-val': 'replacementval',
     'focusable-buttons': 'focusablebuttons'
-  };
+  } as const satisfies Record<string, string>;
 
   return mapping[attrName] || attrName;
 }
@@ -48,7 +48,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
   // Boolean settings
   const booleanSettings = [
     'verticalbuttons', 'mousewheel', 'booster', 'focusablebuttons'
-  ];
+  ] as const;
 
   if (booleanSettings.includes(settingName)) {
     return value === 'true' || value === '';
@@ -58,7 +58,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
   const numberSettings = [
     'min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay',
     'boostat', 'maxboostedstep', 'firstclickvalueifempty'
-  ];
+  ] as const;
 
   if (numberSettings.includes(settingName)) {
     const num = Number(value);
@@ -120,4 +120,4 @@ export const OBSERVED_ATTRIBUTES = [
   'booster',
   'boost-at',
   'max-boosted-step'
-];
+ ] as const;
