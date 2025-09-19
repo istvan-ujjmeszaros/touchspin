@@ -2092,6 +2092,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.31.0"
     husky: "npm:^8.0.0"
     jiti: "npm:2.5.1"
+    jquery: "npm:^3.7.1"
     nyc: "npm:^17.1.0"
     playwright: "npm:^1.54.2"
     prettier: "npm:^3.3.3"
@@ -4145,6 +4146,13 @@ __metadata:
   version: 1.4.0
   resolution: "jju@npm:1.4.0"
   checksum: 10c0/f3f444557e4364cfc06b1abf8331bf3778b26c0c8552ca54429bc0092652172fdea26cbffe33e1017b303d5aa506f7ede8571857400efe459cb7439180e2acad
+  languageName: node
+  linkType: hard
+
+"jquery@npm:^3.7.1":
+  version: 3.7.1
+  resolution: "jquery@npm:3.7.1"
+  checksum: 10c0/808cfbfb758438560224bf26e17fcd5afc7419170230c810dd11f5c1792e2263e2970cca8d659eb84fcd9acc301edb6d310096e450277d54be4f57071b0c82d9
   languageName: node
   linkType: hard
 

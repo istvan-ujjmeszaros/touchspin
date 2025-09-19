@@ -89,6 +89,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
           ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
+          ["jquery", "npm:3.7.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
@@ -2632,6 +2633,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-import", "virtual:db5795ae64318c815ce68ebae5e02cc5a8cb63ff3c73dab21adc86a2d77c9e99e84cf0573b6c5bf2826442550d0f7c99b6ce279bff4e9f4c331a7c3cb738b2d0#npm:2.32.0"],\
           ["husky", "npm:8.0.3"],\
           ["jiti", "npm:2.5.1"],\
+          ["jquery", "npm:3.7.1"],\
           ["nyc", "npm:17.1.0"],\
           ["playwright", "npm:1.55.0"],\
           ["prettier", "npm:3.6.2"],\
@@ -4934,6 +4936,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../home/styu/.yarn/berry/cache/jju-npm-1.4.0-670678eaa3-10c0.zip/node_modules/jju/",\
         "packageDependencies": [\
           ["jju", "npm:1.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["jquery", [\
+      ["npm:3.7.1", {\
+        "packageLocation": "../../home/styu/.yarn/berry/cache/jquery-npm-3.7.1-eeeac0f21e-10c0.zip/node_modules/jquery/",\
+        "packageDependencies": [\
+          ["jquery", "npm:3.7.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -14171,7 +14182,7 @@ function arg(
 		}
 
 		if (wholeArg.length > 1 && wholeArg[0] === '-') {
-			 
+			/* eslint-disable operator-linebreak */
 			const separatedArguments =
 				wholeArg[1] === '-' || wholeArg.length === 2
 					? [wholeArg]
@@ -14222,7 +14233,7 @@ function arg(
 							!(
 								argv[i + 1].match(/^-?\d*(\.(?=\d))?\d*$/) &&
 								(type === Number ||
-									 
+									// eslint-disable-next-line no-undef
 									(typeof BigInt !== 'undefined' && type === BigInt))
 							))
 					) {
