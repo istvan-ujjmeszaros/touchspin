@@ -3,6 +3,7 @@
   "compilerOptions": {
     "types": ["node", "@playwright/test"],
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@touchspin/core": ["packages/core/src/index.ts"],
       "@touchspin/core/renderer": ["packages/core/src/renderer.ts"]
@@ -22,6 +23,7 @@
     "reports",
     "tmp",
     "**/vite.config.*",
-    "**/playwright*.config.*"
+    "**/playwright*.config.*",
+    "**/types/**"
   ]
 }
