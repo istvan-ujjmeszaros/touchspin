@@ -28,6 +28,11 @@
       "import": "./test-helpers/renderers/index.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      "renderer": ["./dist/renderer.d.ts"]
+    }
+  },
   "files": [
     "dist/",
     "README.md"
