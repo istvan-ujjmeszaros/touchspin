@@ -1,4 +1,10 @@
 export { default as AbstractRenderer } from './AbstractRenderer';
+export type {
+  RendererOptionKind,
+  RendererOptionDef,
+  RendererOptionSchema,
+  InferOptionsFromSchema,
+} from './AbstractRenderer';
 
 // Canonical Renderer interface and constructor type for TouchSpin
 // Exposed under the subpath '@touchspin/core/renderer'
@@ -15,7 +21,7 @@ export interface Renderer {
 export type RendererConstructor = new (
   inputEl: HTMLInputElement,
   settings: Readonly<TouchSpinCoreOptions>,
-  core: TouchSpinCore
+  core: unknown
 ) => Renderer;
 
 // Optionally exposed element bag type for renderer implementations
