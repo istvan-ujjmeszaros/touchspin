@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Input Event Handling', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -22,7 +21,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
 
   test.describe('Input Change Event Interception', () => {
     test('change event with valid value is allowed through', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -49,7 +48,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('change event with invalid value is intercepted', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         min: 0,
         max: 100,
@@ -90,7 +89,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('change event interception with NaN value', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -126,7 +125,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('change event with boundary violation is intercepted', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 10,
@@ -163,7 +162,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('change event stopImmediatePropagation is called correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 10,
@@ -201,7 +200,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
 
   test.describe('Input Blur Event Handling', () => {
     test('blur event triggers value sanitization', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         min: 0,
         max: 100,
@@ -225,7 +224,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('blur event with valid value does not trigger sanitization', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         min: 0,
         max: 100,
@@ -249,7 +248,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('blur event handles empty input correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -268,7 +267,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('blur event with NaN input triggers sanitization', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -294,7 +293,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('blur event with boundary violation triggers correction', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 10,
         max: 90,
@@ -319,7 +318,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
 
   test.describe('Input Event Handler Integration', () => {
     test('change and blur event handlers work together correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 10,
         min: 0,
         max: 100,
@@ -356,7 +355,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('input event handlers are properly attached and detached', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -391,7 +390,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('input event handlers handle rapid value changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -430,7 +429,7 @@ test.describe('Core TouchSpin Input Event Handling', () => {
     });
 
     test('change event interception works with forcestepdivisibility', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'round',
         initval: 15 // Multiple of 3

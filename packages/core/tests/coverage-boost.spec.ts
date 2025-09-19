@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -24,7 +24,6 @@ test.describe('Core TouchSpin Coverage Boost', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -34,7 +33,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Public API Surface', () => {
     test('toPublicApi should expose core methods with correct structure', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const publicApi = await getPublicAPI(page, 'test-input');
 
@@ -46,7 +45,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Force Step Divisibility None', () => {
     test('forcestepdivisibility none preserves non-divisible values through increment', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'none',
         initval: 10  // Not divisible by 3
@@ -61,7 +60,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('forcestepdivisibility none with decimals preserves precision', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.1,
         decimals: 2,
         forcestepdivisibility: 'none',
@@ -75,7 +74,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Runtime Settings Updates', () => {
     test('updateSettingsViaAPI can switch forcestepdivisibility round to none', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'round',
         initval: 10  // Gets normalized to 9
@@ -91,7 +90,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('updateSettingsViaAPI can switch forcestepdivisibility none to round', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         forcestepdivisibility: 'none',
         initval: 17  // Not divisible by 5
@@ -109,7 +108,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Keyboard Events Emit Start/Stop Spin', () => {
     test('keyboard hold emits startspin and stopspin events', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await page.focus('[data-testid="test-input"]');
@@ -122,7 +121,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('API spin methods do not emit startspin or stopspin events', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       // API methods should not emit start/stop events
@@ -136,7 +135,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Wheel Events Emit Start/Stop Spin', () => {
     test('mousewheel emits startspin and stopspin events when focused', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
       await apiHelpers.clearEventLog(page);
 
@@ -157,80 +156,80 @@ test.describe('Core TouchSpin Coverage Boost', () => {
   test.describe('Settings Sanitization Edge Cases', () => {
     test('invalid step values are sanitized to 1', async ({ page }) => {
       // Test infinite step
-      await initializeCore(page, 'test-input', { step: Infinity, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: Infinity, initval: 10 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(11); // Uses default step 1
 
       // Test NaN step
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { step: NaN, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: NaN, initval: 10 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(11);
 
       // Test negative step
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { step: -5, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: -5, initval: 10 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(11);
     });
 
     test('invalid decimals values are sanitized to 0', async ({ page }) => {
       // Test negative decimals
-      await initializeCore(page, 'test-input', { decimals: -2, initval: 10.555 });
+      await initializeTouchspin(page, 'test-input', { decimals: -2, initval: 10.555 });
       expect(await readInputValue(page, 'test-input')).toBe('11'); // Rounded, no decimals
 
       // Test infinite decimals
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { decimals: Infinity, initval: 10.555 });
+      await initializeTouchspin(page, 'test-input', { decimals: Infinity, initval: 10.555 });
       expect(await readInputValue(page, 'test-input')).toBe('11');
 
       // Test NaN decimals
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { decimals: NaN, initval: 10.555 });
+      await initializeTouchspin(page, 'test-input', { decimals: NaN, initval: 10.555 });
       expect(await readInputValue(page, 'test-input')).toBe('11');
     });
 
     test('invalid min values are sanitized to null', async ({ page }) => {
       // Test NaN min
-      await initializeCore(page, 'test-input', { min: NaN, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { min: NaN, initval: 10 });
       await setValueViaAPI(page, 'test-input', -1000);
       expect(await getNumericValue(page, 'test-input')).toBe(-1000); // No min constraint
 
       // Test string min
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { min: 'invalid', initval: 10 });
+      await initializeTouchspin(page, 'test-input', { min: 'invalid', initval: 10 });
       await setValueViaAPI(page, 'test-input', -1000);
       expect(await getNumericValue(page, 'test-input')).toBe(-1000);
 
       // Test empty string min
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { min: '', initval: 10 });
+      await initializeTouchspin(page, 'test-input', { min: '', initval: 10 });
       await setValueViaAPI(page, 'test-input', -1000);
       expect(await getNumericValue(page, 'test-input')).toBe(-1000);
     });
 
     test('invalid max values are sanitized to null', async ({ page }) => {
       // Test NaN max
-      await initializeCore(page, 'test-input', { max: NaN, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { max: NaN, initval: 10 });
       await setValueViaAPI(page, 'test-input', 1000);
       expect(await getNumericValue(page, 'test-input')).toBe(1000); // No max constraint
 
       // Test infinite max
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { max: Infinity, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { max: Infinity, initval: 10 });
       await setValueViaAPI(page, 'test-input', 1000);
       expect(await getNumericValue(page, 'test-input')).toBe(1000);
 
       // Test undefined max
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { max: undefined, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { max: undefined, initval: 10 });
       await setValueViaAPI(page, 'test-input', 1000);
       expect(await getNumericValue(page, 'test-input')).toBe(1000);
     });
 
     test('min/max values are swapped when min > max', async ({ page }) => {
       // Initialize with swapped min/max
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 50,
         max: 10, // max < min, should be swapped
         initval: 25
@@ -246,31 +245,31 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
     test('invalid stepinterval values are sanitized to default', async ({ page }) => {
       // Test negative stepinterval
-      await initializeCore(page, 'test-input', { stepinterval: -100, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { stepinterval: -100, initval: 10 });
       // Should use default stepinterval (can't easily test timing but should not crash)
       expect(await getNumericValue(page, 'test-input')).toBe(10);
 
       // Test NaN stepinterval
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { stepinterval: NaN, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { stepinterval: NaN, initval: 10 });
       expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
 
     test('invalid stepintervaldelay values are sanitized to default', async ({ page }) => {
       // Test negative stepintervaldelay
-      await initializeCore(page, 'test-input', { stepintervaldelay: -500, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { stepintervaldelay: -500, initval: 10 });
       expect(await getNumericValue(page, 'test-input')).toBe(10);
 
       // Test infinite stepintervaldelay
       await destroyCore(page, 'test-input');
-      await initializeCore(page, 'test-input', { stepintervaldelay: Infinity, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { stepintervaldelay: Infinity, initval: 10 });
       expect(await getNumericValue(page, 'test-input')).toBe(10);
     });
   });
 
   test.describe('Disabled and Readonly Input Handling', () => {
     test('disabled input does not respond to spin operations', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Disable the input
       await page.evaluate(() => {
@@ -289,7 +288,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('readonly input does not respond to spin operations', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Make input readonly
       await page.evaluate(() => {
@@ -308,7 +307,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('spinning stops when input becomes disabled during operation', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Start spinning
       await startUpSpinViaAPI(page, 'test-input');
@@ -329,7 +328,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('spinning direction change works for enabled inputs', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Start up spin
       await startUpSpinViaAPI(page, 'test-input');
@@ -347,7 +346,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('spin stops at boundaries and does not start continuous spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 2,
@@ -380,7 +379,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('min', '5');
       });
 
-      await initializeCore(page, 'test-input', { initval: 3 });
+      await initializeTouchspin(page, 'test-input', { initval: 3 });
 
       // Value should be clamped to min
       expect(await getNumericValue(page, 'test-input')).toBe(5);
@@ -392,7 +391,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('max', '10');
       });
 
-      await initializeCore(page, 'test-input', { initval: 15 });
+      await initializeTouchspin(page, 'test-input', { initval: 15 });
 
       // Value should be clamped to max
       expect(await getNumericValue(page, 'test-input')).toBe(10);
@@ -404,7 +403,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('step', '5');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(15); // 10 + 5
@@ -416,7 +415,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('min', 'invalid');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Should not have min constraint due to invalid attribute
       await setValueViaAPI(page, 'test-input', -100);
@@ -429,7 +428,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('max', 'NaN');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Should not have max constraint due to invalid attribute
       await setValueViaAPI(page, 'test-input', 1000);
@@ -442,7 +441,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('step', '-5');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Should use default step of 1 due to invalid step
       await incrementViaAPI(page, 'test-input');
@@ -457,7 +456,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('step', '');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Empty attributes should be treated as null/default
       await setValueViaAPI(page, 'test-input', -1000);
@@ -471,7 +470,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('dynamically updates when native attributes change', async ({ page }) => {
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Add min attribute dynamically
       await page.evaluate(() => {
@@ -493,7 +492,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
         input.setAttribute('max', '15');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Remove attributes
       await page.evaluate(() => {
@@ -516,7 +515,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
 
   test.describe('Edge Cases and Error Paths', () => {
     test('setValue with invalid input preserves previous value', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const initialValue = await getNumericValue(page, 'test-input');
 
@@ -529,7 +528,7 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('extreme boundary values are handled correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: -999999,
         max: 999999,
@@ -544,14 +543,14 @@ test.describe('Core TouchSpin Coverage Boost', () => {
     });
 
     test('zero step value defaults to 1', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 0, initval: 10 });
 
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(11); // Step 0 becomes 1
     });
 
     test('negative step value is handled gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: -1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: -1, initval: 10 });
 
       await incrementViaAPI(page, 'test-input');
       const newValue = await getNumericValue(page, 'test-input');

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -126,7 +125,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('data-bts-mousewheel', 'true');
       });
 
-      await initializeCore(page, 'test-input', { initval: 25 });
+      await initializeTouchspin(page, 'test-input', { initval: 25 });
 
       // Verify data-bts attributes were processed
       await setValueViaAPI(page, 'test-input', 45);
@@ -160,7 +159,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('step', '1'); // Another conflict
       });
 
-      await initializeCore(page, 'test-input', { initval: 25 });
+      await initializeTouchspin(page, 'test-input', { initval: 25 });
 
       // Should have warnings about conflicts
       expect(warnings.some(w => w.includes('data-bts-min') && w.includes('min'))).toBe(true);
@@ -177,7 +176,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
       });
 
       // Test the actual parsing by checking the resulting behavior
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // These tests verify the attributes were parsed, but the actual behavior
       // testing would require more complex scenarios since most of these affect
@@ -195,7 +194,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('step', '5');
       });
 
-      await initializeCore(page, 'test-input', { initval: 50 });
+      await initializeTouchspin(page, 'test-input', { initval: 50 });
 
       // Verify native attributes were processed
       await setValueViaAPI(page, 'test-input', -10);
@@ -218,7 +217,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('data-bts-max', '50'); // Should win
       });
 
-      await initializeCore(page, 'test-input', { initval: 30 });
+      await initializeTouchspin(page, 'test-input', { initval: 30 });
 
       // data-bts values should be used
       await setValueViaAPI(page, 'test-input', 5);
@@ -237,7 +236,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
       });
 
       // Should not crash and should use defaults/null for invalid values
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Should not have constraints due to invalid min/max
       await setValueViaAPI(page, 'test-input', -1000);
@@ -250,7 +249,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
 
   test.describe('Attribute Mutation Handling', () => {
     test('responds to dynamic native attribute changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', { initval: 50 });
+      await initializeTouchspin(page, 'test-input', { initval: 50 });
 
       // Dynamically add min attribute
       await page.evaluate(() => {
@@ -273,7 +272,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('max', '80');
       });
 
-      await initializeCore(page, 'test-input', { initval: 50 });
+      await initializeTouchspin(page, 'test-input', { initval: 50 });
 
       // Remove attributes
       await page.evaluate(() => {
@@ -298,7 +297,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
         input.setAttribute('step', '1');
       });
 
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Change step attribute
       await page.evaluate(() => {
@@ -314,7 +313,7 @@ test.describe('Core TouchSpin Attribute Parsing', () => {
     });
 
     test('handles disabled/readonly attribute changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Dynamically disable input
       await page.evaluate(() => {

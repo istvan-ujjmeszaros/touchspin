@@ -80,7 +80,7 @@ test.describe('Vertical Buttons', () => {
   test('should handle disabled state for vertical buttons', async ({ page }) => {
     const testid = 'touchspin-vertical';
 
-    await apiHelpers.setInputAttr(page, testid, 'disabled', true);
+    await apiHelpers.setInputAttribute(page, testid, 'disabled', true);
 
     // Buttons should be disabled
     const upButtonDisabled = await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {

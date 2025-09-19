@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -13,7 +13,6 @@ test.describe('Core TouchSpin Settings Sanitization', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -245,7 +244,7 @@ test.describe('Core TouchSpin Settings Sanitization', () => {
   test.describe('Settings Sanitization During Initialization', () => {
     test('applies sanitization during core initialization', async ({ page }) => {
       // Initialize with invalid values that should be sanitized
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: Infinity,
         decimals: -1,
         min: 'invalid',
@@ -273,7 +272,7 @@ test.describe('Core TouchSpin Settings Sanitization', () => {
 
     test('handles min/max swapping during initialization', async ({ page }) => {
       // Initialize with min > max
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 100,
         max: 50,
         initval: 75
@@ -290,7 +289,7 @@ test.describe('Core TouchSpin Settings Sanitization', () => {
 
   test.describe('Runtime Settings Sanitization', () => {
     test('sanitizes settings during updateSettings calls', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Update with invalid values
       await updateSettingsViaAPI(page, 'test-input', {
@@ -316,7 +315,7 @@ test.describe('Core TouchSpin Settings Sanitization', () => {
     });
 
     test('applies min/max swapping during runtime updates', async ({ page }) => {
-      await initializeCore(page, 'test-input', { initval: 10 });
+      await initializeTouchspin(page, 'test-input', { initval: 10 });
 
       // Update with swapped min/max
       await updateSettingsViaAPI(page, 'test-input', {

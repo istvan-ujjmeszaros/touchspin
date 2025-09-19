@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -14,14 +14,13 @@ import {
 const {
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
-  setInputAttr        // was: setInputAttribute
+  setInputAttribute        // was: setInputAttribute
 } = apiHelpers;
 
 test.describe('Core TouchSpin Step Calculations', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/minimal.html');
-    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -30,25 +29,25 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Basic Step Operations', () => {
     test('should increment by step amount', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 5 });
+      await initializeTouchspin(page, 'test-input', { step: 5 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(55); // 50 + 5
     });
 
     test('should decrement by step amount', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, initval: 48 });
+      await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
       await decrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(45); // 48 - 3
     });
 
     test('should handle decimal step values', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0.25, decimals: 2, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2, initval: 10 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(10.25);
     });
 
     test('should handle negative step values by using absolute value', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: -3 });
+      await initializeTouchspin(page, 'test-input', { step: -3 });
       // Negative step should be sanitized to positive
       const settings = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -59,7 +58,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should use step value of 1 when step is zero', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0 });
+      await initializeTouchspin(page, 'test-input', { step: 0 });
       const settings = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         const core = (input as any)._touchSpinCore;
@@ -69,7 +68,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle very small step values', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0.001, decimals: 3, initval: 1 });
+      await initializeTouchspin(page, 'test-input', { step: 0.001, decimals: 3, initval: 1 });
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(1.001);
     });
@@ -77,39 +76,39 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Value Normalization on Initialization', () => {
     test('should normalize initial value to nearest step multiple', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3 });
+      await initializeTouchspin(page, 'test-input', { step: 3 });
       expect(await getNumericValue(page, 'test-input')).toBe(51); // 50 → 51 (nearest multiple of 3)
     });
 
     test('should round 50 to 51 when step is 3', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, initval: 50 });
+      await initializeTouchspin(page, 'test-input', { step: 3, initval: 50 });
       expect(await getNumericValue(page, 'test-input')).toBe(51); // 50 rounded up to 51
     });
 
     test('should round 49 to 48 when step is 3', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, initval: 49 });
+      await initializeTouchspin(page, 'test-input', { step: 3, initval: 49 });
       expect(await getNumericValue(page, 'test-input')).toBe(48); // 49 rounded down to 48
     });
 
     test('should not normalize when value is already divisible by step', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, initval: 48 });
+      await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
       expect(await getNumericValue(page, 'test-input')).toBe(48); // No change needed
     });
 
     test('should handle decimal step normalization', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0.5, initval: 1.3, decimals: 1 });
+      await initializeTouchspin(page, 'test-input', { step: 0.5, initval: 1.3, decimals: 1 });
       expect(await getNumericValue(page, 'test-input')).toBe(1.5); // 1.3 → 1.5 (nearest 0.5 multiple)
     });
 
     test('should normalize to exact step multiple for large steps', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 25, initval: 63 });
+      await initializeTouchspin(page, 'test-input', { step: 25, initval: 63 });
       expect(await getNumericValue(page, 'test-input')).toBe(75); // 63 → 75 (nearest multiple of 25)
     });
   });
 
   test.describe('Step with NaN Values', () => {
     test('should use firstclickvalueifempty when starting from NaN', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 10,
         firstclickvalueifempty: 20,
         initval: ''  // Start with empty value
@@ -122,7 +121,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should calculate midpoint when no firstclickvalueifempty set', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 10,
         max: 30,
         step: 5,
@@ -133,7 +132,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle NaN during down operation', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         firstclickvalueifempty: 25,
         initval: ''  // Start with empty value
@@ -145,7 +144,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Step Alignment', () => {
     test('should align bounds to step when step changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 7, max: 23, step: 1 });
+      await initializeTouchspin(page, 'test-input', { min: 7, max: 23, step: 1 });
       // Update to a step that requires alignment
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -162,7 +161,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should not align bounds when step is 1', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 7, max: 23, step: 5 });
+      await initializeTouchspin(page, 'test-input', { min: 7, max: 23, step: 5 });
       // Update to step 1 - should not align
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -232,7 +231,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Force Step Divisibility', () => {
     test('should round value to nearest step multiple', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'round'
       });
@@ -241,7 +240,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should floor value to step multiple', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 7,
         forcestepdivisibility: 'floor'
       });
@@ -250,7 +249,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should ceil value to step multiple', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 6,
         forcestepdivisibility: 'ceil'
       });
@@ -259,7 +258,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should not enforce step divisibility when set to none', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'none'
       });
@@ -268,7 +267,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should respect decimal places in step divisibility', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.5,
         decimals: 2,
         forcestepdivisibility: 'round'
@@ -278,7 +277,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle exact step multiples', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         forcestepdivisibility: 'round'
       });
@@ -287,7 +286,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should normalize decimal precision after step divisibility', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.1,
         decimals: 1,
         forcestepdivisibility: 'round'
@@ -299,7 +298,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
 
   test.describe('Step Calculation Edge Cases', () => {
     test('should handle very large step values', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1000000,
         initval: 0,
         max: 2000000  // Set max higher than step to avoid clamping
@@ -309,7 +308,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle very small decimal steps', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.0001,
         decimals: 4,
         initval: 0
@@ -319,7 +318,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should handle step with repeating decimals', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1/3,
         decimals: 3,
         initval: 0
@@ -331,7 +330,7 @@ test.describe('Core TouchSpin Step Calculations', () => {
     });
 
     test('should maintain precision in complex step calculations', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.2,
         decimals: 1,
         initval: 0.2  // Use value that doesn't need normalization

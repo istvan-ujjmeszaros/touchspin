@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   destroyCore,
   isCoreInitialized,
   getNumericValue,
@@ -17,7 +17,6 @@ test.describe('Core TouchSpin Destruction', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -26,7 +25,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('removes initialization marker and instance', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+    await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
     await destroyCore(page, 'test-input');
 
     // Marker gone
@@ -38,7 +37,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('keyboard input becomes a no-op after destroy (no value change, no events)', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+    await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
     await destroyCore(page, 'test-input');
     await apiHelpers.clearEventLog(page); // Clear after destroy
 
@@ -53,7 +52,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('mouse wheel becomes a no-op after destroy', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 5 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 5 });
     await apiHelpers.clearEventLog(page);
     await destroyCore(page, 'test-input');
 
@@ -66,7 +65,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('double destroy is idempotent', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 5 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 5 });
     await destroyCore(page, 'test-input');
 
     // Second destroy should handle missing instance gracefully
@@ -89,7 +88,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('stops any ongoing spin on destroy (no more changes afterwards)', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 5 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 5 });
     await page.focus('[data-testid="test-input"]');
 
     // Begin producing changes via keyboard (source of "spin" in Core)
@@ -123,7 +122,7 @@ test.describe('Core TouchSpin Destruction', () => {
       input.setAttribute('readonly', '');
     });
 
-    await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
     await destroyCore(page, 'test-input');
 
     const attrs = await page.evaluate(() => {
@@ -145,7 +144,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('API access after destroy throws appropriate error', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+    await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
     await destroyCore(page, 'test-input');
 
     // Test that API calls throw after destroy
@@ -167,7 +166,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('clearing event handlers prevents residual native events', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 8 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 8 });
     await apiHelpers.clearEventLog(page);
     await destroyCore(page, 'test-input');
 
@@ -185,7 +184,7 @@ test.describe('Core TouchSpin Destruction', () => {
 
   test('allows re-initialization after destroy', async ({ page }) => {
     // First initialization
-    await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+    await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
     expect(await isCoreInitialized(page, 'test-input')).toBe(true);
 
     // Destroy
@@ -193,7 +192,7 @@ test.describe('Core TouchSpin Destruction', () => {
     expect(await isCoreInitialized(page, 'test-input')).toBe(false);
 
     // Re-initialize with different settings
-    await initializeCore(page, 'test-input', { step: 5, initval: 25 });
+    await initializeTouchspin(page, 'test-input', { step: 5, initval: 25 });
     expect(await isCoreInitialized(page, 'test-input')).toBe(true);
     expect(await getNumericValue(page, 'test-input')).toBe(25);
 
@@ -203,7 +202,7 @@ test.describe('Core TouchSpin Destruction', () => {
   });
 
   test('maintains input value through destroy/init cycle', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 12 });
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 12 });
 
     // Change value
     await setValueViaAPI(page, 'test-input', 20);
@@ -211,14 +210,14 @@ test.describe('Core TouchSpin Destruction', () => {
 
     // Destroy and re-init without specifying initval
     await destroyCore(page, 'test-input');
-    await initializeCore(page, 'test-input', { step: 1 }); // No initval - should use current input value
+    await initializeTouchspin(page, 'test-input', { step: 1 }); // No initval - should use current input value
 
     // Value should be preserved from input element
     expect(await getNumericValue(page, 'test-input')).toBe(20);
   });
 
   test('properly cleans up without renderer (no DOM artifacts)', async ({ page }) => {
-    await initializeCore(page, 'test-input', { step: 1, initval: 10 }); // No renderer
+    await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 }); // No renderer
 
     // Core with no renderer should only modify the input element itself
     const beforeDestroy = await page.evaluate(() => {

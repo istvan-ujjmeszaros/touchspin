@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -22,7 +21,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
   test.describe('Up Button Mouse Events', () => {
     test('mousedown on up button starts spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -41,7 +40,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mousedown preventDefault behavior on up button', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -71,7 +70,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mouseup stops spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 50 // Fast for testing
@@ -95,7 +94,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mouseleave on document stops spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 50
@@ -129,7 +128,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('continuous mouse hold creates multiple increments', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 30, // Very fast for testing
@@ -152,7 +151,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
   test.describe('Down Button Mouse Events', () => {
     test('mousedown on down button starts spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         initval: 20
       });
@@ -176,7 +175,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mousedown preventDefault behavior on down button', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -206,7 +205,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mouseup on down button stops spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 50
@@ -237,7 +236,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
   test.describe('Touch Events', () => {
     test('touchstart on up button starts spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 15
       });
@@ -260,7 +259,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('touchstart preventDefault behavior', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -304,7 +303,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('touchstart on down button starts spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         initval: 30
       });
@@ -327,7 +326,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('touchend stops spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 50
@@ -363,7 +362,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
   test.describe('Mouse/Touch Integration with Boundaries', () => {
     test('mouse spinning stops at max boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 2,
@@ -389,7 +388,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('mouse spinning stops at min boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 10,
@@ -417,7 +416,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
 
   test.describe('Button Event Handler Edge Cases', () => {
     test('button handlers work with disabled renderer buttons', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -444,7 +443,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('multiple rapid button clicks are handled correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -469,7 +468,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('button events work after DOM rebuild', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         verticalbuttons: false
@@ -499,7 +498,7 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
     });
 
     test('global mouse events are properly cleaned up on destroy', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });

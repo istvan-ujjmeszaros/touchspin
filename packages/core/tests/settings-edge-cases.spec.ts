@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -249,7 +248,7 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
     });
 
     test('min/max swapping works during settings updates', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 10,
         max: 90,
@@ -422,7 +421,7 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
 
   test.describe('Settings Update Edge Cases', () => {
     test('updateSettings sanitizes partial settings during runtime', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -460,7 +459,7 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
     });
 
     test('updateSettings handles empty/null partial settings', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         min: 10,
         max: 90,
@@ -491,7 +490,7 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
     });
 
     test('updateSettings with null parameter uses empty object', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         initval: 50
       });
@@ -524,7 +523,7 @@ test.describe('Core TouchSpin Settings Edge Cases', () => {
 
   test.describe('Settings Observer Integration', () => {
     test('setting observers are notified during sanitization changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 10,
         max: 90,

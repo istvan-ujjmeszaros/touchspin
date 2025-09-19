@@ -19,7 +19,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the up button and press Enter
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (upButton) {
@@ -39,7 +39,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the down button and press Space
-      const wrapper2 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper2 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper2.evaluate((container) => {
         const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
@@ -62,7 +62,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Focus the down button and press Enter
-      const wrapper3 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper3 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper3.evaluate((container) => {
         const downButton = container.querySelector('[data-touchspin-injected="down"]') as HTMLElement | null;
         if (downButton) {
@@ -85,7 +85,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Hold Space key on up button to trigger spinning
-      const wrapper4 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper4 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper4.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
@@ -111,7 +111,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Test that preventDefault is called
-      const wrapper5 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper5 = await apiHelpers.getWrapperWhenReady(page, testid);
       const preventDefaultCalled = await wrapper5.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         let preventDefaultWasCalled = false;
@@ -136,7 +136,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const initialValue = await apiHelpers.readInputValue(page, testid);
 
       // Press various other keys that should not trigger actions
-      const wrapper6 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper6 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper6.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {
@@ -158,7 +158,7 @@ test.describe('Keyboard Accessibility Tests', () => {
       const testid = 'touchspin-default';
 
       // Rapidly press and release Space key multiple times
-      const wrapper7 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper7 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper7.evaluate((container) => {
         const upButton = container.querySelector('[data-touchspin-injected=\"up\"]') as HTMLElement | null;
         if (upButton) {

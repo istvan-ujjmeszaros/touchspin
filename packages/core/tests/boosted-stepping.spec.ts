@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -15,7 +15,6 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -25,7 +24,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
 
   test.describe('Booster Configuration', () => {
     test('disabling booster returns base step', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         booster: false,
         initval: 10
@@ -41,7 +40,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('enabling booster starts with base step', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         booster: true,
         boostat: 10,
@@ -59,7 +58,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('booster accelerates step based on spin count', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         booster: true,
         boostat: 5, // Boost every 5 spins
@@ -99,7 +98,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('maxboostedstep caps acceleration', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         booster: true,
         boostat: 2,
@@ -128,7 +127,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('invalid maxboostedstep is ignored', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         booster: true,
         boostat: 5,
@@ -148,7 +147,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('handles zero and negative boostat values', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         booster: true,
         boostat: 0, // Invalid boostat
@@ -171,7 +170,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
 
   test.describe('Value Alignment Algorithm', () => {
     test('handles zero step in alignment', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -185,7 +184,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('aligns values to step boundaries correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const alignments = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -215,7 +214,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('handles precision issues with decimal steps', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const precisionTest = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -235,7 +234,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('integer arithmetic avoids floating point errors', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Test the algorithm with a case that would fail with naive floating point math
       const result = await page.evaluate(async () => {
@@ -253,7 +252,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
 
   test.describe('Booster in Action', () => {
     test('spin counter affects step size during continuous spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         booster: true,
         boostat: 3,
@@ -271,7 +270,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('maxboostedstep limits acceleration in practice', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         booster: true,
         boostat: 2,
@@ -291,7 +290,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('firstclickvalueifempty affects NaN value handling', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         firstclickvalueifempty: 25,
         initval: 10
@@ -309,7 +308,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('calculates midpoint when no firstclickvalueifempty', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 10,
         max: 30,
@@ -327,7 +326,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
     });
 
     test('handles null min/max in NaN value calculation', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: null,
         max: null,
@@ -348,7 +347,7 @@ test.describe('Core TouchSpin Boosted Stepping', () => {
 
   test.describe('Step Integration with Boundaries', () => {
     test('boosted step respects max boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         booster: true,
         boostat: 2,

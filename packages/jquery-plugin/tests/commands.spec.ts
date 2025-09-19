@@ -9,27 +9,25 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.beforeEach(async ({ page }) => {
     // Reload page for each test to ensure clean state
     await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
-    await apiHelpers.waitForPageReady(page, 'testPageReady');
     await apiHelpers.installJqueryPlugin(page);
-    await apiHelpers.waitForTouchSpinPluginReady(page);
   });
 
   test.describe('Plugin Initialization', () => {
 
     test('should initialize TouchSpin on element', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // TouchSpin should be properly initialized with wrapper
       expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
 
       // Should have up and down buttons with correct test IDs
-      const elements = await apiHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
       expect(await elements.upButton.count()).toBe(1);
       expect(await elements.downButton.count()).toBe(1);
     });
 
     test('should initialize with custom settings', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
         prefix: '$',
         postfix: '.00'
       });
@@ -38,7 +36,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
       expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
 
       // Settings should be applied with correct test IDs
-      const elements = await apiHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
       expect(await elements.prefix.textContent()).toBe('$');
       expect(await elements.postfix.textContent()).toBe('.00');
     });
@@ -47,7 +45,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Value Commands', () => {
 
     test('should get value using get command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       const value = await jqueryHelpers.jQueryGetValue(page, 'test-input');
 
@@ -55,15 +53,15 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should get value using getvalue command alias', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
-      const value = await jqueryHelpers.jQueryTouchSpin(page, 'test-input', 'getvalue');
+      const value = await jqueryHelpers.jQueryTouchSpinApi(page, 'test-input', 'getvalue');
 
       expect(value).toBe(50); // Default test input value
     });
 
     test('should set value using set command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQuerySetValue(page, 'test-input', 75);
 
@@ -71,9 +69,9 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should set value using setvalue command alias', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
-      await jqueryHelpers.jQueryTouchSpin(page, 'test-input', 'setvalue', 25);
+      await jqueryHelpers.jQueryTouchSpinApi(page, 'test-input', 'setvalue', 25);
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('25');
     });
@@ -89,17 +87,17 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Increment/Decrement Commands', () => {
 
     test('should increment using uponce command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 5 });
 
-      await jqueryHelpers.jQueryUpOnce(page, 'test-input');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'test-input');
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
     });
 
     test('should decrement using downonce command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 3 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 3 });
 
-      await jqueryHelpers.jQueryDownOnce(page, 'test-input');
+      await jqueryHelpers.jQueryApiDownOnce(page, 'test-input');
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('48'); // 50 - 3, rounded to step
     });
@@ -108,7 +106,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Continuous Spinning Commands', () => {
 
     test('should start up spin using startupspin command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 1 });
 
       // Hold up button for 100ms to test spinning behavior
       await apiHelpers.holdUpButton(page, 'test-input', 100);
@@ -118,7 +116,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should start down spin using startdownspin command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 1 });
 
       // Hold down button for 100ms to test spinning behavior
       await apiHelpers.holdDownButton(page, 'test-input', 100);
@@ -128,7 +126,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should stop spinning using stopspin command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 1 });
 
       // Hold up button for 100ms to test spinning behavior
       await apiHelpers.holdUpButton(page, 'test-input', 100);
@@ -146,7 +144,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Settings Commands', () => {
 
     test('should update settings using updatesettings command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQueryUpdateSettings(page, 'test-input', {
         prefix: '€',
@@ -154,17 +152,17 @@ test.describe('jQuery TouchSpin Commands API', () => {
       });
 
       // Prefix should be updated
-      const elements = await apiHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
       expect(await elements.prefix.textContent()).toBe('€');
 
       // Step setting should work
-      await jqueryHelpers.jQueryUpOnce(page, 'test-input');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'test-input');
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('60'); // 50 + 10
     });
 
     test('should add prefix through settings update', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQueryUpdateSettings(page, 'test-input', {
         prefix: '$'
@@ -177,7 +175,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should add postfix through settings update', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQueryUpdateSettings(page, 'test-input', {
         postfix: ' USD'
@@ -190,7 +188,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should update button text through settings', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQueryUpdateSettings(page, 'test-input', {
         buttondown_txt: 'Less',
@@ -198,7 +196,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
       });
 
       // Button texts should be updated
-      const elements = await apiHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
       expect(await elements.downButton.textContent()).toBe('Less');
       expect(await elements.upButton.textContent()).toBe('More');
     });
@@ -207,7 +205,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Destroy Command', () => {
 
     test('should destroy TouchSpin instance using destroy command', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       await jqueryHelpers.jQueryDestroy(page, 'test-input');
 
@@ -226,22 +224,22 @@ test.describe('jQuery TouchSpin Commands API', () => {
     });
 
     test('should allow reinitializing after destroy', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Destroy
       await jqueryHelpers.jQueryDestroy(page, 'test-input');
 
       // Reinitialize with different settings
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
         prefix: 'NEW',
         step: 20
       });
 
       // Should work with new settings
-      const elements = await apiHelpers.getTouchSpinElementsStrict(page, 'test-input');
+      const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
       expect(await elements.prefix.textContent()).toBe('NEW');
 
-      await jqueryHelpers.jQueryUpOnce(page, 'test-input');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'test-input');
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('80'); // 50 + 10 + 20, corrected to step multiple
     });
@@ -250,7 +248,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('jQuery Integration', () => {
 
     test('should support jQuery method chaining', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       const isJQuery = await page.evaluate(() => {
         const result = (window as any).$('[data-testid="test-input"]')
@@ -268,12 +266,12 @@ test.describe('jQuery TouchSpin Commands API', () => {
       await apiHelpers.createAdditionalInput(page, 'input-2', { value: '30' });
 
       // Initialize both with different settings
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
-      await apiHelpers.initializeTouchSpinJQuery(page, 'input-2', { step: 3 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'input-2', { step: 3 });
 
       // Operate on each independently
-      await jqueryHelpers.jQueryUpOnce(page, 'test-input');
-      await jqueryHelpers.jQueryUpOnce(page, 'input-2');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'test-input');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'input-2');
 
       expect(await apiHelpers.readInputValue(page, 'test-input')).toBe('55'); // 50 + 5
       expect(await apiHelpers.readInputValue(page, 'input-2')).toBe('33'); // 30 + 3
@@ -284,8 +282,8 @@ test.describe('jQuery TouchSpin Commands API', () => {
       await apiHelpers.createAdditionalInput(page, 'input-2', { value: '30' });
 
       // Initialize both
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
-      await apiHelpers.initializeTouchSpinJQuery(page, 'input-2', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'input-2', {});
 
       // Destroy first one
       await jqueryHelpers.jQueryDestroy(page, 'test-input');
@@ -295,7 +293,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
       expect(await apiHelpers.isTouchSpinInitialized(page, 'input-2')).toBe(true);
 
       // Second instance should still be functional
-      await jqueryHelpers.jQueryUpOnce(page, 'input-2');
+      await jqueryHelpers.jQueryApiUpOnce(page, 'input-2');
 
       expect(await apiHelpers.readInputValue(page, 'input-2')).toBe('31'); // 30 + 1
     });
@@ -304,7 +302,7 @@ test.describe('jQuery TouchSpin Commands API', () => {
   test.describe('Error Handling', () => {
 
     test('should handle invalid commands gracefully', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Invalid command should not throw error
       const noError = await page.evaluate(() => {

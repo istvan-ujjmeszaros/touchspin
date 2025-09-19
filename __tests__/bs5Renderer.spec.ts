@@ -15,7 +15,7 @@ test.describe('Bootstrap 5 Renderer', () => {
 
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
 
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
@@ -43,7 +43,7 @@ test.describe('Bootstrap 5 Renderer', () => {
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
@@ -86,7 +86,7 @@ test.describe('Bootstrap 5 Renderer', () => {
     });
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
 
       // Test buttons have correct classes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -127,7 +127,7 @@ test.describe('Bootstrap 5 Renderer', () => {
       await page.click('[data-testid="basic-update-up-text"]');
       await page.click('[data-testid="basic-update-down-text"]');
 
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -143,7 +143,7 @@ test.describe('Bootstrap 5 Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_class: 'custom-up-class', buttondown_class: 'custom-down-class' }]);
       });
 
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -288,7 +288,7 @@ test.describe('Bootstrap 5 Renderer', () => {
     });
 
     test('should generate correct Bootstrap 5 markup structure', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
 
       // Test buttons have correct classes
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');

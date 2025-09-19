@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Event System Internals', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -22,7 +21,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
 
   test.describe('Event Subscription Management', () => {
     test('off() method removes specific handler', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const eventCallCounts = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -68,7 +67,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('off() method removes all handlers when no specific handler provided', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const eventCallCounts = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -110,7 +109,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('off() method handles non-existent event gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -129,7 +128,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('off() method handles non-existent handler gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -156,7 +155,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
 
   test.describe('Event Emission System', () => {
     test('emit() method triggers subscribed handlers with detail', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const emissionResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -188,7 +187,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('emit() method triggers multiple handlers for same event', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const multiHandlerResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -225,7 +224,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('emit() method handles non-existent event gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -244,7 +243,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('emit() method works without detail parameter', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const noDetailResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -274,7 +273,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
 
   test.describe('Teardown Callback System', () => {
     test('registerTeardown() registers and executes callback on destroy', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const teardownResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -301,7 +300,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('registerTeardown() returns unregister function', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const unregisterResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -331,7 +330,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('registerTeardown() throws error for non-function callback', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const errorResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -351,7 +350,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('teardown callback errors are caught and logged', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Capture console errors
       const consoleMessages: string[] = [];
@@ -388,7 +387,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('teardown callbacks are cleared after destroy', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const callbackResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -428,7 +427,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('unregister function handles callback not in array', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -454,7 +453,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
 
   test.describe('Event System Integration', () => {
     test('on() method returns unsubscribe function that works with off()', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const unsubscribeResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -489,7 +488,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('event system handles rapid subscribe/unsubscribe cycles', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const cycleResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -518,7 +517,7 @@ test.describe('Core TouchSpin Event System Internals', () => {
     });
 
     test('event system survives settings updates', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const survivalResult = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;

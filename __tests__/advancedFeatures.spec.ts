@@ -16,14 +16,14 @@ test.describe('Advanced Features', () => {
   test.describe('Data Attributes Configuration', () => {
     test('should clamp to min via data-bts-min', async ({ page }) => {
       const testid = 'touchspin-data-attributes';
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
       await apiHelpers.fillWithValueAndBlur(page, testid, '30');
       await apiHelpers.expectValueToBe(page, testid, '40', 2000);
     });
 
     test('should clamp to max via data-bts-max', async ({ page }) => {
       const testid = 'touchspin-data-attributes';
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
       // reset to a known baseline then exceed max
       await apiHelpers.fillWithValue(page, testid, '50');
       await apiHelpers.fillWithValueAndBlur(page, testid, '70');
@@ -32,7 +32,7 @@ test.describe('Advanced Features', () => {
 
     test('should apply step from data-bts-step', async ({ page }) => {
       const testid = 'touchspin-data-attributes';
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
       await apiHelpers.fillWithValue(page, testid, '50');
       await apiHelpers.clickUpButton(page, testid);
       await apiHelpers.expectValueToBe(page, testid, '52', 2000);
@@ -89,7 +89,7 @@ test.describe('Advanced Features', () => {
       const testid = 'touchspin-default';
 
       // Simulate touch events
-      const wrapper3 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper3 = await apiHelpers.getWrapperWhenReady(page, testid);
       await wrapper3.evaluate((container) => {
         const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         button?.dispatchEvent(new Event('touchstart', { bubbles: true }));

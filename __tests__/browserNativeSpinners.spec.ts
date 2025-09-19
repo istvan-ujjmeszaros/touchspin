@@ -36,7 +36,7 @@ test.describe('Browser Native Spinner Controls', () => {
   test.describe('Native Attributes Only', () => {
     test('should respect native min when no TouchSpin min provided', async ({ page }) => {
       const testid = 'touchspin-native-only-attrs';
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
 
       // Try to go below native min=2 from a known baseline
       await apiHelpers.fillWithValue(page, testid, '5');
@@ -55,7 +55,7 @@ test.describe('Browser Native Spinner Controls', () => {
 
     test('should respect native max when no TouchSpin max provided', async ({ page }) => {
       const testid = 'touchspin-native-only-attrs';
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
 
       // Try to go above native max=12 from a known baseline
       await apiHelpers.fillWithValue(page, testid, '10');
@@ -77,7 +77,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-only-attrs';
 
       // Ensure TouchSpin is initialized by waiting for wrapper
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
 
       await apiHelpers.fillWithValue(page, testid, '5');
       const input = apiHelpers.getElement(page, testid);
@@ -111,7 +111,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-native-with-attrs';
 
       // Ensure TouchSpin is initialized by waiting for wrapper
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
 
       // Check that native attributes were updated to match TouchSpin settings
       const input = apiHelpers.getElement(page, testid);
@@ -448,7 +448,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-disabled-test';
 
       // Ensure TouchSpin is initialized and disabled immediately after init
-      await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      await apiHelpers.getWrapperWhenReady(page, testid);
 
       const input = apiHelpers.getElement(page, testid);
       await expect(input).toBeDisabled();
@@ -468,7 +468,7 @@ test.describe('Browser Native Spinner Controls', () => {
       const testid = 'touchspin-disabled-test';
 
       // Ensure TouchSpin is initialized and disabled
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, testid);
       const input = apiHelpers.getElement(page, testid);
       await expect(input).toBeDisabled();
 

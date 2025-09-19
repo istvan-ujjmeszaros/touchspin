@@ -21,7 +21,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
     test(`should maintain consistent button behavior (${name})`, async ({ page }, testInfo) => {
       testInfo.setTimeout(30000);
       await page.goto(`/__tests__/html/${html}`);
-      await apiHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
+      await apiHelpers.getWrapperWhenReady(page, 'touchspin-default');
 
       // Reset value and test increment
       await apiHelpers.fillWithValue(page, 'touchspin-default', '50');
@@ -38,7 +38,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
     test(`should generate valid HTML structure (${html})`, async ({ page }, testInfo) => {
       testInfo.setTimeout(20000);
       await page.goto(`/__tests__/html/${html}`);
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'touchspin-default');
 
       // Validate basic structure exists using data-testid selectors (consistent across versions)
       const hasUpButton = wrapper.getByTestId('touchspin-default-up');
@@ -55,7 +55,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
       testInfo.setTimeout(20000);
       await page.goto(`/__tests__/html/${html}`);
 
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'touchspin-default');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'touchspin-default');
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
       await expect(wrapper.getByTestId('touchspin-default-up')).toBeVisible();
       await expect(wrapper.getByTestId('touchspin-default-down')).toBeVisible();
@@ -79,7 +79,7 @@ test.describe('Cross-Version Renderer Consistency', () => {
       });
 
       // Wait for wrapper fully injected
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'prefix-postfix-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'prefix-postfix-wrapper');
 
       // Prefer role-based selectors to avoid relying on testid propagation timing
       const prefixEl = wrapper.locator('[data-touchspin-injected="prefix"]').first();

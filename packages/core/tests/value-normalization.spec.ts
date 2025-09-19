@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -14,14 +14,13 @@ const {
   clickDownButton,    // was: coreDownOnce
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
-  setInputAttr        // was: setInputAttribute
+  setInputAttribute        // was: setInputAttribute
 } = apiHelpers;
 
 test.describe('Core TouchSpin Value Normalization', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/minimal.html');
-    await apiHelpers.waitForCoreTestReady(page);
 
     // Set up event logging for Core tests (no jQuery needed)
     await page.evaluate(() => {
@@ -44,13 +43,13 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('getValue Method', () => {
     test('should return numeric value from input', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       const value = await getNumericValue(page, 'test-input');
       expect(value).toBe(50); // Default input value
     });
 
     test('should display empty string for empty input', async ({ page }) => {
-      await initializeCore(page, 'test-input', { initval: '' });
+      await initializeTouchspin(page, 'test-input', { initval: '' });
       // TouchSpin displays empty string in the input, even though getValue() returns NaN internally
       const displayValue = await readInputValue(page, 'test-input');
       expect(displayValue).toBe('');
@@ -58,7 +57,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
     test('should clear non-numeric input to empty string', async ({ page }) => {
       // Initialize first, then set non-numeric value
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         input.value = 'abc';
@@ -70,7 +69,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
     test('should use replacement value when input is empty', async ({ page }) => {
       await fillWithValue(page, 'test-input', '');
-      await initializeCore(page, 'test-input', { replacementval: '25' });
+      await initializeTouchspin(page, 'test-input', { replacementval: '25' });
       const value = await getNumericValue(page, 'test-input');
       expect(value).toBe(25);
     });
@@ -106,21 +105,21 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('setValue Method', () => {
     test('should set numeric value', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       await setValueViaAPI(page, 'test-input', 75);
       expect(await readInputValue(page, 'test-input')).toBe('75');
       expect(await getNumericValue(page, 'test-input')).toBe(75);
     });
 
     test('should set string numeric value', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       await setValueViaAPI(page, 'test-input', '85');
       expect(await readInputValue(page, 'test-input')).toBe('85');
       expect(await getNumericValue(page, 'test-input')).toBe(85);
     });
 
     test('should ignore invalid numeric values', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       const originalValue = await readInputValue(page, 'test-input');
       await setValueViaAPI(page, 'test-input', 'invalid');
       // Value should remain unchanged
@@ -128,7 +127,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should ignore infinite values', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       const originalValue = await readInputValue(page, 'test-input');
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -140,7 +139,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should respect disabled input', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         input.disabled = true;
@@ -152,7 +151,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should respect readonly input', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         input.setAttribute('readonly', '');
@@ -164,20 +163,20 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should apply constraints when setting value', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 0, max: 100 });
+      await initializeTouchspin(page, 'test-input', { min: 0, max: 100 });
       // Set value above max
       await setValueViaAPI(page, 'test-input', 150);
       expect(await getNumericValue(page, 'test-input')).toBe(100); // Clamped to max
     });
 
     test('should align to step when setting value', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 5 });
+      await initializeTouchspin(page, 'test-input', { step: 5 });
       await setValueViaAPI(page, 'test-input', 23);
       expect(await getNumericValue(page, 'test-input')).toBe(25); // 23 rounded to nearest step (25)
     });
 
     test('should NOT trigger change event when programmatic value is not sanitized', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
       // Clear event log
       await page.evaluate(() => window.clearEventLog());
       await setValueViaAPI(page, 'test-input', 80);
@@ -191,7 +190,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should trigger change event when programmatic value is sanitized', async ({ page }) => {
-      await initializeCore(page, 'test-input', { max: 60 });
+      await initializeTouchspin(page, 'test-input', { max: 60 });
       // Clear event log
       await page.evaluate(() => window.clearEventLog());
       await setValueViaAPI(page, 'test-input', 80); // Will be clamped to 60
@@ -208,19 +207,19 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('Value Constraints', () => {
     test('should clamp value to minimum boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 10, max: 90 });
+      await initializeTouchspin(page, 'test-input', { min: 10, max: 90 });
       await setValueViaAPI(page, 'test-input', 5);
       expect(await getNumericValue(page, 'test-input')).toBe(10); // Clamped to min
     });
 
     test('should clamp value to maximum boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 10, max: 90 });
+      await initializeTouchspin(page, 'test-input', { min: 10, max: 90 });
       await setValueViaAPI(page, 'test-input', 95);
       expect(await getNumericValue(page, 'test-input')).toBe(90); // Clamped to max
     });
 
     test('should handle null min/max boundaries', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: null, max: null });
+      await initializeTouchspin(page, 'test-input', { min: null, max: null });
       await setValueViaAPI(page, 'test-input', -1000);
       expect(await getNumericValue(page, 'test-input')).toBe(-1000); // No clamping
       await setValueViaAPI(page, 'test-input', 1000);
@@ -228,13 +227,13 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should handle both boundaries null', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: null, max: null });
+      await initializeTouchspin(page, 'test-input', { min: null, max: null });
       await setValueViaAPI(page, 'test-input', 12345);
       expect(await getNumericValue(page, 'test-input')).toBe(12345);
     });
 
     test('should handle minimum only', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 20, max: null });
+      await initializeTouchspin(page, 'test-input', { min: 20, max: null });
       await setValueViaAPI(page, 'test-input', 15);
       expect(await getNumericValue(page, 'test-input')).toBe(20); // Clamped to min
       await setValueViaAPI(page, 'test-input', 1000);
@@ -242,7 +241,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should handle maximum only', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: null, max: 80 });
+      await initializeTouchspin(page, 'test-input', { min: null, max: 80 });
       await setValueViaAPI(page, 'test-input', 90);
       expect(await getNumericValue(page, 'test-input')).toBe(80); // Clamped to max
       await setValueViaAPI(page, 'test-input', -1000);
@@ -252,7 +251,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('firstclickvalueifempty', () => {
     test('should use firstclickvalueifempty when input is NaN', async ({ page }) => {
-      await initializeCore(page, 'test-input', { firstclickvalueifempty: 42 });
+      await initializeTouchspin(page, 'test-input', { firstclickvalueifempty: 42 });
       // Simulate getting value when NaN
       const result = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -264,7 +263,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should use midpoint of min/max when firstclickvalueifempty not set', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 20, max: 80 });
+      await initializeTouchspin(page, 'test-input', { min: 20, max: 80 });
       const result = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         const core = (input as any)._touchSpinCore;
@@ -274,7 +273,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should handle null min in _valueIfIsNaN', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: null, max: 100 });
+      await initializeTouchspin(page, 'test-input', { min: null, max: 100 });
       const result = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         const core = (input as any)._touchSpinCore;
@@ -284,7 +283,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should handle null max in _valueIfIsNaN', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 10, max: null });
+      await initializeTouchspin(page, 'test-input', { min: 10, max: null });
       const result = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
         const core = (input as any)._touchSpinCore;
@@ -296,7 +295,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('Display Formatting', () => {
     test('should format value with specified decimals', async ({ page }) => {
-      await initializeCore(page, 'test-input', { decimals: 2 });
+      await initializeTouchspin(page, 'test-input', { decimals: 2 });
       await setValueViaAPI(page, 'test-input', 42);
       expect(await readInputValue(page, 'test-input')).toBe('42.00');
     });
@@ -317,7 +316,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should handle zero decimals', async ({ page }) => {
-      await initializeCore(page, 'test-input', { decimals: 0 });
+      await initializeTouchspin(page, 'test-input', { decimals: 0 });
       await setValueViaAPI(page, 'test-input', 42.789);
       expect(await readInputValue(page, 'test-input')).toBe('43'); // Rounded to integer
     });
@@ -325,7 +324,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
 
   test.describe('Value Check on Blur', () => {
     test('should sanitize value on blur', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 0, max: 100, step: 5 });
+      await initializeTouchspin(page, 'test-input', { min: 0, max: 100, step: 5 });
       // Set invalid value directly in input
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -341,7 +340,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should emit change event when value is corrected on blur', async ({ page }) => {
-      await initializeCore(page, 'test-input', { max: 50 });
+      await initializeTouchspin(page, 'test-input', { max: 50 });
       // Set value above max directly
       await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -362,7 +361,7 @@ test.describe('Core TouchSpin Value Normalization', () => {
     });
 
     test('should not emit change event when value is already correct', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 0, max: 100 });
+      await initializeTouchspin(page, 'test-input', { min: 0, max: 100 });
       // Set valid value
       await fillWithValue(page, 'test-input', '50');
       // Clear event log after setting value

@@ -23,7 +23,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that user button text was applied
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-button-text-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-button-text-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -39,7 +39,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that user prefix/postfix was applied
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-prefix-postfix-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-prefix-postfix-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
 
@@ -55,7 +55,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that user vertical button content was applied
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-vertical-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-vertical-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -75,7 +75,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that user classes override renderer defaults
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-user-override-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-user-override-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -154,7 +154,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that data attributes were applied
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-data-attrs-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-data-attrs-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
       const postfixElement = wrapper.locator('[data-touchspin-injected="postfix"]');
 
@@ -179,7 +179,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check that JS settings override data attributes
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-js-override-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-js-override-wrapper');
       const prefixElement = wrapper.locator('[data-touchspin-injected="prefix"]');
 
       // Should have JS prefix, not data attribute prefix
@@ -206,7 +206,7 @@ test.describe('Settings Precedence System', () => {
       await page.waitForLoadState('networkidle');
 
       // Check initial state
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'test-button-text-wrapper');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'test-button-text-wrapper');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
 
       await expect(upButton).toHaveText('USER-UP');

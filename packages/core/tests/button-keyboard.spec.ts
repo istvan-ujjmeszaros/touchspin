@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -22,7 +21,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
 
   test.describe('Up Button Keyboard Interaction', () => {
     test('Space key on up button starts and stops spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: true
@@ -55,7 +54,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Enter key on up button starts and stops spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         initval: 20,
         focusablebuttons: true
@@ -84,7 +83,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('other keys on up button are ignored', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: true
@@ -108,7 +107,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('auto-repeat keydown events are ignored', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: true
@@ -158,7 +157,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Space preventDefault behavior on up button', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: true
@@ -220,7 +219,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
 
   test.describe('Down Button Keyboard Interaction', () => {
     test('Space key on down button starts and stops spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: true
@@ -253,7 +252,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Enter key on down button starts and stops spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         initval: 30,
         focusablebuttons: true
@@ -279,7 +278,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('non-focusable buttons ignore keyboard events', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         focusablebuttons: false // Disabled focusable buttons
@@ -303,7 +302,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
 
   test.describe('Input Element Arrow Key Handling', () => {
     test('Arrow up key on input starts up spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -321,7 +320,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Arrow down key on input starts down spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         initval: 20
       });
@@ -339,7 +338,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Arrow key release stops spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10,
         stepinterval: 50 // Fast for testing
@@ -370,7 +369,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Arrow key auto-repeat is ignored', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -407,7 +406,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Enter key on input triggers value check', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -427,7 +426,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
     });
 
     test('Arrow keys prevent default behavior', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 10
       });
@@ -486,7 +485,7 @@ test.describe('Core TouchSpin Button Keyboard Interaction', () => {
 
   test.describe('Keyboard Integration with Boundaries', () => {
     test('keyboard spin stops at boundaries', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 2,

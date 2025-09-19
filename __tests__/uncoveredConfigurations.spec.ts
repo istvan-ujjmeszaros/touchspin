@@ -56,7 +56,7 @@ test.describe('Uncovered Configuration Options', () => {
       });
 
       // Hold down button for extended time to see if boosting occurs
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'no-booster-test');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'no-booster-test');
       await wrapper.evaluate((container) => {
         const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
         if (button) {

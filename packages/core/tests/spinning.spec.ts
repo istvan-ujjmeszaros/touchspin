@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -19,14 +19,13 @@ const {
   clickDownButton,    // was: coreDownOnce
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
-  setInputAttr        // was: setInputAttribute
+  setInputAttribute        // was: setInputAttribute
 } = apiHelpers;
 
 test.describe('Core TouchSpin Continuous Spinning', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -35,7 +34,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
 
   test.describe('Spin API Methods', () => {
     test('should start up spin via API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await startUpSpinViaAPI(page, 'test-input');
@@ -45,7 +44,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should start down spin via API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await startDownSpinViaAPI(page, 'test-input');
@@ -55,7 +54,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should stop spin via API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await startUpSpinViaAPI(page, 'test-input');
       await apiHelpers.clearEventLog(page);
 
@@ -66,7 +65,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should handle multiple spin operations', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await stopSpinViaAPI(page, 'test-input');
@@ -80,7 +79,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
 
   test.describe('Spin Behavior at Boundaries', () => {
     test('should emit min event when value reaches minimum boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, min: 0, initval: 1 });
+      await initializeTouchspin(page, 'test-input', { step: 1, min: 0, initval: 1 });
       await apiHelpers.clearEventLog(page);
 
       // Use API decrement to reach minimum directly
@@ -92,7 +91,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should emit max event when value reaches maximum boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, max: 10, initval: 9 });
+      await initializeTouchspin(page, 'test-input', { step: 1, max: 10, initval: 9 });
       await apiHelpers.clearEventLog(page);
 
       // Use API increment to reach maximum directly
@@ -104,7 +103,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should respect step boundaries while spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, min: 0, max: 15, initval: 6 });
+      await initializeTouchspin(page, 'test-input', { step: 3, min: 0, max: 15, initval: 6 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await apiHelpers.waitForTimeout(50);
@@ -119,7 +118,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
 
   test.describe('Spin Direction Changes', () => {
     test('should stop current spin when starting opposite direction', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await apiHelpers.clearEventLog(page);
@@ -132,7 +131,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should handle rapid direction changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await startDownSpinViaAPI(page, 'test-input');
@@ -146,7 +145,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should maintain consistent state after direction changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
       const initialValue = await getNumericValue(page, 'test-input');
 
       await startUpSpinViaAPI(page, 'test-input');
@@ -160,7 +159,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
 
   test.describe('Keyboard and Mouse Spin Events', () => {
     test('should handle held arrow key simulation', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
 
       const initialValue = await getNumericValue(page, 'test-input');
@@ -175,7 +174,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should stop spin on focus loss', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
 
       await startUpSpinViaAPI(page, 'test-input');
@@ -191,7 +190,7 @@ test.describe('Core TouchSpin Continuous Spinning', () => {
     });
 
     test('should handle mousewheel events with focus', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await page.focus('[data-testid="test-input"]');
       await apiHelpers.clearEventLog(page);
 

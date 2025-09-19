@@ -134,7 +134,7 @@ expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
 **Test Helpers Strategy**:
 ```typescript
 // packages/core/test-helpers/core-adapter.ts
-export async function initializeCore(page, testId, options)  // Creates TouchSpinCore instance directly
+export async function initializeTouchspin(page, testId, options)  // Creates TouchSpinCore instance directly
 export async function incrementViaAPI(page, testId)    // Uses core.upOnce()
 export async function decrementViaAPI(page, testId)    // Uses core.downOnce()
 export async function incrementViaKeyboard(page, testId) // ArrowUp key
@@ -176,18 +176,18 @@ When writing tests involving `step` values, always choose an `initval` that is d
 
 ```typescript
 // ❌ BAD: Will cause normalization (50 → 51 when step=3)
-await initializeCore(page, 'test-input', { step: 3 });
+await initializeTouchspin(page, 'test-input', { step: 3 });
 await decrementViaAPI(page, 'test-input');
 expect(await getNumericValue(page, 'test-input')).toBe(47); // FAILS: Actually 48
 
 // ✅ GOOD: Use divisible initial value
-await initializeCore(page, 'test-input', { step: 3, initval: 48 });
+await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
 await decrementViaAPI(page, 'test-input');
 expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
 
 // ✅ GOOD: Use setValueViaAPI to ensure exact value before testing
 await setValueViaAPI(page, 'test-input', 48);
-await initializeCore(page, 'test-input', { step: 3 });
+await initializeTouchspin(page, 'test-input', { step: 3 });
 await decrementViaAPI(page, 'test-input');
 expect(await getNumericValue(page, 'test-input')).toBe(45); // PASSES
 ```
@@ -217,9 +217,9 @@ There are two distinct initialization functions for different test scenarios:
 **1. Core Tests (Renderer-Independent)**
 ```typescript
 // packages/core/test-helpers/core-adapter.ts
-import { initializeCore } from '../test-helpers/core-adapter';
+import { initializeTouchspin } from '../test-helpers/core-adapter';
 
-await initializeCore(page, 'test-input', {
+await initializeTouchspin(page, 'test-input', {
   step: 3,
   min: 0,
   max: 100,
@@ -232,7 +232,7 @@ await initializeCore(page, 'test-input', {
 // Uses existing jQuery-based helpers
 import touchspinHelpers from '../test-helpers';
 
-await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {
+await touchspinHelpers.initializeTouchspinJQuery(page, 'test-input', {
   step: 3,
   min: 0,
   max: 100
@@ -242,7 +242,7 @@ await touchspinHelpers.initializeTouchSpinJQuery(page, 'test-input', {
 **✅ CORRECT Core Test Pattern:**
 ```typescript
 // Use initval option instead of separate setValue call
-await initializeCore(page, 'test-input', {
+await initializeTouchspin(page, 'test-input', {
   step: 0.25,
   decimals: 2,
   initval: 10  // Sets value before Core initialization
@@ -255,12 +255,12 @@ expect(await getNumericValue(page, 'test-input')).toBe(10.25);
 ```typescript
 // This will fail because _touchSpinCore doesn't exist yet
 await setValueViaAPI(page, 'test-input', 10);  // FAILS!
-await initializeCore(page, 'test-input', { step: 0.25, decimals: 2 });
+await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2 });
 ```
 
 **Key Differences:**
-- **`initializeCore`**: Creates `new TouchSpinCore()` directly, stores on `input._touchSpinCore`
-- **`initializeTouchSpinJQuery`**: Uses jQuery wrapper, creates renderer UI elements
+- **`initializeTouchspin`**: Creates `new TouchSpinCore()` directly, stores on `input._touchSpinCore`
+- **`initializeTouchspinJQuery`**: Uses jQuery wrapper, creates renderer UI elements
 - **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
 - **Core helpers work without renderer**: No buttons created, API/keyboard/wheel only
 
@@ -326,14 +326,14 @@ packages/core/
 
    ```typescript
    import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
-   import { initializeCore } from '../test-helpers/core-adapter';
+   import { initializeTouchspin } from '../test-helpers/core-adapter';
    ```
 
 ### ✅ Do
 
 ```typescript
 import touchspinHelpers from '../../__tests__/helpers/touchspinHelpers';
-import { initializeCore } from '../test-helpers/core-adapter';
+import { initializeTouchspin } from '../test-helpers/core-adapter';
 ```
 
 ### ❌ Don’t
@@ -551,15 +551,15 @@ expect(await touchspinHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(t
   3. Mutation observer active
   4. Component ready for interaction
 
-**IMPORTANT**: The `initializeCore` helper automatically waits for this attribute before returning. Tests should never manually check for initialization - the helper guarantees the Core is ready.
+**IMPORTANT**: The `initializeTouchspin` helper automatically waits for this attribute before returning. Tests should never manually check for initialization - the helper guarantees the Core is ready.
 
 ```typescript
-// ✅ CORRECT - initializeCore waits for full initialization
-await initializeCore(page, 'test-input', { step: 5 });
+// ✅ CORRECT - initializeTouchspin waits for full initialization
+await initializeTouchspin(page, 'test-input', { step: 5 });
 // Core is guaranteed to be fully ready here
 
 // ❌ WRONG - Don't manually check, helper does this
-await initializeCore(page, 'test-input', { step: 5 });
+await initializeTouchspin(page, 'test-input', { step: 5 });
 await page.waitForSelector('[data-testid="test-input"][data-touchspin-injected]'); // Redundant!
 ```
 

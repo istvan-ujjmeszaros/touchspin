@@ -15,7 +15,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
   test.describe('Basic Rendering', () => {
     test('should inject required data-touchspin-injected attributes', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
 
       // Verify wrapper itself has the data attribute
       await expect(wrapper).toHaveAttribute('data-touchspin-injected', 'wrapper');
@@ -36,7 +36,7 @@ test.describe('Tailwind CSS Renderer', () => {
 
     test('should work without any Bootstrap CSS dependencies', async ({ page }) => {
       // Verify TouchSpin still functions correctly
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
 
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -72,7 +72,7 @@ test.describe('Tailwind CSS Renderer', () => {
     });
 
     test('should handle basic increment/decrement', async ({ page }) => {
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const input = wrapper.locator('input[type="text"]');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
@@ -141,7 +141,7 @@ test.describe('Tailwind CSS Renderer', () => {
       await page.click('[data-testid="basic-update-up-text"]');
       await page.click('[data-testid="basic-update-down-text"]');
 
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 
@@ -157,7 +157,7 @@ test.describe('Tailwind CSS Renderer', () => {
         $i.trigger('touchspin.updatesettings', [{ buttonup_class: 'custom-up-class', buttondown_class: 'custom-down-class' }]);
       });
 
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, 'basic-container');
+      const wrapper = await apiHelpers.getWrapperWhenReady(page, 'basic-container');
       const upButton = wrapper.locator('[data-touchspin-injected="up"]');
       const downButton = wrapper.locator('[data-touchspin-injected="down"]');
 

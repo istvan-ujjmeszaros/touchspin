@@ -224,7 +224,7 @@ test.describe('Events', () => {
     const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
     // Ensure ready and isolate events for this test
-    await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+    await apiHelpers.getWrapperWhenReady(page, testid);
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
     // Hold ArrowUp to initiate spinning for longer than stepintervaldelay (100ms)
@@ -241,7 +241,7 @@ test.describe('Events', () => {
     const elementId = await apiHelpers.getElementIdFromTestId(page, testid);
 
     // Ensure ready and isolate events for this test
-    const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
+    const wrapper = await apiHelpers.getWrapperWhenReady(page, testid);
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');

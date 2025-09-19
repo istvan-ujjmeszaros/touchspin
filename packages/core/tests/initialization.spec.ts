@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -16,14 +16,13 @@ const {
   clickDownButton,    // was: coreDownOnce
   readInputValue,     // was: getInputValue
   fillWithValue,      // was: setInputValue
-  setInputAttr        // was: setInputAttribute
+  setInputAttribute        // was: setInputAttribute
 } = apiHelpers;
 
 test.describe('Core TouchSpin Initialization', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -32,14 +31,14 @@ test.describe('Core TouchSpin Initialization', () => {
 
   test.describe('Basic Initialization', () => {
     test('should initialize with default settings', async ({ page }) => {
-      await initializeCore(page, 'test-input', {});
+      await initializeTouchspin(page, 'test-input', {});
 
       expect(await isCoreInitialized(page, 'test-input')).toBe(true);
       expect(await getNumericValue(page, 'test-input')).toBe(50); // Fixture default value
     });
 
     test('should initialize with custom settings', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 5,
         max: 25,
         step: 2,
@@ -68,7 +67,7 @@ test.describe('Core TouchSpin Initialization', () => {
     });
 
     test('should set up input attributes correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', { min: 10, max: 50, step: 5 });
+      await initializeTouchspin(page, 'test-input', { min: 10, max: 50, step: 5 });
 
       const attributes = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -91,7 +90,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
   test.describe('State Setup', () => {
     test('should initialize internal state correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
 
       // Test that increment/decrement work immediately after initialization
       await incrementViaAPI(page, 'test-input');
@@ -102,14 +101,14 @@ test.describe('Core TouchSpin Initialization', () => {
     });
 
     test('should process initial value from options', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 42 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 42 });
 
       expect(await getNumericValue(page, 'test-input')).toBe(42);
     });
 
     test('should apply constraints to initial value', async ({ page }) => {
       // Initial value above max should be clamped
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 0,
         max: 20,
         step: 1,
@@ -121,7 +120,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
     test('should set up step normalization', async ({ page }) => {
       // Initial value not aligned to step should be normalized
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         forcestepdivisibility: 'round',
         initval: 17
@@ -131,7 +130,7 @@ test.describe('Core TouchSpin Initialization', () => {
     });
 
     test('should handle decimal precision setup', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         decimals: 2,
         step: 0.25,
         initval: 5.1234
@@ -144,7 +143,7 @@ test.describe('Core TouchSpin Initialization', () => {
   test.describe('Error Handling', () => {
     test('should handle invalid settings gracefully', async ({ page }) => {
       // Test invalid decimals - should default to 0
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         decimals: -5, // Invalid negative decimals
         step: 1,
         initval: 5.75
@@ -155,7 +154,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
     test('should handle conflicting min/max settings', async ({ page }) => {
       // Test min > max
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: 50,
         max: 10, // max < min
         step: 1,
@@ -168,7 +167,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
     test('should prevent double initialization on same element', async ({ page }) => {
       // First initialization
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const firstValue = await getNumericValue(page, 'test-input');
       expect(firstValue).toBe(10);
@@ -194,7 +193,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
     test('should handle null/undefined options', async ({ page }) => {
       // Test with minimal options
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         min: null,
         max: null,
         step: 1
@@ -210,7 +209,7 @@ test.describe('Core TouchSpin Initialization', () => {
 
   test.describe('Initialization Lifecycle', () => {
     test('should be ready for value operations after initialization', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 3, min: 0, max: 100, initval: 15 });
+      await initializeTouchspin(page, 'test-input', { step: 3, min: 0, max: 100, initval: 15 });
 
       // Test all basic operations work immediately
       await incrementViaAPI(page, 'test-input');
@@ -224,7 +223,7 @@ test.describe('Core TouchSpin Initialization', () => {
     });
 
     test('should be ready for boundary enforcement after initialization', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, min: 10, max: 20, initval: 15 });
+      await initializeTouchspin(page, 'test-input', { step: 1, min: 10, max: 20, initval: 15 });
 
       // Test boundary enforcement works
       await setValueViaAPI(page, 'test-input', 5); // Below min
@@ -241,13 +240,13 @@ test.describe('Core TouchSpin Initialization', () => {
         input.value = '42';
       });
 
-      await initializeCore(page, 'test-input', { step: 1 }); // No initval
+      await initializeTouchspin(page, 'test-input', { step: 1 }); // No initval
 
       expect(await getNumericValue(page, 'test-input')).toBe(42); // Preserves input value
     });
 
     test('should create DOM markers for initialization tracking', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1 });
+      await initializeTouchspin(page, 'test-input', { step: 1 });
 
       const hasMarker = await page.evaluate(() => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -258,7 +257,7 @@ test.describe('Core TouchSpin Initialization', () => {
     });
 
     test('should support custom step values immediately', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 0.5, decimals: 1, initval: 5.0 });
+      await initializeTouchspin(page, 'test-input', { step: 0.5, decimals: 1, initval: 5.0 });
 
       await incrementViaAPI(page, 'test-input');
       expect(await getNumericValue(page, 'test-input')).toBe(5.5); // Custom step works

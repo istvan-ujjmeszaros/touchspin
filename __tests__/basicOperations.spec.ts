@@ -42,14 +42,14 @@ test.describe('Core functionality', () => {
     const testid = 'touchspin-default';
 
     // Test disabled input
-    await apiHelpers.setInputAttr(page, testid, 'disabled', true);
+    await apiHelpers.setInputAttribute(page, testid, 'disabled', true);
     await apiHelpers.clickUpButton(page, testid);
     expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
     expect(await apiHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);
 
     // Reset and test readonly
-    await apiHelpers.setInputAttr(page, testid, 'disabled', false);
-    await apiHelpers.setInputAttr(page, testid, 'readonly', true);
+    await apiHelpers.setInputAttribute(page, testid, 'disabled', false);
+    await apiHelpers.setInputAttribute(page, testid, 'readonly', true);
     await apiHelpers.clickUpButton(page, testid);
     expect(await apiHelpers.readInputValue(page, testid)).toBe('50');
     expect(await apiHelpers.checkTouchspinUpIsDisabled(page, testid)).toBe(true);

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -40,7 +39,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         };
       });
 
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 10,
         max: 90,
@@ -84,7 +83,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         input.removeAttribute('step');
       });
 
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         min: 0,
         max: 100,
@@ -133,7 +132,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
         };
       });
 
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 5,
         min: 10,
         max: 90, // This will add max attribute
@@ -406,7 +405,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
 
   test.describe('Dynamic Attribute Changes', () => {
     test('native attribute changes trigger setting updates', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 50
       });
@@ -430,7 +429,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
     });
 
     test('data-bts attribute changes are ignored during runtime', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         max: 100,
@@ -455,7 +454,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
     });
 
     test('disabled/readonly state changes are handled', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 50
       });
@@ -484,7 +483,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
     });
 
     test('rapid attribute changes are handled gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 50
       });
@@ -545,7 +544,7 @@ test.describe('Core TouchSpin Data Attributes Advanced Cases', () => {
     });
 
     test('attribute mutation observer handles frequent changes', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         initval: 50
       });

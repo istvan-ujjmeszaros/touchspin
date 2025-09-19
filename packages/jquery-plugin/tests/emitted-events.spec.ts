@@ -9,15 +9,13 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.beforeEach(async ({ page }) => {
     // Reload page for each test to ensure clean state
     await page.goto('http://localhost:8866/packages/jquery-plugin/tests/html/test-fixture.html');
-    await apiHelpers.waitForPageReady(page, 'testPageReady');
     await apiHelpers.installJqueryPlugin(page);
-    await apiHelpers.waitForTouchSpinPluginReady(page);
   });
 
   test.describe('Boundary Events', () => {
 
     test('should emit touchspin.on.min when reaching minimum', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 0, initval: 1 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { min: 0, initval: 1 });
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickDownButton(page, 'test-input');
@@ -28,7 +26,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.max when reaching maximum', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { max: 100, initval: 99 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { max: 100, initval: 99 });
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -39,7 +37,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit min event when trying to go below minimum', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 10, initval: 10 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { min: 10, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickDownButton(page, 'test-input');
@@ -50,7 +48,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit max event when trying to go above maximum', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { max: 100, initval: 100 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { max: 100, initval: 100 });
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -64,10 +62,10 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Spin Start Events', () => {
 
     test('should emit touchspin.on.startspin when spinning starts', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       // Wait for the event to be logged
       await apiHelpers.waitForEventInLog(page, 'touchspin.on.startspin');
@@ -78,10 +76,10 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.startupspin when up spinning starts', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       await apiHelpers.waitForEventInLog(page, 'touchspin.on.startupspin');
 
@@ -91,7 +89,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.startdownspin when down spinning starts', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await jqueryHelpers.jQueryStartDownSpin(page, 'test-input');
@@ -107,10 +105,10 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Spin Stop Events', () => {
 
     test('should emit touchspin.on.stopspin when spinning stops', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Start spinning first
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       await apiHelpers.waitForTimeout(100);
       await apiHelpers.clearEventLog(page);
@@ -123,10 +121,10 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.stopupspin when up spinning stops', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Start up spinning first
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       await apiHelpers.waitForTimeout(100);
       await apiHelpers.clearEventLog(page);
@@ -139,7 +137,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit touchspin.on.stopdownspin when down spinning stops', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Start down spinning first
       await jqueryHelpers.jQueryStartDownSpin(page, 'test-input');
@@ -158,10 +156,10 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Sequences', () => {
 
     test('should emit start events before stop events', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       await apiHelpers.waitForTimeout(200);
 
@@ -177,11 +175,11 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit correct events when switching spin direction', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       // Start up spin
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
+      await jqueryHelpers.jQueryApiStartUpSpin(page, 'test-input');
 
       await apiHelpers.waitForTimeout(200);
 
@@ -206,7 +204,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Native Events', () => {
 
     test('should emit native change event when value changes', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -217,7 +215,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should NOT emit native change event when setting value via API', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await page.evaluate(() => {
@@ -230,7 +228,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit native focus event when input receives focus', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await page.focus('[data-testid="test-input"]');
@@ -239,7 +237,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should invoke value validation on jQuery-triggered blur', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 0, max: 100 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100 });
 
       // Set value above maximum to test validation correction
       await page.evaluate(() => {
@@ -264,7 +262,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Button Click Events', () => {
 
     test('should emit native click events when buttons are clicked', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -274,7 +272,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should update value with mouse wheel and emit only native change (no start/stopspin)', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1, initval: 50 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 1, initval: 50 });
       await apiHelpers.clearEventLog(page);
 
       const input = page.locator('[data-testid="test-input"]');
@@ -297,7 +295,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should emit events when clicking at boundaries', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { max: 100, initval: 100 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { max: 100, initval: 100 });
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -311,7 +309,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Multiple Event Types', () => {
 
     test('should emit both TouchSpin and native events together', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { min: 40, max: 50, initval: 45 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { min: 40, max: 50, initval: 45 });
       await apiHelpers.clearEventLog(page);
 
       // Action that should trigger multiple event types
@@ -328,7 +326,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should track event counts correctly', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 5 });
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', { step: 5 });
       await apiHelpers.clearEventLog(page);
 
       // Click multiple times
@@ -346,7 +344,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Context and Data', () => {
 
     test('should provide correct event target in logged events', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -360,7 +358,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
     });
 
     test('should log value changes with events', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
       await apiHelpers.clearEventLog(page);
 
       await apiHelpers.clickUpButton(page, 'test-input');
@@ -377,7 +375,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
   test.describe('Event Cleanup', () => {
 
     test('should stop emitting events after destroy', async ({ page }) => {
-      await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', {});
+      await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {});
 
       // Destroy the instance
       await page.evaluate(() => {

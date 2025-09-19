@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -19,7 +19,6 @@ test.describe('Core TouchSpin Public API', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -29,7 +28,7 @@ test.describe('Core TouchSpin Public API', () => {
 
   test.describe('toPublicApi Method', () => {
     test('exposes all public API methods', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const publicApi = await getPublicAPI(page, 'test-input');
 
@@ -48,7 +47,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('methods maintain correct context binding', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Test that methods work when called from public API
       const result = await page.evaluate(async () => {
@@ -82,7 +81,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('setValue method works through public API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -98,7 +97,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('updateSettings method works through public API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, decimals: 0, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, decimals: 0, initval: 10 });
 
       await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -113,7 +112,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('destroy method works through public API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const isDestroyedViaAPI = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -132,7 +131,7 @@ test.describe('Core TouchSpin Public API', () => {
 
   test.describe('Direct API Spin Methods', () => {
     test('startUpSpin method works directly', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await startUpSpinViaAPI(page, 'test-input');
@@ -144,7 +143,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('startDownSpin method works directly', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await startDownSpinViaAPI(page, 'test-input');
@@ -156,7 +155,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('stopSpin method stops active spinning', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await apiHelpers.clearEventLog(page);
@@ -168,7 +167,7 @@ test.describe('Core TouchSpin Public API', () => {
 
     test('direct spin methods work without renderer/buttons', async ({ page }) => {
       // Initialize without any renderer (no buttons)
-      await initializeCore(page, 'test-input', { step: 2, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
 
       const initialValue = await getNumericValue(page, 'test-input');
 
@@ -182,7 +181,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('idempotent behavior - calling startUpSpin twice', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
       await apiHelpers.clearEventLog(page);
 
       await startUpSpinViaAPI(page, 'test-input');
@@ -197,7 +196,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('direction switching during spin', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       await startUpSpinViaAPI(page, 'test-input');
       await apiHelpers.clearEventLog(page);
@@ -215,7 +214,7 @@ test.describe('Core TouchSpin Public API', () => {
 
   test.describe('Event System API', () => {
     test('on/off methods work through public API', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const eventReceived = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -244,7 +243,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('off method removes all handlers when no specific handler provided', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -280,7 +279,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('event system handles callback errors gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
@@ -313,7 +312,7 @@ test.describe('Core TouchSpin Public API', () => {
 
   test.describe('API Behavior After Destroy', () => {
     test('API methods handle destroy gracefully', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       // Get public API reference before destroy
       const result = await page.evaluate(async () => {
@@ -341,7 +340,7 @@ test.describe('Core TouchSpin Public API', () => {
     });
 
     test('double destroy is safe', async ({ page }) => {
-      await initializeCore(page, 'test-input', { step: 1, initval: 10 });
+      await initializeTouchspin(page, 'test-input', { step: 1, initval: 10 });
 
       const result = await page.evaluate(async () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;

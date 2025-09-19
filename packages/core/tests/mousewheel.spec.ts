@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '../../../__tests__/helpers/touchspinApiHelpers';
 import {
-  initializeCore,
+  initializeTouchspin,
   getNumericValue,
   setValueViaAPI,
   destroyCore,
@@ -12,7 +12,6 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.startCoverage(page);
     await page.goto('http://localhost:8866/packages/core/tests/html/test-fixture.html');
-    await apiHelpers.waitForCoreTestReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
@@ -22,7 +21,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
 
   test.describe('Mousewheel Configuration', () => {
     test('disabled mousewheel ignores wheel events', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: false, // Disabled
         initval: 10
@@ -47,7 +46,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('enabled mousewheel responds when input is focused', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true, // Enabled
         initval: 10
@@ -72,7 +71,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('mousewheel requires focus to work', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
@@ -98,7 +97,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('mousewheel events are prevented when enabled and focused', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
@@ -140,7 +139,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
 
   test.describe('Mousewheel Direction Detection', () => {
     test('negative deltaY triggers upOnce', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 2,
         mousewheel: true,
         initval: 10
@@ -161,7 +160,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('positive deltaY triggers downOnce', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         mousewheel: true,
         initval: 15
@@ -182,7 +181,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('zero deltaY is ignored', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
@@ -211,7 +210,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
 
   test.describe('Mousewheel with Boundaries', () => {
     test('mousewheel respects min boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         min: 0,
         mousewheel: true,
@@ -239,7 +238,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('mousewheel respects max boundary', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         max: 10,
         mousewheel: true,
@@ -269,7 +268,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
 
   test.describe('Mousewheel Integration', () => {
     test('mousewheel works with decimal steps', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 0.5,
         decimals: 1,
         mousewheel: true,
@@ -294,7 +293,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('mousewheel triggers value normalization', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 3,
         forcestepdivisibility: 'round',
         mousewheel: true,
@@ -314,7 +313,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('multiple rapid wheel events work correctly', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
@@ -335,7 +334,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
     });
 
     test('mousewheel disabled after destroy', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
@@ -360,7 +359,7 @@ test.describe('Core TouchSpin Mousewheel Handling', () => {
 
   test.describe('Focus Integration', () => {
     test('focus changes during wheel events', async ({ page }) => {
-      await initializeCore(page, 'test-input', {
+      await initializeTouchspin(page, 'test-input', {
         step: 1,
         mousewheel: true,
         initval: 10
