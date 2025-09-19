@@ -596,20 +596,123 @@ expect(await touchspinHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(tru
 
 ### Helper Functions Reference
 
+The test helpers are now organized into focused modules for better maintainability:
+
+#### Import Options
+
 ```typescript
-startCoverage(page)
-installJqueryPlugin(page)
-initializeTouchSpin(page, testId, options)
-getTouchSpinElementsStrict(page, testId)
-clickUpButton(page, testId)
-clickDownButton(page, testId)
-clearEventLog(page)
-getEventLog(page)
-hasEventInLog(page, event, type?)
-countEventInLog(page, event, type?)
-getEventsOfType(page, type)
-waitForEventInLog(page, event, options?)
-readInputValue(page, testId)
+// Option 1: Import everything (backward compatible)
+import * as apiHelpers from '__tests__/helpers/touchspinApiHelpers';
+
+// Option 2: Import specific modules (recommended for new tests)
+import { clickUpButton, holdDownButton } from '__tests__/helpers/interactions/buttons';
+import { expectValueToBe } from '__tests__/helpers/assertions/values';
+import { setupLogging, clearEventLog } from '__tests__/helpers/events';
+```
+
+#### Core Functionality
+
+**Element Access & Selectors:**
+- `getTouchSpinElements(page, testId)` - Returns wrapper, input, buttons, prefix/postfix
+- `getTouchSpinWrapper(page, testId)` - Returns wrapper element
+- `getElement(page, testId)` - Returns input element
+- `inputById(page, testId)`, `wrapperById(page, testId)` - Basic selectors
+
+**Initialization & State:**
+- `initializeTouchspinJQuery(page, testId, options)` - jQuery plugin initialization
+- `initializeTouchspin(page, testId, options)` - Core initialization
+- `isTouchSpinInitialized(page, testId)` - Check if initialized
+- `isTouchSpinDestroyed(page, testId)` - Check if destroyed
+- `isCoreInitialized(page, testId)` - Check Core instance exists
+
+#### Interactions
+
+**Button Operations:**
+- `clickUpButton(page, testId)`, `clickDownButton(page, testId)` - Single clicks
+- `holdUpButton(page, testId, ms)`, `holdDownButton(page, testId, ms)` - Hold for duration
+- `focusUpButton(page, testId)`, `focusDownButton(page, testId)` - Focus buttons
+
+**Keyboard Operations:**
+- `pressUpArrowKeyOnInput(page, testId)`, `pressDownArrowKeyOnInput(page, testId)` - Single key press
+- `holdUpArrowKeyOnInput(page, testId, ms)`, `holdDownArrowKeyOnInput(page, testId, ms)` - Hold keys
+
+**Mouse Operations:**
+- `wheelUpOnInput(page, testId)`, `wheelDownOnInput(page, testId)` - Mouse wheel events
+
+**Input Operations:**
+- `readInputValue(page, testId)` - Get current input value
+- `fillWithValue(page, testId, value)` - Fill input with value
+- `fillWithValueAndBlur(page, testId, value)` - Fill and trigger blur
+- `typeInInput(page, testId, text)` - Type text into input
+- `selectAllInInput(page, testId)` - Select all text
+
+#### Core API Operations
+
+- `getNumericValue(page, testId)` - Get parsed numeric value
+- `setValueViaAPI(page, testId, value)` - Set value via Core API
+- `incrementViaAPI(page, testId)`, `decrementViaAPI(page, testId)` - Direct API calls
+- `startUpSpinViaAPI(page, testId)`, `startDownSpinViaAPI(page, testId)` - Start spinning
+- `stopSpinViaAPI(page, testId)` - Stop spinning
+- `updateSettingsViaAPI(page, testId, settings)` - Update configuration
+- `destroyCore(page, testId)` - Destroy Core instance
+
+#### Event System
+
+**Event Logging:**
+- `setupLogging(page)` - Initialize event capture (idempotent)
+- `clearEventLog(page)` - Clear event history
+- `getEventLog(page)` - Get full event log array
+- `hasEventInLog(page, event, type?)` - Check if event occurred
+- `countEventInLog(page, event, type?)` - Count event occurrences
+- `waitForEventInLog(page, event, options?)` - Wait for specific event
+- `getEventsOfType(page, type)` - Get events by type ('native' | 'touchspin')
+
+#### Assertions (Polled Expectations)
+
+**Value Assertions:**
+- `expectValueToBe(page, testId, expected, timeout?)` - Wait for specific value
+- `expectValueToBeGreaterThan(page, testId, value, timeout?)` - Wait for value > threshold
+- `expectValueToBeLessThan(page, testId, value, timeout?)` - Wait for value < threshold
+- `expectValueToBeBetween(page, testId, min, max, timeout?)` - Wait for value in range
+
+**Button State Assertions:**
+- `expectButtonToBeDisabled(page, testId, 'up'|'down', timeout?)` - Wait for disabled state
+- `expectButtonToBeEnabled(page, testId, 'up'|'down', timeout?)` - Wait for enabled state
+
+**Event Assertions:**
+- `expectEventFired(page, eventName, timeout?)` - Wait for event to fire
+- `expectNoEvent(page, eventName, timeout?)` - Ensure event doesn't fire
+- `expectEventCount(page, eventName, count, timeout?)` - Wait for specific event count
+
+#### Test Utilities
+
+**Coverage:**
+- `startCoverage(page)` - Start CDP coverage collection
+- `collectCoverage(page, testName)` - Collect and save coverage data
+
+**Test Setup:**
+- `installJqueryPlugin(page)` - Install jQuery plugin with Bootstrap5 renderer
+- `createAdditionalInput(page, testId, options)` - Create dynamic test inputs
+- `waitForPageReady(page, flag?, timeout?)` - Wait for page ready state
+
+#### Types
+
+```typescript
+type EventLogType = 'native' | 'touchspin';
+interface EventLogEntry {
+  type: EventLogType;
+  event: string;
+  target?: string;
+  value?: string;
+}
+interface TouchSpinElements {
+  wrapper: Locator;
+  input: Locator;
+  upButton: Locator;
+  downButton: Locator;
+  prefix: Locator;
+  postfix: Locator;
+}
 ```
 
 ### Test File Locations
