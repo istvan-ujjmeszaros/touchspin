@@ -64,5 +64,5 @@ export enum TouchSpinEmittedEvent {
  * Type for update settings event data
  */
 export interface TouchSpinUpdateSettingsData {
-  [key: string]: any;
+  [key: string]: unknown;
 }
