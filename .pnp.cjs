@@ -1760,6 +1760,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/renderers/bootstrap5", {\
         "packageLocation": "./packages/renderers/bootstrap5/",\
         "packageDependencies": [\
+          ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
           ["bootstrap", "virtual:bb7c6f9b30b2b961fef22dcd14c69f5e22c24e1c3eb6dfa1c9cee5ad9e755b7eaa12fad3dbee6a431fc79ca87553617be3a5082969865f79f94d857ec7946a12#npm:5.3.8"],\
@@ -1774,6 +1775,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/renderers/tailwind", {\
         "packageLocation": "./packages/renderers/tailwind/",\
         "packageDependencies": [\
+          ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-tailwind", "workspace:packages/renderers/tailwind"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
@@ -1796,6 +1798,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/vanilla-renderer", {\
         "packageLocation": "./packages/vanilla-renderer/",\
         "packageDependencies": [\
+          ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/vanilla-renderer", "workspace:packages/vanilla-renderer"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\

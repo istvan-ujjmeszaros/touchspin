@@ -1417,6 +1417,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     bootstrap: "npm:^5.3.3"
     typescript: "npm:^5.7.2"
@@ -1429,6 +1430,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
@@ -1446,6 +1448,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@touchspin/vanilla-renderer@workspace:packages/vanilla-renderer"
   dependencies:
+    "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"

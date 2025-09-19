@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers } from '@touchspin/core/test-helpers/runtime/installDomHelpers';
+import { installDomHelpers, startCoverage, collectCoverage } from '@touchspin/core/test-helpers';
 import { initializeTouchspinWithBootstrap5 } from './helpers/initialization';
-import { startCoverage, collectCoverage } from '@touchspin/core/test-helpers/test-utilities/coverage';
 
 test.describe('renderer-b5: custom labels/classes render', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,4 +35,3 @@ test.describe('renderer-b5: custom labels/classes render', () => {
     await expect(w.locator('[data-touchspin-injected="postfix"]')).toHaveClass(/fx-postfix/);
   });
 });
-
