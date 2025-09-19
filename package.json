@@ -55,6 +55,7 @@
     "dev:force": "node scripts/dev-force.mjs",
     "preview": "node scripts/static-server.mjs",
     "build": "yarn workspaces foreach -p -A run build",
+    "build:prod": "yarn workspaces foreach -p -A run build",
     "build:test": "yarn workspaces foreach -p -A run build:test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

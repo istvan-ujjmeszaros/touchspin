@@ -27,7 +27,9 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
-    "build": "echo 'Use root build:prod'",
+    "build": "run-p build:types build:js",
+    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-tailwind.scss dist/touchspin-tailwind.css --style=expanded --source-map --watch"
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
+    "tsup": "^8.1.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"

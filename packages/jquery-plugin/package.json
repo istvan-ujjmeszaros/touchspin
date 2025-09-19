@@ -31,8 +31,10 @@
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/jquery-plugin#readme",
   "scripts": {
     "prepack": "yarn build",
-    "dev": "vite dev --port 8866",
-    "build": "vite build && vite build -c vite.legacy.config.ts --mode=bootstrap3 && vite build -c vite.legacy.config.ts --mode=bootstrap4 && vite build -c vite.legacy.config.ts --mode=bootstrap5 && vite build -c vite.legacy.config.ts --mode=tailwind && mkdir -p dist && cp -f types/index.d.ts dist/index.d.ts",
+    "dev": "node ../../scripts/static-server.mjs",
+    "build": "run-p build:types build:js",
+    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit",
     "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
     "test:ui": "cd ../.. && playwright test packages/jquery-plugin/tests/ --ui",
@@ -61,13 +63,14 @@
     }
   },
   "devDependencies": {
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.54.2",
     "@touchspin/renderer-bootstrap3": "workspace:*",
     "@touchspin/renderer-bootstrap4": "workspace:*",
     "@touchspin/renderer-bootstrap5": "workspace:*",
     "@touchspin/renderer-tailwind": "workspace:*",
     "@types/jquery": "^3.5.30",
     "jquery": "^3.7.1",
+    "tsup": "^8.1.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"

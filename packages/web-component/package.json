@@ -23,8 +23,10 @@
   ],
   "scripts": {
     "prepack": "yarn build",
-    "dev": "vite dev --port 8866",
-    "build": "vite build",
+    "dev": "node ../../scripts/static-server.mjs",
+    "build": "run-p build:types build:js",
+    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit"
   },
   "publishConfig": {
