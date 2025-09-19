@@ -57,6 +57,7 @@
     }
   },
   "devDependencies": {
+    "bootstrap": "^5.3.3",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
