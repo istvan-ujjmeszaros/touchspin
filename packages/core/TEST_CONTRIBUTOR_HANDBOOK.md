@@ -91,17 +91,17 @@ test.describe('TouchSpin: <feature>', () => {
 ```ts
 import { test } from '@playwright/test';
 import * as apiHelpers from '@__tests__/helpers/apiHelpers';
-import * as jqueryHelpers from '@__tests__/helpers/jqueryHelpers';
+import { installJqueryPlugin, initializeTouchspinJQuery } from '@touchspin/jquery-plugin/test-helpers';
 
 test.describe('TouchSpin (jQuery+renderer): <feature>', () => {
   test.beforeEach(async ({ page }) => {
     await apiHelpers.waitForPageReady(page);
-    await apiHelpers.installJqueryPlugin(page);  // sets renderer + centralized logging
+    await installJqueryPlugin(page);  // sets renderer + centralized logging
     await apiHelpers.clearEventLog(page);
   });
 
   test('should render prefix and increment with button', async ({ page }) => {
-    await apiHelpers.initializeTouchspinJQuery(page, 'price', { min: 0, max: 10, step: 1 });
+    await initializeTouchspinJQuery(page, 'price', { min: 0, max: 10, step: 1 });
     await apiHelpers.expectTouchSpinInitialized(page, 'price');
 
     await apiHelpers.hasPrefix(page, 'price', '$');     // renderer-agnostic
@@ -122,8 +122,8 @@ test.describe('TouchSpin (jQuery+renderer): <feature>', () => {
 await apiHelpers.initializeTouchspin(page, 'qty', { min: 0, max: 10, step: 1 });
 
 // jQuery + renderer
-await apiHelpers.installJqueryPlugin(page);
-await apiHelpers.initializeTouchspinJQuery(page, 'qty', { min: 0, max: 10, step: 1 });
+await installJqueryPlugin(page);
+await initializeTouchspinJQuery(page, 'qty', { min: 0, max: 10, step: 1 });
 
 // Readiness checks
 await apiHelpers.expectTouchSpinInitialized(page, 'qty');

@@ -15,7 +15,7 @@ export * from './core/initialization';
 export * from './core/api';
 
 // jQuery functionality
-export * from './jquery/initialization';
+// Moved to '@touchspin/jquery-plugin/test-helpers'
 
 // Interactions
 export * from './interactions/buttons';

@@ -38,6 +38,14 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
+  // Forbid jQuery usage inside core package (SOLID boundary)
+  {
+    files: ['packages/core/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', { paths: ['jquery'] }],
+      'no-restricted-globals': ['error', 'jQuery', '$'],
+    },
+  },
   {
     files: ['**/*.test.ts', '**/*.spec.ts', '__tests__/**/*.ts'],
     languageOptions: {

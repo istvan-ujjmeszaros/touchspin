@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
-import type { TouchSpinCoreOptions } from '../types';
-import { setupLogging } from '../events/setup';
-import { installDomHelpers } from '../runtime/installDomHelpers';
+import type { TouchSpinCoreOptions } from '@touchspin/core';
+import { setupLogging } from '@touchspin/core/test-helpers/events/setup';
+import { installDomHelpers } from '@touchspin/core/test-helpers/runtime/installDomHelpers';
 
 /* ──────────────────────────
  * jQuery plugin bootstrap (for jQuery pages)
@@ -84,3 +84,4 @@ export async function initializeTouchspinJQuery(
   ].join(', ');
   await page.locator(sel).first().waitFor({ timeout: 5000 });
 }
+

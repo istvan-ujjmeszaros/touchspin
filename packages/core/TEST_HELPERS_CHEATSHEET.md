@@ -55,9 +55,10 @@ test.describe('TouchSpin: basic interactions', () => {
 // Core (no renderer)
 await apiHelpers.initializeTouchspin(page, 'qty', { min: 0, max: 10, step: 1 });
 
-// jQuery (with renderer)
-await apiHelpers.installJqueryPlugin(page);
-await apiHelpers.initializeTouchspinJQuery(page, 'qty', { min: 0, max: 10, step: 1 });
+// jQuery (with renderer) — from plugin helpers
+import { installJqueryPlugin, initializeTouchspinJQuery } from '@touchspin/jquery-plugin/test-helpers';
+await installJqueryPlugin(page);
+await initializeTouchspinJQuery(page, 'qty', { min: 0, max: 10, step: 1 });
 ```
 
 ## Interactions (selection)
