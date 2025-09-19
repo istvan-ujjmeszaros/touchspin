@@ -9,7 +9,11 @@ export async function waitForPageReady(
   readyFlag = 'testPageReady',
   timeout = 5000
 ): Promise<void> {
-  await page.waitForFunction((flag) => (window as any)[flag] === true, readyFlag, { timeout });
+  await page.waitForFunction(
+    (flag: string) => (window as unknown as Record<string, unknown>)[flag] === true,
+    readyFlag,
+    { timeout }
+  );
 }
 
 export async function waitForSanitization(page: Page, _testId: string): Promise<void> {

@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import type { EventLogEntry, EventLogType } from '../types';
 
 /* ──────────────────────────
  * Centralized logging (idempotent)
@@ -20,64 +21,69 @@ export async function setupLogging(page: Page): Promise<void> {
 
     const logEvent =
       window.logEvent ||
-      ((name: string, detail?: Record<string, unknown>) => {
+      ((name: string, detail?: Partial<EventLogEntry>) => {
         window.eventLog = window.eventLog || [];
-        const entry = {
+        const entry: EventLogEntry = {
           event: name,
-          type: (detail?.type as string) ?? 'native',
-          ...(detail ?? {}),
-        };
+          type: (detail?.type as EventLogType) ?? 'native',
+        } as EventLogEntry;
+        if (detail?.target !== undefined) (entry as { target?: string }).target = detail.target;
+        if (detail?.value !== undefined) (entry as { value?: string }).value = detail.value;
         window.eventLog.push(entry);
         const box = document.getElementById('event-log') as HTMLTextAreaElement | null;
         if (box) {
-          const t = (detail?.target as string) ?? '';
-          const v = (detail?.value as string) ?? '';
+          const t = entry.target ?? '';
+          const v = entry.value ?? '';
           box.value += `${name}${t ? ` [${t}]` : ''}${v ? ` = ${v}` : ''}\n`;
-}
-});
+        }
+      });
 
-// TouchSpin emitted DOM CustomEvents (renderer-agnostic)
-const tsEvents = [
-  'touchspin.on.min',
-  'touchspin.on.max',
-  'touchspin.on.startspin',
-  'touchspin.on.startupspin',
-  'touchspin.on.startdownspin',
-  'touchspin.on.stopspin',
-  'touchspin.on.stopupspin',
-  'touchspin.on.stopdownspin',
-] as const;
+    window.logEvent = logEvent;
 
-tsEvents.forEach((ev) => {
-  document.addEventListener(
-    ev,
-    (e: Event) => {
-      const target = e.target as HTMLElement | null;
-      // Try to resolve the owning input's testId
-      const input =
-        target?.closest('[data-testid$="-wrapper"]')?.querySelector('input[data-testid]') ??
-        (target as HTMLInputElement | null);
-      const testId =
-        (input as HTMLInputElement | null)?.getAttribute('data-testid') ||
-        target?.id ||
-        'unknown';
-      const value = (input as HTMLInputElement | null)?.value;
-      logEvent(ev, { type: 'touchspin', target: testId, value });
-    },
-    true
-  );
-});
+    // TouchSpin emitted DOM CustomEvents (renderer-agnostic)
+    const tsEvents = [
+      'touchspin.on.min',
+      'touchspin.on.max',
+      'touchspin.on.startspin',
+      'touchspin.on.startupspin',
+      'touchspin.on.startdownspin',
+      'touchspin.on.stopspin',
+      'touchspin.on.stopupspin',
+      'touchspin.on.stopdownspin',
+    ] as const;
 
-// Native 'change' on inputs of interest
-document.addEventListener(
-  'change',
-  (e: Event) => {
-    const input = e.target as HTMLInputElement | null;
-    if (!input || !input.matches('input[data-testid]')) return;
-    const testId = input.getAttribute('data-testid') || 'unknown';
-    logEvent('change', { type: 'native', target: testId, value: input.value });
-  },
-  true
-);
-});
+    tsEvents.forEach((ev) => {
+      document.addEventListener(
+        ev,
+        (e: Event) => {
+          const target = e.target as HTMLElement | null;
+          // Try to resolve the owning input's testId
+          const input =
+            target?.closest('[data-testid$="-wrapper"]')?.querySelector('input[data-testid]') ??
+            (target as HTMLInputElement | null);
+          const testId =
+            (input as HTMLInputElement | null)?.getAttribute('data-testid') ||
+            target?.id ||
+            'unknown';
+          const value = (input as HTMLInputElement | null)?.value;
+          const detail: Partial<EventLogEntry> = { type: 'touchspin', target: testId };
+          if (value !== undefined) (detail as { value?: string }).value = value;
+          logEvent(ev, detail);
+        },
+        true
+      );
+    });
+
+    // Native 'change' on inputs of interest
+    document.addEventListener(
+      'change',
+      (e: Event) => {
+        const input = e.target as HTMLInputElement | null;
+        if (!input || !input.matches('input[data-testid]')) return;
+        const testId = input.getAttribute('data-testid') || 'unknown';
+        logEvent('change', { type: 'native', target: testId, value: input.value });
+      },
+      true
+    );
+  });
 }

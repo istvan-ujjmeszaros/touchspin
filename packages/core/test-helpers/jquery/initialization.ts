@@ -15,12 +15,19 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
       throw new Error('Tests must not load /src/. Use /dist/index.js.\n' + offenders.join('\n'));
     }
 
-    const { installWithRenderer } = await import('/packages/jquery-plugin/dist/index.js');
-    const rendererMod = await import('/packages/renderers/bootstrap5/dist/index.js');
-    const Bootstrap5Renderer = (rendererMod as any).default || (rendererMod as any).Bootstrap5Renderer;
+    const jqueryPluginUrl = '/packages/jquery-plugin/dist/index.js';
+    const { installWithRenderer } = (await import(jqueryPluginUrl)) as unknown as {
+      installWithRenderer: (renderer: unknown) => void;
+    };
+    const rendererUrl = '/packages/renderers/bootstrap5/dist/index.js';
+    const rendererMod = (await import(rendererUrl)) as unknown as {
+      default?: unknown;
+      Bootstrap5Renderer?: unknown;
+    };
+    const Bootstrap5Renderer = (rendererMod.default ?? rendererMod.Bootstrap5Renderer) as unknown;
     installWithRenderer(Bootstrap5Renderer);
 
-    (window as any).touchSpinReady = true;
+    window.touchSpinReady = true;
   });
 
   // Centralized logging (no jQuery-specific .on wiring)
@@ -38,7 +45,11 @@ export async function initializeTouchspinJQuery(
 ): Promise<void> {
   await setupLogging(page);
   await page.evaluate(({ id, opts }) => {
-    const $ = (window as any).$;
+    const win = window as unknown as Record<string, unknown>;
+    const $ = win['$'] as unknown as {
+      (selector: string): { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
+      call?: (thisArg: unknown, selector: string) => { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
+    };
     const $input = $.call ? $.call(null, `[data-testid="${id}"]`) : $(`[data-testid="${id}"]`);
     if (opts.initval !== undefined) $input.val(opts.initval);
     $input.TouchSpin(opts);

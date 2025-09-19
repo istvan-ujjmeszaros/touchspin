@@ -18,10 +18,10 @@ export async function createAdditionalInput(
   } = {}
 ): Promise<void> {
   await page.evaluate(({ id, opts }) => {
-    (window as any).createTestInput(id, opts);
+    window.createTestInput?.(id, opts);
   }, { id: testId, opts: options });
 }
 
 export async function clearAdditionalInputs(page: Page): Promise<void> {
-  await page.evaluate(() => (window as any).clearAdditionalInputs());
+  await page.evaluate(() => window.clearAdditionalInputs?.());
 }

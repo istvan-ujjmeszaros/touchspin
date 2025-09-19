@@ -1,8 +1,16 @@
 import type { Page } from '@playwright/test';
+// Minimal CDP session interface to avoid external type dependency
+interface MinimalCDPSession {
+  send(method: string, params?: unknown): Promise<unknown>;
+}
 
 /* ──────────────────────────
  * Coverage helpers (CDP)
  * ────────────────────────── */
+
+interface PageWithCDP extends Page {
+  __cdpSession?: MinimalCDPSession;
+}
 
 export async function startCoverage(page: Page): Promise<void> {
   if (process.env.COVERAGE !== '1') return;
@@ -10,7 +18,7 @@ export async function startCoverage(page: Page): Promise<void> {
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Profiler.enable');
     await cdp.send('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
-    (page as any).__cdpSession = cdp;
+    (page as PageWithCDP).__cdpSession = cdp;
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Failed to start CDP coverage:', err);
@@ -20,14 +28,17 @@ export async function startCoverage(page: Page): Promise<void> {
 export async function collectCoverage(page: Page, testName: string): Promise<void> {
   if (process.env.COVERAGE !== '1') return;
   try {
-    const cdp = (page as any).__cdpSession;
+    const cdp = (page as PageWithCDP).__cdpSession;
     if (!cdp) {
       // eslint-disable-next-line no-console
       console.warn(`No CDP session found for test: ${testName}`);
       return;
     }
-    const { result } = await cdp.send('Profiler.takePreciseCoverage');
-    await saveCoverageData(result as Array<{ url?: string }>, testName);
+    const out = await cdp.send('Profiler.takePreciseCoverage');
+    const result = (out as { result?: unknown }).result as Array<{ url?: string }> | undefined;
+    if (result) {
+      await saveCoverageData(result, testName);
+    }
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(`Coverage collection error for ${testName}:`, err);

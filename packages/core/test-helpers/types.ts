@@ -43,6 +43,8 @@ declare global {
     createTestInput?: (id: string, opts?: Partial<TouchSpinCoreOptions>) => void;
     clearAdditionalInputs?: () => void;
     clearEventLog?: () => void;
+    /** Optional readiness flag used by wait helpers */
+    testPageReady?: boolean;
   }
 }
 
