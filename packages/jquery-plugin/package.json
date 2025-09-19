@@ -5,14 +5,11 @@
   "description": "jQuery wrapper for TouchSpin core (delegates to core, preserves API/events)",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -32,9 +29,10 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
-    "build": "run-p build:types build:js",
-    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build": "run-p build:types build:js build:iife",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2018 --dts false",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --clean --target es2018",
     "typecheck": "tsc --noEmit",
     "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
     "test:ui": "cd ../.. && playwright test packages/jquery-plugin/tests/ --ui",

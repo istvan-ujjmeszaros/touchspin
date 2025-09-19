@@ -7,14 +7,11 @@
     "**/*.css",
     "**/*.scss"
   ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     }
   },
   "files": [
@@ -25,7 +22,7 @@
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
     "build": "run-p build:types build:js",
-    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2020 --dts false",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit"
   },
@@ -35,8 +32,7 @@
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": "./dist/index.js"
       }
     }
   },
@@ -55,9 +51,8 @@
     "@touchspin/vanilla-renderer": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "vite": "^7.1.5",
-    "vite-plugin-dts": "^4.0.0"
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
   },
   "repository": {
     "type": "git",

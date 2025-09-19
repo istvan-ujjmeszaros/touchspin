@@ -8,15 +8,12 @@
     "**/*.css",
     "**/*.scss"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "style": "dist/touchspin-bootstrap5.css",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./css": "./dist/touchspin-bootstrap5.css"
   },
@@ -28,7 +25,7 @@
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
     "build": "run-p build:types build:js",
-    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2020 --dts false",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit",

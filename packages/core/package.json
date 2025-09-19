@@ -5,19 +5,15 @@
   "description": "Core logic for TouchSpin (framework-agnostic)",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./renderer": {
       "types": "./dist/renderer.d.ts",
-      "import": "./src/renderer.ts",
-      "require": "./dist/renderer.cjs"
+      "import": "./dist/renderer.js"
     },
     "./test-helpers": {
       "types": "./test-helpers/index.ts",
@@ -42,13 +38,11 @@
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": "./dist/index.js"
       },
       "./renderer": {
         "types": "./dist/renderer.d.ts",
-        "import": "./dist/renderer.mjs",
-        "require": "./dist/renderer.cjs"
+        "import": "./dist/renderer.js"
       }
     }
   },
@@ -56,7 +50,7 @@
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
     "build": "run-p build:types build:js",
-    "build:js": "tsup src/index.ts src/renderer.ts --format esm,cjs --sourcemap --clean --target es2020 --dts false",
+    "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --clean --target es2020 --dts false",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit"
@@ -65,9 +59,7 @@
     "@playwright/test": "^1.54.2",
     "@touchspin/vanilla-renderer": "workspace:*",
     "tsup": "^8.1.0",
-    "typescript": "^5.7.2",
-    "vite": "^7.1.5",
-    "vite-plugin-dts": "^4.0.0"
+    "typescript": "^5.7.2"
   },
   "author": "TouchSpin Contributors",
   "repository": {
