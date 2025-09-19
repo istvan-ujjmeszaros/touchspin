@@ -37,10 +37,14 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.spec.ts', '__tests__/**/*.ts', 'vite.config.ts', 'eslint.config.ts'],
+    files: ['**/*.test.ts', '**/*.spec.ts', '__tests__/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: path.resolve('.'),
+      },
       globals: {
         console: 'readonly',
         process: 'readonly',
@@ -58,6 +62,28 @@ export default [
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'never' }],
+      '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['vite.config.ts', 'eslint.config.ts', 'playwright.config.ts', '**/playwright*.config.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-trailing-spaces': 'error',
+      'quotes': ['error', 'single'],
+      'eqeqeq': 'error',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/consistent-type-assertions': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
