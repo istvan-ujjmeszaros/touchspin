@@ -6,8 +6,11 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "stripInternal": true,
     "skipLibCheck": true,
+    "stripInternal": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
     "types": ["jquery"]
   },
   "include": ["src/**/*"]

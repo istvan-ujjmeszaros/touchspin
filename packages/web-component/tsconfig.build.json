@@ -1,20 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "stripInternal": true,
     "skipLibCheck": true,
-    "paths": {
-      "@touchspin/core": ["../core/src/index.ts"],
-      "@touchspin/core/renderer": ["../core/src/renderer.ts"]
-    },
+    "stripInternal": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
     "types": []
   },
   "include": ["src/**/*"]
