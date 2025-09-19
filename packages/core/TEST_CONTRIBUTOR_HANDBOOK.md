@@ -271,7 +271,7 @@ await apiHelpers.expectEventFired(page, 'change');
 ### 5) Prefix/Postfix presence
 
 ```ts
-await apiHelpers.initializeTouchspinJQuery(page, 'price', { step: 1 });
+await initializeTouchspinJQuery(page, 'price', { step: 1 });
 await apiHelpers.hasPrefix(page, 'price', '$');
 ```
 
