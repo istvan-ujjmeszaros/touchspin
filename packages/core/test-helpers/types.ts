@@ -45,6 +45,8 @@ declare global {
     clearEventLog?: () => void;
     /** Optional readiness flag used by wait helpers */
     testPageReady?: boolean;
+    /** Helper installed by setupLogging to fetch core by testId inside page context */
+    __tsGetCoreByTestId?: (id: string) => TouchSpinCorePublicAPI;
   }
 }
 
