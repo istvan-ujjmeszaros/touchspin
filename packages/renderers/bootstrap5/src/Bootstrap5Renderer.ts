@@ -3,14 +3,32 @@
  * Builds Bootstrap 5 UI elements around TouchSpin input
  */
 import { AbstractRenderer } from '@touchspin/core/renderer';
+import type { InferOptionsFromSchema, RendererOptionSchema } from '@touchspin/core/renderer';
+
+const schema = Object.freeze({
+  buttonup_txt: { kind: 'string' },
+  buttondown_txt: { kind: 'string' },
+  buttonup_class: { kind: 'string' },
+  buttondown_class: { kind: 'string' },
+  verticalbuttons: { kind: 'boolean' },
+  verticalup: { kind: 'string' },
+  verticaldown: { kind: 'string' },
+  prefix: { kind: 'string' },
+  postfix: { kind: 'string' },
+  prefix_extraclass: { kind: 'string' },
+  postfix_extraclass: { kind: 'string' },
+} as const satisfies RendererOptionSchema);
 
 class Bootstrap5Renderer extends AbstractRenderer {
+  private opts!: Readonly<Partial<InferOptionsFromSchema<typeof schema>>>;
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   private _formControlAdded?: boolean;
   declare wrapper: HTMLElement | null;
 
   init(): void {
+    // Project a typed view of options used by this renderer
+    this.opts = this.projectRendererOptions(schema);
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
@@ -67,21 +85,21 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const inputGroupSize = this._detectInputGroupSize();
 
     let html;
-    if (this.settings.verticalbuttons) {
+    if (this.opts.verticalbuttons) {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin">
-          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
-          ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
+          ${this.opts.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.opts.prefix}</span>` : ''}
+          ${this.opts.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.opts.postfix}</span>` : ''}
           ${this.buildVerticalButtons()}
         </div>
       `;
     } else {
       html = `
         <div class="input-group ${inputGroupSize} bootstrap-touchspin">
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
-          ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
-          ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.buttondown_txt || '−'}</button>
+          ${this.opts.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.opts.prefix}</span>` : ''}
+          ${this.opts.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.opts.postfix}</span>` : ''}
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.buttonup_txt || '+'}</button>
         </div>
       `;
     }
@@ -97,7 +115,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     }
 
     // Find the position to insert input
-    if (this.settings.verticalbuttons) {
+    if (this.opts.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
       const prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]');
       const postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]');
@@ -145,16 +163,16 @@ class Bootstrap5Renderer extends AbstractRenderer {
     let elementsHtml: string;
     if (this.settings.verticalbuttons) {
       elementsHtml = `
-        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
-        ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
+        ${this.opts.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.opts.prefix}</span>` : ''}
+        ${this.opts.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.opts.postfix}</span>` : ''}
         ${this.buildVerticalButtons()}
       `;
     } else {
       elementsHtml = `
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.buttondown_txt || '−'}</button>
         ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
         ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.buttonup_txt || '+'}</button>
       `;
     }
 
@@ -291,8 +309,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     return `
       <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper" data-touchspin-injected="vertical-wrapper">
         <span class="input-group-btn-vertical">
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttonup_class || 'btn btn-outline-secondary'} ${this.settings.verticalupclass || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.verticalup || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.settings.buttondown_class || 'btn btn-outline-secondary'} ${this.settings.verticaldownclass || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.verticaldown || '−'}</button>
         </span>
       </span>
     `;

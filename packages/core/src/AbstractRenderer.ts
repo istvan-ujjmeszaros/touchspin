@@ -17,6 +17,25 @@
 import type { TouchSpinCoreOptions } from './index';
 import type { Renderer } from './renderer';
 
+export type RendererOptionKind = 'string' | 'boolean' | 'number' | 'enum';
+export type RendererOptionDef =
+  | { kind: 'string' }
+  | { kind: 'boolean' }
+  | { kind: 'number' }
+  | { kind: 'enum'; values: readonly string[] };
+export type RendererOptionSchema = Readonly<Record<string, RendererOptionDef>>;
+
+type InferOption<S extends RendererOptionDef> =
+  S extends { kind: 'string' } ? string | undefined
+    : S extends { kind: 'boolean' } ? boolean | undefined
+    : S extends { kind: 'number' } ? number | undefined
+    : S extends { kind: 'enum'; values: readonly (infer V)[] } ? V | undefined
+    : unknown;
+
+export type InferOptionsFromSchema<S extends RendererOptionSchema> = {
+  [K in keyof S]: InferOption<S[K]>;
+};
+
 abstract class AbstractRenderer implements Renderer {
   /**
    * @param {HTMLInputElement} inputEl - The input element to render around
@@ -167,6 +186,23 @@ abstract class AbstractRenderer implements Renderer {
       // Mark component as ready (DOM built, events attached)
       this.wrapper.setAttribute('data-touchspin-injected', this.wrapperType);
     }
+  }
+
+  /**
+   * Helper to project flat core settings into a typed renderer-specific view.
+   * No coercion; simply narrows known keys per schema for better DX.
+   */
+  protected projectRendererOptions<S extends RendererOptionSchema>(
+    schema: S,
+    from: Record<string, unknown> = this.settings as unknown as Record<string, unknown>
+  ): Readonly<Partial<InferOptionsFromSchema<S>>> {
+    const out: Record<string, unknown> = {};
+    for (const key in schema) {
+      if (Object.prototype.hasOwnProperty.call(from, key)) {
+        out[key] = from[key];
+      }
+    }
+    return out as Readonly<Partial<InferOptionsFromSchema<S>>>;
   }
 }
 
