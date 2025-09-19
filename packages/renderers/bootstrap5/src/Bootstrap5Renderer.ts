@@ -13,6 +13,8 @@ const schema = Object.freeze({
   verticalbuttons: { kind: 'boolean' },
   verticalup: { kind: 'string' },
   verticaldown: { kind: 'string' },
+  verticalupclass: { kind: 'string' },
+  verticaldownclass: { kind: 'string' },
   prefix: { kind: 'string' },
   postfix: { kind: 'string' },
   prefix_extraclass: { kind: 'string' },

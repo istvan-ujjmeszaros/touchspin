@@ -1361,6 +1361,8 @@ __metadata:
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
+    "@types/jquery": "npm:^3.5.30"
+    jquery: "npm:^3.7.1"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
@@ -1377,6 +1379,8 @@ __metadata:
     "@touchspin/renderer-bootstrap4": "workspace:*"
     "@touchspin/renderer-bootstrap5": "workspace:*"
     "@touchspin/renderer-tailwind": "workspace:*"
+    "@types/jquery": "npm:^3.5.30"
+    jquery: "npm:^3.7.1"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"
