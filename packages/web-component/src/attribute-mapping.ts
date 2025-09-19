@@ -31,7 +31,7 @@ export function attributeToSetting(attrName: string): string {
     'focusable-buttons': 'focusablebuttons'
   } as const satisfies Record<string, string>;
 
-  return mapping[attrName] || attrName;
+  return (mapping as Record<string, string>)[attrName] || attrName;
 }
 
 /**
@@ -50,7 +50,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
     'verticalbuttons', 'mousewheel', 'booster', 'focusablebuttons'
   ] as const;
 
-  if (booleanSettings.includes(settingName)) {
+  if ((booleanSettings as readonly string[]).includes(settingName)) {
     return value === 'true' || value === '';
   }
 
@@ -60,7 +60,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
     'boostat', 'maxboostedstep', 'firstclickvalueifempty'
   ] as const;
 
-  if (numberSettings.includes(settingName)) {
+  if ((numberSettings as readonly string[]).includes(settingName)) {
     const num = Number(value);
     return isNaN(num) ? null : num;
   }
