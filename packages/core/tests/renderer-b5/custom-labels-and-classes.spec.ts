@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { initializeTouchspinWithBootstrap5 } from '../../test-helpers';
+import { initializeTouchspinWithBootstrap5, startCoverage, collectCoverage } from '../../test-helpers';
 
 test.describe('renderer-b5: custom labels/classes render', () => {
+  test.beforeEach(async ({ page }) => {
+    await startCoverage(page);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await collectCoverage(page, testInfo.title);
+  });
   test('programmatic init applies texts and classes', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
 

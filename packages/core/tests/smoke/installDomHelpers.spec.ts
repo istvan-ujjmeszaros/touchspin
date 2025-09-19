@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers } from '../../test-helpers';
+import { installDomHelpers, startCoverage, collectCoverage } from '../../test-helpers';
 
 test.describe('installDomHelpers smoke', () => {
+  test.beforeEach(async ({ page }) => {
+    await startCoverage(page);
+  });
+  test.afterEach(async ({ page }, testInfo) => {
+    await collectCoverage(page, testInfo.title);
+  });
   test('installs __ts namespace with required methods', async ({ page }) => {
     await page.goto('/');
     await installDomHelpers(page);
