@@ -15,10 +15,21 @@ function run(command) {
 
 console.log('🔀 Merging coverage files...');
 
-if (!existsSync('.nyc_output')) {
-  console.log('⚠️  No coverage data found (.nyc_output directory missing)');
+const istanbulJsonDir = 'reports/istanbul-json';
+if (!existsSync(istanbulJsonDir)) {
+  console.log(`⚠️  No coverage data found (${istanbulJsonDir} directory missing)`);
   process.exit(0);
 }
 
-run('npx nyc merge .nyc_output .nyc_output/coverage.json');
+// Ensure .nyc_output directory exists
+if (!existsSync('.nyc_output')) {
+  try {
+    execSync('mkdir -p .nyc_output');
+  } catch (error) {
+    console.error('Failed to create .nyc_output directory:', error);
+    process.exit(1);
+  }
+}
+
+run(`npx nyc merge ${istanbulJsonDir} .nyc_output/coverage.json`);
 console.log('✅ Coverage merge complete');
