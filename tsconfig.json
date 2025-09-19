@@ -6,7 +6,10 @@
     "skipLibCheck": true,
     "paths": {
       "@touchspin/core": ["packages/core/src/index.ts"],
-      "@touchspin/core/renderer": ["packages/core/src/renderer.ts"]
+      "@touchspin/core/renderer": ["packages/core/src/renderer.ts"],
+      "@touchspin/core/test-helpers/*": ["packages/core/test-helpers/*"],
+      "@touchspin/jquery-plugin/test-helpers": ["packages/jquery-plugin/test-helpers/index.ts"],
+      "@touchspin/jquery-plugin/test-helpers/*": ["packages/jquery-plugin/test-helpers/*"]
     }
   },
   "include": [
