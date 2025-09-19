@@ -788,9 +788,11 @@ export class TouchSpinCore {
     // Restore all original attributes
     this._restoreOriginalAttributes();
 
-    // Remove instance from element
-    if (this.input[INSTANCE_KEY] === this) {
-      delete this.input[INSTANCE_KEY];
+    // Remove instance from element (type-safe guard)
+    type WithCore = HTMLInputElement & { [INSTANCE_KEY]?: TouchSpinCore };
+    const inst = (this.input as WithCore)[INSTANCE_KEY];
+    if (inst === this) {
+      delete (this.input as WithCore)[INSTANCE_KEY];
     }
   }
 
