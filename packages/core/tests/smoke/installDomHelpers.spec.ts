@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { installDomHelpers } from '../../core/test-helpers';
+import { installDomHelpers } from '../../test-helpers';
 
 test.describe('installDomHelpers smoke', () => {
   test('installs __ts namespace with required methods', async ({ page }) => {
@@ -16,4 +16,3 @@ test.describe('installDomHelpers smoke', () => {
     });
   });
 });
-
