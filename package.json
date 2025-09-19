@@ -76,7 +76,7 @@
     "test:headed": "playwright test --project=chromium --headed",
     "test:ui": "playwright test --project=chromium --ui",
     "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed",
-    "coverage:run": "yarn build:test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev PW_COVERAGE=1 playwright test --project=chromium-coverage --reporter=list",
+    "coverage:run": "yarn build:test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev PW_COVERAGE=1 playwright test --project=chromium --reporter=list",
     "coverage": "yarn coverage:run && yarn coverage:merge && yarn coverage:report && yarn coverage:open",
     "coverage:merge": "node scripts/coverage-merge.mjs",
     "coverage:report": "node scripts/coverage-report.mjs",
