@@ -20,6 +20,7 @@ reports/
 
 # Build outputs
 dist/
+devdist/
 
 # Obsolete planning/agent docs (ignored for local dev)
 **/*AGENT*.md
@@ -43,3 +44,7 @@ off/
 **/AppData/**
 C:/Users/*/AppData/*
 *\\Users\\*\\AppData\\*
+
+# Yarn PnP files (auto-generated)
+.pnp.cjs
+.yarn/install-state.gz
