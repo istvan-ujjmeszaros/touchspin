@@ -8,7 +8,11 @@
     "rootDir": "./src",
     "stripInternal": true,
     "skipLibCheck": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "@touchspin/core": ["../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": ["../core/dist/renderer.d.ts"]
+    }
   },
   "include": ["src/**/*"]
 }
