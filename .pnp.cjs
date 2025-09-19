@@ -1761,6 +1761,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
+          ["bootstrap", "virtual:bb7c6f9b30b2b961fef22dcd14c69f5e22c24e1c3eb6dfa1c9cee5ad9e755b7eaa12fad3dbee6a431fc79ca87553617be3a5082969865f79f94d857ec7946a12#npm:5.3.8"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
           ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
           ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
@@ -2609,6 +2610,28 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["better-path-resolve", "npm:1.0.0"],\
           ["is-windows", "npm:1.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["bootstrap", [\
+      ["npm:5.3.8", {\
+        "packageLocation": "../../home/styu/.yarn/berry/cache/bootstrap-npm-5.3.8-b7bef82d06-10c0.zip/node_modules/bootstrap/",\
+        "packageDependencies": [\
+          ["bootstrap", "npm:5.3.8"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:bb7c6f9b30b2b961fef22dcd14c69f5e22c24e1c3eb6dfa1c9cee5ad9e755b7eaa12fad3dbee6a431fc79ca87553617be3a5082969865f79f94d857ec7946a12#npm:5.3.8", {\
+        "packageLocation": "./.yarn/__virtual__/bootstrap-virtual-743f9643e4/3/home/styu/.yarn/berry/cache/bootstrap-npm-5.3.8-b7bef82d06-10c0.zip/node_modules/bootstrap/",\
+        "packageDependencies": [\
+          ["@popperjs/core", null],\
+          ["@types/popperjs__core", null],\
+          ["bootstrap", "virtual:bb7c6f9b30b2b961fef22dcd14c69f5e22c24e1c3eb6dfa1c9cee5ad9e755b7eaa12fad3dbee6a431fc79ca87553617be3a5082969865f79f94d857ec7946a12#npm:5.3.8"]\
+        ],\
+        "packagePeers": [\
+          "@popperjs/core",\
+          "@types/popperjs__core"\
         ],\
         "linkType": "HARD"\
       }]\
