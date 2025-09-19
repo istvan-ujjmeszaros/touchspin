@@ -106,6 +106,38 @@ declare const MyRenderer: RendererConstructor;
 TouchSpin(input, { renderer: MyRenderer });
 ```
 
+### Typecheck Stability (structural constructor)
+
+To avoid src/dist private-field brand collisions during typecheck, the `RendererConstructor` in `@touchspin/core/renderer` uses a structural constructor signature. Renderers still get the full `core` instance at runtime, but the constructor is typed against a minimal facade to keep typecheck stable across workspaces.
+
+You do not need to change your runtime code — just import the constructor type from `@touchspin/core/renderer`.
+
+### Renderer Option Schemas (DX only)
+
+For better DX without changing public, flat options, you can define a small schema next to your renderer and project a typed view from `AbstractRenderer`:
+
+```ts
+import { AbstractRenderer, type RendererOptionSchema, type InferOptionsFromSchema } from '@touchspin/core/renderer';
+
+const schema = Object.freeze({
+  buttonup_txt: { kind: 'string' },
+  buttondown_txt: { kind: 'string' },
+  // ... more keys your renderer uses
+} as const satisfies RendererOptionSchema);
+
+class MyRenderer extends AbstractRenderer {
+  private opts!: Readonly<Partial<InferOptionsFromSchema<typeof schema>>>;
+  private refreshOpts() { this.opts = this.projectRendererOptions(schema); }
+
+  init(): void {
+    this.refreshOpts();
+    // use this.opts.key in templates; read live values via this.settings in update paths
+  }
+}
+```
+
+This preserves the flat public API while giving strong autocomplete inside your renderer.
+
 ### Default Renderer (Global)
 
 You can register a default renderer class (a `RendererConstructor`) that core uses when none is provided in options:
