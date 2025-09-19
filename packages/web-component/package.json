@@ -22,7 +22,7 @@
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
     "build": "yarn run build:types && yarn run build:js",
-    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2020",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --clean --target es2020 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit"
   },
