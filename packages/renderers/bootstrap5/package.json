@@ -57,6 +57,7 @@
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "bootstrap": "^5.3.3",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",

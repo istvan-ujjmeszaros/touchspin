@@ -57,6 +57,7 @@
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "typescript": "^5.7.2",
     "vite": "^7.1.5",
     "vite-plugin-dts": "^4.0.0"
