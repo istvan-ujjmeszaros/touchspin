@@ -161,7 +161,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml: string;
-    if (this.settings.verticalbuttons) {
+    if (this.opts.verticalbuttons) {
       elementsHtml = `
         ${this.opts.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.opts.prefix}</span>` : ''}
         ${this.opts.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.opts.postfix}</span>` : ''}
@@ -170,8 +170,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
     } else {
       elementsHtml = `
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttondown_class || 'btn btn-outline-secondary'} bootstrap-touchspin-down" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.opts.buttondown_txt || '−'}</button>
-        ${this.settings.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix}</span>` : ''}
-        ${this.settings.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix}</span>` : ''}
+        ${this.opts.prefix ? `<span class="input-group-text bootstrap-touchspin-prefix ${this.opts.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.opts.prefix}</span>` : ''}
+        ${this.opts.postfix ? `<span class="input-group-text bootstrap-touchspin-postfix ${this.opts.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.opts.postfix}</span>` : ''}
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.opts.buttonup_class || 'btn btn-outline-secondary'} bootstrap-touchspin-up" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.opts.buttonup_txt || '+'}</button>
       `;
     }
@@ -183,7 +183,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     let prefixEl: HTMLElement | null;
     let postfixEl: HTMLElement | null;
 
-    if (this.settings.verticalbuttons) {
+    if (this.opts.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
       prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');
       if (prefixEl) {
