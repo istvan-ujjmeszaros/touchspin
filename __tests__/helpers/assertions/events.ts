@@ -11,8 +11,8 @@ export async function expectEventFired(
 ): Promise<void> {
   await page.waitForFunction(
     (eventName) => {
-      const log = (window as any).eventLog || [];
-      return log.some((e: any) => e.event === eventName);
+      const log = window.eventLog || [];
+      return log.some((e) => e.event === eventName);
     },
     eventName,
     { timeout }
@@ -41,8 +41,8 @@ export async function expectEventCount(
 ): Promise<void> {
   await page.waitForFunction(
     ({ eventName, count }) => {
-      const log = (window as any).eventLog || [];
-      return log.filter((e: any) => e.event === eventName).length === count;
+      const log = window.eventLog || [];
+      return log.filter((e) => e.event === eventName).length === count;
     },
     { eventName, count },
     { timeout }

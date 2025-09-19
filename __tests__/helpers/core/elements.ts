@@ -3,7 +3,12 @@ import type { TouchSpinElements } from '../types';
 import { inputById, wrapperById, upButtonIn, downButtonIn, prefixIn, postfixIn } from './selectors';
 
 /* ──────────────────────────
- * Readiness / initialization
+ * Element access and readiness checks
+ *
+ * LAYERING RULES:
+ * - Depends on: core/selectors.ts, types.ts
+ * - Used by: interactions/*, assertions/*, core/api.ts
+ * - Do not import from: events/*, jquery/*, test-utilities/*
  * ────────────────────────── */
 
 /** True if wrapper with injection marker exists. */

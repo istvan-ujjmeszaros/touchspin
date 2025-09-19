@@ -5,9 +5,19 @@ import { prefixIn, postfixIn } from '../core/selectors';
 
 /* ──────────────────────────
  * Bootstrap-specific helpers (deprecated)
- * NOTE: These remain Bootstrap-specific; consider removing for renderer-agnostic approach
+ *
+ * @deprecated These helpers are Bootstrap-specific and should be avoided in new tests.
+ * Use renderer-agnostic alternatives from core/elements.ts instead.
+ *
+ * LAYERING RULES:
+ * - Depends on: core/selectors.ts, core/elements.ts
+ * - Used by: legacy tests only
+ * - Do not use in new tests - use renderer-agnostic alternatives
  * ────────────────────────── */
 
+/**
+ * @deprecated Bootstrap-specific helper. Use renderer-agnostic alternatives instead.
+ */
 export async function getInputGroupAddons(page: Page, testId: string): Promise<string[]> {
   const wrapper = wrapperById(page, testId);
   if ((await wrapper.count()) === 0) throw new Error(`Wrapper not found for "${testId}".`);
@@ -18,10 +28,16 @@ export async function getInputGroupAddons(page: Page, testId: string): Promise<s
   );
 }
 
+/**
+ * @deprecated Bootstrap-specific helper. Use renderer-agnostic alternatives instead.
+ */
 export async function checkPrependExists(page: Page): Promise<boolean> {
   return (await page.locator('.input-group-prepend').count()) > 0;
 }
 
+/**
+ * @deprecated Bootstrap-specific helper. Use renderer-agnostic alternatives instead.
+ */
 export async function checkAppendExists(page: Page): Promise<boolean> {
   return (await page.locator('.input-group-append').count()) > 0;
 }

@@ -1,7 +1,13 @@
 import type { Page, Locator } from '@playwright/test';
+import type { InjectedRole } from '../types';
 
 /* ──────────────────────────
- * Small selector builders (renderer-agnostic)
+ * Renderer-agnostic selector builders
+ *
+ * LAYERING RULES:
+ * - This module has no dependencies (leaf level)
+ * - Used by: core/elements.ts, interactions/*, assertions/*
+ * - Do not import from other helper modules
  * ────────────────────────── */
 
 export const inputById = (page: Page, testId: string): Locator =>
@@ -12,7 +18,7 @@ export const wrapperById = (page: Page, testId: string): Locator =>
 
 export const injected = (
   wrapper: Locator,
-  role: 'up' | 'down' | 'prefix' | 'postfix'
+  role: InjectedRole
 ): Locator => wrapper.locator(`[data-touchspin-injected="${role}"]`).first();
 
 export const upButtonIn = (wrapper: Locator): Locator => injected(wrapper, 'up');

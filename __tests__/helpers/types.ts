@@ -25,3 +25,35 @@ export interface TouchSpinElements {
   /** Optional postfix element rendered after the input. */
   postfix: Locator;
 }
+
+/** TouchSpin Core API interface for better type safety */
+export interface TouchSpinCore {
+  setValue(value: number | string): void;
+  upOnce(): void;
+  downOnce(): void;
+  startUpSpin(): void;
+  startDownSpin(): void;
+  stopSpin(): void;
+  updateSettings(settings: Record<string, unknown>): void;
+  toPublicApi(): unknown;
+  initDOMEventHandling(): void;
+  destroy(): void;
+}
+
+/** Injected element roles for renderer-agnostic selectors */
+export type InjectedRole = 'up' | 'down' | 'prefix' | 'postfix';
+
+/** Window interface augmentation for TouchSpin test environment */
+declare global {
+  interface Window {
+    __tsLoggingSetup?: boolean;
+    eventLog?: EventLogEntry[];
+    logEvent?: (name: string, detail?: Partial<EventLogEntry>) => void;
+    touchSpinReady?: boolean;
+    createTestInput?: (id: string, opts?: Record<string, unknown>) => void;
+    clearAdditionalInputs?: () => void;
+    clearEventLog?: () => void;
+  }
+}
+
+export {};

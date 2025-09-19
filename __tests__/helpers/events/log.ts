@@ -3,20 +3,24 @@ import type { EventLogEntry, EventLogType } from '../types';
 
 /* ──────────────────────────
  * Event log helpers (typed)
+ *
+ * LAYERING RULES:
+ * - Depends on: types.ts
+ * - Used by: assertions/events.ts, test scripts
+ * - Do not import from: core/*, interactions/*, jquery/*
  * ────────────────────────── */
 
 export async function getEventLog(page: Page): Promise<EventLogEntry[]> {
-  return page.evaluate(() => (window as any).eventLog || []);
+  return page.evaluate(() => window.eventLog || []);
 }
 
 export async function clearEventLog(page: Page): Promise<void> {
   await page.evaluate(() => {
-    const w = window as any;
-    if (w.clearEventLog) {
-      w.clearEventLog();
+    if (window.clearEventLog) {
+      window.clearEventLog();
       return;
     }
-    w.eventLog = [];
+    window.eventLog = [];
     const box = document.getElementById('event-log') as HTMLTextAreaElement | null;
     if (box) box.value = '';
   });

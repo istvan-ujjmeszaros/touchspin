@@ -2,6 +2,11 @@ import type { Page } from '@playwright/test';
 
 /* ──────────────────────────
  * Centralized logging (idempotent)
+ *
+ * LAYERING RULES:
+ * - This module has no dependencies (leaf level)
+ * - Used by: core/initialization.ts, jquery/initialization.ts
+ * - Do not import from other helper modules
  * ────────────────────────── */
 
 /**
@@ -10,20 +15,19 @@ import type { Page } from '@playwright/test';
  */
 export async function setupLogging(page: Page): Promise<void> {
   await page.evaluate(() => {
-    const w = window as any;
-    if (w.__tsLoggingSetup) return;
-    w.__tsLoggingSetup = true;
+    if (window.__tsLoggingSetup) return;
+    window.__tsLoggingSetup = true;
 
     const logEvent =
-      w.logEvent ||
+      window.logEvent ||
       ((name: string, detail?: Record<string, unknown>) => {
-        w.eventLog = w.eventLog || [];
+        window.eventLog = window.eventLog || [];
         const entry = {
           event: name,
           type: (detail?.type as string) ?? 'native',
           ...(detail ?? {}),
         };
-        w.eventLog.push(entry);
+        window.eventLog.push(entry);
         const box = document.getElementById('event-log') as HTMLTextAreaElement | null;
         if (box) {
           const t = (detail?.target as string) ?? '';
