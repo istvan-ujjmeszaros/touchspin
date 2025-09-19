@@ -11,36 +11,38 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
   await installDomHelpers(page);
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await page.evaluate(async () => {
-    // Ensure jQuery is present; load from local test asset if missing
-    if (!(window as unknown as { jQuery?: unknown }).jQuery && !(window as unknown as { $?: unknown }).$) {
-      await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = '/__tests__/html/assets/jquery/jquery-3.7.1.min.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Failed to load jQuery'));
-        document.head.appendChild(script);
-      });
-    }
-    const offenders = Array.from(document.querySelectorAll('script[src*="/src/"]')).map(
-      (s) => (s as HTMLScriptElement).src
-    );
-    if (offenders.length) {
-      throw new Error('Tests must not load /src/. Use /dist/index.js.\n' + offenders.join('\n'));
-    }
+    try {
+      const offenders = Array.from(document.querySelectorAll('script[src*="/src/"]')).map(
+        (s) => (s as HTMLScriptElement).src
+      );
+      if (offenders.length) {
+        throw new Error('Tests must not load /src/. Use /dist/index.js.\n' + offenders.join('\n'));
+      }
 
-    const jqueryPluginUrl = '/packages/jquery-plugin/dist/index.js';
-    const { installWithRenderer } = (await import(jqueryPluginUrl)) as unknown as {
-      installWithRenderer: (renderer: unknown) => void;
-    };
-    const rendererUrl = '/packages/renderers/bootstrap5/dist/index.js';
-    const rendererMod = (await import(rendererUrl)) as unknown as {
-      default?: unknown;
-      Bootstrap5Renderer?: unknown;
-    };
-    const Bootstrap5Renderer = (rendererMod.default ?? rendererMod.Bootstrap5Renderer) as unknown;
-    installWithRenderer(Bootstrap5Renderer);
+      // Import jQuery from node_modules
+      const jq = (await import('jquery')) as unknown as { default: unknown };
+      const $ = (jq as { default: unknown }).default as unknown;
+      const w = window as unknown as Record<string, unknown>;
+      if (!w['jQuery']) w['jQuery'] = $;
+      if (!w['$']) w['$'] = $;
 
-    window.touchSpinReady = true;
+      const jqueryPluginUrl = '/packages/jquery-plugin/dist/index.js';
+      const { installWithRenderer } = (await import(jqueryPluginUrl)) as unknown as {
+        installWithRenderer: (renderer: unknown) => void;
+      };
+      const rendererUrl = '/packages/renderers/bootstrap5/dist/index.js';
+      const rendererMod = (await import(rendererUrl)) as unknown as {
+        default?: unknown;
+        Bootstrap5Renderer?: unknown;
+      };
+      const Bootstrap5Renderer = (rendererMod.default ?? rendererMod.Bootstrap5Renderer) as unknown;
+      installWithRenderer(Bootstrap5Renderer);
+
+      window.touchSpinReady = true;
+    } catch (err) {
+      console.error('installJqueryPlugin failed:', err);
+      throw err;
+    }
   });
 
   // Centralized logging (no jQuery-specific .on wiring)
@@ -60,13 +62,24 @@ export async function initializeTouchspinJQuery(
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
   await page.evaluate(({ id, opts }) => {
-    const win = window as unknown as Record<string, unknown>;
-    const $ = win['$'] as unknown as {
-      (selector: string): { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
-      call?: (thisArg: unknown, selector: string) => { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
-    };
-    const $input = $.call ? $.call(null, `[data-testid="${id}"]`) : $(`[data-testid="${id}"]`);
-    if (opts.initval !== undefined) $input.val(opts.initval);
-    $input.TouchSpin(opts);
+    try {
+      const win = window as unknown as Record<string, unknown>;
+      const $ = win['$'] as unknown as {
+        (selector: string): { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
+        call?: (thisArg: unknown, selector: string) => { val: (v: unknown) => void; TouchSpin: (o: unknown) => void };
+      };
+      const $input = $.call ? $.call(null, `[data-testid=\"${id}\"]`) : $(`[data-testid=\"${id}\"]`);
+      if ((opts as Record<string, unknown>).initval !== undefined) $input.val((opts as Record<string, unknown>).initval);
+      $input.TouchSpin(opts);
+    } catch (err) {
+      console.error('initializeTouchspinJQuery failed:', err);
+      throw err;
+    }
   }, { id: testId, opts: options });
+
+  const sel = [
+    `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
+    `[data-testid=\"${testId}\"][data-touchspin-injected]`,
+  ].join(', ');
+  await page.locator(sel).first().waitFor({ timeout: 5000 });
 }

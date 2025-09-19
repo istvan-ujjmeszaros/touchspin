@@ -1,12 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { installJqueryPlugin, initializeTouchspinJQuery } from '../../test-helpers';
+import { initializeTouchspinWithBootstrap5 } from '../../test-helpers';
 
 test.describe('renderer-b5: custom labels/classes render', () => {
   test('programmatic init applies texts and classes', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
-    await installJqueryPlugin(page);
 
-    await initializeTouchspinJQuery(page, 'test-input', {
+    await initializeTouchspinWithBootstrap5(page, 'test-input', {
       buttonup_txt: 'UP',
       buttondown_txt: 'DOWN',
       buttonup_class: 'btn btn-primary',
@@ -28,4 +27,3 @@ test.describe('renderer-b5: custom labels/classes render', () => {
     await expect(w.locator('[data-touchspin-injected="postfix"]')).toHaveClass(/fx-postfix/);
   });
 });
-
