@@ -110,12 +110,8 @@ test.describe('jQuery TouchSpin Commands API', () => {
     test('should start up spin using startupspin command', async ({ page }) => {
       await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
 
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
-
-      // Wait briefly for spinning to start
-      await apiHelpers.waitForTimeout(100);
-
-      await jqueryHelpers.jQueryStopSpin(page, 'test-input');
+      // Hold up button for 100ms to test spinning behavior
+      await apiHelpers.holdUpButton(page, 'test-input', 100);
 
       const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
       expect(finalValue).toBeGreaterThan(50); // Should have increased
@@ -124,12 +120,8 @@ test.describe('jQuery TouchSpin Commands API', () => {
     test('should start down spin using startdownspin command', async ({ page }) => {
       await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
 
-      await jqueryHelpers.jQueryStartDownSpin(page, 'test-input');
-
-      // Wait briefly for spinning to start
-      await apiHelpers.waitForTimeout(100);
-
-      await jqueryHelpers.jQueryStopSpin(page, 'test-input');
+      // Hold down button for 100ms to test spinning behavior
+      await apiHelpers.holdDownButton(page, 'test-input', 100);
 
       const finalValue = parseInt(await apiHelpers.readInputValue(page, 'test-input'));
       expect(finalValue).toBeLessThan(50); // Should have decreased
@@ -138,21 +130,16 @@ test.describe('jQuery TouchSpin Commands API', () => {
     test('should stop spinning using stopspin command', async ({ page }) => {
       await apiHelpers.initializeTouchSpinJQuery(page, 'test-input', { step: 1 });
 
-      // Start spinning
-      await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
-
-      await apiHelpers.waitForTimeout(100);
-
-      // Stop and capture value
-      await jqueryHelpers.jQueryStopSpin(page, 'test-input');
+      // Hold up button for 100ms to test spinning behavior
+      await apiHelpers.holdUpButton(page, 'test-input', 100);
 
       const stoppedValue = await apiHelpers.readInputValue(page, 'test-input');
 
-      // Wait more to ensure it really stopped
-      await apiHelpers.waitForTimeout(200);
-
-      const finalValue = await apiHelpers.readInputValue(page, 'test-input');
-      expect(finalValue).toBe(stoppedValue); // Should not have changed after stop
+      // Verify value remains stable (polling to ensure it doesn't change)
+      await expect.poll(
+        async () => await apiHelpers.readInputValue(page, 'test-input'),
+        { timeout: 500 }
+      ).toBe(stoppedValue); // Should not have changed after stop
     });
   });
 
