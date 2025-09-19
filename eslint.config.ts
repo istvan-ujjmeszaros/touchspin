@@ -37,13 +37,16 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '__tests__/**/*.ts', 'vite.config.ts', 'eslint.config.ts'],
+    files: ['**/*.test.ts', '**/*.spec.ts', '__tests__/**/*.ts', 'vite.config.ts', 'eslint.config.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         console: 'readonly',
         process: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        globalThis: 'readonly',
       },
     },
     rules: {
