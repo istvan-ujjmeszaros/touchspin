@@ -16,7 +16,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
 
   test('step=5, init 95: two ups => one change (100)', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
-    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 95 });
+    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '95' });
     await clearEventLog(page);
     await clickUpButton(page, 'test-input');
     await clickUpButton(page, 'test-input');
@@ -27,7 +27,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
 
   test("forcestepdivisibility='none', step=5, init 97: two ups => one change (100)", async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
-    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 97, forcestepdivisibility: 'none' });
+    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '97', forcestepdivisibility: 'none' });
     await clearEventLog(page);
     await clickUpButton(page, 'test-input');
     await clickUpButton(page, 'test-input');
@@ -40,14 +40,14 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
     await page.goto('/packages/core/tests/html/test-fixture.html');
 
     // Max case
-    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 100 });
+    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '100' });
     await clearEventLog(page);
     await clickUpButton(page, 'test-input');
     const c1 = await countEventInLog(page, 'change');
     test.expect(c1).toBe(0);
 
     // Min case
-    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 0 });
+    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '0' });
     await clearEventLog(page);
     await clickDownButton(page, 'test-input');
     const c2 = await countEventInLog(page, 'change');
@@ -56,7 +56,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
 
   test('blur sanitization: raw 96 with step=5 => exactly one change to 95', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
-    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: 90 });
+    await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '90' });
     await clearEventLog(page);
     await setValueSilentlyAndBlur(page, 'test-input', '96');
     await expectValueToBe(page, 'test-input', '95');

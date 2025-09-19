@@ -18,7 +18,7 @@ export default defineConfig({
   /* No retries; fail fast */
   retries: 0,
   // Stop as soon as a failure occurs on CI to surface issues quickly
-  maxFailures: process.env.CI ? 1 : undefined,
+  maxFailures: process.env.CI ? 1 : 0,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
