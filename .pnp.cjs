@@ -1407,10 +1407,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0", {\
-        "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-6b71eedabd/3/home/styu/.yarn/berry/cache/@rollup-pluginutils-npm-5.3.0-41141e497e-10c0.zip/node_modules/@rollup/pluginutils/",\
+      ["virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:5.3.0", {\
+        "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-b966520a98/3/home/styu/.yarn/berry/cache/@rollup-pluginutils-npm-5.3.0-41141e497e-10c0.zip/node_modules/@rollup/pluginutils/",\
         "packageDependencies": [\
-          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:5.3.0"],\
           ["@types/estree", "npm:1.0.8"],\
           ["@types/rollup", null],\
           ["estree-walker", "npm:2.0.2"],\
@@ -1702,9 +1702,10 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@playwright/test", "npm:1.55.0"],\
           ["@touchspin/core", "workspace:packages/core"],\
+          ["@touchspin/vanilla-renderer", "workspace:packages/vanilla-renderer"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1723,8 +1724,8 @@ const RAW_RUNTIME_STATE =
           ["@types/jquery", "npm:3.5.33"],\
           ["jquery", "npm:3.7.1"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1736,8 +1737,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-bootstrap3", "workspace:packages/renderers/bootstrap3"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1749,8 +1750,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-bootstrap4", "workspace:packages/renderers/bootstrap4"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1763,8 +1764,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/renderer-bootstrap5", "workspace:packages/renderers/bootstrap5"],\
           ["bootstrap", "virtual:bb7c6f9b30b2b961fef22dcd14c69f5e22c24e1c3eb6dfa1c9cee5ad9e755b7eaa12fad3dbee6a431fc79ca87553617be3a5082969865f79f94d857ec7946a12#npm:5.3.8"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1776,8 +1777,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/renderer-tailwind", "workspace:packages/renderers/tailwind"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1798,8 +1799,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/core", "workspace:packages/core"],\
           ["@touchspin/vanilla-renderer", "workspace:packages/vanilla-renderer"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -1812,8 +1813,8 @@ const RAW_RUNTIME_STATE =
           ["@touchspin/vanilla-renderer", "workspace:packages/vanilla-renderer"],\
           ["@touchspin/web-component", "workspace:packages/web-component"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -2215,14 +2216,14 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0", {\
-        "packageLocation": "./.yarn/__virtual__/@vue-language-core-virtual-970432c1da/3/home/styu/.yarn/berry/cache/@vue-language-core-npm-2.2.0-451bd2aafd-10c0.zip/node_modules/@vue/language-core/",\
+      ["virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:2.2.0", {\
+        "packageLocation": "./.yarn/__virtual__/@vue-language-core-virtual-5877d3e963/3/home/styu/.yarn/berry/cache/@vue-language-core-npm-2.2.0-451bd2aafd-10c0.zip/node_modules/@vue/language-core/",\
         "packageDependencies": [\
           ["@types/typescript", null],\
           ["@volar/language-core", "npm:2.4.23"],\
           ["@vue/compiler-dom", "npm:3.5.21"],\
           ["@vue/compiler-vue2", "npm:2.7.16"],\
-          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:2.2.0"],\
           ["@vue/shared", "npm:3.5.21"],\
           ["alien-signals", "npm:0.4.14"],\
           ["minimatch", "npm:9.0.5"],\
@@ -7126,8 +7127,8 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5", {\
-        "packageLocation": "./.yarn/__virtual__/vite-virtual-3d4c0ca1f3/3/home/styu/.yarn/berry/cache/vite-npm-7.1.5-cf091ecd54-10c0.zip/node_modules/vite/",\
+      ["virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5", {\
+        "packageLocation": "./.yarn/__virtual__/vite-virtual-9fcb5ee6bd/3/home/styu/.yarn/berry/cache/vite-npm-7.1.5-cf091ecd54-10c0.zip/node_modules/vite/",\
         "packageDependencies": [\
           ["@types/jiti", null],\
           ["@types/less", null],\
@@ -7156,7 +7157,7 @@ const RAW_RUNTIME_STATE =
           ["terser", null],\
           ["tinyglobby", "npm:0.2.15"],\
           ["tsx", null],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
           ["yaml", null]\
         ],\
         "packagePeers": [\
@@ -7251,23 +7252,23 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4", {\
-        "packageLocation": "./.yarn/__virtual__/vite-plugin-dts-virtual-c36b407a39/3/home/styu/.yarn/berry/cache/vite-plugin-dts-npm-4.5.4-2445647687-10c0.zip/node_modules/vite-plugin-dts/",\
+      ["virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4", {\
+        "packageLocation": "./.yarn/__virtual__/vite-plugin-dts-virtual-2452052828/3/home/styu/.yarn/berry/cache/vite-plugin-dts-npm-4.5.4-2445647687-10c0.zip/node_modules/vite-plugin-dts/",\
         "packageDependencies": [\
           ["@microsoft/api-extractor", "npm:7.52.12"],\
-          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:5.3.0"],\
           ["@types/typescript", null],\
           ["@types/vite", null],\
           ["@volar/typescript", "npm:2.4.23"],\
-          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:2.2.0"],\
           ["compare-versions", "npm:6.1.1"],\
           ["debug", "virtual:643ed7cc338bcf145a82d8b05b3bef6bcf150ca545df386225596f10ce53cc90b88b3ca83e348ade1ccea5f3f8e76c92d2f0e2ba544da60d40aff9921c56872d#npm:4.4.1"],\
           ["kolorist", "npm:1.8.0"],\
           ["local-pkg", "npm:1.1.2"],\
           ["magic-string", "npm:0.30.19"],\
           ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
-          ["vite", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:7.1.5"],\
-          ["vite-plugin-dts", "virtual:4ede523a3170b206c10aa6c5954502f29534ea1683c4f00d0f4024a1c1d6341851bcdc66ca90a59d8834e045d7ebae03b6e2c680730418ca7372e10c4ddfd46b#npm:4.5.4"]\
+          ["vite", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:7.1.5"],\
+          ["vite-plugin-dts", "virtual:83decdcc0c02ba7a84aa8db0fa074fe7901e301fa37efef7a0242c6bc07cc04bab86b630eeb2b18eb7979b22ea31d480cc8cfe26ac90d88e5d37a73b01e51dc5#npm:4.5.4"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -7281,11 +7282,11 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/vite-plugin-dts-virtual-0043a2886e/3/home/styu/.yarn/berry/cache/vite-plugin-dts-npm-4.5.4-2445647687-10c0.zip/node_modules/vite-plugin-dts/",\
         "packageDependencies": [\
           ["@microsoft/api-extractor", "npm:7.52.12"],\
-          ["@rollup/pluginutils", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:5.3.0"],\
+          ["@rollup/pluginutils", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:5.3.0"],\
           ["@types/typescript", null],\
           ["@types/vite", null],\
           ["@volar/typescript", "npm:2.4.23"],\
-          ["@vue/language-core", "virtual:c36b407a3959a7a4b0add9b07d19c7b6eea8385975de8d4ee624ec6abbb89228279c207614cef0a9c1128a36e49fca3f1eed9b63c4652012c6a194cf1f754767#npm:2.2.0"],\
+          ["@vue/language-core", "virtual:2452052828c9705fe7f9b0f3d425646223acb1860d3a3500e3fcc56a79201ed066f98109d15c99bd595aaac3c99d9e0fa8c27ca1ee4c76cb39ec9dea23863617#npm:2.2.0"],\
           ["compare-versions", "npm:6.1.1"],\
           ["debug", "virtual:643ed7cc338bcf145a82d8b05b3bef6bcf150ca545df386225596f10ce53cc90b88b3ca83e348ade1ccea5f3f8e76c92d2f0e2ba544da60d40aff9921c56872d#npm:4.4.1"],\
           ["kolorist", "npm:1.8.0"],\

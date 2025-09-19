@@ -27,17 +27,23 @@ Helpers used:
     1) page.evaluate: call `$(input).TouchSpin('up')` → expect value incremented; same for 'down'
 
 - [ ] DOM event bridging
-  - Purpose: jQuery `.on('change', ...)` fires when core triggers native change.
+  - Purpose: jQuery `.on('change', ...)` fires once when core triggers native change (no duplicates).
   - Pseudocode:
-    1) page.evaluate: attach `$(input).on('change', handler)`; perform interaction; assert handler invoked
+    1) page.evaluate: attach `$(input).on('change', handler)`; perform interaction; assert handler invoked exactly once
 
 - [ ] blur compatibility
   - Purpose: `.trigger('blur')` invokes core blur handling.
   - Pseudocode:
     1) page.evaluate: `$(input).trigger('blur')` after value edit → expect sanitization/checkValue applied
 
+- [ ] change event emission — edge cases via plugin
+  - Purpose: ensure plugin does not introduce duplicate 'change' events on boundary/rounding cases.
+  - Pseudocode:
+    1) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, initval: 95 }); clickUpButton twice → expectEventCount('change', 1)
+    2) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, forcestepdivisibility: 'none', initval: 97 }); clickUpButton twice → expectEventCount('change', 1)
+    3) initializeTouchspinJQuery('qty', { step: 5, min: 0, max: 100, initval: 100 }); clickUpButton → expectEventCount('change', 0)
+
 - [ ] destroy/uninitialize
   - Purpose: plugin cleanup, idempotent destroy.
   - Pseudocode:
     1) page.evaluate: `$(input).TouchSpin('destroy')`; actions no longer affect value; calling again is safe
-

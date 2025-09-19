@@ -1361,6 +1361,7 @@ __metadata:
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
+    "@touchspin/vanilla-renderer": "workspace:*"
     typescript: "npm:^5.7.2"
     vite: "npm:^7.1.5"
     vite-plugin-dts: "npm:^4.0.0"

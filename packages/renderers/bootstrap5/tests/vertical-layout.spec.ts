@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { initializeTouchspinWithBootstrap5, startCoverage, collectCoverage } from '../../test-helpers';
+import { installDomHelpers } from '@touchspin/core/test-helpers/runtime/installDomHelpers';
+import { initializeTouchspinWithBootstrap5 } from './helpers/initialization';
+import { startCoverage, collectCoverage } from '@touchspin/core/test-helpers/test-utilities/coverage';
 
 test.describe('renderer-b5: vertical layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,6 +12,7 @@ test.describe('renderer-b5: vertical layout', () => {
   });
   test('vertical texts and classes applied', async ({ page }) => {
     await page.goto('/packages/core/tests/html/test-fixture.html');
+    await installDomHelpers(page);
 
     await initializeTouchspinWithBootstrap5(page, 'test-input', {
       verticalbuttons: true,
@@ -33,3 +36,4 @@ test.describe('renderer-b5: vertical layout', () => {
     await expect(down).toHaveClass(/v-down/);
   });
 });
+

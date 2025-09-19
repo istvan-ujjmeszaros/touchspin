@@ -52,3 +52,27 @@ Helpers used:
     1) initializeTouchspin('qty', {})
     2) destroyCore → interactions no longer change value; calling destroy again is safe
 
+---
+
+- [ ] change event emission — boundary/rounding edge cases
+  - Purpose: ensure exactly one native 'change' fires per effective value change, and none when value doesn't change.
+  - Pseudocode:
+    1) page.goto(fixture) and clearEventLog
+    2) initializeTouchspinWithBootstrap5('qty', { step: 5, min: 0, max: 100 });
+       page.evaluate: set input value to '95' before init or via initval: 95
+    3) clickUpButton twice → expectValueToBe '100' and expectEventCount('change', 1)
+    4) initializeTouchspinWithBootstrap5('qty', { step: 5, min: 0, max: 100, forcestepdivisibility: 'none', initval: 97 })
+       clickUpButton twice → expect value '100'; expectEventCount('change', 1)
+    5) initializeTouchspinWithBootstrap5('qty', { step: 5, min: 0, max: 100, initval: 100 })
+       clickUpButton once → expectEventCount('change', 0)
+    6) initializeTouchspinWithBootstrap5('qty', { step: 5, min: 0, max: 100, initval: 0 })
+       clickDownButton once → expectEventCount('change', 0) (already at min)
+
+- [ ] change event emission — programmatic and sanitize paths
+  - Purpose: programmatic setValue and sanitize-on-blur produce at most one change when resulting display differs.
+  - Pseudocode:
+    1) initializeTouchspin('qty', { step: 5, min: 0, max: 100 })
+       setValueViaAPI('qty', '96'); clearEventLog; blur input (fillWithValueAndBlur('qty','96')) → expectEventCount('change', 1) and value '95' (round)
+    2) updateSettingsViaAPI({ min: 60 }) from current value 70 → clearEventLog; expectEventCount('change', 0) (value unchanged)
+    3) updateSettingsViaAPI({ max: 50 }) from current value 70 → expectEventCount('change', 1) and value '50'
+    4) setValueViaAPI('qty', currentValue) → expectEventCount('change', 0) (no-op write)
