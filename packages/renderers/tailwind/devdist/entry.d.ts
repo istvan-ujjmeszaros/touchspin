@@ -2,7 +2,7 @@ import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchs
 import TailwindRenderer from './TailwindRenderer';
 declare function TouchSpin(element: HTMLInputElement, options?: Record<string, any>): ReturnType<typeof CoreTouchSpin>;
 declare namespace TouchSpin {
-    var get: typeof getTouchSpin;
+    var get: any;
     var destroy: (element: HTMLInputElement) => boolean;
 }
 export { TouchSpin, TouchSpinCore, getTouchSpin, TailwindRenderer };

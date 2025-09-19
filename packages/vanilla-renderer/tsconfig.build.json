@@ -11,8 +11,8 @@
     "skipLibCheck": true,
     "types": [],
     "paths": {
-      "@touchspin/core": ["../core/dist/index.d.ts"],
-      "@touchspin/core/renderer": ["../core/dist/renderer.d.ts"]
+      "@touchspin/core": ["../core/src/index.ts"],
+      "@touchspin/core/renderer": ["../core/src/renderer.ts"]
     }
   },
   "include": ["src/**/*"]
