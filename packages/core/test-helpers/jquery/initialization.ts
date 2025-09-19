@@ -9,6 +9,7 @@ import { installDomHelpers } from '../runtime/installDomHelpers';
 
 export async function installJqueryPlugin(page: Page): Promise<void> {
   await installDomHelpers(page);
+  await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await page.evaluate(async () => {
     const offenders = Array.from(document.querySelectorAll('script[src*="/src/"]')).map(
       (s) => (s as HTMLScriptElement).src
@@ -46,6 +47,7 @@ export async function initializeTouchspinJQuery(
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await installDomHelpers(page);
+  await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
   await page.evaluate(({ id, opts }) => {
     const win = window as unknown as Record<string, unknown>;

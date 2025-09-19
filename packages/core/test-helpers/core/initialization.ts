@@ -14,6 +14,8 @@ export async function initializeTouchspin(
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await installDomHelpers(page);
+  // Early DX check: ensure namespace exists
+  await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
   await page.evaluate(async ({ testId, options }) => {
     const url = 'http://localhost:8866/packages/core/dist/index.js';
