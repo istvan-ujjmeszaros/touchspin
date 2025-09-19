@@ -67,6 +67,7 @@
     "@touchspin/renderer-bootstrap5": "workspace:*",
     "@touchspin/renderer-tailwind": "workspace:*",
     "@types/jquery": "^3.5.30",
+    "@types/node": "^22.7.4",
     "jquery": "^3.7.1",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2",

@@ -11,5 +11,9 @@
       "import": "./src/index.js",
       "require": "./src/index.js"
     }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4"
   }
 }
