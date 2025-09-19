@@ -186,8 +186,12 @@ export class TouchSpinCore {
 
     // Allow global default options (e.g., to set a global default renderer or defaults)
     /** @type {Partial<TouchSpinCoreOptions>} */
-    const globalDefaults = (typeof globalThis !== 'undefined' && (globalThis as any).TouchSpinDefaultOptions)
-      ? TouchSpinCore.sanitizePartialSettings((globalThis as any).TouchSpinDefaultOptions, DEFAULTS)
+    const globalDefaults = (typeof globalThis !== 'undefined' &&
+      (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> }).TouchSpinDefaultOptions)
+      ? TouchSpinCore.sanitizePartialSettings(
+          (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> }).TouchSpinDefaultOptions!,
+          DEFAULTS
+        )
       : {};
 
     /** @type {TouchSpinCoreOptions} */
