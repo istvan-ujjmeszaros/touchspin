@@ -9,7 +9,7 @@ import {
   startUpSpinViaAPI,
   startDownSpinViaAPI,
   stopSpinViaAPI
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Boosted Stepping', () => {
   test.beforeEach(async ({ page }) => {

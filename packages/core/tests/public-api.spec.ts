@@ -13,7 +13,7 @@ import {
   incrementViaAPI,
   decrementViaAPI,
   updateSettingsViaAPI
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Public API', () => {
   test.beforeEach(async ({ page }) => {

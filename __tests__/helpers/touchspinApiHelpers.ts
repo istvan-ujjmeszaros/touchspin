@@ -926,14 +926,6 @@ async function getElement(page: Page, testId: string) {
   return page.locator(`[data-testid="${testId}"]`);
 }
 
-// Helper for value assertions to replace expect().toHaveValue()
-async function expectElementToHaveValue(page: Page, testId: string, expectedValue: string): Promise<void> {
-  const actualValue = await readInputValue(page, testId);
-  if (actualValue !== expectedValue) {
-    throw new Error(`Expected element ${testId} to have value "${expectedValue}", but got "${actualValue}"`);
-  }
-}
-
 // Generic element click helper
 async function clickElement(page: Page, testId: string): Promise<void> {
   const element = page.locator(`[data-testid="${testId}"]`);

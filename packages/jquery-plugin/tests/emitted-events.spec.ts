@@ -69,8 +69,8 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
       await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
 
-      // Allow brief time for event to be logged
-      await apiHelpers.waitForTimeout(100);
+      // Wait for the event to be logged
+      await apiHelpers.waitForEventInLog(page, 'touchspin.on.startspin');
 
       await jqueryHelpers.jQueryStopSpin(page, 'test-input');
 
@@ -83,7 +83,7 @@ test.describe('jQuery TouchSpin Emitted Events', () => {
 
       await jqueryHelpers.jQueryStartUpSpin(page, 'test-input');
 
-      await apiHelpers.waitForTimeout(100);
+      await apiHelpers.waitForEventInLog(page, 'touchspin.on.startupspin');
 
       await jqueryHelpers.jQueryStopSpin(page, 'test-input');
 

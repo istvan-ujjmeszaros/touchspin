@@ -80,25 +80,8 @@ test.describe('TouchSpin Callback Tests', () => {
         async () => apiHelpers.readInputValue(page, testid)
       ).toBe('$5,499.90');
 
-      // Start spinning up (hold down for enough time to reach max)
-      const wrapper = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
-      await wrapper.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        if (button) {
-          button.dispatchEvent(new Event('mousedown', { bubbles: true }));
-        }
-      });
-
-      // Hold for enough time to reach max value (step is 0.1, so need at least 1 increment)
-      await apiHelpers.waitForTimeout(800);
-
-      // Stop spinning
-      await wrapper.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        if (button) {
-          button.dispatchEvent(new Event('mouseup', { bubbles: true }));
-        }
-      });
+      // Hold up button for enough time to reach max value (step is 0.1, so need at least 1 increment)
+      await apiHelpers.holdUpButton(page, testid, 800);
 
       // Should reach max value and be properly formatted
       await expect.poll(
@@ -206,25 +189,8 @@ test.describe('TouchSpin Callback Tests', () => {
         async () => apiHelpers.readInputValue(page, testid)
       ).toBe('$5,499.90');
 
-      // Start spinning up
-      const wrapper2 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
-      await wrapper2.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        if (button) {
-          button.dispatchEvent(new Event('mousedown', { bubbles: true }));
-        }
-      });
-
-      // Hold long enough to reach max
-      await apiHelpers.waitForTimeout(800);
-
-      // Stop spinning
-      await wrapper2.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        if (button) {
-          button.dispatchEvent(new Event('mouseup', { bubbles: true }));
-        }
-      });
+      // Hold up button long enough to reach max
+      await apiHelpers.holdUpButton(page, testid, 800);
 
       // Should reach max value with proper numeral.js formatting
       await expect.poll(

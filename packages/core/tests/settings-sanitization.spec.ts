@@ -7,7 +7,7 @@ import {
   destroyCore,
   readInputValue,
   updateSettingsViaAPI
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Settings Sanitization', () => {
   test.beforeEach(async ({ page }) => {

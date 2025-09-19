@@ -11,7 +11,7 @@ import {
   stopSpinViaAPI,
   incrementViaAPI,
   decrementViaAPI
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Advanced Spinning', () => {
   test.beforeEach(async ({ page }) => {

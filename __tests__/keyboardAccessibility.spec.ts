@@ -105,11 +105,6 @@ test.describe('Keyboard Accessibility Tests', () => {
       // Should have incremented multiple times
       const value = parseInt(await apiHelpers.readInputValue(page, testid) || '50');
       expect(value).toBeGreaterThan(50);
-
-      // Wait briefly for spinning effect
-      await apiHelpers.waitForTimeout(100);
-
-      // Brief wait for event processing
     });
 
     test('should prevent default behavior on Space and Enter keys', async ({ page }) => {

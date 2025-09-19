@@ -11,7 +11,7 @@ import {
   incrementViaAPI,
   decrementViaAPI,
   setValueViaAPI
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Destruction', () => {
   test.beforeEach(async ({ page }) => {

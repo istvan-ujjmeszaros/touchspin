@@ -10,7 +10,7 @@ import {
   decrementViaAPI,
   incrementViaKeyboard,
   decrementViaKeyboard
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 // Use original battle-tested helpers
 const {

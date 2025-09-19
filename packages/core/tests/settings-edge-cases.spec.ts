@@ -6,7 +6,7 @@ import {
   setValueViaAPI,
   destroyCore,
   readInputValue
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Settings Edge Cases', () => {
   test.beforeEach(async ({ page }) => {

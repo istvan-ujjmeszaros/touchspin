@@ -127,12 +127,9 @@ test.describe('Events', () => {
     // Press Tab to trigger blur and commit/sanitize the value
     await page.keyboard.press('Tab');
 
-    // Wait for a short period to ensure all events are processed
-    await apiHelpers.waitForTimeout(500);
-
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
-    expect(await apiHelpers.changeEventCounter(page)).toBe(1);
+    await expect.poll(() => apiHelpers.changeEventCounter(page)).toBe(1);
     expect(await apiHelpers.countChangeWithValue(page, '100')).toBe(1);
   });
 
@@ -156,12 +153,9 @@ test.describe('Events', () => {
     // Press Tab to trigger blur and commit/sanitize the value
     await page.keyboard.press('Tab');
 
-    // Wait for a short period to ensure all events are processed
-    await apiHelpers.waitForTimeout(500);
-
     // TODO: This should ideally be 0 since clamping back to original value shouldn't fire change
     // But current implementation compares against intermediate input value, not original committed value
-    expect(await apiHelpers.changeEventCounter(page)).toBe(1);
+    await expect.poll(() => apiHelpers.changeEventCounter(page)).toBe(1);
     expect(await apiHelpers.countChangeWithValue(page, '0')).toBe(1);
   });
 
@@ -178,12 +172,10 @@ test.describe('Events', () => {
 
     await page.keyboard.press('Tab');
 
-    await apiHelpers.waitForTimeout(500);
-
     // FIXME: Currently firing 2 change events with decorated value instead of 1
     // This may be due to double processing in _checkValue or callback chains
     // For now, accepting the current behavior to focus on core contract fixes
-    expect(await apiHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
+    await expect.poll(() => apiHelpers.countChangeWithValue(page, '$1,000.00')).toBe(1);
   });
 
   test('Should have the decorated value on blur', async ({ page }) => {
@@ -206,9 +198,6 @@ test.describe('Events', () => {
     // Click on another element to trigger focusout - using a different TouchSpin element
     const otherInput = apiHelpers.getElement(page, 'touchspin-group-lg');
     await otherInput.click({ clickCount: 1 });
-
-    // Allow the deferred focusout commit to run
-    await apiHelpers.waitForTimeout(0);
 
     // Raw '1000' should NOT be the committed value
     expect(await apiHelpers.countChangeWithValue(page, '1000')).toBe(0);
@@ -238,17 +227,8 @@ test.describe('Events', () => {
     await apiHelpers.getWrapperInstanceWhenReady(page, testid);
     await page.evaluate(() => { const log = document.getElementById('events_log'); if (log) log.textContent = ''; });
 
-    // Focus the input and hold ArrowUp to initiate spinning
-    const input = apiHelpers.getElement(page, testid);
-    await input.focus();
-    await page.keyboard.down('ArrowUp');
-    await page.keyboard.down('ArrowUp');
-    await page.keyboard.down('ArrowUp');
-    await page.keyboard.down('ArrowUp');
-    await page.keyboard.down('ArrowUp');
-    await apiHelpers.waitForTimeout(100); // hold longer than stepintervaldelay
-    await page.keyboard.up('ArrowUp');
-    await apiHelpers.waitForTimeout(50);
+    // Hold ArrowUp to initiate spinning for longer than stepintervaldelay (100ms)
+    await apiHelpers.holdUpArrowKeyOnInput(page, testid, 150);
 
     // Exactly one startupspin event should have been fired for this element
     await expect.poll(
@@ -267,15 +247,10 @@ test.describe('Events', () => {
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
     await upButton.focus();
 
-    // Simulate a hold: multiple downs without intermediate ups
+    // Hold Space key for 100ms to trigger spinning
     await page.keyboard.down(' ');
-    await page.keyboard.down(' ');
-    await page.keyboard.down(' ');
-    await page.keyboard.down(' ');
-    await page.keyboard.down(' ');
-    await apiHelpers.waitForTimeout(100);
+    await apiHelpers.waitForTimeout(100); // hold longer than stepintervaldelay
     await page.keyboard.up(' ');
-    await apiHelpers.waitForTimeout(50);
 
     await expect.poll(
       async () => apiHelpers.countEvent(page, elementId, 'touchspin.on.startupspin')

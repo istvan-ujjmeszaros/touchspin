@@ -97,17 +97,8 @@ test.describe('Vertical Buttons', () => {
   test('should support long press spinning for vertical buttons', async ({ page }) => {
     const testid = 'touchspin-vertical';
 
-    // Simulate long press by holding mousedown for longer than stepintervaldelay (500ms)
-    await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
-      button.dispatchEvent(new Event('mousedown', { bubbles: true }));
-    });
-
-    // Wait longer than the default stepintervaldelay (500ms) to trigger spinning
-    await apiHelpers.waitForTimeout(700);
-
-    await page.locator('.bootstrap-touchspin-vertical-button-wrapper .bootstrap-touchspin-up').first().evaluate((button) => {
-      button.dispatchEvent(new Event('mouseup', { bubbles: true }));
-    });
+    // Hold button for longer than stepintervaldelay (500ms) to trigger spinning
+    await apiHelpers.holdUpButton(page, testid, 700);
 
     // Should have incremented multiple times due to spinning
     const finalValue = parseInt(await apiHelpers.readInputValue(page, testid) || '50');

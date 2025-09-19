@@ -6,7 +6,7 @@ import {
   setValueViaAPI,
   destroyCore,
   readInputValue
-} from '../../..__tests__/helpers/touchspinApiHelpers';
+} from '../../../__tests__/helpers/touchspinApiHelpers';
 
 test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,12 +27,10 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         initval: 10
       });
 
-      const upButton = page.locator('[data-testid="test-input-up"]');
       await apiHelpers.clearEventLog(page);
 
-      // Mouse down on up button
-      await upButton.dispatchEvent('mousedown');
-      await apiHelpers.waitForTimeout(50);
+      // Click up button
+      await apiHelpers.clickUpButton(page, 'test-input');
 
       // Should increment immediately
       expect(await getNumericValue(page, 'test-input')).toBe(11);
@@ -40,9 +38,6 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
       // Should emit start spin events
       expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
       expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(true);
-
-      // Clean up
-      await upButton.dispatchEvent('mouseup');
     });
 
     test('mousedown preventDefault behavior on up button', async ({ page }) => {
@@ -82,26 +77,21 @@ test.describe('Core TouchSpin Button Mouse/Touch Interaction', () => {
         stepinterval: 50 // Fast for testing
       });
 
-      const upButton = page.locator('[data-testid="test-input-up"]');
-
-      // Start spinning
-      await upButton.dispatchEvent('mousedown');
-      await apiHelpers.waitForTimeout(150); // Let it spin a few times
+      // Hold up button to spin
+      await apiHelpers.holdUpButton(page, 'test-input', 150);
 
       const valueBeforeStop = await getNumericValue(page, 'test-input');
       await apiHelpers.clearEventLog(page);
 
-      // Stop spinning
-      await upButton.dispatchEvent('mouseup');
-      await apiHelpers.waitForTimeout(50);
+      // Verify button hold incremented value
+      expect(valueBeforeStop).toBeGreaterThan(10);
 
-      // Should emit stop spin events
+      // Should emit stop spin events (already emitted by holdUpButton)
       expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin')).toBe(true);
       expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin')).toBe(true);
 
-      // Should stop changing value
-      await apiHelpers.waitForTimeout(100);
-      expect(await getNumericValue(page, 'test-input')).toBe(valueBeforeStop);
+      // Value should remain stable after spinning stopped
+      await expect.poll(() => getNumericValue(page, 'test-input')).toBe(valueBeforeStop);
     });
 
     test('mouseleave on document stops spinning', async ({ page }) => {

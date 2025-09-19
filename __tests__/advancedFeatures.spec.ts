@@ -132,19 +132,8 @@ test.describe('Advanced Features', () => {
     test('should fire custom spin events', async ({ page }) => {
       const testid = 'touchspin-default';
 
-      // Start spinning and check for events
-      const wrapper4 = await apiHelpers.getWrapperInstanceWhenReady(page, testid);
-      await wrapper4.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mousedown', { bubbles: true }));
-      });
-
-      await apiHelpers.waitForTimeout(600); // Wait for spin to start
-
-      await wrapper4.evaluate((container) => {
-        const button = container.querySelector('[data-touchspin-injected="up"]') as HTMLElement | null;
-        button?.dispatchEvent(new Event('mouseup', { bubbles: true }));
-      });
+      // Hold up button for 600ms to test spin events
+      await apiHelpers.holdUpButton(page, testid, 600);
 
       // Check that spin events were logged (if events logging is available)
       const hasSpinEvents = await page.evaluate(() => {
