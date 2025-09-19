@@ -27,6 +27,8 @@
     "tmp",
     "**/vite.config.*",
     "**/playwright*.config.*",
-    "**/types/**"
+    "**/types/**",
+    "**/tests/**",
+    "**/__tests__/**"
   ]
 }
