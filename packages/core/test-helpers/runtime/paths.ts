@@ -1,4 +1,4 @@
-const TARGET = (typeof process !== 'undefined' && process && process.env && process.env.TS_BUILD_TARGET === 'dev')
+const TARGET = (typeof process !== 'undefined' && process && process.env && (process.env.TS_BUILD_TARGET === 'dev' || process.env.PW_COVERAGE === '1'))
   ? 'devdist'
   : 'dist';
 
