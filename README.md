@@ -735,7 +735,7 @@ You can run tests (Playwright) and the dev examples server together while iterat
 The combined mode uses `concurrently` to run:
 
 ```
-yarn dev   # Vite on port 8866, opens /examples/
+yarn dev   # Static server on port 8866, opens /examples/
 yarn test:watch  # Playwright UI
 ```
 

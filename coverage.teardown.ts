@@ -43,10 +43,7 @@ async function globalTeardown() {
       const u = new URL(rawUrl);
       let p = decodeURIComponent(u.pathname);         // e.g. /packages/jquery-plugin/src/index.js or /packages/jquery-plugin/dist/index.js
 
-      // Ignore vite internals
-      if (p.includes('/@id/') || p.includes('/node_modules/.vite/deps/') || p.includes('/@vite/')) {
-        return null;
-      }
+      // Ignore bundler/dev-server internals if present (none expected now)
 
       const ix = p.indexOf('/packages/');
       if (ix === -1) return null;

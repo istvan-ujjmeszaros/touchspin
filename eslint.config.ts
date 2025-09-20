@@ -76,7 +76,7 @@ export default [
     },
   },
   {
-    files: ['vite.config.ts', 'eslint.config.ts', 'playwright.config.ts', '**/playwright*.config.ts'],
+    files: ['eslint.config.ts', 'playwright.config.ts', '**/playwright*.config.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

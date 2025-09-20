@@ -52,7 +52,7 @@ const ensureServerRunning = async () => {
     return;
   }
 
-  // Start the development server (Vite) in detached mode
+  // Start the development server in detached mode
   const serverProcess = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'dev'], {
     detached: true,
     stdio: 'ignore'

@@ -25,7 +25,7 @@
     "dist",
     "reports",
     "tmp",
-    "**/vite.config.*",
+    
     "**/playwright*.config.*",
     "**/types/**",
     "**/tests/**",

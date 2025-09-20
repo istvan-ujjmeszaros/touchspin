@@ -63,7 +63,7 @@ jobs:
           path: |
             packages/*/dist
             packages/renderers/*/dist
-          key: ${{ runner.os }}-build-${{ hashFiles('packages/**/src/**', 'tsconfig*.json', 'vite.config.ts') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/**/src/**', 'tsconfig*.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
 

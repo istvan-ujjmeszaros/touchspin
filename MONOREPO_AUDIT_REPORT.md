@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The Bootstrap TouchSpin monorepo has undergone a complete architectural refactor to a modern monorepo structure using Yarn 4 with PnP, Vite builds, and Playwright tests. The codebase is well-organized with clear separation of concerns between core logic, renderers, and integration packages. The project is mostly ready for npm publication with some minor adjustments needed.
+The Bootstrap TouchSpin monorepo has undergone a complete architectural refactor to a modern monorepo structure using Yarn 4 with PnP, tsup/tsc builds, and Playwright tests. The codebase is well-organized with clear separation of concerns between core logic, renderers, and integration packages. The project is mostly ready for npm publication with some minor adjustments needed.
 
 ---
 
@@ -93,7 +93,7 @@ All packages at v1.0.0 while root is v4.8.0. Consider:
 ### ✅ Well-Structured
 - Core package exports proper types via `dist/index.d.ts`
 - Renderer interface properly defined in `@touchspin/core/renderer`
-- All packages generate .d.ts files via vite-plugin-dts
+- All packages generate .d.ts files via TypeScript (tsc)
 - AbstractRenderer base class available for extension
 
 ### ⚠️ Potential Issues

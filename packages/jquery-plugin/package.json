@@ -70,8 +70,6 @@
     "@types/node": "^22.7.4",
     "jquery": "^3.7.1",
     "tsup": "^8.1.0",
-    "typescript": "^5.7.2",
-    "vite": "^7.1.5",
-    "vite-plugin-dts": "^4.0.0"
+    "typescript": "^5.7.2"
   }
 }

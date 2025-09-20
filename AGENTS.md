@@ -10,7 +10,7 @@ This document guides contributors (human and AI assistants) on how to work effec
 ## Safety checklist for agents and contributors
 - Always work under Yarn 4 (Berry) with PnP and workspaces
 - Only change code under `packages/`; legacy root `src/` is reference‑only
-- Use port `8866` for dev servers; per‑package Vite is configured with `server.open`
+- Use port `8866` for dev servers; the repo is served via `http-server` with import maps for tests
 - Before pushing:
   - Run `yarn build` (all packages must build cleanly)
   - Run `yarn test` (or `yarn test:dev` during local iteration)
@@ -53,7 +53,7 @@ Documentation
 
 Developer Experience
 - `/examples` hub lists all examples recursively (works today)
-- Maintain per‑package `server.open` behavior for faster iteration
+- Maintain per‑package example pages that open quickly for faster iteration
 
 Framework wrappers (future)
 - Thin wrappers for React/Vue/Angular that set a default renderer and expose idiomatic APIs
@@ -61,4 +61,3 @@ Framework wrappers (future)
 Guidelines
 - Renderers must use `data-touchspin-injected` attributes to allow core to bind events (no class‑based event wiring)
 - Avoid modifying legacy root `src/`; all source lives in `packages/*`
-
