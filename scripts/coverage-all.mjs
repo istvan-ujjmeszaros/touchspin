@@ -47,7 +47,6 @@ async function main() {
     }
   );
 
-  console.log('🔀 Merging coverage files...');
   runAndExit('yarn', ['coverage:merge']);
 
   console.log('📊 Generating reports...');
