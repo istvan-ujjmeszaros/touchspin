@@ -29,7 +29,9 @@
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc --noEmit",
-    "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch"
+    "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch",
+    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap5/tests",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap5/tests"
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"

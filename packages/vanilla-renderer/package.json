@@ -45,7 +45,9 @@
     "build:test": "tsc -p tsconfig.testbuild.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "watch:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --source-map --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/vanilla-renderer/tests",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../playwright-coverage.config.ts --project=chromium-coverage packages/vanilla-renderer/tests"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
