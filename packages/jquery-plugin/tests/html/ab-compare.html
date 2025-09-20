@@ -6,6 +6,15 @@
   <title>jQuery TouchSpin A/B Compare (Original v4.7.3 vs New Wrapper)</title>
   <link rel="stylesheet" href="/__tests__/html/assets/bootstrap/bootstrap-4.6.2.min.css">
   <script src="/__tests__/html/assets/jquery/jquery-3.7.1.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "/packages/core/devdist/index.js",
+      "@touchspin/core/renderer": "/packages/core/devdist/renderer.js",
+      "@touchspin/core/events": "/packages/core/devdist/events.js"
+    }
+  }
+  </script>
   <style>
     body { padding: 20px; }
     .test-section {

@@ -9,6 +9,11 @@ const rootDir = path.resolve(__dirname, '..');
 
 /**
  * Fix import paths in devdist files to use devdist instead of dist
+ *
+ * NOTE: This script is kept for fallback purposes but is NO LONGER USED by default.
+ * Test fixtures now use import maps to handle module resolution natively in the browser.
+ * To run manually with debug output: DEBUG_FIX_IMPORTS=1 node scripts/fix-devdist-imports.mjs
+ * To use in build: yarn build:test:with-fix
  */
 function fixDevdistImports() {
   // First fix core package devdist relative imports
@@ -24,7 +29,9 @@ function fixDevdistImports() {
       content = content.replace(/from ['"]\.\/events['"]/g, 'from "/packages/core/devdist/events.js"');
       content = content.replace(/from ['"]\.\/renderer['"]/g, 'from "/packages/core/devdist/renderer.js"');
       fs.writeFileSync(file, content);
-      console.log(`✅ Fixed relative imports in ${file}`);
+      if (process.env.DEBUG_FIX_IMPORTS === '1') {
+        console.log(`✅ Fixed relative imports in ${file}`);
+      }
     });
   }
 
@@ -55,7 +62,9 @@ function fixDevdistImports() {
         if (originalPattern.test(content)) {
           content = content.replace(originalPattern, replacement);
           fs.writeFileSync(file, content);
-          console.log(`✅ Fixed devdist imports in ${file}`);
+          if (process.env.DEBUG_FIX_IMPORTS === '1') {
+            console.log(`✅ Fixed devdist imports in ${file}`);
+          }
         }
       });
     }
