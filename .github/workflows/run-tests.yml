@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     container:
-      image: mcr.microsoft.com/playwright:v1.54.2-jammy
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy
       options: --ipc=host
     timeout-minutes: 20
 
