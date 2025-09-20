@@ -12,6 +12,10 @@
       "import": "./dist/index.js"
     },
     "./renderer": {
+      "test": {
+        "types": "./devdist/renderer.d.ts",
+        "import": "./devdist/renderer.js"
+      },
       "types": "./dist/renderer.d.ts",
       "import": "./dist/renderer.js"
     },

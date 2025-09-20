@@ -6,6 +6,11 @@ export default defineConfig({
   plugins: [
     dts({ entryRoot: 'src', outDir: 'dist', insertTypesEntry: true, skipDiagnostics: true }),
   ],
+  resolve: {
+    alias: process.env.TS_BUILD_TARGET === 'dev' || process.env.PW_COVERAGE === '1' ? {
+      '@touchspin/core/renderer': path.resolve(__dirname, 'devdist/renderer.js')
+    } : {}
+  },
   server: {
     port: 8866,
     strictPort: true,

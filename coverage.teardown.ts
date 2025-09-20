@@ -35,6 +35,9 @@ async function globalTeardown() {
   const istanbulJsonDir = path.join(process.cwd(), 'reports', 'istanbul-json');
   fs.mkdirSync(istanbulJsonDir, { recursive: true });
 
+  // DEBUG: Log environment variables
+  console.log(`🔧 Environment: TS_BUILD_TARGET=${process.env.TS_BUILD_TARGET}, PW_COVERAGE=${process.env.PW_COVERAGE}, COVERAGE=${process.env.COVERAGE}`);
+
   function toLocalPath(rawUrl: string): string | null {
     try {
       const u = new URL(rawUrl);
@@ -97,7 +100,10 @@ async function globalTeardown() {
 
         // Only log unique URLs
         if (!loggedUrls.has(entry.url)) {
-          console.log(`🔍 Processing URL: ${entry.url} → ${localPath || 'SKIPPED'}`);
+          const expectedTarget = entry.url.includes('/src/') ? 'SRC' :
+                               entry.url.includes('/devdist/') ? 'DEVDIST' :
+                               entry.url.includes('/dist/') ? 'DIST' : 'OTHER';
+          console.log(`🔍 Processing URL [${expectedTarget}]: ${entry.url} → ${localPath || 'SKIPPED'}`);
           loggedUrls.add(entry.url);
         }
 
