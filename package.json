@@ -95,6 +95,7 @@
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
     "guard:no-src-in-tests": "node scripts/guard-no-src-in-tests.mjs",
     "guard:tests": "node scripts/guard-tests.mjs all",
+    "guard:esm-extensions": "node scripts/guard-esm-extensions.mjs",
     "postinstall": "husky install"
   },
   "workspaces": [

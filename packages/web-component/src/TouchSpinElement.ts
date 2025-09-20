@@ -5,8 +5,8 @@
 
 import { TouchSpin, getTouchSpin } from '@touchspin/core';
 import { VanillaRenderer } from '@touchspin/vanilla-renderer';
-import { getSettingsFromAttributes, OBSERVED_ATTRIBUTES, attributeToSetting, parseAttributeValue } from './attribute-mapping';
-import { bridgeEvents } from './event-bridge';
+import { getSettingsFromAttributes, OBSERVED_ATTRIBUTES, attributeToSetting, parseAttributeValue } from './attribute-mapping.js';
+import { bridgeEvents } from './event-bridge.js';
 
 /**
  * TouchSpin Custom Element

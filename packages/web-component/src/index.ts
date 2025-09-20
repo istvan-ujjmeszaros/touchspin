@@ -3,7 +3,7 @@
  * Standards-based custom element for framework-agnostic usage
  */
 
-import { TouchSpinElement } from './TouchSpinElement';
+import { TouchSpinElement } from './TouchSpinElement.js';
 
 // Register the custom element
 if (!customElements.get('touchspin-element')) {
@@ -14,8 +14,8 @@ if (!customElements.get('touchspin-element')) {
 export { TouchSpinElement };
 
 // Export utilities for advanced usage
-export { getSettingsFromAttributes, attributeToSetting, parseAttributeValue, OBSERVED_ATTRIBUTES } from './attribute-mapping';
-export { bridgeEvents, EVENT_NAME_MAP, getAvailableEvents } from './event-bridge';
+export { getSettingsFromAttributes, attributeToSetting, parseAttributeValue, OBSERVED_ATTRIBUTES } from './attribute-mapping.js';
+export { bridgeEvents, EVENT_NAME_MAP, getAvailableEvents } from './event-bridge.js';
 
 // Default export for convenience
 export default TouchSpinElement;

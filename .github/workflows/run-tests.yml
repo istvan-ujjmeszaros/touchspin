@@ -70,6 +70,9 @@ jobs:
       - name: Build test artifacts (devdist)
         run: yarn build:test
 
+      - name: Guard ESM import extensions
+        run: yarn guard:esm-extensions
+
       - name: Assert devdist presence
         run: |
           test -f packages/core/devdist/index.js

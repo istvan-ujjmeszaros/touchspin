@@ -1,6 +1,6 @@
 // Standalone Tailwind build entry point
 import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
-import TailwindRenderer from './TailwindRenderer';
+import TailwindRenderer from './TailwindRenderer.js';
 
 // Create a wrapper that automatically sets the Tailwind renderer
 function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}): ReturnType<typeof CoreTouchSpin> {

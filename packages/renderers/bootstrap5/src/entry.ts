@@ -1,6 +1,6 @@
 // Standalone Bootstrap 5 build entry point
 import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
-import Bootstrap5Renderer from './Bootstrap5Renderer';
+import Bootstrap5Renderer from './Bootstrap5Renderer.js';
 
 // Create a wrapper that automatically sets the Bootstrap 5 renderer
 function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}) {

@@ -1,14 +1,14 @@
-export { default as AbstractRenderer } from './AbstractRenderer';
+export { default as AbstractRenderer } from './AbstractRenderer.js';
 export type {
   RendererOptionKind,
   RendererOptionDef,
   RendererOptionSchema,
   InferOptionsFromSchema,
-} from './AbstractRenderer';
+} from './AbstractRenderer.js';
 
 // Canonical Renderer interface and constructor type for TouchSpin
 // Exposed under the subpath '@touchspin/core/renderer'
-import type { TouchSpinCoreOptions } from './index';
+import type { TouchSpinCoreOptions } from './index.js';
 
 // Minimal instance surface used by core. Renderers may implement more.
 export interface Renderer {
