@@ -4,6 +4,7 @@ import { inputById } from './selectors';
 import { setupLogging } from '../events/setup';
 import { coreUrl as coreRuntimeUrl, vanillaRendererClassUrl } from '../runtime/paths';
 import { installDomHelpers } from '../runtime/installDomHelpers';
+import { preFetchCheck } from '../test-utilities/network';
 
 /* ──────────────────────────
  * Core (direct) API initialization
@@ -18,6 +19,10 @@ export async function initializeTouchspin(
   // Early DX check: ensure namespace exists
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
+
+  // Pre-check that core module is fetchable (better error messages)
+  await preFetchCheck(page, coreRuntimeUrl);
+
   await page.evaluate(async ({ testId, options, coreUrl }) => {
     const origin = (globalThis as any).location?.origin ?? '';
     const url = new URL(coreUrl, origin).href;

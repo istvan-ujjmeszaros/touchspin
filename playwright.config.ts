@@ -107,11 +107,13 @@ export default defineConfig({
     // },
   ],
 
-  /* Serve repository statically for tests (no HMR/bundling) */
+  /* Serve repository root statically for tests (no HMR/bundling) */
   webServer: {
-    command: 'node scripts/static-server.mjs',
+    command: 'yarn serve:root',
     port: 8866,
     reuseExistingServer: true,
     timeout: 20000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });

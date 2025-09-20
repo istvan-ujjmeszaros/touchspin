@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.54.2-focal
+      options: --user 1001
     timeout-minutes: 20
 
     steps:
@@ -42,21 +45,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-nm-
 
-      # Get Playwright version for precise cache key
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test']")" >> $GITHUB_OUTPUT
-
-      # Cache Playwright browsers with version-specific key
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}-chromium
-          restore-keys: |
-            ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}-
-            ${{ runner.os }}-playwright-
 
       - name: Yarn install and prepare environment
         run: |
@@ -66,14 +54,7 @@ jobs:
           EOF
           yarn install
 
-      # Only install Playwright if not cached
-      - name: Install Playwright browser
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: yarn playwright install chromium
-
-      # Install system dependencies separately (always needed even with cache)
-      - name: Install Playwright system dependencies
-        run: yarn playwright install-deps chromium
+      # Playwright browser and dependencies are pre-installed in the container
 
       # Cache build artifacts
       - name: Cache build output
