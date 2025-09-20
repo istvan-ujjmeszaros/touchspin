@@ -13,8 +13,8 @@ interface PageWithCDP extends Page {
 }
 
 export async function startCoverage(page: Page): Promise<void> {
-  // Check PW_COVERAGE too since that's set by coverage:run
-  if (process.env.COVERAGE !== '1' && process.env.PW_COVERAGE !== '1') return;
+  // Use PW_COVERAGE as the single source of truth for coverage runs
+  if (process.env.PW_COVERAGE !== '1') return;
   try {
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Profiler.enable');
@@ -27,8 +27,8 @@ export async function startCoverage(page: Page): Promise<void> {
 }
 
 export async function collectCoverage(page: Page, testName: string): Promise<void> {
-  // Check PW_COVERAGE too since that's set by coverage:run
-  if (process.env.COVERAGE !== '1' && process.env.PW_COVERAGE !== '1') return;
+  // Use PW_COVERAGE as the single source of truth for coverage runs
+  if (process.env.PW_COVERAGE !== '1') return;
   try {
     const cdp = (page as PageWithCDP).__cdpSession;
     if (!cdp) {
@@ -57,11 +57,6 @@ export async function saveCoverageData(
   const coverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
   if (!fs.existsSync(coverageDir)) fs.mkdirSync(coverageDir, { recursive: true });
 
-  // Debug: Log all URLs
-  console.log(`[Coverage Debug] Test: ${testName}, Total URLs: ${coverage.length}`);
-  const sampleUrls = coverage.slice(0, 5).map(e => e.url);
-  console.log(`[Coverage Debug] Sample URLs:`, sampleUrls);
-
   const sourceCoverage = coverage.filter((entry) => {
     const url = entry.url ?? '';
     return (
@@ -72,7 +67,6 @@ export async function saveCoverageData(
     );
   });
 
-  console.log(`[Coverage Debug] Filtered coverage: ${sourceCoverage.length} files`);
   if (sourceCoverage.length > 0) {
     const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     const filePath = path.join(coverageDir, fileName);

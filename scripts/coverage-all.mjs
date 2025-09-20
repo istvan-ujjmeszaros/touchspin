@@ -24,9 +24,9 @@ function runAndExit(cmd, args, extraEnv = {}) {
 
 console.log(`🎯 Running coverage in build mode${open ? ' (will open)' : ''}`);
 
-console.log('📦 Building packages...');
-// Topological: types first, then JS (ensures core d.ts exist before consumers).
-runAndExit('yarn', ['build:prod']);
+console.log('📦 Building test packages...');
+// Only build the test artifacts (devdist) needed for coverage
+runAndExit('yarn', ['build:test']);
 
 console.log('🔍 Checking for src imports in tests...');
 runAndExit('yarn', ['guard:no-src-in-tests']);

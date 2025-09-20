@@ -40,7 +40,7 @@ function fixDevdistImports() {
   ];
 
   packages.forEach(pkg => {
-    // Fix devdist files
+    // ONLY fix devdist files - never touch dist (publish artifacts)
     const devdistDir = path.join(rootDir, pkg, 'devdist');
     if (fs.existsSync(devdistDir)) {
       const devdistFiles = fs.readdirSync(devdistDir)
@@ -60,25 +60,7 @@ function fixDevdistImports() {
       });
     }
 
-    // Fix dist files
-    const distDir = path.join(rootDir, pkg, 'dist');
-    if (fs.existsSync(distDir)) {
-      const distFiles = fs.readdirSync(distDir)
-        .filter(f => f.endsWith('.js'))
-        .map(f => path.join(distDir, f));
-
-      distFiles.forEach(file => {
-        let content = fs.readFileSync(file, 'utf-8');
-        const originalPattern = /from ['"]@touchspin\/core\/renderer['"]/g;
-        const replacement = 'from "/packages/core/dist/renderer.js"';
-
-        if (originalPattern.test(content)) {
-          content = content.replace(originalPattern, replacement);
-          fs.writeFileSync(file, content);
-          console.log(`✅ Fixed dist imports in ${file}`);
-        }
-      });
-    }
+    // DO NOT process dist files - those are publish artifacts
   });
 }
 

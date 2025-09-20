@@ -19,7 +19,8 @@ export async function initializeTouchspin(
   await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
   await setupLogging(page);
   await page.evaluate(async ({ testId, options, coreUrl }) => {
-    const url = 'http://localhost:8866' + coreUrl;
+    const origin = (globalThis as any).location?.origin ?? '';
+    const url = new URL(coreUrl, origin).href;
     const { TouchSpinCore } = (await import(url)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
@@ -68,10 +69,11 @@ export async function initializeTouchspinWithVanilla(
 ): Promise<void> {
   await setupLogging(page);
   await page.evaluate(async ({ testId, options, coreUrl, rendererUrl }) => {
-    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
+    const origin = (globalThis as any).location?.origin ?? '';
+    const { TouchSpinCore } = (await import(new URL(coreUrl, origin).href)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
-    const rendererMod = (await import('http://localhost:8866' + rendererUrl)) as unknown as { default?: unknown };
+    const rendererMod = (await import(new URL(rendererUrl, origin).href)) as unknown as { default?: unknown };
     const VanillaRenderer = rendererMod.default as unknown;
 
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
@@ -104,10 +106,11 @@ export async function initializeTouchspinWithRenderer(
   await setupLogging(page);
   const coreUrl = coreRuntimeUrl;
   await page.evaluate(async ({ testId, options, rendererUrl, exportName, coreUrl }) => {
-    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
+    const origin = (globalThis as any).location?.origin ?? '';
+    const { TouchSpinCore } = (await import(new URL(coreUrl, origin).href)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
-    const mod = (await import(rendererUrl)) as unknown as Record<string, unknown> & { default?: unknown };
+    const mod = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
     const Renderer = (exportName ? (mod[exportName] as unknown) : (mod.default as unknown)) ?? mod.default;
 
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
