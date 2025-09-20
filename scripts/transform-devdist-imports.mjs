@@ -8,12 +8,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 /**
- * Fix import paths in devdist files to use devdist instead of dist
+ * Transform import paths in devdist files for serving from repository root.
  *
- * NOTE: This script is kept for fallback purposes but is NO LONGER USED by default.
- * Test fixtures now use import maps to handle module resolution natively in the browser.
- * To run manually with debug output: DEBUG_FIX_IMPORTS=1 node scripts/fix-devdist-imports.mjs
- * To use in build: yarn build:test:with-fix
+ * Why this is necessary:
+ * - TypeScript outputs relative imports (e.g., './events')
+ * - We serve test files from repo root via http-server
+ * - Browsers resolve relative imports based on the URL, not file location
+ * - Import maps can't rewrite imports inside modules, only top-level imports
+ *
+ * This script converts relative imports to absolute paths that work when
+ * serving from the repository root.
  */
 function fixDevdistImports() {
   // First fix core package devdist relative imports
