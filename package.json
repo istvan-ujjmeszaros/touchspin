@@ -54,7 +54,7 @@
     "dev": "node scripts/static-server.mjs",
     "dev:force": "node scripts/dev-force.mjs",
     "preview": "node scripts/static-server.mjs",
-    "build": "yarn workspaces foreach -p -A run build",
+    "build": "yarn workspace @touchspin/core build && yarn workspaces foreach -p -A --exclude @touchspin/core run build",
     "build:types:all": "yarn workspaces foreach -t -A run build:types",
     "build:js:all": "yarn workspaces foreach -t -A run build:js",
     "build:prod": "yarn build:types:all && yarn build:js:all",
