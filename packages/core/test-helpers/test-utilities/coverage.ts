@@ -61,6 +61,7 @@ export async function saveCoverageData(
     const url = entry.url ?? '';
     return (
       url.includes('/packages/') &&
+      // Include dev runtime too: /src/ (unit), /dist/ (prod), /devdist/ (Playwright coverage)
       (url.includes('/src/') || url.includes('/dist/') || url.includes('/devdist/')) &&
       !url.includes('node_modules') &&
       !url.includes('@vite/client')

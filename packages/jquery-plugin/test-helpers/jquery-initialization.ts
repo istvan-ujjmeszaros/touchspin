@@ -28,11 +28,11 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
       if (!w['$']) w['$'] = $;
 
       const jqueryPluginUrl = '/packages/jquery-plugin/dist/index.js';
-      const { installWithRenderer } = (await import(jqueryPluginUrl)) as unknown as {
+      const { installWithRenderer } = (await import(new URL(jqueryPluginUrl, location.origin).href)) as unknown as {
         installWithRenderer: (renderer: unknown) => void;
       };
       const rendererUrl = '/packages/renderers/bootstrap5/dist/index.js';
-      const rendererMod = (await import(rendererUrl)) as unknown as {
+      const rendererMod = (await import(new URL(rendererUrl, location.origin).href)) as unknown as {
         default?: unknown;
         Bootstrap5Renderer?: unknown;
       };
