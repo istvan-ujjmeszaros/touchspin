@@ -7,7 +7,7 @@ on:
     branches: [ master, main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -86,8 +86,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Build all packages
-        run: yarn build
+      - name: Build test artifacts (devdist)
+        run: yarn build:test
+
+      - name: Assert devdist presence
+        run: |
+          test -f packages/core/devdist/index.js
+          test -f packages/vanilla-renderer/devdist/VanillaRenderer.js
+          test -f packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js
+
+      - name: Guard - no src imports in tests
+        run: yarn guard:no-src-in-tests
 
       - name: Run tests (Chromium)
         run: yarn test
@@ -105,3 +114,42 @@ jobs:
           path: reports/
           retention-days: 7
           if-no-files-found: ignore
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test]
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+
+      - name: Enable corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            node_modules
+          key: ${{ runner.os }}-yarn-nm-${{ hashFiles('yarn.lock', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-nm-
+
+      - name: Yarn install
+        run: |
+          cat > .yarnrc.yml << 'EOF'
+          nodeLinker: node-modules
+          EOF
+          yarn install --immutable
+
+      - name: Build publish artifacts (dist)
+        run: yarn build
