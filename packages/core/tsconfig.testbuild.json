@@ -12,7 +12,9 @@
     "skipLibCheck": true,
     "types": [],
     "incremental": true,
-    "tsBuildInfoFile": "./devdist/.tsbuildinfo"
+    "tsBuildInfoFile": "./devdist/.tsbuildinfo",
+    "baseUrl": "./src",
+    "paths": {}
   },
   "include": ["src/**/*"]
 }

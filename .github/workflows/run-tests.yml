@@ -68,7 +68,7 @@ jobs:
             ${{ runner.os }}-build-
 
       - name: Build test artifacts (devdist)
-        run: yarn build:test
+        run: yarn build:test:with-fix
 
       - name: Assert devdist presence
         run: |

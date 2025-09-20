@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "incremental": true,
     "tsBuildInfoFile": "./devdist/.tsbuildinfo",
+    "baseUrl": "./src",
     "paths": {
       "@touchspin/core": ["../../core/dist/index.d.ts"],
       "@touchspin/core/renderer": ["../../core/dist/renderer.d.ts"]

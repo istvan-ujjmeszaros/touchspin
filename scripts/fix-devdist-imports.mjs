@@ -28,6 +28,7 @@ function fixDevdistImports() {
       // Fix relative imports in core devdist files
       content = content.replace(/from ['"]\.\/events['"]/g, 'from "/packages/core/devdist/events.js"');
       content = content.replace(/from ['"]\.\/renderer['"]/g, 'from "/packages/core/devdist/renderer.js"');
+      content = content.replace(/from ['"]\.\/AbstractRenderer['"]/g, 'from "/packages/core/devdist/AbstractRenderer.js"');
       fs.writeFileSync(file, content);
       if (process.env.DEBUG_FIX_IMPORTS === '1') {
         console.log(`✅ Fixed relative imports in ${file}`);
