@@ -102,9 +102,9 @@ export async function initializeTouchspinWithRenderer(
   exportName?: string
 ): Promise<void> {
   await setupLogging(page);
-  await page.evaluate(async ({ testId, options, rendererUrl, exportName }) => {
-    const coreUrl = 'http://localhost:8866/packages/core/dist/index.js';
-    const { TouchSpinCore } = (await import(coreUrl)) as unknown as {
+  const coreUrl = coreRuntimeUrl;
+  await page.evaluate(async ({ testId, options, rendererUrl, exportName, coreUrl }) => {
+    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
     const mod = (await import(rendererUrl)) as unknown as Record<string, unknown> & { default?: unknown };
@@ -117,7 +117,7 @@ export async function initializeTouchspinWithRenderer(
     const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as Partial<TouchSpinCoreOptions>);
     (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-  }, { testId, options, rendererUrl, exportName });
+  }, { testId, options, rendererUrl, exportName, coreUrl });
 
   const sel = [
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,

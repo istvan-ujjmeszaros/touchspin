@@ -85,6 +85,9 @@ async function globalTeardown() {
   const loggedUrls = new Set<string>();
   const loggedPaths = new Set<string>();
   const urlCounts = new Map<string, number>();
+  const allRawUrls: string[] = [];
+  const processedUrls: string[] = [];
+  const skippedUrls: string[] = [];
 
   for (const file of coverageFiles) {
     const filePath = path.join(playwrightCoverageDir, file);
@@ -93,6 +96,9 @@ async function globalTeardown() {
       const coverage = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
       for (const entry of coverage) {
+        // Collect ALL raw URLs for debugging
+        allRawUrls.push(entry.url);
+
         const localPath = toLocalPath(entry.url);
 
         // Track URL frequency
@@ -108,8 +114,16 @@ async function globalTeardown() {
         }
 
         if (!localPath) {
-          // skip non-project modules (vite deps, etc.)
+          // Track skipped URLs for debugging
+          if (!skippedUrls.includes(entry.url)) {
+            skippedUrls.push(entry.url);
+          }
           continue;
+        }
+
+        // Track processed URLs
+        if (!processedUrls.includes(entry.url)) {
+          processedUrls.push(entry.url);
         }
 
         try {
@@ -152,22 +166,39 @@ async function globalTeardown() {
     }
   }
 
+  // Comprehensive debug summary
+  console.log(`\n📊 COVERAGE DEBUG SUMMARY:`);
+  console.log(`   Total raw v8 URLs: ${allRawUrls.length}`);
+  console.log(`   Unique URLs processed: ${processedUrls.length}`);
+  console.log(`   Unique URLs skipped: ${skippedUrls.length}`);
+  console.log(`   Istanbul files generated: ${filesProcessed}`);
+
+  // Show core files specifically
+  const coreIndexUrls = allRawUrls.filter(url => url.includes('/core/') && url.includes('index.js'));
+  const rendererUrls = allRawUrls.filter(url => url.includes('/renderer') || url.includes('Renderer'));
+
+  console.log(`\n🔍 KEY FILES ANALYSIS:`);
+  console.log(`   Core index.js URLs: ${coreIndexUrls.length} → ${coreIndexUrls.join(', ')}`);
+  console.log(`   Renderer URLs: ${rendererUrls.length} → ${rendererUrls.slice(0, 3).join(', ')}${rendererUrls.length > 3 ? '...' : ''}`);
+
+  // Show devdist vs dist breakdown
+  const devdistUrls = allRawUrls.filter(url => url.includes('/devdist/'));
+  const distUrls = allRawUrls.filter(url => url.includes('/dist/'));
+
+  console.log(`\n📁 BUILD TARGET ANALYSIS:`);
+  console.log(`   DEVDIST URLs: ${devdistUrls.length} → ${devdistUrls.slice(0, 2).join(', ')}${devdistUrls.length > 2 ? '...' : ''}`);
+  console.log(`   DIST URLs: ${distUrls.length} → ${distUrls.slice(0, 2).join(', ')}${distUrls.length > 2 ? '...' : ''}`);
+
+  if (skippedUrls.length > 0) {
+    console.log(`\n⚠️  SKIPPED URLs (first 5): ${skippedUrls.slice(0, 5).join(', ')}`);
+  }
+
   if (filesProcessed > 0) {
-    console.log(`✅ Processed coverage for ${loggedUrls.size} unique source URLs`);
-
-    // Show top-5 most frequent URLs
-    const topUrls = Array.from(urlCounts.entries())
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 5);
-    if (topUrls.length > 1) {
-      const topUrlsStr = topUrls.map(([url, count]) => `${path.basename(url)}(${count}x)`).join(', ');
-      console.log(`📊 Most frequent: ${topUrlsStr}`);
-    }
-
+    console.log(`\n✅ Successfully processed coverage for ${loggedUrls.size} unique source URLs`);
     console.log(`📁 Individual Istanbul JSON files saved to ${istanbulJsonDir}`);
     console.log('💡 Run "yarn coverage:merge && yarn coverage:report" to generate final reports');
   } else {
-    console.log('⚠️  No source coverage collected');
+    console.log('\n❌ No source coverage collected - check if tests are running and importing project files');
   }
 }
 
