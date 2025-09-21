@@ -43,7 +43,7 @@ Move to `/docs/archive/` directory:
 - **ORIGINAL_MODERN_DIFF.md** - Historical migration reference
 - **WORKLOG.md** - Development history
 - **architecture-claude/** - AI-generated architecture docs (historical)
-- **architecture-consolidated/** - Consolidated architecture docs (historical)
+- **docs/** - Consolidated architecture docs (replaces the historical `architecture-consolidated/` folder)
 - **architecture-openai/** - AI-generated architecture docs (historical)
 
 ### Files to REVIEW/UPDATE
@@ -52,12 +52,7 @@ Move to `/docs/archive/` directory:
 - **AGENTS.md** - Claude-specific, consider moving to .claude/
 
 ### Redundant Documentation
-The three architecture folders contain significant overlap:
-- **architecture-claude/** (4 files)
-- **architecture-consolidated/** (17 files)
-- **architecture-openai/** (24 files)
-
-**Recommendation:** Archive these in `/docs/archive/ai-generated/` and maintain a single source of truth in ARCHITECTURE.md
+The historical architecture folders have been merged into `docs/`. Keep any remaining AI-generated drafts under `docs/legacy/` if they provide value, otherwise archive them outside the repo.
 
 ---
 

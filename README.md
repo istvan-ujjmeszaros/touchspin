@@ -81,6 +81,15 @@ bower install bootstrap-touchspin
 
 ---
 
+## Monorepo Documentation
+
+- [docs/index.md](docs/index.md) — architecture, migration, and extension guides
+- [ARCHITECTURE.md](ARCHITECTURE.md) — high-level summary of the modern modular build
+- [BUILDING.md](BUILDING.md) — running `yarn build`, `yarn build:test`, and workspace builds
+- [TESTING.md](TESTING.md) — Playwright, coverage, and guard scripts
+
+---
+
 ## Usage Examples
 
 ### Basic Number Spinner

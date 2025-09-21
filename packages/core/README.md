@@ -3,6 +3,8 @@
 
 Framework-agnostic TouchSpin core with element-attached architecture. Core is strictly jQuery-free; any jQuery integration lives in the `@touchspin/jquery-plugin` package (including test helpers).
 
+📚 **Documentation**: See [`docs/architecture/overview.md`](../../docs/architecture/overview.md) for a full package map and [`docs/architecture/renderer-guide.md`](../../docs/architecture/renderer-guide.md) for extension patterns.
+
 ## Status: ✅ IMPLEMENTED
 
 The core is fully implemented with modern element-attached architecture.

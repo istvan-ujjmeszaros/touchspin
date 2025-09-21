@@ -1,32 +1,34 @@
 # Bootstrap TouchSpin Architecture Guide
 
-A comprehensive guide to the modular architecture of Bootstrap TouchSpin - a framework-agnostic numeric input component with 100% backward compatibility.
+This guide describes the TypeScript architecture that powers the TouchSpin monorepo. The goal is to show how responsibilities are split across packages, how data flows through the system, and where you can extend the component safely.
 
 ## Architecture Overview
 
-TouchSpin uses a **modular architecture** that separates concerns into focused packages:
+TouchSpin uses a **workspace-first architecture** backed by Yarn 4. Each package focuses on a single concern:
 
 ```
 packages/
-├── core/              # Framework-agnostic business logic
-├── jquery-plugin/     # jQuery compatibility wrapper  
-└── renderers/         # UI builders for CSS frameworks
-    ├── bootstrap3/    # Bootstrap 3 support
-    ├── bootstrap4/    # Bootstrap 4 support  
-    ├── bootstrap5/    # Bootstrap 5 support
-    └── tailwind/      # Tailwind CSS support
+├── core/               # Framework-agnostic business logic (TypeScript)
+├── jquery-plugin/      # jQuery compatibility wrapper
+├── renderers/          # DOM renderers for design systems
+│   ├── bootstrap3/
+│   ├── bootstrap4/
+│   ├── bootstrap5/
+│   └── tailwind/
+├── vanilla-renderer/   # CSS-variable driven renderer used by the web component
+└── web-component/      # Standards-based `<touchspin-element>` custom element
 ```
 
-This design enables:
+This separation gives us:
 - **Framework Independence**: Core logic works with any CSS framework
 - **100% Backward Compatibility**: Existing jQuery code works unchanged
 - **Extensibility**: Easy to add new renderers and framework wrappers
 - **Testability**: Each package can be tested in isolation
-- **Modern JavaScript**: Uses contemporary patterns while supporting legacy usage
+- **TypeScript DX**: Shared types keep renderers and wrappers honest
 
 ## Package Responsibilities
 
-### Core Package (`packages/core/`)
+### Core Package (`packages/core`)
 
 **Responsibilities:**
 - Business logic (validation, calculations, state management)
@@ -34,22 +36,25 @@ This design enables:
 - Settings management with comprehensive sanitization
 - Public API for direct usage
 
-**Key Classes:**
-- `TouchSpinCore` - Main business logic class
-- `AbstractRenderer` - Base class for all renderers
-- Factory functions: `TouchSpin()`, `getTouchSpin()`
+**Key Exports:**
+- `TouchSpinCore` — state machine that owns business rules
+- `AbstractRenderer` / `RendererConstructor` — renderer contracts
+- `TouchSpin()` / `getTouchSpin()` — factory helpers that attach instances to inputs
 
-**Usage:**
-```javascript
+**Usage (TypeScript):**
+```ts
 import { TouchSpin } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
-const api = TouchSpin(inputElement, {
-    min: 0,
-    max: 100,
-    step: 1
+const input = document.querySelector('input[type="number"]') as HTMLInputElement;
+const api = TouchSpin(input, {
+  renderer: Bootstrap5Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
 });
 
-api.on('change', (data) => console.log('Value:', data.newValue));
+api.on('change', ({ newValue }) => console.log('Value:', newValue));
 api.upOnce();
 ```
 
@@ -68,25 +73,25 @@ api.upOnce();
 - `TailwindRenderer` - Tailwind CSS support
 
 **Renderer Pattern:**
-```javascript
-class CustomRenderer extends AbstractRenderer {
-    init() {
-        // 1. Build DOM structure
-        this.wrapper = this.buildWrapper();
-        
-        // 2. Find buttons and elements
-        const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
-        
-        // 3. Attach core event handlers
-        this.core.attachUpEvents(upButton);
-        
-        // 4. Observe setting changes
-        this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
-    }
+```ts
+import { AbstractRenderer } from '@touchspin/core/renderer';
+
+export default class CustomRenderer extends AbstractRenderer {
+  init(): void {
+    this.wrapper = this.buildInputGroup();
+
+    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+
+    this.core.attachUpEvents(upButton);
+    this.core.attachDownEvents(downButton);
+
+    this.core.observeSetting('prefix', (value) => this.updatePrefix(value ?? ''));
+  }
 }
 ```
 
-### jQuery Plugin (`packages/jquery-plugin/`)
+### jQuery Plugin (`packages/jquery-plugin`)
 
 **Responsibilities:**
 - Backward compatibility with jQuery-based code
@@ -95,7 +100,7 @@ class CustomRenderer extends AbstractRenderer {
 - Chainable jQuery interface
 
 **Compatibility Layer:**
-```javascript
+```ts
 // Modern API
 const api = TouchSpin('#spinner', options);
 
@@ -111,34 +116,26 @@ $('#spinner').on('touchspin.on.max', handler);
 
 The heart of the system is the `TouchSpinCore` class:
 
-```javascript
+```ts
 class TouchSpinCore {
-    constructor(inputEl, settings) {
-        this.inputEl = inputEl;
-        this.settings = sanitizeSettings(settings);
-        this.eventEmitter = new Map();
-        this.spinning = false;
-        
-        this.setupEventHandlers();
-        this.initializeValue();
-    }
-    
-    // Public API methods
-    upOnce() { /* Increment by one step */ }
-    downOnce() { /* Decrement by one step */ }
-    startUpSpin() { /* Begin continuous increment */ }
-    stopSpin() { /* Stop continuous operation */ }
-    getValue() { /* Get current numeric value */ }
-    setValue(value) { /* Set value with validation */ }
-    updateSettings(options) { /* Update configuration */ }
-    
-    // Event system
-    on(event, callback) { /* Add event listener */ }
-    off(event, callback) { /* Remove event listener */ }
-    emit(event, data) { /* Emit event */ }
-    
-    // Lifecycle
-    destroy() { /* Clean up instance */ }
+  constructor(input: HTMLInputElement, options: TouchSpinCoreOptions) {
+    this.input = input;
+    this.settings = TouchSpinCore.sanitizePartialSettings(options, DEFAULTS);
+    this.attachLifecycle();
+  }
+
+  upOnce() { /* ... */ }
+  downOnce() { /* ... */ }
+  startUpSpin() { /* ... */ }
+  startDownSpin() { /* ... */ }
+  stopSpin() { /* ... */ }
+  getValue() { /* ... */ }
+  setValue(value: string | number) { /* ... */ }
+  updateSettings(options: Partial<TouchSpinCoreOptions>) { /* ... */ }
+
+  on(event: TouchSpinCallableEvent, handler: (detail?: unknown) => void) { /* ... */ }
+  off(event: TouchSpinCallableEvent, handler: (detail?: unknown) => void) { /* ... */ }
+  destroy() { /* ... */ }
 }
 ```
 
@@ -153,35 +150,31 @@ TouchSpin uses a **framework-agnostic event system** with automatic jQuery bridg
 - `boostchange` - Step size changed during acceleration
 
 **Event Flow:**
-```javascript
+```ts
 // Core emits framework-agnostic events
-core.emit('max', {value: 100, direction: 'up'});
+core.emit('max', { value: 100, direction: 'up' });
 
 // jQuery wrapper automatically bridges to legacy events
-$(input).trigger('touchspin.on.max', {value: 100, direction: 'up'});
+$(input).trigger('touchspin.on.max', { value: 100, direction: 'up' });
 ```
 
 ### Settings Management
 
 Settings undergo **comprehensive sanitization** to ensure valid configurations:
 
-```javascript
-// Input sanitization
-const settings = sanitizeSettings({
-    step: 0,      // Invalid - corrected to 1
-    decimals: -1, // Invalid - corrected to 0
-    min: 'invalid', // Invalid - corrected to null
-    max: 100
-});
+```ts
+const sanitized = TouchSpinCore.sanitizePartialSettings(
+  { step: 0, decimals: -1, min: Number.NaN, max: 100 },
+  core.settings,
+);
 
-// Result: {step: 1, decimals: 0, min: null, max: 100}
+// Result: { step: 1, decimals: 0, min: null, max: 100 }
 ```
 
 **Observer Pattern** for reactive updates:
-```javascript
-// Renderers can observe setting changes
-core.observeSetting('prefix', (newValue) => {
-    this.prefixElement.textContent = newValue;
+```ts
+this.core.observeSetting('prefix', (next) => {
+  this.prefixElement.textContent = next ?? '';
 });
 ```
 

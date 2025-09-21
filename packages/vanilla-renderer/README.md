@@ -2,6 +2,8 @@
 
 A vanilla CSS-based renderer for TouchSpin components without framework dependencies.
 
+📚 Renderer architecture docs: [`docs/architecture/renderer-guide.md`](../../docs/architecture/renderer-guide.md)
+
 This renderer extends `AbstractRenderer` and implements the core `Renderer` contract from `@touchspin/core/renderer`.
 
 ## Features

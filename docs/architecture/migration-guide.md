@@ -18,17 +18,19 @@ This guide provides practical guidance for migrating from any previous version o
 
 Use the jQuery wrapper for backward compatibility while gradually adopting modern patterns:
 
-```javascript
+```ts
 // Phase 1: Keep existing code working
 $('#spinner').TouchSpin({min: 0, max: 100});
 $('#spinner').TouchSpin('setValue', 50);
 
 // Phase 2: Start using modern API alongside
-const api = getTouchSpin('#spinner');
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = getTouchSpin(input);
 console.log('Current value:', api.getValue());
 
 // Phase 3: Full modern migration
-const api = TouchSpin('#spinner', {min: 0, max: 100});
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = TouchSpin(input, { min: 0, max: 100 });
 api.setValue(50);
 ```
 
@@ -36,7 +38,7 @@ api.setValue(50);
 
 Completely rewrite to use the modern API:
 
-```javascript
+```ts
 // Before (Legacy/In-Between)
 $('#spinner').TouchSpin({
     min: 0,
@@ -51,12 +53,13 @@ $('#spinner').on('touchspin.on.min', function() {
 });
 
 // After (Modern)
-const api = TouchSpin('#spinner', {
-    min: 0,
-    max: 100,
-    step: 1,
-    decimals: 0,
-    verticalbuttons: true
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = TouchSpin(input, {
+  min: 0,
+  max: 100,
+  step: 1,
+  decimals: 0,
+  verticalbuttons: true,
 });
 
 api.on('min', function() {
@@ -70,12 +73,13 @@ api.on('min', function() {
 
 **Problem:** Code that directly accesses instance data will break.
 
-```javascript
+```ts
 // ❌ Legacy/In-Between - Will break
 const internalApi = $('#spinner').data('touchspinInternal');
 
 // ✅ Modern - Correct approach
-const api = getTouchSpin('#spinner');
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = getTouchSpin(input);
 ```
 
 **Migration:** Replace all direct data access with the public API.
@@ -85,7 +89,7 @@ const api = getTouchSpin('#spinner');
 **Problem:** Boundary checking logic has changed from reactive to proactive.
 
 **Legacy Behavior:** Operations calculated, then boundaries enforced
-```javascript
+```ts
 // Legacy: Always increments, then clamps
 function upOnce() {
     value += step;
@@ -94,7 +98,7 @@ function upOnce() {
 ```
 
 **Modern Behavior:** Operations prevented at boundaries
-```javascript  
+```ts  
 // Modern: Prevents operation entirely at boundary
 upOnce() {
     if (currentValue === max) {
@@ -116,7 +120,7 @@ upOnce() {
 
 **Problem:** Event plumbing and timing has changed.
 
-```javascript
+```ts
 // ❌ Legacy - Direct jQuery events only
 $('#spinner').on('touchspin.on.max', handler);
 
@@ -139,7 +143,7 @@ api.on('max', handler); // Modern approach
 **Legacy/In-Between:** Always syncs attributes to input element
 **Modern:** Only syncs for `type="number"` inputs
 
-```javascript
+```ts
 // Modern behavior
 if (inputElement.type === 'number') {
     inputElement.min = settings.min;
@@ -166,7 +170,7 @@ if (inputElement.type === 'number') {
 - Prevents intermediate invalid values from propagating
 - Final change event after sanitization is cleaner
 
-```javascript
+```ts
 // Modern approach prevents intermediate invalid values
 _handleInputChange(e) {
     const current = this.inputEl.value;
@@ -183,7 +187,7 @@ _handleInputChange(e) {
 
 **Problem:** Settings validation is now much more strict.
 
-```javascript
+```ts
 // ❌ Legacy - Silent failures
 TouchSpin({step: 0}); // Silently broken
 
@@ -206,7 +210,7 @@ TouchSpin({step: 0}); // Automatically corrected to minimum valid step
 **Legacy/In-Between:** Plugin binds events to renderer-returned elements
 **Modern:** Renderer must call `attachUpEvents`/`attachDownEvents`
 
-```javascript
+```ts
 // ❌ Legacy renderer pattern
 return {
     wrapper: $wrapper,
@@ -227,7 +231,7 @@ init() {
 
 **Modern Requirement:** Renderers should render prefix/postfix elements even if empty - core will hide them.
 
-```javascript
+```ts
 // Modern approach - always render, let core control visibility
 buildPrefix() {
     const prefix = document.createElement('span');
@@ -259,24 +263,25 @@ buildPrefix() {
 
 ### Step 2: Prepare Dependencies
 
-1. **Update TouchSpin:**
+1. **Install the modular packages:**
    ```bash
-   npm install bootstrap-touchspin@latest
+   yarn add @touchspin/core @touchspin/jquery-plugin @touchspin/renderer-bootstrap5
    ```
 
-2. **Include appropriate packages:**
-   ```javascript
-   // For jQuery compatibility
-   import 'bootstrap-touchspin/dist/jquery-plugin.js';
-   
-   // For modern usage
-   import TouchSpin from 'bootstrap-touchspin';
+2. **Wire up imports (choose modern or jQuery API):**
+   ```ts
+   // Modern API
+   import { TouchSpin } from '@touchspin/core';
+   import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+   // jQuery wrapper when you need backward compatibility
+   import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
+   installJqueryTouchSpin(window.jQuery);
    ```
 
-3. **Update CSS if needed:**
+3. **Load the matching CSS bundle:**
    ```css
-   /* Modern CSS classes may differ from legacy */
-   @import 'bootstrap-touchspin/dist/bootstrap-touchspin.css';
+   @import '@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css';
    ```
 
 ### Step 3: Migration Implementation
@@ -285,7 +290,7 @@ buildPrefix() {
 
 Keep existing code mostly unchanged:
 
-```javascript
+```ts
 // Before
 $('#spinner').TouchSpin(options);
 $('#spinner').TouchSpin('setValue', 42);
@@ -301,14 +306,15 @@ $('#spinner').on('touchspin.on.max', handler);
 
 Update to use modern patterns:
 
-```javascript
+```ts
 // Before
 $('#spinner').TouchSpin({min: 0, max: 100});
 const value = $('#spinner').TouchSpin('getValue');
 $('#spinner').TouchSpin('setValue', 42);
 
 // After
-const api = TouchSpin('#spinner', {min: 0, max: 100});
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = TouchSpin(input, { min: 0, max: 100 });
 const value = api.getValue();
 api.setValue(42);
 ```
@@ -316,7 +322,7 @@ api.setValue(42);
 ### Step 4: Testing Strategy
 
 1. **Verify basic functionality:**
-   ```javascript
+   ```ts
    // Test all core operations
    api.upOnce();
    api.downOnce();
@@ -325,24 +331,30 @@ api.setValue(42);
    ```
 
 2. **Test boundary conditions:**
-   ```javascript
+   ```ts
    api.setValue(api.settings.max);
    api.upOnce(); // Should emit 'max' event, not change value
    ```
 
 3. **Test event handling:**
-   ```javascript
-   let maxHit = false;
-   api.on('max', () => { maxHit = true; });
-   api.setValue(api.settings.max);
-   api.upOnce();
-   console.assert(maxHit, 'Max event should fire');
+   ```ts
+  const maxValue = 100;
+  api.updateSettings({ max: maxValue });
+
+  let maxHit = false;
+  api.on('max', () => { maxHit = true; });
+  api.setValue(maxValue);
+  api.upOnce();
+  console.assert(maxHit, 'Max event should fire');
    ```
 
 4. **Test settings updates:**
-   ```javascript
-   api.updateSettings({max: 200});
-   console.assert(api.settings.max === 200, 'Settings should update');
+   ```ts
+  let observedMax = 0;
+  const stop = api.observeSetting('max', (value) => { observedMax = value; });
+  api.updateSettings({ max: 200 });
+  stop();
+  console.assert(observedMax === 200, 'Settings observer should fire');
    ```
 
 ### Step 5: Performance Verification
@@ -365,10 +377,15 @@ api.setValue(42);
 
 **Bootstrap 3 → 4 → 5:** Renderers handle framework differences automatically.
 
-```javascript
-// Works with any Bootstrap version
-const api = TouchSpin('#spinner', {
-    // Renderer automatically selected based on detected Bootstrap version
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = TouchSpin(input, {
+  renderer: Bootstrap5Renderer,
+  min: 0,
+  max: 100,
 });
 ```
 
@@ -376,35 +393,23 @@ const api = TouchSpin('#spinner', {
 
 If you have custom renderers, follow the new contract:
 
-```javascript
-class CustomRenderer {
-    constructor(inputEl, settings, core) {
-        this.inputEl = inputEl;
-        this.settings = settings;
-        this.core = core;
-    }
-    
-    init() {
-        this.buildDOM();
-        
-        // REQUIRED: Attach events via core
-        this.core.attachUpEvents(this.upButton, this.upBehavior);
-        this.core.attachDownEvents(this.downButton, this.downBehavior);
-        
-        // REQUIRED: Set data attributes for core event targeting
-        this.upButton.dataset.touchspinInjected = 'up';
-        this.downButton.dataset.touchspinInjected = 'down';
-        this.wrapper.dataset.touchspinInjected = 'wrapper';
-        
-        return this.wrapper;
-    }
-    
-    // Optional: React to setting changes
-    observeSetting(key, value) {
-        if (key === 'prefix') {
-            this.prefixElement.textContent = value;
-        }
-    }
+```ts
+import { AbstractRenderer } from '@touchspin/core/renderer';
+
+export default class CustomRenderer extends AbstractRenderer {
+  init(): void {
+    this.wrapper = this.buildInputGroup();
+
+    const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
+    const downButton = this.wrapper.querySelector('[data-touchspin-injected="down"]');
+
+    this.core.attachUpEvents(upButton);
+    this.core.attachDownEvents(downButton);
+
+    this.core.observeSetting('prefix', (value) => {
+      this.updatePrefix(value ?? '');
+    });
+  }
 }
 ```
 
@@ -412,7 +417,7 @@ class CustomRenderer {
 
 ### Unit Test Examples
 
-```javascript
+```ts
 describe('TouchSpin Migration', () => {
     test('basic functionality works', () => {
         const api = TouchSpin('#spinner', {min: 0, max: 10});
@@ -450,7 +455,7 @@ describe('TouchSpin Migration', () => {
 
 ### Integration Test Examples
 
-```javascript
+```ts
 describe('TouchSpin jQuery Compatibility', () => {
     test('wrapper maintains compatibility', () => {
         $('#spinner').TouchSpin({min: 0, max: 10});
@@ -495,32 +500,36 @@ describe('TouchSpin jQuery Compatibility', () => {
 
 If migration issues occur:
 
-1. **Keep old version available:**
-   ```javascript
-   // Conditional loading during migration
-   if (USE_LEGACY_TOUCHSPIN) {
-       import 'bootstrap-touchspin-legacy';
-   } else {
-       import 'bootstrap-touchspin';
+1. **Keep the wrapper installed:**
+   ```ts
+   import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
+
+   if (featureFlags.useLegacyJqueryApi) {
+     installJqueryTouchSpin(window.jQuery);
    }
    ```
 
-2. **Feature flags for gradual rollout:**
-   ```javascript
-   const useLegacy = featureFlags.legacyTouchSpin;
-   const api = useLegacy 
-       ? LegacyTouchSpin('#spinner', options)
-       : TouchSpin('#spinner', options);
+2. **Gate modern usage behind a flag:**
+   ```ts
+   const input = document.querySelector('#spinner') as HTMLInputElement;
+
+   if (featureFlags.useModernTouchSpin) {
+     TouchSpin(input, options);
+   } else {
+     installJqueryTouchSpin(window.jQuery);
+     $(input).TouchSpin(options);
+   }
    ```
 
-3. **Fallback detection:**
-   ```javascript
+3. **Fall back gracefully:**
+   ```ts
    try {
-       const api = TouchSpin('#spinner', options);
-       // Use modern API
+     const input = document.querySelector('#spinner') as HTMLInputElement;
+     TouchSpin(input, options);
    } catch (error) {
-       console.warn('Falling back to legacy TouchSpin', error);
-       $('#spinner').TouchSpin(options); // Legacy fallback
+     console.warn('Falling back to jQuery TouchSpin', error);
+     installJqueryTouchSpin(window.jQuery);
+     $('#spinner').TouchSpin(options);
    }
    ```
 

@@ -2,6 +2,8 @@
 
 A standards-based Web Component implementation of TouchSpin, providing a framework-agnostic custom element for number input with increment/decrement controls.
 
+📚 For core architecture details see [`docs/architecture/overview.md`](../../docs/architecture/overview.md). Attribute documentation lives in [`docs/reference/options-and-events.md`](../../docs/reference/options-and-events.md).
+
 ## Features
 
 - 🌐 **Framework Agnostic** - Works with React, Angular, Vue, or vanilla JavaScript

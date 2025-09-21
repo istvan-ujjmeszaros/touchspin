@@ -3,6 +3,8 @@
 
 Tailwind renderer for TouchSpin.
 
+📚 See [`docs/architecture/renderer-guide.md`](../../../docs/architecture/renderer-guide.md) for renderer contracts and extension tips.
+
 ## Install
 
 ```
