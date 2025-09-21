@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./devdist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "sourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
@@ -13,8 +13,8 @@
     "types": [],
     "incremental": true,
     "tsBuildInfoFile": "./devdist/.tsbuildinfo",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {}
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*"]
 }
