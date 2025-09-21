@@ -685,6 +685,12 @@ The inspect script provides:
 - Safe to run `yarn dev` multiple times (checks if already running)
 - Serves static files from project root with disabled caching
 
+**Dev Base URL Override**  
+- Inspect tool builds the URL from `DEV_BASE_URL` when set, otherwise defaults to `http://localhost:8866`.
+- Example:
+  - `DEV_BASE_URL=https://your-tunnel.example.com yarn inspect /packages/core/tests/__shared__/fixtures/test-fixture.html text`
+- Inside browser-evaluated helpers, modules are resolved relative to `location.origin` (no hard-coded hosts).
+
 ### Build Process
 
 TouchSpin uses a Rollup-based build system:
