@@ -201,3 +201,123 @@ test.skip('handles attribute precedence rules', async ({ page }) => {
 test.skip('maps accessibility attributes', async ({ page }) => {
   // Implementation pending
 });
+
+/**
+ * Scenario: processes custom class attributes
+ * Given a touch-spin element with custom class attributes
+ * When the element is initialized
+ * Then custom classes are applied to appropriate elements
+ * Params:
+ * { "customClasses": { "wrapper-class": "custom-wrapper", "input-class": "custom-input" }, "expectedApplication": "element_specific_classes" }
+ */
+test.skip('processes custom class attributes', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: handles internationalization attributes
+ * Given a touch-spin element with i18n attributes
+ * When the element is initialized
+ * Then internationalization settings are correctly applied
+ * Params:
+ * { "i18nAttributes": { "lang": "fr", "dir": "rtl", "locale": "fr-FR" }, "expectedBehavior": "localization_support" }
+ */
+test.skip('handles internationalization attributes', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: supports plugin-specific attributes
+ * Given a touch-spin element with plugin-specific attributes
+ * When the element is initialized with plugins
+ * Then plugin attributes are correctly mapped to plugin settings
+ * Params:
+ * { "pluginAttributes": { "validation-plugin": "strict", "format-plugin": "currency" }, "expectedMapping": "plugin_configuration" }
+ */
+test.skip('supports plugin-specific attributes', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: maps event configuration attributes
+ * Given a touch-spin element with event configuration attributes
+ * When the element is initialized
+ * Then event settings are correctly mapped and configured
+ * Params:
+ * { "eventAttributes": { "on-change": "handleChange", "on-spin": "handleSpin" }, "expectedConfiguration": "event_handler_mapping" }
+ */
+test.skip('maps event configuration attributes', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: handles conditional attribute processing
+ * Given a touch-spin element with conditional attributes
+ * When attributes have conditional logic
+ * Then conditional processing is applied correctly
+ * Params:
+ * { "conditionalAttributes": { "enable-if": "condition", "disable-unless": "requirement" }, "conditionEvaluation": "runtime_evaluation" }
+ */
+test.skip('handles conditional attribute processing', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: supports attribute validation schemas
+ * Given a touch-spin element with schema-validated attributes
+ * When attributes are processed
+ * Then validation schemas are applied and enforced
+ * Params:
+ * { "validationSchema": "json_schema", "validationRules": ["type_checking", "range_validation"], "expectedEnforcement": "schema_compliance" }
+ */
+test.skip('supports attribute validation schemas', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: processes nested attribute structures
+ * Given a touch-spin element with nested attribute structures
+ * When complex nested attributes are processed
+ * Then nested structures are correctly parsed and applied
+ * Params:
+ * { "nestedAttributes": { "config.theme.primary": "#007bff", "settings.validation.strict": "true" }, "nestingSupport": "dot_notation_parsing" }
+ */
+test.skip('processes nested attribute structures', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: handles attribute conflicts resolution
+ * Given a touch-spin element with conflicting attribute values
+ * When multiple attributes specify conflicting settings
+ * Then conflicts are resolved according to precedence rules
+ * Params:
+ * { "conflictingAttributes": { "min": "10", "data-min": "5" }, "resolutionStrategy": "precedence_based", "expectedWinner": "element_attribute" }
+ */
+test.skip('handles attribute conflicts resolution', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: supports custom attribute extensions
+ * Given a touch-spin element with custom extension attributes
+ * When custom attributes are defined and used
+ * Then custom extensions are correctly processed
+ * Params:
+ * { "customExtensions": { "x-custom-behavior": "special", "ext-validation": "custom" }, "extensionSupport": "custom_attribute_handling" }
+ */
+test.skip('supports custom attribute extensions', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: maps framework-specific attributes
+ * Given a touch-spin element with framework-specific attributes
+ * When the element is used within different frameworks
+ * Then framework attributes are correctly mapped
+ * Params:
+ * { "frameworkAttributes": { "angular-directive": "ngModel", "react-prop": "onChange" }, "frameworkSupport": "multi_framework_compatibility" }
+ */
+test.skip('maps framework-specific attributes', async ({ page }) => {
+  // Implementation pending
+});
