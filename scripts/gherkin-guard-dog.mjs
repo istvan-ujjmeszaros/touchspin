@@ -79,15 +79,15 @@ function parseTests(src) {
   const implementedTests = [];
   const skippedTests = [];
 
-  // matches: test('Title',   or  test("Title",
-  const testRe = /^\s*test\s*\(\s*['"`]([^'"`]+)['"`]\s*,/gm;
+  // matches: test('Title',   or  test("Title", with optional comments
+  const testRe = /^\s*(?:\/\/.*\n\s*)?test\s*\(\s*['"`]([^'"`]+)['"`]\s*,/gm;
   let m;
   while ((m = testRe.exec(src))) {
     implementedTests.push(m[1].trim());
   }
 
-  // matches: test.skip('Title',   or  test.skip("Title",
-  const skipRe = /^\s*test\.skip\s*\(\s*['"`]([^'"`]+)['"`]\s*,/gm;
+  // matches: test.skip('Title',   or  test.skip("Title", with optional comments
+  const skipRe = /^\s*(?:\/\/.*\n\s*)?test\.skip\s*\(\s*['"`]([^'"`]+)['"`]\s*,/gm;
   while ((m = skipRe.exec(src))) {
     skippedTests.push(m[1].trim());
   }

@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ROOTS = process.argv.slice(2);
-const DEFAULT_ROOTS = ["packages/core/tests/__shared__/helpers"];
+const DEFAULT_ROOTS = ["packages/**/tests/__shared__/helpers"];
 const START_DIRS = ROOTS.length ? ROOTS.map(p => path.resolve(p)) : expandGlobs(DEFAULT_ROOTS);
 const FILE_REGEX = /\.(ts|tsx|js|jsx)$/i;
 const OUTPUT_PATH = "tests/STEP-LEXICON.md";
@@ -28,7 +28,7 @@ const IGNORE_DIRS = new Set([
 function expandGlobs(globs) {
   const dirs = [];
   for (const glob of globs) {
-    // Simple glob expansion for packages/**/tests/__shared__/helpers/**
+    // Simple glob expansion for packages/**/tests/__shared__/helpers
     const parts = glob.split('/');
     if (parts[0] === 'packages' && parts[1] === '**') {
       try {
@@ -103,11 +103,18 @@ function extractExportedFunctions(src, filePath) {
       const docComment = findPrecedingDocComment(lines, i);
       if (docComment) {
         const steps = extractStepsFromComment(docComment);
-        if (steps.length > 0) {
+        // Filter out meaningless steps (artifacts like "/**" or single characters)
+        const meaningfulSteps = steps.filter(step =>
+          step.length > 3 &&
+          !step.match(/^\/?\*+\/?$/) &&
+          step.includes(' ')  // Require at least one space (proper sentence)
+        );
+
+        if (meaningfulSteps.length > 0) {
           const notes = extractNotesFromComment(docComment);
           const category = getCategoryFromPath(filePath);
 
-          for (const step of steps) {
+          for (const step of meaningfulSteps) {
             functions.push({
               step,
               functionName,

@@ -933,6 +933,35 @@ test('increases value on click on up button and triggers change event', async ({
 });
 ```
 
+### How to Implement a Planned Scenario
+
+When converting a planned scenario from `test.skip()` to `test()`:
+
+1. **Flip checklist status**: Change `[ ]` to `[x]` in the checklist
+2. **Change test method**: Convert `test.skip('Title', ...)` to `test('Title', ...)`
+3. **Use only lexicon steps**: Every action must exist in `tests/STEP-LEXICON.md`
+4. **Keep scenario title exactly**: Test title must match the scenario comment exactly
+5. **Implement using helpers**: Replace `// Implementation pending` with actual test code using documented helpers
+
+#### Quick Example
+
+```diff
+/*
+ * CHECKLIST — Scenarios in this spec
+- * [ ] increases value on click on up button and triggers change event
++ * [x] increases value on click on up button and triggers change event
+ */
+
+- test.skip('increases value on click on up button and triggers change event', async ({ page }) => {
++ test('increases value on click on up button and triggers change event', async ({ page }) => {
+-   // Implementation pending
++   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
++   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, initval: '0' });
++   await clickUpButton(page, 'test-input');
++   await expectValueToBe(page, 'test-input', '1');
+  });
+```
+
 ### PR Checklist
 
 When contributing tests, ensure:
