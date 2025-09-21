@@ -1,5 +1,5 @@
-export { default as AbstractRenderer } from './AbstractRenderer';
-export type { RendererOptionKind, RendererOptionDef, RendererOptionSchema, InferOptionsFromSchema, } from './AbstractRenderer';
+export { default as AbstractRenderer } from './AbstractRenderer.js';
+export type { RendererOptionKind, RendererOptionDef, RendererOptionSchema, InferOptionsFromSchema, } from './AbstractRenderer.js';
 export interface Renderer {
     init(): void;
     finalizeWrapperAttributes(): void;

@@ -3,9 +3,9 @@
  */
 export type ForceStepDivisibility = 'none' | 'floor' | 'round' | 'ceil';
 export type TouchSpinCalcCallback = (value: string) => string;
-export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events';
-export type { TouchSpinUpdateSettingsData } from './events';
-import type { Renderer, RendererConstructor } from './renderer';
+export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events.js';
+export type { TouchSpinUpdateSettingsData } from './events.js';
+import type { Renderer, RendererConstructor } from './renderer.js';
 export interface TouchSpinCoreOptions {
     min?: number | null;
     max?: number | null;
