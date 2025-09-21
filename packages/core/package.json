@@ -61,9 +61,9 @@
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
     "build": "rm -rf dist && yarn run build:types && yarn run build:js",
-    "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js rendererEntry=renderer.js",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "tsc -p tsconfig.testbuild.json",
+    "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js rendererEntry=renderer.js",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
