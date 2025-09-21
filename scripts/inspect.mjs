@@ -10,11 +10,15 @@ const format = process.argv[3] || 'json'; // 'json' or 'text'
 if (!path) {
   console.error('Usage: npm run inspect <path> [json|text]');
   console.error('Example: npm run inspect /__tests__/html/index-bs4.html');
+  console.error('Environment: set DEV_BASE_URL to override dev base (default http://localhost:8866)');
   process.exit(1);
 }
 
-// Build full URL from path (always use localhost:8866 as per convention)
-const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://localhost:8866/${path}`;
+// Build full URL from path. Default dev base is http://localhost:8866, but
+// allow override via DEV_BASE_URL for custom setups (tunnels, containers, etc.).
+const rawBase = process.env.DEV_BASE_URL || 'http://localhost:8866';
+const base = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+const url = path.startsWith('/') ? `${base}${path}` : `${base}/${path}`;
 
 // Auto-start development server if needed
 //
@@ -28,6 +32,8 @@ const url = path.startsWith('/') ? `http://localhost:8866${path}` : `http://loca
 // This makes the inspect command self-sufficient and always work regardless
 // of whether the dev server is already running.
 const ensureServerRunning = async () => {
+  // Keep default as 8866 per repo convention. If DEV_BASE_URL overrides host/port,
+  // we still try to spin up the local dev server on 8866 if not already running.
   const port = 8866;
 
   // Check if server is already running
