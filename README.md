@@ -681,9 +681,10 @@ The inspect script provides:
 - **Summary statistics**: Quick health overview
 
 **Development Server**  
-- Always uses port 8866 for consistency
+- Always uses port 8866 for tests by default
 - Safe to run `yarn dev` multiple times (checks if already running)
-- Serves static files from project root with disabled caching
+- `yarn dev`/`yarn preview` use an in-repo static server that respects `PORT` (defaults to 8866)
+- `yarn test` starts the local server on 8866 unless `DEV_BASE_URL` points to an external origin
 
 **Dev Base URL Override**  
 - Inspect tool builds the URL from `DEV_BASE_URL` when set, otherwise defaults to `http://localhost:8866`.
@@ -691,7 +692,7 @@ The inspect script provides:
   - `DEV_BASE_URL=https://your-tunnel.example.com yarn inspect /packages/core/tests/__shared__/fixtures/test-fixture.html text`
 - Inside browser-evaluated helpers, modules are resolved relative to `location.origin` (no hard-coded hosts).
 - Playwright tests also respect `DEV_BASE_URL` for their `baseURL`; if unset, they default to `http://localhost:8866`.
- - If `DEV_BASE_URL` points to an external server, Playwright will not start a local server and will target the external URL instead.
+- If `DEV_BASE_URL` points to an external server, Playwright will not start a local server and will target the external URL instead.
 
 ### Build Process
 

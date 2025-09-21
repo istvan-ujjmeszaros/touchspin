@@ -52,7 +52,7 @@
   "scripts": {
     "dev": "node scripts/static-server.mjs",
     "preview": "node scripts/static-server.mjs",
-    "serve:root": "http-server -a 127.0.0.1 -p 8866 -c-1 .",
+    "serve:root": "node scripts/static-server.mjs",
     "build": "yarn workspace @touchspin/core build && yarn workspaces foreach -p -A --exclude @touchspin/core run build",
     "build:types:all": "yarn workspaces foreach -t -A run build:types",
     "build:js:all": "yarn workspaces foreach -t -A run build:js",

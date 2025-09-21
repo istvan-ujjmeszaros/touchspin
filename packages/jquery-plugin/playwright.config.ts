@@ -4,6 +4,11 @@ const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').repla
 const DEFAULT_BASE = 'http://localhost:8866';
 const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
+if (!process.env.CI) {
+  // eslint-disable-next-line no-console
+  console.log(`[playwright:jquery-plugin] baseURL=${DEV_BASE_URL} (${useExternalServer ? 'external' : 'local'})`);
+}
+
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/?(*.)+(spec|test).[jt]s?(x)',
