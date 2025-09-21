@@ -6,7 +6,7 @@ import { initializeTouchspinWithRenderer } from '../core/initialization';
 export function defineSharedRendererTests(name: string, rendererUrl: string) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/packages/core/tests/html/test-fixture.html');
+      await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
       await installDomHelpers(page);
     });
 
@@ -76,4 +76,3 @@ export function defineSharedRendererTests(name: string, rendererUrl: string) {
     });
   });
 }
-

@@ -9,10 +9,11 @@ export async function initializeTouchspinWithBootstrap5(
 ): Promise<void> {
   await setupLogging(page);
   await page.evaluate(async ({ testId, options, coreUrl, rendererUrl }) => {
-    const { TouchSpinCore } = (await import('http://localhost:8866' + coreUrl)) as unknown as {
+    const origin = (globalThis as any).location?.origin ?? '';
+    const { TouchSpinCore } = (await import(new URL(coreUrl, origin).href)) as unknown as {
       TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
     };
-    const rendererMod = (await import('http://localhost:8866' + rendererUrl)) as unknown as { default?: unknown; Bootstrap5Renderer?: unknown };
+    const rendererMod = (await import(new URL(rendererUrl, origin).href)) as unknown as { default?: unknown; Bootstrap5Renderer?: unknown };
     const Bootstrap5Renderer = (rendererMod.default ?? rendererMod.Bootstrap5Renderer) as unknown;
 
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;

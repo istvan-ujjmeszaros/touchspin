@@ -15,7 +15,7 @@ This directory contains behavioral tests for the TouchSpin core package. These t
 
 ### Test Fixture
 
-- **`html/test-fixture.html`** - Minimal HTML fixture for core testing (no jQuery dependency)
+- **`__shared__/fixtures/test-fixture.html`** - Minimal HTML fixture for core testing (no jQuery dependency)
 
 ## Implementation Status
 

@@ -10,7 +10,7 @@ Helpers used:
 - Coverage hooks: `startCoverage(page)`, `collectCoverage(page, title)`
 
 Notes:
-- Navigate to `packages/core/tests/html/test-fixture.html` for a ready input with `data-testid="test-input"`.
+- Navigate to `packages/core/tests/__shared__/fixtures/test-fixture.html` for a ready input with `data-testid="test-input"`.
 - Prefer renderer-agnostic selectors (`[data-touchspin-injected]`); only assert essential Bootstrap classes.
 
 ---
@@ -18,7 +18,7 @@ Notes:
 - [ ] renderer-b5: basic horizontal init and updates
   - Purpose: Cover init(), buildBasicInputGroup(), _detectInputGroupSize(), updateButtonText(), updateButtonClass(), updatePrefix/Postfix(+Classes), updateButtonFocusability(), rebuildDOM(), teardown() removal of `form-control`.
   - Pseudocode:
-    1) page.goto('/packages/core/tests/html/test-fixture.html')
+    1) page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html')
     2) page.evaluate: remove `form-control` from input; add `form-control-sm`
     3) initializeTouchspinWithBootstrap5('test-input', { prefix:'$', prefix_extraclass:'fx-p', postfix:'kg', postfix_extraclass:'fx-s', buttonup_txt:'UP', buttondown_txt:'DOWN', buttonup_class:'btn btn-success', buttondown_class:'btn btn-warning', focusablebuttons:true })
     4) Assert wrapper has `input-group-sm`; up/down buttons exist with texts/classes; prefix/postfix texts/classes; buttons tabindex='0'
@@ -68,4 +68,3 @@ Coverage checklist by feature (for review while implementing):
 - [ ] handleVerticalButtonsChange → rebuildDOM
 - [ ] rebuildDOM → removeInjectedElements and rebuild
 - [ ] updateButtonFocusability tabindex toggle
-
