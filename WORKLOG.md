@@ -9,8 +9,6 @@ Resume Block (single source of truth)
 - Progress: Added failing tests across BS3/BS4/BS5/Tailwind asserting no overwrite of existing data-testid on advanced wrapper
 - Fixed: —
 - Next checkpoint: TESTID-FIX — implement renderer change to skip overriding wrapper data-testid when present, then verify tests
-- CI note: Do not run `node check-build-integrity.mjs` locally. CI runs it to ensure PRs include up-to-date `dist/`.
-
 Quick Commands
 - Tests (non-visual): `yarn test` (spawns its own test web server; no manual server needed)
 - Build at checkpoint: `yarn build` (then commit `dist/`)

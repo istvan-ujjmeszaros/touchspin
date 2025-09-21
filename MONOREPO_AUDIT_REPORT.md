@@ -77,10 +77,6 @@ All packages at v1.0.0 while root is v4.8.0. Consider:
 - Aligning versions before first publish
 - Setting up changesets for coordinated releases
 
-#### Build Integrity
-- No `yarn check-build-integrity` script found (referenced in some docs)
-- Consider adding build validation scripts
-
 ---
 
 ## 4. TypeScript Types Review
