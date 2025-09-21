@@ -28,6 +28,12 @@ This document guides contributors (human and AI assistants) on how to work effec
   - `yarn test:watch` — Playwright UI
   - `yarn test:dev` (aka `yarn dev:test`) — run dev server + Playwright UI together
 
+Note on dev base URL
+- Tools and tests assume the dev server at `http://localhost:8866`.
+- Inside browser contexts (e.g., Playwright `page.evaluate`), prefer resolving module URLs against `location.origin` rather than hard-coding the host:
+  - Example: `import(new URL(coreUrl, location.origin).href)`
+- A future enhancement may allow utilities to honor `DEV_BASE_URL` to override the default; default behavior remains `http://localhost:8866`.
+
 ## Conventions and architecture
 - Core (`@touchspin/core`): framework‑agnostic logic; builds ESM+CJS; subpath export `@touchspin/core/renderer`
 - Renderers: Bootstrap 3/4/5, Tailwind, Vanilla

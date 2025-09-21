@@ -104,6 +104,16 @@ Notes:
 - **Tests:** Use `PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json` and `TS_BUILD_TARGET=dev`.
 - **Coverage:** `yarn coverage` runs run+merge+report+open; always uses `devdist`.
 
+## Local Dev Server & Base URL
+
+- The dev server runs on `http://localhost:8866` by convention and is started by `yarn dev`.
+- In browser-evaluated helpers (e.g., inside `page.evaluate`), prefer origin-relative resolution:
+  - Example: `const origin = location.origin; await import(new URL(coreUrl, origin).href)`
+  - Avoid hard-coding `http://localhost:8866` inside evaluated code.
+- Developer utilities such as `scripts/inspect.mjs` currently assume `http://localhost:8866` when constructing URLs.
+  - Proposed improvement: allow overriding via an environment variable (e.g., `DEV_BASE_URL`) with a sensible default to `http://localhost:8866`.
+  - If/when introduced, document the variable in tool help text and README.
+
 ## Porting Policy (Parity with Source)
 
 When porting behavior between the legacy jQuery plugin (`src/jquery.bootstrap-touchspin.js`) and the new core/wrapper packages:
