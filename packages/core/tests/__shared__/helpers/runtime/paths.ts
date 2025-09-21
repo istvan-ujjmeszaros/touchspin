@@ -3,7 +3,9 @@ const TARGET = isDevBuild ? 'devdist' : 'dist';
 
 export const coreUrl = `/packages/core/${TARGET}/index.js`;
 export const vanillaRendererUrl = `/packages/vanilla-renderer/${TARGET}/index.js`;
-export const vanillaRendererClassUrl = `/packages/vanilla-renderer/${TARGET}/VanillaRenderer.js`;
+export const vanillaRendererClassUrl = TARGET === 'devdist'
+  ? `/packages/vanilla-renderer/${TARGET}/VanillaRenderer.js`
+  : `/packages/vanilla-renderer/${TARGET}/index.js`;
 export const rendererUrlFor = (name: string) => `/packages/renderers/${name}/${TARGET}/index.js`;
 export const rendererClassUrlFor = (name: string) => {
   if (TARGET === 'devdist') {
