@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers, startCoverage, collectCoverage } from '../../test-helpers';
+import { installDomHelpers, startCoverage, collectCoverage } from '../../__shared__/helpers';
 
 test.describe('installDomHelpers smoke', () => {
   test.beforeEach(async ({ page }) => {

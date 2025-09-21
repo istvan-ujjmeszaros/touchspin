@@ -10,7 +10,7 @@ test.describe('renderer-b5: vertical layout', () => {
     await collectCoverage(page, testInfo.title);
   });
   test('vertical texts and classes applied', async ({ page }) => {
-    await page.goto('/packages/core/tests/html/test-fixture.html');
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await installDomHelpers(page);
 
     await initializeTouchspinWithBootstrap5(page, 'test-input', {

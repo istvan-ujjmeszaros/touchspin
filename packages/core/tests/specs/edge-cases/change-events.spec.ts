@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
-import { startCoverage, collectCoverage } from '../../test-helpers/test-utilities/coverage';
-import { initializeTouchspinWithVanilla } from '../../test-helpers/core/initialization';
-import { clickUpButton, clickDownButton } from '../../test-helpers/interactions/buttons';
-import { setValueSilentlyAndBlur } from '../../test-helpers/interactions/input';
-import { clearEventLog, countEventInLog } from '../../test-helpers/events/log';
-import { expectValueToBe } from '../../test-helpers/assertions/values';
+import { startCoverage, collectCoverage } from '../../__shared__/helpers/test-utilities/coverage';
+import { initializeTouchspinWithVanilla } from '../../__shared__/helpers/core/initialization';
+import { clickUpButton, clickDownButton } from '../../__shared__/helpers/interactions/buttons';
+import { setValueSilentlyAndBlur } from '../../__shared__/helpers/interactions/input';
+import { clearEventLog, countEventInLog } from '../../__shared__/helpers/events/log';
+import { expectValueToBe } from '../../__shared__/helpers/assertions/values';
 
 test.describe('Core change event emission edge cases (Vanilla renderer)', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +15,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
   });
 
   test('step=5, init 95: two ups => one change (100)', async ({ page }) => {
-    await page.goto('/packages/core/tests/html/test-fixture.html');
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '95' });
     await clearEventLog(page);
     await clickUpButton(page, 'test-input');
@@ -26,7 +26,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
   });
 
   test("forcestepdivisibility='none', step=5, init 97: two ups => one change (100)", async ({ page }) => {
-    await page.goto('/packages/core/tests/html/test-fixture.html');
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '97', forcestepdivisibility: 'none' });
     await clearEventLog(page);
     await clickUpButton(page, 'test-input');
@@ -37,7 +37,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
   });
 
   test('at max: up => zero change; at min: down => zero change', async ({ page }) => {
-    await page.goto('/packages/core/tests/html/test-fixture.html');
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
 
     // Max case
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '100' });
@@ -55,7 +55,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
   });
 
   test('blur sanitization: raw 96 with step=5 => exactly one change to 95', async ({ page }) => {
-    await page.goto('/packages/core/tests/html/test-fixture.html');
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '90' });
     await clearEventLog(page);
     await setValueSilentlyAndBlur(page, 'test-input', '96');

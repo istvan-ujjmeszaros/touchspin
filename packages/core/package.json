@@ -16,16 +16,20 @@
       "import": "./dist/renderer.js"
     },
     "./test-helpers": {
-      "types": "./test-helpers/index.ts",
-      "import": "./test-helpers/index.ts"
+      "types": "./tests/__shared__/helpers/index.ts",
+      "import": "./tests/__shared__/helpers/index.ts"
     },
     "./test-helpers/*": {
-      "types": "./test-helpers/*",
-      "import": "./test-helpers/*"
+      "types": "./tests/__shared__/helpers/*",
+      "import": "./tests/__shared__/helpers/*"
     },
     "./test-helpers/renderers": {
-      "types": "./test-helpers/renderers/index.ts",
-      "import": "./test-helpers/renderers/index.ts"
+      "types": "./tests/__shared__/helpers/renderers/index.ts",
+      "import": "./tests/__shared__/helpers/renderers/index.ts"
+    },
+    "./tests/__shared__/fixtures": {
+      "types": "./tests/__shared__/fixtures/index.ts",
+      "import": "./tests/__shared__/fixtures/index.ts"
     }
   },
   "typesVersions": {

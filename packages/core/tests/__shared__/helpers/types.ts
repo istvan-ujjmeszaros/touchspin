@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../src/index';
+import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '@touchspin/core';
 
 /** Event log entry shape emitted by test fixtures */
 export type EventLogType = 'native' | 'touchspin';
