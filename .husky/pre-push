@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Exit on any error
+set -e
+
+echo "🐶 Husky pre-push: Comprehensive Gherkin validation"
+
+# Run comprehensive Gherkin guard on all spec files
+echo "🛡️ Running comprehensive Gherkin guard..."
+yarn test:guard
+
+# Regenerate Step Lexicon to ensure it's current
+echo "📖 Regenerating Step Lexicon..."
+yarn lexicon:gen
+
+# Check if lexicon is out of sync
+if ! git diff --quiet tests/STEP-LEXICON.md 2>/dev/null; then
+  echo "❌ Step Lexicon is out of sync!"
+  echo "   Run 'yarn lexicon:gen' and commit the changes."
+  exit 1
+fi
+
+echo "✅ Pre-push validation complete"
