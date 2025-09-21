@@ -1218,7 +1218,7 @@ __metadata:
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/vanilla-renderer": "workspace:*"
+    "@touchspin/renderer-vanilla": "workspace:*"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
@@ -1297,18 +1297,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
+"@touchspin/renderer-vanilla@workspace:*, @touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla"
-  dependencies:
-    "@playwright/test": "npm:^1.54.2"
-    "@types/node": "npm:^22.7.4"
-  languageName: unknown
-  linkType: soft
-
-"@touchspin/vanilla-renderer@workspace:*, @touchspin/vanilla-renderer@workspace:packages/vanilla-renderer":
-  version: 0.0.0-use.local
-  resolution: "@touchspin/vanilla-renderer@workspace:packages/vanilla-renderer"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
@@ -1324,7 +1315,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/vanilla-renderer": "workspace:*"
+    "@touchspin/renderer-vanilla": "workspace:*"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"

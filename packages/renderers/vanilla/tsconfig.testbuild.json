@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./devdist",
     "rootDir": "./src",
@@ -15,8 +15,8 @@
     "tsBuildInfoFile": "./devdist/.tsbuildinfo",
     "baseUrl": "./src",
     "paths": {
-      "@touchspin/core": ["../core/dist/index.d.ts"],
-      "@touchspin/core/renderer": ["../core/dist/renderer.d.ts"]
+      "@touchspin/core": ["../../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": ["../../core/dist/renderer.d.ts"]
     }
   },
   "include": ["src/**/*"]

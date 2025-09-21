@@ -4,7 +4,7 @@
  */
 
 import { TouchSpin, getTouchSpin } from '@touchspin/core';
-import { VanillaRenderer } from '@touchspin/vanilla-renderer';
+import { VanillaRenderer } from '@touchspin/renderer-vanilla';
 import { getSettingsFromAttributes, OBSERVED_ATTRIBUTES, attributeToSetting, parseAttributeValue } from './attribute-mapping.js';
 import { bridgeEvents } from './event-bridge.js';
 

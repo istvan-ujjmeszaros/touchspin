@@ -48,7 +48,7 @@
   "license": "MIT",
   "dependencies": {
     "@touchspin/core": "workspace:*",
-    "@touchspin/vanilla-renderer": "workspace:*"
+    "@touchspin/renderer-vanilla": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
