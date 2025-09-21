@@ -1,8 +1,8 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./devdist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "sourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
@@ -13,8 +13,11 @@
     "types": [],
     "incremental": true,
     "tsBuildInfoFile": "./devdist/.tsbuildinfo",
-    "baseUrl": "./",
-    "paths": {}
+    "baseUrl": "./src",
+    "paths": {
+      "@touchspin/core": ["../../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": ["../../core/dist/renderer.d.ts"]
+    }
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*"]
 }

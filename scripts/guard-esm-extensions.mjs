@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const roots = [
   'packages/core/devdist',
-  'packages/vanilla-renderer/devdist',
+  'packages/renderers/vanilla/devdist',
   'packages/renderers/bootstrap5/devdist',
   'packages/renderers/bootstrap4/devdist',
   'packages/renderers/bootstrap3/devdist',

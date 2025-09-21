@@ -76,7 +76,7 @@ jobs:
       - name: Assert devdist presence
         run: |
           test -f packages/core/devdist/index.js
-          test -f packages/vanilla-renderer/devdist/VanillaRenderer.js
+          test -f packages/renderers/vanilla/devdist/VanillaRenderer.js
           test -f packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js
 
       - name: Guard - no src imports in tests

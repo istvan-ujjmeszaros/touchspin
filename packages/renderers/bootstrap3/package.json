@@ -27,6 +27,7 @@
     "build": "rm -rf dist && yarn run build:types && yarn run build:js",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --source-map --watch"
   },

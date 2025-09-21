@@ -32,17 +32,16 @@
  */
 
 import { test } from '@playwright/test';
-import { expectValueToBe } from '../../__shared__/helpers/assertions/values';
+import { expectValueToBe } from '../__shared__/helpers/assertions/values';
 import {
-  addTextToElementByTestId,
-  blurElementByTestId,
-  clickDownButton,
-  clickUpButton,
-  setValue,
+  typeInInput,
+  fillWithValueAndBlur,
+  fillWithValue,
   setValueSilentlyAndBlur,
-} from '../../__shared__/helpers/interactions/input';
-import { clearEventLog, countEventInLog } from '../../__shared__/helpers/events/log';
-import { initializeTouchspinWithVanilla } from '../../__shared__/helpers/core/initialization';
+} from '../__shared__/helpers/interactions/input';
+import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
+import { clearEventLog, countEventInLog } from '../__shared__/helpers/events/log';
+import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 
  /**
   * Scenario: increases value on click on up button and triggers change event
@@ -86,8 +85,7 @@ test('triggers change event on blur when value changed', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
-  await setValue(page, 'test-input', '5');
-  await blurElementByTestId(page, 'test-input');
+  await fillWithValueAndBlur(page, 'test-input', '5');
   await expectValueToBe(page, 'test-input', '5');
   const changeEventCount = await countEventInLog(page, 'change');
   test.expect(changeEventCount).toBe(1);
@@ -103,8 +101,9 @@ test('does not trigger change event on blur when value unchanged', async ({ page
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
-  await addTextToElementByTestId(page, 'test-input', ''); // no change
-  await blurElementByTestId(page, 'test-input');
+  // Focus input but don't change value, then blur
+  await page.locator('[data-testid="test-input"]').focus();
+  await page.keyboard.press('Tab');
   await expectValueToBe(page, 'test-input', '0');
   const changeEventCount = await countEventInLog(page, 'change');
   test.expect(changeEventCount).toBe(0);

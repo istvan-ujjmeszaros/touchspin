@@ -28,9 +28,9 @@ function loadManifest(packageSubPath: string): ArtifactManifest {
 const coreManifest = loadManifest('packages/core');
 export const coreUrl = `/packages/core/${TARGET}/${coreManifest.esmEntry ?? 'index.js'}`;
 
-const vanillaManifest = loadManifest('packages/vanilla-renderer');
-export const vanillaRendererUrl = `/packages/vanilla-renderer/${TARGET}/${vanillaManifest.esmEntry ?? 'index.js'}`;
-export const vanillaRendererClassUrl = `/packages/vanilla-renderer/${TARGET}/${vanillaManifest.classModule ?? vanillaManifest.esmEntry ?? 'index.js'}`;
+const vanillaManifest = loadManifest('packages/renderers/vanilla');
+export const vanillaRendererUrl = `/packages/renderers/vanilla/${TARGET}/${vanillaManifest.esmEntry ?? 'index.js'}`;
+export const vanillaRendererClassUrl = `/packages/renderers/vanilla/${TARGET}/${vanillaManifest.classModule ?? vanillaManifest.esmEntry ?? 'index.js'}`;
 
 function rendererManifest(name: string): ArtifactManifest {
   return loadManifest(`packages/renderers/${name}`);

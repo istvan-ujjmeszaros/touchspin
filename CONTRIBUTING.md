@@ -44,6 +44,17 @@ See our [Writing Gherkin Tests Guide](docs/WRITING_GHERKIN_TESTS.md) for detaile
 - Renderer event wiring via `data-touchspin-injected` attributes (no class-based wiring).
 - Side effects: keep minimal; prefer pure functions where possible.
 
+### Package Setup Requirements
+
+All testable packages (renderers, component wrappers, plugins) MUST include:
+
+1. **Build Scripts**: Each package must support both production (`build`) and test (`build:test`) builds
+2. **Test Build Configuration**: A `tsconfig.testbuild.json` file for test compilation
+3. **Artifacts Manifest**: Both `dist/` and `devdist/` directories must contain `artifacts.json`
+4. **Consistent Structure**: Standard directory layout with `src/`, `dist/`, `devdist/`, and `tests/`
+
+**📋 Complete Requirements**: See [Package Requirements Guide](docs/architecture/package-requirements.md) for detailed setup instructions.
+
 ## Renderer Authoring Guide
 
 Renderers provide the UI layer around the input element and delegate all logic to core. They must align with the canonical core API exported from `@touchspin/core/renderer`.
