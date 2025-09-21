@@ -7,7 +7,7 @@
  * CHECKLIST — Scenarios in this spec
  * [x] increases value on click on up button and triggers change event
  * [x] decreases value on click on down button and triggers change event
- * [x] triggers change event on blur when value changed2
+ * [x] triggers change event on blur when value changed
  * [x] does not trigger change event on blur when value unchanged
  * [ ] Mount does not emit change event
  * [ ] Clicking up caps at max with only real transitions emitting change
