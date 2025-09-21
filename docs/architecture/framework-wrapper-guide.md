@@ -247,7 +247,7 @@ export class ReactiveFormComponent {
 ### Custom Hook Implementation
 
 ```javascript
-// useTouchSpin.js
+// useTouchSpin.ts
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { TouchSpin } from '@touchspin/core';
 
@@ -503,7 +503,7 @@ function AdvancedExample() {
 ### Composable Implementation
 
 ```javascript
-// useTouchSpin.js
+// useTouchSpin.ts
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { TouchSpin } from '@touchspin/core';
 
@@ -770,7 +770,7 @@ const {
 ### Svelte Store Implementation
 
 ```javascript
-// touchSpinStore.js
+// touchSpinStore.ts
 import { writable } from 'svelte/store';
 import { TouchSpin } from '@touchspin/core';
 
@@ -866,7 +866,7 @@ export function createTouchSpinStore(element, options = {}) {
 <!-- TouchSpinComponent.svelte -->
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-    import { createTouchSpinStore } from './touchSpinStore.js';
+    import { createTouchSpinStore } from './touchSpinStore.ts';
     
     export let options = {};
     export let testId = undefined;
@@ -1095,7 +1095,7 @@ test('useRef API access', () => {
 ### Vue Testing
 
 ```javascript
-// TouchSpinComponent.spec.js
+// TouchSpinComponent.spec.ts
 import { mount } from '@vue/test-utils';
 import TouchSpinComponent from './TouchSpinComponent.vue';
 

@@ -239,7 +239,7 @@ To use your custom renderer, register it with TouchSpin:
 ### Method 1: Direct Registration
 ```javascript
 import { TouchSpin, registerRenderer } from '@touchspin/core';
-import MaterialRenderer from './MaterialRenderer.js';
+import MaterialRenderer from './MaterialRenderer.ts';
 
 // Register the renderer globally
 registerRenderer('material', MaterialRenderer);
@@ -259,15 +259,15 @@ For reusable renderers, create a package structure:
 @touchspin/material/
 ├── package.json
 ├── src/
-│   └── index.js
+│   └── index.ts
 └── dist/
-    └── touchspin-material.js
+    └── touchspin-material.ts
 ```
 
-**src/index.js:**
+**src/index.ts:**
 ```javascript
 import { registerRenderer } from '@touchspin/core';
-import MaterialRenderer from './MaterialRenderer.js';
+import MaterialRenderer from './MaterialRenderer.ts';
 
 // Auto-register when imported
 registerRenderer('material', MaterialRenderer);
@@ -337,7 +337,7 @@ Your renderer should include CSS that provides proper layout and accessibility:
 Create tests to ensure your renderer works correctly:
 
 ```javascript
-// tests/material-renderer.test.js
+// tests/material-renderer.test.ts
 import { test, expect } from '@playwright/test';
 
 test.describe('Material Renderer', () => {

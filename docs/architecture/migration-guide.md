@@ -10,7 +10,7 @@ This guide provides practical guidance for migrating from any previous version o
 |----------------------------|-----------------|---------------------|
 | `$('#spinner').trigger('touchspin.uponce')` | TRUE Legacy (v3.x) | 🔴 High - Major API changes |
 | `$('#spinner').TouchSpin('uponce')` | In-Between (v4.x) | 🟡 Medium - API compatible but behavioral changes |
-| `const api = TouchSpin('#spinner'); api.upOnce()` | New Modular (v5.x) | ✅ Already modern |
+| `const api = TouchSpin(inputEl); api.upOnce()` | New Modular (v5.x) | ✅ Already modern |
 
 ## Migration Strategies
 
@@ -127,7 +127,8 @@ $('#spinner').on('touchspin.on.max', handler);
 // ✅ Modern - Use wrapper for compatibility OR modern events
 $('#spinner').on('touchspin.on.max', handler); // Still works via wrapper
 // OR
-const api = getTouchSpin('#spinner');
+const input = document.querySelector('#spinner') as HTMLInputElement;
+const api = getTouchSpin(input);
 api.on('max', handler); // Modern approach
 ```
 
@@ -332,7 +333,9 @@ api.setValue(42);
 
 2. **Test boundary conditions:**
    ```ts
-   api.setValue(api.settings.max);
+   const maxValue = 100;
+   api.updateSettings({ max: maxValue });
+   api.setValue(maxValue);
    api.upOnce(); // Should emit 'max' event, not change value
    ```
 
@@ -419,37 +422,41 @@ export default class CustomRenderer extends AbstractRenderer {
 
 ```ts
 describe('TouchSpin Migration', () => {
-    test('basic functionality works', () => {
-        const api = TouchSpin('#spinner', {min: 0, max: 10});
-        
-        api.setValue(5);
-        expect(api.getValue()).toBe(5);
-        
-        api.upOnce();
-        expect(api.getValue()).toBe(6);
-    });
-    
-    test('boundary behavior is correct', () => {
-        const api = TouchSpin('#spinner', {min: 0, max: 10});
-        const maxSpy = jest.fn();
-        
-        api.on('max', maxSpy);
-        api.setValue(10);
-        api.upOnce(); // Should not change value
-        
-        expect(api.getValue()).toBe(10);
-        expect(maxSpy).toHaveBeenCalled();
-    });
-    
-    test('settings updates work', () => {
-        const api = TouchSpin('#spinner', {max: 10});
-        
-        api.updateSettings({max: 20});
-        expect(api.settings.max).toBe(20);
-        
-        api.setValue(15); // Should now be valid
-        expect(api.getValue()).toBe(15);
-    });
+  test('basic functionality works', () => {
+    const spinner = document.createElement('input');
+    document.body.appendChild(spinner);
+    const api = TouchSpin(spinner, { min: 0, max: 10 })!;
+
+    api.setValue(5);
+    expect(api.getValue()).toBe(5);
+
+    api.upOnce();
+    expect(api.getValue()).toBe(6);
+  });
+
+  test('boundary behavior is correct', () => {
+    const spinner = document.createElement('input');
+    document.body.appendChild(spinner);
+    const api = TouchSpin(spinner, { min: 0, max: 10 })!;
+    const maxSpy = jest.fn();
+
+    api.on('max', maxSpy);
+    api.setValue(10);
+    api.upOnce(); // Should not change value
+
+    expect(api.getValue()).toBe(10);
+    expect(maxSpy).toHaveBeenCalled();
+  });
+
+  test('settings updates work', () => {
+    const spinner = document.createElement('input');
+    document.body.appendChild(spinner);
+    const api = TouchSpin(spinner, { max: 10 })!;
+
+    api.updateSettings({ max: 20 });
+    api.setValue(15); // Should now be valid
+    expect(api.getValue()).toBe(15);
+  });
 });
 ```
 
