@@ -4,7 +4,9 @@ import path from 'path';
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
-const DEV_BASE_URL = process.env.DEV_BASE_URL || 'http://localhost:8866';
+const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').replace(/\/$/, '');
+const DEFAULT_BASE = 'http://localhost:8866';
+const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
 export default defineConfig({
   testDir: './',
@@ -110,12 +112,20 @@ export default defineConfig({
   ],
 
   /* Serve repository root statically for tests (no HMR/bundling) */
-  webServer: {
-    command: 'yarn serve:root',
-    port: 8866,
-    reuseExistingServer: true,
-    timeout: 20000,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  },
+  webServer: useExternalServer
+    ? {
+        url: DEV_BASE_URL,
+        reuseExistingServer: true,
+        timeout: 20000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    : {
+        command: 'yarn serve:root',
+        port: 8866,
+        reuseExistingServer: true,
+        timeout: 20000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      },
 });

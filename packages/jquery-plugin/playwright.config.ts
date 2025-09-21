@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const DEV_BASE_URL = process.env.DEV_BASE_URL || 'http://localhost:8866';
+const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').replace(/\/$/, '');
+const DEFAULT_BASE = 'http://localhost:8866';
+const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
 export default defineConfig({
   testDir: './tests',
@@ -41,11 +43,17 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'yarn dev',
-    port: 8866,
-    reuseExistingServer: true,
-    timeout: 20000,
-    cwd: '../..',
-  },
+  webServer: useExternalServer
+    ? {
+        url: DEV_BASE_URL,
+        reuseExistingServer: true,
+        timeout: 20000,
+      }
+    : {
+        command: 'yarn dev',
+        port: 8866,
+        reuseExistingServer: true,
+        timeout: 20000,
+        cwd: '../..',
+      },
 });
