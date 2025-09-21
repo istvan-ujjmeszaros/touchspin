@@ -55,7 +55,7 @@ Choose the build that matches your Bootstrap version:
 ### Package Manager Installation
 
 ```bash
-# npm
+# yarn
 yarn add bootstrap-touchspin
 
 # bower
@@ -664,7 +664,7 @@ yarn dev
 yarn inspect /__tests__/html/index-bs4.html text
 
 # Run tests
-npm test
+yarn test
 
 # Build the project
 yarn build

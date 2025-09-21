@@ -78,7 +78,7 @@ All packages at v1.0.0 while root is v4.8.0. Consider:
 - Setting up changesets for coordinated releases
 
 #### Build Integrity
-- No `npm run check-build-integrity` script found (referenced in some docs)
+- No `yarn check-build-integrity` script found (referenced in some docs)
 - Consider adding build validation scripts
 
 ---

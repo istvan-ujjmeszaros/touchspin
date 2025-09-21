@@ -333,24 +333,26 @@ See **[Event Reference](reference/event-matrix.md)** for timing and data details
 ### Installation
 
 ```bash
-npm install @touchspin/core @touchspin/bootstrap5
+yarn add @touchspin/core @touchspin/renderer-bootstrap5
 ```
 
 ### Basic Usage
 
-```javascript
+```ts
 import { TouchSpin } from '@touchspin/core';
-import '@touchspin/bootstrap5'; // Registers Bootstrap 5 renderer
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
-const api = TouchSpin('#my-input', {
-    min: 0,
-    max: 100,
-    step: 1,
-    prefix: '$'
+const input = document.querySelector('#my-input') as HTMLInputElement;
+const api = TouchSpin(input, {
+  renderer: Bootstrap5Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
+  prefix: '$',
 });
 
-api.on('change', (data) => {
-    console.log(`Value changed to: ${data.newValue}`);
+api.on('change', ({ newValue }) => {
+  console.log(`Value changed to: ${newValue}`);
 });
 ```
 

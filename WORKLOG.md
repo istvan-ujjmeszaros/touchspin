@@ -9,12 +9,12 @@ Resume Block (single source of truth)
 - Progress: Added failing tests across BS3/BS4/BS5/Tailwind asserting no overwrite of existing data-testid on advanced wrapper
 - Fixed: —
 - Next checkpoint: TESTID-FIX — implement renderer change to skip overriding wrapper data-testid when present, then verify tests
-- CI note: Do not run `npm run check-build-integrity` locally. CI runs it to ensure PRs include up-to-date `dist/`.
+- CI note: Do not run `node check-build-integrity.mjs` locally. CI runs it to ensure PRs include up-to-date `dist/`.
 
 Quick Commands
-- Tests (non-visual): `npm test` (spawns its own test web server; no manual server needed)
-- Build at checkpoint: `npm run build` (then commit `dist/`)
-- Visual tests (optional): `npm run test:visual` (separate Playwright project)
+- Tests (non-visual): `yarn test` (spawns its own test web server; no manual server needed)
+- Build at checkpoint: `yarn build` (then commit `dist/`)
+- Visual tests (optional): `yarn test --project=chromium --ui` (Playwright UI)
 
 Manual Pages
 - Bridge: `__tests__/html/destroy-test-bridge.html`
@@ -38,4 +38,4 @@ Recent Checkpoints (most recent first)
 When Finishing a Step
 - Update the Resume Block: set the next focus, note any caveats, and the next checkpoint tag name.
 - Tick items in `TODO_CHECKLIST.md` that were completed and adjust `TODO_HIGHLEVEL.md` as needed.
-- If creating a checkpoint: create tag (e.g., `LGTM-5`), run `npm run build`, commit `dist/` and your changes.
+- If creating a checkpoint: create tag (e.g., `LGTM-5`), run `yarn build`, commit `dist/`, and your changes.

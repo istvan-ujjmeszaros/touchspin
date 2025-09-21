@@ -105,7 +105,7 @@ Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
 ## 🐛 Troubleshooting
 
 ### TouchSpin is not a function
-- Ensure you've built the project first: `npm run build`
+- Ensure you've built the project first: `yarn build`
 - Check that `dist/` folder contains the build files
 - Verify browser allows loading local files (some browsers block file:// requests)
 

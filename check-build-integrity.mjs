@@ -85,7 +85,7 @@ function checkBuildIntegrity() {
 
   // Check if committed dist folder exists
   if (!fs.existsSync(distFolder)) {
-    console.error('❌ Committed dist folder does not exist! Please run "npm run build" first.');
+    console.error('❌ Committed dist folder does not exist! Please run "yarn build" first.');
     process.exit(1);
   }
 
@@ -99,7 +99,7 @@ function checkBuildIntegrity() {
   try {
     // Build fresh dist files into temp folder using integrity check mode
     console.log(`🔨 Building fresh dist files into ${tempDistFolder} for comparison...`);
-    execSync('npm run build', {
+    execSync('yarn build', {
       stdio: 'inherit',
       env: { ...process.env, BUILD_INTEGRITY_CHECK: 'true' }
     });
@@ -141,7 +141,7 @@ function checkBuildIntegrity() {
       }
 
       if (hasDifferences) {
-        console.error('\nPlease rebuild the dist files with "npm run build" and commit the changes.');
+        console.error('\nPlease rebuild the dist files with "yarn build" and commit the changes.');
       }
       // Ensure temp is cleaned even when failing
       cleanupTemp();

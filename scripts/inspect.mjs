@@ -8,8 +8,8 @@ const path = process.argv[2];
 const format = process.argv[3] || 'json'; // 'json' or 'text'
 
 if (!path) {
-  console.error('Usage: npm run inspect <path> [json|text]');
-  console.error('Example: npm run inspect /__tests__/html/index-bs4.html');
+  console.error('Usage: yarn inspect <path> [json|text]');
+  console.error('Example: yarn inspect /__tests__/html/index-bs4.html');
   console.error('Environment: set DEV_BASE_URL to override dev base (default http://localhost:8866)');
   process.exit(1);
 }
@@ -23,12 +23,12 @@ const url = path.startsWith('/') ? `${base}${path}` : `${base}/${path}`;
 // Auto-start development server if needed
 //
 // WHY THIS CODE EXISTS:
-// npm scripts with && operator don't work well with persistent servers.
+// Yarn scripts with && operator don't work well with persistent servers.
 // Running "node serve.mjs && node inspect.mjs" causes the inspect script
 // to never execute because serve.mjs runs indefinitely.
 //
 // Cross-platform background process spawning (&, start, etc.) is unreliable
-// in npm scripts, so we handle server startup directly in this script.
+// in package scripts, so we handle server startup directly in this script.
 // This makes the inspect command self-sufficient and always work regardless
 // of whether the dev server is already running.
 const ensureServerRunning = async () => {
@@ -59,7 +59,7 @@ const ensureServerRunning = async () => {
   }
 
   // Start the development server in detached mode
-  const serverProcess = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'dev'], {
+  const serverProcess = spawn(process.platform === 'win32' ? 'yarn.cmd' : 'yarn', ['dev'], {
     detached: true,
     stdio: 'ignore'
   });
