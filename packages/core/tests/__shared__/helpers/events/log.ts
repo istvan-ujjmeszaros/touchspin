@@ -14,6 +14,9 @@ export async function getEventLog(page: Page): Promise<EventLogEntry[]> {
   return page.evaluate(() => window.eventLog || []);
 }
 
+/**
+ * When I clear the event log
+ */
 export async function clearEventLog(page: Page): Promise<void> {
   await page.evaluate(() => {
     if (window.clearEventLog) {

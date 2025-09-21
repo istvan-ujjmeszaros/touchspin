@@ -749,6 +749,202 @@ This folder is part of the project structure and should be used instead of syste
 
 ---
 
+## 🎭 Gherkin-Style Test Format & Step Lexicon
+
+### Test Format: Comments-First Approach
+
+We use a **Gherkin-style comment approach** for test specification and organization. This provides clear documentation of test intent without requiring a full Gherkin parser.
+
+#### Spec File Structure
+
+```typescript
+/**
+ * Feature: [Brief feature description]
+ * Background: fixture = [path to test fixture]
+ */
+
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] implemented scenario one
+ * [x] implemented scenario two
+ * [ ] planned scenario three
+ * [ ] planned scenario four
+ */
+
+import { test } from '@playwright/test';
+// ... imports
+
+/**
+ * Scenario: implemented scenario one
+ * Given the fixture page is loaded
+ * When I perform some action
+ * Then some expected result occurs
+ */
+test('implemented scenario one', async ({ page }) => {
+  // Test implementation
+});
+
+/**
+ * Scenario: planned scenario three
+ * Given some initial state
+ * When some action is performed
+ * Then some result is expected
+ * Params:
+ * { "setting": "value", "other": 123 }
+ */
+test.skip('planned scenario three', async ({ page }) => {
+  // Implementation pending
+});
+```
+
+#### Format Rules
+
+1. **Feature Header**: Minimal `/** Feature: ... */` at top of file
+2. **Checklist**: `/* CHECKLIST — Scenarios in this spec */` block with `[x]`/`[ ]` items
+3. **Scenario Comments**: Immediately above each `test()` with Given/When/Then structure
+4. **Params**: Optional JSON block for complex test configurations
+5. **Implemented Tests**: Use `test()` with `[x]` in checklist
+6. **Planned Tests**: Use `test.skip()` with `[ ]` in checklist
+
+### Guard Script Validation
+
+The **gherkin-guard-dog** script enforces checklist consistency:
+
+```bash
+# Run the guard (validates all .spec.ts files)
+yarn test:guard
+
+# With environment variables
+REQUIRE_CHECKLIST=1 yarn test:guard  # Fail if no checklist found
+VERBOSE=1 yarn test:guard            # Show OK messages
+```
+
+#### Validation Rules
+
+- `[x]` items must have corresponding `test()` (not `test.skip()`)
+- `[ ]` items must have corresponding `test.skip()`
+- Every `test()` must be listed as `[x]` in checklist
+- Every `test.skip()` must be listed as `[ ]` in checklist
+- No duplicate test titles or checklist items
+- Test titles must exactly match checklist items
+
+### Step Lexicon Generation
+
+The **step lexicon** is auto-generated from doc-comments in helper functions and serves as the **single source of truth** for available test steps.
+
+#### Helper Function Annotation
+
+```typescript
+/**
+ * When I click the up button on "{testId}"
+ * @note Keeps focus; does not blur
+ */
+export async function clickUpButton(page: Page, testId: string) { ... }
+
+/**
+ * Then the value of "{testId}" is "{expected}"
+ */
+export async function expectValueToBe(page: Page, testId: string, expected: string) { ... }
+
+/**
+ * Given I mount TouchSpin on "{testId}" with settings
+ * Given TouchSpin is initialized on "{testId}" with {settings}
+ * @note Multiple step phrases supported for flexibility
+ */
+export async function initializeTouchspinWithVanilla(page, testId, settings) { ... }
+```
+
+#### Doc-Comment Format
+
+- **First line**: Human-readable step description (becomes lexicon entry)
+- **Additional lines**: Alternative phrasings (each becomes separate entry)
+- **@note lines**: Optional implementation notes
+- **Placeholders**: Use `{testId}`, `{expected}`, `{settings}`, `{value}`, etc.
+
+#### Generate the Lexicon
+
+```bash
+# Generate tests/STEP-LEXICON.md from helper doc-comments
+yarn lexicon:gen
+
+# Override default scan paths
+yarn lexicon:gen packages/foo/helpers packages/bar/helpers
+```
+
+#### Generated Output Format
+
+```markdown
+# Step Lexicon (generated)
+
+## interactions
+
+- **When I click the up button on "{testId}"**
+  - `clickUpButton(page, testId)`
+  - File: `packages/core/tests/__shared__/helpers/interactions/buttons.ts`
+
+- **When I type "{text}" into "{testId}"**
+  - `typeInInput(page, testId, text)`
+  - File: `packages/core/tests/__shared__/helpers/interactions/input.ts`
+
+## assertions
+
+- **Then the value of "{testId}" is "{expected}"**
+  - `expectValueToBe(page, testId, expected, timeout?)`
+  - File: `packages/core/tests/__shared__/helpers/assertions/values.ts`
+```
+
+### Claude Scope Discipline
+
+When Claude generates tests from Gherkin comments, these rules **must** be followed:
+
+#### ✅ Claude May
+
+1. **Implement only `[ ]` scenarios**: Convert `test.skip()` to `test()` and flip checklist to `[x]`
+2. **Use only lexicon steps**: Every step phrase must exist in `tests/STEP-LEXICON.md`
+3. **Match titles exactly**: Test titles must equal scenario titles character-for-character
+4. **Handle malformed Params**: Use `test.skip()` with error comment for invalid JSON
+
+#### ❌ Claude Must NOT
+
+1. **Invent new steps**: Never create step phrases not in the lexicon
+2. **Modify existing helpers**: Don't change helper function signatures or behavior
+3. **Implement `[x]` scenarios**: These are already done
+4. **Change test names**: Keep exact scenario titles as test names
+
+#### Example Valid Implementation
+
+```typescript
+// Scenario comment (already exists)
+/**
+ * Scenario: increases value on click on up button and triggers change event
+ * Given the fixture page is loaded
+ * When I click the up button
+ * Then the value increases and change event is fired
+ */
+
+// Claude converts from test.skip to test, updates checklist [x]
+test('increases value on click on up button and triggers change event', async ({ page }) => {
+  // Implementation using only lexicon steps
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, initval: '0' });
+  await clickUpButton(page, 'test-input');
+  await expectValueToBe(page, 'test-input', '1');
+  // ... rest using lexicon steps
+});
+```
+
+### PR Checklist
+
+When contributing tests, ensure:
+
+- [ ] **Checklist updated**: `[ ]` → `[x]` for implemented scenarios
+- [ ] **Guard passes**: `yarn test:guard` runs clean
+- [ ] **Lexicon regenerated**: `yarn lexicon:gen` if helper docs changed
+- [ ] **Step compliance**: All steps exist in generated lexicon
+- [ ] **Test titles exact**: Match scenario comments precisely
+
+---
+
 ## 🔧 Important Development Workflow
 
 ### CRITICAL: Always Rebuild After Source Changes

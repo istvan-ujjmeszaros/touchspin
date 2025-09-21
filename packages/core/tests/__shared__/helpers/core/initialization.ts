@@ -67,6 +67,11 @@ export async function initializeTouchspinWithBootstrap5(
   throw new Error('initializeTouchspinWithBootstrap5 was removed from core test helpers. Use renderer-local helpers instead.');
 }
 
+/**
+ * Given I mount TouchSpin on "{testId}" with settings
+ * Given TouchSpin is initialized on "{testId}" with {settings}
+ * @note Uses vanilla renderer for core testing
+ */
 export async function initializeTouchspinWithVanilla(
   page: Page,
   testId: string,

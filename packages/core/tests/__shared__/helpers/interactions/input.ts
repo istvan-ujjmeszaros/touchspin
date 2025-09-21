@@ -6,6 +6,9 @@ import { waitForTouchspinInitialized } from '../core/elements';
  * Input interactions
  * ────────────────────────── */
 
+/**
+ * When I type "{text}" into "{testId}"
+ */
 export async function typeInInput(page: Page, testId: string, text: string): Promise<void> {
   const input = inputById(page, testId);
   if ((await input.count()) === 0) throw new Error(`Input not found for "${testId}".`);
@@ -25,6 +28,10 @@ export async function readInputValue(page: Page, testId: string): Promise<string
   return inputById(page, testId).inputValue();
 }
 
+/**
+ * When I set the value of "{testId}" to "{value}"
+ * @note Selects all text before filling, triggers input events
+ */
 export async function fillWithValue(page: Page, testId: string, value: string): Promise<void> {
   await waitForTouchspinInitialized(page, testId);
   const input = inputById(page, testId);
@@ -58,7 +65,10 @@ export async function fillWithValueAndBlur(
   }
 }
 
-/** Set the input value without dispatching input/change events (direct property set), then blur. */
+/**
+ * When I set "{testId}" value to "{value}" silently and blur
+ * @note Sets value without input events, then blurs to trigger validation
+ */
 export async function setValueSilentlyAndBlur(
   page: Page,
   testId: string,

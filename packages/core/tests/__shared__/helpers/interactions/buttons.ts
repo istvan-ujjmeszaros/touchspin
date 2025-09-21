@@ -6,16 +6,25 @@ import { upButtonIn, downButtonIn } from '../core/selectors';
  * Button interactions
  * ────────────────────────── */
 
+/**
+ * When I click the up button on "{testId}"
+ */
 export async function clickUpButton(page: Page, testId: string): Promise<void> {
   const { upButton } = await getTouchSpinElements(page, testId);
   await upButton.click();
 }
 
+/**
+ * When I click the down button on "{testId}"
+ */
 export async function clickDownButton(page: Page, testId: string): Promise<void> {
   const { downButton } = await getTouchSpinElements(page, testId);
   await downButton.click();
 }
 
+/**
+ * When I hold the up button on "{testId}" for {durationMs} milliseconds
+ */
 export async function holdUpButton(page: Page, testId: string, durationMs: number): Promise<void> {
   const wrapper = await getTouchSpinWrapper(page, testId);
   const btn = upButtonIn(wrapper);

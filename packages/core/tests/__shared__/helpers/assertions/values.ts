@@ -4,6 +4,9 @@ import type { Page } from '@playwright/test';
  * Value-based polled expectations
  * ────────────────────────── */
 
+/**
+ * Then the value of "{testId}" is "{expected}"
+ */
 export async function expectValueToBe(
   page: Page,
   testId: string,
@@ -31,6 +34,9 @@ export async function expectValueToChange(
   await expectValueToBe(page, testId, to, timeout);
 }
 
+/**
+ * Then the value of "{testId}" is greater than {value}
+ */
 export async function expectValueToBeGreaterThan(
   page: Page,
   testId: string,
