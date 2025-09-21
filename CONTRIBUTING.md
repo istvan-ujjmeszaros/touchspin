@@ -1,6 +1,6 @@
-# Contributing
+# Contributing to Bootstrap TouchSpin
 
-Thanks for your interest in contributing to TouchSpin! This guide covers how to propose changes, coding standards, and how to author new renderers.
+Thank you for your interest in contributing to Bootstrap TouchSpin! This guide covers how to propose changes, coding standards, our testing approach, and how to author new renderers.
 
 ## How to Contribute
 
@@ -12,16 +12,27 @@ Thanks for your interest in contributing to TouchSpin! This guide covers how to 
 - Mention which package(s) are affected (core, renderer-bootstrap5, jquery-plugin, etc.).
 
 ### Submitting Pull Requests
-- Fork the repo and create a topic branch from `main`:
+- Fork the repo and create a topic branch from `master`:
   - Example: `feat/renderer-<flavor>` or `fix/core-<short-desc>`
 - Keep PRs focused and small; one logical change per PR.
 - Follow commit best practices: concise subject, informative body.
 - Ensure everything builds and tests pass locally:
   - `yarn install`
   - `yarn build` (all packages must build cleanly)
-  - `yarn test` (or `yarn test:dev` during local iteration)
+  - `yarn test` (comprehensive Gherkin-style tests)
+  - `yarn test:guard` (validate test/checklist consistency)
 - Do not commit built artifacts in `dist/`; CI/build will produce them.
 - Use Yarn 4 (Berry) with PnP (already configured in the repo).
+
+### Our Testing Philosophy
+We use a **Gherkin-style testing approach** with comprehensive behavior documentation:
+
+- **Plan first**: Start with `test.skip()` scenarios documenting all behaviors
+- **One behavior per test**: Focus on single, testable outcomes
+- **Helper-driven**: Use our Step Lexicon for consistent interactions
+- **Coverage-focused**: Aim for 100% test coverage on new features
+
+See our [Writing Gherkin Tests Guide](docs/WRITING_GHERKIN_TESTS.md) for detailed guidance.
 
 ### Coding Standards
 - TypeScript, strict and explicit: prefer explicit types; avoid `any`.
