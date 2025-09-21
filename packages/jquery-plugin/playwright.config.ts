@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const DEV_BASE_URL = process.env.DEV_BASE_URL || 'http://localhost:8866';
+
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/?(*.)+(spec|test).[jt]s?(x)',
@@ -19,7 +21,7 @@ export default defineConfig({
   outputDir: '../../reports/test-results/jquery-plugin',
 
   use: {
-    baseURL: 'http://localhost:8866',
+    baseURL: DEV_BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

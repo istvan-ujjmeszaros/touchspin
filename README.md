@@ -690,6 +690,7 @@ The inspect script provides:
 - Example:
   - `DEV_BASE_URL=https://your-tunnel.example.com yarn inspect /packages/core/tests/__shared__/fixtures/test-fixture.html text`
 - Inside browser-evaluated helpers, modules are resolved relative to `location.origin` (no hard-coded hosts).
+ - Playwright tests also respect `DEV_BASE_URL` for their `baseURL`; if unset, they default to `http://localhost:8866`.
 
 ### Build Process
 

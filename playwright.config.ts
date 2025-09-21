@@ -4,6 +4,8 @@ import path from 'path';
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+const DEV_BASE_URL = process.env.DEV_BASE_URL || 'http://localhost:8866';
+
 export default defineConfig({
   testDir: './',
   testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/**/tests/**/*.spec.ts'],
@@ -34,7 +36,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:8866',
+    baseURL: DEV_BASE_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
