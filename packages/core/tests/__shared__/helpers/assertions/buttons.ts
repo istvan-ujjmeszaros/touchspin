@@ -6,7 +6,10 @@ import { upButtonIn, downButtonIn } from '../core/selectors';
  * Button state expectations
  * ────────────────────────── */
 
-/** Renderer-agnostic: button locator is based on injected attribute. */
+/**
+ * Then the "{button}" button on "{testId}" is disabled
+ * Renderer-agnostic: button locator is based on injected attribute.
+ */
 export async function expectButtonToBeDisabled(
   page: Page,
   testId: string,
@@ -21,6 +24,9 @@ export async function expectButtonToBeDisabled(
   }
 }
 
+/**
+ * Then the "{button}" button on "{testId}" is enabled
+ */
 export async function expectButtonToBeEnabled(
   page: Page,
   testId: string,

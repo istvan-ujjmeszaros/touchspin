@@ -4,6 +4,9 @@ import type { Page } from '@playwright/test';
  * Event-based expectations
  * ────────────────────────── */
 
+/**
+ * Then the "{eventName}" event is fired
+ */
 export async function expectEventFired(
   page: Page,
   eventName: string,
@@ -19,6 +22,9 @@ export async function expectEventFired(
   );
 }
 
+/**
+ * Then the "{eventName}" event is not fired
+ */
 export async function expectNoEvent(
   page: Page,
   eventName: string,
@@ -33,6 +39,9 @@ export async function expectNoEvent(
   }
 }
 
+/**
+ * Then the "{eventName}" event is fired exactly {count} times
+ */
 export async function expectEventCount(
   page: Page,
   eventName: string,

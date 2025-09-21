@@ -23,6 +23,9 @@ export async function expectValueToBe(
   );
 }
 
+/**
+ * Then the value of "{testId}" changes from "{from}" to "{to}"
+ */
 export async function expectValueToChange(
   page: Page,
   testId: string,
@@ -53,6 +56,9 @@ export async function expectValueToBeGreaterThan(
   );
 }
 
+/**
+ * Then the value of "{testId}" is less than {value}
+ */
 export async function expectValueToBeLessThan(
   page: Page,
   testId: string,
@@ -69,6 +75,9 @@ export async function expectValueToBeLessThan(
   );
 }
 
+/**
+ * Then the value of "{testId}" is between {min} and {max}
+ */
 export async function expectValueToBeBetween(
   page: Page,
   testId: string,
