@@ -23,14 +23,14 @@ if [ -n "$HELPER_CHANGED" ]; then
 fi
 
 # Check if any spec files or guard script changed (run guard if so)
-SPEC_OR_GUARD_CHANGED=$(echo "$STAGED_FILES" | grep -E "\.(spec|guard)\..*\.(ts|js|mjs)$" || true)
+SPEC_OR_GUARD_CHANGED=$(echo "$STAGED_FILES" | grep -E "\.(spec|guard)\.(ts|tsx|js|mjs)$" || true)
 if [ -n "$SPEC_OR_GUARD_CHANGED" ]; then
   echo "🛡️ Spec or guard files changed, running Gherkin guard..."
-  yarn test:guard
+  yarn test:guard || { echo "❌ Gherkin guard failed"; exit 1; }
   echo "✅ Gherkin guard passed"
 fi
 
 # Run existing guard for src-in-tests
-yarn guard:no-src-in-tests
+yarn guard:no-src-in-tests || { echo "❌ src-in-tests guard failed"; exit 1; }
 
 echo "✅ Pre-commit validation complete"
