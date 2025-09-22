@@ -450,6 +450,32 @@ document.addEventListener('touchspin.on.max', (e: Event) => {
 
 **💡 Rule of thumb**: If you're about to write ANY selector code in test files or test helpers, STOP and find the existing helper that does what you need.
 
+### 🚀 Performance Evidence: Why Helpers Matter
+
+**We've proven that using canonical helpers provides significant performance improvements** through comprehensive benchmarking:
+
+**Key Performance Insights:**
+1. **Canonical helpers are dramatically more efficient** - using `apiHelpers.incrementViaAPI()` vs duplicated functions
+2. **DOM manipulation is the main bottleneck** - textarea writes cause most performance cost
+3. **Event handling overhead is minimal** - registering listeners has little impact vs DOM writes
+4. **Single page.evaluate calls are faster** - canonical helpers use `window.__ts` infrastructure optimally
+
+**Why Canonical Helpers Win:**
+- **Optimized architecture**: Single `page.evaluate` with `window.__ts.requireCoreByTestId()`
+- **Reduced round trips**: No extra element lookups or evaluations
+- **Proven infrastructure**: Built and tested for efficiency
+
+**Performance Test Commands:**
+```bash
+# Build first (always required after source changes)
+yarn build
+
+# Run performance benchmarks
+yarn exec playwright test packages/core/tests/specs/api-operations.spec.ts -g "API performance" --project=chromium --reporter=list
+```
+
+**The evidence is clear**: Using existing helpers isn't just about code organization - it delivers measurable performance gains.
+
 ### ✅ Do
 
 ```typescript

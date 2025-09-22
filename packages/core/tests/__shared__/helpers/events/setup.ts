@@ -20,10 +20,12 @@ export async function setupLogging(page: Page): Promise<void> {
 
     // Skip entirely if no event-log textarea exists
     if (!document.getElementById('event-log')) {
+      console.log('[setupLogging] No event-log textarea found - skipping all event listener registration');
       window.__tsLoggingSetup = true; // Mark as setup to prevent re-runs
       return; // No event listeners registered at all
     }
 
+    console.log('[setupLogging] Event-log textarea found - registering event listeners');
     window.__tsLoggingSetup = true;
 
     // (DOM helpers are installed via installDomHelpers; logging remains here)
@@ -61,6 +63,7 @@ export async function setupLogging(page: Page): Promise<void> {
       'touchspin.on.stopdownspin',
     ] as const;
 
+    console.log(`[setupLogging] Registering ${tsEvents.length} TouchSpin event listeners`);
     tsEvents.forEach((ev) => {
       document.addEventListener(
         ev,
@@ -92,6 +95,7 @@ export async function setupLogging(page: Page): Promise<void> {
     });
 
     // Native 'change' on inputs of interest
+    console.log('[setupLogging] Registering change event listener');
     document.addEventListener(
       'change',
       (e: Event) => {
