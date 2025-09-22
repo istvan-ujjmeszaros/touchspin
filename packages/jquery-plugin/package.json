@@ -29,10 +29,13 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
-    "build": "rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife",
+    "build": "rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --target es2018 --tsconfig tsconfig.build.json",
+    "build:umd-bs3": "tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --dts=false --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
+    "build:umd-bs4": "tsup src/jquery-touchspin-bs4.ts --format iife --global-name TouchSpinBS4 --dts=false --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
+    "build:umd-bs5": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --dts=false --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
     "typecheck": "tsc --noEmit",
     "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
@@ -40,7 +43,10 @@
     "test:coverage": "cd ../.. && COVERAGE=1 playwright test packages/jquery-plugin/tests/"
   },
   "dependencies": {
-    "@touchspin/core": "workspace:*"
+    "@touchspin/core": "workspace:*",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*"
   },
   "publishConfig": {
     "access": "public",
@@ -63,9 +69,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
-    "@touchspin/renderer-bootstrap3": "workspace:*",
-    "@touchspin/renderer-bootstrap4": "workspace:*",
-    "@touchspin/renderer-bootstrap5": "workspace:*",
     "@touchspin/renderer-tailwind": "workspace:*",
     "@types/jquery": "^3.5.30",
     "@types/node": "^22.7.4",
