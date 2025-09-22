@@ -1,5 +1,7 @@
-@touchspin/core
-==============
+# @touchspin/core
+
+> [!NOTE]
+> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
 
 Framework-agnostic TouchSpin core with element-attached architecture. Core is strictly jQuery-free; any jQuery integration lives in the `@touchspin/jquery-plugin` package (including test helpers).
 
@@ -19,6 +21,46 @@ The core is fully implemented with modern element-attached architecture.
 - **Clean Lifecycle**: Simple init/destroy with automatic cleanup
 - **Data Attribute Event Handling**: DOM events via data-touchspin-injected attributes only
 - **Complete API**: All original TouchSpin functionality preserved
+
+## Getting Started
+
+To use the core package, you need to provide a renderer. Here is a basic example using the `VanillaRenderer`:
+
+```html
+<input type="number" id="my-spinner" value="50">
+
+<script type="module">
+  import { TouchSpin } from '@touchspin/core';
+  import { VanillaRenderer } from '@touchspin/renderer-vanilla';
+
+  const input = document.getElementById('my-spinner');
+  const instance = TouchSpin(input, {
+    renderer: VanillaRenderer,
+    min: 0,
+    max: 100,
+    step: 5
+  });
+</script>
+```
+
+### Using the RawRenderer
+
+If you only need the core functionality without any UI, you can use the `RawRenderer`. This is useful for programmatic control or for building your own custom UI.
+
+```javascript
+import { TouchSpin } from '@touchspin/core';
+
+const input = document.getElementById('my-spinner');
+const instance = TouchSpin(input, {
+  renderer: null, // or RawRenderer
+  min: 0,
+  max: 100,
+  step: 1
+});
+
+// You can still control the input programmatically
+instance.upOnce();
+```
 
 ## API
 
@@ -54,6 +96,19 @@ api.destroy()             // Destroy and remove from element
 ```
 
 ### Event System
+
+The core emits the following events that you can listen to:
+
+| Event | Description |
+|---|---|
+| `min` | Fired when the minimum value is reached. |
+| `max` | Fired when the maximum value is reached. |
+| `startspin` | Fired when spinning starts in any direction. |
+| `startupspin` | Fired when spinning up starts. |
+| `startdownspin` | Fired when spinning down starts. |
+| `stopspin` | Fired when spinning stops in any direction. |
+| `stopupspin` | Fired when spinning up stops. |
+| `stopdownspin` | Fired when spinning down stops. |
 
 ```javascript
 api.on('min', () => console.log('Hit minimum'));

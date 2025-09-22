@@ -1,4 +1,7 @@
-# TouchSpin Web Component
+# @touchspin/web-component
+
+> [!NOTE]
+> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
 
 A standards-based Web Component implementation of TouchSpin, providing a framework-agnostic custom element for number input with increment/decrement controls.
 
@@ -16,60 +19,40 @@ A standards-based Web Component implementation of TouchSpin, providing a framewo
 
 ## Installation
 
+### Alpha Version from NPM
+
 ```bash
-yarn add @touchspin/web-component
+npm install @touchspin/web-component@next
 ```
 
-## Quick Start
+## Getting Started
 
-### Import and Use
+1.  **Install the component:**
 
-```html
-<!-- Import the Web Component -->
-<script type="module">
-  import '@touchspin/web-component';
-</script>
+    ```bash
+    npm install @touchspin/web-component@next
+    ```
 
-<!-- Use the custom element -->
-<touchspin-input min="0" max="100" value="50"></touchspin-input>
-```
+2.  **Import the component and its styles:**
 
-## Styles
+    ```html
+    <script type="module" src="node_modules/@touchspin/web-component/dist/index.js"></script>
+    <link rel="stylesheet" href="node_modules/@touchspin/renderer-vanilla/dist/touchspin-vanilla.css">
+    ```
 
-The web component uses the Vanilla renderer styles. Include the CSS in your page or bundle it once in your app entry:
+3.  **Use the component in your HTML:**
 
-```html
-<link rel="stylesheet" href="/node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css" />
-```
+    ```html
+    <touchspin-input min="0" max="100" value="50"></touchspin-input>
+    ```
 
 ## CDN (UMD)
 
 ```html
-<script src="/node_modules/@touchspin/web-component/dist/index.umd.js"></script>
-<link rel="stylesheet" href="/node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css" />
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/web-component@5.0.0-alpha.1/dist/index.umd.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/touchspin-vanilla.css" />
+
 <touchspin-input min="0" max="100" value="50"></touchspin-input>
-```
-
-### Basic Examples
-
-```html
-<!-- Basic spinner -->
-<touchspin-input min="0" max="100" value="50" step="1"></touchspin-input>
-
-<!-- Currency input -->
-<touchspin-input min="0" max="1000" value="25.50" step="0.01" 
-                   prefix="$" postfix=".00"></touchspin-input>
-
-<!-- Vertical buttons -->
-<touchspin-input min="0" max="100" value="75" 
-                   vertical-buttons="true"></touchspin-input>
-
-<!-- Custom button text -->
-<touchspin-input min="1" max="10" value="5" 
-                   button-up-txt="▲" button-down-txt="▼"></touchspin-input>
-
-<!-- Disabled state -->
-<touchspin-input min="0" max="100" value="42" disabled></touchspin-input>
 ```
 
 ## API Reference
@@ -205,18 +188,23 @@ See the [VanillaRenderer documentation](../vanilla-renderer/README.md) for all a
 
 ```jsx
 import '@touchspin/web-component';
+import { useEffect, useRef } from 'react';
 
 function MyComponent() {
-  const handleChange = (e) => {
-    console.log('Value:', e.detail.value);
-  };
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleChange = (e) => console.log('Value:', e.detail.value);
+    ref.current.addEventListener('touchspin-change', handleChange);
+    return () => ref.current.removeEventListener('touchspin-change', handleChange);
+  }, []);
 
   return (
     <touchspin-input
+      ref={ref}
       min={0}
       max={100}
-      defaultValue={50}
-      onTouchspinChange={handleChange}
+      value={50}
     />
   );
 }
@@ -239,7 +227,7 @@ export class AppModule {}
 <touchspin-input 
   [min]="0" 
   [max]="100" 
-  [value]="currentValue"
+  [(ngModel)]="currentValue"
   (touchspin-change)="onValueChange($event)">
 </touchspin-input>
 ```
@@ -251,13 +239,14 @@ export class AppModule {}
   <touchspin-input 
     :min="0" 
     :max="100" 
-    :value="currentValue"
+    v-model="currentValue"
     @touchspin-change="onValueChange">
   </touchspin-input>
 </template>
 
 <script setup>
 import '@touchspin/web-component';
+import { ref } from 'vue';
 
 const currentValue = ref(50);
 

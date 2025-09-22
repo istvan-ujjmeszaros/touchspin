@@ -1,5 +1,8 @@
 # @touchspin/jquery-plugin
 
+> [!NOTE]
+> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 jQuery plugin wrapper for TouchSpin that provides **full backward compatibility** with the original Bootstrap TouchSpin jQuery plugin while leveraging the modern core architecture.
 
 ## Overview
@@ -15,6 +18,12 @@ This plugin preserves the complete original TouchSpin jQuery API while adding su
 - ✅ **Clean Architecture** - Thin wrapper that delegates to modern core
 
 ## Installation
+
+### Alpha Version from NPM
+
+```bash
+npm install bootstrap-touchspin@next
+```
 
 ### ES Modules
 
@@ -32,20 +41,17 @@ installJqueryTouchSpin(window.jQuery);
 
 ### CDN / UMD
 
+This package provides UMD bundles that include the core, a renderer, and the jQuery wrapper in a single file. Choose the bundle that matches your Bootstrap version:
+
 ```html
-<!-- Core + Renderer + jQuery plugin -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/core/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/index.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css" />
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin/dist/index.umd.js"></script>
+<!-- For Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs5.min.js"></script>
 
-<script>
-  // Set default renderer
-  TouchSpinJquery.installWithRenderer(TouchSpinRendererBootstrap5);
+<!-- For Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs4.min.js"></script>
 
-  // Now use the jQuery API
-  jQuery('#myinput').TouchSpin({ min: 0, max: 100 });
-</script>
+<!-- For Bootstrap 3 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs3.min.js"></script>
 ```
 
 ## Initialization
@@ -57,8 +63,7 @@ installJqueryTouchSpin(window.jQuery);
 $('#myinput').TouchSpin({
   min: 0,
   max: 100,
-  step: 1,
-  renderer: Bootstrap5Renderer // Required if no default renderer set
+  step: 1
 });
 
 // With all options
@@ -70,7 +75,6 @@ $('#myinput').TouchSpin({
   prefix: '$',               // Prefix text
   postfix: 'USD',            // Postfix text
   verticalbuttons: false,    // Vertical button layout
-  renderer: Bootstrap5Renderer // Renderer class (optional if default set)
 });
 ```
 

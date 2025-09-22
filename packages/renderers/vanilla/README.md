@@ -1,8 +1,9 @@
-# TouchSpin Vanilla Renderer
+# @touchspin/renderer-vanilla
+
+> [!NOTE]
+> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
 
 A vanilla CSS-based renderer for TouchSpin components without framework dependencies.
-
-📚 Renderer architecture docs: [`docs/architecture/renderer-guide.md`](../../docs/architecture/renderer-guide.md)
 
 This renderer extends `AbstractRenderer` and implements the core `Renderer` contract from `@touchspin/core/renderer`.
 
@@ -17,8 +18,10 @@ This renderer extends `AbstractRenderer` and implements the core `Renderer` cont
 
 ## Installation
 
+### Alpha Version from NPM
+
 ```bash
-yarn add @touchspin/vanilla-renderer @touchspin/core
+npm install @touchspin/renderer-vanilla@next
 ```
 
 ## Quick Start
@@ -29,14 +32,14 @@ yarn add @touchspin/vanilla-renderer @touchspin/core
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="@touchspin/vanilla-renderer/dist/touchspin-vanilla.css">
+  <link rel="stylesheet" href="node_modules/@touchspin/renderer-vanilla/dist/touchspin-vanilla.css">
 </head>
 <body>
   <input type="number" id="my-spinner" value="5" min="0" max="100" step="1">
   
   <script type="module">
     import { TouchSpin } from '@touchspin/core';
-    import { VanillaRenderer } from '@touchspin/vanilla-renderer';
+    import { VanillaRenderer } from '@touchspin/renderer-vanilla';
     
     const spinner = TouchSpin(document.getElementById('my-spinner'), {
       renderer: VanillaRenderer
@@ -46,11 +49,19 @@ yarn add @touchspin/vanilla-renderer @touchspin/core
 </html>
 ```
 
+### CDN (UMD)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0-alpha.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/index.umd.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/touchspin-vanilla.css" />
+```
+
 ### JavaScript Modules
 
 ```javascript
 import { TouchSpin } from '@touchspin/core';
-import { VanillaRenderer } from '@touchspin/vanilla-renderer';
+import { VanillaRenderer } from '@touchspin/renderer-vanilla';
 
 // Initialize with VanillaRenderer
 const input = document.getElementById('my-spinner');
@@ -74,7 +85,7 @@ touchspin.on('change', (value) => console.log('Value:', value));
 Set VanillaRenderer as the default for all TouchSpin instances:
 
 ```javascript
-import { VanillaRenderer } from '@touchspin/vanilla-renderer';
+import { VanillaRenderer } from '@touchspin/renderer-vanilla';
 
 // Set global default
 globalThis.TouchSpinDefaultRenderer = VanillaRenderer;
