@@ -89,115 +89,15 @@ export async function initializeTouchspin(
 }
 
 /**
- * Increment value via Core API (direct method call)
+ * Get numeric value from Core internal state (different from display value)
+ * Note: Use apiHelpers.getNumericValue() for display value, this gets Core's internal value
  */
-export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.upOnce();
-  });
-}
-
-/**
- * Decrement value via Core API (direct method call)
- */
-export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.downOnce();
-  });
-}
-
-/**
- * Start up spin via Core API
- */
-export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.startUpSpin();
-  });
-}
-
-/**
- * Start down spin via Core API
- */
-export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.startDownSpin();
-  });
-}
-
-/**
- * Stop spin via Core API
- */
-export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.stopSpin();
-  });
-}
-
-/**
- * Set value via Core API
- */
-export async function setValueViaAPI(page: Page, testId: string, value: number | string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement, value) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.setValue(value);
-  }, value);
-}
-
-/**
- * Get numeric value from Core
- */
-export async function getNumericValue(page: Page, testId: string): Promise<number> {
+export async function getCoreNumericValue(page: Page, testId: string): Promise<number> {
   const input = inputById(page, testId);
   return await input.evaluate((inputEl: HTMLInputElement) => {
     const core = (inputEl as any)._touchSpinCore;
     if (!core) throw new Error(`Core not found for input`);
     return core.getValue();
-  });
-}
-
-/**
- * Update settings via Core API
- */
-export async function updateSettingsViaAPI(
-  page: Page,
-  testId: string,
-  settings: Partial<TouchSpinCoreOptions>
-): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement, settings) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.updateSettings(settings);
-  }, settings);
-}
-
-/**
- * Destroy Core instance
- */
-export async function destroyCore(page: Page, testId: string): Promise<void> {
-  const input = inputById(page, testId);
-  await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for input`);
-    core.destroy();
-    delete (inputEl as any)._touchSpinCore;
   });
 }
 
