@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const isDevBuild = typeof process !== 'undefined' && process && process.env && (process.env.TS_BUILD_TARGET === 'dev' || process.env.PW_COVERAGE === '1');
 const TARGET = isDevBuild ? 'devdist' : 'dist';
@@ -7,12 +8,15 @@ const TARGET = isDevBuild ? 'devdist' : 'dist';
 type ArtifactManifest = Record<string, string>;
 const manifestCache = new Map<string, ArtifactManifest>();
 
+const runtimeDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(runtimeDir, '../../../../../..');
+
 function loadManifest(packageSubPath: string): ArtifactManifest {
   const cacheKey = `${packageSubPath}:${TARGET}`;
   const cached = manifestCache.get(cacheKey);
   if (cached) return cached;
 
-  const manifestPath = path.join(process.cwd(), packageSubPath, TARGET, 'artifacts.json');
+  const manifestPath = path.resolve(repoRoot, packageSubPath, TARGET, 'artifacts.json');
 
   try {
     const raw = readFileSync(manifestPath, 'utf8');
