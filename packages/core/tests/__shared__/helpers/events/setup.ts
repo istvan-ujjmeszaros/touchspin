@@ -17,6 +17,13 @@ import type { EventLogEntry, EventLogType, TouchSpinCorePublicAPI } from '../typ
 export async function setupLogging(page: Page): Promise<void> {
   await page.evaluate(() => {
     if (window.__tsLoggingSetup) return;
+
+    // Skip entirely if no event-log textarea exists
+    if (!document.getElementById('event-log')) {
+      window.__tsLoggingSetup = true; // Mark as setup to prevent re-runs
+      return; // No event listeners registered at all
+    }
+
     window.__tsLoggingSetup = true;
 
     // (DOM helpers are installed via installDomHelpers; logging remains here)
@@ -58,6 +65,14 @@ export async function setupLogging(page: Page): Promise<void> {
       document.addEventListener(
         ev,
         (e: Event) => {
+          // Early return if no textarea, not visible, or disabled
+          const eventLogTextarea = document.getElementById('event-log') as HTMLTextAreaElement | null;
+          if (!eventLogTextarea ||
+              eventLogTextarea.style.display === 'none' ||
+              eventLogTextarea.disabled) {
+            return;
+          }
+
           const target = e.target as HTMLElement | null;
           // Try to resolve the owning input's testId
           const input =
@@ -80,6 +95,14 @@ export async function setupLogging(page: Page): Promise<void> {
     document.addEventListener(
       'change',
       (e: Event) => {
+        // Early return if no textarea, not visible, or disabled
+        const eventLogTextarea = document.getElementById('event-log') as HTMLTextAreaElement | null;
+        if (!eventLogTextarea ||
+            eventLogTextarea.style.display === 'none' ||
+            eventLogTextarea.disabled) {
+          return;
+        }
+
         const input = e.target as HTMLInputElement | null;
         if (!input || !input.matches('input[data-testid]')) return;
         const testId = input.getAttribute('data-testid') || 'unknown';

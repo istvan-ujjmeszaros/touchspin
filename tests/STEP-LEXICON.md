@@ -126,6 +126,14 @@
 
 ## test-utilities
 
+- **Disable event log textarea to skip DOM writes while keeping event listeners**
+  - `disableEventLogging(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
+
+- **Enable event log textarea to resume DOM writes**
+  - `enableEventLogging(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
+
 - **Pre-check multiple resources in parallel.**
   - `preFetchCheckMultiple(page, urls)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/network.ts`
@@ -133,6 +141,10 @@
 - **Pre-check that a resource is fetchable before attempting dynamic imports.**
   - `preFetchCheck(page, url)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/network.ts`
+
+- **Remove event log textarea completely to prevent event listener registration**
+  - `removeEventLogTextarea(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
 
 - **This helps provide better error messages when the web server isn't properly configured.**
   - `preFetchCheck(page, url)`
