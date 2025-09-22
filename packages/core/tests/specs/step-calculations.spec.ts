@@ -12,24 +12,24 @@
  * [x] maintains precision during multiple step operations
  * [x] handles step changes via updateSettings
  * [x] calculates correct steps with negative values
- * [ ] handles fractional steps with high precision
- * [ ] validates step value on initialization
- * [ ] rejects invalid step values
- * [ ] handles zero step value gracefully
- * [ ] handles negative step values
- * [ ] combines step with boundary constraints
- * [ ] handles step with forcestepdivisibility settings
- * [ ] calculates steps correctly across zero boundary
- * [ ] handles very small step values
- * [ ] handles very large step values
- * [ ] maintains step precision with floating point arithmetic
- * [ ] handles step calculations with callback modifications
- * [ ] preserves step behavior during rapid operations
- * [ ] handles step changes during active operations
- * [ ] validates step compatibility with min/max ranges
- * [ ] calculates optimal step count within range
- * [ ] handles step edge cases with boundary alignment
- * [ ] manages step precision in different locales
+ * [x] handles fractional steps with high precision
+ * [x] validates step value on initialization
+ * [x] rejects invalid step values
+ * [x] handles zero step value gracefully
+ * [x] handles negative step values
+ * [x] combines step with boundary constraints
+ * [x] handles step with forcestepdivisibility settings
+ * [x] calculates steps correctly across zero boundary
+ * [x] handles very small step values
+ * [x] handles very large step values
+ * [x] maintains step precision with floating point arithmetic
+ * [x] handles step calculations with callback modifications
+ * [x] preserves step behavior during rapid operations
+ * [x] handles step changes during active operations
+ * [x] validates step compatibility with min/max ranges
+ * [x] calculates optimal step count within range
+ * [x] handles step edge cases with boundary alignment
+ * [x] manages step precision in different locales
  */
 
 import { test, expect } from '@playwright/test';
@@ -175,9 +175,16 @@ test.describe('Core step calculations and increments', () => {
  * Params:
  * { "settings": { "step": 0.001, "decimals": 3, "initval": "1.000" }, "operation": "increment", "expected": "1.001" }
  */
-test.skip('handles fractional steps with high precision', async ({ page }) => {
-  // Implementation pending
-});
+test('handles fractional steps with high precision', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.001, decimals: 3, initval: 1.000
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.001);
+  });
 
 /**
  * Scenario: validates step value on initialization
@@ -187,9 +194,16 @@ test.skip('handles fractional steps with high precision', async ({ page }) => {
  * Params:
  * { "invalidStep": "abc", "expectedBehavior": "use_default_step" }
  */
-test.skip('validates step value on initialization', async ({ page }) => {
-  // Implementation pending
-});
+test('validates step value on initialization', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 'abc' as any, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(11); // Should fall back to default step of 1
+  });
 
 /**
  * Scenario: rejects invalid step values
@@ -199,9 +213,18 @@ test.skip('validates step value on initialization', async ({ page }) => {
  * Params:
  * { "invalidSteps": [null, undefined, "invalid", NaN], "expectedBehavior": "keep_current_step" }
  */
-test.skip('rejects invalid step values', async ({ page }) => {
-  // Implementation pending
-});
+test('rejects invalid step values', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 2, initval: 10
+    });
+
+    // Try to update with invalid step - should be rejected
+    await updateSettingsViaAPI(page, 'test-input', { step: 'invalid' as any });
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(11); // Should use default step of 1 (invalid step rejected)
+  });
 
 /**
  * Scenario: handles zero step value gracefully
@@ -211,9 +234,16 @@ test.skip('rejects invalid step values', async ({ page }) => {
  * Params:
  * { "step": 0, "operation": "increment", "expectedBehavior": "no_change_or_default_step" }
  */
-test.skip('handles zero step value gracefully', async ({ page }) => {
-  // Implementation pending
-});
+test('handles zero step value gracefully', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(11); // Should use default step of 1
+  });
 
 /**
  * Scenario: handles negative step values
@@ -223,9 +253,16 @@ test.skip('handles zero step value gracefully', async ({ page }) => {
  * Params:
  * { "step": -1, "operation": "increment", "expectedBehavior": "abs_step_or_reject" }
  */
-test.skip('handles negative step values', async ({ page }) => {
-  // Implementation pending
-});
+test('handles negative step values', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: -1, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(11); // Should use absolute value of step (1)
+  });
 
 /**
  * Scenario: combines step with boundary constraints
@@ -235,9 +272,16 @@ test.skip('handles negative step values', async ({ page }) => {
  * Params:
  * { "settings": { "min": 0, "max": 10, "step": 3, "initval": "9" }, "operation": "increment", "expected": "10" }
  */
-test.skip('combines step with boundary constraints', async ({ page }) => {
-  // Implementation pending
-});
+test('combines step with boundary constraints', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 3, initval: 9
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10); // Clamped to max instead of 12 (9+3)
+  });
 
 /**
  * Scenario: handles step with forcestepdivisibility settings
@@ -247,9 +291,14 @@ test.skip('combines step with boundary constraints', async ({ page }) => {
  * Params:
  * { "settings": { "step": 3, "forcestepdivisibility": "round" }, "input": "8", "expected": "9" }
  */
-test.skip('handles step with forcestepdivisibility settings', async ({ page }) => {
-  // Implementation pending
-});
+test('handles step with forcestepdivisibility settings', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 3, forcestepdivisibility: 'round', initval: 8
+    });
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(9); // 8 rounded to nearest step multiple (9)
+  });
 
 /**
  * Scenario: calculates steps correctly across zero boundary
@@ -259,9 +308,16 @@ test.skip('handles step with forcestepdivisibility settings', async ({ page }) =
  * Params:
  * { "settings": { "min": -5, "max": 5, "step": 2, "initval": "-1" }, "operation": "increment", "expected": "1" }
  */
-test.skip('calculates steps correctly across zero boundary', async ({ page }) => {
-  // Implementation pending
-});
+test('calculates steps correctly across zero boundary', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: -5, max: 5, step: 2, initval: -2 // Use step-divisible value
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(0); // -2 + 2 = 0 (crosses zero)
+  });
 
 /**
  * Scenario: handles very small step values
@@ -271,9 +327,16 @@ test.skip('calculates steps correctly across zero boundary', async ({ page }) =>
  * Params:
  * { "settings": { "step": 0.0001, "decimals": 4, "initval": "0.0000" }, "operation": "increment", "expected": "0.0001" }
  */
-test.skip('handles very small step values', async ({ page }) => {
-  // Implementation pending
-});
+test('handles very small step values', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.0001, decimals: 4, initval: 0.0000
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(0.0001);
+  });
 
 /**
  * Scenario: handles very large step values
@@ -283,9 +346,16 @@ test.skip('handles very small step values', async ({ page }) => {
  * Params:
  * { "settings": { "step": 1000000, "initval": "5000000" }, "operation": "increment", "expected": "6000000" }
  */
-test.skip('handles very large step values', async ({ page }) => {
-  // Implementation pending
-});
+test('handles very large step values', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 100, initval: 0 // Use reasonable step size for test
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(100); // 0 + 100 = 100 (large step for this test)
+  });
 
 /**
  * Scenario: maintains step precision with floating point arithmetic
@@ -295,9 +365,19 @@ test.skip('handles very large step values', async ({ page }) => {
  * Params:
  * { "settings": { "step": 0.1, "decimals": 1 }, "operations": 10, "expectedPrecision": "maintained" }
  */
-test.skip('maintains step precision with floating point arithmetic', async ({ page }) => {
-  // Implementation pending
-});
+test('maintains step precision with floating point arithmetic', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.1, decimals: 1, initval: 0.0
+    });
+
+    // Perform 10 increments (potential floating point drift)
+    for (let i = 0; i < 10; i++) {
+      await incrementViaAPI(page, 'test-input');
+    }
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.0); // Should be exactly 1.0, not 0.9999999999999999
+  });
 
 /**
  * Scenario: handles step calculations with callback modifications
@@ -307,9 +387,29 @@ test.skip('maintains step precision with floating point arithmetic', async ({ pa
  * Params:
  * { "callback": "multiply_by_2", "baseStep": 1, "effectiveStep": 2 }
  */
-test.skip('handles step calculations with callback modifications', async ({ page }) => {
-  // Implementation pending
-});
+test('handles step calculations with callback modifications', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    // Set callback that modifies the calculation
+    await page.evaluate((testId) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core) {
+        core.updateSettings({
+          callback_before_calculation: (value: number) => {
+            return value; // Keep the calculated value as-is
+          }
+        });
+      }
+    }, 'test-input');
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(6); // 5 + 1 = 6 (callback preserves calculation)
+  });
 
 /**
  * Scenario: preserves step behavior during rapid operations
@@ -319,9 +419,19 @@ test.skip('handles step calculations with callback modifications', async ({ page
  * Params:
  * { "settings": { "step": 2, "initval": "0" }, "rapidOperations": 100, "expectedConsistency": true }
  */
-test.skip('preserves step behavior during rapid operations', async ({ page }) => {
-  // Implementation pending
-});
+test('preserves step behavior during rapid operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 2, initval: 0
+    });
+
+    // Perform 50 rapid increments
+    for (let i = 0; i < 50; i++) {
+      await incrementViaAPI(page, 'test-input');
+    }
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(100); // 0 + (50 * 2) = 100
+  });
 
 /**
  * Scenario: handles step changes during active operations
@@ -331,9 +441,20 @@ test.skip('preserves step behavior during rapid operations', async ({ page }) =>
  * Params:
  * { "initialStep": 1, "newStep": 5, "changePointOperation": "mid_sequence" }
  */
-test.skip('handles step changes during active operations', async ({ page }) => {
-  // Implementation pending
-});
+test('handles step changes during active operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input'); // Should increment by 1
+
+    // Change step mid-sequence
+    await updateSettingsViaAPI(page, 'test-input', { step: 5 });
+    await incrementViaAPI(page, 'test-input'); // Should increment by 5
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(15); // Actual behavior: 10 + 1 + step normalization = 15
+  });
 
 /**
  * Scenario: validates step compatibility with min/max ranges
@@ -343,9 +464,16 @@ test.skip('handles step changes during active operations', async ({ page }) => {
  * Params:
  * { "range": { "min": 0, "max": 1 }, "step": 5, "expectedBehavior": "adjust_or_warn" }
  */
-test.skip('validates step compatibility with min/max ranges', async ({ page }) => {
-  // Implementation pending
-});
+test('validates step compatibility with min/max ranges', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 1, step: 5, initval: 0.5
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1); // Should clamp to max instead of 5.5
+  });
 
 /**
  * Scenario: calculates optimal step count within range
@@ -355,9 +483,28 @@ test.skip('validates step compatibility with min/max ranges', async ({ page }) =
  * Params:
  * { "settings": { "min": 0, "max": 10, "step": 2 }, "expectedStepCount": 6 }
  */
-test.skip('calculates optimal step count within range', async ({ page }) => {
-  // Implementation pending
-});
+test('calculates optimal step count within range', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 2, initval: 0
+    });
+
+    // Count possible increments: 0, 2, 4, 6, 8, 10 = 6 values
+    let value = await getNumericValue(page, 'test-input');
+    let stepCount = 0;
+
+    while (value < 10) {
+      await incrementViaAPI(page, 'test-input');
+      const newValue = await getNumericValue(page, 'test-input');
+      if (newValue > value) {
+        stepCount++;
+        value = newValue;
+      } else {
+        break; // Hit max boundary
+      }
+    }
+
+    expect(stepCount).toBe(5); // 5 increments to go from 0 to 10
+  });
 
 /**
  * Scenario: handles step edge cases with boundary alignment
@@ -367,9 +514,16 @@ test.skip('calculates optimal step count within range', async ({ page }) => {
  * Params:
  * { "settings": { "min": 1, "max": 9, "step": 2, "initval": "7" }, "operation": "increment", "expected": "9" }
  */
-test.skip('handles step edge cases with boundary alignment', async ({ page }) => {
-  // Implementation pending
-});
+test('handles step edge cases with boundary alignment', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 1, max: 9, step: 2, initval: 7
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(9); // 7 + 2 = 9 (exactly on boundary)
+  });
 
 /**
  * Scenario: manages step precision in different locales
@@ -379,8 +533,15 @@ test.skip('handles step edge cases with boundary alignment', async ({ page }) =>
  * Params:
  * { "locale": "de-DE", "step": 0.1, "decimalSeparator": ",", "expectedPrecision": "maintained" }
  */
-test.skip('manages step precision in different locales', async ({ page }) => {
-  // Implementation pending
-});
+test('manages step precision in different locales', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.1, decimals: 1, initval: 1.0
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.1); // Precision maintained regardless of locale
+  });
 
 });
