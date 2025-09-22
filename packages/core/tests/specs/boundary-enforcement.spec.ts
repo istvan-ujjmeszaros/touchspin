@@ -34,12 +34,7 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
-  incrementViaAPI,
-  decrementViaAPI,
-  setValueViaAPI,
-  getNumericValue,
-  updateSettingsViaAPI,
-  destroyCore
+  getCoreNumericValue
 } from '../../test-helpers/core-adapter';
 
 test.describe('Core boundary enforcement and validation', () => {
@@ -110,10 +105,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Try to increment beyond maximum
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
     // Should stay at maximum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10);
   });
 
@@ -131,10 +126,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Try to decrement below minimum
-    await decrementViaAPI(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
 
     // Should stay at minimum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(5);
   });
 
@@ -152,10 +147,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Increment to maximum
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
     // Should reach maximum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10);
   });
 
@@ -173,10 +168,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Decrement to minimum
-    await decrementViaAPI(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
 
     // Should reach minimum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(5);
   });
 
@@ -194,10 +189,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Update boundaries
-    await updateSettingsViaAPI(page, 'test-input', { min: 5, max: 12 });
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { min: 5, max: 12 });
 
     // Current value should be clamped to new max
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(12);
   });
 
@@ -215,10 +210,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Reduce maximum below current value
-    await updateSettingsViaAPI(page, 'test-input', { max: 15 });
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { max: 15 });
 
     // Should clamp to new maximum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(15);
   });
 
@@ -236,10 +231,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Increase minimum above current value
-    await updateSettingsViaAPI(page, 'test-input', { min: 8 });
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { min: 8 });
 
     // Should clamp to new minimum
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(8);
   });
 
@@ -257,12 +252,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Try to go beyond decimal boundaries
-    await setValueViaAPI(page, 'test-input', 10.5);
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 10.5);
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(8.7);
 
-    await setValueViaAPI(page, 'test-input', 0.8);
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 0.8);
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.5);
   });
 
@@ -280,12 +275,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Test negative boundary enforcement
-    await setValueViaAPI(page, 'test-input', 0);
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 0);
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(-2);
 
-    await setValueViaAPI(page, 'test-input', -15);
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', -15);
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(-10);
   });
 
@@ -303,12 +298,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Should not allow any increment/decrement
-    await incrementViaAPI(page, 'test-input');
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(5);
 
-    await decrementViaAPI(page, 'test-input');
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(5);
   });
 
@@ -326,10 +321,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Update boundaries but keep current value within range
-    await updateSettingsViaAPI(page, 'test-input', { min: 5, max: 15 });
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { min: 5, max: 15 });
 
     // Value should be preserved
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10);
   });
 
@@ -349,7 +344,7 @@ test.describe('Core boundary enforcement and validation', () => {
     await apiHelpers.clearEventLog(page);
 
     // Set value beyond boundary to trigger clamping
-    await setValueViaAPI(page, 'test-input', 15);
+    await apiHelpers.setValueViaAPI(page, 'test-input', 15);
 
     // Should emit change event due to clamping
     await apiHelpers.expectEventFired(page, 'change');
@@ -369,10 +364,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Try to set value that would require clamping to boundary
-    await setValueViaAPI(page, 'test-input', 12);
+    await apiHelpers.setValueViaAPI(page, 'test-input', 12);
 
     // Should clamp to max (Core clamps to boundary without step alignment)
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10); // Clamped to max value
   });
 
@@ -390,10 +385,10 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Update max boundary but keep current value within range
-    await updateSettingsViaAPI(page, 'test-input', { max: 8 });
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { max: 8 });
 
     // Should preserve current value if it's within new boundaries
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(3); // Value preserved since 3 <= 8
   });
 
@@ -411,12 +406,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Test precision with small decimal values
-    await setValueViaAPI(page, 'test-input', 0.95);
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 0.95);
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(0.9);
 
-    await setValueViaAPI(page, 'test-input', 0.05);
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 0.05);
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(0.1);
   });
 
@@ -434,12 +429,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Programmatic setValue should enforce boundaries
-    await setValueViaAPI(page, 'test-input', 25);
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 25);
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(20);
 
-    await setValueViaAPI(page, 'test-input', 5);
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 5);
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10);
   });
 
@@ -457,12 +452,12 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Test with large numbers
-    await setValueViaAPI(page, 'test-input', 99999999);
-    let value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 99999999);
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(9999999);
 
-    await setValueViaAPI(page, 'test-input', 500);
-    value = await getNumericValue(page, 'test-input');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 500);
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1000000);
   });
 
@@ -481,10 +476,10 @@ test.describe('Core boundary enforcement and validation', () => {
 
     // Rapid increments should not exceed boundary
     for (let i = 0; i < 10; i++) {
-      await incrementViaAPI(page, 'test-input');
+      await apiHelpers.incrementViaAPI(page, 'test-input');
     }
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(5);
   });
 
@@ -506,7 +501,7 @@ test.describe('Core boundary enforcement and validation', () => {
     });
 
     // Should clamp initial value to boundaries
-    const value = await getNumericValue(page, 'test-input2');
+    const value = await apiHelpers.getNumericValue(page, 'test-input2');
     expect(value).toBe(20);
   });
 
@@ -525,11 +520,11 @@ test.describe('Core boundary enforcement and validation', () => {
 
     // Any operation should maintain the fixed value
     await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
-    let value = await getNumericValue(page, 'test-input');
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(7.5);
 
     await apiHelpers.pressDownArrowKeyOnInput(page, 'test-input');
-    value = await getNumericValue(page, 'test-input');
+    value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(7.5);
   });
 
@@ -558,10 +553,10 @@ test.describe('Core boundary enforcement and validation', () => {
     }, { testId: 'test-input' });
 
     // Increment with callback that returns value outside boundaries
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
     // Callback can override boundary enforcement
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(15); // Callback value takes precedence over boundaries
   });
 });

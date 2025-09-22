@@ -42,13 +42,7 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
-  incrementViaAPI,
-  decrementViaAPI,
-  setValueViaAPI,
-  getNumericValue,
-  startUpSpinViaAPI,
-  startDownSpinViaAPI,
-  stopSpinViaAPI
+  getCoreNumericValue
 } from '../../test-helpers/core-adapter';
 
 test.describe('Core event system and emission', () => {
@@ -302,8 +296,8 @@ test('does not emit start/stop spin events for API operations', async ({ page })
     await apiHelpers.clearEventLog(page);
 
     // API operations should NOT emit spin events
-    await startUpSpinViaAPI(page, 'test-input');
-    await stopSpinViaAPI(page, 'test-input');
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
     const hasStartSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin');
     const hasStopSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin');

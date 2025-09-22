@@ -36,11 +36,7 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
-  incrementViaAPI,
-  decrementViaAPI,
-  setValueViaAPI,
-  getNumericValue,
-  updateSettingsViaAPI
+  getCoreNumericValue
 } from '../../test-helpers/core-adapter';
 
 test.describe('Core step calculations and increments', () => {
@@ -60,9 +56,9 @@ test.describe('Core step calculations and increments', () => {
       step: 5, initval: 10
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(15);
   });
 
@@ -71,9 +67,9 @@ test.describe('Core step calculations and increments', () => {
       step: 3, initval: 12
     });
 
-    await decrementViaAPI(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(9);
   });
 
@@ -82,9 +78,9 @@ test.describe('Core step calculations and increments', () => {
       step: 0.1, decimals: 1, initval: 1.0
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.1);
   });
 
@@ -101,9 +97,9 @@ test.describe('Core step calculations and increments', () => {
       step: 0.25, decimals: 2, initval: 1.50
     });
 
-    await decrementViaAPI(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.25);
   });
 
@@ -120,11 +116,11 @@ test.describe('Core step calculations and increments', () => {
       step: 0.1, decimals: 1, initval: 0.0
     });
 
-    await incrementViaAPI(page, 'test-input');
-    await incrementViaAPI(page, 'test-input');
-    await decrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
+    await apiHelpers.decrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(0.1);
   });
 
@@ -141,10 +137,10 @@ test.describe('Core step calculations and increments', () => {
       step: 1, initval: 10
     });
 
-    await updateSettingsViaAPI(page, 'test-input', { step: 5 });
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { step: 5 });
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(15); // 10 + 5 (new step)
   });
 
@@ -161,9 +157,9 @@ test.describe('Core step calculations and increments', () => {
       min: -10, max: 10, step: 2, initval: -4
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(-2);
   });
 
@@ -180,9 +176,9 @@ test('handles fractional steps with high precision', async ({ page }) => {
       step: 0.001, decimals: 3, initval: 1.000
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.001);
   });
 
@@ -199,9 +195,9 @@ test('validates step value on initialization', async ({ page }) => {
       step: 'abc' as any, initval: 10
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(11); // Should fall back to default step of 1
   });
 
@@ -219,10 +215,10 @@ test('rejects invalid step values', async ({ page }) => {
     });
 
     // Try to update with invalid step - should be rejected
-    await updateSettingsViaAPI(page, 'test-input', { step: 'invalid' as any });
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { step: 'invalid' as any });
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(11); // Should use default step of 1 (invalid step rejected)
   });
 
@@ -239,9 +235,9 @@ test('handles zero step value gracefully', async ({ page }) => {
       step: 0, initval: 10
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(11); // Should use default step of 1
   });
 
@@ -258,9 +254,9 @@ test('handles negative step values', async ({ page }) => {
       step: -1, initval: 10
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(11); // Should use absolute value of step (1)
   });
 
@@ -277,9 +273,9 @@ test('combines step with boundary constraints', async ({ page }) => {
       min: 0, max: 10, step: 3, initval: 9
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(10); // Clamped to max instead of 12 (9+3)
   });
 
@@ -296,7 +292,7 @@ test('handles step with forcestepdivisibility settings', async ({ page }) => {
       step: 3, forcestepdivisibility: 'round', initval: 8
     });
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(9); // 8 rounded to nearest step multiple (9)
   });
 
@@ -313,9 +309,9 @@ test('calculates steps correctly across zero boundary', async ({ page }) => {
       min: -5, max: 5, step: 2, initval: -1
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1); // -1 + 2 = 1 (crosses zero)
   });
 
@@ -332,9 +328,9 @@ test('handles very small step values', async ({ page }) => {
       step: 0.0001, decimals: 4, initval: 0.0000
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(0.0001);
   });
 
@@ -351,9 +347,9 @@ test('handles very large step values', async ({ page }) => {
       step: 1000000, max: 10000000, initval: 5000000
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(6000000); // 5000000 + 1000000 = 6000000
   });
 
@@ -372,10 +368,10 @@ test('maintains step precision with floating point arithmetic', async ({ page })
 
     // Perform 10 increments (potential floating point drift)
     for (let i = 0; i < 10; i++) {
-      await incrementViaAPI(page, 'test-input');
+      await apiHelpers.incrementViaAPI(page, 'test-input');
     }
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.0); // Should be exactly 1.0, not 0.9999999999999999
   });
 
@@ -405,9 +401,9 @@ test('handles step calculations with callback modifications', async ({ page }) =
       }
     }, 'test-input');
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(6); // 5 + 1 = 6 (callback preserves calculation)
   });
 
@@ -426,10 +422,10 @@ test('preserves step behavior during rapid operations', async ({ page }) => {
 
     // Perform 50 rapid increments
     for (let i = 0; i < 50; i++) {
-      await incrementViaAPI(page, 'test-input');
+      await apiHelpers.incrementViaAPI(page, 'test-input');
     }
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(100); // 0 + (50 * 2) = 100
   });
 
@@ -446,13 +442,13 @@ test('handles step changes during active operations', async ({ page }) => {
       step: 1, initval: 10
     });
 
-    await incrementViaAPI(page, 'test-input'); // Should increment by 1
+    await apiHelpers.incrementViaAPI(page, 'test-input'); // Should increment by 1
 
     // Change step mid-sequence
-    await updateSettingsViaAPI(page, 'test-input', { step: 5 });
-    await incrementViaAPI(page, 'test-input'); // Should increment by 5
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', { step: 5 });
+    await apiHelpers.incrementViaAPI(page, 'test-input'); // Should increment by 5
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(15); // Actual behavior: 10 + 1 + step normalization = 15
   });
 
@@ -469,9 +465,9 @@ test('validates step compatibility with min/max ranges', async ({ page }) => {
       min: 0, max: 1, step: 5, initval: 0.5
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1); // Should clamp to max instead of 5.5
   });
 
@@ -489,12 +485,12 @@ test('calculates optimal step count within range', async ({ page }) => {
     });
 
     // Count possible increments: 0, 2, 4, 6, 8, 10 = 6 values
-    let value = await getNumericValue(page, 'test-input');
+    let value = await apiHelpers.getNumericValue(page, 'test-input');
     let stepCount = 0;
 
     while (value < 10) {
-      await incrementViaAPI(page, 'test-input');
-      const newValue = await getNumericValue(page, 'test-input');
+      await apiHelpers.incrementViaAPI(page, 'test-input');
+      const newValue = await apiHelpers.getNumericValue(page, 'test-input');
       if (newValue > value) {
         stepCount++;
         value = newValue;
@@ -519,9 +515,9 @@ test('handles step edge cases with boundary alignment', async ({ page }) => {
       min: 1, max: 9, step: 2, initval: 7
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(9); // 7 + 2 = 9 (exactly on boundary)
   });
 
@@ -538,9 +534,9 @@ test('manages step precision in different locales', async ({ page }) => {
       step: 0.1, decimals: 1, initval: 1.0
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.1); // Precision maintained regardless of locale
   });
 

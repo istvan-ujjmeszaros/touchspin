@@ -31,9 +31,7 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
-  setValueViaAPI,
-  getNumericValue,
-  incrementViaAPI
+  getCoreNumericValue
 } from '../../test-helpers/core-adapter';
 
 test.describe('Core value management and normalization', () => {
@@ -54,7 +52,7 @@ test.describe('Core value management and normalization', () => {
       step: 3, initval: 50
     });
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(51); // 50 normalized to nearest step multiple (51)
   });
 
@@ -92,9 +90,9 @@ test.describe('Core value management and normalization', () => {
       step: 1, initval: 0
     });
 
-    await setValueViaAPI(page, 'test-input', '42');
+    await apiHelpers.setValueViaAPI(page, 'test-input', '42');
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
     expect(numericValue).toBe(42);
     expect(displayValue).toBe('42');
@@ -138,7 +136,7 @@ test('handles decimal precision correctly', async ({ page }) => {
     });
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
 
     expect(displayValue).toBe('1.25');
     expect(numericValue).toBe(1.25);
@@ -157,9 +155,9 @@ test('parses scientific notation values', async ({ page }) => {
       step: 1, initval: 0
     });
 
-    await setValueViaAPI(page, 'test-input', '1e2');
+    await apiHelpers.setValueViaAPI(page, 'test-input', '1e2');
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(100);
@@ -179,7 +177,7 @@ test('handles negative values correctly', async ({ page }) => {
       min: -10, max: 10, step: 1, initval: -5
     });
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(-5);
@@ -202,7 +200,7 @@ test('trims leading and trailing spaces on blur', async ({ page }) => {
     await apiHelpers.fillWithValueAndBlur(page, 'test-input', '  42  ');
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
 
     expect(displayValue).toBe('42'); // Spaces trimmed
     expect(numericValue).toBe(42);
@@ -221,7 +219,7 @@ test('normalizes to step when forcestepdivisibility is floor', async ({ page }) 
       step: 3, forcestepdivisibility: 'floor', initval: 8
     });
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(6); // 8 floored to nearest step multiple (6)
   });
 
@@ -238,7 +236,7 @@ test('normalizes to step when forcestepdivisibility is ceil', async ({ page }) =
       step: 3, forcestepdivisibility: 'ceil', initval: 7
     });
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(9); // 7 ceiled to nearest step multiple (9)
   });
 
@@ -255,7 +253,7 @@ test('skips normalization when forcestepdivisibility is none', async ({ page }) 
       step: 3, forcestepdivisibility: 'none', initval: 8
     });
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(8); // No normalization, value preserved
   });
 
@@ -273,7 +271,7 @@ test('preserves exact decimal precision with decimals setting', async ({ page })
     });
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
 
     expect(displayValue).toBe('1.23'); // Rounded to 2 decimals
     expect(numericValue).toBe(1.23);
@@ -295,7 +293,7 @@ test('rounds to nearest decimal place on blur', async ({ page }) => {
     await apiHelpers.fillWithValueAndBlur(page, 'test-input', '1.28');
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
 
     expect(displayValue).toBe('1.3'); // Rounded to 1 decimal place
     expect(numericValue).toBe(1.3);
@@ -314,7 +312,7 @@ test('handles very large numbers correctly', async ({ page }) => {
       step: 1, max: 1000000000, initval: 999999999
     });
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(999999999);
@@ -334,7 +332,7 @@ test('handles very small decimal numbers correctly', async ({ page }) => {
       decimals: 6, step: 0.000001, initval: 0.000001
     });
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(0.000001);
@@ -354,7 +352,7 @@ test('maintains internal numeric state vs display value', async ({ page }) => {
       decimals: 2, step: 0.01, initval: 42
     });
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(42); // Internal numeric value
@@ -375,7 +373,7 @@ test('handles locale-specific decimal separators', async ({ page }) => {
     });
 
     // Core should handle decimal points consistently regardless of locale
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
     expect(numericValue).toBe(1.5);
@@ -395,9 +393,9 @@ test('validates input on programmatic setValue', async ({ page }) => {
       step: 1, initval: 10
     });
 
-    await setValueViaAPI(page, 'test-input', 'invalid');
+    await apiHelpers.setValueViaAPI(page, 'test-input', 'invalid');
 
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
     expect(numericValue).toBe(10); // Invalid value rejected, previous value kept
   });
 
@@ -414,10 +412,10 @@ test('handles edge case of setting value to empty string', async ({ page }) => {
       min: 0, step: 1, initval: 5
     });
 
-    await setValueViaAPI(page, 'test-input', '');
+    await apiHelpers.setValueViaAPI(page, 'test-input', '');
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
-    const numericValue = await getNumericValue(page, 'test-input');
+    const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
 
     expect(displayValue).toBe('0'); // Core sets to minimum value
     expect(numericValue).toBe(0); // Numeric minimum value
@@ -436,9 +434,9 @@ test('maintains precision during increment/decrement operations', async ({ page 
       step: 0.1, decimals: 1, initval: 1.0
     });
 
-    await incrementViaAPI(page, 'test-input');
+    await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(1.1); // Precision maintained during increment
   });
 
