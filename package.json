@@ -95,6 +95,7 @@
     "coverage:all": "node scripts/coverage-all.mjs",
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",
     "guard:no-src-in-tests": "node scripts/guard-no-src-in-tests.mjs",
+    "guard:no-queryselector": "node scripts/guard-no-queryselector.mjs",
     "guard:tests": "node scripts/guard-tests.mjs all",
     "guard:esm-extensions": "node scripts/guard-esm-extensions.mjs",
     "lexicon:gen": "yarn node scripts/step-lexicon.mjs",

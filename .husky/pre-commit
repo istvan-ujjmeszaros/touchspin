@@ -30,7 +30,8 @@ if [ -n "$SPEC_OR_GUARD_CHANGED" ]; then
   echo "✅ Gherkin guard passed"
 fi
 
-# Run existing guard for src-in-tests
+# Run guards for test quality
 yarn guard:no-src-in-tests || { echo "❌ src-in-tests guard failed"; exit 1; }
+yarn guard:no-queryselector || { echo "❌ querySelector guard failed"; exit 1; }
 
 echo "✅ Pre-commit validation complete"
