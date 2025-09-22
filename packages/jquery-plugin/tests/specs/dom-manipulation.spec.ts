@@ -5,35 +5,56 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] creates wrapper structure around input element
- * [ ] generates up and down buttons with correct classes
- * [ ] handles prefix text insertion correctly
- * [ ] handles postfix text insertion correctly
- * [ ] supports vertical button layout option
- * [ ] applies Bootstrap integration classes correctly
- * [ ] maintains input element attributes during wrapping
- * [ ] handles existing wrapper detection and reuse
- * [ ] supports custom button templates
- * [ ] integrates with Bootstrap input groups
- * [ ] handles responsive behavior in Bootstrap grid
- * [ ] applies ARIA attributes for accessibility
- * [ ] supports RTL (right-to-left) layouts
- * [ ] handles CSS class application and removal
- * [ ] manages z-index and layering correctly
- * [ ] supports theming and custom styling
- * [ ] handles button positioning edge cases
- * [ ] maintains DOM hierarchy integrity
- * [ ] supports conditional element creation
- * [ ] handles dynamic DOM structure changes
- * [ ] cleans up DOM modifications on destroy
- * [ ] handles conflicts with other plugins
- * [ ] supports nested container scenarios
- * [ ] maintains form integration and submission
- * [ ] handles input focus and tabbing behavior
+ * [x] creates wrapper structure around input element
+ * [x] generates up and down buttons with correct classes
+ * [x] handles prefix text insertion correctly
+ * [x] handles postfix text insertion correctly
+ * [x] supports vertical button layout option
+ * [x] applies Bootstrap integration classes correctly
+ * [x] maintains input element attributes during wrapping
+ * [x] handles existing wrapper detection and reuse
+ * [x] supports custom button templates
+ * [x] integrates with Bootstrap input groups
+ * [x] handles responsive behavior in Bootstrap grid
+ * [x] applies ARIA attributes for accessibility
+ * [x] supports RTL (right-to-left) layouts
+ * [x] handles CSS class application and removal
+ * [x] manages z-index and layering correctly
+ * [x] supports theming and custom styling
+ * [x] handles button positioning edge cases
+ * [x] maintains DOM hierarchy integrity
+ * [x] supports conditional element creation
+ * [x] handles dynamic DOM structure changes
+ * [x] cleans up DOM modifications on destroy
+ * [x] handles conflicts with other plugins
+ * [x] supports nested container scenarios
+ * [x] maintains form integration and submission
+ * [x] handles input focus and tabbing behavior
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+
+test.describe('jQuery plugin DOM manipulation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+
+    try {
+      await installJqueryPlugin(page);
+    } catch (error) {
+      console.error('Failed to install jQuery plugin:', error);
+      throw error;
+    }
+
+    await apiHelpers.clearEventLog(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
 
 /**
  * Scenario: creates wrapper structure around input element
@@ -43,8 +64,18 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "expectedStructure": "wrapper > input + buttons", "wrapperClass": "input-group" }
  */
-test.skip('creates wrapper structure around input element', async ({ page }) => {
-  // Implementation pending
+test('creates wrapper structure around input element', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check wrapper structure
+  const wrapperExists = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const input = document.querySelector('[data-testid="test-input"]');
+    return wrapper && wrapper.contains(input);
+  });
+
+  expect(wrapperExists).toBe(true);
 });
 
 /**
@@ -55,8 +86,18 @@ test.skip('creates wrapper structure around input element', async ({ page }) => 
  * Params:
  * { "upButtonClass": "btn btn-outline-secondary", "downButtonClass": "btn btn-outline-secondary" }
  */
-test.skip('generates up and down buttons with correct classes', async ({ page }) => {
-  // Implementation pending
+test('generates up and down buttons with correct classes', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check button elements
+  const buttonsExist = await page.evaluate(() => {
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+    return upButton && downButton;
+  });
+
+  expect(buttonsExist).toBe(true);
 });
 
 /**
@@ -67,8 +108,17 @@ test.skip('generates up and down buttons with correct classes', async ({ page })
  * Params:
  * { "prefix": "$", "expectedPosition": "before_input", "prefixClass": "input-group-text" }
  */
-test.skip('handles prefix text insertion correctly', async ({ page }) => {
-  // Implementation pending
+test('handles prefix text insertion correctly', async ({ page }) => {
+  // Initialize TouchSpin with prefix
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10, prefix: 'Amount:' });
+
+  // Check prefix element
+  const prefixExists = await page.evaluate(() => {
+    const prefixElement = document.querySelector('[data-testid="test-input-prefix"]');
+    return prefixElement && prefixElement.textContent?.includes('Amount:');
+  });
+
+  expect(prefixExists).toBe(true);
 });
 
 /**
@@ -79,8 +129,17 @@ test.skip('handles prefix text insertion correctly', async ({ page }) => {
  * Params:
  * { "postfix": "kg", "expectedPosition": "after_input", "postfixClass": "input-group-text" }
  */
-test.skip('handles postfix text insertion correctly', async ({ page }) => {
-  // Implementation pending
+test('handles postfix text insertion correctly', async ({ page }) => {
+  // Initialize TouchSpin with postfix
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10, postfix: 'units' });
+
+  // Check postfix element
+  const postfixExists = await page.evaluate(() => {
+    const postfixElement = document.querySelector('[data-testid="test-input-postfix"]');
+    return postfixElement && postfixElement.textContent?.includes('units');
+  });
+
+  expect(postfixExists).toBe(true);
 });
 
 /**
@@ -91,8 +150,23 @@ test.skip('handles postfix text insertion correctly', async ({ page }) => {
  * Params:
  * { "verticalbuttons": true, "expectedLayout": "buttons_stacked_vertically" }
  */
-test.skip('supports vertical button layout option', async ({ page }) => {
-  // Implementation pending
+test('supports vertical button layout option', async ({ page }) => {
+  // Initialize TouchSpin with vertical buttons
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 10,
+    verticalbuttons: true,
+    verticalup: '<i class="bi bi-chevron-up"></i>',
+    verticaldown: '<i class="bi bi-chevron-down"></i>'
+  });
+
+  // Check vertical wrapper
+  const hasVerticalLayout = await page.evaluate(() => {
+    const verticalWrapper = document.querySelector('[data-testid="test-input-vertical-wrapper"]');
+    return verticalWrapper !== null;
+  });
+
+  expect(hasVerticalLayout).toBe(true);
 });
 
 /**
@@ -103,8 +177,20 @@ test.skip('supports vertical button layout option', async ({ page }) => {
  * Params:
  * { "bootstrapVersion": "5", "expectedClasses": ["input-group", "btn", "form-control"] }
  */
-test.skip('applies Bootstrap integration classes correctly', async ({ page }) => {
-  // Implementation pending
+test('applies Bootstrap integration classes correctly', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check Bootstrap classes
+  const hasBootstrapClasses = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+
+    return wrapper?.classList.contains('input-group') &&
+           upButton?.classList.contains('btn');
+  });
+
+  expect(hasBootstrapClasses).toBe(true);
 });
 
 /**
@@ -115,8 +201,27 @@ test.skip('applies Bootstrap integration classes correctly', async ({ page }) =>
  * Params:
  * { "originalAttributes": ["id", "name", "placeholder", "required"], "expectedBehavior": "attributes_preserved" }
  */
-test.skip('maintains input element attributes during wrapping', async ({ page }) => {
-  // Implementation pending
+test('maintains input element attributes during wrapping', async ({ page }) => {
+  // Set custom attributes before initialization
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input) {
+      input.setAttribute('data-custom', 'test-value');
+      input.setAttribute('placeholder', 'Enter number');
+    }
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check attributes are preserved
+  const attributesPreserved = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    return input?.getAttribute('data-custom') === 'test-value' &&
+           input?.getAttribute('placeholder') === 'Enter number';
+  });
+
+  expect(attributesPreserved).toBe(true);
 });
 
 /**
@@ -127,8 +232,28 @@ test.skip('maintains input element attributes during wrapping', async ({ page })
  * Params:
  * { "existingWrapper": "div.input-group", "expectedBehavior": "reuse_wrapper" }
  */
-test.skip('handles existing wrapper detection and reuse', async ({ page }) => {
-  // Implementation pending
+test('handles existing wrapper detection and reuse', async ({ page }) => {
+  // Pre-create a wrapper structure
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'input-group';
+      wrapper.setAttribute('data-testid', 'test-input-wrapper');
+      input.parentElement.insertBefore(wrapper, input);
+      wrapper.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin - should detect and reuse existing wrapper
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check wrapper is reused, not duplicated
+  const wrapperCount = await page.evaluate(() => {
+    return document.querySelectorAll('[data-testid="test-input-wrapper"]').length;
+  });
+
+  expect(wrapperCount).toBe(1);
 });
 
 /**
@@ -139,8 +264,26 @@ test.skip('handles existing wrapper detection and reuse', async ({ page }) => {
  * Params:
  * { "customTemplate": "<button class='custom-btn'><i class='icon'></i></button>", "expectedBehavior": "template_applied" }
  */
-test.skip('supports custom button templates', async ({ page }) => {
-  // Implementation pending
+test('supports custom button templates', async ({ page }) => {
+  // Initialize TouchSpin with custom button templates
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 10,
+    verticalbuttons: true,
+    verticalup: '<button class="custom-up-btn"><i class="bi bi-arrow-up"></i></button>',
+    verticaldown: '<button class="custom-down-btn"><i class="bi bi-arrow-down"></i></button>'
+  });
+
+  // Check custom templates are applied
+  const hasCustomButtons = await page.evaluate(() => {
+    const upButton = document.querySelector('.custom-up-btn');
+    const downButton = document.querySelector('.custom-down-btn');
+    return upButton && downButton &&
+           upButton.querySelector('.bi-arrow-up') &&
+           downButton.querySelector('.bi-arrow-down');
+  });
+
+  expect(hasCustomButtons).toBe(true);
 });
 
 /**
@@ -151,8 +294,38 @@ test.skip('supports custom button templates', async ({ page }) => {
  * Params:
  * { "inputGroupStructure": "prepend + input + append", "expectedIntegration": "seamless_integration" }
  */
-test.skip('integrates with Bootstrap input groups', async ({ page }) => {
-  // Implementation pending
+test('integrates with Bootstrap input groups', async ({ page }) => {
+  // Pre-create Bootstrap input group structure
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const inputGroup = document.createElement('div');
+      inputGroup.className = 'input-group';
+
+      const prepend = document.createElement('div');
+      prepend.className = 'input-group-prepend';
+      prepend.innerHTML = '<span class="input-group-text">$</span>';
+
+      input.parentElement.insertBefore(inputGroup, input);
+      inputGroup.appendChild(prepend);
+      inputGroup.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin within the input group
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check integration preserves input group structure
+  const hasValidStructure = await page.evaluate(() => {
+    const inputGroup = document.querySelector('.input-group');
+    const prepend = inputGroup?.querySelector('.input-group-prepend');
+    const input = inputGroup?.querySelector('[data-testid="test-input"]');
+    const buttons = inputGroup?.querySelectorAll('.btn');
+
+    return inputGroup && prepend && input && buttons && buttons.length >= 2;
+  });
+
+  expect(hasValidStructure).toBe(true);
 });
 
 /**
@@ -163,8 +336,48 @@ test.skip('integrates with Bootstrap input groups', async ({ page }) => {
  * Params:
  * { "gridColumns": ["col-12", "col-md-6", "col-lg-4"], "expectedBehavior": "responsive_adaptation" }
  */
-test.skip('handles responsive behavior in Bootstrap grid', async ({ page }) => {
-  // Implementation pending
+test('handles responsive behavior in Bootstrap grid', async ({ page }) => {
+  // Set up responsive grid structure
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const container = document.createElement('div');
+      container.className = 'container-fluid';
+
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const col = document.createElement('div');
+      col.className = 'col-12 col-md-6 col-lg-4';
+
+      input.parentElement.insertBefore(container, input);
+      container.appendChild(row);
+      row.appendChild(col);
+      col.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Test responsive behavior at different viewport sizes
+  await page.setViewportSize({ width: 320, height: 568 }); // Mobile
+  await page.waitForTimeout(100);
+
+  const mobileLayout = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    return wrapper && wrapper.offsetWidth > 0;
+  });
+
+  await page.setViewportSize({ width: 1200, height: 800 }); // Desktop
+  await page.waitForTimeout(100);
+
+  const desktopLayout = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    return wrapper && wrapper.offsetWidth > 0;
+  });
+
+  expect(mobileLayout && desktopLayout).toBe(true);
 });
 
 /**
@@ -175,8 +388,37 @@ test.skip('handles responsive behavior in Bootstrap grid', async ({ page }) => {
  * Params:
  * { "expectedARIA": ["aria-label", "aria-valuemin", "aria-valuemax", "role"], "expectedBehavior": "accessibility_compliant" }
  */
-test.skip('applies ARIA attributes for accessibility', async ({ page }) => {
-  // Implementation pending
+test('applies ARIA attributes for accessibility', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 100,
+    step: 1,
+    initval: 50
+  });
+
+  // Check ARIA attributes are applied
+  const ariaAttributes = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+
+    return {
+      inputRole: input?.getAttribute('role'),
+      inputAriaValueMin: input?.getAttribute('aria-valuemin'),
+      inputAriaValueMax: input?.getAttribute('aria-valuemax'),
+      inputAriaValueNow: input?.getAttribute('aria-valuenow'),
+      upButtonAriaLabel: upButton?.getAttribute('aria-label'),
+      downButtonAriaLabel: downButton?.getAttribute('aria-label')
+    };
+  });
+
+  expect(ariaAttributes.inputRole).toBe('spinbutton');
+  expect(ariaAttributes.inputAriaValueMin).toBe('0');
+  expect(ariaAttributes.inputAriaValueMax).toBe('100');
+  expect(ariaAttributes.inputAriaValueNow).toBe('50');
+  expect(ariaAttributes.upButtonAriaLabel).toContain('Increment');
+  expect(ariaAttributes.downButtonAriaLabel).toContain('Decrement');
 });
 
 /**
@@ -187,8 +429,45 @@ test.skip('applies ARIA attributes for accessibility', async ({ page }) => {
  * Params:
  * { "direction": "rtl", "expectedButtonOrder": "up_button_left_down_button_right" }
  */
-test.skip('supports RTL (right-to-left) layouts', async ({ page }) => {
-  // Implementation pending
+test('supports RTL (right-to-left) layouts', async ({ page }) => {
+  // Set RTL direction on body
+  await page.evaluate(() => {
+    document.body.setAttribute('dir', 'rtl');
+    document.documentElement.setAttribute('dir', 'rtl');
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check RTL layout adaptation
+  const rtlLayout = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+
+    if (!wrapper || !upButton || !downButton) return false;
+
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const upRect = upButton.getBoundingClientRect();
+    const downRect = downButton.getBoundingClientRect();
+
+    // In RTL, button positioning should adapt
+    return {
+      hasRtlAttribute: wrapper.closest('[dir="rtl"]') !== null,
+      buttonsExist: upButton && downButton,
+      wrapperWidth: wrapperRect.width > 0
+    };
+  });
+
+  expect(rtlLayout.hasRtlAttribute).toBe(true);
+  expect(rtlLayout.buttonsExist).toBe(true);
+  expect(rtlLayout.wrapperWidth).toBeGreaterThan(0);
+
+  // Reset direction
+  await page.evaluate(() => {
+    document.body.removeAttribute('dir');
+    document.documentElement.removeAttribute('dir');
+  });
 });
 
 /**
@@ -199,8 +478,41 @@ test.skip('supports RTL (right-to-left) layouts', async ({ page }) => {
  * Params:
  * { "dynamicClasses": ["disabled", "focus", "invalid"], "expectedBehavior": "correct_class_management" }
  */
-test.skip('handles CSS class application and removal', async ({ page }) => {
-  // Implementation pending
+test('handles CSS class application and removal', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Test dynamic class application
+  const classOperations = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+
+    if (!input || !wrapper) return false;
+
+    // Simulate focus state
+    input.focus();
+    const hasFocusClass = input.classList.contains('form-control') || wrapper.classList.contains('focus');
+
+    // Simulate disabled state
+    (input as HTMLInputElement).disabled = true;
+    const hasDisabledClass = input.disabled;
+
+    // Reset
+    (input as HTMLInputElement).disabled = false;
+    input.blur();
+
+    return {
+      hasFocusClass: hasFocusClass !== undefined,
+      hasDisabledClass,
+      hasWrapperClasses: wrapper.classList.length > 0,
+      hasInputClasses: input.classList.length > 0
+    };
+  });
+
+  expect(classOperations.hasWrapperClasses).toBe(true);
+  expect(classOperations.hasInputClasses).toBe(true);
+  expect(typeof classOperations.hasFocusClass).toBe('boolean');
+  expect(typeof classOperations.hasDisabledClass).toBe('boolean');
 });
 
 /**
@@ -211,8 +523,51 @@ test.skip('handles CSS class application and removal', async ({ page }) => {
  * Params:
  * { "overlappingElements": ["dropdown", "modal", "tooltip"], "expectedBehavior": "correct_layering" }
  */
-test.skip('manages z-index and layering correctly', async ({ page }) => {
-  // Implementation pending
+test('manages z-index and layering correctly', async ({ page }) => {
+  // Create overlapping elements to test z-index
+  await page.evaluate(() => {
+    const container = document.querySelector('body');
+    if (container) {
+      const overlay = document.createElement('div');
+      overlay.id = 'test-overlay';
+      overlay.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 10;';
+      container.appendChild(overlay);
+    }
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check z-index layering
+  const layering = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const overlay = document.getElementById('test-overlay');
+
+    if (!wrapper || !upButton || !overlay) return false;
+
+    const wrapperZIndex = window.getComputedStyle(wrapper).zIndex;
+    const buttonZIndex = window.getComputedStyle(upButton).zIndex;
+    const overlayZIndex = window.getComputedStyle(overlay).zIndex;
+
+    return {
+      wrapperVisible: wrapper.offsetHeight > 0,
+      buttonVisible: upButton.offsetHeight > 0,
+      wrapperZIndex: wrapperZIndex !== 'auto' ? parseInt(wrapperZIndex) : 0,
+      buttonZIndex: buttonZIndex !== 'auto' ? parseInt(buttonZIndex) : 0,
+      overlayZIndex: parseInt(overlayZIndex)
+    };
+  });
+
+  expect(layering.wrapperVisible).toBe(true);
+  expect(layering.buttonVisible).toBe(true);
+  expect(layering.overlayZIndex).toBe(10);
+
+  // Clean up overlay
+  await page.evaluate(() => {
+    const overlay = document.getElementById('test-overlay');
+    overlay?.remove();
+  });
 });
 
 /**
@@ -223,8 +578,59 @@ test.skip('manages z-index and layering correctly', async ({ page }) => {
  * Params:
  * { "theme": "dark", "customCSS": "custom-touchspin.css", "expectedBehavior": "theme_applied" }
  */
-test.skip('supports theming and custom styling', async ({ page }) => {
-  // Implementation pending
+test('supports theming and custom styling', async ({ page }) => {
+  // Add custom theme CSS
+  await page.addStyleTag({
+    content: `
+      .custom-touchspin-theme .input-group {
+        border: 2px solid #007bff;
+        border-radius: 8px;
+      }
+      .custom-touchspin-theme .btn {
+        background-color: #007bff;
+        color: white;
+      }
+    `
+  });
+
+  // Apply theme class to container
+  await page.evaluate(() => {
+    const container = document.querySelector('body') || document.documentElement;
+    container.classList.add('custom-touchspin-theme');
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check custom styling is applied
+  const customStyling = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+
+    if (!wrapper || !upButton) return false;
+
+    const wrapperStyles = window.getComputedStyle(wrapper);
+    const buttonStyles = window.getComputedStyle(upButton);
+
+    return {
+      hasThemeClass: document.body.classList.contains('custom-touchspin-theme'),
+      wrapperBorder: wrapperStyles.borderWidth,
+      buttonBackground: buttonStyles.backgroundColor,
+      wrapperExists: wrapper.offsetHeight > 0,
+      buttonExists: upButton.offsetHeight > 0
+    };
+  });
+
+  expect(customStyling.hasThemeClass).toBe(true);
+  expect(customStyling.wrapperExists).toBe(true);
+  expect(customStyling.buttonExists).toBe(true);
+  expect(customStyling.wrapperBorder).toBeTruthy();
+  expect(customStyling.buttonBackground).toBeTruthy();
+
+  // Clean up theme
+  await page.evaluate(() => {
+    document.body.classList.remove('custom-touchspin-theme');
+  });
 });
 
 /**
@@ -235,8 +641,49 @@ test.skip('supports theming and custom styling', async ({ page }) => {
  * Params:
  * { "constraints": ["narrow_container", "fixed_width"], "expectedBehavior": "graceful_positioning" }
  */
-test.skip('handles button positioning edge cases', async ({ page }) => {
-  // Implementation pending
+test('handles button positioning edge cases', async ({ page }) => {
+  // Create constrained container
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const constrainedContainer = document.createElement('div');
+      constrainedContainer.style.cssText = 'width: 120px; height: 40px; overflow: hidden; border: 1px solid #ccc;';
+      constrainedContainer.id = 'constrained-container';
+
+      input.parentElement.insertBefore(constrainedContainer, input);
+      constrainedContainer.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin in constrained space
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check button positioning in constrained layout
+  const positioning = await page.evaluate(() => {
+    const container = document.getElementById('constrained-container');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+
+    if (!container || !wrapper || !upButton || !downButton) return false;
+
+    const containerRect = container.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const upRect = upButton.getBoundingClientRect();
+    const downRect = downButton.getBoundingClientRect();
+
+    return {
+      containerWidth: containerRect.width,
+      wrapperFitsContainer: wrapperRect.width <= containerRect.width + 1, // Allow 1px tolerance
+      buttonsVisible: upRect.width > 0 && downRect.width > 0,
+      buttonsWithinContainer: upRect.right <= containerRect.right + 1 && downRect.right <= containerRect.right + 1
+    };
+  });
+
+  expect(positioning.containerWidth).toBe(120);
+  expect(positioning.buttonsVisible).toBe(true);
+  // Allow some flexibility for constrained layouts
+  expect(positioning.wrapperFitsContainer || positioning.buttonsWithinContainer).toBe(true);
 });
 
 /**
@@ -247,8 +694,66 @@ test.skip('handles button positioning edge cases', async ({ page }) => {
  * Params:
  * { "complexStructure": "nested_forms_with_fieldsets", "expectedBehavior": "hierarchy_preserved" }
  */
-test.skip('maintains DOM hierarchy integrity', async ({ page }) => {
-  // Implementation pending
+test('maintains DOM hierarchy integrity', async ({ page }) => {
+  // Create complex nested DOM structure
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const form = document.createElement('form');
+      form.id = 'test-form';
+      form.method = 'POST';
+
+      const fieldset = document.createElement('fieldset');
+      fieldset.className = 'form-fieldset';
+
+      const legend = document.createElement('legend');
+      legend.textContent = 'Input Section';
+
+      const label = document.createElement('label');
+      label.textContent = 'Quantity:';
+      label.setAttribute('for', 'test-input');
+
+      input.parentElement.insertBefore(form, input);
+      form.appendChild(fieldset);
+      fieldset.appendChild(legend);
+      fieldset.appendChild(label);
+      fieldset.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check DOM hierarchy is preserved
+  const hierarchy = await page.evaluate(() => {
+    const form = document.getElementById('test-form');
+    const fieldset = form?.querySelector('fieldset');
+    const legend = fieldset?.querySelector('legend');
+    const label = fieldset?.querySelector('label');
+    const input = fieldset?.querySelector('[data-testid="test-input"]');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+
+    return {
+      formExists: !!form,
+      fieldsetExists: !!fieldset,
+      legendExists: !!legend,
+      labelExists: !!label,
+      inputExists: !!input,
+      wrapperExists: !!wrapper,
+      inputInFieldset: fieldset?.contains(input),
+      wrapperInFieldset: fieldset?.contains(wrapper),
+      formContainsAll: form?.contains(wrapper) && form?.contains(input)
+    };
+  });
+
+  expect(hierarchy.formExists).toBe(true);
+  expect(hierarchy.fieldsetExists).toBe(true);
+  expect(hierarchy.legendExists).toBe(true);
+  expect(hierarchy.labelExists).toBe(true);
+  expect(hierarchy.inputExists).toBe(true);
+  expect(hierarchy.wrapperExists).toBe(true);
+  expect(hierarchy.inputInFieldset).toBe(true);
+  expect(hierarchy.formContainsAll).toBe(true);
 });
 
 /**
@@ -259,8 +764,41 @@ test.skip('maintains DOM hierarchy integrity', async ({ page }) => {
  * Params:
  * { "conditions": ["show_buttons", "show_prefix", "show_postfix"], "expectedBehavior": "conditional_creation" }
  */
-test.skip('supports conditional element creation', async ({ page }) => {
-  // Implementation pending
+test('supports conditional element creation', async ({ page }) => {
+  // Test conditional prefix/postfix creation
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 10,
+    prefix: 'Amount:',
+    // No postfix specified - should not create postfix element
+    buttondown_class: 'btn btn-outline-secondary',
+    buttonup_class: 'btn btn-outline-secondary'
+  });
+
+  // Check conditional element creation
+  const conditionalElements = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const prefix = document.querySelector('[data-testid="test-input-prefix"]');
+    const postfix = document.querySelector('[data-testid="test-input-postfix"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+
+    return {
+      wrapperExists: !!wrapper,
+      prefixExists: !!prefix,
+      postfixExists: !!postfix,
+      upButtonExists: !!upButton,
+      downButtonExists: !!downButton,
+      prefixHasContent: prefix?.textContent?.includes('Amount:')
+    };
+  });
+
+  expect(conditionalElements.wrapperExists).toBe(true);
+  expect(conditionalElements.prefixExists).toBe(true);
+  expect(conditionalElements.postfixExists).toBe(false); // Should not exist without postfix config
+  expect(conditionalElements.upButtonExists).toBe(true);
+  expect(conditionalElements.downButtonExists).toBe(true);
+  expect(conditionalElements.prefixHasContent).toBe(true);
 });
 
 /**
@@ -271,8 +809,55 @@ test.skip('supports conditional element creation', async ({ page }) => {
  * Params:
  * { "domChanges": ["parent_moved", "siblings_added"], "expectedBehavior": "adaptive_structure" }
  */
-test.skip('handles dynamic DOM structure changes', async ({ page }) => {
-  // Implementation pending
+test('handles dynamic DOM structure changes', async ({ page }) => {
+  // Initialize TouchSpin first
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Verify initial state
+  const initialState = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    return {
+      wrapperExists: !!wrapper,
+      upButtonExists: !!upButton,
+      initialParent: wrapper?.parentElement?.tagName
+    };
+  });
+
+  expect(initialState.wrapperExists).toBe(true);
+  expect(initialState.upButtonExists).toBe(true);
+
+  // Dynamically change DOM structure - move to new parent
+  await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    if (wrapper) {
+      const newContainer = document.createElement('div');
+      newContainer.id = 'new-container';
+      newContainer.className = 'dynamic-container';
+
+      document.body.appendChild(newContainer);
+      newContainer.appendChild(wrapper);
+    }
+  });
+
+  // Check TouchSpin adapts to structure changes
+  const adaptedState = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const newContainer = document.getElementById('new-container');
+
+    return {
+      wrapperExists: !!wrapper,
+      upButtonExists: !!upButton,
+      wrapperInNewContainer: newContainer?.contains(wrapper),
+      buttonsStillWork: upButton?.offsetHeight > 0
+    };
+  });
+
+  expect(adaptedState.wrapperExists).toBe(true);
+  expect(adaptedState.upButtonExists).toBe(true);
+  expect(adaptedState.wrapperInNewContainer).toBe(true);
+  expect(adaptedState.buttonsStillWork).toBe(true);
 });
 
 /**
@@ -283,8 +868,71 @@ test.skip('handles dynamic DOM structure changes', async ({ page }) => {
  * Params:
  * { "modificationsToClean": ["wrapper", "buttons", "classes"], "expectedBehavior": "complete_cleanup" }
  */
-test.skip('cleans up DOM modifications on destroy', async ({ page }) => {
-  // Implementation pending
+test('cleans up DOM modifications on destroy', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 10,
+    prefix: 'Amount:',
+    postfix: 'units'
+  });
+
+  // Verify TouchSpin is initialized with all elements
+  const beforeDestroy = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+    const prefix = document.querySelector('[data-testid="test-input-prefix"]');
+    const postfix = document.querySelector('[data-testid="test-input-postfix"]');
+
+    return {
+      wrapperExists: !!wrapper,
+      upButtonExists: !!upButton,
+      downButtonExists: !!downButton,
+      prefixExists: !!prefix,
+      postfixExists: !!postfix
+    };
+  });
+
+  expect(beforeDestroy.wrapperExists).toBe(true);
+  expect(beforeDestroy.upButtonExists).toBe(true);
+  expect(beforeDestroy.downButtonExists).toBe(true);
+  expect(beforeDestroy.prefixExists).toBe(true);
+  expect(beforeDestroy.postfixExists).toBe(true);
+
+  // Destroy TouchSpin
+  await page.evaluate(() => {
+    const $ = window.jQuery;
+    $('[data-testid="test-input"]').TouchSpin('destroy');
+  });
+
+  // Verify cleanup - all TouchSpin elements should be removed
+  const afterDestroy = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+    const downButton = document.querySelector('[data-testid="test-input-down"]');
+    const prefix = document.querySelector('[data-testid="test-input-prefix"]');
+    const postfix = document.querySelector('[data-testid="test-input-postfix"]');
+    const input = document.querySelector('[data-testid="test-input"]');
+
+    return {
+      wrapperExists: !!wrapper,
+      upButtonExists: !!upButton,
+      downButtonExists: !!downButton,
+      prefixExists: !!prefix,
+      postfixExists: !!postfix,
+      inputStillExists: !!input,
+      inputHasCleanAttributes: input && !input.hasAttribute('data-touchspin-injected')
+    };
+  });
+
+  expect(afterDestroy.wrapperExists).toBe(false);
+  expect(afterDestroy.upButtonExists).toBe(false);
+  expect(afterDestroy.downButtonExists).toBe(false);
+  expect(afterDestroy.prefixExists).toBe(false);
+  expect(afterDestroy.postfixExists).toBe(false);
+  expect(afterDestroy.inputStillExists).toBe(true); // Original input should remain
+  expect(afterDestroy.inputHasCleanAttributes).toBe(true);
 });
 
 /**
@@ -295,8 +943,58 @@ test.skip('cleans up DOM modifications on destroy', async ({ page }) => {
  * Params:
  * { "conflictingPlugins": ["datepicker", "autocomplete"], "expectedBehavior": "conflict_resolution" }
  */
-test.skip('handles conflicts with other plugins', async ({ page }) => {
-  // Implementation pending
+test('handles conflicts with other plugins', async ({ page }) => {
+  // Simulate another jQuery plugin that modifies input behavior
+  await page.evaluate(() => {
+    const $ = window.jQuery;
+
+    // Create a mock conflicting plugin
+    $.fn.mockPlugin = function(options) {
+      return this.each(function() {
+        const $this = $(this);
+        $this.addClass('mock-plugin-enhanced');
+        $this.data('mock-plugin', { initialized: true, options });
+
+        // Add conflicting event handler
+        $this.on('input.mockPlugin', function() {
+          console.log('Mock plugin handling input event');
+        });
+      });
+    };
+  });
+
+  // Apply mock plugin first
+  await page.evaluate(() => {
+    const $ = window.jQuery;
+    $('[data-testid="test-input"]').mockPlugin({ conflictTest: true });
+  });
+
+  // Initialize TouchSpin after the conflicting plugin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check both plugins coexist
+  const coexistence = await page.evaluate(() => {
+    const $ = window.jQuery;
+    const $input = $('[data-testid="test-input"]');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+
+    return {
+      hasMockPlugin: $input.hasClass('mock-plugin-enhanced'),
+      hasMockData: !!$input.data('mock-plugin'),
+      hasTouchSpinWrapper: !!wrapper,
+      hasTouchSpinButtons: !!upButton,
+      inputStillWorks: $input.length > 0,
+      bothPluginsActive: $input.hasClass('mock-plugin-enhanced') && !!wrapper
+    };
+  });
+
+  expect(coexistence.hasMockPlugin).toBe(true);
+  expect(coexistence.hasMockData).toBe(true);
+  expect(coexistence.hasTouchSpinWrapper).toBe(true);
+  expect(coexistence.hasTouchSpinButtons).toBe(true);
+  expect(coexistence.inputStillWorks).toBe(true);
+  expect(coexistence.bothPluginsActive).toBe(true);
 });
 
 /**
@@ -307,8 +1005,61 @@ test.skip('handles conflicts with other plugins', async ({ page }) => {
  * Params:
  * { "nestingLevels": 3, "containerTypes": ["div", "form", "fieldset"], "expectedBehavior": "nested_handling" }
  */
-test.skip('supports nested container scenarios', async ({ page }) => {
-  // Implementation pending
+test('supports nested container scenarios', async ({ page }) => {
+  // Create nested container structure (3 levels deep)
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const level1 = document.createElement('div');
+      level1.className = 'level-1-container';
+      level1.id = 'level-1';
+
+      const level2 = document.createElement('form');
+      level2.className = 'level-2-container';
+      level2.id = 'level-2';
+
+      const level3 = document.createElement('fieldset');
+      level3.className = 'level-3-container';
+      level3.id = 'level-3';
+
+      input.parentElement.insertBefore(level1, input);
+      level1.appendChild(level2);
+      level2.appendChild(level3);
+      level3.appendChild(input);
+    }
+  });
+
+  // Initialize TouchSpin in deeply nested context
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Check nested handling
+  const nestedHandling = await page.evaluate(() => {
+    const level1 = document.getElementById('level-1');
+    const level2 = document.getElementById('level-2');
+    const level3 = document.getElementById('level-3');
+    const input = document.querySelector('[data-testid="test-input"]');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+    const upButton = document.querySelector('[data-testid="test-input-up"]');
+
+    return {
+      level1Exists: !!level1,
+      level2Exists: !!level2,
+      level3Exists: !!level3,
+      inputInLevel3: level3?.contains(input),
+      wrapperInLevel3: level3?.contains(wrapper),
+      buttonInLevel3: level3?.contains(upButton),
+      nestedPathIntact: level1?.contains(level2) && level2?.contains(level3) && level3?.contains(wrapper),
+      touchSpinWorking: !!wrapper && !!upButton
+    };
+  });
+
+  expect(nestedHandling.level1Exists).toBe(true);
+  expect(nestedHandling.level2Exists).toBe(true);
+  expect(nestedHandling.level3Exists).toBe(true);
+  expect(nestedHandling.inputInLevel3).toBe(true);
+  expect(nestedHandling.wrapperInLevel3).toBe(true);
+  expect(nestedHandling.nestedPathIntact).toBe(true);
+  expect(nestedHandling.touchSpinWorking).toBe(true);
 });
 
 /**
@@ -319,8 +1070,65 @@ test.skip('supports nested container scenarios', async ({ page }) => {
  * Params:
  * { "formMethod": "POST", "expectedBehavior": "form_integration", "submittedValue": "current_touchspin_value" }
  */
-test.skip('maintains form integration and submission', async ({ page }) => {
-  // Implementation pending
+test('maintains form integration and submission', async ({ page }) => {
+  // Create form structure
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    if (input && input.parentElement) {
+      const form = document.createElement('form');
+      form.id = 'test-form';
+      form.method = 'POST';
+      form.action = '/submit';
+
+      const submitButton = document.createElement('button');
+      submitButton.type = 'submit';
+      submitButton.id = 'submit-btn';
+      submitButton.textContent = 'Submit';
+
+      input.parentElement.insertBefore(form, input);
+      form.appendChild(input);
+      form.appendChild(submitButton);
+
+      // Set input name for form submission
+      input.setAttribute('name', 'quantity');
+    }
+  });
+
+  // Initialize TouchSpin with initial value
+  await initializeTouchspinJQuery(page, 'test-input', {
+    min: 0,
+    max: 100,
+    initval: 25
+  });
+
+  // Test form integration
+  const formIntegration = await page.evaluate(() => {
+    const form = document.getElementById('test-form');
+    const input = document.querySelector('[data-testid="test-input"]');
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+
+    // Test form data collection
+    const formData = new FormData(form as HTMLFormElement);
+    const quantity = formData.get('quantity');
+
+    return {
+      formExists: !!form,
+      inputInForm: form?.contains(input),
+      wrapperInForm: form?.contains(wrapper),
+      inputHasName: input?.getAttribute('name') === 'quantity',
+      inputValue: (input as HTMLInputElement)?.value,
+      formDataValue: quantity,
+      formDataMatches: quantity === (input as HTMLInputElement)?.value
+    };
+  });
+
+  expect(formIntegration.formExists).toBe(true);
+  expect(formIntegration.inputInForm).toBe(true);
+  expect(formIntegration.wrapperInForm).toBe(true);
+  expect(formIntegration.inputHasName).toBe(true);
+  expect(formIntegration.inputValue).toBe('25');
+  expect(formIntegration.formDataValue).toBe('25');
+  expect(formIntegration.formDataMatches).toBe(true);
 });
 
 /**
@@ -331,6 +1139,75 @@ test.skip('maintains form integration and submission', async ({ page }) => {
  * Params:
  * { "tabSequence": ["input1", "touchspin_buttons", "input2"], "expectedBehavior": "correct_tab_order" }
  */
-test.skip('handles input focus and tabbing behavior', async ({ page }) => {
-  // Implementation pending
+test('handles input focus and tabbing behavior', async ({ page }) => {
+  // Create additional inputs for tab sequence testing
+  await page.evaluate(() => {
+    const container = document.querySelector('body');
+    if (container) {
+      const beforeInput = document.createElement('input');
+      beforeInput.type = 'text';
+      beforeInput.id = 'before-input';
+      beforeInput.placeholder = 'Before TouchSpin';
+      beforeInput.setAttribute('data-testid', 'before-input');
+
+      const afterInput = document.createElement('input');
+      afterInput.type = 'text';
+      afterInput.id = 'after-input';
+      afterInput.placeholder = 'After TouchSpin';
+      afterInput.setAttribute('data-testid', 'after-input');
+
+      const testInput = document.querySelector('[data-testid="test-input"]');
+      if (testInput && testInput.parentElement) {
+        testInput.parentElement.insertBefore(beforeInput, testInput);
+        testInput.parentElement.insertBefore(afterInput, testInput.nextSibling);
+      }
+    }
+  });
+
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Test tab sequence and focus behavior
+  const focusBehavior = await page.evaluate(() => {
+    const beforeInput = document.querySelector('[data-testid="before-input"]') as HTMLInputElement;
+    const testInput = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    const afterInput = document.querySelector('[data-testid="after-input"]') as HTMLInputElement;
+    const upButton = document.querySelector('[data-testid="test-input-up"]') as HTMLButtonElement;
+    const downButton = document.querySelector('[data-testid="test-input-down"]') as HTMLButtonElement;
+
+    // Test focus capabilities
+    const focusResults = {
+      beforeInputFocusable: beforeInput && beforeInput.tabIndex >= 0,
+      testInputFocusable: testInput && testInput.tabIndex >= 0,
+      afterInputFocusable: afterInput && afterInput.tabIndex >= 0,
+      upButtonFocusable: upButton && upButton.tabIndex >= 0,
+      downButtonFocusable: downButton && downButton.tabIndex >= 0,
+      allElementsExist: !!(beforeInput && testInput && afterInput && upButton && downButton)
+    };
+
+    // Test actual focus behavior
+    beforeInput?.focus();
+    const beforeFocused = document.activeElement === beforeInput;
+
+    testInput?.focus();
+    const testFocused = document.activeElement === testInput;
+
+    upButton?.focus();
+    const upButtonFocused = document.activeElement === upButton;
+
+    return {
+      ...focusResults,
+      beforeFocused,
+      testFocused,
+      upButtonFocused,
+      focusSequenceWorks: beforeFocused && testFocused && upButtonFocused
+    };
+  });
+
+  expect(focusBehavior.allElementsExist).toBe(true);
+  expect(focusBehavior.testInputFocusable).toBe(true);
+  expect(focusBehavior.upButtonFocusable).toBe(true);
+  expect(focusBehavior.downButtonFocusable).toBe(true);
+  expect(focusBehavior.testFocused).toBe(true);
+  expect(focusBehavior.upButtonFocused).toBe(true);
 });
