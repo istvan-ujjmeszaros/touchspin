@@ -12,9 +12,9 @@ import { bridgeEvents } from './event-bridge.js';
  * TouchSpin Custom Element
  *
  * @example
- * <touchspin-element min="0" max="100" value="50"></touchspin-element>
+ * <touchspin-input min="0" max="100" value="50"></touchspin-input>
  */
-export class TouchSpinElement extends HTMLElement {
+export class TouchSpinInput extends HTMLElement {
   private _touchspin: ReturnType<typeof TouchSpin> | null;
   private _input: HTMLInputElement | null;
   private _eventUnsubscribers: Array<() => void>;

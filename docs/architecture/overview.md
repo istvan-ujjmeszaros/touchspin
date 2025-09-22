@@ -16,7 +16,7 @@ packages/
 │   ├── bootstrap5/
 │   └── tailwind/
 ├── vanilla-renderer/   # CSS-variable driven renderer used by the web component
-└── web-component/      # Standards-based `<touchspin-element>` custom element
+└── web-component/      # Standards-based `<touchspin-input>` custom element
 ```
 
 This separation gives us:

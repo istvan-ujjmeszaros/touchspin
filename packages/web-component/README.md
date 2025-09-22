@@ -31,7 +31,7 @@ yarn add @touchspin/web-component
 </script>
 
 <!-- Use the custom element -->
-<touchspin-element min="0" max="100" value="50"></touchspin-element>
+<touchspin-input min="0" max="100" value="50"></touchspin-input>
 ```
 
 ## Styles
@@ -47,29 +47,29 @@ The web component uses the Vanilla renderer styles. Include the CSS in your page
 ```html
 <script src="/node_modules/@touchspin/web-component/dist/index.umd.js"></script>
 <link rel="stylesheet" href="/node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css" />
-<touchspin-element min="0" max="100" value="50"></touchspin-element>
+<touchspin-input min="0" max="100" value="50"></touchspin-input>
 ```
 
 ### Basic Examples
 
 ```html
 <!-- Basic spinner -->
-<touchspin-element min="0" max="100" value="50" step="1"></touchspin-element>
+<touchspin-input min="0" max="100" value="50" step="1"></touchspin-input>
 
 <!-- Currency input -->
-<touchspin-element min="0" max="1000" value="25.50" step="0.01" 
-                   prefix="$" postfix=".00"></touchspin-element>
+<touchspin-input min="0" max="1000" value="25.50" step="0.01" 
+                   prefix="$" postfix=".00"></touchspin-input>
 
 <!-- Vertical buttons -->
-<touchspin-element min="0" max="100" value="75" 
-                   vertical-buttons="true"></touchspin-element>
+<touchspin-input min="0" max="100" value="75" 
+                   vertical-buttons="true"></touchspin-input>
 
 <!-- Custom button text -->
-<touchspin-element min="1" max="10" value="5" 
-                   button-up-txt="▲" button-down-txt="▼"></touchspin-element>
+<touchspin-input min="1" max="10" value="5" 
+                   button-up-txt="▲" button-down-txt="▼"></touchspin-input>
 
 <!-- Disabled state -->
-<touchspin-element min="0" max="100" value="42" disabled></touchspin-element>
+<touchspin-input min="0" max="100" value="42" disabled></touchspin-input>
 ```
 
 ## API Reference
@@ -97,7 +97,7 @@ The web component uses the Vanilla renderer styles. Include the CSS in your page
 Access via JavaScript:
 
 ```javascript
-const spinner = document.querySelector('touchspin-element');
+const spinner = document.querySelector('touchspin-input');
 
 // Get/set value
 console.log(spinner.value); // Get current value
@@ -116,7 +116,7 @@ spinner.readonly = false;
 ### Methods
 
 ```javascript
-const spinner = document.querySelector('touchspin-element');
+const spinner = document.querySelector('touchspin-input');
 
 // Increment/decrement
 spinner.upOnce();      // Increment by one step
@@ -144,7 +144,7 @@ spinner.destroy(); // Manual cleanup
 All events bubble and include the current value in `event.detail`:
 
 ```javascript
-const spinner = document.querySelector('touchspin-element');
+const spinner = document.querySelector('touchspin-input');
 
 // Value changes
 spinner.addEventListener('touchspin-change', (e) => {
@@ -187,7 +187,7 @@ spinner.addEventListener('touchspin-stop-spin', (e) => {
 TouchSpin Web Component uses CSS variables for complete customization:
 
 ```css
-touchspin-element {
+touchspin-input {
   --ts-wrapper-border-color: #3b82f6;
   --ts-button-background-color: #f0f9ff;
   --ts-button-background-color-hover: #dbeafe;
@@ -212,7 +212,7 @@ function MyComponent() {
   };
 
   return (
-    <touchspin-element
+    <touchspin-input
       min={0}
       max={100}
       defaultValue={50}
@@ -236,24 +236,24 @@ export class AppModule {}
 
 ```html
 <!-- component.html -->
-<touchspin-element 
+<touchspin-input 
   [min]="0" 
   [max]="100" 
   [value]="currentValue"
   (touchspin-change)="onValueChange($event)">
-</touchspin-element>
+</touchspin-input>
 ```
 
 ### Vue
 
 ```vue
 <template>
-  <touchspin-element 
+  <touchspin-input 
     :min="0" 
     :max="100" 
     :value="currentValue"
     @touchspin-change="onValueChange">
-  </touchspin-element>
+  </touchspin-input>
 </template>
 
 <script setup>
@@ -281,11 +281,11 @@ For older browsers, use a [Web Components polyfill](https://www.webcomponents.or
 ### Custom Renderers
 
 ```javascript
-import { TouchSpinElement } from '@touchspin/web-component';
+import { TouchSpinInput } from '@touchspin/web-component';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
 // Register with custom renderer
-class CustomTouchSpinElement extends TouchSpinElement {
+class CustomTouchSpinElement extends TouchSpinInput {
   _resolveRenderer(name) {
     if (name === 'bootstrap5') {
       return Bootstrap5Renderer;
@@ -304,7 +304,7 @@ customElements.define('custom-touchspin', CustomTouchSpinElement);
 ### Shadow DOM
 
 ```javascript
-class ShadowTouchSpinElement extends TouchSpinElement {
+class ShadowTouchSpinElement extends TouchSpinInput {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
