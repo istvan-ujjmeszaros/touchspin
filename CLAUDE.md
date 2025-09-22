@@ -74,6 +74,13 @@ test('scenario name', async ({ page }) => {
 * **Document issues** for later resolution
 * **Continue with remaining tests** - don't stop for bugs
 
+#### CRUCIAL: Use Exact Scenario Parameters
+* **NEVER modify the parameters specified in Gherkin scenarios**
+* **Use EXACTLY the values provided in Params:** - no adjustments
+* **Let tests fail if parameters don't match Core behavior**
+* **DO NOT change test parameters to make tests pass**
+* **Failed tests will be reviewed and addressed separately**
+
 ## 🔧 Testing Requirements
 
 ### Dist-Only Rule
