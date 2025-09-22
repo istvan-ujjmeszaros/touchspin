@@ -310,13 +310,13 @@ test('handles step with forcestepdivisibility settings', async ({ page }) => {
  */
 test('calculates steps correctly across zero boundary', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: -5, max: 5, step: 2, initval: -2 // Use step-divisible value
+      min: -5, max: 5, step: 2, initval: -1
     });
 
     await incrementViaAPI(page, 'test-input');
 
     const value = await getNumericValue(page, 'test-input');
-    expect(value).toBe(0); // -2 + 2 = 0 (crosses zero)
+    expect(value).toBe(1); // -1 + 2 = 1 (crosses zero)
   });
 
 /**
@@ -348,13 +348,13 @@ test('handles very small step values', async ({ page }) => {
  */
 test('handles very large step values', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      step: 100, initval: 0 // Use reasonable step size for test
+      step: 1000000, max: 10000000, initval: 5000000
     });
 
     await incrementViaAPI(page, 'test-input');
 
     const value = await getNumericValue(page, 'test-input');
-    expect(value).toBe(100); // 0 + 100 = 100 (large step for this test)
+    expect(value).toBe(6000000); // 5000000 + 1000000 = 6000000
   });
 
 /**

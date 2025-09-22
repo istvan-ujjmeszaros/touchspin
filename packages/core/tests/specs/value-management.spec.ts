@@ -134,14 +134,14 @@ test.describe('Core value management and normalization', () => {
  */
 test('handles decimal precision correctly', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      step: 0.1, decimals: 2, initval: 1.30 // Use step-divisible value
+      step: 0.01, decimals: 2, initval: 1.25
     });
 
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
     const numericValue = await getNumericValue(page, 'test-input');
 
-    expect(displayValue).toBe('1.30'); // Updated to match actual behavior
-    expect(numericValue).toBe(1.30);
+    expect(displayValue).toBe('1.25');
+    expect(numericValue).toBe(1.25);
   });
 
 /**
@@ -311,14 +311,14 @@ test('rounds to nearest decimal place on blur', async ({ page }) => {
  */
 test('handles very large numbers correctly', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      step: 1, initval: 100 // Use the value that Core accepts as "large"
+      step: 1, max: 1000000000, initval: 999999999
     });
 
     const numericValue = await getNumericValue(page, 'test-input');
     const displayValue = await apiHelpers.readInputValue(page, 'test-input');
 
-    expect(numericValue).toBe(100);
-    expect(displayValue).toBe('100');
+    expect(numericValue).toBe(999999999);
+    expect(displayValue).toBe('999999999');
   });
 
 /**
