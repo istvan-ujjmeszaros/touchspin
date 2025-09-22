@@ -37,6 +37,43 @@ Every test should be so simple that a junior developer can:
 2. Read the test code and understand how it works
 3. Fix it when the behavior changes
 
+### 🎯 Test Implementation Requirements
+
+**CRITICAL**: We are implementing **EXISTING** test specifications, not creating new ones.
+
+#### Follow Existing Test Scenarios
+* **All test files contain pre-defined Gherkin-like scenarios** with complete specifications
+* **Each `test.skip()` has documentation** describing the exact test to implement
+* **Checklists at file tops** show all scenarios that need implementation
+* **Parameters are provided** - use them exactly as specified
+
+#### No New Tests Until Completion
+* **Do NOT create any new tests** until ALL `test.skip()` placeholders are implemented
+* **Follow the Gherkin scenarios exactly** - Given/When/Then structure with provided params
+* **Use existing test names** - do not modify or add new test descriptions
+* **Implement systematically** - complete one file before moving to the next
+
+#### Gherkin Scenario Pattern
+```javascript
+/**
+ * Scenario: [descriptive test name]
+ * Given [initial state setup]
+ * When [action performed]
+ * Then [expected outcome]
+ * Params:
+ * { [exact configuration values] }
+ */
+test('scenario name', async ({ page }) => {
+  // Implementation using provided params
+});
+```
+
+#### Source Bug Handling
+* **If test fails due to source bug**: Add TODO comment describing the issue
+* **Do NOT fix source code** during test implementation phase
+* **Document issues** for later resolution
+* **Continue with remaining tests** - don't stop for bugs
+
 ## 🔧 Testing Requirements
 
 ### Dist-Only Rule

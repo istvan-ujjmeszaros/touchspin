@@ -15,6 +15,9 @@ tmp/
 # Test results and reports - consolidated under reports/
 reports/
 
+# Test run metadata
+**/test-results/.last-run.json
+
 # NYC coverage output
 .nyc_output/
 
