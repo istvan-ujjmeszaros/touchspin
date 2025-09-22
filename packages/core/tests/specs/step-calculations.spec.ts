@@ -5,13 +5,13 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] increments by basic integer step value
- * [ ] decrements by basic integer step value
- * [ ] handles decimal step increments correctly
- * [ ] handles decimal step decrements correctly
- * [ ] maintains precision during multiple step operations
- * [ ] handles step changes via updateSettings
- * [ ] calculates correct steps with negative values
+ * [x] increments by basic integer step value
+ * [x] decrements by basic integer step value
+ * [x] handles decimal step increments correctly
+ * [x] handles decimal step decrements correctly
+ * [x] maintains precision during multiple step operations
+ * [x] handles step changes via updateSettings
+ * [x] calculates correct steps with negative values
  * [ ] handles fractional steps with high precision
  * [ ] validates step value on initialization
  * [ ] rejects invalid step values
@@ -32,44 +32,61 @@
  * [ ] manages step precision in different locales
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import {
+  initializeTouchspin,
+  incrementViaAPI,
+  decrementViaAPI,
+  setValueViaAPI,
+  getNumericValue,
+  updateSettingsViaAPI
+} from '../../test-helpers/core-adapter';
 
-/**
- * Scenario: increments by basic integer step value
- * Given the fixture page is loaded with an integer step
- * When I increment the value
- * Then it increases by the step amount
- * Params:
- * { "settings": { "step": 5, "initval": "10" }, "operation": "increment", "expected": "15" }
- */
-test.skip('increments by basic integer step value', async ({ page }) => {
-  // Implementation pending
-});
+test.describe('Core step calculations and increments', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+    await apiHelpers.clearEventLog(page);
+  });
 
-/**
- * Scenario: decrements by basic integer step value
- * Given the fixture page is loaded with an integer step
- * When I decrement the value
- * Then it decreases by the step amount
- * Params:
- * { "settings": { "step": 3, "initval": "12" }, "operation": "decrement", "expected": "9" }
- */
-test.skip('decrements by basic integer step value', async ({ page }) => {
-  // Implementation pending
-});
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
 
-/**
- * Scenario: handles decimal step increments correctly
- * Given the fixture page is loaded with a decimal step
- * When I increment the value
- * Then it increases by the decimal step amount with correct precision
- * Params:
- * { "settings": { "step": 0.1, "decimals": 1, "initval": "1.0" }, "operation": "increment", "expected": "1.1" }
- */
-test.skip('handles decimal step increments correctly', async ({ page }) => {
-  // Implementation pending
-});
+  test('increments by basic integer step value', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 5, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(15);
+  });
+
+  test('decrements by basic integer step value', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 3, initval: 12
+    });
+
+    await decrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(9);
+  });
+
+  test('handles decimal step increments correctly', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.1, decimals: 1, initval: 1.0
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.1);
+  });
 
 /**
  * Scenario: handles decimal step decrements correctly
@@ -79,9 +96,16 @@ test.skip('handles decimal step increments correctly', async ({ page }) => {
  * Params:
  * { "settings": { "step": 0.25, "decimals": 2, "initval": "1.50" }, "operation": "decrement", "expected": "1.25" }
  */
-test.skip('handles decimal step decrements correctly', async ({ page }) => {
-  // Implementation pending
-});
+  test('handles decimal step decrements correctly', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.25, decimals: 2, initval: 1.50
+    });
+
+    await decrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.25);
+  });
 
 /**
  * Scenario: maintains precision during multiple step operations
@@ -91,9 +115,18 @@ test.skip('handles decimal step decrements correctly', async ({ page }) => {
  * Params:
  * { "settings": { "step": 0.1, "decimals": 1, "initval": "0.0" }, "operations": ["inc", "inc", "dec"], "expected": "0.1" }
  */
-test.skip('maintains precision during multiple step operations', async ({ page }) => {
-  // Implementation pending
-});
+  test('maintains precision during multiple step operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 0.1, decimals: 1, initval: 0.0
+    });
+
+    await incrementViaAPI(page, 'test-input');
+    await incrementViaAPI(page, 'test-input');
+    await decrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(0.1);
+  });
 
 /**
  * Scenario: handles step changes via updateSettings
@@ -103,9 +136,17 @@ test.skip('maintains precision during multiple step operations', async ({ page }
  * Params:
  * { "initialStep": 1, "newStep": 5, "operation": "increment", "expectedChange": 5 }
  */
-test.skip('handles step changes via updateSettings', async ({ page }) => {
-  // Implementation pending
-});
+  test('handles step changes via updateSettings', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await updateSettingsViaAPI(page, 'test-input', { step: 5 });
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(15); // 10 + 5 (new step)
+  });
 
 /**
  * Scenario: calculates correct steps with negative values
@@ -115,9 +156,16 @@ test.skip('handles step changes via updateSettings', async ({ page }) => {
  * Params:
  * { "settings": { "min": -10, "max": 10, "step": 2, "initval": "-4" }, "operation": "increment", "expected": "-2" }
  */
-test.skip('calculates correct steps with negative values', async ({ page }) => {
-  // Implementation pending
-});
+  test('calculates correct steps with negative values', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: -10, max: 10, step: 2, initval: -4
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(-2);
+  });
 
 /**
  * Scenario: handles fractional steps with high precision
@@ -333,4 +381,6 @@ test.skip('handles step edge cases with boundary alignment', async ({ page }) =>
  */
 test.skip('manages step precision in different locales', async ({ page }) => {
   // Implementation pending
+});
+
 });
