@@ -32,7 +32,7 @@
     "build": "rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --clean --target es2018 --tsconfig tsconfig.build.json",
+    "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
     "typecheck": "tsc --noEmit",
     "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",

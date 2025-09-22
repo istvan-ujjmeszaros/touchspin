@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
-import { setupLogging } from '@touchspin/core/test-helpers/events/setup';
-import { installDomHelpers } from '@touchspin/core/test-helpers/runtime/installDomHelpers';
+import { setupLogging, installDomHelpers } from '@touchspin/core/test-helpers';
 
 /* ──────────────────────────
  * jQuery plugin bootstrap (for jQuery pages)
@@ -19,10 +18,23 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
         throw new Error('Tests must not load /src/. Use /dist/index.js.\n' + offenders.join('\n'));
       }
 
-      // Import jQuery from node_modules without static specifier to avoid TS resolution
-      const moduleName = ['j','q','u','e','r','y'].join('');
-      const $ = await (new Function('n', 'return import(n)') as (n: string) => Promise<{ default?: unknown }>)(moduleName)
-        .then(m => m.default ?? (m as unknown));
+      // Load jQuery from CDN for browser testing
+      if (!window.jQuery) {
+        const script = document.createElement('script');
+        script.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+
+        // Wait for jQuery to load
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+          // Timeout after 10 seconds
+          setTimeout(() => reject(new Error('jQuery load timeout')), 10000);
+        });
+      }
+
+      const $ = window.jQuery;
       const w = window as unknown as Record<string, unknown>;
       if (!w['jQuery']) w['jQuery'] = $;
       if (!w['$']) w['$'] = $;
