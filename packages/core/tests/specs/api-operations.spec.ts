@@ -598,3 +598,4 @@ test('API performance is acceptable under load', async ({ page }) => {
     const finalValue = await getNumericValue(page, 'test-input');
     expect(finalValue).toBe(0); // Back to initial value after up/down pairs
   });
+});

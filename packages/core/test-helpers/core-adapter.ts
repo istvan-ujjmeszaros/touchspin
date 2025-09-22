@@ -49,6 +49,29 @@ export async function initializeTouchspin(
 
     // Initialize DOM event handling
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+
+    // Bridge Core internal events to DOM CustomEvents for test event logging
+    const eventMap = {
+      'min': 'touchspin.on.min',
+      'max': 'touchspin.on.max',
+      'startspin': 'touchspin.on.startspin',
+      'startupspin': 'touchspin.on.startupspin',
+      'startdownspin': 'touchspin.on.startdownspin',
+      'stopspin': 'touchspin.on.stopspin',
+      'stopupspin': 'touchspin.on.stopupspin',
+      'stopdownspin': 'touchspin.on.stopdownspin'
+    };
+
+    Object.entries(eventMap).forEach(([coreEvent, domEvent]) => {
+      (core as any).on(coreEvent, () => {
+        const customEvent = new CustomEvent(domEvent, {
+          detail: { testId, value: input.value },
+          bubbles: true,
+          cancelable: true
+        });
+        input.dispatchEvent(customEvent);
+      });
+    });
   }, { testId, options, coreUrl: coreRuntimeUrl });
 
   // Wait for initialization to complete
@@ -69,84 +92,84 @@ export async function initializeTouchspin(
  * Increment value via Core API (direct method call)
  */
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.upOnce();
-  }, { testId });
+  });
 }
 
 /**
  * Decrement value via Core API (direct method call)
  */
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.downOnce();
-  }, { testId });
+  });
 }
 
 /**
  * Start up spin via Core API
  */
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.startUpSpin();
-  }, { testId });
+  });
 }
 
 /**
  * Start down spin via Core API
  */
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.startDownSpin();
-  }, { testId });
+  });
 }
 
 /**
  * Stop spin via Core API
  */
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.stopSpin();
-  }, { testId });
+  });
 }
 
 /**
  * Set value via Core API
  */
 export async function setValueViaAPI(page: Page, testId: string, value: number | string): Promise<void> {
-  await page.evaluate(({ testId, value }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement, value) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.setValue(value);
-  }, { testId, value });
+  }, value);
 }
 
 /**
  * Get numeric value from Core
  */
 export async function getNumericValue(page: Page, testId: string): Promise<number> {
-  return await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  return await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     return core.getValue();
-  }, { testId });
+  });
 }
 
 /**
@@ -157,35 +180,35 @@ export async function updateSettingsViaAPI(
   testId: string,
   settings: Partial<TouchSpinCoreOptions>
 ): Promise<void> {
-  await page.evaluate(({ testId, settings }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement, settings) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.updateSettings(settings);
-  }, { testId, settings });
+  }, settings);
 }
 
 /**
  * Destroy Core instance
  */
 export async function destroyCore(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
     core.destroy();
-    delete (input as any)._touchSpinCore;
-  }, { testId });
+    delete (inputEl as any)._touchSpinCore;
+  });
 }
 
 /**
  * Check if Core is initialized
  */
 export async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
-  return await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    return !!(input && (input as any)._touchSpinCore);
-  }, { testId });
+  const input = inputById(page, testId);
+  return await input.evaluate((inputEl: HTMLInputElement) => {
+    return !!((inputEl as any)._touchSpinCore);
+  });
 }
 
 /**
@@ -230,10 +253,10 @@ export async function decrementViaWheel(page: Page, testId: string): Promise<voi
  * Get the public API interface for the Core instance
  */
 export async function getPublicAPI(page: Page, testId: string): Promise<any> {
-  return await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (!core) throw new Error(`Core not found for ${testId}`);
+  const input = inputById(page, testId);
+  return await input.evaluate((inputEl: HTMLInputElement) => {
+    const core = (inputEl as any)._touchSpinCore;
+    if (!core) throw new Error(`Core not found for input`);
 
     // Return the public API methods/properties
     return {
@@ -247,5 +270,5 @@ export async function getPublicAPI(page: Page, testId: string): Promise<any> {
       updateSettings: typeof core.updateSettings === 'function',
       destroy: typeof core.destroy === 'function'
     };
-  }, { testId });
+  });
 }
