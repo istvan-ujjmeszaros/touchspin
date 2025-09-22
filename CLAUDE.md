@@ -240,6 +240,15 @@ await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3, initval: 48 
 - `step: 0.1` → One decimal place (0.1, 0.2, 0.3...)
 - `step: 0.25` → Quarter values (0.25, 0.5, 0.75, 1.0...)
 
+**⚠️ IMPORTANT: Avoid Normalization Side Effects in Tests**
+
+When using `updateSettings` to change the `step` value during a test:
+- **Be aware** that the current value will be normalized to the nearest multiple of the new step
+- **Use step-divisible values** throughout the test to avoid unexpected normalization
+- **Example**: If value is 11 and you change step to 2, the value becomes 12 (normalized)
+- **Better approach**: Use values that are already divisible by all steps used in the test
+- **Reserve normalization testing** for dedicated tests that specifically verify this behavior
+
 #### Core vs jQuery Helper Functions
 
 **CRITICAL: Use the Right Helper for the Right Test Type**

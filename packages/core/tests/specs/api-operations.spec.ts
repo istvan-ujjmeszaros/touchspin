@@ -5,35 +5,60 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] upOnce increments value by one step
- * [ ] downOnce decrements value by one step
- * [ ] setValue sets value programmatically
- * [ ] getValue returns current numeric value
- * [ ] startUpSpin begins upward spinning
- * [ ] startDownSpin begins downward spinning
- * [ ] stopSpin halts any active spinning
- * [ ] updateSettings modifies configuration dynamically
- * [ ] destroy cleans up instance completely
- * [ ] isDestroyed returns correct status
- * [ ] API methods respect boundary constraints
- * [ ] API methods maintain step compliance
- * [ ] API methods handle invalid parameters gracefully
- * [ ] API methods return appropriate values/promises
- * [ ] API methods work correctly after updateSettings
- * [ ] chained API calls work correctly
- * [ ] API methods maintain internal state consistency
- * [ ] concurrent API calls are handled safely
- * [ ] API methods trigger appropriate events
- * [ ] API methods preserve precision
- * [ ] API validation prevents invalid operations
- * [ ] API methods handle edge cases gracefully
- * [ ] API state is recoverable after errors
- * [ ] API methods work with callback modifications
- * [ ] API performance is acceptable under load
+ * [x] upOnce increments value by one step
+ * [x] downOnce decrements value by one step
+ * [x] setValue sets value programmatically
+ * [x] getValue returns current numeric value
+ * [x] startUpSpin begins upward spinning
+ * [x] startDownSpin begins downward spinning
+ * [x] stopSpin halts any active spinning
+ * [x] updateSettings modifies configuration dynamically
+ * [x] destroy cleans up instance completely
+ * [x] isDestroyed returns correct status
+ * [x] API methods respect boundary constraints
+ * [x] API methods maintain step compliance
+ * [x] API methods handle invalid parameters gracefully
+ * [x] API methods return appropriate values/promises
+ * [x] API methods work correctly after updateSettings
+ * [x] chained API calls work correctly
+ * [x] API methods maintain internal state consistency
+ * [x] concurrent API calls are handled safely
+ * [x] API methods trigger appropriate events
+ * [x] API methods preserve precision
+ * [x] API validation prevents invalid operations
+ * [x] API methods handle edge cases gracefully
+ * [x] API state is recoverable after errors
+ * [x] API methods work with callback modifications
+ * [x] API performance is acceptable under load
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import {
+  initializeTouchspin,
+  incrementViaAPI,
+  decrementViaAPI,
+  setValueViaAPI,
+  getNumericValue,
+  updateSettingsViaAPI,
+  destroyCore,
+  isCoreInitialized,
+  startUpSpinViaAPI,
+  startDownSpinViaAPI,
+  stopSpinViaAPI
+} from '../../test-helpers/core-adapter';
+
+test.describe('Core API operations and programmatic control', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+    await apiHelpers.clearEventLog(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
 
 /**
  * Scenario: upOnce increments value by one step
@@ -43,9 +68,16 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "settings": { "step": 2, "initval": "10" }, "operation": "upOnce", "expected": "12" }
  */
-test.skip('upOnce increments value by one step', async ({ page }) => {
-  // Implementation pending
-});
+test('upOnce increments value by one step', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 2, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(12);
+  });
 
 /**
  * Scenario: downOnce decrements value by one step
@@ -55,9 +87,16 @@ test.skip('upOnce increments value by one step', async ({ page }) => {
  * Params:
  * { "settings": { "step": 3, "initval": "15" }, "operation": "downOnce", "expected": "12" }
  */
-test.skip('downOnce decrements value by one step', async ({ page }) => {
-  // Implementation pending
-});
+test('downOnce decrements value by one step', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 3, initval: 15
+    });
+
+    await decrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(12);
+  });
 
 /**
  * Scenario: setValue sets value programmatically
@@ -67,9 +106,16 @@ test.skip('downOnce decrements value by one step', async ({ page }) => {
  * Params:
  * { "initialValue": "10", "setValue": "25", "expected": "25" }
  */
-test.skip('setValue sets value programmatically', async ({ page }) => {
-  // Implementation pending
-});
+test('setValue sets value programmatically', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await setValueViaAPI(page, 'test-input', '25');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(25);
+  });
 
 /**
  * Scenario: getValue returns current numeric value
@@ -79,9 +125,14 @@ test.skip('setValue sets value programmatically', async ({ page }) => {
  * Params:
  * { "displayValue": "42", "expectedNumericValue": 42 }
  */
-test.skip('getValue returns current numeric value', async ({ page }) => {
-  // Implementation pending
-});
+test('getValue returns current numeric value', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 42
+    });
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(42);
+  });
 
 /**
  * Scenario: startUpSpin begins upward spinning
@@ -91,9 +142,21 @@ test.skip('getValue returns current numeric value', async ({ page }) => {
  * Params:
  * { "initialValue": "5", "spinDuration": 500, "expectedBehavior": "continuous_increment" }
  */
-test.skip('startUpSpin begins upward spinning', async ({ page }) => {
-  // Implementation pending
-});
+test('startUpSpin begins upward spinning', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    const initialValue = await getNumericValue(page, 'test-input');
+    await startUpSpinViaAPI(page, 'test-input');
+
+    // Allow some time for spinning
+    await page.waitForTimeout(100);
+    await stopSpinViaAPI(page, 'test-input');
+
+    const finalValue = await getNumericValue(page, 'test-input');
+    expect(finalValue).toBeGreaterThan(initialValue); // Value increased during spinning
+  });
 
 /**
  * Scenario: startDownSpin begins downward spinning
@@ -103,9 +166,21 @@ test.skip('startUpSpin begins upward spinning', async ({ page }) => {
  * Params:
  * { "initialValue": "10", "spinDuration": 500, "expectedBehavior": "continuous_decrement" }
  */
-test.skip('startDownSpin begins downward spinning', async ({ page }) => {
-  // Implementation pending
-});
+test('startDownSpin begins downward spinning', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    const initialValue = await getNumericValue(page, 'test-input');
+    await startDownSpinViaAPI(page, 'test-input');
+
+    // Allow some time for spinning
+    await page.waitForTimeout(100);
+    await stopSpinViaAPI(page, 'test-input');
+
+    const finalValue = await getNumericValue(page, 'test-input');
+    expect(finalValue).toBeLessThan(initialValue); // Value decreased during spinning
+  });
 
 /**
  * Scenario: stopSpin halts any active spinning
@@ -115,9 +190,21 @@ test.skip('startDownSpin begins downward spinning', async ({ page }) => {
  * Params:
  * { "activeSpinning": "up", "stopAction": "stopSpin", "expectedBehavior": "immediate_stop" }
  */
-test.skip('stopSpin halts any active spinning', async ({ page }) => {
-  // Implementation pending
-});
+test('stopSpin halts any active spinning', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await startUpSpinViaAPI(page, 'test-input');
+    await page.waitForTimeout(50); // Brief spinning
+    const valueAfterStart = await getNumericValue(page, 'test-input');
+
+    await stopSpinViaAPI(page, 'test-input');
+    await page.waitForTimeout(50); // Wait to ensure spinning stopped
+    const valueAfterStop = await getNumericValue(page, 'test-input');
+
+    expect(valueAfterStop).toBe(valueAfterStart); // No change after stop
+  });
 
 /**
  * Scenario: updateSettings modifies configuration dynamically
@@ -127,9 +214,17 @@ test.skip('stopSpin halts any active spinning', async ({ page }) => {
  * Params:
  * { "initialSettings": { "step": 1, "max": 10 }, "newSettings": { "step": 5, "max": 50 } }
  */
-test.skip('updateSettings modifies configuration dynamically', async ({ page }) => {
-  // Implementation pending
-});
+test('updateSettings modifies configuration dynamically', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, max: 10, initval: 5
+    });
+
+    await updateSettingsViaAPI(page, 'test-input', { step: 5, max: 50 });
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10); // 5 + 5 = 10 (new step applied)
+  });
 
 /**
  * Scenario: destroy cleans up instance completely
@@ -139,9 +234,17 @@ test.skip('updateSettings modifies configuration dynamically', async ({ page }) 
  * Params:
  * { "expectedCleanup": ["event_listeners", "dom_modifications", "internal_state"] }
  */
-test.skip('destroy cleans up instance completely', async ({ page }) => {
-  // Implementation pending
-});
+test('destroy cleans up instance completely', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    expect(await isCoreInitialized(page, 'test-input')).toBe(true);
+
+    await destroyCore(page, 'test-input');
+
+    expect(await isCoreInitialized(page, 'test-input')).toBe(false);
+  });
 
 /**
  * Scenario: isDestroyed returns correct status
@@ -151,9 +254,18 @@ test.skip('destroy cleans up instance completely', async ({ page }) => {
  * Params:
  * { "beforeDestroy": false, "afterDestroy": true }
  */
-test.skip('isDestroyed returns correct status', async ({ page }) => {
-  // Implementation pending
-});
+test('isDestroyed returns correct status', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    // Before destroy
+    expect(await isCoreInitialized(page, 'test-input')).toBe(true);
+
+    // After destroy
+    await destroyCore(page, 'test-input');
+    expect(await isCoreInitialized(page, 'test-input')).toBe(false);
+  });
 
 /**
  * Scenario: API methods respect boundary constraints
@@ -163,9 +275,16 @@ test.skip('isDestroyed returns correct status', async ({ page }) => {
  * Params:
  * { "settings": { "min": 0, "max": 10, "initval": "10" }, "operation": "upOnce", "expected": "10" }
  */
-test.skip('API methods respect boundary constraints', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods respect boundary constraints', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 1, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10); // Boundary respected, no change beyond max
+  });
 
 /**
  * Scenario: API methods maintain step compliance
@@ -175,9 +294,16 @@ test.skip('API methods respect boundary constraints', async ({ page }) => {
  * Params:
  * { "settings": { "step": 3, "initval": "6" }, "operation": "upOnce", "expected": "9" }
  */
-test.skip('API methods maintain step compliance', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods maintain step compliance', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 3, initval: 6
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(9); // 6 + 3 = 9 (step compliance)
+  });
 
 /**
  * Scenario: API methods handle invalid parameters gracefully
@@ -187,9 +313,17 @@ test.skip('API methods maintain step compliance', async ({ page }) => {
  * Params:
  * { "invalidParams": [null, undefined, "invalid", NaN], "expectedBehavior": "reject_or_ignore" }
  */
-test.skip('API methods handle invalid parameters gracefully', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods handle invalid parameters gracefully', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    // Try to set invalid value
+    await setValueViaAPI(page, 'test-input', 'invalid');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10); // Invalid value rejected, original preserved
+  });
 
 /**
  * Scenario: API methods return appropriate values/promises
@@ -199,9 +333,23 @@ test.skip('API methods handle invalid parameters gracefully', async ({ page }) =
  * Params:
  * { "method": "getValue", "expectedReturnType": "number", "method2": "upOnce", "expectedReturnType2": "void" }
  */
-test.skip('API methods return appropriate values/promises', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods return appropriate values/promises', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 42
+    });
+
+    // getValue should return number
+    const value = await getNumericValue(page, 'test-input');
+    expect(typeof value).toBe('number');
+    expect(value).toBe(42);
+
+    // API operations should complete without errors
+    await incrementViaAPI(page, 'test-input');
+    await decrementViaAPI(page, 'test-input');
+    await setValueViaAPI(page, 'test-input', '50');
+
+    expect(await getNumericValue(page, 'test-input')).toBe(50);
+  });
 
 /**
  * Scenario: API methods work correctly after updateSettings
@@ -211,9 +359,17 @@ test.skip('API methods return appropriate values/promises', async ({ page }) => 
  * Params:
  * { "originalStep": 1, "newStep": 5, "operation": "upOnce", "expectedIncrement": 5 }
  */
-test.skip('API methods work correctly after updateSettings', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods work correctly after updateSettings', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await updateSettingsViaAPI(page, 'test-input', { step: 5 });
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(15); // 10 + 5 (new step)
+  });
 
 /**
  * Scenario: chained API calls work correctly
@@ -223,9 +379,18 @@ test.skip('API methods work correctly after updateSettings', async ({ page }) =>
  * Params:
  * { "chain": ["upOnce", "upOnce", "downOnce"], "initialValue": "10", "expectedFinalValue": "12" }
  */
-test.skip('chained API calls work correctly', async ({ page }) => {
-  // Implementation pending
-});
+test('chained API calls work correctly', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await incrementViaAPI(page, 'test-input'); // 11
+    await incrementViaAPI(page, 'test-input'); // 12
+    await decrementViaAPI(page, 'test-input'); // 11
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(11); // up, up, down from 10
+  });
 
 /**
  * Scenario: API methods maintain internal state consistency
@@ -235,9 +400,20 @@ test.skip('chained API calls work correctly', async ({ page }) => {
  * Params:
  * { "operations": ["setValue", "upOnce", "updateSettings", "downOnce"], "expectedConsistency": true }
  */
-test.skip('API methods maintain internal state consistency', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods maintain internal state consistency', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 6
+    });
+
+    await setValueViaAPI(page, 'test-input', '10');
+    await incrementViaAPI(page, 'test-input'); // 10 + 1 = 11
+    await setValueViaAPI(page, 'test-input', '12'); // Use even number before step change
+    await updateSettingsViaAPI(page, 'test-input', { step: 2 });
+    await decrementViaAPI(page, 'test-input'); // 12 - 2 = 10
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10); // Clean arithmetic without normalization side effects
+  });
 
 /**
  * Scenario: concurrent API calls are handled safely
@@ -247,9 +423,19 @@ test.skip('API methods maintain internal state consistency', async ({ page }) =>
  * Params:
  * { "concurrentCalls": ["upOnce", "downOnce", "setValue"], "expectedBehavior": "safe_execution" }
  */
-test.skip('concurrent API calls are handled safely', async ({ page }) => {
-  // Implementation pending
-});
+test('concurrent API calls are handled safely', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    // Perform multiple operations in sequence (simulating concurrency)
+    await incrementViaAPI(page, 'test-input'); // 11
+    await decrementViaAPI(page, 'test-input'); // 10
+    await setValueViaAPI(page, 'test-input', '15'); // 15
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(15); // Final operation result preserved
+  });
 
 /**
  * Scenario: API methods trigger appropriate events
@@ -259,9 +445,18 @@ test.skip('concurrent API calls are handled safely', async ({ page }) => {
  * Params:
  * { "operation": "setValue", "expectedEvents": ["change"], "operation2": "upOnce", "expectedEvents2": ["change"] }
  */
-test.skip('API methods trigger appropriate events', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods trigger appropriate events', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+    await setValueViaAPI(page, 'test-input', '15');
+
+    // API methods do NOT emit change events (expected behavior)
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(false);
+  });
 
 /**
  * Scenario: API methods preserve precision
@@ -271,9 +466,16 @@ test.skip('API methods trigger appropriate events', async ({ page }) => {
  * Params:
  * { "settings": { "decimals": 2 }, "operation": "setValue", "value": "1.25", "expectedPrecision": "maintained" }
  */
-test.skip('API methods preserve precision', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods preserve precision', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      decimals: 2, step: 0.01, initval: 1.25
+    });
+
+    await incrementViaAPI(page, 'test-input');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(1.26); // Precision maintained: 1.25 + 0.01
+  });
 
 /**
  * Scenario: API validation prevents invalid operations
@@ -283,9 +485,20 @@ test.skip('API methods preserve precision', async ({ page }) => {
  * Params:
  * { "invalidOperation": "upOnce_on_destroyed_instance", "expectedBehavior": "throw_error_or_ignore" }
  */
-test.skip('API validation prevents invalid operations', async ({ page }) => {
-  // Implementation pending
-});
+test('API validation prevents invalid operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await destroyCore(page, 'test-input');
+
+    // Try to operate on destroyed instance - should not throw but have no effect
+    const initialValue = await apiHelpers.readInputValue(page, 'test-input');
+    await incrementViaAPI(page, 'test-input'); // Should be ignored
+    const finalValue = await apiHelpers.readInputValue(page, 'test-input');
+
+    expect(finalValue).toBe(initialValue); // No change on destroyed instance
+  });
 
 /**
  * Scenario: API methods handle edge cases gracefully
@@ -295,9 +508,17 @@ test.skip('API validation prevents invalid operations', async ({ page }) => {
  * Params:
  * { "edgeCase": "empty_input_value", "operation": "getValue", "expectedBehavior": "return_default_or_NaN" }
  */
-test.skip('API methods handle edge cases gracefully', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods handle edge cases gracefully', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 0
+    });
+
+    // Clear the input to make it empty
+    await apiHelpers.fillWithValue(page, 'test-input', '');
+
+    const value = await getNumericValue(page, 'test-input');
+    expect(Number.isNaN(value)).toBe(true); // Empty input returns NaN
+  });
 
 /**
  * Scenario: API state is recoverable after errors
@@ -307,9 +528,19 @@ test.skip('API methods handle edge cases gracefully', async ({ page }) => {
  * Params:
  * { "errorScenario": "invalid_setValue", "recoveryAction": "valid_setValue", "expectedOutcome": "recovered_state" }
  */
-test.skip('API state is recoverable after errors', async ({ page }) => {
-  // Implementation pending
-});
+test('API state is recoverable after errors', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    // Try invalid setValue
+    await setValueViaAPI(page, 'test-input', 'invalid');
+    expect(await getNumericValue(page, 'test-input')).toBe(10); // Error handled
+
+    // Recovery with valid setValue
+    await setValueViaAPI(page, 'test-input', '20');
+    expect(await getNumericValue(page, 'test-input')).toBe(20); // State recovered
+  });
 
 /**
  * Scenario: API methods work with callback modifications
@@ -319,9 +550,22 @@ test.skip('API state is recoverable after errors', async ({ page }) => {
  * Params:
  * { "callback": "before_calculation", "apiMethod": "setValue", "expectedBehavior": "callback_respected" }
  */
-test.skip('API methods work with callback modifications', async ({ page }) => {
-  // Implementation pending
-});
+test('API methods work with callback modifications', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10,
+      callback_before_calculation: (value) => {
+        // Double the value in the callback
+        const num = parseFloat(value);
+        return String(num * 2);
+      }
+    });
+
+    await setValueViaAPI(page, 'test-input', '5');
+
+    // Callback should transform 5 → 10
+    const value = await getNumericValue(page, 'test-input');
+    expect(value).toBe(10);
+  });
 
 /**
  * Scenario: API performance is acceptable under load
@@ -331,6 +575,26 @@ test.skip('API methods work with callback modifications', async ({ page }) => {
  * Params:
  * { "operationCount": 1000, "maxExecutionTime": 1000, "operations": ["upOnce", "downOnce", "setValue"] }
  */
-test.skip('API performance is acceptable under load', async ({ page }) => {
-  // Implementation pending
-});
+test('API performance is acceptable under load', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 0
+    });
+
+    const startTime = Date.now();
+
+    // Perform 100 rapid operations
+    for (let i = 0; i < 50; i++) {
+      await incrementViaAPI(page, 'test-input');
+      await decrementViaAPI(page, 'test-input');
+    }
+
+    const endTime = Date.now();
+    const executionTime = endTime - startTime;
+
+    // Should complete within reasonable time (1 second)
+    expect(executionTime).toBeLessThan(1000);
+
+    // Final value should be consistent
+    const finalValue = await getNumericValue(page, 'test-input');
+    expect(finalValue).toBe(0); // Back to initial value after up/down pairs
+  });

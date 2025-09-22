@@ -21,8 +21,8 @@ export interface TouchSpinCoreOptions {
     callback_before_calculation?: TouchSpinCalcCallback;
     callback_after_calculation?: TouchSpinCalcCallback;
     renderer?: RendererConstructor | null | undefined;
-    initval?: string;
-    replacementval?: string;
+    initval?: string | number;
+    replacementval?: string | number;
     mousewheel?: boolean;
     verticalbuttons?: boolean;
     verticalup?: string;

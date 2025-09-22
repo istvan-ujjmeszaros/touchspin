@@ -29,8 +29,8 @@ export interface TouchSpinCoreOptions {
   callback_after_calculation?: TouchSpinCalcCallback;
   // Renderer constructor (e.g., Bootstrap5Renderer) or null for no UI
   renderer?: RendererConstructor | null | undefined;
-  initval?: string;
-  replacementval?: string;
+  initval?: string | number;
+  replacementval?: string | number;
   mousewheel?: boolean;
   verticalbuttons?: boolean;
   verticalup?: string;
@@ -299,7 +299,7 @@ export class TouchSpinCore {
     // Set initial value if specified and input is empty
     const initVal = this.settings.initval ?? '';
     if (initVal !== '' && this.input.value === '') {
-      this.input.value = initVal;
+      this.input.value = String(initVal);
     }
 
     // Core always handles these for the input
@@ -700,7 +700,7 @@ export class TouchSpinCore {
     let raw = this.input.value;
     const repl = this.settings.replacementval ?? '';
     if (raw === '' && repl !== '') {
-      raw = repl;
+      raw = String(repl);
     }
     if (raw === '') return NaN;
     const before = this.settings.callback_before_calculation || ((v) => v);

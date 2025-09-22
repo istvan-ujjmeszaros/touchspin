@@ -5,20 +5,20 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] emits change event on value increment
- * [ ] emits change event on value decrement
- * [ ] emits change event on blur with value change
- * [ ] does not emit change event on blur without value change
- * [ ] does not emit change event during initialization
- * [ ] emits touchspin.on.startspin when user-triggered spinning starts
- * [ ] emits touchspin.on.stopspin when user-triggered spinning stops
+ * [x] emits change event on value increment
+ * [x] emits change event on value decrement
+ * [x] emits change event on blur with value change
+ * [x] does not emit change event on blur without value change
+ * [x] does not emit change event during initialization
+ * [x] emits touchspin.on.startspin when user-triggered spinning starts
+ * [x] emits touchspin.on.stopspin when user-triggered spinning stops
  * [ ] emits touchspin.on.startupspin when up spinning starts
  * [ ] emits touchspin.on.stopupspin when up spinning stops
  * [ ] emits touchspin.on.startdownspin when down spinning starts
  * [ ] emits touchspin.on.stopdownspin when down spinning stops
  * [ ] emits touchspin.on.min when minimum value is reached
  * [ ] emits touchspin.on.max when maximum value is reached
- * [ ] does not emit start/stop spin events for API operations
+ * [x] does not emit start/stop spin events for API operations
  * [ ] maintains correct event order during complex operations
  * [ ] handles event listener cleanup on destroy
  * [ ] supports custom event data in event objects
@@ -38,8 +38,30 @@
  * [ ] handles event emission errors gracefully
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import {
+  initializeTouchspin,
+  incrementViaAPI,
+  decrementViaAPI,
+  setValueViaAPI,
+  getNumericValue,
+  startUpSpinViaAPI,
+  startDownSpinViaAPI,
+  stopSpinViaAPI
+} from '../../test-helpers/core-adapter';
+
+test.describe('Core event system and emission', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+    await apiHelpers.clearEventLog(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
 
 /**
  * Scenario: emits change event on value increment
@@ -49,9 +71,19 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "settings": { "initval": "5" }, "operation": "increment", "expectedEvents": ["change"] }
  */
-test.skip('emits change event on value increment', async ({ page }) => {
-  // Implementation pending
-});
+test('emits change event on value increment', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard) should emit change events
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits change event on value decrement
@@ -61,9 +93,19 @@ test.skip('emits change event on value increment', async ({ page }) => {
  * Params:
  * { "settings": { "initval": "5" }, "operation": "decrement", "expectedEvents": ["change"] }
  */
-test.skip('emits change event on value decrement', async ({ page }) => {
-  // Implementation pending
-});
+test('emits change event on value decrement', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard) should emit change events
+    await apiHelpers.pressDownArrowKeyOnInput(page, 'test-input');
+
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits change event on blur with value change
@@ -73,9 +115,17 @@ test.skip('emits change event on value decrement', async ({ page }) => {
  * Params:
  * { "initialValue": "5", "newValue": "10", "expectedEvents": ["change"] }
  */
-test.skip('emits change event on blur with value change', async ({ page }) => {
-  // Implementation pending
-});
+test('emits change event on blur with value change', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+    await apiHelpers.fillWithValueAndBlur(page, 'test-input', '10');
+
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+  });
 
 /**
  * Scenario: does not emit change event on blur without value change
@@ -85,9 +135,21 @@ test.skip('emits change event on blur with value change', async ({ page }) => {
  * Params:
  * { "value": "5", "operation": "blur_without_change", "expectedEvents": [] }
  */
-test.skip('does not emit change event on blur without value change', async ({ page }) => {
-  // Implementation pending
-});
+test('does not emit change event on blur without value change', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Focus and blur without changing value
+    const input = page.getByTestId('test-input');
+    await input.focus();
+    await input.blur();
+
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(false);
+  });
 
 /**
  * Scenario: does not emit change event during initialization
@@ -97,9 +159,16 @@ test.skip('does not emit change event on blur without value change', async ({ pa
  * Params:
  * { "settings": { "initval": "42" }, "expectedEvents": [] }
  */
-test.skip('does not emit change event during initialization', async ({ page }) => {
-  // Implementation pending
-});
+test('does not emit change event during initialization', async ({ page }) => {
+    await apiHelpers.clearEventLog(page);
+
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 42
+    });
+
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(false); // No change event during initialization
+  });
 
 /**
  * Scenario: emits touchspin.on.startspin when user-triggered spinning starts
@@ -109,9 +178,19 @@ test.skip('does not emit change event during initialization', async ({ page }) =
  * Params:
  * { "trigger": "keyboard_hold", "expectedEvents": ["touchspin.on.startspin"] }
  */
-test.skip('emits touchspin.on.startspin when user-triggered spinning starts', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.startspin when user-triggered spinning starts', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold) should emit start spin events
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStartSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin');
+    expect(hasStartSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.stopspin when user-triggered spinning stops
@@ -121,9 +200,19 @@ test.skip('emits touchspin.on.startspin when user-triggered spinning starts', as
  * Params:
  * { "trigger": "keyboard_release", "expectedEvents": ["touchspin.on.stopspin"] }
  */
-test.skip('emits touchspin.on.stopspin when user-triggered spinning stops', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.stopspin when user-triggered spinning stops', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold and release) should emit stop spin events
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStopSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin');
+    expect(hasStopSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.startupspin when up spinning starts
@@ -205,9 +294,23 @@ test.skip('emits touchspin.on.max when maximum value is reached', async ({ page 
  * Params:
  * { "operation": "api_increment", "forbiddenEvents": ["touchspin.on.startspin", "touchspin.on.stopspin"] }
  */
-test.skip('does not emit start/stop spin events for API operations', async ({ page }) => {
-  // Implementation pending
-});
+test('does not emit start/stop spin events for API operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // API operations should NOT emit spin events
+    await startUpSpinViaAPI(page, 'test-input');
+    await stopSpinViaAPI(page, 'test-input');
+
+    const hasStartSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin');
+    const hasStopSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin');
+
+    expect(hasStartSpinEvent).toBe(false);
+    expect(hasStopSpinEvent).toBe(false);
+  });
 
 /**
  * Scenario: maintains correct event order during complex operations
@@ -411,4 +514,6 @@ test.skip('maintains event backward compatibility', async ({ page }) => {
  */
 test.skip('handles event emission errors gracefully', async ({ page }) => {
   // Implementation pending
+});
+
 });
