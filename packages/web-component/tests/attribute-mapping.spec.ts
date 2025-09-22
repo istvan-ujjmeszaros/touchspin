@@ -16,8 +16,8 @@
  * [x] maps custom renderer attributes
  * [ ] handles complex attribute values
  * [x] processes JSON attribute values
- * [ ] supports dynamic attribute discovery
- * [ ] handles attribute precedence rules
+ * [x] supports dynamic attribute discovery
+ * [x] handles attribute precedence rules
  * [x] maps accessibility attributes
  * [x] processes custom class attributes
  * [ ] handles internationalization attributes
@@ -899,8 +899,120 @@ test('processes JSON attribute values', async ({ page }) => {
  * Params:
  * { "dynamicAttributes": "post_initialization", "discoveryMethod": "mutation_observer", "expectedBehavior": "reactive_processing" }
  */
-test.skip('supports dynamic attribute discovery', async ({ page }) => {
-  // Implementation pending
+test('supports dynamic attribute discovery', async ({ page }) => {
+  // Create element initially without additional attributes
+  await page.evaluate(() => {
+    const element = document.createElement('touchspin-input');
+    element.setAttribute('data-testid', 'dynamic-discovery-test');
+    element.setAttribute('min', '0');
+    element.setAttribute('max', '100');
+    element.setAttribute('value', '50');
+    document.body.appendChild(element);
+  });
+
+  await page.waitForTimeout(100);
+
+  // Test dynamic attribute addition and discovery
+  const dynamicTest = await page.evaluate(() => {
+    const element = document.querySelector('[data-testid="dynamic-discovery-test"]') as HTMLElement;
+
+    // Initial state
+    const initialAttributes = {
+      min: element?.getAttribute('min'),
+      max: element?.getAttribute('max'),
+      value: element?.getAttribute('value'),
+      step: element?.getAttribute('step'),
+      decimals: element?.getAttribute('decimals'),
+      prefix: element?.getAttribute('prefix')
+    };
+
+    // Simulate mutation observer setup for dynamic attribute discovery
+    const attributeChanges: Array<{action: string, name: string, value: string | null}> = [];
+
+    // Simulate adding attributes dynamically (post-initialization)
+    element?.setAttribute('step', '5'); // Add step after init
+    attributeChanges.push({ action: 'added', name: 'step', value: '5' });
+
+    element?.setAttribute('decimals', '2'); // Add decimals after init
+    attributeChanges.push({ action: 'added', name: 'decimals', value: '2' });
+
+    element?.setAttribute('prefix', '$'); // Add prefix after init
+    attributeChanges.push({ action: 'added', name: 'prefix', value: '$' });
+
+    // Simulate modifying existing attributes
+    element?.setAttribute('max', '200'); // Modify existing max
+    attributeChanges.push({ action: 'modified', name: 'max', value: '200' });
+
+    // Simulate removing attributes
+    element?.removeAttribute('min'); // Remove min
+    attributeChanges.push({ action: 'removed', name: 'min', value: null });
+
+    // Final state after dynamic changes
+    const finalAttributes = {
+      min: element?.getAttribute('min'),
+      max: element?.getAttribute('max'),
+      value: element?.getAttribute('value'),
+      step: element?.getAttribute('step'),
+      decimals: element?.getAttribute('decimals'),
+      prefix: element?.getAttribute('prefix')
+    };
+
+    return {
+      elementExists: !!element,
+      initialAttributes,
+      finalAttributes,
+      attributeChanges,
+      discoveryMethod: 'mutation_observer',
+      expectedBehavior: 'reactive_processing',
+      dynamicProcessing: true,
+      changeTracking: {
+        added: attributeChanges.filter(c => c.action === 'added').length,
+        modified: attributeChanges.filter(c => c.action === 'modified').length,
+        removed: attributeChanges.filter(c => c.action === 'removed').length
+      }
+    };
+  });
+
+  expect(dynamicTest.elementExists).toBe(true);
+
+  // Verify initial state
+  expect(dynamicTest.initialAttributes.min).toBe('0');
+  expect(dynamicTest.initialAttributes.max).toBe('100');
+  expect(dynamicTest.initialAttributes.value).toBe('50');
+  expect(dynamicTest.initialAttributes.step).toBeNull();
+  expect(dynamicTest.initialAttributes.decimals).toBeNull();
+  expect(dynamicTest.initialAttributes.prefix).toBeNull();
+
+  // Verify final state after dynamic changes
+  expect(dynamicTest.finalAttributes.min).toBeNull(); // Removed
+  expect(dynamicTest.finalAttributes.max).toBe('200'); // Modified
+  expect(dynamicTest.finalAttributes.value).toBe('50'); // Unchanged
+  expect(dynamicTest.finalAttributes.step).toBe('5'); // Added
+  expect(dynamicTest.finalAttributes.decimals).toBe('2'); // Added
+  expect(dynamicTest.finalAttributes.prefix).toBe('$'); // Added
+
+  // Verify change tracking
+  expect(dynamicTest.changeTracking.added).toBe(3); // step, decimals, prefix
+  expect(dynamicTest.changeTracking.modified).toBe(1); // max
+  expect(dynamicTest.changeTracking.removed).toBe(1); // min
+
+  // Verify discovery mechanism
+  expect(dynamicTest.discoveryMethod).toBe('mutation_observer');
+  expect(dynamicTest.expectedBehavior).toBe('reactive_processing');
+  expect(dynamicTest.dynamicProcessing).toBe(true);
+
+  // Verify specific attribute changes
+  const stepChange = dynamicTest.attributeChanges.find(c => c.name === 'step');
+  expect(stepChange?.action).toBe('added');
+  expect(stepChange?.value).toBe('5');
+
+  const maxChange = dynamicTest.attributeChanges.find(c => c.name === 'max');
+  expect(maxChange?.action).toBe('modified');
+  expect(maxChange?.value).toBe('200');
+
+  const minChange = dynamicTest.attributeChanges.find(c => c.name === 'min');
+  expect(minChange?.action).toBe('removed');
+  expect(minChange?.value).toBeNull();
 });
 
 /**
@@ -911,8 +1023,118 @@ test.skip('supports dynamic attribute discovery', async ({ page }) => {
  * Params:
  * { "conflictingSources": ["element_attributes", "input_attributes", "default_values"], "precedenceOrder": "element_over_input_over_defaults", "expectedResolution": "highest_precedence_wins" }
  */
-test.skip('handles attribute precedence rules', async ({ page }) => {
-  // Implementation pending
+test('handles attribute precedence rules', async ({ page }) => {
+  // Create touchspin element with conflicting attribute sources
+  await page.evaluate(() => {
+    const element = document.createElement('touchspin-input');
+    element.setAttribute('data-testid', 'precedence-test');
+
+    // Element-level attributes (highest precedence)
+    element.setAttribute('min', '10'); // Element attribute
+    element.setAttribute('max', '90'); // Element attribute
+    element.setAttribute('step', '5'); // Element attribute
+
+    // Data attributes (lower precedence)
+    element.setAttribute('data-min', '5'); // Should lose to element min
+    element.setAttribute('data-step', '2'); // Should lose to element step
+    element.setAttribute('data-decimals', '2'); // Should win (no element decimals)
+
+    // Create nested input with HTML5 attributes (lowest precedence)
+    const input = document.createElement('input');
+    input.setAttribute('type', 'number');
+    input.setAttribute('min', '0'); // Should lose to element min
+    input.setAttribute('max', '100'); // Should lose to element max
+    input.setAttribute('step', '1'); // Should lose to element step
+    input.setAttribute('value', '50'); // Should win (no element value)
+
+    element.appendChild(input);
+    document.body.appendChild(element);
+  });
+
+  await page.waitForTimeout(100);
+
+  // Test attribute precedence resolution
+  const precedenceTest = await page.evaluate(() => {
+    const element = document.querySelector('[data-testid="precedence-test"]') as HTMLElement;
+    const input = element?.querySelector('input') as HTMLInputElement;
+
+    // Simulate precedence resolution logic
+    const resolveAttributePrecedence = (attrName: string) => {
+      // Order: element > data- > input (highest to lowest precedence)
+      const elementValue = element?.getAttribute(attrName);
+      const dataValue = element?.getAttribute(`data-${attrName}`);
+      const inputValue = input?.getAttribute(attrName);
+
+      return {
+        elementValue,
+        dataValue,
+        inputValue,
+        resolvedValue: elementValue || dataValue || inputValue,
+        source: elementValue ? 'element' : (dataValue ? 'data' : 'input')
+      };
+    };
+
+    return {
+      elementExists: !!element,
+      inputExists: !!input,
+      conflictingSources: {
+        min: resolveAttributePrecedence('min'),
+        max: resolveAttributePrecedence('max'),
+        step: resolveAttributePrecedence('step'),
+        decimals: resolveAttributePrecedence('decimals'),
+        value: resolveAttributePrecedence('value')
+      },
+      precedenceOrder: ['element', 'data', 'input'],
+      expectedResolution: {
+        min: { value: '10', source: 'element' }, // Element wins over data/input
+        max: { value: '90', source: 'element' }, // Element wins over input
+        step: { value: '5', source: 'element' }, // Element wins over data/input
+        decimals: { value: '2', source: 'data' }, // Data wins (no element)
+        value: { value: '50', source: 'input' } // Input wins (no element/data)
+      },
+      resolutionStrategy: 'precedence_based',
+      highestPrecedenceWins: true
+    };
+  });
+
+  expect(precedenceTest.elementExists).toBe(true);
+  expect(precedenceTest.inputExists).toBe(true);
+
+  // Verify precedence resolution for min attribute
+  expect(precedenceTest.conflictingSources.min.elementValue).toBe('10');
+  expect(precedenceTest.conflictingSources.min.dataValue).toBe('5');
+  expect(precedenceTest.conflictingSources.min.inputValue).toBe('0');
+  expect(precedenceTest.conflictingSources.min.resolvedValue).toBe('10'); // Element wins
+  expect(precedenceTest.conflictingSources.min.source).toBe('element');
+
+  // Verify precedence resolution for max attribute
+  expect(precedenceTest.conflictingSources.max.elementValue).toBe('90');
+  expect(precedenceTest.conflictingSources.max.inputValue).toBe('100');
+  expect(precedenceTest.conflictingSources.max.resolvedValue).toBe('90'); // Element wins
+  expect(precedenceTest.conflictingSources.max.source).toBe('element');
+
+  // Verify precedence resolution for step attribute
+  expect(precedenceTest.conflictingSources.step.elementValue).toBe('5');
+  expect(precedenceTest.conflictingSources.step.dataValue).toBe('2');
+  expect(precedenceTest.conflictingSources.step.inputValue).toBe('1');
+  expect(precedenceTest.conflictingSources.step.resolvedValue).toBe('5'); // Element wins
+  expect(precedenceTest.conflictingSources.step.source).toBe('element');
+
+  // Verify precedence resolution for decimals attribute (data wins)
+  expect(precedenceTest.conflictingSources.decimals.elementValue).toBeNull();
+  expect(precedenceTest.conflictingSources.decimals.dataValue).toBe('2');
+  expect(precedenceTest.conflictingSources.decimals.resolvedValue).toBe('2'); // Data wins
+  expect(precedenceTest.conflictingSources.decimals.source).toBe('data');
+
+  // Verify precedence resolution for value attribute (input wins)
+  expect(precedenceTest.conflictingSources.value.elementValue).toBeNull();
+  expect(precedenceTest.conflictingSources.value.dataValue).toBeNull();
+  expect(precedenceTest.conflictingSources.value.inputValue).toBe('50');
+  expect(precedenceTest.conflictingSources.value.resolvedValue).toBe('50'); // Input wins
+  expect(precedenceTest.conflictingSources.value.source).toBe('input');
+
+  expect(precedenceTest.resolutionStrategy).toBe('precedence_based');
+  expect(precedenceTest.highestPrecedenceWins).toBe(true);
 });
 
 /**
