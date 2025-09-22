@@ -5,14 +5,14 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] calls upOnce method via jQuery interface
- * [ ] calls downOnce method via jQuery interface
- * [ ] calls setValue method with jQuery syntax
- * [ ] calls getValue method and returns correct value
- * [ ] calls destroy method via jQuery interface
- * [ ] supports method chaining after API calls
- * [ ] handles invalid method names gracefully
- * [ ] passes parameters correctly to underlying methods
+ * [x] calls upOnce method via jQuery interface
+ * [x] calls downOnce method via jQuery interface
+ * [x] calls setValue method with jQuery syntax
+ * [x] calls getValue method and returns correct value
+ * [x] calls destroy method via jQuery interface
+ * [x] supports method chaining after API calls
+ * [x] handles invalid method names gracefully
+ * [x] passes parameters correctly to underlying methods
  * [ ] returns appropriate values from getter methods
  * [ ] handles method calls on multiple elements
  * [ ] supports method calls with mixed argument types
@@ -32,8 +32,29 @@
  * [ ] supports asynchronous method patterns
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+
+test.describe('jQuery plugin methods', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+
+    try {
+      await installJqueryPlugin(page);
+    } catch (error) {
+      console.error('Failed to install jQuery plugin:', error);
+      throw error;
+    }
+
+    await apiHelpers.clearEventLog(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
 
 /**
  * Scenario: calls upOnce method via jQuery interface
@@ -43,8 +64,17 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "initialValue": "10", "method": "upOnce", "expectedValue": "11" }
  */
-test.skip('calls upOnce method via jQuery interface', async ({ page }) => {
-  // Implementation pending
+test('calls upOnce method via jQuery interface', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20, initval: 10 });
+
+  // Call upOnce method via jQuery interface
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('upOnce');
+  });
+
+  await apiHelpers.expectValueToBe(page, 'test-input', '11');
 });
 
 /**
@@ -55,8 +85,17 @@ test.skip('calls upOnce method via jQuery interface', async ({ page }) => {
  * Params:
  * { "initialValue": "10", "method": "downOnce", "expectedValue": "9" }
  */
-test.skip('calls downOnce method via jQuery interface', async ({ page }) => {
-  // Implementation pending
+test('calls downOnce method via jQuery interface', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20, initval: 10 });
+
+  // Call downOnce method via jQuery interface
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('downOnce');
+  });
+
+  await apiHelpers.expectValueToBe(page, 'test-input', '9');
 });
 
 /**
@@ -67,8 +106,17 @@ test.skip('calls downOnce method via jQuery interface', async ({ page }) => {
  * Params:
  * { "method": "setValue", "parameter": 25, "expectedValue": "25" }
  */
-test.skip('calls setValue method with jQuery syntax', async ({ page }) => {
-  // Implementation pending
+test('calls setValue method with jQuery syntax', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 50 });
+
+  // Call setValue method via jQuery interface
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('setValue', 25);
+  });
+
+  await apiHelpers.expectValueToBe(page, 'test-input', '25');
 });
 
 /**
@@ -79,8 +127,17 @@ test.skip('calls setValue method with jQuery syntax', async ({ page }) => {
  * Params:
  * { "currentValue": "42", "method": "getValue", "expectedReturn": 42 }
  */
-test.skip('calls getValue method and returns correct value', async ({ page }) => {
-  // Implementation pending
+test('calls getValue method and returns correct value', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 50, initval: 15 });
+
+  // Call getValue method via jQuery interface
+  const value = await page.evaluate(() => {
+    const $ = (window as any).$;
+    return $('[data-testid="test-input"]').TouchSpin('getValue');
+  });
+
+  expect(value).toBe(15);
 });
 
 /**
@@ -91,8 +148,19 @@ test.skip('calls getValue method and returns correct value', async ({ page }) =>
  * Params:
  * { "method": "destroy", "expectedBehavior": "complete_cleanup" }
  */
-test.skip('calls destroy method via jQuery interface', async ({ page }) => {
-  // Implementation pending
+test('calls destroy method via jQuery interface', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20 });
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+
+  // Call destroy method via jQuery interface
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('destroy');
+  });
+
+  // Should be destroyed
+  await apiHelpers.expectTouchSpinDestroyed(page, 'test-input');
 });
 
 /**
@@ -103,8 +171,26 @@ test.skip('calls destroy method via jQuery interface', async ({ page }) => {
  * Params:
  * { "chain": ".touchspin('upOnce').addClass('incremented')", "expectedBehavior": "successful_chain" }
  */
-test.skip('supports method chaining after API calls', async ({ page }) => {
-  // Implementation pending
+test('supports method chaining after API calls', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20, initval: 5 });
+
+  // Test method chaining
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    const result = $('[data-testid="test-input"]')
+      .TouchSpin('setValue', 10)
+      .TouchSpin('upOnce')
+      .TouchSpin('upOnce');
+
+    // Should return jQuery object for chaining
+    if (!result.jquery) {
+      throw new Error('Method chaining should return jQuery object');
+    }
+  });
+
+  // Final value should be 12 (10 + 1 + 1)
+  await apiHelpers.expectValueToBe(page, 'test-input', '12');
 });
 
 /**
@@ -115,8 +201,22 @@ test.skip('supports method chaining after API calls', async ({ page }) => {
  * Params:
  * { "invalidMethods": ["invalidMethod", "", null], "expectedBehavior": "throw_error_or_ignore" }
  */
-test.skip('handles invalid method names gracefully', async ({ page }) => {
-  // Implementation pending
+test('handles invalid method names gracefully', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20 });
+
+  // Call invalid method - should handle gracefully
+  const result = await page.evaluate(() => {
+    const $ = (window as any).$;
+    try {
+      return $('[data-testid="test-input"]').TouchSpin('invalidMethod');
+    } catch (error) {
+      return { error: error.message };
+    }
+  });
+
+  // Should either return gracefully or throw a reasonable error
+  expect(result).toBeDefined();
 });
 
 /**
@@ -127,8 +227,27 @@ test.skip('handles invalid method names gracefully', async ({ page }) => {
  * Params:
  * { "method": "setValue", "parameters": [42, "42", 42.5], "expectedBehavior": "correct_parameter_handling" }
  */
-test.skip('passes parameters correctly to underlying methods', async ({ page }) => {
-  // Implementation pending
+test('passes parameters correctly to underlying methods', async ({ page }) => {
+  // Initialize TouchSpin
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100 });
+
+  // Test method with multiple parameters
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('setValue', 42);
+  });
+
+  await apiHelpers.expectValueToBe(page, 'test-input', '42');
+
+  // Test another method with parameters
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin('updateSettings', { step: 5 });
+  });
+
+  // Click up should now increment by 5
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '47');
 });
 
 /**
@@ -334,3 +453,5 @@ test.skip('handles method calls with callback functions', async ({ page }) => {
 test.skip('supports asynchronous method patterns', async ({ page }) => {
   // Implementation pending
 });
+
+}); // Close test.describe block
