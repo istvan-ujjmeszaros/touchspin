@@ -370,6 +370,86 @@ packages/core/
    import { initializeTouchspin } from '../test-helpers/core-adapter';
    ```
 
+## 🚨 CRITICAL: USE THE FUCKING HELPERS!
+
+### THE GOLDEN RULE: Use Existing Helpers - That's Why We Built Them!
+
+**🎯 We have helpers for EVERYTHING. Stop reinventing the wheel!**
+
+```typescript
+// ✅ CORRECT - Use the helpers we already built
+import * as apiHelpers from '@touchspin/core/test-helpers';
+
+// Want to click up button?
+await apiHelpers.clickUpButton(page, testId);
+
+// Want to get input value?
+const value = await apiHelpers.readInputValue(page, testId);
+
+// Want to fill input?
+await apiHelpers.fillWithValue(page, testId, '50');
+
+// Want to increment via API (Core tests)?
+await apiHelpers.incrementViaAPI(page, testId);
+
+// Want to check if initialized?
+expect(await apiHelpers.isTouchSpinInitialized(page, testId)).toBe(true);
+```
+
+### ABSOLUTELY FORBIDDEN in Test Code:
+
+```typescript
+// ❌ NEVER DO THIS - Use helpers instead!
+document.querySelector('[data-testid="test-input"]')
+page.locator('[data-testid="test-input"]').click()
+document.getElementById('something')
+
+// ❌ NEVER WRITE NEW LOCATOR CODE - Use existing helpers!
+export async function clickUpButton(page: Page, testId: string) {
+  const button = page.locator(`[data-testid="${testId}-up"]`); // WRONG!
+  await button.click();
+}
+```
+
+### ✅ querySelector IS legitimate in these contexts ONLY:
+
+**1. Browser Runtime Context (page.evaluate, page.waitForFunction):**
+```typescript
+// ✅ CORRECT - Inside browser execution context where Playwright locators don't work
+await page.evaluate(({ testId }) => {
+  const input = document.querySelector(`[data-testid="${testId}"]`); // Required here
+  return input.value;
+}, { testId });
+
+await page.waitForFunction(({ testId, expected }) => {
+  const input = document.querySelector(`[data-testid="${testId}"]`); // Required here
+  return input && input.value === expected;
+}, { testId, expected });
+```
+
+**2. Runtime Helper Functions (installDomHelpers.ts, events/setup.ts):**
+```typescript
+// ✅ CORRECT - Browser-side utilities injected into window
+window.__ts = {
+  byId: (id: string) => document.querySelector(`[data-testid="${id}"]`) // Required here
+};
+
+// ✅ CORRECT - Event listeners run in browser context
+document.addEventListener('touchspin.on.max', (e: Event) => {
+  const input = target?.querySelector('input[data-testid]'); // Required here
+}, true);
+```
+
+### Why This Rule is CRITICAL:
+
+1. **We already solved all the problems**: Helpers handle edge cases, retries, error handling
+2. **Consistency**: All tests use the same reliable patterns
+3. **Maintainability**: One place to fix selector issues
+4. **Stop wasting time**: Don't rewrite what already exists and works
+5. **Guard Protection**: Automated guards prevent regressions
+
+**💡 Rule of thumb**: If you're about to write ANY selector code in test files or test helpers, STOP and find the existing helper that does what you need.
+
 ### ✅ Do
 
 ```typescript
