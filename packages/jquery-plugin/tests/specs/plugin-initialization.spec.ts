@@ -12,12 +12,12 @@
  * [x] handles re-initialization gracefully
  * [x] supports settings precedence: data attributes vs options
  * [x] initializes with default settings when no options provided
- * [ ] validates settings object during initialization
- * [ ] handles initialization on hidden elements
- * [ ] initializes correctly after DOM manipulation
- * [ ] supports initialization via data attributes only
- * [ ] handles initialization with invalid selectors
- * [ ] preserves jQuery method chaining after initialization
+ * [x] validates settings object during initialization
+ * [x] handles initialization on hidden elements
+ * [x] initializes correctly after DOM manipulation
+ * [x] supports initialization via data attributes only
+ * [x] handles initialization with invalid selectors
+ * [x] preserves jQuery method chaining after initialization
  * [ ] handles initialization timing issues
  * [ ] supports lazy initialization patterns
  * [ ] handles initialization with mixed element types
@@ -325,8 +325,20 @@ test('initializes with default settings when no options provided', async ({ page
  * Params:
  * { "invalidSettings": { "step": "invalid", "min": "abc" }, "expectedBehavior": "use_defaults" }
  */
-test.skip('validates settings object during initialization', async ({ page }) => {
-  // Implementation pending
+test('validates settings object during initialization', async ({ page }) => {
+  // Use the helper instead of direct jQuery - it handles invalid settings gracefully
+  await initializeTouchspinJQuery(page, 'test-input', {
+    step: 'invalid' as any, // Invalid step type
+    min: 'abc' as any,      // Invalid min type
+    max: null as any        // Invalid max type
+  });
+
+  // Should still initialize successfully with default values
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+
+  // Should fall back to sensible defaults when invalid values provided
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBeGreaterThan(page, 'test-input', 0);
 });
 
 /**
@@ -337,8 +349,21 @@ test.skip('validates settings object during initialization', async ({ page }) =>
  * Params:
  * { "hiddenStyle": "display: none", "expectedBehavior": "successful_init" }
  */
-test.skip('handles initialization on hidden elements', async ({ page }) => {
-  // Implementation pending
+test('handles initialization on hidden elements', async ({ page }) => {
+  // Hide the input element
+  await page.locator('[data-testid="test-input"]').evaluate(el => el.style.display = 'none');
+
+  // Initialize TouchSpin on hidden element using helper
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+  // Should initialize successfully even when hidden
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+
+  // Make visible and verify functionality
+  await page.locator('[data-testid="test-input"]').evaluate(el => el.style.display = '');
+
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '1');
 });
 
 /**
@@ -349,8 +374,26 @@ test.skip('handles initialization on hidden elements', async ({ page }) => {
  * Params:
  * { "domChange": "add_wrapper_div", "initTiming": "after_change" }
  */
-test.skip('initializes correctly after DOM manipulation', async ({ page }) => {
-  // Implementation pending
+test('initializes correctly after DOM manipulation', async ({ page }) => {
+  // Move the input to a different parent
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]');
+    const newParent = document.createElement('div');
+    newParent.id = 'new-parent';
+    document.body.appendChild(newParent);
+    newParent.appendChild(input!);
+  });
+
+  // Initialize TouchSpin after DOM manipulation using helper
+  await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10, initval: 3 });
+
+  // Should initialize successfully in new location
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '3');
+
+  // Test functionality
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '4');
 });
 
 /**
@@ -361,8 +404,29 @@ test.skip('initializes correctly after DOM manipulation', async ({ page }) => {
  * Params:
  * { "dataAttributes": "data-min='0' data-max='100' data-step='5'", "expectedSettings": { "min": 0, "max": 100, "step": 5 } }
  */
-test.skip('supports initialization via data attributes only', async ({ page }) => {
-  // Implementation pending
+test('supports initialization via data attributes only', async ({ page }) => {
+  // Create input with data attributes
+  await apiHelpers.createAdditionalInput(page, 'data-input', {
+    dataAttributes: {
+      'data-min': '5',
+      'data-max': '15',
+      'data-step': '2',
+      'data-initval': '7'
+    }
+  });
+
+  // Initialize without options object - should use data attributes
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="data-input"]').TouchSpin();
+  });
+
+  await apiHelpers.expectTouchSpinInitialized(page, 'data-input');
+  await apiHelpers.expectValueToBe(page, 'data-input', '7');
+
+  // Test that data attributes are respected
+  await apiHelpers.clickUpButton(page, 'data-input');
+  await apiHelpers.expectValueToBe(page, 'data-input', '9'); // step: 2
 });
 
 /**
@@ -373,8 +437,22 @@ test.skip('supports initialization via data attributes only', async ({ page }) =
  * Params:
  * { "invalidSelectors": ["#nonexistent", "", null], "expectedBehavior": "no_error" }
  */
-test.skip('handles initialization with invalid selectors', async ({ page }) => {
-  // Implementation pending
+test('handles initialization with invalid selectors', async ({ page }) => {
+  // Try to initialize on non-existent elements
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    // Should handle gracefully without throwing errors
+    const result = $('#non-existent-element').TouchSpin({ min: 0, max: 10 });
+    expect(result.length).toBe(0);
+  });
+
+  // Original input should still be untouched and can be initialized
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin({ min: 0, max: 10 });
+  });
+
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
 });
 
 /**
@@ -385,8 +463,22 @@ test.skip('handles initialization with invalid selectors', async ({ page }) => {
  * Params:
  * { "chain": ".touchspin().addClass('active').show()", "expectedBehavior": "successful_chain" }
  */
-test.skip('preserves jQuery method chaining after initialization', async ({ page }) => {
-  // Implementation pending
+test('preserves jQuery method chaining after initialization', async ({ page }) => {
+  const chainedResult = await page.evaluate(() => {
+    const $ = (window as any).$;
+    // TouchSpin should return jQuery object for chaining
+    return $('[data-testid="test-input"]')
+      .TouchSpin({ min: 0, max: 10 })
+      .addClass('chained-class')
+      .hasClass('chained-class');
+  });
+
+  expect(chainedResult).toBe(true);
+  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+
+  // Verify the CSS class was actually added
+  const hasClass = await page.locator('[data-testid="test-input"]').getAttribute('class');
+  expect(hasClass).toContain('chained-class');
 });
 
 /**
