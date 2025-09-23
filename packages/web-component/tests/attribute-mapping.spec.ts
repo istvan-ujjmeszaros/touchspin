@@ -2835,3 +2835,5 @@ test('maps framework-specific attributes', async ({ page }) => {
   expect(frameworkTest.processedFrameworks.integrationComplete).toBe(true);
   expect(frameworkTest.frameworkIntegration).toBe(true);
 });
+
+});

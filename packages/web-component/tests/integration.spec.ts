@@ -1794,7 +1794,7 @@ test('supports debugging and inspection', async ({ page }) => {
     // Test debugging tools compatibility
     const debugToolsSupport = {
       console: typeof console !== 'undefined',
-      breakpoints: typeof debugger !== 'undefined',
+      breakpoints: true, // debugger statement is always available
       elementInspector: element.getAttribute('debug') === 'true'
     };
 

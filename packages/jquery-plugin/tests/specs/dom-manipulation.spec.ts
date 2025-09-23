@@ -1211,3 +1211,5 @@ test('handles input focus and tabbing behavior', async ({ page }) => {
   expect(focusBehavior.testFocused).toBe(true);
   expect(focusBehavior.upButtonFocused).toBe(true);
 });
+
+});
