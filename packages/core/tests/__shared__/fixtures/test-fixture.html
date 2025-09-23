@@ -153,7 +153,7 @@
             label.setAttribute('for', id);
 
             const input = document.createElement('input');
-            input.type = 'number';
+            input.type = options.type || 'number';
             input.id = id;
             input.setAttribute('data-testid', id);
             input.className = 'form-control';
@@ -166,6 +166,13 @@
             if (options.step !== undefined) input.step = options.step;
             if (options.disabled) input.disabled = true;
             if (options.readonly) input.readOnly = true;
+            if (options.dataAttributes) {
+                Object.entries(options.dataAttributes).forEach(([attr, value]) => {
+                    if (typeof value === 'string') {
+                        input.setAttribute(attr, value);
+                    }
+                });
+            }
 
             wrapper.appendChild(label);
             wrapper.appendChild(input);

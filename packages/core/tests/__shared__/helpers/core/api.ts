@@ -115,3 +115,20 @@ export async function getPublicAPI(page: Page, testId: string): Promise<TouchSpi
     return window.__ts!.requireCoreByTestId(testId);
   }, { testId });
 }
+
+/**
+ * When I read the applied settings for "{testId}"
+ */
+export async function getAppliedSettings(
+  page: Page,
+  testId: string
+): Promise<TouchSpinCoreOptions> {
+  return page.evaluate(({ testId }) => {
+    const input = window.__ts!.requireInputByTestId(testId) as HTMLInputElement & {
+      _touchSpinCore?: { settings: TouchSpinCoreOptions };
+    };
+    const core = input._touchSpinCore;
+    if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
+    return JSON.parse(JSON.stringify(core.settings)) as TouchSpinCoreOptions;
+  }, { testId });
+}

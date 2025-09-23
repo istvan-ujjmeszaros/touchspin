@@ -15,11 +15,27 @@ export async function createAdditionalInput(
     disabled?: boolean;
     readonly?: boolean;
     label?: string;
+    type?: string;
+    dataAttributes?: Record<string, string>;
   } = {}
 ): Promise<void> {
   await page.evaluate(({ id, opts }) => {
     window.createTestInput?.(id, opts);
   }, { id: testId, opts: options });
+}
+
+export async function setDataAttributes(
+  page: Page,
+  testId: string,
+  dataAttributes: Record<string, string>
+): Promise<void> {
+  await page.evaluate(({ id, attrs }) => {
+    const el = document.querySelector(`[data-testid="${id}"]`) as HTMLElement | null;
+    if (!el) throw new Error(`Element with testId "${id}" not found`);
+    Object.entries(attrs).forEach(([name, value]) => {
+      el.setAttribute(name, value);
+    });
+  }, { id: testId, attrs: dataAttributes });
 }
 
 export async function clearAdditionalInputs(page: Page): Promise<void> {
