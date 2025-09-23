@@ -77,7 +77,7 @@
     "release": "changeset publish",
     "inspect": "node scripts/inspect.mjs",
     "pretest": "yarn guard:tests",
-    "test": "yarn build:test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
+    "test": "PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
     "test:ci": "yarn build:test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
     "typecheck:tests": "tsc -p tsconfig.playwright.json",
     "test:watch": "playwright test --project=chromium --ui",
