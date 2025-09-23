@@ -1,7 +1,6 @@
 # @touchspin/renderer-vanilla
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 
 A vanilla CSS-based renderer for TouchSpin components without framework dependencies.
 
@@ -21,7 +20,7 @@ This renderer extends `AbstractRenderer` and implements the core `Renderer` cont
 ### Alpha Version from NPM
 
 ```bash
-npm install @touchspin/renderer-vanilla@next
+npm install @touchspin/renderer-vanilla
 ```
 
 ## Quick Start
@@ -52,7 +51,7 @@ npm install @touchspin/renderer-vanilla@next
 ### CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0-alpha.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/5.0.0/dist/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/index.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/touchspin-vanilla.css" />
 ```

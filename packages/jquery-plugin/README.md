@@ -1,9 +1,8 @@
 # @touchspin/jquery-plugin
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
 
-jQuery plugin wrapper for TouchSpin that provides **full backward compatibility** with the original Bootstrap TouchSpin jQuery plugin while leveraging the modern core architecture.
+
+jQuery plugin wrapper for TouchSpin that provides **full backward compatibility** with the original TouchSpin jQuery plugin while leveraging the modern core architecture.
 
 ## Overview
 
@@ -22,7 +21,7 @@ This plugin preserves the complete original TouchSpin jQuery API while adding su
 ### Alpha Version from NPM
 
 ```bash
-npm install bootstrap-touchspin@next
+npm install @touchspin/jquery-plugin
 ```
 
 ### ES Modules
@@ -45,13 +44,13 @@ This package provides UMD bundles that include the core, a renderer, and the jQu
 
 ```html
 <!-- For Bootstrap 5 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/5.0.0"></script>
 
 <!-- For Bootstrap 4 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs4.min.js"></script>
 
 <!-- For Bootstrap 3 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/touchspin@5.0.0-alpha.1/dist/touchspin.jquery.bs3.min.js"></script>
 ```
 
 ## Initialization
@@ -310,7 +309,7 @@ installWithRenderer(renderer);
 
 ## Migration from Original TouchSpin
 
-This plugin is a **drop-in replacement** for the original Bootstrap TouchSpin. Simply:
+This plugin is a **drop-in replacement** for the original TouchSpin. Simply:
 
 1. Replace the old script includes with the new ones
 2. Add a renderer (Bootstrap 3/4/5 depending on your framework)

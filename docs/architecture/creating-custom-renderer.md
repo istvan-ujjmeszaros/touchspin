@@ -54,27 +54,21 @@ Your DOM structure must include these data attributes for core event targeting:
 - `data-touchspin-injected="prefix"` - Prefix element (if used)
 - `data-touchspin-injected="postfix"` - Postfix element (if used)
 
-## Complete Material UI Example
+## Generic Custom Renderer Example
 
-Here's a full implementation of a Material UI renderer:
+Here's a simplified example of a custom renderer, focusing on the essential interactions with the core and DOM manipulation, without relying on a specific global UI library.
 
 ```javascript
 import { AbstractRenderer } from '@touchspin/core';
 
-class MaterialRenderer extends AbstractRenderer {
+class CustomRenderer extends AbstractRenderer {
     init() {
         // Initialize internal element references
         this.prefixEl = null;
         this.postfixEl = null;
         
-        // Add Material UI classes to input
-        if (!this.input.classList.contains('mdc-text-field__input')) {
-            this.input.classList.add('mdc-text-field__input');
-            this._materialClassAdded = true;
-        }
-        
-        // Build Material Design structure
-        this.wrapper = this.buildMaterialWrapper();
+        // Build your custom DOM structure
+        this.wrapper = this.buildCustomWrapper();
         
         // Find created elements
         const upButton = this.wrapper.querySelector('[data-touchspin-injected="up"]');
@@ -91,60 +85,36 @@ class MaterialRenderer extends AbstractRenderer {
         this.core.observeSetting('postfix', (value) => this.updatePostfix(value));
         this.core.observeSetting('buttonup_class', (value) => this.updateButtonClass('up', value));
         this.core.observeSetting('buttondown_class', (value) => this.updateButtonClass('down', value));
-        
-        // Initialize Material Design components if library is available
-        if (typeof window.mdc !== 'undefined') {
-            this.initializeMaterialComponents();
-        }
     }
     
     teardown() {
-        // Remove Material UI classes if we added them
-        if (this._materialClassAdded) {
-            this.input.classList.remove('mdc-text-field__input');
-            this._materialClassAdded = false;
-        }
-        
-        // Cleanup Material components
-        if (this.textField) {
-            this.textField.destroy();
-        }
-        
+        // Custom cleanup specific to your renderer
         super.teardown();
     }
     
-    buildMaterialWrapper() {
+    buildCustomWrapper() {
         const testidAttr = this.getWrapperTestId();
         
         const html = `
-            <div class="mdc-text-field mdc-text-field--outlined touchspin-material" 
+            <div class="custom-touchspin-wrapper" 
                  data-touchspin-injected="wrapper"${testidAttr}>
-                <span class="mdc-text-field__prefix touchspin-prefix" 
+                <span class="custom-touchspin-prefix" 
                       data-touchspin-injected="prefix"${this.getPrefixTestId()}>
                     ${this.settings.prefix || ''}
                 </span>
-                <span class="mdc-notched-outline">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__notch">
-                        <span class="mdc-floating-label">Value</span>
-                    </span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <div class="touchspin-controls">
-                    <button class="${this.settings.buttondown_class || 'mdc-button mdc-button--dense'} touchspin-down" 
+                <div class="custom-touchspin-controls">
+                    <button class="${this.settings.buttondown_class || 'custom-button'} custom-touchspin-down" 
                             data-touchspin-injected="down"${this.getDownButtonTestId()} 
                             type="button" aria-label="Decrease value">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">${this.settings.buttondown_txt || '−'}</span>
+                        ${this.settings.buttondown_txt || '−'}
                     </button>
-                    <button class="${this.settings.buttonup_class || 'mdc-button mdc-button--dense'} touchspin-up" 
+                    <button class="${this.settings.buttonup_class || 'custom-button'} custom-touchspin-up" 
                             data-touchspin-injected="up"${this.getUpButtonTestId()} 
                             type="button" aria-label="Increase value">
-                        <span class="mdc-button__ripple"></span>
-                        <span class="mdc-button__label">${this.settings.buttonup_txt || '+'}</span>
+                        ${this.settings.buttonup_txt || '+'}
                     </button>
                 </div>
-                <span class="mdc-text-field__suffix touchspin-postfix" 
+                <span class="custom-touchspin-postfix" 
                       data-touchspin-injected="postfix"${this.getPostfixTestId()}>
                     ${this.settings.postfix || ''}
                 </span>
@@ -158,10 +128,7 @@ class MaterialRenderer extends AbstractRenderer {
         
         // Insert wrapper and move input
         this.input.parentElement.insertBefore(wrapper, this.input);
-        
-        // Find the notch and insert input
-        const notch = wrapper.querySelector('.mdc-notched-outline__notch');
-        notch.appendChild(this.input);
+        wrapper.insertBefore(this.input, wrapper.querySelector('.custom-touchspin-controls'));
         
         // Hide empty prefix/postfix
         this.hideEmptyPrefixPostfix(wrapper);
@@ -210,82 +177,31 @@ class MaterialRenderer extends AbstractRenderer {
     updateButtonClass(type, className) {
         const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
         if (button) {
-            // Preserve Material structure while updating classes
-            button.className = `${className || 'mdc-button mdc-button--dense'} touchspin-${type}`;
-        }
-    }
-    
-    initializeMaterialComponents() {
-        // Initialize Material text field component
-        this.textField = new window.mdc.textField.MDCTextField(this.wrapper);
-        
-        // Initialize Material buttons if ripple is available
-        if (window.mdc.ripple) {
-            const buttons = this.wrapper.querySelectorAll('.mdc-button');
-            buttons.forEach(button => {
-                new window.mdc.ripple.MDCRipple(button);
-            });
+            button.className = `${className || 'custom-button'} custom-touchspin-${type}`;
         }
     }
 }
 
-export default MaterialRenderer;
+export default CustomRenderer;
 ```
 
-## Registering Your Renderer
+## Using Your Custom Renderer
 
-To use your custom renderer, register it with TouchSpin:
+To use your custom renderer, you pass its class directly to the `TouchSpin` factory function via the `renderer` option.
 
-### Method 1: Direct Registration
 ```javascript
-import { TouchSpin, registerRenderer } from '@touchspin/core';
-import MaterialRenderer from './MaterialRenderer.ts';
+import { TouchSpin } from '@touchspin/core';
+import CustomRenderer from './CustomRenderer.ts'; // Your custom renderer class
 
-// Register the renderer globally
-registerRenderer('material', MaterialRenderer);
-
-// Use it in TouchSpin
-const api = TouchSpin('#my-input', {
-    renderer: 'material',
+const inputElement = document.getElementById('my-input');
+const api = TouchSpin(inputElement, {
+    renderer: CustomRenderer, // Pass the class directly
     min: 0,
     max: 100
 });
 ```
 
-### Method 2: Package Distribution
-For reusable renderers, create a package structure:
-
-```
-@touchspin/material/
-├── package.json
-├── src/
-│   └── index.ts
-└── dist/
-    └── touchspin-material.ts
-```
-
-**src/index.ts:**
-```javascript
-import { registerRenderer } from '@touchspin/core';
-import MaterialRenderer from './MaterialRenderer.ts';
-
-// Auto-register when imported
-registerRenderer('material', MaterialRenderer);
-
-export { MaterialRenderer };
-export default MaterialRenderer;
-```
-
-**Usage:**
-```javascript
-import '@touchspin/core';
-import '@touchspin/material'; // Auto-registers 'material' renderer
-
-const api = TouchSpin('#my-input', {
-    renderer: 'material',
-    // ... other options
-});
-```
+This approach ensures that the core can instantiate and manage your renderer directly, adhering to the modular architecture.
 
 ## CSS Styling Requirements
 
@@ -334,38 +250,206 @@ Your renderer should include CSS that provides proper layout and accessibility:
 
 ## Testing Your Renderer
 
-Create tests to ensure your renderer works correctly:
+When testing your custom renderer, you can initialize TouchSpin directly with your renderer class and then use the returned API to interact with the component.
 
 ```javascript
-// tests/material-renderer.test.ts
+// tests/custom-renderer.test.ts
 import { test, expect } from '@playwright/test';
+import { TouchSpin } from '@touchspin/core';
+import CustomRenderer from '../src/CustomRenderer'; // Your custom renderer class
 
-test.describe('Material Renderer', () => {
-    test('creates proper Material Design structure', async ({ page }) => {
-        await page.goto('/test-material.html');
+test.describe('Custom Renderer', () => {
+    test('creates proper custom structure and functions', async ({ page }) => {
+        await page.goto('/test-fixture.html'); // Assuming a basic test fixture
+        
+        // Initialize TouchSpin with your custom renderer
+        await page.evaluate(() => {
+            const input = document.getElementById('test-input');
+            window.myTouchSpinInstance = TouchSpin(input, {
+                renderer: CustomRenderer,
+                min: 0,
+                max: 100,
+                value: 50
+            });
+        });
         
         // Check wrapper structure
-        await expect(page.locator('.mdc-text-field.touchspin-material')).toBeVisible();
+        await expect(page.locator('.custom-touchspin-wrapper')).toBeVisible();
         
         // Check required data attributes
         await expect(page.locator('[data-touchspin-injected="wrapper"]')).toBeVisible();
         await expect(page.locator('[data-touchspin-injected="up"]')).toBeVisible();
         await expect(page.locator('[data-touchspin-injected="down"]')).toBeVisible();
         
-        // Test functionality
-        await page.locator('[data-touchspin-injected="up"]').click();
-        await expect(page.locator('input')).toHaveValue('1');
+        // Test functionality via the API
+        await page.evaluate(() => {
+            window.myTouchSpinInstance.upOnce();
+        });
+        await expect(page.locator('#test-input')).toHaveValue('51');
     });
     
     test('handles prefix/postfix updates', async ({ page }) => {
-        await page.goto('/test-material.html');
+        await page.goto('/test-fixture.html');
+        
+        // Initialize with your custom renderer
+        await page.evaluate(() => {
+            const input = document.getElementById('test-input');
+            window.myTouchSpinInstance = TouchSpin(input, {
+                renderer: CustomRenderer,
+                prefix: '```
+
+## Common Patterns
+
+### Handling Vertical Button Layout
+
+```javascript
+buildVerticalButtons() {
+    if (this.settings.verticalbuttons) {
+        return `
+            <div class="your-framework-vertical-controls">
+                <button data-touchspin-injected="up">${this.settings.verticalup || '+'}</button>
+                <button data-touchspin-injected="down">${this.settings.verticaldown || '−'}</button>
+            </div>
+        `;
+    }
+    // Return horizontal layout
+}
+```
+
+### Responsive Design Support
+
+```javascript
+init() {
+    // ... basic setup
+    
+    // Apply responsive classes based on input size
+    const inputSize = this.detectInputSize();
+    this.wrapper.classList.add(`your-framework-${inputSize}`);
+}
+
+detectInputSize() {
+    const classList = this.input.className;
+    if (classList.includes('small')) return 'sm';
+    if (classList.includes('large')) return 'lg';
+    return 'md';
+}
+```
+
+### Framework Component Integration
+
+```javascript
+init() {
+    // ... DOM setup
+    
+    // Initialize framework-specific components
+    this.initFrameworkComponents();
+}
+
+initFrameworkComponents() {
+    // Example: Initialize component library features
+    if (typeof YourFramework !== 'undefined') {
+        this.frameworkInstance = new YourFramework.Component(this.wrapper, {
+            // component options
+        });
+    }
+}
+
+teardown() {
+    // Clean up framework components
+    if (this.frameworkInstance) {
+        this.frameworkInstance.destroy();
+    }
+    super.teardown();
+}
+```
+
+## Best Practices
+
+### 1. Framework Independence
+- Don't assume the framework library is loaded
+- Provide fallback behavior when framework features are unavailable
+- Use feature detection instead of version checking
+
+### 2. Accessibility
+- Always include proper ARIA labels on buttons
+- Ensure keyboard navigation works correctly
+- Maintain proper focus management
+- Test with screen readers
+
+### 3. Performance
+- Minimize DOM queries by storing element references
+- Use event delegation where appropriate
+- Clean up event listeners and framework instances in `teardown()`
+
+### 4. Styling
+- Provide default styles that work without the framework
+- Use CSS custom properties for easy theming
+- Ensure styles don't conflict with existing page styles
+
+### 5. Testing
+- Test initialization and teardown thoroughly
+- Verify all settings updates work correctly
+- Test edge cases like empty prefix/postfix
+- Include accessibility testing
+
+## Advanced Features
+
+### Custom Event Handling
+
+```javascript
+init() {
+    // ... basic setup
+    
+    // Add custom event handling
+    this.core.on('change', (data) => {
+        this.onValueChange(data);
+    });
+}
+
+onValueChange(data) {
+    // Custom logic for value changes
+    this.updateCustomIndicator(data.newValue);
+}
+```
+
+### Animation Support
+
+```javascript
+updatePrefix(value) {
+    const prefixEl = this.prefixEl;
+    
+    if (value && value !== '') {
+        prefixEl.textContent = value;
+        
+        // Add animation class
+        prefixEl.classList.add('fade-in');
+        prefixEl.style.display = '';
+        
+        // Remove animation class after completion
+        setTimeout(() => {
+            prefixEl.classList.remove('fade-in');
+        }, 300);
+    } else {
+        // Animate out
+        prefixEl.classList.add('fade-out');
+        setTimeout(() => {
+            prefixEl.style.display = 'none';
+            prefixEl.classList.remove('fade-out');
+        }, 300);
+    }
+}
+```
+
+This guide provides everything needed to create professional, accessible custom renderers for TouchSpin. The modular architecture makes it straightforward to support any CSS framework while maintaining full backward compatibility and functionality.
+            });
+        });
         
         // Test prefix update
         await page.evaluate(() => {
-            window.touchspinAPI.updateSettings({ prefix: '$' });
+            window.myTouchSpinInstance.updateSettings({ prefix: '€' });
         });
         
-        await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('$');
+        await expect(page.locator('[data-touchspin-injected="prefix"]')).toHaveText('€');
         await expect(page.locator('[data-touchspin-injected="prefix"]')).toBeVisible();
     });
 });

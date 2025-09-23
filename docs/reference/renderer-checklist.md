@@ -12,17 +12,17 @@ Common contract (all renderers)
 
 Bootstrap 3
 - Structure: input-group with .input-group-addon for prefix/postfix; buttons often in .input-group-btn (pre/append wrappers)
-- Wrapper classes: bootstrap-touchspin + size variants via input classes
+- Wrapper classes: touchspin + size variants via input classes
 - Vertical buttons: renderer provides stacked buttons container
 
 Bootstrap 4
 - Structure: .input-group-prepend / .input-group-append; prefix/postfix inside .input-group-text
-- Wrapper classes: bootstrap-touchspin + size variants via input classes
+- Wrapper classes: touchspin + size variants via input classes
 - Vertical buttons: same concept, separate vertical wrapper injected
 
 Bootstrap 5
 - Structure: direct children (no prepend/append components); prefix/postfix as .input-group-text siblings
-- Wrapper classes: bootstrap-touchspin, size via input classes
+- Wrapper classes: touchspin, size via input classes
 - Vertical buttons: injected wrapper with stacked buttons
 
 Tailwind

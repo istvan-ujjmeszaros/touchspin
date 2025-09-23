@@ -1,4 +1,4 @@
-# Bootstrap TouchSpin - Testing Strategy & Agent Reference
+# TouchSpin - Testing Strategy & Agent Reference
 
 ## 🎯 PRIMARY MISSION: Achieve 100% Test Coverage with Clean Behavioral Tests
 
@@ -898,7 +898,7 @@ All legacy tests have been archived to `__tests__/*.spec.deprecated.ts` for refe
 
 ### Temporary Files and Documentation
 
-**Project tmp folder**: Use `/apps/bootstrap-touchspin-openai/tmp/` (not system `/tmp/`) for:
+**Project tmp folder**: Use `/apps/touchspin-openai/tmp/` (not system `/tmp/`) for:
 - Temporary documentation files
 - Progress tracking files
 - Work-in-progress notes

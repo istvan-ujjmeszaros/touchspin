@@ -1,15 +1,15 @@
 # Three-Stage TouchSpin Evolution: Complete Architectural Transformation
 
-This document traces the complete architectural evolution of Bootstrap TouchSpin through three distinct stages, from a simple jQuery plugin to a modern modular framework-agnostic component.
+This document traces the complete architectural evolution of TouchSpin through three distinct stages, from a simple jQuery plugin to a modern modular framework-agnostic component.
 
 ## Evolution Overview
 
-Bootstrap TouchSpin has undergone a complete architectural transformation across three major stages:
+TouchSpin has undergone a complete architectural transformation across three major stages:
 
 | Stage | Version | File | Lines | Key Characteristics |
 |-------|---------|------|-------|-------------------|
-| **TRUE Legacy** | v3.x | `tmp/jquery.bootstrap-touchspin.legacy.js` | 873 | Original simple jQuery plugin with hardcoded Bootstrap markup |
-| **In-Between** | v4.x | `src/jquery.bootstrap-touchspin.js` | 1,502 | Enhanced monolithic with renderer system and command API |
+| **TRUE Legacy** | v3.x | `tmp/jquery.touchspin.legacy.js` | 873 | Original simple jQuery plugin with hardcoded Bootstrap markup |
+| **In-Between** | v4.x | `src/jquery.touchspin.js` | 1,502 | Enhanced monolithic with renderer system and command API |
 | **New Modular** | v5.x | `packages/` | ~300/pkg | Complete modular rewrite with framework-agnostic core |
 
 ## Architectural Transformation Summary

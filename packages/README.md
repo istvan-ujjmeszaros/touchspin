@@ -1,7 +1,6 @@
 # TouchSpin Packages
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The packages are not yet published to npm.
+
 
 This directory contains the modern multi-package architecture implementation of TouchSpin. The renderer-based architecture provides framework-agnostic core functionality with pluggable UI renderers.
 
@@ -38,7 +37,10 @@ Renderers are responsible for creating the visual representation of the spinner 
 *   **[@touchspin/renderer-tailwind](./renderers/tailwind/README.md):** Renderer for Tailwind CSS.
 *   **[@touchspin/renderer-vanilla](./renderers/vanilla/README.md):** A framework-agnostic renderer with no CSS dependencies.
 
-## Planned Packages
+## Future Development
 
--   `@touchspin/react`: A React wrapper.
--   `@touchspin/angular`: An Angular wrapper.
+We are continuously working to expand TouchSpin's ecosystem. Here are some areas for future development:
+
+-   `@touchspin/react`: An official React wrapper.
+-   `@touchspin/angular`: An official Angular wrapper.
+-   Other framework wrappers and renderers as community needs arise.

@@ -1,7 +1,6 @@
 # TouchSpin Renderers
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The packages are not yet published to npm.
+
 
 This directory contains the renderer packages for TouchSpin. Renderers are responsible for creating the visual representation of the spinner component for a specific CSS framework.
 

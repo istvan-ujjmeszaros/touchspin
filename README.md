@@ -1,19 +1,18 @@
-# Bootstrap TouchSpin v5.0.0-alpha.1
+# TouchSpin v5.0.0
 
-> [!WARNING]
-> This is an alpha version of Bootstrap TouchSpin v5. It is not yet ready for production use. Please use it for testing purposes only and report any issues you find.
+
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa)](https://github.com/sponsors/istvan-ujjmeszaros)
-[![run-tests](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/actions/workflows/run-tests.yml/badge.svg)](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/actions/workflows/run-tests.yml)
-[![npm version](https://img.shields.io/npm/v/bootstrap-touchspin/next)](https://www.npmjs.com/package/bootstrap-touchspin)
-[![npm downloads](https://img.shields.io/npm/dm/bootstrap-touchspin)](https://www.npmjs.com/package/bootstrap-touchspin)
+[![run-tests](https://github.com/istvan-ujjmeszaros/touchspin/actions/workflows/run-tests.yml/badge.svg)](https://github.com/istvan-ujjmeszaros/touchspin/actions/workflows/run-tests.yml)
+[![npm version](https://img.shields.io/npm/v/touchspin/next)](https://www.npmjs.com/package/touchspin)
+[![npm downloads](https://img.shields.io/npm/dm/touchspin)](https://www.npmjs.com/package/touchspin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.**
 
 TouchSpin is a mobile-first JavaScript library with a modern renderer-based architecture that transforms number inputs into spinner controls with increment/decrement buttons for touch interfaces and desktop environments. Available as both a framework-agnostic core, a jQuery plugin wrapper, and a standards-based Web Component.
 
-**[Live Demo & Documentation](https://www.virtuosoft.eu/code/bootstrap-touchspin/)**
+**[Live Demo & Documentation](https://www.virtuosoft.eu/code/touchspin/)**
 
 ---
 
@@ -44,10 +43,10 @@ Install the alpha version from npm:
 
 ```bash
 # yarn
-yarn add bootstrap-touchspin@next
+yarn add touchspin
 
 # npm
-npm install bootstrap-touchspin@next
+npm install touchspin@next
 ```
 
 ### UMD Builds (for jQuery)
@@ -56,16 +55,16 @@ Choose the build that matches your Bootstrap version:
 
 ```html
 <!-- Bootstrap 3 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.min.css">
-<script src="dist/jquery.bootstrap-touchspin-bs3.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
+<script src="dist/jquery.touchspin-bs3.min.js"></script>
 
 <!-- Bootstrap 4 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.min.css">
-<script src="dist/jquery.bootstrap-touchspin-bs4.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
+<script src="dist/jquery.touchspin-bs4.min.js"></script>
 
 <!-- Bootstrap 5 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.min.css">
-<script src="dist/jquery.bootstrap-touchspin-bs5.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
+<script src="dist/jquery.touchspin-bs5.min.js"></script>
 ```
 
 ### Basic Usage (jQuery)
@@ -123,19 +122,15 @@ TouchSpin now uses a modern renderer-based architecture that separates core func
 
 ---
 
-## v5 Roadmap
+## Future Development
 
-This project is currently in alpha. The following is a high-level roadmap for the v5 release:
+This project is now stable with the v5.0.0 release. We are continuously working to improve TouchSpin. Here are some areas for future development:
 
--   **API Stability:** Finalize the core API and the API for the framework wrappers.
--   **Framework Wrappers:** Create wrappers for popular frameworks like React, Vue, and Angular.
--   **Documentation:** Improve the documentation and add more examples.
--   **Testing:** Reach 100% test coverage and add more visual regression tests.
--   **Performance:** Profile and optimize the performance of the core and renderers.
-
-### Migration from v4
-
-A detailed migration guide will be provided with the first stable release of v5. The jQuery plugin is designed to be 100% backward compatible, so the migration should be straightforward for most users.
+-   **Framework Wrappers:** Create official wrappers for popular frameworks like React, Vue, and Angular to provide more idiomatic usage.
+-   **Enhanced Documentation:** Continuously improve documentation with more examples, use cases, and detailed guides.
+-   **Testing Expansion:** Expand test coverage, including more visual regression tests and cross-browser compatibility checks.
+-   **Performance Optimizations:** Further profile and optimize the performance of the core and renderers for even faster and smoother operation.
+-   **New Renderers:** Explore adding support for other CSS frameworks or design systems.
 
 ---
 
@@ -147,6 +142,6 @@ This project uses AI agents to assist in development, particularly in writing te
 
 ## Version History
 
-**Latest: v5.0.0-alpha.1**
+**Latest: v5.0.0**
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.

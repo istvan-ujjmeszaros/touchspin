@@ -15,11 +15,20 @@
 - stepinterval / stepintervaldelay
   - Hold behavior timings: delay before repeating, then repeat cadence.
 
-- booster / boostat / maxboostedstep
+- maxboostedstep
   - Booster increases effective step after boostat repeats; capped by maxboostedstep if finite; level changes drive boostchange events.
+
+- callback_before_calculation
+  - Function to modify value before calculation.
+
+- callback_after_calculation
+  - Function to format display value after calculation.
 
 - mousewheel
   - Enabled only when input focused; wheel up/down maps to upOnce/downOnce; preventDefault to avoid page scroll.
+
+- focusablebuttons
+  - Makes buttons focusable (adds tabindex).
 
 - prefix/postfix (+ _extraclass)
   - Renderer visuals; prefix/postfix text and extra classes; core hides empty prefix/postfix.

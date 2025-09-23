@@ -2,6 +2,40 @@
 
 Renderers provide framework-specific DOM while core owns behavior. This guide consolidates the renderer contract and practical tips.
 
+```mermaid
+flowchart LR
+  I["input data-testid = id"] --> W[wrapper div]
+  W --> U[button up]
+  W --> D[button down]
+  W --> P1[prefix]
+  W --> P2[postfix]
+
+  %% All elements get data-touchspin-injected attributes (wrapper, up, down, prefix, postfix)
+  %% All elements get data-testid attributes (id-wrapper, id-up, id-down, id-prefix, id-postfix)
+```
+
+
+
+```mermaid
+flowchart LR
+  R["Renderer.init()"] --> B["Build DOM wrapper"]
+  B --> P1["Prefix element"]
+  B --> P2["Postfix element"]
+  B --> U["Up button"]
+  B --> D["Down button"]
+  B --> W["Wrapper testid: {input}-wrapper"]
+  %% testids added automatically: {input}-up, {input}-down, {input}-prefix, {input}-postfix
+  U --> AE["core.attachUpEvents(U)"]
+  D --> AD["core.attachDownEvents(D)"]
+  subgraph Reactive
+    O1["observeSetting prefix"]
+    O2["observeSetting postfix"]
+    O3["observeSetting button*"]
+  end
+```
+
+
+
 Contract (all renderers)
 - Build/augment DOM around the input and add roles via `data-touchspin-injected`:
   - `wrapper`, `up`, `down`, `prefix`, `postfix` (and `vertical-wrapper` when vertical buttons are used)

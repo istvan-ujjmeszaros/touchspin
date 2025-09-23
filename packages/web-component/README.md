@@ -1,7 +1,6 @@
 # @touchspin/web-component
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 
 A standards-based Web Component implementation of TouchSpin, providing a framework-agnostic custom element for number input with increment/decrement controls.
 
@@ -22,7 +21,7 @@ A standards-based Web Component implementation of TouchSpin, providing a framewo
 ### Alpha Version from NPM
 
 ```bash
-npm install @touchspin/web-component@next
+npm install @touchspin/web-component
 ```
 
 ## Getting Started
@@ -49,7 +48,7 @@ npm install @touchspin/web-component@next
 ## CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/web-component@5.0.0-alpha.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/web-component@5.0.0/dist/index.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0-alpha.1/dist/touchspin-vanilla.css" />
 
 <touchspin-input min="0" max="100" value="50"></touchspin-input>
@@ -313,7 +312,7 @@ class ShadowTouchSpinElement extends TouchSpinInput {
 
 ## Contributing
 
-See the main [TouchSpin repository](https://github.com/istvan-ujjmeszaros/bootstrap-touchspin) for contribution guidelines.
+See the main [TouchSpin repository](https://github.com/istvan-ujjmeszaros/touchspin) for contribution guidelines.
 
 ## License
 

@@ -1,10 +1,10 @@
-# Gemini Project Context: Bootstrap TouchSpin
+# Gemini Project Context: TouchSpin
 
-This document provides context for the Bootstrap TouchSpin project, a mobile and touch-friendly input spinner component.
+This document provides context for the TouchSpin project, a mobile and touch-friendly input spinner component.
 
 ## Project Overview
 
-This is a monorepo for the Bootstrap TouchSpin project, a JavaScript library that enhances number inputs into spinner controls. The project has a modern, modular architecture with a framework-agnostic core, renderers for different CSS frameworks (Bootstrap 3, 4, 5, and Tailwind), and a jQuery plugin for backward compatibility.
+This is a monorepo for the TouchSpin project, a JavaScript library that enhances number inputs into spinner controls. The project has a modern, modular architecture with a framework-agnostic core, renderers for different CSS frameworks (Bootstrap 3, 4, 5, and Tailwind), and a jQuery plugin for backward compatibility.
 
 The project is written in TypeScript and uses Yarn 4 (Berry) with PnP and workspaces for package management.
 

@@ -1,7 +1,6 @@
 # @touchspin/renderer-tailwind
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 
 Tailwind CSS renderer for TouchSpin.
 
@@ -14,7 +13,7 @@ This package provides a renderer that creates a Tailwind CSS-compatible UI for t
 ### Alpha Version from NPM
 
 ```bash
-npm install @touchspin/renderer-tailwind@next
+npm install @touchspin/renderer-tailwind
 ```
 
 ## Usage
@@ -45,7 +44,7 @@ npm install @touchspin/renderer-tailwind@next
 ## CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0-alpha.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/5.0.0/dist/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0-alpha.1/dist/index.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0-alpha.1/dist/touchspin-tailwind.css" />
 ```

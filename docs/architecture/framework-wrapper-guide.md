@@ -40,7 +40,7 @@ import {
     forwardRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { TouchSpin, TouchSpinAPI, TouchSpinOptions } from '@touchspin/core';
+import { TouchSpin, TouchSpinCorePublicAPI, TouchSpinCoreOptions } from '@touchspin/core';
 
 @Component({
     selector: 'app-touchspin',
@@ -251,7 +251,7 @@ export class ReactiveFormComponent {
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { TouchSpin } from '@touchspin/core';
 
-export function useTouchSpin(options = {}, dependencies = []) {
+export function useTouchSpin(options = {}) {
     const inputRef = useRef(null);
     const apiRef = useRef(null);
     const [value, setValue] = useState(options.initval || 0);
@@ -305,7 +305,7 @@ export function useTouchSpin(options = {}, dependencies = []) {
                 api.destroy();
             };
         }
-    }, dependencies);
+    }, [options]); // Simplified dependencies
     
     // Update settings when options change
     useEffect(() => {
@@ -507,9 +507,9 @@ function AdvancedExample() {
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { TouchSpin } from '@touchspin/core';
 
-export function useTouchSpin(elementRef, options = {}) {
+export function useTouchSpin(elementRef, options) {
     const api = ref(null);
-    const value = ref(options.value?.initval || 0);
+    const value = ref(options.initval || 0);
     const isAtMin = ref(false);
     const isAtMax = ref(false);
     const isSpinning = ref(false);
@@ -523,27 +523,27 @@ export function useTouchSpin(elementRef, options = {}) {
         
         api.value = TouchSpin(elementRef.value, {
             renderer: 'bootstrap5',
-            ...options.value
+            ...options
         });
         
         // Set up event listeners
-        const changeUnsub = api.value.on('change', (data) => {
+        const changeUnsub = api.on('change', (data) => {
             value.value = data.newValue;
         });
         
-        const minUnsub = api.value.on('min', () => {
+        const minUnsub = api.on('min', () => {
             isAtMin.value = true;
         });
         
-        const maxUnsub = api.value.on('max', () => {
+        const maxUnsub = api.on('max', () => {
             isAtMax.value = true;
         });
         
-        const startSpinUnsub = api.value.on('startspin', () => {
+        const startSpinUnsub = api.on('startspin', () => {
             isSpinning.value = true;
         });
         
-        const stopSpinUnsub = api.value.on('stopspin', () => {
+        const stopSpinUnsub = api.on('stopspin', () => {
             isSpinning.value = false;
             isAtMin.value = false;
             isAtMax.value = false;

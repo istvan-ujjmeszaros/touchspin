@@ -1,6 +1,6 @@
-# Bootstrap TouchSpin Demos
+# TouchSpin Demos
 
-This directory contains comprehensive demos showcasing Bootstrap TouchSpin's compatibility with different Bootstrap versions.
+This directory contains comprehensive demos showcasing TouchSpin's compatibility with different Bootstrap versions.
 
 ## 🎯 Available Demos
 
@@ -64,21 +64,21 @@ demo/
 └── README.md               # This file
 
 ../dist/                     # TouchSpin build files (referenced by demos)
-├── jquery.bootstrap-touchspin-bs3.js
-├── jquery.bootstrap-touchspin-bs4.js  
-├── jquery.bootstrap-touchspin-bs5.js
-├── jquery.bootstrap-touchspin.css
+├── jquery.touchspin-bs3.js
+├── jquery.touchspin-bs4.js  
+├── jquery.touchspin-bs5.js
+├── jquery.touchspin.css
 └── ...
 ```
 
 ## 📦 Version-Specific Builds
 
-Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
+TouchSpin provides optimized builds for each Bootstrap version:
 
 ### Available Builds
-- **Bootstrap 3**: `jquery.bootstrap-touchspin-bs3.js` (~35KB)
-- **Bootstrap 4**: `jquery.bootstrap-touchspin-bs4.js` (~35KB)  
-- **Bootstrap 5**: `jquery.bootstrap-touchspin-bs5.js` (~35KB)
+- **Bootstrap 3**: `jquery.touchspin-bs3.js` (~35KB)
+- **Bootstrap 4**: `jquery.touchspin-bs4.js` (~35KB)  
+- **Bootstrap 5**: `jquery.touchspin-bs5.js` (~35KB)
 
 ### Demo File Mapping
 - `bootstrap3.html` → Uses BS3 specific build
@@ -92,15 +92,7 @@ Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
 3. **Optimized structure** - Tailored HTML for each Bootstrap version
 4. **Explicit dependencies** - Know exactly which Bootstrap version you're using
 
-## 🆕 Recent Updates
 
-- ✅ Added version-specific builds for BS3/4/5 (v4.7.3)
-- ✅ Updated all demo files to use optimized builds
-- ✅ Created comprehensive version-specific demos
-- ✅ Added main demo hub with navigation
-- ✅ Removed universal build and auto-detection logic
-- ✅ Added responsive design and modern styling
-- ✅ Simplified file structure - just open HTML files directly!
 
 ## 🐛 Troubleshooting
 
@@ -111,6 +103,6 @@ Bootstrap TouchSpin provides optimized builds for each Bootstrap version:
 
 ### Wrong Bootstrap version styling
 - Make sure you're using the correct TouchSpin build for your Bootstrap version
-- Bootstrap 3: use `jquery.bootstrap-touchspin-bs3.js`
-- Bootstrap 4: use `jquery.bootstrap-touchspin-bs4.js`  
-- Bootstrap 5: use `jquery.bootstrap-touchspin-bs5.js`
+- Bootstrap 3: use `jquery.touchspin-bs3.js`
+- Bootstrap 4: use `jquery.touchspin-bs4.js`  
+- Bootstrap 5: use `jquery.touchspin-bs5.js`

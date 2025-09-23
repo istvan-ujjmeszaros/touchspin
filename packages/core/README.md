@@ -1,7 +1,6 @@
 # @touchspin/core
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 
 Framework-agnostic TouchSpin core with element-attached architecture. Core is strictly jQuery-free; any jQuery integration lives in the `@touchspin/jquery-plugin` package (including test helpers).
 
@@ -43,16 +42,16 @@ To use the core package, you need to provide a renderer. Here is a basic example
 </script>
 ```
 
-### Using the RawRenderer
+### Using the RawRenderer (No UI)
 
-If you only need the core functionality without any UI, you can use the `RawRenderer`. This is useful for programmatic control or for building your own custom UI.
+If you only need the core functionality without any UI, you can achieve this by setting the `renderer` option to `null`. This is useful for programmatic control or for building your own custom UI.
 
 ```javascript
 import { TouchSpin } from '@touchspin/core';
 
 const input = document.getElementById('my-spinner');
 const instance = TouchSpin(input, {
-  renderer: null, // or RawRenderer
+  renderer: null, // Explicitly no UI
   min: 0,
   max: 100,
   step: 1

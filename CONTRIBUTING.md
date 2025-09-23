@@ -1,6 +1,6 @@
-# Contributing to Bootstrap TouchSpin
+# Contributing to TouchSpin
 
-Thank you for your interest in contributing to Bootstrap TouchSpin! This guide covers how to propose changes, coding standards, our testing approach, and how to author new renderers.
+Thank you for your interest in contributing to TouchSpin! This guide covers how to propose changes, coding standards, our testing approach, and how to author new renderers.
 
 ## How to Contribute
 
@@ -132,13 +132,10 @@ Notes:
 - In browser-evaluated helpers (e.g., inside `page.evaluate`), prefer origin-relative resolution:
   - Example: `const origin = location.origin; await import(new URL(coreUrl, origin).href)`
   - Avoid hard-coding `http://localhost:8866` inside evaluated code.
-- Developer utilities such as `scripts/inspect.mjs` currently assume `http://localhost:8866` when constructing URLs.
-  - Proposed improvement: allow overriding via an environment variable (e.g., `DEV_BASE_URL`) with a sensible default to `http://localhost:8866`.
-  - If/when introduced, document the variable in tool help text and README.
 
 ## Porting Policy (Parity with Source)
 
-When porting behavior between the legacy jQuery plugin (`src/jquery.bootstrap-touchspin.js`) and the new core/wrapper packages:
+When porting behavior between the legacy jQuery plugin (`src/jquery.touchspin.js`) and the new core/wrapper packages:
 - In PR descriptions, include links or references to the exact source lines that the change mirrors.
 - Call out any intentional deviations in behavior and justify them.
 - Prefer moving code and preserving semantics over rewrites to minimize drift.

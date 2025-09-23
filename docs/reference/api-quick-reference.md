@@ -25,7 +25,7 @@ const core = getTouchSpinCore(inputElement);
 |--------|------------|---------|-------------|
 | `getValue()` | none | `number` | Get current numeric value |
 | `setValue(value)` | `number` | `void` | Set value with constraint application |
-| `getDisplayValue()` | none | `string` | Get formatted display value |
+| `getFormattedValue()` | none | `string` | Get the value formatted according to `decimals` and `callback_after_calculation` |
 
 ```javascript
 // Examples
@@ -117,6 +117,8 @@ api.destroy(); // Removes events, DOM elements, and instance reference
 | `step` | `number` | `1` | Increment/decrement amount |
 | `decimals` | `number` | `0` | Number of decimal places |
 | `forcestepdivisibility` | `string` | `'round'` | Step alignment: 'round', 'floor', 'ceil', 'none' |
+| `callback_before_calculation` | `function` | `(value) => value` | Callback before value calculation (can modify value) |
+| `callback_after_calculation` | `function` | `(value) => value` | Callback after value calculation (can format display) |
 
 ```javascript
 TouchSpin('#spinner', {
@@ -208,6 +210,7 @@ TouchSpin('#spinner', {
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `mousewheel` | `boolean` | `true` | Enable mouse wheel support |
+| `focusablebuttons` | `boolean` | `false` | Make buttons focusable (adds tabindex) |
 
 ```javascript
 TouchSpin('#spinner', {

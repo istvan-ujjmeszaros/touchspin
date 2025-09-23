@@ -159,7 +159,7 @@ graph TB
 
 ## Architecture Overview Explanation
 
-This diagram illustrates the complete three-stage evolution of Bootstrap TouchSpin and the modern modular architecture.
+This diagram illustrates the complete three-stage evolution of TouchSpin and the modern modular architecture.
 
 ### Three-Stage Evolution
 

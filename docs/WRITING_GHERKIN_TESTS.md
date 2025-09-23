@@ -367,8 +367,6 @@ test('maintains state independence between instances', async ({ page }) => {
 ## 📚 Related Documentation
 
 - [Step Lexicon](../tests/STEP-LEXICON.md) - Available helper functions
-- [Test Helpers Cheatsheet](../packages/core/TEST_HELPERS_CHEATSHEET.md) - Quick reference
-- [Contributor Handbook](../packages/core/TEST_CONTRIBUTOR_HANDBOOK.md) - Detailed guidelines
 - [Project README](../README.md) - Overall project documentation
 
 ---

@@ -5,14 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.0.0] - 2025-01-XX
+## [5.0.0] - 2025-09-22
 
-### Modernization (LGTM-7a/7b/8)
-- Moved modern facade to `src/wrappers/modern-facade.js` and updated manual pages (LGTM-7a).
-- Added build footer hooks via `APPEND_WRAPPERS` to append wrappers after UMD bundle (LGTM-7b).
-- Removed inline modern facade from plugin; default UMD builds now append modern-facade wrapper (LGTM-8).
-- Fixed ESM manual page by waiting for plugin registration before installing the facade.
-- Docs: Added ARCHITECTURE.md and ROADMAP.md; refined README build variants and wrapper control; updated TODOs/WORKLOG.
+
 
 ### 🚀 Major Features
 
@@ -110,7 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Build System
 - **Removed Universal Build**: No longer generates single file supporting all Bootstrap versions
 - **Version-Specific Builds Required**: Must choose Bootstrap 3, 4, or 5 specific build
-- **New File Names**: `jquery.bootstrap-touchspin-bs[3|4|5].js` instead of single universal file
+- **New File Names**: `jquery.touchspin-bs[3|4|5].js` instead of single universal file
 
 #### API Changes
 - **Removed Automatic Bootstrap Detection**: Explicit version builds eliminate runtime detection
@@ -174,42 +169,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🙏 Acknowledgments
 
-This release represents a complete modernization of Bootstrap TouchSpin while maintaining backward compatibility. Special thanks to the open source community for feedback and testing.
+This release represents a complete modernization of TouchSpin while maintaining backward compatibility. Special thanks to the open source community for feedback and testing.
 
 ---
 
-## Migration Guide from 4.x to 5.0
+## Migration from 4.x to 5.0
 
-### Required Changes
-
-1. **Use Version-Specific Build**:
-   ```html
-   <!-- Old (4.x) -->
-   <script src="jquery.bootstrap-touchspin.min.js"></script>
-   
-   <!-- New (5.0) - Choose your Bootstrap version -->
-   <script src="jquery.bootstrap-touchspin-bs4.min.js"></script>
-   ```
-
-2. **Update Build Process**: If using custom builds, migrate from Grunt to npm scripts
-3. **Test TestID Integration**: If using automated testing, leverage new testid propagation
-
-### Backward Compatibility
-
-- **API Unchanged**: All existing TouchSpin options and methods work identically
-- **Events Unchanged**: All touchspin.* events fire as before
-- **CSS Classes**: No changes to existing CSS class names or styling
-- **jQuery Compatibility**: Continues to work with jQuery 1.7+ through 3.x
-
-### New Features Available
-
-- **ARIA Support**: Automatic accessibility attributes (no action required)
-- **Native Sync**: HTML5 number input attributes sync automatically
-- **Better Types**: Enhanced IDE support with TypeScript compatibility
-- **Improved Reliability**: Edge cases and memory leaks resolved automatically
-
-### Breaking Changes
-
-- **Build Files**: Must choose Bootstrap version-specific build file
-- **Removed Auto-Detection**: Bootstrap version no longer detected at runtime
-- **Dropped IE8 Support**: Minimum support is now IE9+ (ES5 compatibility)
+A detailed migration guide is available in the [documentation](docs/architecture/migration-guide.md).

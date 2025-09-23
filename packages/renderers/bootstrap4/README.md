@@ -1,7 +1,6 @@
 # @touchspin/renderer-bootstrap4
 
-> [!NOTE]
-> This is an alpha version of Bootstrap TouchSpin v5. The package is not yet published to npm.
+
 
 Bootstrap 4 renderer for TouchSpin.
 
@@ -14,7 +13,7 @@ This package provides a renderer that creates a Bootstrap 4-compatible UI for th
 ### Alpha Version from NPM
 
 ```bash
-npm install @touchspin/renderer-bootstrap4@next
+npm install @touchspin/renderer-bootstrap4
 ```
 
 ## Usage
@@ -47,7 +46,7 @@ npm install @touchspin/renderer-bootstrap4@next
 ## CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0-alpha.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/5.0.0/dist/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0-alpha.1/dist/index.umd.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0-alpha.1/dist/touchspin-bootstrap4.css" />
 ```

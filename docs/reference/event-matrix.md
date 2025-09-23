@@ -20,6 +20,4 @@
   - Core dispatches native change when display actually changes via _setDisplay()
   - Core intercepts native change in capture to prevent propagation of unsanitized values; blur/Enter apply sanitization and emit final change
 
-- Cancelable lifecycle events (future plan in analysis)
-  - beforedestroy (cancelable) → touchspin.on.beforedestroy
-  - Non-cancelable: init, beforerender, afterrender, destroy
+
