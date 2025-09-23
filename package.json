@@ -1,9 +1,8 @@
 {
   "name": "bootstrap-touchspin",
-  "version": "4.8.0",
+  "version": "5.0.0",
   "title": "Bootstrap Touchspin",
-  "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.",
-  "private": true,
+  "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5. jQuery plugin with IIFE/UMD builds for backward compatibility.",
   "keywords": [
     "input",
     "bootstrap",
@@ -16,7 +15,14 @@
     "name": "István Ujj-Mészáros",
     "url": "https://github.com/istvan-ujjmeszaros"
   },
-  "main": "dist/index.cjs",
+  "main": "dist/jquery.bootstrap-touchspin-bs5.js",
+  "browser": "dist/jquery.bootstrap-touchspin-bs5.js",
+  "style": "dist/jquery.bootstrap-touchspin.css",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE.md"
+  ],
   "license": "MIT",
   "contributors": [],
   "repository": {
@@ -53,7 +59,11 @@
     "dev": "node scripts/static-server.mjs",
     "preview": "node scripts/static-server.mjs",
     "serve:root": "node scripts/static-server.mjs",
-    "build": "yarn workspace @touchspin/core build && yarn workspaces foreach -pt -A --exclude @touchspin/core run build",
+    "build": "yarn workspace @touchspin/core build && yarn workspaces foreach -pt -A --exclude @touchspin/core run build && yarn build:dist",
+    "build:dist": "yarn build:copy-iife && yarn build:copy-css",
+    "build:copy-iife": "mkdir -p dist && cp packages/jquery-plugin/dist/jquery-touchspin-bs*.js* dist/ && node scripts/rename-iife.mjs",
+    "build:copy-css": "mkdir -p dist && echo '/* TouchSpin v5.0.0 CSS */' > dist/jquery.bootstrap-touchspin.css",
+    "prebuild": "rm -rf dist",
     "build:types:all": "yarn workspaces foreach -t -A run build:types",
     "build:js:all": "yarn workspaces foreach -t -A run build:js",
     "build:prod": "yarn build:types:all && yarn build:js:all",

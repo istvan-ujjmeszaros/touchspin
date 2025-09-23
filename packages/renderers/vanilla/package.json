@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-vanilla",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
   "type": "module",
   "sideEffects": [

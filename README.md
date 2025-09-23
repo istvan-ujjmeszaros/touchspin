@@ -39,14 +39,31 @@ TouchSpin is a mobile-first JavaScript library with a modern renderer-based arch
 
 ### Package Manager Installation
 
-Install the alpha version from npm:
+#### For jQuery Users (Backward Compatible)
 
 ```bash
 # yarn
-yarn add touchspin
+yarn add bootstrap-touchspin
 
 # npm
-npm install touchspin@next
+npm install bootstrap-touchspin
+```
+
+#### For Modern JavaScript/TypeScript Projects
+
+```bash
+# Core package (framework-agnostic)
+npm install @touchspin/core
+
+# jQuery wrapper (ESM, if using jQuery)
+npm install @touchspin/jquery-plugin
+
+# Web Component
+npm install @touchspin/web-component
+
+# Specific renderers (as needed)
+npm install @touchspin/renderer-bootstrap5
+npm install @touchspin/renderer-tailwind
 ```
 
 ### UMD Builds (for jQuery)
@@ -55,16 +72,16 @@ Choose the build that matches your Bootstrap version:
 
 ```html
 <!-- Bootstrap 3 -->
-<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
-<script src="dist/jquery.touchspin-bs3.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
+<script src="dist/jquery.bootstrap-touchspin-bs3.js"></script>
 
 <!-- Bootstrap 4 -->
-<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
-<script src="dist/jquery.touchspin-bs4.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
+<script src="dist/jquery.bootstrap-touchspin-bs4.js"></script>
 
 <!-- Bootstrap 5 -->
-<link rel="stylesheet" href="dist/jquery.touchspin.min.css">
-<script src="dist/jquery.touchspin-bs5.min.js"></script>
+<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
+<script src="dist/jquery.bootstrap-touchspin-bs5.js"></script>
 ```
 
 ### Basic Usage (jQuery)

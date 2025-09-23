@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-bootstrap3",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "type": "module",
   "sideEffects": [
     "**/*.css",

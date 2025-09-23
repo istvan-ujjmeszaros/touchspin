@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/web-component",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "TouchSpin Web Component - Standards-based custom element for framework-agnostic usage",
   "type": "module",
   "sideEffects": [
