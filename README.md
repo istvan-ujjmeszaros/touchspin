@@ -112,6 +112,65 @@ Choose the build that matches your Bootstrap version:
 
 ---
 
+## Configuration
+
+### Data Attributes
+
+TouchSpin reads configuration from `data-bts-*` attributes using kebab-case naming:
+
+| Option | Data Attribute |
+|--------|---------------|
+| `min` | `data-bts-min` |
+| `max` | `data-bts-max` |
+| `step` | `data-bts-step` |
+| `decimals` | `data-bts-decimals` |
+| `initval` | `data-bts-init-val` |
+| `replacementval` | `data-bts-replacement-val` |
+| `mousewheel` | `data-bts-mouse-wheel` |
+| `verticalbuttons` | `data-bts-vertical-buttons` |
+| `forcestepdivisibility` | `data-bts-force-step-divisibility` |
+| `stepinterval` | `data-bts-step-interval` |
+| `maxboostedstep` | `data-bts-max-boosted-step` |
+| `prefix` | `data-bts-prefix` |
+| `postfix` | `data-bts-postfix` |
+
+Example:
+```html
+<input type="number"
+       data-bts-min="0"
+       data-bts-max="100"
+       data-bts-step="5"
+       data-bts-mouse-wheel="true"
+       data-bts-vertical-buttons="false"
+       data-bts-force-step-divisibility="round">
+```
+
+### Callback Functions
+
+TouchSpin provides two formatting callbacks that **must always be used together**:
+
+- `callback_before_calculation`: Parses formatted display values back to numeric (e.g., "$1,234" → "1234")
+- `callback_after_calculation`: Formats numeric values for display (e.g., "1234" → "$1,234")
+
+**⚠️ Important**: These callbacks work as a pair. Using only one will trigger a console warning and may cause unexpected behavior. The before callback removes formatting, the after callback adds it back.
+
+Example:
+```javascript
+$('#price').TouchSpin({
+  // Both callbacks must be defined together
+  callback_before_calculation: function(val) {
+    // Parse: Remove $ and commas
+    return String(val).replace(/[$,]/g, '');
+  },
+  callback_after_calculation: function(val) {
+    // Format: Add $ and commas
+    return '$' + Number(val).toLocaleString();
+  }
+});
+```
+
+---
+
 ## Monorepo Documentation
 
 - [docs/index.md](docs/index.md) — architecture, migration, and extension guides

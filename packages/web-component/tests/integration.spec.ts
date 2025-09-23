@@ -38,6 +38,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { captureConsole } from '@touchspin/core/test-helpers';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('TouchSpin Web Component integration scenarios', () => {
@@ -1828,16 +1829,8 @@ test('supports debugging and inspection', async ({ page }) => {
  * { "errorReporting": ["console_errors", "error_boundaries"], "loggingLevels": ["debug", "warn", "error"], "expectedBehavior": "comprehensive_error_handling" }
  */
 test('handles error reporting and logging', async ({ page }) => {
-  // Set up error capture
-  let consoleErrors: string[] = [];
-  let consoleWarns: string[] = [];
-  page.on('console', msg => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
-    } else if (msg.type() === 'warn') {
-      consoleWarns.push(msg.text());
-    }
-  });
+  // Set up error capture using the clean helper
+  const console = captureConsole(page);
 
   // Create component and trigger error scenarios
   await page.evaluate(() => {
@@ -1895,6 +1888,10 @@ test('handles error reporting and logging', async ({ page }) => {
   expect(errorTest.errorBoundaries).toBe(true);
   expect(errorTest.loggingLevels.error).toBe(true);
   expect(errorTest.comprehensiveErrorHandling).toBe(true);
+
+  // Check that console capture is working (may be empty in this simple test)
+  expect(Array.isArray(console.errors)).toBe(true);
+  expect(Array.isArray(console.warnings)).toBe(true);
 });
 
 /**

@@ -37,6 +37,7 @@ export * from './test-utilities/coverage';
 export * from './test-utilities/fixtures';
 export * from './test-utilities/wait';
 export * from './test-utilities/network';
+export * from './test-utilities/console';
 export * from './runtime/installDomHelpers';
 export * from './runtime/paths';
 

@@ -366,6 +366,9 @@ export class TouchSpinCore {
 
     // Validate callbacks and handle input type conversion if needed
     this._validateCallbacks();
+
+    // Check for callback pairing and warn if needed
+    this._checkCallbackPairing();
   }
 
   /**
@@ -694,6 +697,9 @@ export class TouchSpinCore {
     this._updateAriaAttributes();
     this._syncNativeAttributes();
     this._checkValue(false);
+
+    // Check for callback pairing and warn if needed
+    this._checkCallbackPairing();
   }
 
   getValue(): number {
@@ -1503,6 +1509,30 @@ export class TouchSpinCore {
 
     if (isDisabled) {
       this.stopSpin();
+    }
+  }
+
+  /**
+   * Check if callbacks are properly paired and warn if not
+   * @private
+   */
+  _checkCallbackPairing(): void {
+    const defCb = (v: string) => v;
+    const hasBefore = this.settings.callback_before_calculation &&
+      this.settings.callback_before_calculation.toString() !== defCb.toString();
+    const hasAfter = this.settings.callback_after_calculation &&
+      this.settings.callback_after_calculation.toString() !== defCb.toString();
+
+    if (hasBefore && !hasAfter) {
+      console.warn(
+        'TouchSpin: callback_before_calculation is defined but callback_after_calculation is missing. ' +
+        'These callbacks should be used together - one removes formatting, the other adds it back.'
+      );
+    } else if (!hasBefore && hasAfter) {
+      console.warn(
+        'TouchSpin: callback_after_calculation is defined but callback_before_calculation is missing. ' +
+        'These callbacks should be used together - one removes formatting, the other adds it back.'
+      );
     }
   }
 }

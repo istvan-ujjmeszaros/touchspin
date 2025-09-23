@@ -126,6 +126,54 @@
 
 ## test-utilities
 
+- **// ...perform actions...**
+  - `hasWarningContaining(warnings, text)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **// ...perform actions...**
+  - `hasWarningsContaining(warnings, texts)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **// Perform actions**
+  - `captureConsole(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **// Perform actions that may trigger warnings**
+  - `captureConsoleWarnings(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Capture all console output from a Playwright page**
+  - `captureConsole(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Capture console errors from a Playwright page**
+  - `captureConsoleErrors(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Capture console logs from a Playwright page**
+  - `captureConsoleLogs(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Capture console warnings from a Playwright page**
+  - `captureConsoleWarnings(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **const console = captureConsole(page);**
+  - `captureConsole(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **const warnings = captureConsoleWarnings(page);**
+  - `captureConsoleWarnings(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **const warnings = captureConsoleWarnings(page);**
+  - `hasWarningContaining(warnings, text)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **const warnings = captureConsoleWarnings(page);**
+  - `hasWarningsContaining(warnings, texts)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
 - **Disable event log textarea to skip DOM writes while keeping event listeners**
   - `disableEventLogging(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
@@ -133,6 +181,26 @@
 - **Enable event log textarea to resume DOM writes**
   - `enableEventLogging(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
+
+- **expect(hasWarningContaining(warnings, 'callback_before_calculation')).toBe(true);**
+  - `hasWarningContaining(warnings, text)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **expect(hasWarningsContaining(warnings, ['callback_before', 'missing'])).toBe(true);**
+  - `hasWarningsContaining(warnings, texts)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **expect(warnings).toContainEqual(expect.stringContaining('warning message'));**
+  - `captureConsoleWarnings(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Helper to check if a warning contains specific text**
+  - `hasWarningContaining(warnings, text)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Helper to check if multiple warning texts are present**
+  - `hasWarningsContaining(warnings, texts)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
 
 - **Pre-check multiple resources in parallel.**
   - `preFetchCheckMultiple(page, urls)`
@@ -145,6 +213,22 @@
 - **Remove event log textarea completely to prevent event listener registration**
   - `removeEventLogTextarea(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/fixtures.ts`
+
+- **Returns an array that will be populated with error messages**
+  - `captureConsoleErrors(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Returns an array that will be populated with log messages**
+  - `captureConsoleLogs(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Returns an array that will be populated with warning messages**
+  - `captureConsoleWarnings(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
+
+- **Returns an object with arrays for warnings, errors, and logs**
+  - `captureConsole(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
 
 - **This helps provide better error messages when the web server isn't properly configured.**
   - `preFetchCheck(page, url)`
