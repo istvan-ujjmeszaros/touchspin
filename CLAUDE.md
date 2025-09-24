@@ -108,22 +108,16 @@ test('scenario name', async ({ page }) => {
 
 ## 📊 Coverage Roadmap: Journey to 100%
 
-### Phase 1: jQuery Plugin Package ✅ (\~95% Complete)
+### Phase 1: jQuery Plugin Package ✅ (Patterns Established)
 
-* **Status**: Almost done, refining patterns
-* **Focus**: Establishing clean patterns for other packages
+* **Status**: Clean patterns established, serves as reference implementation
+* **Focus**: Reference for testing methodology and helper usage
 * **Location**: `packages/jquery-plugin/tests/`
 * **Coverage Target**: 100%
-* **Remaining Work**:
 
-  * Cover `forcestepdivisibility` options (floor, ceil, none)
-  * Test vertical button configurations
-  * Add callback function tests
-  * Complete edge cases
+### Phase 2: Core Package 🚀 (Active Development)
 
-### Phase 2: Core Package 🚀 (NEXT - 0%)
-
-* **Status**: Starting after jQuery plugin completion
+* **Status**: Implementation ongoing with comprehensive test infrastructure
 * **Focus**: Core logic, state management, value calculations
 * **Location**: `packages/core/tests/`
 * **Coverage Target**: 100%
@@ -166,35 +160,18 @@ const numericValue = await getNumericValue(page, 'test-input');
 expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
 ```
 
-#### Core Testing Strategy: Renderer-Independent
+#### Core Testing Strategy: Use Full Initialization
 
-**CRITICAL DISCOVERY**: TouchSpin Core without a renderer provides only keyboard/wheel functionality - **no buttons are created**. This is the intended behavior for pure Core testing.
+**IMPORTANT**: For Core package tests that need full TouchSpin functionality, use `initializeTouchspinWithVanilla` which provides:
+- Complete TouchSpin Core instance with VanillaRenderer
+- All API methods (`upOnce()`, `downOnce()`, `setValue()`, etc.)
+- Button interactions (`clickUpButton()`, `clickDownButton()`)
+- Keyboard/wheel events
+- Full UI including buttons
 
-**Core-Only Architecture**:
-- Core package manages state, calculations, boundaries, validation
-- Without renderer: Only supports keyboard (ArrowUp/ArrowDown) and mouse wheel events
-- Console warning: "TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work..."
-
-**Test Helpers Strategy**:
-```typescript
-// packages/core/test-helpers/core-adapter.ts
-export async function initializeTouchspin(page, testId, options)  // Creates TouchSpinCore instance directly
-export async function incrementViaAPI(page, testId)    // Uses core.upOnce()
-export async function decrementViaAPI(page, testId)    // Uses core.downOnce()
-export async function incrementViaKeyboard(page, testId) // ArrowUp key
-export async function decrementViaKeyboard(page, testId) // ArrowDown key
-export async function incrementViaWheel(page, testId)  // Mouse wheel up
-export async function decrementViaWheel(page, testId)  // Mouse wheel down
-export async function setValueViaAPI(page, testId, value)  // Uses core.setValue()
-export async function getNumericValue(page, testId)   // Gets numeric value from input
-export async function destroyCore(page, testId)       // Destroys Core instance
-export async function isCoreInitialized(page, testId) // Checks if Core is initialized
-```
-
-**DO NOT use button helpers in Core tests**:
-- `clickUpButton()` and `clickDownButton()` will fail - no buttons exist
-- These helpers are for renderer integration tests only
-- Core tests should use API or keyboard/wheel methods
+**Core Testing Approaches**:
+1. **Full Functionality**: Use `initializeTouchspinWithVanilla` for comprehensive testing
+2. **Callback Testing Only**: Use `core-adapter.ts` stub for callback pairing validation tests
 
 **Core Test File Status** (All syntax errors fixed):
 - `boundary-enforcement.spec.ts` - Placeholder tests for min/max enforcement
@@ -211,10 +188,10 @@ export async function isCoreInitialized(page, testId) // Checks if Core is initi
 
 ```typescript
 // ❌ Pitfall: fixture value 50 with step 3 may become 51 during init
-await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3 });
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 3 });
 
 // ✅ Prefer supplying a divisible init value
-await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 3, initval: 48 });
 ```
 
 **Rule of thumb (from Handbook):**
@@ -282,32 +259,25 @@ await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
 
 **✅ CORRECT Core Test Pattern:**
 ```typescript
-// Use initval option instead of separate setValue call
-await initializeTouchspin(page, 'test-input', {
+// Use initval option with full initialization
+await initializeTouchspinWithVanilla(page, 'test-input', {
   step: 0.25,
   decimals: 2,
   initval: 10  // Sets value before Core initialization
 });
-await incrementViaAPI(page, 'test-input');
-expect(await getNumericValue(page, 'test-input')).toBe(10.25);
-```
-
-**❌ WRONG Core Test Pattern:**
-```typescript
-// This will fail because _touchSpinCore doesn't exist yet
-await setValueViaAPI(page, 'test-input', 10);  // FAILS!
-await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2 });
+await apiHelpers.incrementViaAPI(page, 'test-input');
+expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10.25);
 ```
 
 **Key Differences:**
-- **`initializeTouchspin`**: Creates `new TouchSpinCore()` directly, stores on `input._touchSpinCore`
-- **`initializeTouchspinJQuery`**: Uses jQuery wrapper, creates renderer UI elements
+- **`initializeTouchspinWithVanilla`**: Creates full TouchSpin Core with VanillaRenderer
+- **`initializeTouchspinJQuery`**: Uses jQuery wrapper with Bootstrap renderer
 - **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
-- **Core helpers work without renderer**: No buttons created, API/keyboard/wheel only
+- **Full Core provides buttons and complete API**: All interaction methods available
 
-### Phase 3: Renderer Packages 📅 (Future - 0%)
+### Phase 3: Renderer Packages 📅 (Planned)
 
-* **Status**: After core package
+* **Status**: Planned after core package foundation
 * **Coverage Target**: 100% each
 * **Packages**:
 
@@ -321,9 +291,9 @@ await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2 });
   * ARIA attributes
   * Theme integration
 
-### Phase 4: Integration & E2E 🔄 (Final - 0%)
+### Phase 4: Integration & E2E 🔄 (Future)
 
-* **Status**: After individual packages
+* **Status**: Planned after individual package completion
 * **Focus**: Cross-package integration
 * **Coverage Target**: Key user workflows
 
@@ -497,98 +467,12 @@ import { clickUpButton } from '../test-helpers/helpers/core-helpers';
 * Core without a renderer creates **no buttons** (only supports keyboard/wheel events and API methods).
 * Button-based helpers (`clickUpButton`, `clickDownButton`) only work if a renderer is attached.
 
-### Policy
-
-1. **Pure Core Tests**: Use API methods (`upOnce`, `downOnce`) or keyboard events (ArrowUp/ArrowDown).
-2. **UI-Oriented Tests**: If buttons are needed, explicitly initialize Core with a renderer (default: Bootstrap5Renderer).
-3. **Hybrid Approach**: Prefer API methods for Core logic, renderer-based tests only when verifying integration with renderers.
-
-### Adapter Extension
-
-In `core-adapter.ts`, provide unified methods:
-
-```typescript
-// API-based increment/decrement
-export async function incrementViaAPI(page, testId) { /* ... */ }
-export async function decrementViaAPI(page, testId) { /* ... */ }
-
-// Keyboard-based
-export async function incrementViaKeyboard(page, testId) { /* ... */ }
-export async function decrementViaKeyboard(page, testId) { /* ... */ }
-
-// Renderer-based (optional)
-export async function incrementViaButton(page, testId) { /* ... */ }
-export async function decrementViaButton(page, testId) { /* ... */ }
-```
-
-### Expected Usage
-
-* **Core Logic Tests** → API/keyboard
-* **Renderer Integration Tests** → Renderer + button clicks
 
 ---
 
-## 📖 Testing Methodology & Guidelines
+## 📖 Testing Methodology Overview
 
-> **📋 Quick Reference**: See [TEST_HELPERS_CHEATSHEET.md](packages/core/TEST_HELPERS_CHEATSHEET.md)
-> **📚 Comprehensive Guide**: See [TEST_CONTRIBUTOR_HANDBOOK.md](packages/core/TEST_CONTRIBUTOR_HANDBOOK.md)
-
-### 🎯 Golden Rules (from Handbook)
-
-* **Helpers-first**: All interactions and checks go through `apiHelpers` / `jqueryHelpers`
-* **Renderer-agnostic**: Use `data-touchspin-injected="up|down|prefix|postfix"` — never Bootstrap classes
-* **Centralized logging**: Logging is wired by initializers — do **not** add listeners in tests
-* **Deterministic waits**: Use `waitForTouchspinInitialized`, `waitForSanitization`, or `expect*` helpers (no arbitrary sleeps)
-* **AAA + one behavior per test**: Arrange–Act–Assert; descriptive titles; keep tests focused
-
-### 📋 Standard Test Template
-
-```typescript
-import { test, expect } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
-
-test.describe('TouchSpin: [feature]', () => {
-  test.beforeEach(async ({ page }) => {
-    await apiHelpers.startCoverage(page);
-    await apiHelpers.waitForPageReady(page);
-    await apiHelpers.clearEventLog(page);
-  });
-
-  test.afterEach(async ({ page }, testInfo) => {
-    await apiHelpers.collectCoverage(page, testInfo.title);
-  });
-
-  test('should [specific behavior]', async ({ page }) => {
-    // Arrange
-    await apiHelpers.initializeTouchspin(page, 'qty', { step: 3, initval: 9 });
-    await apiHelpers.expectTouchSpinInitialized(page, 'qty');
-
-    // Act
-    await apiHelpers.clickUpButton(page, 'qty');
-
-    // Assert
-    await apiHelpers.expectValueToBe(page, 'qty', '12');
-    await apiHelpers.expectEventFired(page, 'change');
-  });
-});
-```
-
-### 🚫 Anti-patterns (from Handbook)
-
-* Direct DOM ops on TouchSpin controls (`page.locator(...).click()`) → **use helpers**
-* Adding listeners in tests (`addEventListener`, `$(document).on(...)`) → **logging is centralized**
-* Bootstrap class selectors → **use injected roles**
-* Arbitrary `waitForTimeout` → **use deterministic waits/expectations**
-* Mixing Core and jQuery init in the same test file → keep them in separate suites
-
-### ✅ Review Checklist (from Handbook)
-
-* [ ] Only `apiHelpers` / `jqueryHelpers` used for TouchSpin interactions
-* [ ] Renderer-agnostic locators (no Bootstrap classes)
-* [ ] No raw sleeps; expectations/waits are deterministic
-* [ ] No test-level event listeners; logging relies on central setup
-* [ ] Test names describe behavior ("should …"), one behavior per test
-* [ ] If helpers were edited, examples/cheatsheet updated accordingly
+> **📚 Complete Testing Guide**: See "📚 AI Agent Testing Guides" section below for comprehensive initialization patterns, best practices, debugging guidance, and copy-paste examples.
 
 ## 🎯 Coverage Strategy: Achieving 100%
 
@@ -817,7 +701,6 @@ interface TouchSpinElements {
 
 **New Test Structure:**
 * Test Helpers: `packages/core/test-helpers/` (shared across all packages)
-* Test Cheatsheet: `packages/core/TEST_HELPERS_CHEATSHEET.md`
 * New Tests: `packages/*/tests/*.spec.ts` (when written)
 
 **Archived Tests (for reference only):**
@@ -1210,6 +1093,349 @@ expect(await getNumericValue(page, 'test-input')).toBe(50);  // Original preserv
 expect(await readInputValue(page, 'test-input')).toBe('10 USD'); // Formatted display
 expect(await getNumericValue(page, 'test-input')).toBe(10);      // Internal numeric preserved
 ```
+
+---
+
+## 📚 AI Agent Testing Guides
+
+This section consolidates essential testing guidance for AI agents working on TouchSpin tests.
+
+### 🔧 Test Initialization Patterns
+
+Understanding the correct initialization patterns is crucial for writing working tests. **Different packages require different initialization approaches.**
+
+#### Core Package Tests
+
+**Key Helper:** `initializeTouchspinWithVanilla` from `@touchspin/core/test-helpers`
+
+Core tests focus on fundamental business logic, independent of any specific UI framework.
+
+```typescript
+import { test, expect } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+
+test.describe('Core API operations', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await apiHelpers.startCoverage(page);
+    await apiHelpers.waitForPageReady(page);
+    await apiHelpers.clearEventLog(page);
+  });
+
+  test('upOnce increments value by one step', async ({ page }) => {
+    await initializeTouchspinWithVanilla(page, 'test-input', {
+      step: 2, initval: 10
+    });
+
+    await apiHelpers.incrementViaAPI(page, 'test-input');
+
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(value).toBe(12);
+  });
+});
+```
+
+**Explanation:**
+- Creates a full TouchSpin Core instance with VanillaRenderer
+- Provides complete functionality including buttons and all API methods
+- Supports API calls, button clicks, and keyboard/wheel events
+
+#### jQuery Plugin Tests
+
+**Key Helper:** `initializeTouchspinJQuery` from `packages/jquery-plugin/tests/helpers/jquery-initialization.ts`
+
+```typescript
+import { test, expect } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
+import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+
+test.describe('jQuery plugin initialization', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await installJqueryPlugin(page);
+  });
+
+  test('initializes single element with touchspin method', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+    await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+  });
+});
+```
+
+#### Renderer Tests
+
+**Key Helper:** `initializeTouchspinWithRenderer` from `@touchspin/core/test-helpers`
+
+```typescript
+import { test, expect } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
+import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
+
+const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
+
+test.describe('Bootstrap 5 specific behavior', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await installDomHelpers(page);
+  });
+
+  test('uses Bootstrap 5 input-group-text for buttons', async ({ page }) => {
+    await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
+    const wrapper = page.getByTestId('test-input-wrapper');
+    // ... assertions
+  });
+});
+```
+
+#### Web Component Tests
+
+**Key Helper:** `initializeWebComponentTest` from `@touchspin/core/test-helpers`
+
+```typescript
+import { test, expect } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
+import { initializeWebComponentTest } from '@touchspin/core/test-helpers';
+
+test.describe('TouchSpin Web Component lifecycle', () => {
+  test.beforeEach(async ({ page }) => {
+    await initializeWebComponentTest(page);
+  });
+
+  test('initializes when connected to DOM', async ({ page }) => {
+    await page.evaluate(() => {
+      const element = document.createElement('touchspin-input');
+      element.setAttribute('min', '0');
+      element.setAttribute('max', '100');
+      element.setAttribute('data-testid', 'web-component-test');
+      document.body.appendChild(element);
+    });
+    // Assertions
+  });
+});
+```
+
+### 🎯 Core Testing Best Practices
+
+#### 1. No Manual Waits: Use Polling Assertions
+
+**❌ NEVER use manual waits** - they lead to flaky, slow, unreliable tests:
+
+```typescript
+// 🚨 WRONG - Fixed wait makes test unreliable
+await page.waitForTimeout(500);
+const value = await apiHelpers.readInputValue(page, 'test-input');
+expect(value).toBe('11');
+```
+
+**✅ ALWAYS use polling assertion helpers** - they wait intelligently:
+
+```typescript
+// ✅ CORRECT - Polls until condition is true or timeout
+await apiHelpers.expectValueToBe(page, 'test-input', '11');
+```
+
+#### 2. Use Human-Readable Helpers
+
+**✅ Use high-level helpers** for simple, readable tests:
+
+```typescript
+// ✅ CORRECT - Intent is immediately clear
+await apiHelpers.clickUpButton(page, 'test-input');
+await apiHelpers.expectValueToBe(page, 'test-input', '6');
+await apiHelpers.expectEventFired(page, 'change');
+```
+
+**❌ Don't use low-level Playwright APIs** directly:
+
+```typescript
+// ❌ WRONG - Too low-level, harder to read and maintain
+await page.locator('[data-testid="test-input-up"]').click();
+const inputValue = await page.locator('[data-testid="test-input"]').inputValue();
+expect(inputValue).toBe('6');
+```
+
+#### 3. Test Behavior Once
+
+Each distinct behavior should be tested by **one focused test**:
+
+**✅ Good - Separate tests for behavior and edge cases:**
+
+```typescript
+test('should increment the value by the step amount', async ({ page }) => {
+  await apiHelpers.initializeTouchspinWithVanilla(page, 'test-input', { initval: 10, step: 5 });
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '15');
+});
+
+test('should not increment past the maximum value', async ({ page }) => {
+  await apiHelpers.initializeTouchspinWithVanilla(page, 'test-input', { initval: 100, max: 100 });
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '100');
+});
+```
+
+### 🍳 Test Helper Cookbook
+
+Copy-paste examples for common testing scenarios:
+
+#### Initialization
+
+```typescript
+// Core tests with full functionality
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
+
+// jQuery plugin tests
+import { initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+
+// Renderer tests
+import { initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
+const RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
+await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+```
+
+#### Interactions
+
+```typescript
+// Button clicks
+await apiHelpers.clickUpButton(page, 'test-input');
+await apiHelpers.clickDownButton(page, 'test-input');
+
+// Keyboard interactions
+await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+await apiHelpers.pressDownArrowKeyOnInput(page, 'test-input');
+
+// Input operations
+await apiHelpers.typeInInput(page, 'test-input', '50');
+await apiHelpers.fillWithValueAndBlur(page, 'test-input', '75');
+```
+
+#### Core API Interactions
+
+**⚠️ Important:** These only work with tests initialized using `initializeTouchspinWithVanilla`, `initializeTouchspinWithRenderer`, or jQuery plugin initialization, NOT with stub `core-adapter`.
+
+```typescript
+// First, initialize with a method that provides full API access
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
+
+// Now API interactions work:
+await apiHelpers.incrementViaAPI(page, 'test-input');
+await apiHelpers.decrementViaAPI(page, 'test-input');
+await apiHelpers.setValueViaAPI(page, 'test-input', '88');
+await apiHelpers.updateSettingsViaAPI(page, 'test-input', { step: 10 });
+```
+
+#### Value Reading
+
+```typescript
+// Display value (string as appears in input)
+const displayValue = await apiHelpers.readInputValue(page, 'test-input');
+expect(displayValue).toBe('50.00');
+
+// Numeric value (parsed number)
+const numericValue = await apiHelpers.getNumericValue(page, 'test-input');
+expect(numericValue).toBe(50);
+```
+
+#### Assertions
+
+```typescript
+// Value assertions (poll until true)
+await apiHelpers.expectValueToBe(page, 'test-input', '25');
+await apiHelpers.expectValueToBeGreaterThan(page, 'test-input', 10);
+await apiHelpers.expectValueToBeLessThan(page, 'test-input', 30);
+
+// Component state
+await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+await apiHelpers.expectButtonToBeDisabled(page, 'test-input', 'up');
+await apiHelpers.expectButtonToBeEnabled(page, 'test-input', 'down');
+
+// Event assertions
+await apiHelpers.clearEventLog(page); // Clear before acting
+// ... perform action ...
+await apiHelpers.expectEventFired(page, 'change');
+await apiHelpers.expectEventFired(page, 'touchspin.on.max');
+await apiHelpers.expectNoEvent(page, 'touchspin.on.startspin');
+await apiHelpers.expectEventCount(page, 'change', 3);
+```
+
+### 🐛 Debugging Failing Tests
+
+#### Step 1: Analyze Test Intent
+- Read the Gherkin scenario comments (`/** Scenario: ... */`)
+- Compare test implementation to described behavior
+- Verify correct helpers are being used
+
+#### Step 2: Examine Error Messages
+- **Timeout errors**: Polling assertion didn't become true (most common)
+- **Locator errors**: Element not found, selector wrong, or element not visible
+- **Assertion errors**: Value received didn't match expected value
+
+#### Step 3: Use Event Log for Debugging
+
+```typescript
+// Add temporary logging to see what actually happened
+console.log(await apiHelpers.getEventLog(page));
+```
+
+Analyze the log:
+- Did expected events fire? (e.g., `change`, `touchspin.on.max`)
+- Did any unexpected events fire?
+- What was the last event before failure?
+
+#### Step 4: Common Fixes
+
+**Flaky Tests:** Replace `page.waitForTimeout()` with polling assertions like `expectValueToBe()`
+
+**Incorrect Assertions:** Double-check the Gherkin scenario - are you checking `string` vs `number`? Using `readInputValue` vs `getNumericValue`?
+
+**Timing Issues:** Ensure all helper functions are `await`ed. Initialization helpers wait for component readiness.
+
+**Wrong Helper Usage:** Using `clickUpButton` in core test with no UI? Refer to cookbook for correct helper.
+
+#### Step 5: Interactive Debugging
+
+```typescript
+// Pause execution for manual inspection
+await page.pause();
+```
+
+Then run: `yarn exec playwright test --headed [test-file]`
+
+### ❌ Common Anti-Patterns to Avoid
+
+#### Wrong Initialization for Test Type
+
+```typescript
+// 🚨 WRONG - Don't use jQuery helpers in core tests
+test('bad core test', async ({ page }) => {
+  await initializeTouchspinJQuery(page, 'test-input', { step: 1 }); // jQuery not loaded!
+  await apiHelpers.clickUpButton(page, 'test-input'); // No buttons in core tests!
+});
+```
+
+#### Bypassing Helpers
+
+```typescript
+// 🚨 WRONG - Don't bypass setup logic in helpers
+test('bad manual initialization', async ({ page }) => {
+  await page.evaluate(() => {
+    const $ = (window as any).$;
+    $('[data-testid="test-input"]').TouchSpin({ step: 5 }); // Brittle, bypasses setup
+  });
+});
+```
+
+#### Importing from /src
+
+```typescript
+// 🚨 WRONG - Never import from /src in tests
+import { TouchSpinCore } from '../../src/core'; // Forbidden - bypasses build
+```
+
+**Correction:** All necessary modules are exported from `@touchspin/core/test-helpers`
 
 ---
 
