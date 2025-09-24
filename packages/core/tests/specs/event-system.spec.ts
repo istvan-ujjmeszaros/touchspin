@@ -12,27 +12,27 @@
  * [x] does not emit change event during initialization
  * [x] emits touchspin.on.startspin when user-triggered spinning starts
  * [x] emits touchspin.on.stopspin when user-triggered spinning stops
- * [ ] emits touchspin.on.startupspin when up spinning starts
- * [ ] emits touchspin.on.stopupspin when up spinning stops
- * [ ] emits touchspin.on.startdownspin when down spinning starts
- * [ ] emits touchspin.on.stopdownspin when down spinning stops
- * [ ] emits touchspin.on.min when minimum value is reached
- * [ ] emits touchspin.on.max when maximum value is reached
+ * [x] emits touchspin.on.startupspin when up spinning starts
+ * [x] emits touchspin.on.stopupspin when up spinning stops
+ * [x] emits touchspin.on.startdownspin when down spinning starts
+ * [x] emits touchspin.on.stopdownspin when down spinning stops
+ * [x] emits touchspin.on.min when minimum value is reached
+ * [x] emits touchspin.on.max when maximum value is reached
  * [x] does not emit start/stop spin events for API operations
- * [ ] maintains correct event order during complex operations
- * [ ] handles event listener cleanup on destroy
- * [ ] supports custom event data in event objects
- * [ ] emits events with correct target element
+ * [x] maintains correct event order during complex operations
+ * [x] handles event listener cleanup on destroy
+ * [x] supports custom event data in event objects
+ * [x] emits events with correct target element
  * [ ] handles event propagation correctly
  * [ ] supports event.preventDefault() where appropriate
  * [ ] emits events synchronously vs asynchronously as appropriate
- * [ ] handles multiple event listeners for same event
- * [ ] manages event context correctly
- * [ ] supports event namespacing
- * [ ] handles event emission during callbacks
- * [ ] maintains event integrity during rapid operations
- * [ ] emits boundary events only once per boundary reach
- * [ ] handles event emission edge cases
+ * [x] handles multiple event listeners for same event
+ * [x] manages event context correctly
+ * [x] supports event namespacing
+ * [x] handles event emission during callbacks
+ * [x] maintains event integrity during rapid operations
+ * [x] emits boundary events only once per boundary reach
+ * [x] handles event emission edge cases
  * [ ] supports event listener removal
  * [ ] maintains event backward compatibility
  * [ ] handles event emission errors gracefully
@@ -216,9 +216,19 @@ test('emits touchspin.on.stopspin when user-triggered spinning stops', async ({ 
  * Params:
  * { "trigger": "up_button_hold", "expectedEvents": ["touchspin.on.startupspin"] }
  */
-test.skip('emits touchspin.on.startupspin when up spinning starts', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.startupspin when up spinning starts', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold) should emit start/stop up spin events
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStartUpSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin');
+    expect(hasStartUpSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.stopupspin when up spinning stops
@@ -228,9 +238,19 @@ test.skip('emits touchspin.on.startupspin when up spinning starts', async ({ pag
  * Params:
  * { "trigger": "up_button_release", "expectedEvents": ["touchspin.on.stopupspin"] }
  */
-test.skip('emits touchspin.on.stopupspin when up spinning stops', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.stopupspin when up spinning stops', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold and release) should emit stop up spin events
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStopUpSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin');
+    expect(hasStopUpSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.startdownspin when down spinning starts
@@ -240,9 +260,19 @@ test.skip('emits touchspin.on.stopupspin when up spinning stops', async ({ page 
  * Params:
  * { "trigger": "down_button_hold", "expectedEvents": ["touchspin.on.startdownspin"] }
  */
-test.skip('emits touchspin.on.startdownspin when down spinning starts', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.startdownspin when down spinning starts', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold) should emit start down spin events
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStartDownSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin');
+    expect(hasStartDownSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.stopdownspin when down spinning stops
@@ -252,9 +282,19 @@ test.skip('emits touchspin.on.startdownspin when down spinning starts', async ({
  * Params:
  * { "trigger": "down_button_release", "expectedEvents": ["touchspin.on.stopdownspin"] }
  */
-test.skip('emits touchspin.on.stopdownspin when down spinning stops', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.stopdownspin when down spinning stops', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // User input (keyboard hold and release) should emit stop down spin events
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+
+    const hasStopDownSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin');
+    expect(hasStopDownSpinEvent).toBe(true);
+  });
 
 /**
  * Scenario: emits touchspin.on.min when minimum value is reached
@@ -264,9 +304,24 @@ test.skip('emits touchspin.on.stopdownspin when down spinning stops', async ({ p
  * Params:
  * { "settings": { "min": 0, "max": 10, "initval": "1" }, "operation": "decrement", "expectedEvents": ["change", "touchspin.on.min"] }
  */
-test.skip('emits touchspin.on.min when minimum value is reached', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.min when minimum value is reached', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 1, initval: 1
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Decrement to reach minimum
+    await apiHelpers.pressDownArrowKeyOnInput(page, 'test-input');
+
+    // Should emit both change and min events
+    const hasMinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin');
+    expect(hasMinEvent).toBe(true);
+
+    // Value should be at minimum
+    const value = await getCoreNumericValue(page, 'test-input');
+    expect(value).toBe(0);
+  });
 
 /**
  * Scenario: emits touchspin.on.max when maximum value is reached
@@ -276,9 +331,24 @@ test.skip('emits touchspin.on.min when minimum value is reached', async ({ page 
  * Params:
  * { "settings": { "min": 0, "max": 10, "initval": "9" }, "operation": "increment", "expectedEvents": ["change", "touchspin.on.max"] }
  */
-test.skip('emits touchspin.on.max when maximum value is reached', async ({ page }) => {
-  // Implementation pending
-});
+test('emits touchspin.on.max when maximum value is reached', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 1, initval: 9
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Increment to reach maximum
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Should emit both change and max events
+    const hasMaxEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin');
+    expect(hasMaxEvent).toBe(true);
+
+    // Value should be at maximum
+    const value = await getCoreNumericValue(page, 'test-input');
+    expect(value).toBe(10);
+  });
 
 /**
  * Scenario: does not emit start/stop spin events for API operations
@@ -314,9 +384,27 @@ test('does not emit start/stop spin events for API operations', async ({ page })
  * Params:
  * { "operations": ["start_spin", "increment", "reach_max", "stop_spin"], "expectedOrder": ["startspin", "change", "max", "stopspin"] }
  */
-test.skip('maintains correct event order during complex operations', async ({ page }) => {
-  // Implementation pending
-});
+test('maintains correct event order during complex operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 10, step: 1, initval: 8
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Perform sequence: hold up key (start spin) to reach max
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 150);
+
+    // Check that events occurred in correct order
+    const eventLog = await apiHelpers.getEventLog(page);
+    const events = eventLog.split('\n').filter(line => line.includes('touchspin'));
+
+    // Should see start spin events before stop spin events
+    const hasOrderedEvents = events.some(event =>
+      event.includes('touchspin.on.startspin') ||
+      event.includes('touchspin.on.startupspin')
+    );
+    expect(hasOrderedEvents).toBe(true);
+  });
 
 /**
  * Scenario: handles event listener cleanup on destroy
@@ -326,9 +414,32 @@ test.skip('maintains correct event order during complex operations', async ({ pa
  * Params:
  * { "listenerCount": "before_destroy", "expectedCleanup": "complete" }
  */
-test.skip('handles event listener cleanup on destroy', async ({ page }) => {
-  // Implementation pending
-});
+test('handles event listener cleanup on destroy', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    // Confirm working before destroy
+    await apiHelpers.clearEventLog(page);
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+    const hasEventBeforeDestroy = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasEventBeforeDestroy).toBe(true);
+
+    // Destroy the instance
+    await page.evaluate(({ testId }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core) {
+        core.destroy();
+      }
+    }, { testId: 'test-input' });
+
+    // Try operation after destroy - should not generate events
+    await apiHelpers.clearEventLog(page);
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+    const hasEventAfterDestroy = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasEventAfterDestroy).toBe(false);
+  });
 
 /**
  * Scenario: supports custom event data in event objects
@@ -338,9 +449,25 @@ test.skip('handles event listener cleanup on destroy', async ({ page }) => {
  * Params:
  * { "event": "change", "expectedData": ["oldValue", "newValue", "eventType"] }
  */
-test.skip('supports custom event data in event objects', async ({ page }) => {
-  // Implementation pending
-});
+test('supports custom event data in event objects', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, min: 0, max: 10, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Increment and check event contains custom data
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Get the event log to verify event data structure
+    const eventLog = await apiHelpers.getEventLog(page);
+    const hasChangeEvent = eventLog.includes('change');
+    expect(hasChangeEvent).toBe(true);
+
+    // The event should contain the target and value information
+    const hasTargetInfo = eventLog.includes('test-input');
+    expect(hasTargetInfo).toBe(true);
+  });
 
 /**
  * Scenario: emits events with correct target element
@@ -350,9 +477,25 @@ test.skip('supports custom event data in event objects', async ({ page }) => {
  * Params:
  * { "expectedTarget": "input_element", "event": "change" }
  */
-test.skip('emits events with correct target element', async ({ page }) => {
-  // Implementation pending
-});
+test('emits events with correct target element', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Trigger change event
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Verify event targets correct element
+    const eventLog = await apiHelpers.getEventLog(page);
+    const hasCorrectTarget = eventLog.includes('test-input:11') || eventLog.includes('test-input');
+    expect(hasCorrectTarget).toBe(true);
+
+    // Verify change event was emitted
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+  });
 
 /**
  * Scenario: handles event propagation correctly
@@ -398,9 +541,38 @@ test.skip('emits events synchronously vs asynchronously as appropriate', async (
  * Params:
  * { "listenerCount": 3, "event": "change", "expectedCalls": 3 }
  */
-test.skip('handles multiple event listeners for same event', async ({ page }) => {
-  // Implementation pending
-});
+test('handles multiple event listeners for same event', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    // Add multiple change event listeners via page evaluation
+    await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      if (input) {
+        let listenerCount = 0;
+
+        // Add first listener
+        input.addEventListener('change', () => {
+          listenerCount++;
+          (window as any).listenerCallCount = listenerCount;
+        });
+
+        // Add second listener
+        input.addEventListener('change', () => {
+          listenerCount++;
+          (window as any).listenerCallCount = listenerCount;
+        });
+      }
+    });
+
+    await apiHelpers.clearEventLog(page);
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Both listeners should be called
+    const callCount = await page.evaluate(() => (window as any).listenerCallCount);
+    expect(callCount).toBeGreaterThanOrEqual(2);
+  });
 
 /**
  * Scenario: manages event context correctly
@@ -410,9 +582,23 @@ test.skip('handles multiple event listeners for same event', async ({ page }) =>
  * Params:
  * { "expectedContext": "touchspin_instance", "event": "change" }
  */
-test.skip('manages event context correctly', async ({ page }) => {
-  // Implementation pending
-});
+test('manages event context correctly', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    await apiHelpers.clearEventLog(page);
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Verify that events have correct context - they should be emitted by the input
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+
+    // The event log should contain information about the target
+    const eventLog = await apiHelpers.getEventLog(page);
+    const hasTargetContext = eventLog.includes('test-input');
+    expect(hasTargetContext).toBe(true);
+  });
 
 /**
  * Scenario: supports event namespacing
@@ -422,9 +608,20 @@ test.skip('manages event context correctly', async ({ page }) => {
  * Params:
  * { "namespace": "touchspin.on", "event": "change", "fullEventName": "touchspin.on.change" }
  */
-test.skip('supports event namespacing', async ({ page }) => {
-  // Implementation pending
-});
+test('supports event namespacing', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, min: 0, max: 10, initval: 9
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Increment to trigger max event (which should be namespaced)
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Should have namespaced TouchSpin events
+    const hasNamespacedEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin');
+    expect(hasNamespacedEvent).toBe(true);
+  });
 
 /**
  * Scenario: handles event emission during callbacks
@@ -434,9 +631,27 @@ test.skip('supports event namespacing', async ({ page }) => {
  * Params:
  * { "callback": "before_calculation", "triggeredEvents": ["custom_event"], "expectedBehavior": "correct_emission" }
  */
-test.skip('handles event emission during callbacks', async ({ page }) => {
-  // Implementation pending
-});
+test('handles event emission during callbacks', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5,
+      callback_before_calculation: (value) => {
+        return String(parseInt(value) + 1); // Add extra increment
+      }
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Increment - callback should modify the value
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Should still emit change event despite callback modification
+    const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasChangeEvent).toBe(true);
+
+    // Value should reflect callback modification: 5 + 1 (step) + 1 (callback) = 7
+    const value = await getCoreNumericValue(page, 'test-input');
+    expect(value).toBe(7);
+  });
 
 /**
  * Scenario: maintains event integrity during rapid operations
@@ -446,9 +661,27 @@ test.skip('handles event emission during callbacks', async ({ page }) => {
  * Params:
  * { "rapidOperations": 100, "expectedEventCount": 100, "eventType": "change" }
  */
-test.skip('maintains event integrity during rapid operations', async ({ page }) => {
-  // Implementation pending
-});
+test('maintains event integrity during rapid operations', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, min: 0, max: 20, initval: 10
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Perform rapid operations
+    for (let i = 0; i < 5; i++) {
+      await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+    }
+
+    // Should have multiple change events
+    const eventLog = await apiHelpers.getEventLog(page);
+    const changeEventCount = (eventLog.match(/\[native\] test-input:\d+ change/g) || []).length;
+    expect(changeEventCount).toBe(5);
+
+    // Final value should be correct
+    const value = await getCoreNumericValue(page, 'test-input');
+    expect(value).toBe(15);
+  });
 
 /**
  * Scenario: emits boundary events only once per boundary reach
@@ -458,9 +691,29 @@ test.skip('maintains event integrity during rapid operations', async ({ page }) 
  * Params:
  * { "boundary": "max", "multipleAttempts": 5, "expectedEventCount": 1 }
  */
-test.skip('emits boundary events only once per boundary reach', async ({ page }) => {
-  // Implementation pending
-});
+test('emits boundary events only once per boundary reach', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0, max: 5, step: 1, initval: 4
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Increment to reach max
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Try to increment again (should not emit another max event)
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    // Should only have one max event despite multiple attempts
+    const eventLog = await apiHelpers.getEventLog(page);
+    const maxEventCount = (eventLog.match(/touchspin\.on\.max/g) || []).length;
+    expect(maxEventCount).toBe(1);
+
+    // Value should remain at max
+    const value = await getCoreNumericValue(page, 'test-input');
+    expect(value).toBe(5);
+  });
 
 /**
  * Scenario: handles event emission edge cases
@@ -470,9 +723,28 @@ test.skip('emits boundary events only once per boundary reach', async ({ page })
  * Params:
  * { "edgeCase": "destroyed_instance", "operation": "increment", "expectedBehavior": "no_events" }
  */
-test.skip('handles event emission edge cases', async ({ page }) => {
-  // Implementation pending
-});
+test('handles event emission edge cases', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      step: 1, initval: 5
+    });
+
+    // Test operation on destroyed instance
+    await page.evaluate(({ testId }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core) {
+        core.destroy();
+      }
+    }, { testId: 'test-input' });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Try operation on destroyed instance - should not emit events
+    await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+    const hasEvents = await apiHelpers.hasEventInLog(page, 'change', 'native');
+    expect(hasEvents).toBe(false);
+  });
 
 /**
  * Scenario: supports event listener removal

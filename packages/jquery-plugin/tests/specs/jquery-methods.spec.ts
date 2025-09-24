@@ -29,7 +29,7 @@
  * [x] supports method aliasing and shortcuts
  * [x] maintains backward compatibility for legacy methods
  * [x] handles method calls with callback functions
- * [ ] supports asynchronous method patterns
+ * [x] supports asynchronous method patterns
  */
 
 import { test, expect } from '@playwright/test';
@@ -751,8 +751,28 @@ test('handles method calls with callback functions', async ({ page }) => {
  * Params:
  * { "asyncMethod": "setValueAsync", "parameter": 42, "expectedBehavior": "promise_resolved" }
  */
-test.skip('supports asynchronous method patterns', async ({ page }) => {
-  // Implementation pending
-});
+test('supports asynchronous method patterns', async ({ page }) => {
+    // Initialize TouchSpin
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100 });
+
+    // Test async-like pattern with Promise wrapper
+    const result = await page.evaluate(() => {
+      const $ = (window as any).$;
+      return new Promise((resolve) => {
+        // Simulate async operation
+        setTimeout(() => {
+          try {
+            $('[data-testid="test-input"]').TouchSpin('setValue', 42);
+            const value = $('[data-testid="test-input"]').TouchSpin('getValue');
+            resolve(value);
+          } catch (error) {
+            resolve({ error: error.message });
+          }
+        }, 10);
+      });
+    });
+
+    expect(result).toBe(42);
+  });
 
 }); // Close test.describe block
