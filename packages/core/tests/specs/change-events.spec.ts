@@ -42,6 +42,7 @@ import {
 import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
 import { clearEventLog, countEventInLog, hasEventInLog } from '../__shared__/helpers/events/log';
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
+import { getNumericValue } from '../__shared__/helpers/core/api';
 
  /**
   * Scenario: increases value on click on up button and triggers change event

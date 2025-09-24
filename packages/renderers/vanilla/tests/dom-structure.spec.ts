@@ -45,12 +45,13 @@ test.describe('Vanilla specific behavior', () => {
     await expect(upButton).toBeVisible();
     await expect(downButton).toBeVisible();
 
-    // Should not have framework-specific button classes
+    // Should not have framework-specific button classes (but may have ts-btn as semantic class)
     const upClasses = await upButton.getAttribute('class');
     const downClasses = await downButton.getAttribute('class');
 
-    expect(upClasses || '').not.toMatch(/btn|button-|input-group/);
-    expect(downClasses || '').not.toMatch(/btn|button-|input-group/);
+    // Should avoid Bootstrap/framework classes but allow TouchSpin's semantic classes like ts-btn
+    expect(upClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/);  // Avoid standalone 'btn' but allow 'ts-btn'
+    expect(downClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/);
   });
 
   test('maintains minimal DOM structure', async ({ page }) => {
