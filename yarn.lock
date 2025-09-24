@@ -1255,6 +1255,7 @@ __metadata:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     "@types/node": "npm:^22.7.4"
+    sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown
@@ -1267,6 +1268,7 @@ __metadata:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     "@types/node": "npm:^22.7.4"
+    sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown
@@ -1280,6 +1282,7 @@ __metadata:
     "@touchspin/core": "workspace:*"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:^5.3.3"
+    sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown

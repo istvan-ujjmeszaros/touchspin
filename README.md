@@ -110,6 +110,63 @@ Choose the build that matches your Bootstrap version:
 <touchspin-input min="0" max="100" value="50"></touchspin-input>
 ```
 
+### Initialization Options
+
+TouchSpin ships with multiple delivery formats so you can pick the one that matches your stack. Each option below renders the same spinner; only the loading mechanism differs.
+
+#### 1. Global (IIFE) build with embedded renderers
+
+```html
+<!-- Include the bundled CSS/JS pair from the CDN or your build output -->
+<link rel="stylesheet" href="https://unpkg.com/@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css">
+<script src="https://unpkg.com/touchspin/dist/touchspin-bootstrap5.umd.js"></script>
+
+<input id="quantity" type="number" value="5">
+
+<script>
+  const spinner = TouchSpin(document.getElementById('quantity'), {
+    renderer: 'bootstrap5',
+    min: 0,
+    max: 100,
+    step: 1
+  });
+</script>
+```
+
+#### 2. ES Modules (native browsers or Vite/Next/Rollup)
+
+```html
+<script type="module">
+  import { TouchSpin } from '@touchspin/core';
+  import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+  import '@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css';
+
+  const spinner = TouchSpin(document.querySelector('#quantity'), {
+    renderer: Bootstrap5Renderer,
+    step: 0.5
+  });
+</script>
+```
+
+#### 3. Classic jQuery plugin wrapper
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/touchspin/dist/jquery.bootstrap-touchspin.css">
+<script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/touchspin/dist/jquery.bootstrap-touchspin-bs5.js"></script>
+
+<input id="quantity" type="number" value="5">
+
+<script>
+  $('#quantity').TouchSpin({
+    renderer: 'bootstrap5',
+    min: 0,
+    max: 100,
+    step: 1
+  });
+</script>
+```
+
 ---
 
 ## Configuration

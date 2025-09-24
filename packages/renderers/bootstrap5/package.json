@@ -24,8 +24,9 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
-    "build": "rm -rf dist && yarn run build:types && yarn run build:js",
+    "build": "rm -rf dist && yarn run build:types && yarn run build:css && yarn run build:js",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
+    "build:css": "yarn exec sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap5Renderer.js",
     "typecheck": "tsc --noEmit",
@@ -62,6 +63,7 @@
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
     "bootstrap": "^5.3.3",
+    "sass": "^1.77.8",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"
   }

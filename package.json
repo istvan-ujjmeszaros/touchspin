@@ -119,5 +119,5 @@
     "@touchspin/core": "workspace:*",
     "ci": "^2.3.0"
   },
-  "packageManager": "yarn@4.9.4"
+  "packageManager": "yarn@4.10.3"
 }
