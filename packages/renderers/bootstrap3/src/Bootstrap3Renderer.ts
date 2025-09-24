@@ -365,6 +365,10 @@ class Bootstrap3Renderer extends AbstractRenderer {
     this.wrapper = null;
 
     this.buildAndAttachDOM();
+
+    if (this.wrapper) {
+      this.finalizeWrapperAttributes();
+    }
   }
 
   updateButtonFocusability(newValue: boolean): void {

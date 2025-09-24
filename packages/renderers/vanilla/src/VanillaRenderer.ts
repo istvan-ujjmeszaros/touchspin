@@ -233,6 +233,10 @@ class VanillaRenderer extends AbstractRenderer {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
+
+    if (this.wrapper) {
+      this.finalizeWrapperAttributes();
+    }
   }
 
   buildAndAttachDOM(): void {

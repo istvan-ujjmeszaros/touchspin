@@ -389,6 +389,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
+
+    // Ensure the rebuilt wrapper is marked as initialized for future cleanup cycles
+    if (this.wrapper) {
+      this.finalizeWrapperAttributes();
+    }
   }
 
   updateButtonFocusability(newValue: boolean): void {

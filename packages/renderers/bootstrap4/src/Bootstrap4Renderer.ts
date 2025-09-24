@@ -359,6 +359,10 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
+
+    if (this.wrapper) {
+      this.finalizeWrapperAttributes();
+    }
   }
 
   updateButtonFocusability(newValue: boolean): void {
