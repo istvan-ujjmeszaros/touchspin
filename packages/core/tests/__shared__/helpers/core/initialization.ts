@@ -114,22 +114,47 @@ export async function initializeTouchspinWithRenderer(
   exportName?: string
 ): Promise<void> {
   await setupLogging(page);
+  await installDomHelpers(page);
+
+  // Pre-check that modules are fetchable (better error messages)
+  await preFetchCheck(page, coreRuntimeUrl);
+  await preFetchCheck(page, rendererUrl);
+
   const coreUrl = coreRuntimeUrl;
   await page.evaluate(async ({ testId, options, rendererUrl, exportName, coreUrl }) => {
-    const origin = (globalThis as any).location?.origin ?? '';
-    const { TouchSpinCore } = (await import(new URL(coreUrl, origin).href)) as unknown as {
-      TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
-    };
-    const mod = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
-    const Renderer = (exportName ? (mod[exportName] as unknown) : (mod.default as unknown)) ?? mod.default;
+    try {
+      const origin = (globalThis as any).location?.origin ?? '';
 
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (!input) throw new Error(`Input with testId "${testId}" not found`);
-    if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
+      // Import core module
+      const coreModule = (await import(new URL(coreUrl, origin).href)) as unknown as {
+        TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
+      };
+      const { TouchSpinCore } = coreModule;
 
-    const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as Partial<TouchSpinCoreOptions>);
-    (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
-    (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+      if (!TouchSpinCore) {
+        throw new Error(`TouchSpinCore not found in module: ${coreUrl}`);
+      }
+
+      // Import renderer module
+      const rendererModule = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
+      const Renderer = (exportName ? (rendererModule[exportName] as unknown) : (rendererModule.default as unknown)) ?? rendererModule.default;
+
+      if (!Renderer) {
+        throw new Error(`Renderer not found in module: ${rendererUrl} (export: ${exportName || 'default'})`);
+      }
+
+      // eslint-disable-next-line -- Required in browser context
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+      if (!input) throw new Error(`Input with testId "${testId}" not found`);
+      if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
+
+      const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as Partial<TouchSpinCoreOptions>);
+      (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
+      (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+    } catch (err) {
+      console.error('initializeTouchspinWithRenderer failed:', err);
+      throw err;
+    }
   }, { testId, options, rendererUrl, exportName, coreUrl });
 
   const sel = [

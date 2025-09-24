@@ -33,18 +33,16 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { initializeWebComponentTest } from '@touchspin/core/test-helpers';
 
 test.describe('TouchSpin Web Component lifecycle management', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await apiHelpers.startCoverage(page);
+
+    // Use specialized web component loader that handles module resolution
+    await initializeWebComponentTest(page);
+
     await apiHelpers.waitForPageReady(page);
-
-    // Load the web component
-    await page.addScriptTag({
-      path: '/packages/web-component/dist/index.js'
-    });
-
     await apiHelpers.clearEventLog(page);
   });
 
@@ -568,8 +566,48 @@ test('supports late binding scenarios', async ({ page }) => {
   expect(beforeUpgrade.element2Exists).toBe(true);
 
   // Now load the web component script (late binding)
-  await page.addScriptTag({
-    path: '/packages/web-component/dist/index.js'
+  // Use the module-aware loader to handle dependencies
+  await page.evaluate(async () => {
+    // Load dependencies first
+    const moduleMap: Record<string, any> = {};
+    const coreModule = await import('/packages/core/dist/index.js');
+    moduleMap['@touchspin/core'] = coreModule;
+    const vanillaModule = await import('/packages/renderers/vanilla/dist/index.js');
+    moduleMap['@touchspin/renderer-vanilla'] = vanillaModule;
+    (window as any).__touchspinModules = moduleMap;
+
+    // Load and patch the web component
+    const response = await fetch('/packages/web-component/dist/index.js');
+    let componentSource = await response.text();
+
+    componentSource = componentSource.replace(
+      /import\s+\{([^}]+)\}\s+from\s+["']@touchspin\/core["'];?/g,
+      (match, imports) => {
+        const cleanImports = imports.split(',').map((i: string) => i.trim());
+        return cleanImports.map((imp: string) => {
+          const [name, alias] = imp.split(' as ').map(s => s.trim());
+          const finalName = alias || name;
+          return `const ${finalName} = window.__touchspinModules['@touchspin/core'].${name};`;
+        }).join('\n');
+      }
+    );
+
+    componentSource = componentSource.replace(
+      /import\s+\{([^}]+)\}\s+from\s+["']@touchspin\/renderer-vanilla["'];?/g,
+      (match, imports) => {
+        const cleanImports = imports.split(',').map((i: string) => i.trim());
+        return cleanImports.map((imp: string) => {
+          const [name, alias] = imp.split(' as ').map(s => s.trim());
+          const finalName = alias || name;
+          return `const ${finalName} = window.__touchspinModules['@touchspin/renderer-vanilla'].${name};`;
+        }).join('\n');
+      }
+    );
+
+    const scriptElement = document.createElement('script');
+    scriptElement.type = 'module';
+    scriptElement.textContent = componentSource;
+    document.head.appendChild(scriptElement);
   });
 
   await page.waitForTimeout(100);

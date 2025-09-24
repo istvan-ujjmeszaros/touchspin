@@ -38,20 +38,17 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { captureConsole } from '@touchspin/core/test-helpers';
+import { captureConsole, initializeWebComponentTest } from '@touchspin/core/test-helpers';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('TouchSpin Web Component integration scenarios', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await apiHelpers.startCoverage(page);
+
+    // Use specialized web component loader that handles module resolution
+    await initializeWebComponentTest(page);
+
     await apiHelpers.waitForPageReady(page);
-
-    // Load the web component
-    await page.addScriptTag({
-      path: '/packages/web-component/dist/index.js'
-    });
-
     await apiHelpers.clearEventLog(page);
   });
 

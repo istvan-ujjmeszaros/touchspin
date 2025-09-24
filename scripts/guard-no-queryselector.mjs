@@ -106,16 +106,26 @@ function checkFile(filePath) {
       if (pattern.test(line)) {
         // Check if this line is covered by an allowed exception
         const isException = ALLOWED_EXCEPTIONS.some(exception => {
-          // Look at broader function context for exceptions (up to 15 lines before/after)
+          // Check the file path itself for pattern matches
+          const filePathMatch = exception.test(filePath);
+          if (filePathMatch) return true;
+
+          // For page.evaluate and page.waitForFunction, we need special handling
+          // because the block can be very large (30+ lines)
+          if (exception.source.includes('page\\.evaluate') || exception.source.includes('page\\.waitForFunction')) {
+            // Check if we're inside a page.evaluate or page.waitForFunction block
+            // by looking for the pattern and tracking braces/parentheses
+            const isInsidePageEvaluate = isInsideEvaluateBlock(lines, i);
+            if (isInsidePageEvaluate) return true;
+          }
+
+          // For other exceptions, look at broader context (up to 15 lines before/after)
           const contextStart = Math.max(0, i - 15);
           const contextEnd = Math.min(lines.length, i + 15);
           const context = lines.slice(contextStart, contextEnd).join('\n');
-
-          // Also check the file path itself for pattern matches
-          const filePathMatch = exception.test(filePath);
           const contextMatch = exception.test(context);
 
-          return filePathMatch || contextMatch;
+          return contextMatch;
         });
 
         if (!isException) {
@@ -130,6 +140,54 @@ function checkFile(filePath) {
   }
 
   return violations;
+}
+
+// Helper function to check if a line is inside a page.evaluate or page.waitForFunction block
+function isInsideEvaluateBlock(lines, targetLineIndex) {
+  // Search backwards for page.evaluate or page.waitForFunction
+  for (let i = targetLineIndex; i >= Math.max(0, targetLineIndex - 50); i--) {
+    const line = lines[i];
+
+    // Check if this line contains page.evaluate or page.waitForFunction
+    if (/page\.(evaluate|waitForFunction)\s*\(/.test(line)) {
+      // Now we need to check if targetLineIndex is inside this block
+      // We'll track parentheses and braces to determine the block scope
+      let depth = 0;
+      let inBlock = false;
+      let foundAsync = false;
+
+      for (let j = i; j < Math.min(lines.length, i + 100); j++) {
+        const checkLine = lines[j];
+
+        // Look for the async function start
+        if (!foundAsync && /async\s*\(/.test(checkLine)) {
+          foundAsync = true;
+          inBlock = true;
+        }
+
+        // Track depth with parentheses and braces
+        for (const char of checkLine) {
+          if (char === '(' || char === '{') {
+            depth++;
+            if (foundAsync) inBlock = true;
+          } else if (char === ')' || char === '}') {
+            depth--;
+            if (depth <= 0 && j > i) {
+              // We've exited the evaluate block
+              return j >= targetLineIndex;
+            }
+          }
+        }
+
+        // If we've reached our target line and we're in the block, return true
+        if (j === targetLineIndex && inBlock) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
 }
 
 function main() {

@@ -14,6 +14,11 @@ export function universalRendererSuite(name: string, rendererUrl: string) {
     test.beforeEach(async ({ page }) => {
       await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
       await installDomHelpers(page);
+
+      // Ensure window.__ts is available before proceeding
+      await page.evaluate(() => {
+        if (!window.__ts) throw new Error('__ts not installed');
+      });
     });
 
     // DOM Structure Tests (framework-agnostic)
@@ -174,9 +179,9 @@ export function universalRendererSuite(name: string, rendererUrl: string) {
       let prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
       let postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
 
-      // Initially no prefix/postfix
-      await expect(prefix).toBeHidden();
-      await expect(postfix).toBeHidden();
+      // Initially no prefix/postfix (elements don't exist)
+      await expect(prefix).not.toBeAttached();
+      await expect(postfix).not.toBeAttached();
 
       // Add prefix and postfix
       await page.evaluate(() =>
@@ -200,9 +205,9 @@ export function universalRendererSuite(name: string, rendererUrl: string) {
         })
       );
 
-      // Verify they're hidden again
-      await expect(prefix).toBeHidden();
-      await expect(postfix).toBeHidden();
+      // Verify they're removed again (elements don't exist)
+      await expect(prefix).not.toBeAttached();
+      await expect(postfix).not.toBeAttached();
     });
 
     test('switches between horizontal and vertical layouts', async ({ page }) => {
@@ -236,8 +241,8 @@ export function universalRendererSuite(name: string, rendererUrl: string) {
         })
       );
 
-      // Verify vertical wrapper is hidden
-      await expect(verticalWrapper).toBeHidden();
+      // Verify vertical wrapper is removed (element doesn't exist)
+      await expect(verticalWrapper).not.toBeAttached();
     });
 
     // State Preservation Tests

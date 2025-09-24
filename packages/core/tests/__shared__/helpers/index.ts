@@ -38,6 +38,9 @@ export * from './test-utilities/fixtures';
 export * from './test-utilities/wait';
 export * from './test-utilities/network';
 export * from './test-utilities/console';
+export * from './test-utilities/script-loader';
+export * from './test-utilities/test-environment';
+export * from './test-utilities/web-component-loader';
 export * from './runtime/installDomHelpers';
 export * from './runtime/paths';
 

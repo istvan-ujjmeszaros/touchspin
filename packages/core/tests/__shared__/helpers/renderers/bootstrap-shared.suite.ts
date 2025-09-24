@@ -15,6 +15,11 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string) {
     test.beforeEach(async ({ page }) => {
       await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
       await installDomHelpers(page);
+
+      // Ensure window.__ts is available before proceeding
+      await page.evaluate(() => {
+        if (!window.__ts) throw new Error('__ts not installed');
+      });
     });
 
     // Bootstrap Input Group Structure

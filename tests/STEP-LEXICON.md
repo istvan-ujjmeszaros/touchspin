@@ -194,6 +194,66 @@
   - `captureConsoleWarnings(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
 
+- **Given I need a complete web component testing setup**
+  - `initializeWebComponentTest(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
+  - Note: Simplified initialization for web component tests
+
+- **Given I need a specific renderer available**
+  - `preloadRendererModule(page, rendererUrl)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: For dynamic import-based renderer loading
+
+- **Given I need jQuery and TouchSpin plugin available**
+  - `loadJQueryEnvironment(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Handles jQuery loading with retry logic
+
+- **Given I need jQuery available in the browser**
+  - `loadJQueryFromCDN(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads jQuery 3.6.0 from CDN with verification
+
+- **Given I need the jQuery plugin available**
+  - `loadTouchSpinJQueryPlugin(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads the IIFE build with Bootstrap5 renderer
+
+- **Given I need the TouchSpin web component registered**
+  - `loadWebComponentEnvironment(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Forces registration if conditional check fails
+
+- **Given I need the web component available**
+  - `loadTouchSpinWebComponent(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads from local dist and waits for custom element registration
+
+- **Given I need to check if required scripts are loaded**
+  - `verifyScriptAvailability(page, checks, string>)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Centralized verification for multiple script dependencies
+
+- **Given I need to clean up between tests**
+  - `resetTestEnvironment(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Cleans up loaded components for test isolation
+
+- **Given I need to debug loading issues**
+  - `diagnoseEnvironment(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Returns detailed diagnostics about loaded components
+
+- **Given I need to load a script from a URL**
+  - `loadScript(page, url, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Handles both absolute URLs and relative paths with proper error handling
+
+- **Given I need TouchSpin web component with all dependencies resolved**
+  - `loadWebComponentWithDependencies(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
+  - Note: Handles module resolution issues for web component testing
+
 - **Helper to check if a warning contains specific text**
   - `hasWarningContaining(warnings, text)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/console.ts`
@@ -237,6 +297,66 @@
 - **Useful for checking all required scripts before test execution.**
   - `preFetchCheckMultiple(page, urls)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/network.ts`
+
+- **When I diagnose the test environment**
+  - `diagnoseEnvironment(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Returns detailed diagnostics about loaded components
+
+- **When I initialize a web component test environment**
+  - `initializeWebComponentTest(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
+  - Note: Simplified initialization for web component tests
+
+- **When I load jQuery from CDN**
+  - `loadJQueryFromCDN(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads jQuery 3.6.0 from CDN with verification
+
+- **When I load renderer module from "{rendererUrl}"**
+  - `preloadRendererModule(page, rendererUrl)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: For dynamic import-based renderer loading
+
+- **When I load script from "{url}"**
+  - `loadScript(page, url, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Handles both absolute URLs and relative paths with proper error handling
+
+- **When I load the jQuery environment**
+  - `loadJQueryEnvironment(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Handles jQuery loading with retry logic
+
+- **When I load the web component environment**
+  - `loadWebComponentEnvironment(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Forces registration if conditional check fails
+
+- **When I load the web component with bundled dependencies**
+  - `loadWebComponentWithDependencies(page, debug)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
+  - Note: Handles module resolution issues for web component testing
+
+- **When I load TouchSpin jQuery plugin**
+  - `loadTouchSpinJQueryPlugin(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads the IIFE build with Bootstrap5 renderer
+
+- **When I load TouchSpin web component**
+  - `loadTouchSpinWebComponent(page, options)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Loads from local dist and waits for custom element registration
+
+- **When I reset the test environment**
+  - `resetTestEnvironment(page)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
+  - Note: Cleans up loaded components for test isolation
+
+- **When I verify script availability**
+  - `verifyScriptAvailability(page, checks, string>)`
+  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
+  - Note: Centralized verification for multiple script dependencies
 
 - **When I wait for value sanitization to complete**
   - `waitForSanitization(page, _testId)`
