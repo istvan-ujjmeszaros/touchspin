@@ -580,7 +580,7 @@ export class TouchSpinCore {
 
     // Check if already at max boundary before incrementing
     if (this.settings.max !== null && v === this.settings.max) {
-      this.emit('max');
+      // No event emission - just stop spinning if needed
       if (this.spinning && this.direction === 'up') {
         this.stopSpin();
       }
@@ -609,7 +609,7 @@ export class TouchSpinCore {
 
     // Check if already at min boundary before decrementing
     if (this.settings.min !== null && v === this.settings.min) {
-      this.emit('min');
+      // No event emission - just stop spinning if needed
       if (this.spinning && this.direction === 'down') {
         this.stopSpin();
       }

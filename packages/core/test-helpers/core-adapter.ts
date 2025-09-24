@@ -32,6 +32,10 @@ export async function initializeTouchspin(
   // Pre-check that core module is fetchable
   await preFetchCheck(page, coreRuntimeUrl);
 
+  // Separate callback functions from serializable options
+  const { callback_before_calculation, callback_after_calculation, ...serializableOptions } = options;
+  const hasCallbacks = !!(callback_before_calculation || callback_after_calculation);
+
   await page.evaluate(async ({ testId, options, coreUrl }) => {
     const origin = (globalThis as any).location?.origin ?? '';
     const url = new URL(coreUrl, origin).href;
@@ -72,7 +76,31 @@ export async function initializeTouchspin(
         input.dispatchEvent(customEvent);
       });
     });
-  }, { testId, options, coreUrl: coreRuntimeUrl });
+  }, { testId, options: serializableOptions, coreUrl: coreRuntimeUrl });
+
+  // Set up callbacks after initialization if they exist
+  if (hasCallbacks) {
+    await page.evaluate(({ testId, beforeCalc, afterCalc }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core && core.updateSettings) {
+        const callbackOptions: any = {};
+        if (beforeCalc) {
+          // Recreate the callback function in the browser context
+          callbackOptions.callback_before_calculation = new Function('value', beforeCalc) as (value: string) => string;
+        }
+        if (afterCalc) {
+          // Recreate the callback function in the browser context
+          callbackOptions.callback_after_calculation = new Function('value', afterCalc) as (value: string) => string;
+        }
+        core.updateSettings(callbackOptions);
+      }
+    }, {
+      testId,
+      beforeCalc: callback_before_calculation ? callback_before_calculation.toString().replace(/^[^{]*{/, '').replace(/}[^}]*$/, '') : null,
+      afterCalc: callback_after_calculation ? callback_after_calculation.toString().replace(/^[^{]*{/, '').replace(/}[^}]*$/, '') : null
+    });
+  }
 
   // Wait for initialization to complete
   // Core sets data-touchspin-injected on the input element when ready

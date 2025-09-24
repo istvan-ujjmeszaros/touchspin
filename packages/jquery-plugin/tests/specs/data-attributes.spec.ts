@@ -621,7 +621,7 @@ test('supports data attribute templating', async ({ page }) => {
 
     // Simulate template processing
     const templateResult = await page.evaluate(() => {
-      const $ = (window as any)$;
+      const $ = (window as any).$;
       try {
         const input = $('[data-testid="test-input"]');
         const baseValue = 5; // Template variable

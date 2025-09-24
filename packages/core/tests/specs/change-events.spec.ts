@@ -40,7 +40,7 @@ import {
   setValueSilentlyAndBlur,
 } from '../__shared__/helpers/interactions/input';
 import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
-import { clearEventLog, countEventInLog } from '../__shared__/helpers/events/log';
+import { clearEventLog, countEventInLog, hasEventInLog } from '../__shared__/helpers/events/log';
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 
  /**
@@ -294,14 +294,11 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
   await page.waitForTimeout(100);
   await page.keyboard.up('ArrowUp');
 
-  const eventLog = await page.locator('#event-log').inputValue();
-  const events = eventLog.split('\n').filter(line => line.includes('touchspin'));
-
-  // Check for proper event sequence
-  const hasStartSpin = events.some(event => event.includes('touchspin.on.startspin'));
-  const hasStartUpSpin = events.some(event => event.includes('touchspin.on.startupspin'));
-  const hasStopUpSpin = events.some(event => event.includes('touchspin.on.stopupspin'));
-  const hasStopSpin = events.some(event => event.includes('touchspin.on.stopspin'));
+  // Check for proper event sequence using typed helpers
+  const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
+  const hasStartUpSpin = await hasEventInLog(page, 'touchspin.on.startupspin');
+  const hasStopUpSpin = await hasEventInLog(page, 'touchspin.on.stopupspin');
+  const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
 
   test.expect(hasStartSpin || hasStartUpSpin).toBe(true);
   test.expect(hasStopSpin || hasStopUpSpin).toBe(true);
@@ -324,9 +321,9 @@ test('Callable uponce increments without spin start and stop events', async ({ p
   // Click button once (uponce equivalent) - should not emit spin start/stop events
   await clickUpButton(page, 'test-input');
 
-  const eventLog = await page.locator('#event-log').inputValue();
-  const hasStartSpin = eventLog.includes('touchspin.on.startspin');
-  const hasStopSpin = eventLog.includes('touchspin.on.stopspin');
+  // Check that spin events are not emitted for button clicks
+  const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
+  const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
 
   test.expect(hasStartSpin).toBe(false);
   test.expect(hasStopSpin).toBe(false);
@@ -352,8 +349,8 @@ test('Reaching max emits on max event exactly once', async ({ page }) => {
   // Click up to reach max in one step
   await clickUpButton(page, 'test-input');
 
-  const eventLog = await page.locator('#event-log').inputValue();
-  const maxEventCount = (eventLog.match(/touchspin\.on\.max/g) || []).length;
+  // Check max event count using typed helper
+  const maxEventCount = await countEventInLog(page, 'touchspin.on.max');
 
   test.expect(maxEventCount).toBe(1);
   await expectValueToBe(page, 'test-input', '10');
@@ -376,8 +373,8 @@ test('Reaching min emits on min event exactly once', async ({ page }) => {
   // Click down to reach min in one step
   await clickDownButton(page, 'test-input');
 
-  const eventLog = await page.locator('#event-log').inputValue();
-  const minEventCount = (eventLog.match(/touchspin\.on\.min/g) || []).length;
+  // Check min event count using typed helper
+  const minEventCount = await countEventInLog(page, 'touchspin.on.min');
 
   test.expect(minEventCount).toBe(1);
   await expectValueToBe(page, 'test-input', '0');

@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+EVENT LOG TESTING HELPERS AVAILABLE:
+- hasEventInLog(page, eventName, eventType?) - Check if event exists
+- countEventInLog(page, eventName, eventType?) - Count event occurrences
+- getEventLog(page) - Get EventLogEntry[] array (use with array methods)
+- getEventLogText(page) - Get raw string (avoid if possible)
+
+AVOID: page.locator('#event-log').inputValue() + string parsing
+USE: Typed helpers above for consistency and type safety
+-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
