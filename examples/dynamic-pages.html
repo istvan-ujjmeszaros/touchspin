@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin - Dynamic Examples</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.98);
+      color: #333;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #2c3e50;
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6c757d;
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .section {
+      margin: 40px 0;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: #495057;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .example-card {
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 25px;
+      background: white;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .example-card:hover {
+      border-color: #007bff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,123,255,0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin: 0;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-renderer {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .badge-jquery {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .badge-component {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+
+    .card-description {
+      color: #6c757d;
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+
+    .features li {
+      padding: 5px 0;
+      color: #495057;
+      display: flex;
+      align-items: center;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: #28a745;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      text-align: center;
+      flex: 1;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      border: 2px solid #007bff;
+    }
+
+    .btn-primary:hover {
+      background: #0056b3;
+      border-color: #0056b3;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: white;
+      color: #007bff;
+      border: 2px solid #007bff;
+    }
+
+    .btn-outline:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border: 1px solid #b8daff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 30px 0;
+    }
+
+    .info-box h3 {
+      color: #004085;
+      margin-top: 0;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-working {
+      background: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+    }
+
+    .status-partial {
+      background: #ffc107;
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .framework-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/examples/index.html" class="back-link">← Back to Examples Index</a>
+
+    <h1>🎛️ TouchSpin Dynamic Examples</h1>
+    <p class="subtitle">Interactive demos with live parameter controls for each renderer</p>
+
+    <div class="info-box">
+      <h3>📌 About These Examples</h3>
+      <p>Each example page provides an interactive control panel where you can:</p>
+      <ul>
+        <li>Dynamically change TouchSpin parameters (min, max, step, prefix, postfix, etc.)</li>
+        <li>Test different button layouts (horizontal vs vertical)</li>
+        <li>Monitor events in real-time</li>
+        <li>Test API methods (upOnce, downOnce, setValue, etc.)</li>
+        <li>See generated code examples based on current settings</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">🎨 Renderer Examples</h2>
+      <p style="color: #6c757d; margin-bottom: 20px;">
+        Each renderer provides framework-specific styling and DOM structure
+      </p>
+
+      <div class="examples-grid">
+        <!-- Bootstrap 3 -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Bootstrap 3
+            </h3>
+            <span class="badge badge-renderer">Renderer</span>
+          </div>
+          <p class="card-description">
+            Complete interactive demo with ALL 41 TouchSpin configuration options. Test every setting with Bootstrap 3 styling.
+          </p>
+          <ul class="features">
+            <li>✨ All 41 TouchSpin settings</li>
+            <li>💻 Live code generation</li>
+            <li>📊 Event monitoring</li>
+            <li>🔧 API method testing</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/renderers/bootstrap3/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/renderers/bootstrap3" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+
+        <!-- Bootstrap 4 -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Bootstrap 4
+            </h3>
+            <span class="badge badge-renderer">Renderer</span>
+          </div>
+          <p class="card-description">
+            Complete interactive demo with ALL 41 TouchSpin configuration options. Test every setting with Bootstrap 4 styling.
+          </p>
+          <ul class="features">
+            <li>✨ All 41 TouchSpin settings</li>
+            <li>💻 Live code generation</li>
+            <li>📊 Event monitoring</li>
+            <li>🔧 API method testing</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/renderers/bootstrap4/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/renderers/bootstrap4" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+
+        <!-- Bootstrap 5 -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Bootstrap 5
+            </h3>
+            <span class="badge badge-renderer">Renderer</span>
+          </div>
+          <p class="card-description">
+            Complete interactive demo with ALL 41 TouchSpin configuration options. Test every setting with Bootstrap 5 styling.
+          </p>
+          <ul class="features">
+            <li>✨ All 41 TouchSpin settings</li>
+            <li>💻 Live code generation</li>
+            <li>📊 Event monitoring</li>
+            <li>🔧 API method testing</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/renderers/bootstrap5/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/renderers/bootstrap5" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+
+        <!-- Tailwind -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Tailwind CSS
+            </h3>
+            <span class="badge badge-renderer">Renderer</span>
+          </div>
+          <p class="card-description">
+            Utility-first styling with Tailwind CSS classes for complete customization.
+          </p>
+          <ul class="features">
+            <li>Tailwind utility classes</li>
+            <li>Customizable design tokens</li>
+            <li>Modern component styling</li>
+            <li>Method testing panel</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/renderers/tailwind/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/renderers/tailwind" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+
+        <!-- Vanilla -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Vanilla (No Framework)
+            </h3>
+            <span class="badge badge-renderer">Renderer</span>
+          </div>
+          <p class="card-description">
+            Pure CSS styling with CSS custom properties for easy theming.
+          </p>
+          <ul class="features">
+            <li>Framework-agnostic</li>
+            <li>CSS custom properties</li>
+            <li>Live CSS variable editor</li>
+            <li>Minimal dependencies</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/renderers/vanilla/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/renderers/vanilla" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">🔌 Integration Examples</h2>
+      <p style="color: #6c757d; margin-bottom: 20px;">
+        Different ways to integrate TouchSpin into your projects
+      </p>
+
+      <div class="examples-grid">
+        <!-- jQuery Plugin -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              jQuery Plugin
+            </h3>
+            <span class="badge badge-jquery">jQuery</span>
+          </div>
+          <p class="card-description">
+            Traditional jQuery plugin with bundled renderers for Bootstrap 3, 4, and 5.
+          </p>
+          <ul class="features">
+            <li>$.fn.TouchSpin() API</li>
+            <li>Self-contained bundles</li>
+            <li>Legacy compatibility</li>
+            <li>Multiple Bootstrap versions</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/jquery-plugin/example/index.html" class="btn btn-primary">View Demos</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/jquery-plugin" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+
+        <!-- Web Component -->
+        <div class="example-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="status-indicator status-working"></span>
+              Web Component
+            </h3>
+            <span class="badge badge-component">Component</span>
+          </div>
+          <p class="card-description">
+            Native web component with declarative HTML API and attribute binding.
+          </p>
+          <ul class="features">
+            <li>&lt;touchspin-input&gt; element</li>
+            <li>Declarative attributes</li>
+            <li>Shadow DOM encapsulation</li>
+            <li>Framework-agnostic</li>
+          </ul>
+          <div class="btn-group">
+            <a href="/packages/web-component/example/index.html" class="btn btn-primary">View Demo</a>
+            <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/master/packages/web-component" class="btn btn-outline">Source</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h3>💡 Getting Started</h3>
+      <p>Each example page includes:</p>
+      <ul>
+        <li><strong>Live Demo:</strong> Fully functional TouchSpin instances</li>
+        <li><strong>Control Panel:</strong> Adjust all parameters in real-time</li>
+        <li><strong>Event Monitor:</strong> See events as they fire</li>
+        <li><strong>Code Examples:</strong> Generated code based on current settings</li>
+        <li><strong>API Testing:</strong> Buttons to test all public methods</li>
+      </ul>
+      <p style="margin-top: 15px;">
+        <strong>Pro tip:</strong> Open the browser console to see additional debug information and API responses.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
