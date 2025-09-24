@@ -19,18 +19,14 @@ Here are the correct initialization patterns for each type of test in the projec
 
 Core tests focus on the fundamental business logic of TouchSpin, independent of any specific UI framework.
 
-**Key Helper:** `initializeTouchspin` from `packages/core/tests/test-helpers/core-adapter.ts`
+**Key Helper:** `initializeTouchspinWithVanilla` from `@touchspin/core/test-helpers`
 
 **Example:** (`packages/core/tests/specs/api-operations.spec.ts`)
 
 ```typescript
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import {
-  initializeTouchspin,
-  getCoreNumericValue,
-  isCoreInitialized
-} from '../../test-helpers/core-adapter';
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
 
 test.describe('Core API operations', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,13 +37,13 @@ test.describe('Core API operations', () => {
   });
 
   test('upOnce increments value by one step', async ({ page }) => {
-    await initializeTouchspin(page, 'test-input', {
+    await initializeTouchspinWithVanilla(page, 'test-input', {
       step: 2, initval: 10
     });
 
     await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const value = await getCoreNumericValue(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
     expect(value).toBe(12);
   });
 });
@@ -55,9 +51,10 @@ test.describe('Core API operations', () => {
 
 **Explanation:**
 
--   `initializeTouchspin` is imported from the `core-adapter`.
+-   `initializeTouchspinWithVanilla` is imported from `@touchspin/core/test-helpers`.
 -   It takes the `page` object, the `testId` of the input element, and an options object.
--   This helper creates a `TouchSpinCore` instance directly, without a renderer. This means **no UI buttons are created**, and the test must interact with the component via API calls (`incrementViaAPI`, `setValueViaAPI`, etc.) or keyboard/wheel events.
+-   This helper creates a full TouchSpin Core instance with the VanillaRenderer, providing complete functionality including buttons and all API methods.
+-   Tests can interact with the component via API calls (`incrementViaAPI`, `setValueViaAPI`, etc.), button clicks (`clickUpButton`, `clickDownButton`), or keyboard/wheel events.
 
 ---
 

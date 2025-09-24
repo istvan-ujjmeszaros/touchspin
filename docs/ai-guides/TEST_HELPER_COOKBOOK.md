@@ -9,12 +9,12 @@ This guide is a practical cookbook for using the test helpers in the TouchSpin p
 
 ### Core Tests
 
-Use `initializeTouchspin` for core, renderer-agnostic tests.
+Use `initializeTouchspinWithVanilla` for core tests that provide full TouchSpin functionality.
 
 ```typescript
-import { initializeTouchspin } from '../../test-helpers/core-adapter';
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
 
-await initializeTouchspin(page, 'test-input', {
+await initializeTouchspinWithVanilla(page, 'test-input', {
   step: 5,
   initval: 10
 });
@@ -93,9 +93,14 @@ await apiHelpers.fillWithValueAndBlur(page, 'test-input', '75');
 
 ### Core API Interactions
 
-These helpers are for `core` tests and interact directly with the `TouchSpinCore` instance.
+These helpers interact directly with the `TouchSpinCore` instance. **Note:** These only work with tests initialized using `initializeTouchspinWithVanilla`, `initializeTouchspinWithRenderer`, or jQuery plugin initialization, not with the stub `core-adapter`.
 
 ```typescript
+// First, initialize with a method that provides full API access
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
+
+// Now API interactions work:
 // Increment the value via the API
 await apiHelpers.incrementViaAPI(page, 'test-input');
 
