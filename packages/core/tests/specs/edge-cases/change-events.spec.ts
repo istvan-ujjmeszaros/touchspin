@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { startCoverage, collectCoverage } from '../../__shared__/helpers/test-utilities/coverage';
 import { initializeTouchspinWithVanilla } from '../../__shared__/helpers/core/initialization';
 import { clickUpButton, clickDownButton } from '../../__shared__/helpers/interactions/buttons';
-import { setValueSilentlyAndBlur } from '../../__shared__/helpers/interactions/input';
+import { fillWithValueAndBlur } from '../../__shared__/helpers/interactions/input';
 import { clearEventLog, countEventInLog } from '../../__shared__/helpers/events/log';
 import { expectValueToBe } from '../../__shared__/helpers/assertions/values';
 
@@ -58,7 +58,7 @@ test.describe('Core change event emission edge cases (Vanilla renderer)', () => 
     await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
     await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 100, initval: '90' });
     await clearEventLog(page);
-    await setValueSilentlyAndBlur(page, 'test-input', '96');
+    await fillWithValueAndBlur(page, 'test-input', '96');
     await expectValueToBe(page, 'test-input', '95');
     const count = await countEventInLog(page, 'change');
     test.expect(count).toBe(1);
