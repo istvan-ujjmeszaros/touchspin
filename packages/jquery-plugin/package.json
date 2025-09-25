@@ -46,7 +46,8 @@
     "@touchspin/core": "workspace:*",
     "@touchspin/renderer-bootstrap3": "workspace:*",
     "@touchspin/renderer-bootstrap4": "workspace:*",
-    "@touchspin/renderer-bootstrap5": "workspace:*"
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*"
   },
   "publishConfig": {
     "access": "public",
@@ -69,7 +70,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
-    "@touchspin/renderer-tailwind": "workspace:*",
     "@types/jquery": "^3.5.30",
     "@types/node": "^22.7.4",
     "jquery": "^3.7.1",
