@@ -5,8 +5,8 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] creates horizontal layout by default
- * [ ] creates vertical layout when specified
+ * [x] creates horizontal layout by default
+ * [x] creates vertical layout when specified
  * [ ] handles layout switching dynamically
  * [ ] applies correct classes for horizontal layout
  * [ ] applies correct classes for vertical layout
@@ -32,7 +32,7 @@
  * [ ] handles nested layout scenarios
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 /**
@@ -43,8 +43,47 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "defaultLayout": "horizontal", "buttonArrangement": "side_by_side", "inputPosition": "center" }
  */
-test.skip('creates horizontal layout by default', async ({ page }) => {
-  // Implementation pending
+test('creates horizontal layout by default', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  await expect(wrapper).toBeVisible();
+  await expect(upButton).toBeVisible();
+  await expect(downButton).toBeVisible();
+  await expect(input).toBeVisible();
+
+  const buttonPositions = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLElement;
+    const upBtn = document.querySelector('[data-testid="test-input-up"]') as HTMLElement;
+    const downBtn = document.querySelector('[data-testid="test-input-down"]') as HTMLElement;
+
+    if (!input || !upBtn || !downBtn) {
+      return { horizontalAlignment: false };
+    }
+
+    const inputRect = input.getBoundingClientRect();
+    const upRect = upBtn.getBoundingClientRect();
+    const downRect = downBtn.getBoundingClientRect();
+
+    return {
+      inputTop: inputRect.top,
+      upTop: upRect.top,
+      downTop: downRect.top,
+      inputLeft: inputRect.left,
+      upLeft: upRect.left,
+      downLeft: downRect.left,
+      horizontalAlignment:
+        Math.abs(inputRect.top - upRect.top) < 10 &&
+        Math.abs(inputRect.top - downRect.top) < 10
+    };
+  });
+
+  expect(buttonPositions.horizontalAlignment).toBe(true);
 });
 
 /**
@@ -55,8 +94,56 @@ test.skip('creates horizontal layout by default', async ({ page }) => {
  * Params:
  * { "verticalbuttons": true, "buttonArrangement": "stacked", "inputPosition": "beside_buttons" }
  */
-test.skip('creates vertical layout when specified', async ({ page }) => {
-  // Implementation pending
+test('creates vertical layout when specified', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+    verticalbuttons: true,
+  });
+
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  await expect(wrapper).toBeVisible();
+  await expect(upButton).toBeVisible();
+  await expect(downButton).toBeVisible();
+  await expect(input).toBeVisible();
+
+  const buttonPositions = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLElement;
+    const upBtn = document.querySelector('[data-testid="test-input-up"]') as HTMLElement;
+    const downBtn = document.querySelector('[data-testid="test-input-down"]') as HTMLElement;
+
+    if (!input || !upBtn || !downBtn) {
+      return {
+        upBelowInput: false,
+        downBelowUp: false,
+        verticalAlignment: false
+      };
+    }
+
+    const inputRect = input.getBoundingClientRect();
+    const upRect = upBtn.getBoundingClientRect();
+    const downRect = downBtn.getBoundingClientRect();
+
+    return {
+      inputTop: inputRect.top,
+      upTop: upRect.top,
+      downTop: downRect.top,
+      upBelowInput: upRect.top > inputRect.bottom - 5,
+      downBelowUp: downRect.top > upRect.bottom - 5,
+      verticalAlignment: Math.abs(upRect.left - downRect.left) < 10
+    };
+  });
+
+  expect(buttonPositions.verticalAlignment).toBe(true);
+
+  // Buttons should remain functional
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '1');
+  await apiHelpers.clickDownButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '0');
 });
 
 /**
