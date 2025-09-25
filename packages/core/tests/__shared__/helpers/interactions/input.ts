@@ -79,10 +79,9 @@ export async function setValueSilentlyAndBlur(
   const input = inputById(page, testId);
   if ((await input.count()) === 0) throw new Error(`Input not found for "${testId}".`);
   await input.focus();
-  await page.evaluate(({ testId, value }) => {
-    const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (el) el.value = value;
-  }, { testId, value });
+  // Use keyboard input instead of programmatic assignment to trigger change events
+  await selectAllInInput(page, testId);
+  await typeInInput(page, testId, value);
   await page.keyboard.press('Tab');
 }
 
