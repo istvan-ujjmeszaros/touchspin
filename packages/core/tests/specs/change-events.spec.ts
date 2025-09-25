@@ -40,6 +40,7 @@ import {
   setValueSilentlyAndBlur,
 } from '../__shared__/helpers/interactions/input';
 import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
+import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
 import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '../__shared__/helpers/events/log';
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 import { getNumericValue } from '../__shared__/helpers/core/api';
@@ -297,15 +298,17 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
   await clearEventLog(page);
 
   // Hold up arrow key should emit start and stop events in order
-  await page.keyboard.down('ArrowUp');
-  await page.waitForTimeout(100);
-  await page.keyboard.up('ArrowUp');
+  await holdUpArrowKeyOnInput(page, 'test-input', 500);
 
   // Check for proper event sequence using typed helpers
   const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
   const hasStartUpSpin = await hasEventInLog(page, 'touchspin.on.startupspin');
   const hasStopUpSpin = await hasEventInLog(page, 'touchspin.on.stopupspin');
   const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
+
+  // Debug: Log all events to understand what's happening
+  const allEvents = await page.evaluate(() => window.eventLog || []);
+  console.log('All events logged:', allEvents.map(e => `${e.type}:${e.event}`));
 
   test.expect(hasStartSpin || hasStartUpSpin).toBe(true);
   test.expect(hasStopSpin || hasStopUpSpin).toBe(true);
