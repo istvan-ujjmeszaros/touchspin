@@ -23,32 +23,49 @@ export const EVENT_NAME_MAP: Record<(typeof CORE_EVENTS)[keyof typeof CORE_EVENT
  * Bridge TouchSpin core events to CustomEvents
  * @param {Object} touchspinInstance - TouchSpin core instance
  * @param {HTMLElement} element - Custom element to dispatch events from
- * @returns {Function[]} - Array of unsubscribe functions
+ * @returns {Function[]} - Array of cleanup functions
  */
 export function bridgeEvents(
-  touchspinInstance: { on: (evt: (typeof CORE_EVENTS)[keyof typeof CORE_EVENTS], cb: () => void) => () => void; getValue: () => number },
+  touchspinInstance: { getValue: () => number },
   element: HTMLElement
 ): Array<() => void> {
-  const unsubscribers: Array<() => void> = [];
+  const cleanupFunctions: Array<() => void> = [];
 
-  // Bridge all core events
-  for (const coreEvent of Object.keys(EVENT_NAME_MAP) as Array<keyof typeof EVENT_NAME_MAP>) {
-    const customEventName = EVENT_NAME_MAP[coreEvent] as string;
-    const unsubscribe = touchspinInstance.on(coreEvent, () => {
+  // Core DOM event name to web-component event name mapping
+  const domToCustomEventMap: Record<string, string> = {
+    'touchspin.on.min': 'touchspin-min',
+    'touchspin.on.max': 'touchspin-max',
+    'touchspin.on.startspin': 'touchspin-start-spin',
+    'touchspin.on.startupspin': 'touchspin-start-up',
+    'touchspin.on.startdownspin': 'touchspin-start-down',
+    'touchspin.on.stopspin': 'touchspin-stop-spin',
+    'touchspin.on.stopupspin': 'touchspin-stop-up',
+    'touchspin.on.stopdownspin': 'touchspin-stop-down'
+  };
+
+  // Listen for Core DOM CustomEvents and re-dispatch with web-component naming
+  Object.entries(domToCustomEventMap).forEach(([domEventName, customEventName]) => {
+    const handler = (e: Event) => {
       const customEvent = new CustomEvent(customEventName, {
         detail: {
           value: touchspinInstance.getValue(),
-          instance: touchspinInstance
+          instance: touchspinInstance,
+          originalEvent: e
         },
         bubbles: true,
         cancelable: true
       });
 
       element.dispatchEvent(customEvent);
-    });
+    };
 
-    unsubscribers.push(unsubscribe);
-  }
+    // Listen for DOM events dispatched by TouchSpin Core
+    const input = element.querySelector('input');
+    if (input) {
+      input.addEventListener(domEventName, handler);
+      cleanupFunctions.push(() => input.removeEventListener(domEventName, handler));
+    }
+  });
 
   // Bridge input change events
   const input = element.querySelector('input');
@@ -68,18 +85,10 @@ export function bridgeEvents(
     };
 
     input.addEventListener('change', handleInputChange);
-
-    // Return cleanup function that includes input listener cleanup
-    const originalCleanup = () => {
-      unsubscribers.forEach(unsub => unsub());
-    };
-
-    unsubscribers.push(() => {
-      input.removeEventListener('change', handleInputChange);
-    });
+    cleanupFunctions.push(() => input.removeEventListener('change', handleInputChange));
   }
 
-  return unsubscribers;
+  return cleanupFunctions;
 }
 
 /**

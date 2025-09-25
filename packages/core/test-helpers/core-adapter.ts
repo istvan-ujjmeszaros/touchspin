@@ -54,28 +54,7 @@ export async function initializeTouchspin(
     // Initialize DOM event handling
     (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
 
-    // Bridge Core internal events to DOM CustomEvents for test event logging
-    const eventMap = {
-      'min': 'touchspin.on.min',
-      'max': 'touchspin.on.max',
-      'startspin': 'touchspin.on.startspin',
-      'startupspin': 'touchspin.on.startupspin',
-      'startdownspin': 'touchspin.on.startdownspin',
-      'stopspin': 'touchspin.on.stopspin',
-      'stopupspin': 'touchspin.on.stopupspin',
-      'stopdownspin': 'touchspin.on.stopdownspin'
-    };
-
-    Object.entries(eventMap).forEach(([coreEvent, domEvent]) => {
-      (core as any).on(coreEvent, () => {
-        const customEvent = new CustomEvent(domEvent, {
-          detail: { testId, value: input.value },
-          bubbles: true,
-          cancelable: true
-        });
-        input.dispatchEvent(customEvent);
-      });
-    });
+    // Core now dispatches DOM CustomEvents directly, no manual bridging needed
   }, { testId, options: serializableOptions, coreUrl: coreRuntimeUrl });
 
   // Set up callbacks after initialization if they exist

@@ -93,7 +93,6 @@ export class TouchSpinCore {
   spinning: boolean;
   spincount: number;
   direction: false | 'up' | 'down';
-  private _events: Map<CoreEventName, Set<(detail?: unknown) => void>> = new Map();
   private _teardownCallbacks: Array<() => void> = [];
   private _settingObservers: Map<string, Set<(value: unknown, prev?: unknown) => void>> = new Map();
   private _spinDelayTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -213,8 +212,6 @@ export class TouchSpinCore {
     this.spincount = 0;
     /** @type {false|'up'|'down'} */
     this.direction = false;
-    /** @type {Map<string, Set<Function>>} */
-    this._events = new Map();
     /** @type {Array<Function>} */
     this._teardownCallbacks = [];
     /** @type {Map<string, Set<Function>>} */
@@ -817,8 +814,6 @@ export class TouchSpinCore {
       getValue: this.getValue.bind(this),
       setValue: this.setValue.bind(this),
       destroy: this.destroy.bind(this),
-      on: this.on.bind(this),
-      off: this.off.bind(this),
       initDOMEventHandling: this.initDOMEventHandling.bind(this),
       registerTeardown: this.registerTeardown.bind(this),
       attachUpEvents: this.attachUpEvents.bind(this),
@@ -899,48 +894,20 @@ export class TouchSpinCore {
   }
 
   // --- Minimal internal emitter API ---
-  /**
-   * Subscribe to a core event.
-   * Events: 'min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'
-   * @param {string} event
-   * @param {(detail?: any) => void} handler
-   */
-  on(event: CoreEventName, handler: (detail?: unknown) => void): () => void {
-    const set = this._events.get(event) || new Set<(detail?: unknown) => void>();
-    set.add(handler);
-    this._events.set(event, set);
-    return () => this.off(event, handler);
-  }
 
   /**
-   * Unsubscribe from a core event.
+   * Emit a core event as DOM CustomEvent (matching original jQuery plugin behavior)
+   * TODO: Consider making some events cancelable (e.g., startspin) for user control
    * @param {string} event
-   * @param {(detail?: any) => void=} handler
-   */
-  off(event: CoreEventName, handler?: (detail?: unknown) => void): void {
-    const set = this._events.get(event);
-    if (!set) return;
-    if (!handler) {
-      this._events.delete(event);
-      return;
-    }
-    set.delete(handler);
-    if (set.size === 0) this._events.delete(event);
-  }
-
-  /**
-   * Emit a core event to subscribers.
-   * @param {string} event
-   * @param {any=} detail
+   * @param {any=} detail - Currently unused, kept for future extensibility
    */
   emit(event: CoreEventName, detail?: unknown): void {
-    const set = this._events.get(event);
-    if (!set || set.size === 0) return;
-    for (const fn of [...set]) {
-      try { fn(detail); } catch {
-        // Silently ignore callback errors to prevent one bad callback from breaking others
-      }
-    }
+    const domEventName = `touchspin.on.${event}`;
+    const customEvent = new CustomEvent(domEventName, {
+      bubbles: true
+      // cancelable: false (default) - no cancellation logic implemented yet
+    });
+    this.input.dispatchEvent(customEvent);
   }
 
   /**
@@ -1536,8 +1503,6 @@ export interface TouchSpinCorePublicAPI {
   getValue: () => number;
   setValue: (v: number | string) => void;
   destroy: () => void;
-  on: (event: CoreEventName, handler: (detail?: unknown) => void) => () => void;
-  off: (event: CoreEventName, handler?: (detail?: unknown) => void) => void;
   initDOMEventHandling: () => void;
   registerTeardown: (callback: () => void) => () => void;
   attachUpEvents: (el: HTMLElement | null) => void;

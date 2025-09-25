@@ -46,7 +46,6 @@ export declare class TouchSpinCore {
     spinning: boolean;
     spincount: number;
     direction: false | 'up' | 'down';
-    private _events;
     private _teardownCallbacks;
     private _settingObservers;
     private _spinDelayTimeout;
@@ -169,22 +168,9 @@ export declare class TouchSpinCore {
      */
     observeSetting<K extends keyof TouchSpinCoreOptions>(settingName: K, callback: (newValue: NonNullable<TouchSpinCoreOptions[K]>, oldValue?: TouchSpinCoreOptions[K]) => void): () => void;
     /**
-     * Subscribe to a core event.
-     * Events: 'min', 'max', 'startspin', 'startupspin', 'startdownspin', 'stopspin', 'stopupspin', 'stopdownspin'
+     * Emit a core event as DOM CustomEvent (matching original jQuery plugin behavior)
      * @param {string} event
-     * @param {(detail?: any) => void} handler
-     */
-    on(event: CoreEventName, handler: (detail?: unknown) => void): () => void;
-    /**
-     * Unsubscribe from a core event.
-     * @param {string} event
-     * @param {(detail?: any) => void=} handler
-     */
-    off(event: CoreEventName, handler?: (detail?: unknown) => void): void;
-    /**
-     * Emit a core event to subscribers.
-     * @param {string} event
-     * @param {any=} detail
+     * @param {any=} detail - Currently unused, kept for future extensibility
      */
     emit(event: CoreEventName, detail?: unknown): void;
     /**
@@ -328,8 +314,6 @@ export interface TouchSpinCorePublicAPI {
     getValue: () => number;
     setValue: (v: number | string) => void;
     destroy: () => void;
-    on: (event: CoreEventName, handler: (detail?: unknown) => void) => () => void;
-    off: (event: CoreEventName, handler?: (detail?: unknown) => void) => void;
     initDOMEventHandling: () => void;
     registerTeardown: (callback: () => void) => () => void;
     attachUpEvents: (el: HTMLElement | null) => void;
