@@ -19,16 +19,16 @@
  * [x] handles progressive enhancement
  * [x] supports accessibility without framework dependencies
  * [x] provides keyboard navigation patterns
- * [ ] handles focus management independently
- * [ ] supports screen reader optimization
- * [ ] provides ARIA patterns without conflicts
- * [ ] handles mobile touch interactions
- * [ ] supports responsive design patterns
+ * [x] handles focus management independently
+ * [x] supports screen reader optimization
+ * [x] provides ARIA patterns without conflicts
+ * [x] handles mobile touch interactions
+ * [x] supports responsive design patterns
  * [x] provides cross-browser compatibility
  * [ ] handles legacy browser support
  * [x] supports modern web standards
  * [x] provides lightweight DOM structure
- * [ ] handles memory efficiency
+ * [x] handles memory efficiency
  * [ ] supports bundle size optimization
  */
 
@@ -475,8 +475,38 @@ test('provides keyboard navigation patterns', async ({ page }) => {
  * Params:
  * { "focusManagement": "independent", "focusIndicators": "clear", "focusTrapping": "appropriate" }
  */
-test.skip('handles focus management independently', async ({ page }) => {
-  // Implementation pending
+test('handles focus management independently', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+
+  const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Focus should be visible and manageable
+  await input.focus();
+  await expect(input).toBeFocused();
+
+  // Focus should move logically between elements
+  await upButton.focus();
+  await expect(upButton).toBeFocused();
+  await expect(input).not.toBeFocused();
+
+  // Clicking should maintain proper focus
+  await apiHelpers.clickUpButton(page, 'test-input');
+  // Focus should remain on the button after click for keyboard accessibility
+  await expect(upButton).toBeFocused();
+
+  // Manual focus management should work
+  await input.focus();
+  await expect(input).toBeFocused();
+  await expect(upButton).not.toBeFocused();
+
+  // Focus should be restorable
+  await input.blur();
+  await input.focus();
+  await expect(input).toBeFocused();
 });
 
 /**
@@ -487,8 +517,67 @@ test.skip('handles focus management independently', async ({ page }) => {
  * Params:
  * { "screenReaderOptimization": "native", "assistiveTechnology": "optimized", "ariaImplementation": "comprehensive" }
  */
-test.skip('supports screen reader optimization', async ({ page }) => {
-  // Implementation pending
+test('supports screen reader optimization', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+    min: 0,
+    max: 100,
+    step: 5,
+    initval: 50
+  });
+
+  const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Test comprehensive ARIA support for screen readers
+  await expect(input).toHaveAttribute('role', 'spinbutton');
+  await expect(input).toHaveAttribute('aria-valuemin', '0');
+  await expect(input).toHaveAttribute('aria-valuemax', '100');
+  await expect(input).toHaveAttribute('aria-valuenow', '50');
+
+  // Test button descriptions
+  const upAriaLabel = await upButton.getAttribute('aria-label');
+  const downAriaLabel = await downButton.getAttribute('aria-label');
+
+  expect(upAriaLabel).toBeTruthy();
+  expect(downAriaLabel).toBeTruthy();
+  expect(upAriaLabel?.toLowerCase()).toMatch(/increase|increment|up/);
+  expect(downAriaLabel?.toLowerCase()).toMatch(/decrease|decrement|down/);
+
+  // Test live region updates for screen readers
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '55');
+  await expect(input).toHaveAttribute('aria-valuenow', '55');
+
+  // Test keyboard-only navigation (important for screen readers)
+  await input.focus();
+  await page.keyboard.press('ArrowUp');
+  await apiHelpers.expectValueToBe(page, 'test-input', '60');
+  await expect(input).toHaveAttribute('aria-valuenow', '60');
+
+  // Ensure no elements are hidden from screen readers inappropriately
+  const hiddenElements = await page.evaluate(() => {
+    const elements = document.querySelectorAll('[data-testid*="test-input"] [aria-hidden="true"]');
+    return elements.length;
+  });
+  expect(hiddenElements).toBe(0); // No essential elements should be hidden
+
+  // Test that screen readers can identify the control type
+  const controlIdentification = await input.evaluate(el => {
+    return {
+      hasRole: el.hasAttribute('role'),
+      roleValue: el.getAttribute('role'),
+      hasAriaValueNow: el.hasAttribute('aria-valuenow'),
+      tagName: el.tagName
+    };
+  });
+
+  expect(controlIdentification.hasRole).toBe(true);
+  expect(controlIdentification.roleValue).toBe('spinbutton');
+  expect(controlIdentification.hasAriaValueNow).toBe(true);
+  expect(controlIdentification.tagName).toBe('INPUT');
 });
 
 /**
@@ -499,8 +588,45 @@ test.skip('supports screen reader optimization', async ({ page }) => {
  * Params:
  * { "ariaPatterns": "conflict_free", "ariaImplementation": "standards_based", "accessibilityCompliance": "native" }
  */
-test.skip('provides ARIA patterns without conflicts', async ({ page }) => {
-  // Implementation pending
+test('provides ARIA patterns without conflicts', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+    min: 0,
+    max: 100,
+    step: 5,
+    initval: 25
+  });
+
+  const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Test complete spinbutton ARIA pattern
+  await expect(input).toHaveAttribute('role', 'spinbutton');
+  await expect(input).toHaveAttribute('aria-valuemin', '0');
+  await expect(input).toHaveAttribute('aria-valuemax', '100');
+  await expect(input).toHaveAttribute('aria-valuenow', '25');
+
+  // Test button ARIA labels
+  await expect(upButton).toHaveAttribute('aria-label');
+  await expect(downButton).toHaveAttribute('aria-label');
+
+  const upLabel = await upButton.getAttribute('aria-label') || '';
+  const downLabel = await downButton.getAttribute('aria-label') || '';
+  expect(upLabel.toLowerCase()).toMatch(/increase|increment|up/);
+  expect(downLabel.toLowerCase()).toMatch(/decrease|decrement|down/);
+
+  // Verify no conflicting ARIA attributes
+  const inputAttrs = await input.evaluate(el => Array.from(el.attributes).map(attr => attr.name));
+  const ariaAttrs = inputAttrs.filter(attr => attr.startsWith('aria-'));
+  expect(ariaAttrs).not.toContain('aria-hidden'); // Should not be hidden
+  expect(ariaAttrs).not.toContain('aria-disabled'); // Should not be disabled by default
+
+  // Test dynamic ARIA updates
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '30');
+  await expect(input).toHaveAttribute('aria-valuenow', '30');
 });
 
 /**
@@ -511,8 +637,55 @@ test.skip('provides ARIA patterns without conflicts', async ({ page }) => {
  * Params:
  * { "touchInteractions": "optimized", "mobileSupport": "native", "gestureHandling": "appropriate" }
  */
-test.skip('handles mobile touch interactions', async ({ page }) => {
-  // Implementation pending
+test('handles mobile touch interactions', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { step: 2, initval: 10 });
+
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify touch-friendly button sizes (should be at least 24px for basic usability)
+  const upSize = await upButton.boundingBox();
+  const downSize = await downButton.boundingBox();
+
+  expect(upSize).toBeTruthy();
+  expect(downSize).toBeTruthy();
+
+  if (upSize && downSize) {
+    expect(Math.min(upSize.width, upSize.height)).toBeGreaterThanOrEqual(24); // Reasonable minimum
+    expect(Math.min(downSize.width, downSize.height)).toBeGreaterThanOrEqual(24);
+  }
+
+  // Test touch events (simulated via click which works on mobile)
+  await upButton.click();
+  await apiHelpers.expectValueToBe(page, 'test-input', '12');
+
+  await downButton.click();
+  await apiHelpers.expectValueToBe(page, 'test-input', '10');
+
+  // Test that elements are properly configured for touch
+  const touchAction = await upButton.evaluate(el => getComputedStyle(el).touchAction);
+  expect(touchAction).not.toBe('none'); // Should allow some touch actions
+
+  // Verify touch targets don't overlap inappropriately
+  const buttonsOverlap = await page.evaluate(() => {
+    const up = document.querySelector('[data-testid="test-input-up"]') as HTMLElement;
+    const down = document.querySelector('[data-testid="test-input-down"]') as HTMLElement;
+    if (!up || !down) return false;
+
+    const upRect = up.getBoundingClientRect();
+    const downRect = down.getBoundingClientRect();
+
+    // Check if buttons overlap significantly
+    const overlapX = Math.max(0, Math.min(upRect.right, downRect.right) - Math.max(upRect.left, downRect.left));
+    const overlapY = Math.max(0, Math.min(upRect.bottom, downRect.bottom) - Math.max(upRect.top, downRect.top));
+
+    return overlapX > 5 && overlapY > 5; // Allow small overlaps but not significant ones
+  });
+
+  expect(buttonsOverlap).toBe(false); // Buttons shouldn't overlap significantly
 });
 
 /**
@@ -523,8 +696,55 @@ test.skip('handles mobile touch interactions', async ({ page }) => {
  * Params:
  * { "responsiveDesign": "modern_patterns", "breakpointHandling": "css_based", "adaptiveBehavior": "fluid" }
  */
-test.skip('supports responsive design patterns', async ({ page }) => {
-  // Implementation pending
+test('supports responsive design patterns', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  // Test different viewport sizes
+  await page.setViewportSize({ width: 320, height: 568 }); // Mobile
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Should be visible and functional on mobile
+  await expect(wrapper).toBeVisible();
+  await expect(upButton).toBeVisible();
+  await expect(downButton).toBeVisible();
+
+  // Test functionality on mobile size
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '1');
+
+  // Test tablet size
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expect(wrapper).toBeVisible();
+
+  // Test desktop size
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await expect(wrapper).toBeVisible();
+
+  // Verify responsive behavior doesn't break functionality
+  await apiHelpers.clickDownButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '0');
+
+  // Test that elements adapt appropriately across viewports
+  const adaptiveCheck = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]') as HTMLElement;
+    if (!wrapper) return { hasWrapper: false };
+
+    const rect = wrapper.getBoundingClientRect();
+    return {
+      hasWrapper: true,
+      isVisible: rect.width > 0 && rect.height > 0,
+      isReasonablyWide: rect.width > 100, // Should have reasonable width on desktop
+    };
+  });
+
+  expect(adaptiveCheck.hasWrapper).toBe(true);
+  expect(adaptiveCheck.isVisible).toBe(true);
+  expect(adaptiveCheck.isReasonablyWide).toBe(true);
 });
 
 /**
@@ -688,8 +908,62 @@ test('provides lightweight DOM structure', async ({ page }) => {
  * Params:
  * { "memoryEfficiency": "optimized", "memoryLeaks": "prevented", "resourceManagement": "efficient" }
  */
-test.skip('handles memory efficiency', async ({ page }) => {
-  // Implementation pending
+test('handles memory efficiency', async ({ page }) => {
+  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  // Create multiple inputs to test memory efficiency
+  await page.evaluate(() => {
+    const container = document.body;
+    for (let i = 1; i <= 5; i++) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.id = `memory-test-${i}`;
+      input.setAttribute('data-testid', `memory-test-${i}`);
+      container.appendChild(input);
+    }
+  });
+
+  const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+
+  // Initialize multiple TouchSpin instances
+  for (let i = 1; i <= 5; i++) {
+    await apiHelpers.initializeTouchspinWithRenderer(page, `memory-test-${i}`, VANILLA_RENDERER_URL, { initval: i * 10 });
+  }
+
+  // Test that all instances work
+  for (let i = 1; i <= 5; i++) {
+    await apiHelpers.expectValueToBe(page, `memory-test-${i}`, (i * 10).toString());
+    await apiHelpers.clickUpButton(page, `memory-test-${i}`);
+    await apiHelpers.expectValueToBe(page, `memory-test-${i}`, (i * 10 + 1).toString());
+  }
+
+  // Test memory usage patterns (basic check)
+  const memoryInfo = await page.evaluate(() => {
+    // Check DOM element count
+    const allElements = document.querySelectorAll('*').length;
+    const touchspinElements = document.querySelectorAll('[data-testid*="memory-test"]').length;
+
+    return {
+      totalElements: allElements,
+      touchspinElements: touchspinElements,
+      ratio: touchspinElements / allElements
+    };
+  });
+
+  // Should not create excessive DOM elements
+  expect(memoryInfo.touchspinElements).toBeLessThan(50); // Reasonable limit for 5 instances
+  expect(memoryInfo.ratio).toBeLessThan(0.8); // TouchSpin shouldn't dominate the DOM
+
+  // Test cleanup potential (remove one instance)
+  await page.evaluate(() => {
+    const element = document.getElementById('memory-test-1');
+    element?.remove();
+  });
+
+  // Remaining instances should still work
+  await apiHelpers.clickUpButton(page, 'memory-test-2');
+  await apiHelpers.expectValueToBe(page, 'memory-test-2', '21');
 });
 
 /**
