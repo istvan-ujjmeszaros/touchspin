@@ -9,7 +9,7 @@ type JQueryStatic = {
   fn: Record<string, unknown> & { TouchSpin?: (options?: unknown, arg?: unknown) => unknown };
   (selector: Element | string): JQueryInst;
 };
-import { TouchSpin, getTouchSpin, CORE_EVENTS, TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
+import { TouchSpin, getTouchSpin, TouchSpinCallableEvent } from '@touchspin/core';
 
 // Re-export event types for external use
 export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
@@ -72,39 +72,12 @@ export function installJqueryTouchSpin($: JQueryStatic) {
         return;
       }
 
-      // Bridge core events to jQuery events (minimal event forwarding only)
-      const evMap: Record<string, string> = {
-        [CORE_EVENTS.MIN]: TouchSpinEmittedEvent.ON_MIN,
-        [CORE_EVENTS.MAX]: TouchSpinEmittedEvent.ON_MAX,
-        [CORE_EVENTS.START_SPIN]: TouchSpinEmittedEvent.ON_START_SPIN,
-        [CORE_EVENTS.START_UP]: TouchSpinEmittedEvent.ON_START_UP_SPIN,
-        [CORE_EVENTS.START_DOWN]: TouchSpinEmittedEvent.ON_START_DOWN_SPIN,
-        [CORE_EVENTS.STOP_SPIN]: TouchSpinEmittedEvent.ON_STOP_SPIN,
-        [CORE_EVENTS.STOP_UP]: TouchSpinEmittedEvent.ON_STOP_UP_SPIN,
-        [CORE_EVENTS.STOP_DOWN]: TouchSpinEmittedEvent.ON_STOP_DOWN_SPIN,
-      };
-
-      // Store unsubscribe functions for cleanup
-      const unsubs: Array<() => void> = [];
-      Object.keys(evMap).forEach(k => {
-        // @ts-ignore
-        unsubs.push(inst.on(k, () => $input.trigger(evMap[k])));
-      });
 
       // Define jQuery teardown function that cleans up jQuery-specific resources
       const jqueryTeardown = () => {
-        // Clean up event subscriptions to core
-        unsubs.forEach(unsub => {
-          try { unsub(); } catch {
-            // Ignore unsubscribe errors during cleanup
-          }
-        });
         // Clean up ONLY the jQuery events that THIS plugin explicitly added
-        // Based on lines 93-125 in this file: 8 explicit jQuery events
+        // Based on the callable events below: UP_ONCE, DOWN_ONCE, START_UP_SPIN, START_DOWN_SPIN, STOP_SPIN, UPDATE_SETTINGS, DESTROY, blur.touchspin
         $input.off(`${TouchSpinCallableEvent.UP_ONCE} ${TouchSpinCallableEvent.DOWN_ONCE} ${TouchSpinCallableEvent.START_UP_SPIN} ${TouchSpinCallableEvent.START_DOWN_SPIN} ${TouchSpinCallableEvent.STOP_SPIN} ${TouchSpinCallableEvent.UPDATE_SETTINGS} ${TouchSpinCallableEvent.DESTROY} blur.touchspin`);
-
-        // If the core is adding additional jQuery events, they would need to be cleaned up by the core itself
-        // or added to the list above. Currently there are 2 unaccounted events that are not being cleaned up.
       };
 
       // Register teardown with core so it's called on core destroy too
