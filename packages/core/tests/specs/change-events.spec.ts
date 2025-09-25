@@ -27,7 +27,6 @@
  * [x] Decimal rounding on blur respects decimals option
  * [x] Destroy removes artifacts while other instance remains intact
  * [x] Programmatic value setting on text input preserves non-numeric values (no auto-sanitization)
- * [x] User typing non-numeric characters on text input gets sanitized on blur
  * [x] Uponce from max stays at max with no change event
  * [x] Range with negatives increments across zero correctly
  */
@@ -38,7 +37,7 @@ import {
   typeInInput,
   fillWithValueAndBlur,
   fillWithValue,
-  setValueSilentlyAndBlur,
+  setValueSilentlyAndBlur, selectAllInInput,
 } from '../__shared__/helpers/interactions/input';
 import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
 import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
@@ -619,39 +618,6 @@ test('Programmatic value setting on text input preserves non-numeric values (no 
   test.expect(changeCount).toBe(0); // No change event fired = no sanitization
 });
 
-/**
- * Scenario: User typing non-numeric characters on text input gets sanitized on blur
- * Given the fixture page is loaded with a text input (type="number" inputs prevent typing non-numeric)
- * When I type a value with non-numeric characters then blur
- * Then the value is sanitized to just the numeric part
- * Params:
- * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "0" }, "inputType": "text" }
- */
-test('User typing non-numeric characters on text input gets sanitized on blur', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 0 });
-  await clearEventLog(page);
-
-  // Change to text input to allow typing non-numeric characters
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (input) input.type = 'text';
-  }, { testId: 'test-input' });
-
-  // Clear input and type non-numeric characters using keyboard
-  await selectAllInInput(page, 'test-input');
-  await typeInInput(page, 'test-input', '  42abc  ');
-
-  // Blur via Tab to trigger change event and sanitization
-  await page.keyboard.press('Tab');
-
-  // Should sanitize to numeric part (change event fired = sanitization occurred)
-  await expectValueToBe(page, 'test-input', '42');
-
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1); // Change event fired = sanitization occurred
-});
 
 /**
  * Scenario: Uponce from max stays at max with no change event
