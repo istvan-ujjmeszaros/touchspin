@@ -44,6 +44,7 @@ import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboa
 import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '../__shared__/helpers/events/log';
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 import { getNumericValue } from '../__shared__/helpers/core/api';
+import { createAdditionalInput } from '../__shared__/helpers/test-utilities/fixtures';
 
  /**
   * Scenario: increases value on click on up button and triggers change event
@@ -561,17 +562,8 @@ test('Destroy removes artifacts while other instance remains intact', async ({ p
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);
 
-  // Create additional input for second instance
-  await page.evaluate(() => {
-    const container = document.querySelector('.test-container');
-    if (container) {
-      const secondInput = document.createElement('input');
-      secondInput.setAttribute('data-testid', 'second-input');
-      secondInput.setAttribute('type', 'number');
-      secondInput.setAttribute('value', '3');
-      container.appendChild(secondInput);
-    }
-  });
+  // Create additional input for second instance using proper helper
+  await createAdditionalInput(page, 'second-input', { value: '3' });
 
   // Initialize both instances
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 9, initval: 5 });
