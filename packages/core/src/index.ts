@@ -692,7 +692,7 @@ export class TouchSpinCore {
     // Core handles its own setting changes
     this._updateAriaAttributes();
     this._syncNativeAttributes();
-    this._checkValue(false);
+    this._checkValue(true); // Emit change events when updateSettings clamps values
 
     // Check for callback pairing and warn if needed
     this._checkCallbackPairing();

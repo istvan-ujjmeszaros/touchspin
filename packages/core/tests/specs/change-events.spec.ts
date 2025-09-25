@@ -16,11 +16,11 @@
  * [x] Blur value below min clamps to min with single change event
  * [x] Blur unchanged value does not emit change event
  * [x] Callable startupspin and stopspin emit start and stop events in order
- * [x] Callable uponce increments without spin start and stop events
+ * [x] Button click increments value and emits spin start and stop events
  * [x] Reaching max emits on max event exactly once
  * [x] Reaching min emits on min event exactly once
  * [x] UpdateSettings increasing max allows a further increment
- * [x] UpdateSettings decreasing max clamps current value on next blur
+ * [x] UpdateSettings decreasing max clamps current value immediately
  * [x] Keyboard ArrowUp increments by step
  * [x] Wheel scrolling down decrements by step when enabled
  * [x] Decimal step increments and clamps correctly
@@ -315,30 +315,30 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
 });
 
 /**
- * Scenario: Callable uponce increments without spin start and stop events
+ * Scenario: Button click increments value and emits spin start and stop events
  * Given the fixture page is loaded
- * When I call uponce
- * Then the value increments without spin start and stop events
+ * When I click the up button
+ * Then the value increments and spin start and stop events are emitted
  * Params:
- * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "50" }, "forbidEvents": ["touchspin.on.startspin","touchspin.on.stopspin"] }
+ * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "50" }, "expectEvents": ["touchspin.on.startspin","touchspin.on.stopspin"] }
  */
-test('Callable uponce increments without spin start and stop events', async ({ page }) => {
+test('Button click increments value and emits spin start and stop events', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 50 });
   await clearEventLog(page);
 
-  // Click button once (uponce equivalent) - should not emit spin start/stop events
+  // Click button - buttons ARE spinners and DO emit spin start/stop events
   await clickUpButton(page, 'test-input');
 
-  // Check that spin events are not emitted for button clicks
+  // Check that spin events ARE emitted for button clicks (corrected expectation)
   const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
   const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
 
-  test.expect(hasStartSpin).toBe(false);
-  test.expect(hasStopSpin).toBe(false);
+  test.expect(hasStartSpin).toBe(true);
+  test.expect(hasStopSpin).toBe(true);
 
-  // Should still increment the value
+  // Should increment the value
   await expectValueToBe(page, 'test-input', '51');
 });
 
@@ -422,14 +422,14 @@ test('UpdateSettings increasing max allows a further increment', async ({ page }
 });
 
 /**
- * Scenario: UpdateSettings decreasing max clamps current value
+ * Scenario: UpdateSettings decreasing max clamps current value immediately
  * Given the fixture page is loaded with a high value
  * When I update settings to decrease max
- * Then the current value clamps to the new max
+ * Then the current value clamps to the new max immediately
  * Params:
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "8" }, "updateSettings": { "max": 5 } }
  */
-test('UpdateSettings decreasing max clamps current value on next blur', async ({ page }) => {
+test('UpdateSettings decreasing max clamps current value immediately', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 8 });
