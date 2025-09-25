@@ -110,8 +110,6 @@ test('does not trigger change event on blur when value unchanged', async ({ page
   test.expect(changeEventCount).toBe(0);
 });
 
-// ======= Planned Scenarios (test.skip) =======
-
 /**
  * Scenario: Mount does not emit change event
  * Given the fixture page is loaded
