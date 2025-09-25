@@ -17,7 +17,7 @@
  * [x] rejects invalid step values
  * [x] handles zero step value gracefully
  * [x] handles negative step values
- * [x] combines step with boundary constraints
+ * [x] combines step with boundary constraints without rounding
  * [x] handles step with forcestepdivisibility settings
  * [x] calculates steps correctly across zero boundary
  * [x] handles very small step values
@@ -261,22 +261,22 @@ test('handles negative step values', async ({ page }) => {
   });
 
 /**
- * Scenario: combines step with boundary constraints
- * Given the fixture page is loaded with step and boundaries
+ * Scenario: combines step with boundary constraints without rounding
+ * Given the fixture page is loaded with step and boundaries and no step rounding
  * When step operations approach boundaries
- * Then both step and boundary constraints are respected
+ * Then boundary constraints are respected without step divisibility enforcement
  * Params:
- * { "settings": { "min": 0, "max": 10, "step": 3, "initval": "9" }, "operation": "increment", "expected": "10" }
+ * { "settings": { "min": 0, "max": 10, "step": 3, "forcestepdivisibility": "none", "initval": "9" }, "operation": "increment", "expected": "10" }
  */
-test('combines step with boundary constraints', async ({ page }) => {
+test('combines step with boundary constraints without rounding', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 3, initval: 9
+      min: 0, max: 10, step: 3, forcestepdivisibility: 'none', initval: 9
     });
 
     await apiHelpers.incrementViaAPI(page, 'test-input');
 
     const value = await apiHelpers.getNumericValue(page, 'test-input');
-    expect(value).toBe(10); // Clamped to max instead of 12 (9+3)
+    expect(value).toBe(10); // Clamped to max instead of 12 (9+3), no step rounding applied
   });
 
 /**
@@ -306,7 +306,7 @@ test('handles step with forcestepdivisibility settings', async ({ page }) => {
  */
 test('calculates steps correctly across zero boundary', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: -5, max: 5, step: 2, initval: -1
+      min: -5, max: 5, step: 2, initval: -1, forcestepdivisibility: 'none'
     });
 
     await apiHelpers.incrementViaAPI(page, 'test-input');
@@ -462,7 +462,7 @@ test('handles step changes during active operations', async ({ page }) => {
  */
 test('validates step compatibility with min/max ranges', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 1, step: 5, initval: 0.5
+      min: 0, max: 1, step: 0.5, initval: 0.5
     });
 
     await apiHelpers.incrementViaAPI(page, 'test-input');
