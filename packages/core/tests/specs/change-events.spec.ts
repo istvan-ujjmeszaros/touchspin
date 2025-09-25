@@ -563,7 +563,7 @@ test('Destroy removes artifacts while other instance remains intact', async ({ p
 
   // Create additional input for second instance
   await page.evaluate(() => {
-    const container = document.querySelector('.container');
+    const container = document.querySelector('.test-container');
     if (container) {
       const secondInput = document.createElement('input');
       secondInput.setAttribute('data-testid', 'second-input');
