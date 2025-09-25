@@ -94,6 +94,56 @@ api.updateSettings(opts)  // Update options
 api.destroy()             // Destroy and remove from element
 ```
 
+### Value Sanitization & HTML5 Input Types
+
+TouchSpin's sanitization behavior depends on both **event triggers** and **HTML5 input type constraints**:
+
+#### HTML5 Input Type Behavior
+- **`type="number"`**: Browser automatically rejects/clears non-numeric input
+- **`type="text"`**: Browser accepts any input, allowing TouchSpin to handle sanitization
+
+#### TouchSpin Sanitization Rules
+
+**User Input → Auto-Sanitization** (only on `type="text"`)
+```javascript
+// On type="text" input: User types "42abc" and presses Tab
+// → Change event fires → TouchSpin sanitizes → Value becomes "42"
+
+// On type="number" input: User tries to type "42abc"
+// → Browser rejects non-numeric characters → Only "42" gets entered
+```
+
+**Programmatic Input → No Auto-Sanitization**
+```javascript
+// On type="text": Programmatically set non-numeric value
+input.value = "42abc";
+// → No change event → No sanitization → Value remains "42abc"
+
+// On type="number": Programmatically set non-numeric value
+input.value = "42abc";
+// → Browser rejects → Value becomes "" (empty string)
+
+// To trigger sanitization on type="text":
+input.value = "42abc";
+input.dispatchEvent(new Event('change', { bubbles: true }));
+// → Change event fires → TouchSpin sanitizes → Value becomes "42"
+```
+
+#### Recommendation
+- Use **`type="number"`** for most TouchSpin instances (browser handles basic validation)
+- Use **`type="text"`** only when you need custom input patterns that TouchSpin should sanitize
+- Remember: `type="number"` prevents non-numeric input entirely, while `type="text"` + TouchSpin sanitizes on user events
+
+#### When TouchSpin Sanitization Occurs
+- ✅ **User keyboard input on type="text"** + blur/tab
+- ✅ **Manual change event dispatch on type="text"**
+- ✅ **Form submission** (if it triggers change events)
+- ❌ **Direct property assignment** (`input.value = "..."`)
+- ❌ **Any input on type="number"** (browser handles validation)
+- ❌ **Programmatic setValue()** without explicit event dispatch
+
+This behavior ensures TouchSpin respects programmatic control while providing user-friendly sanitization for interactive input.
+
 ### Event System
 
 The core emits the following events that you can listen to:
