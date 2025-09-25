@@ -79,8 +79,26 @@ export async function loadJQueryEnvironment(page: Page, debug = false): Promise<
   }
 
   // Load TouchSpin plugin with retry logic
-  const pluginUrl = await page.evaluate(() => {
-    return `${window.location.origin}/packages/jquery-plugin/dist/jquery-touchspin-bs5.js`;
+  const { url: pluginUrl, module: isModule } = await page.evaluate(async () => {
+    const origin = window.location.origin;
+    const distUrl = `${origin}/packages/jquery-plugin/dist/jquery-touchspin-bs5.js`;
+    const devdistUrl = `${origin}/packages/jquery-plugin/devdist/jquery-touchspin-bs5.js`;
+
+    try {
+      const response = await fetch(distUrl, { method: 'HEAD' });
+      if (response.ok) {
+        return { url: distUrl, module: false } as const;
+      }
+    } catch {
+      // Ignore network errors and fall through to devdist detection
+    }
+
+    const fallbackResponse = await fetch(devdistUrl, { method: 'HEAD' });
+    if (!fallbackResponse.ok) {
+      throw new Error(`TouchSpin jQuery bundle not found. Checked: ${distUrl}, ${devdistUrl}`);
+    }
+
+    return { url: devdistUrl, module: true } as const;
   });
 
   let attempts = 0;
@@ -90,7 +108,10 @@ export async function loadJQueryEnvironment(page: Page, debug = false): Promise<
     if (debug) console.log(`Loading TouchSpin plugin (attempt ${attempts + 1}/${maxAttempts})...`);
 
     try {
-      await loadScript(page, pluginUrl, { timeout: 5000 });
+      await loadScript(page, pluginUrl, {
+        timeout: 5000,
+        attributes: isModule ? { type: 'module' } : {},
+      });
 
       // Wait a moment for the script to execute
       await page.waitForTimeout(100);
