@@ -143,8 +143,13 @@ test('startUpSpin begins upward spinning', async ({ page }) => {
     const initialValue = await getCoreNumericValue(page, 'test-input');
     await apiHelpers.startUpSpinViaAPI(page, 'test-input');
 
-    // Allow some time for spinning
-    await page.waitForTimeout(100);
+    // Allow brief time for spinning to start and change value
+    await page.waitForFunction(() => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      const currentValue = core ? core.getValue() : null;
+      return currentValue > 5; // Wait for value to increase from initial 5
+    }, {}, { timeout: 500 });
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
     const finalValue = await getCoreNumericValue(page, 'test-input');
@@ -167,8 +172,13 @@ test('startDownSpin begins downward spinning', async ({ page }) => {
     const initialValue = await getCoreNumericValue(page, 'test-input');
     await apiHelpers.startDownSpinViaAPI(page, 'test-input');
 
-    // Allow some time for spinning
-    await page.waitForTimeout(100);
+    // Allow brief time for spinning to start and change value
+    await page.waitForFunction(() => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      const currentValue = core ? core.getValue() : null;
+      return currentValue < 10; // Wait for value to decrease from initial 10
+    }, {}, { timeout: 500 });
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
     const finalValue = await getCoreNumericValue(page, 'test-input');
@@ -189,11 +199,18 @@ test('stopSpin halts any active spinning', async ({ page }) => {
     });
 
     await apiHelpers.startUpSpinViaAPI(page, 'test-input');
-    await page.waitForTimeout(50); // Brief spinning
+    // Wait for spinning to change the value
+    await page.waitForFunction(() => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      const currentValue = core ? core.getValue() : null;
+      return currentValue !== 10; // Wait for value to change from initial 10
+    }, {}, { timeout: 300 });
     const valueAfterStart = await getCoreNumericValue(page, 'test-input');
 
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
-    await page.waitForTimeout(50); // Wait to ensure spinning stopped
+    // Brief wait to ensure spinning has completely stopped
+    await page.waitForFunction(() => true, {}, { timeout: 100 });
     const valueAfterStop = await getCoreNumericValue(page, 'test-input');
 
     expect(valueAfterStop).toBe(valueAfterStart); // No change after stop
