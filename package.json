@@ -84,7 +84,7 @@
     "test:dev": "concurrently -k -s first -n dev,test \"yarn dev\" \"yarn test:watch\"",
     "dev:test": "yarn test:dev",
     "test:headed": "playwright test --project=chromium --headed",
-    "test:ui": "playwright test --project=chromium --ui",
+    "test:ui": "TS_BUILD_TARGET=dev playwright test --project=chromium --ui",
     "test:debug": "PWDEBUG=1 playwright test --project=chromium --headed",
     "test:guard": "yarn node scripts/gherkin-guard-dog.mjs",
     "coverage:run": "yarn guard:tests && yarn build:test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev PW_COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts --project=chromium-coverage --reporter=list",
