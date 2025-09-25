@@ -88,7 +88,7 @@ export async function setupLogging(page: Page): Promise<void> {
           const value = (input as HTMLInputElement | null)?.value;
           const detail: Partial<EventLogEntry> = { type: 'touchspin', target: testId };
           if (value !== undefined) (detail as { value?: string }).value = value;
-          logEvent(ev, detail);
+          logEvent(e.type, detail);
         },
         true
       );
