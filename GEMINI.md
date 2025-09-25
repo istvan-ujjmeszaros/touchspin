@@ -651,6 +651,30 @@ await apiHelpers.clickUpButton(page, 'test-input');
 await apiHelpers.expectValueToBe(page, 'test-input', '15');
 ```
 
+### 🔄 Input Value Helper Distinctions
+
+**Critical**: Choose the right helper based on whether you expect input events:
+
+**Programmatic Value Setting (No Input Events):**
+```typescript
+await setValueSilentlyAndBlur(page, 'test-input', 'value');
+// - Uses el.value = value (programmatic)
+// - Does NOT fire input/change events
+// - Use for: Testing that programmatic changes don't trigger sanitization
+```
+
+**User Input Simulation (Fires Input Events):**
+```typescript
+await fillWithValueAndBlur(page, 'test-input', 'value');
+// - Uses keyboard input + blur
+// - DOES fire input/change events
+// - Use for: Testing user input that should trigger sanitization
+```
+
+**Rule of Thumb:**
+- Expect change events = use `fillWithValueAndBlur`
+- Expect NO change events = use `setValueSilentlyAndBlur`
+
 ### 🍳 Quick Reference
 
 **Key Interactions:**
