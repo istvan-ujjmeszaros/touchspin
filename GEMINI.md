@@ -2,140 +2,39 @@
 
 ## 🎯 PRIMARY MISSION: Achieve 100% Test Coverage with Clean Behavioral Tests
 
-### The Testing Revolution
+**We are rewriting ALL tests from scratch** for maintainability and 100% coverage.
 
-We are **rewriting ALL tests from scratch** to create a maintainable, clean test suite that achieves 100% coverage.
+### Core Principles
+* **DIST-ONLY TESTS** - import built artifacts (`/dist/`), never `/src/`
+* **TESTID SELECTORS** - use `data-testid` selectors for reliability
+* **ONE behavior per test** - simple, focused tests
+* **Event log for everything** - single source of truth
+* **Fail fast** - no silent failures
 
-#### Why We're Starting Over
+**Philosophy:** Every test should be so simple that any developer can read the test name, understand what it tests, and fix it when behavior changes.
 
-* **Problem with old tests** (`/__tests__/`):
+### 🎯 Test Implementation Rules
 
-  * Overcomplicated with multiple behaviors per test
-  * Hard to understand what's actually being tested
-  * Difficult to debug when they fail
-  * Mix unit testing with behavioral testing
+**CRITICAL**: Implement **EXISTING** test specifications only.
 
-* **Our new approach**:
-
-  * **DIST-ONLY TESTS** - tests must import built artifacts (`/dist/index.js`), never `/src/`
-  * **TESTID SELECTORS** - use `data-testid` selectors in all tests for reliability
-  * **ONE behavior per test** - if the test name has "and" in it, split it
-  * **NO UNIT TESTS** - only Playwright behavioral tests
-  * **Event log for everything** - single source of truth
-  * **Fail fast** - no silent failures with conditional checks
-  * **Minimal test fixtures** - reuse simple HTML across tests
-
-### Testing Philosophy
-
-```
-Clean Tests = Maintainable Code = Happy Developers
-```
-
-Every test should be so simple that a junior developer can:
-
-1. Read the test name and know what it tests
-2. Read the test code and understand how it works
-3. Fix it when the behavior changes
-
-### 🎯 Test Implementation Requirements
-
-**CRITICAL**: We are implementing **EXISTING** test specifications, not creating new ones.
-
-#### Follow Existing Test Scenarios
-* **All test files contain pre-defined Gherkin-like scenarios** with complete specifications
-* **Each `test.skip()` has documentation** describing the exact test to implement
-* **Checklists at file tops** show all scenarios that need implementation
-* **Parameters are provided** - use them exactly as specified
-
-#### No New Tests Until Completion
-* **Do NOT create any new tests** until ALL `test.skip()` placeholders are implemented
-* **Follow the Gherkin scenarios exactly** - Given/When/Then structure with provided params
-* **Use existing test names** - do not modify or add new test descriptions
-* **Implement systematically** - complete one file before moving to the next
-
-#### Gherkin Scenario Pattern
-```javascript
-/**
- * Scenario: [descriptive test name]
- * Given [initial state setup]
- * When [action performed]
- * Then [expected outcome]
- * Params:
- * { [exact configuration values] }
- */
-test('scenario name', async ({ page }) => {
-  // Implementation using provided params
-});
-```
-
-#### Source Bug Handling
-* **If test fails due to source bug**: Add TODO comment describing the issue
-* **Do NOT fix source code** during test implementation phase
-* **Document issues** for later resolution
-* **Continue with remaining tests** - don't stop for bugs
-
-#### CRUCIAL: Use Exact Scenario Parameters
-* **NEVER modify the parameters specified in Gherkin scenarios**
-* **Use EXACTLY the values provided in Params:** - no adjustments
-* **Let tests fail if parameters don't match Core behavior**
-* **DO NOT change test parameters to make tests pass**
-* **Failed tests will be reviewed and addressed separately**
+* **Follow Gherkin scenarios exactly** - Given/When/Then with provided params
+* **Use exact parameters** - never modify values in scenarios
+* **Complete `test.skip()` placeholders** systematically
+* **Document source bugs** with TODO comments, don't fix code during test implementation
 
 ## 🔧 Testing Requirements
 
-### Dist-Only Rule
+* **Dist-Only**: Load built artifacts (`/dist/`) only, never `/src/`. Guard enforced.
+* **Selectors**: Use `data-testid` selectors only, never CSS classes
+* **Coverage**: `yarn coverage:build` → `yarn coverage:all <path>` → view `reports/coverage/index.html`
+* **Helpers**: Don't modify shared helpers in `__tests__/helpers/` - keep stable
 
-* **Tests must load built artifacts** (`/dist/index.js`) only - never `/src/`
-* **Guard script**: `yarn guard:no-src-in-tests` enforces this rule
-* **Runtime guard**: Tests throw if any `/src/` script sneaks into fixtures
+## 📊 Coverage Roadmap
 
-### Selectors Standard
-
-* **Use `data-testid` selectors** in all tests - TouchSpin auto-generates these
-* **Never use CSS classes** or DOM structure for test selectors
-
-### Coverage (CDP-Based)
-
-* **Build first**: `yarn coverage:build`
-* **Run coverage**: `yarn coverage:all <path> --no-open`
-* **View report**: `reports/coverage/index.html`
-* **Coverage hooks**: Auto-imported in each spec - don't duplicate in tests
-
-### Helper/Config Policy
-
-* **Do not modify** `__tests__/helpers/touchspinApiHelpers.ts` or configs unless absolutely necessary
-* **Keep it stable** - these are shared across all test packages
-
-## 📊 Coverage Roadmap: Journey to 100%
-
-### Phase 1: jQuery Plugin Package ✅ (\~95% Complete)
-
-* **Status**: Almost done, refining patterns
-* **Focus**: Establishing clean patterns for other packages
-* **Location**: `packages/jquery-plugin/tests/`
-* **Coverage Target**: 100%
-* **Remaining Work**:
-
-  * Cover `forcestepdivisibility` options (floor, ceil, none)
-  * Test vertical button configurations
-  * Add callback function tests
-  * Complete edge cases
-
-### Phase 2: Core Package 🚀 (NEXT - 0%)
-
-* **Status**: Starting after jQuery plugin completion
-* **Focus**: Core logic, state management, value calculations
-* **Location**: `packages/core/tests/`
-* **Coverage Target**: 100%
-* **Special Role**: Will house shared test infrastructure
-* **What to test**:
-
-  * Value normalization and validation
-  * Step calculations and rounding
-  * Min/max boundary enforcement
-  * Decimal precision handling
-  * State management
-  * Configuration merging
+**Phase 1: jQuery Plugin** ✅ - Reference patterns established (`packages/jquery-plugin/tests/`)
+**Phase 2: Core Package** 🚀 - Active development (`packages/core/tests/`) - shared infrastructure
+**Phase 3: Renderers** 📅 - Framework-specific testing (`packages/renderers/*/tests/`)
+**Phase 4: Integration** 🔄 - Cross-package workflows
 
 #### 🔍 Core Value Handling Behavior
 
@@ -166,35 +65,18 @@ const numericValue = await getNumericValue(page, 'test-input');
 expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
 ```
 
-#### Core Testing Strategy: Renderer-Independent
+#### Core Testing Strategy: Use Full Initialization
 
-**CRITICAL DISCOVERY**: TouchSpin Core without a renderer provides only keyboard/wheel functionality - **no buttons are created**. This is the intended behavior for pure Core testing.
+**IMPORTANT**: For Core package tests that need full TouchSpin functionality, use `initializeTouchspinWithVanilla` which provides:
+- Complete TouchSpin Core instance with VanillaRenderer
+- All API methods (`upOnce()`, `downOnce()`, `setValue()`, etc.)
+- Button interactions (`clickUpButton()`, `clickDownButton()`)
+- Keyboard/wheel events
+- Full UI including buttons
 
-**Core-Only Architecture**:
-- Core package manages state, calculations, boundaries, validation
-- Without renderer: Only supports keyboard (ArrowUp/ArrowDown) and mouse wheel events
-- Console warning: "TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work..."
-
-**Test Helpers Strategy**:
-```typescript
-// packages/core/test-helpers/core-adapter.ts
-export async function initializeTouchspin(page, testId, options)  // Creates TouchSpinCore instance directly
-export async function incrementViaAPI(page, testId)    // Uses core.upOnce()
-export async function decrementViaAPI(page, testId)    // Uses core.downOnce()
-export async function incrementViaKeyboard(page, testId) // ArrowUp key
-export async function decrementViaKeyboard(page, testId) // ArrowDown key
-export async function incrementViaWheel(page, testId)  // Mouse wheel up
-export async function decrementViaWheel(page, testId)  // Mouse wheel down
-export async function setValueViaAPI(page, testId, value)  // Uses core.setValue()
-export async function getNumericValue(page, testId)   // Gets numeric value from input
-export async function destroyCore(page, testId)       // Destroys Core instance
-export async function isCoreInitialized(page, testId) // Checks if Core is initialized
-```
-
-**DO NOT use button helpers in Core tests**:
-- `clickUpButton()` and `clickDownButton()` will fail - no buttons exist
-- These helpers are for renderer integration tests only
-- Core tests should use API or keyboard/wheel methods
+**Core Testing Approaches**:
+1. **Full Functionality**: Use `initializeTouchspinWithVanilla` for comprehensive testing
+2. **Callback Testing Only**: Use `core-adapter.ts` stub for callback pairing validation tests
 
 **Core Test File Status** (All syntax errors fixed):
 - `boundary-enforcement.spec.ts` - Placeholder tests for min/max enforcement
@@ -211,10 +93,10 @@ export async function isCoreInitialized(page, testId) // Checks if Core is initi
 
 ```typescript
 // ❌ Pitfall: fixture value 50 with step 3 may become 51 during init
-await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3 });
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 3 });
 
 // ✅ Prefer supplying a divisible init value
-await apiHelpers.initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 3, initval: 48 });
 ```
 
 **Rule of thumb (from Handbook):**
@@ -282,32 +164,25 @@ await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
 
 **✅ CORRECT Core Test Pattern:**
 ```typescript
-// Use initval option instead of separate setValue call
-await initializeTouchspin(page, 'test-input', {
+// Use initval option with full initialization
+await initializeTouchspinWithVanilla(page, 'test-input', {
   step: 0.25,
   decimals: 2,
   initval: 10  // Sets value before Core initialization
 });
-await incrementViaAPI(page, 'test-input');
-expect(await getNumericValue(page, 'test-input')).toBe(10.25);
-```
-
-**❌ WRONG Core Test Pattern:**
-```typescript
-// This will fail because _touchSpinCore doesn't exist yet
-await setValueViaAPI(page, 'test-input', 10);  // FAILS!
-await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2 });
+await apiHelpers.incrementViaAPI(page, 'test-input');
+expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10.25);
 ```
 
 **Key Differences:**
-- **`initializeTouchspin`**: Creates `new TouchSpinCore()` directly, stores on `input._touchSpinCore`
-- **`initializeTouchspinJQuery`**: Uses jQuery wrapper, creates renderer UI elements
+- **`initializeTouchspinWithVanilla`**: Creates full TouchSpin Core with VanillaRenderer
+- **`initializeTouchspinJQuery`**: Uses jQuery wrapper with Bootstrap renderer
 - **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
-- **Core helpers work without renderer**: No buttons created, API/keyboard/wheel only
+- **Full Core provides buttons and complete API**: All interaction methods available
 
-### Phase 3: Renderer Packages 📅 (Future - 0%)
+### Phase 3: Renderer Packages 📅 (Planned)
 
-* **Status**: After core package
+* **Status**: Planned after core package foundation
 * **Coverage Target**: 100% each
 * **Packages**:
 
@@ -321,9 +196,9 @@ await initializeTouchspin(page, 'test-input', { step: 0.25, decimals: 2 });
   * ARIA attributes
   * Theme integration
 
-### Phase 4: Integration & E2E 🔄 (Final - 0%)
+### Phase 4: Integration & E2E 🔄 (Future)
 
-* **Status**: After individual packages
+* **Status**: Planned after individual package completion
 * **Focus**: Cross-package integration
 * **Coverage Target**: Key user workflows
 
@@ -370,125 +245,21 @@ packages/core/
    import { initializeTouchspin } from '../test-helpers/core-adapter';
    ```
 
-## 🚨 CRITICAL: USE THE FUCKING HELPERS!
+## 🚨 CRITICAL: Use Existing Helpers
 
-### THE GOLDEN RULE: Use Existing Helpers - That's Why We Built Them!
-
-**🎯 We have helpers for EVERYTHING. Stop reinventing the wheel!**
+**GOLDEN RULE**: Use helpers for ALL TouchSpin interactions. Never write raw selectors in tests.
 
 ```typescript
-// ✅ CORRECT - Use the helpers we already built
+// ✅ CORRECT - Use the helpers
 import * as apiHelpers from '@touchspin/core/test-helpers';
-
-// Want to click up button?
 await apiHelpers.clickUpButton(page, testId);
+await apiHelpers.expectValueToBe(page, testId, '50');
 
-// Want to get input value?
-const value = await apiHelpers.readInputValue(page, testId);
-
-// Want to fill input?
-await apiHelpers.fillWithValue(page, testId, '50');
-
-// Want to increment via API (Core tests)?
-await apiHelpers.incrementViaAPI(page, testId);
-
-// Want to check if initialized?
-expect(await apiHelpers.isTouchSpinInitialized(page, testId)).toBe(true);
+// ❌ WRONG - Don't write raw selectors
+page.locator('[data-testid="test-input"]').click(); // Use helpers instead!
 ```
 
-### ABSOLUTELY FORBIDDEN in Test Code:
-
-```typescript
-// ❌ NEVER DO THIS - Use helpers instead!
-document.querySelector('[data-testid="test-input"]')
-page.locator('[data-testid="test-input"]').click()
-document.getElementById('something')
-
-// ❌ NEVER WRITE NEW LOCATOR CODE - Use existing helpers!
-export async function clickUpButton(page: Page, testId: string) {
-  const button = page.locator(`[data-testid="${testId}-up"]`); // WRONG!
-  await button.click();
-}
-```
-
-### ✅ querySelector IS legitimate in these contexts ONLY:
-
-**1. Browser Runtime Context (page.evaluate, page.waitForFunction):**
-```typescript
-// ✅ CORRECT - Inside browser execution context where Playwright locators don't work
-await page.evaluate(({ testId }) => {
-  const input = document.querySelector(`[data-testid="${testId}"]`); // Required here
-  return input.value;
-}, { testId });
-
-await page.waitForFunction(({ testId, expected }) => {
-  const input = document.querySelector(`[data-testid="${testId}"]`); // Required here
-  return input && input.value === expected;
-}, { testId, expected });
-```
-
-**2. Runtime Helper Functions (installDomHelpers.ts, events/setup.ts):**
-```typescript
-// ✅ CORRECT - Browser-side utilities injected into window
-window.__ts = {
-  byId: (id: string) => document.querySelector(`[data-testid="${id}"]`) // Required here
-};
-
-// ✅ CORRECT - Event listeners run in browser context
-document.addEventListener('touchspin.on.max', (e: Event) => {
-  const input = target?.querySelector('input[data-testid]'); // Required here
-}, true);
-```
-
-### Why This Rule is CRITICAL:
-
-1. **We already solved all the problems**: Helpers handle edge cases, retries, error handling
-2. **Consistency**: All tests use the same reliable patterns
-3. **Maintainability**: One place to fix selector issues
-4. **Stop wasting time**: Don't rewrite what already exists and works
-5. **Guard Protection**: Automated guards prevent regressions
-
-**💡 Rule of thumb**: If you're about to write ANY selector code in test files or test helpers, STOP and find the existing helper that does what you need.
-
-### 🚀 Performance Evidence: Why Helpers Matter
-
-**We've proven that using canonical helpers provides significant performance improvements** through comprehensive benchmarking:
-
-**Key Performance Insights:**
-1. **Canonical helpers are dramatically more efficient** - using `apiHelpers.incrementViaAPI()` vs duplicated functions
-2. **DOM manipulation is the main bottleneck** - textarea writes cause most performance cost
-3. **Event handling overhead is minimal** - registering listeners has little impact vs DOM writes
-4. **Single page.evaluate calls are faster** - canonical helpers use `window.__ts` infrastructure optimally
-
-**Why Canonical Helpers Win:**
-- **Optimized architecture**: Single `page.evaluate` with `window.__ts.requireCoreByTestId()`
-- **Reduced round trips**: No extra element lookups or evaluations
-- **Proven infrastructure**: Built and tested for efficiency
-
-**Performance Test Commands:**
-```bash
-# Build first (always required after source changes)
-yarn build
-
-# Run performance benchmarks
-yarn exec playwright test packages/core/tests/specs/api-operations.spec.ts -g "API performance" --project=chromium --reporter=list
-```
-
-**The evidence is clear**: Using existing helpers isn't just about code organization - it delivers measurable performance gains.
-
-### ✅ Do
-
-```typescript
-import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspin } from '../test-helpers/core-adapter';
-```
-
-### ❌ Don’t
-
-```typescript
-// WRONG: reimplemented helpers
-import { clickUpButton } from '../test-helpers/helpers/core-helpers';
-```
+**Why**: Helpers handle edge cases, provide performance optimizations, ensure consistency, and prevent regressions.
 
 ## 🖼️ Renderer Usage in Core Tests
 
@@ -497,406 +268,34 @@ import { clickUpButton } from '../test-helpers/helpers/core-helpers';
 * Core without a renderer creates **no buttons** (only supports keyboard/wheel events and API methods).
 * Button-based helpers (`clickUpButton`, `clickDownButton`) only work if a renderer is attached.
 
-### Policy
-
-1. **Pure Core Tests**: Use API methods (`upOnce`, `downOnce`) or keyboard events (ArrowUp/ArrowDown).
-2. **UI-Oriented Tests**: If buttons are needed, explicitly initialize Core with a renderer (default: Bootstrap5Renderer).
-3. **Hybrid Approach**: Prefer API methods for Core logic, renderer-based tests only when verifying integration with renderers.
-
-### Adapter Extension
-
-In `core-adapter.ts`, provide unified methods:
-
-```typescript
-// API-based increment/decrement
-export async function incrementViaAPI(page, testId) { /* ... */ }
-export async function decrementViaAPI(page, testId) { /* ... */ }
-
-// Keyboard-based
-export async function incrementViaKeyboard(page, testId) { /* ... */ }
-export async function decrementViaKeyboard(page, testId) { /* ... */ }
-
-// Renderer-based (optional)
-export async function incrementViaButton(page, testId) { /* ... */ }
-export async function decrementViaButton(page, testId) { /* ... */ }
-```
-
-### Expected Usage
-
-* **Core Logic Tests** → API/keyboard
-* **Renderer Integration Tests** → Renderer + button clicks
 
 ---
 
-## 📖 Testing Methodology & Guidelines
+## 📖 Testing Methodology Overview
 
-> **📋 Quick Reference**: See [TEST_HELPERS_CHEATSHEET.md](packages/core/TEST_HELPERS_CHEATSHEET.md)
-> **📚 Comprehensive Guide**: See [TEST_CONTRIBUTOR_HANDBOOK.md](packages/core/TEST_CONTRIBUTOR_HANDBOOK.md)
+> **📚 Complete Testing Guide**: See "📚 AI Agent Testing Guides" section below for comprehensive initialization patterns, best practices, debugging guidance, and copy-paste examples.
 
-### 🎯 Golden Rules (from Handbook)
+## 📚 Quick Reference
 
-* **Helpers-first**: All interactions and checks go through `apiHelpers` / `jqueryHelpers`
-* **Renderer-agnostic**: Use `data-touchspin-injected="up|down|prefix|postfix"` — never Bootstrap classes
-* **Centralized logging**: Logging is wired by initializers — do **not** add listeners in tests
-* **Deterministic waits**: Use `waitForTouchspinInitialized`, `waitForSanitization`, or `expect*` helpers (no arbitrary sleeps)
-* **AAA + one behavior per test**: Arrange–Act–Assert; descriptive titles; keep tests focused
+**Test ID Pattern**: `data-testid="my-input"` creates `my-input-wrapper`, `my-input-up`, `my-input-down`, etc.
 
-### 📋 Standard Test Template
+**Check Initialization**: `expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);`
 
-```typescript
-import { test, expect } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
+**Event Log Format**: `[native/touchspin] target:value eventName`
 
-test.describe('TouchSpin: [feature]', () => {
-  test.beforeEach(async ({ page }) => {
-    await apiHelpers.startCoverage(page);
-    await apiHelpers.waitForPageReady(page);
-    await apiHelpers.clearEventLog(page);
-  });
+**Key Helpers**: `clearEventLog`, `hasEventInLog`, `expectEventFired`, `expectValueToBe`
 
-  test.afterEach(async ({ page }, testInfo) => {
-    await apiHelpers.collectCoverage(page, testInfo.title);
-  });
-
-  test('should [specific behavior]', async ({ page }) => {
-    // Arrange
-    await apiHelpers.initializeTouchspin(page, 'qty', { step: 3, initval: 9 });
-    await apiHelpers.expectTouchSpinInitialized(page, 'qty');
-
-    // Act
-    await apiHelpers.clickUpButton(page, 'qty');
-
-    // Assert
-    await apiHelpers.expectValueToBe(page, 'qty', '12');
-    await apiHelpers.expectEventFired(page, 'change');
-  });
-});
-```
-
-### 🚫 Anti-patterns (from Handbook)
-
-* Direct DOM ops on TouchSpin controls (`page.locator(...).click()`) → **use helpers**
-* Adding listeners in tests (`addEventListener`, `$(document).on(...)`) → **logging is centralized**
-* Bootstrap class selectors → **use injected roles**
-* Arbitrary `waitForTimeout` → **use deterministic waits/expectations**
-* Mixing Core and jQuery init in the same test file → keep them in separate suites
-
-### ✅ Review Checklist (from Handbook)
-
-* [ ] Only `apiHelpers` / `jqueryHelpers` used for TouchSpin interactions
-* [ ] Renderer-agnostic locators (no Bootstrap classes)
-* [ ] No raw sleeps; expectations/waits are deterministic
-* [ ] No test-level event listeners; logging relies on central setup
-* [ ] Test names describe behavior ("should …"), one behavior per test
-* [ ] If helpers were edited, examples/cheatsheet updated accordingly
-
-## 🎯 Coverage Strategy: Achieving 100%
-
-### Workflow
-
-1. **Baseline**: run all tests with coverage
-2. **Identify Gaps**: check red/yellow lines
-3. **Targeted Tests**: add missing cases
-4. **Monitor**: enforce coverage in PRs
-
-### Coverage Tips
-
-* Test error paths
-* Cover edge cases
-* Cover all config options
-* Both if/else branches
-* Defaults explicitly
-
-### What 100% Coverage Means
-
-* Every line executed
-* Every branch covered
-* Every function called
-* Every edge case handled
-
----
-
-## 📚 jQuery Plugin Testing Reference
-
-### Data Attributes Reference
-
-* `wrapper`, `wrapper-advanced`, `up`, `down`, `prefix`, `postfix`, `vertical-wrapper`
-
-### Data Attributes
-
-When initializing TouchSpin through data attributes, the correct format is `data-bts-[setting]`. For example, to set the step to 5, you would use `data-bts-step="5"`.
-
-When initialized with `data-testid="my-input"`, creates:
-
-* `my-input-wrapper`
-* `my-input-up`
-* `my-input-down`
-* `my-input-prefix`
-* `my-input-postfix`
-
-### Checking for Initialization
-
-```typescript
-expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
-```
-
-### CRITICAL: TouchSpin Initialization Detection
-
-**For Core Package Tests Only** (jQuery plugin uses different pattern):
-
-- **Initialization Signal**: Core sets `data-touchspin-injected` attribute **on the input element** when fully initialized
-- **What "fully initialized" means**:
-  1. DOM structure built (wrapper, buttons created)
-  2. Event handlers attached
-  3. Mutation observer active
-  4. Component ready for interaction
-
-**IMPORTANT**: The `initializeTouchspin` helper automatically waits for this attribute before returning. Tests should never manually check for initialization - the helper guarantees the Core is ready.
-
-```typescript
-// ✅ CORRECT - initializeTouchspin waits for full initialization
-await initializeTouchspin(page, 'test-input', { step: 5 });
-// Core is guaranteed to be fully ready here
-
-// ❌ WRONG - Don't manually check, helper does this
-await initializeTouchspin(page, 'test-input', { step: 5 });
-await page.waitForSelector('[data-testid="test-input"][data-touchspin-injected]'); // Redundant!
-```
-
-**Key Difference from jQuery Plugin**:
-- **jQuery Plugin**: Sets `data-touchspin-injected` on the **wrapper element**
-- **Core Package**: Sets `data-touchspin-injected` on the **input element** (updated in Core source)
-
-### Checking for Destroy
-
-```typescript
-expect(await apiHelpers.isTouchSpinDestroyed(page, 'test-input')).toBe(true);
-```
-
-### DOM Structure Examples
-
-* Basic Horizontal Layout
-* With Prefix/Postfix
-* Vertical Buttons
-
-### Event Log System
-
-* Format: `[native] target:value eventName`, `[touchspin] target:value eventName`
-* Helpers: clearEventLog, hasEventInLog, countEventInLog
-
-### Strict Element Finding
-
-* BAD: optional chaining
-* GOOD: strict helpers that throw if missing
-
-### Common Pitfalls
-
-* Step value correction
-* Focus required for keyboard/mousewheel
-
-### Helper Functions Reference
-
-The test helpers are organized into focused modules in the core package for better maintainability:
-
-#### Import Options
-
-```typescript
-// Option 1: Import everything (recommended)
-import * as apiHelpers from '@touchspin/core/test-helpers';
-
-// Option 2: Import specific modules (for focused usage)
-import { clickUpButton, holdDownButton } from '@touchspin/core/test-helpers/interactions/buttons';
-import { expectValueToBe } from '@touchspin/core/test-helpers/assertions/values';
-import { setupLogging, clearEventLog } from '@touchspin/core/test-helpers/events';
-```
-
-#### Core Functionality
-
-**Element Access & Selectors:**
-- `getTouchSpinElements(page, testId)` - Returns wrapper, input, buttons, prefix/postfix
-- `getTouchSpinWrapper(page, testId)` - Returns wrapper element
-- `getElement(page, testId)` - Returns input element
-- `inputById(page, testId)`, `wrapperById(page, testId)` - Basic selectors
-
-**Initialization & State:**
-- `initializeTouchspinJQuery(page, testId, options)` - jQuery plugin initialization
-- `initializeTouchspin(page, testId, options)` - Core initialization
-- `isTouchSpinInitialized(page, testId)` - Check if initialized
-- `isTouchSpinDestroyed(page, testId)` - Check if destroyed
-- `isCoreInitialized(page, testId)` - Check Core instance exists
-
-#### Interactions
-
-**Button Operations:**
-- `clickUpButton(page, testId)`, `clickDownButton(page, testId)` - Single clicks
-- `holdUpButton(page, testId, ms)`, `holdDownButton(page, testId, ms)` - Hold for duration
-- `focusUpButton(page, testId)`, `focusDownButton(page, testId)` - Focus buttons
-
-**Keyboard Operations:**
-- `pressUpArrowKeyOnInput(page, testId)`, `pressDownArrowKeyOnInput(page, testId)` - Single key press
-- `holdUpArrowKeyOnInput(page, testId, ms)`, `holdDownArrowKeyOnInput(page, testId, ms)` - Hold keys
-
-**Mouse Operations:**
-- `wheelUpOnInput(page, testId)`, `wheelDownOnInput(page, testId)` - Mouse wheel events
-
-**Input Operations:**
-- `readInputValue(page, testId)` - Get current input value
-- `fillWithValue(page, testId, value)` - Fill input with value
-- `fillWithValueAndBlur(page, testId, value)` - Fill and trigger blur
-- `typeInInput(page, testId, text)` - Type text into input
-- `selectAllInInput(page, testId)` - Select all text
-
-#### Core API Operations
-
-- `getNumericValue(page, testId)` - Get parsed numeric value
-- `setValueViaAPI(page, testId, value)` - Set value via Core API
-- `incrementViaAPI(page, testId)`, `decrementViaAPI(page, testId)` - Direct API calls
-- `startUpSpinViaAPI(page, testId)`, `startDownSpinViaAPI(page, testId)` - Start spinning
-- `stopSpinViaAPI(page, testId)` - Stop spinning
-- `updateSettingsViaAPI(page, testId, settings)` - Update configuration
-- `destroyCore(page, testId)` - Destroy Core instance
-
-#### Event System
-
-**Event Logging:**
-- `setupLogging(page)` - Initialize event capture (idempotent)
-- `clearEventLog(page)` - Clear event history
-- `getEventLog(page)` - Get full event log array
-- `hasEventInLog(page, event, type?)` - Check if event occurred
-- `countEventInLog(page, event, type?)` - Count event occurrences
-- `waitForEventInLog(page, event, options?)` - Wait for specific event
-- `getEventsOfType(page, type)` - Get events by type ('native' | 'touchspin')
-
-#### Assertions (Polled Expectations)
-
-**Value Assertions:**
-- `expectValueToBe(page, testId, expected, timeout?)` - Wait for specific value
-- `expectValueToBeGreaterThan(page, testId, value, timeout?)` - Wait for value > threshold
-- `expectValueToBeLessThan(page, testId, value, timeout?)` - Wait for value < threshold
-- `expectValueToBeBetween(page, testId, min, max, timeout?)` - Wait for value in range
-
-**Button State Assertions:**
-- `expectButtonToBeDisabled(page, testId, 'up'|'down', timeout?)` - Wait for disabled state
-- `expectButtonToBeEnabled(page, testId, 'up'|'down', timeout?)` - Wait for enabled state
-
-**Event Assertions:**
-- `expectEventFired(page, eventName, timeout?)` - Wait for event to fire
-- `expectNoEvent(page, eventName, timeout?)` - Ensure event doesn't fire
-- `expectEventCount(page, eventName, count, timeout?)` - Wait for specific event count
-
-#### Test Utilities
-
-**Coverage:**
-- `startCoverage(page)` - Start CDP coverage collection
-- `collectCoverage(page, testName)` - Collect and save coverage data
-
-**Test Setup:**
-- `installJqueryPlugin(page)` - Install jQuery plugin with Bootstrap5 renderer
-- `createAdditionalInput(page, testId, options)` - Create dynamic test inputs
-- `waitForPageReady(page, flag?, timeout?)` - Wait for page ready state
-
-#### Types
-
-```typescript
-type EventLogType = 'native' | 'touchspin';
-interface EventLogEntry {
-  type: EventLogType;
-  event: string;
-  target?: string;
-  value?: string;
-}
-interface TouchSpinElements {
-  wrapper: Locator;
-  input: Locator;
-  upButton: Locator;
-  downButton: Locator;
-  prefix: Locator;
-  postfix: Locator;
-}
-```
-
-### Test File Locations
-
-**New Test Structure:**
-* Test Helpers: `packages/core/test-helpers/` (shared across all packages)
-* Test Cheatsheet: `packages/core/TEST_HELPERS_CHEATSHEET.md`
-* New Tests: `packages/*/tests/*.spec.ts` (when written)
-
-**Archived Tests (for reference only):**
-* Deprecated Tests: `__tests__/*.spec.deprecated.ts` (legacy tests for edge case reference)
-
-### Running New Tests
-
+**Running Tests:**
 ```bash
-# Core package tests (when written)
 yarn exec playwright test packages/core/tests/
-
-# jQuery plugin tests (when written)
-yarn exec playwright test packages/jquery-plugin/tests/
-
-# All new tests
-yarn exec playwright test packages/
-
-# With coverage
-COVERAGE=1 yarn exec playwright test --config=playwright-coverage.config.ts packages/
-
-# Debug UI
-yarn exec playwright test --ui
-
-# Headed mode
-yarn exec playwright test --headed
+yarn exec playwright test --ui  # Debug mode
+COVERAGE=1 yarn exec playwright test packages/  # With coverage
 ```
 
----
-
-## 📊 Coverage (Build-Mode First)
-
-* Build-mode eliminates sourcemap drift
-* Coverage flow: V8 → Istanbul JSON → merge → report
-
-### Running Coverage
-
-```bash
-# Coverage for new tests
-yarn coverage:all packages/core/tests/
-yarn coverage:all packages/jquery-plugin/tests/
-yarn coverage:all:ci
-yarn coverage:check
-```
-
-### Troubleshooting
-
-* Comments flagged → use build-mode
-* Missing sources → ensure build success
-* Empty coverage → check `COVERAGE_DIST`
-
----
-
-## 📖 Reference: Archived Test Suite
-
-All legacy tests have been archived to `__tests__/*.spec.deprecated.ts` for reference when identifying edge cases during new test development.
-
-**Key archived tests for reference:**
-- `value-normalization.spec.deprecated.ts` - Value handling edge cases
-- `boundary-enforcement.spec.deprecated.ts` - Min/max behavior
-- `callbacks.spec.deprecated.ts` - Callback function patterns
-- `mousewheel.spec.deprecated.ts` - Mouse wheel interaction edge cases
-- `step-calculations.spec.deprecated.ts` - Step calculation behaviors
-- And 25+ more archived test files
-
-**Usage**: Consult archived tests when implementing new tests to ensure edge cases are covered, but do not run or maintain the deprecated tests.
-
----
-
-## 📁 Project Structure Notes
-
-### Test Infrastructure
-
-**Test helpers location**: All test helpers are in `packages/core/test-helpers/` and can be imported as `@touchspin/core/test-helpers`.
-
-**Archived tests**: Legacy tests are in `__tests__/*.spec.deprecated.ts` for reference only - do not run or maintain these.
-
-**New tests**: Write new tests in `packages/*/tests/` directories using the helper infrastructure.
+**Project Structure:**
+- Test Helpers: `packages/core/test-helpers/`
+- New Tests: `packages/*/tests/*.spec.ts`
+- Archived Tests: `__tests__/*.spec.deprecated.ts` (reference only)
 
 ### Temporary Files and Documentation
 
@@ -1212,6 +611,84 @@ expect(await getNumericValue(page, 'test-input')).toBe(50);  // Original preserv
 expect(await readInputValue(page, 'test-input')).toBe('10 USD'); // Formatted display
 expect(await getNumericValue(page, 'test-input')).toBe(10);      // Internal numeric preserved
 ```
+
+---
+
+## 📚 AI Agent Testing Guides
+
+### 🔧 Critical Initialization Patterns
+
+**Core Tests** - Use `initializeTouchspinWithVanilla` for full functionality:
+```typescript
+import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 2, initval: 10 });
+```
+
+**jQuery Plugin Tests** - Use `initializeTouchspinJQuery`:
+```typescript
+import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+await installJqueryPlugin(page);
+await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
+```
+
+**Renderer Tests** - Use `initializeTouchspinWithRenderer`:
+```typescript
+import { initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
+await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+```
+
+
+### 🎯 Essential Best Practices
+
+1. **No Manual Waits** - Use `expectValueToBe()` not `page.waitForTimeout()`
+2. **Use Helpers** - `clickUpButton()` not `page.locator().click()`
+3. **One Behavior per Test** - Simple, focused tests only
+
+```typescript
+// ✅ CORRECT Pattern
+await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
+await apiHelpers.clickUpButton(page, 'test-input');
+await apiHelpers.expectValueToBe(page, 'test-input', '15');
+```
+
+### 🍳 Quick Reference
+
+**Key Interactions:**
+```typescript
+await apiHelpers.clickUpButton(page, 'test-input');
+await apiHelpers.incrementViaAPI(page, 'test-input');  // API method
+await apiHelpers.typeInInput(page, 'test-input', '50');
+```
+
+**Essential Assertions:**
+```typescript
+await apiHelpers.expectValueToBe(page, 'test-input', '25');
+await apiHelpers.expectEventFired(page, 'change');
+await apiHelpers.expectButtonToBeDisabled(page, 'test-input', 'up');
+```
+
+**Event Debugging:**
+```typescript
+console.log(await apiHelpers.getEventLog(page)); // See what happened
+```
+
+### 🐛 Debugging Guide
+
+**Common Error Types:**
+- **Timeout errors**: Use polling assertions (`expectValueToBe`), not manual waits
+- **Locator errors**: Element not found - check initialization and testid
+- **Wrong initialization**: Use correct helper for test type (Core vs jQuery vs Renderer)
+
+**Debug Tools:**
+```typescript
+console.log(await apiHelpers.getEventLog(page)); // See events
+await page.pause(); // Interactive debugging
+```
+
+**Anti-Patterns:**
+- ❌ Never import from `/src/` in tests (use `/dist/`)
+- ❌ Never use `page.locator()` directly (use helpers)
+- ❌ Never use `page.waitForTimeout()` (use `expectValueToBe`)
 
 ---
 
