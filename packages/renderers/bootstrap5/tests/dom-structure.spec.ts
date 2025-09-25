@@ -3,6 +3,14 @@
  * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
  */
 
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] uses Bootstrap 5 input-group-text for buttons
+ * [x] applies Bootstrap 5 default button styling
+ * [x] supports Bootstrap 5 floating labels compatibility
+ * [x] maintains Bootstrap 5 validation state classes
+ */
+
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
@@ -24,6 +32,12 @@ test.describe('Bootstrap 5 specific behavior', () => {
     await installDomHelpers(page);
   });
 
+  /**
+   * Scenario: uses Bootstrap 5 input-group-text for buttons
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 5 renderer
+   * Then buttons are directly in input-group without append/prepend wrappers
+   */
   test('uses Bootstrap 5 input-group-text for buttons', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
 
@@ -42,6 +56,12 @@ test.describe('Bootstrap 5 specific behavior', () => {
     await expect(downParent).toHaveClass(/input-group/);
   });
 
+  /**
+   * Scenario: applies Bootstrap 5 default button styling
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 5 renderer
+   * Then buttons have Bootstrap 5 default btn-outline-secondary styling
+   */
   test('applies Bootstrap 5 default button styling', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
 
@@ -54,6 +74,12 @@ test.describe('Bootstrap 5 specific behavior', () => {
     await expect(downButton).toHaveClass(/btn-outline-secondary/);
   });
 
+  /**
+   * Scenario: supports Bootstrap 5 floating labels compatibility
+   * Given the fixture page has floating label structure around input
+   * When TouchSpin initializes with Bootstrap 5 renderer
+   * Then floating label structure is preserved and TouchSpin wrapper is visible
+   */
   test('supports Bootstrap 5 floating labels compatibility', async ({ page }) => {
     // Create floating label structure
     await page.evaluate(() => {
@@ -85,6 +111,12 @@ test.describe('Bootstrap 5 specific behavior', () => {
     await expect(wrapper).toBeVisible();
   });
 
+  /**
+   * Scenario: maintains Bootstrap 5 validation state classes
+   * Given the fixture page input has validation state class
+   * When TouchSpin initializes with Bootstrap 5 renderer
+   * Then validation state is preserved and wrapper does not interfere
+   */
   test('maintains Bootstrap 5 validation state classes', async ({ page }) => {
     // Add validation state to input
     await page.evaluate(() => {

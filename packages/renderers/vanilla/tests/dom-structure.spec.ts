@@ -3,6 +3,14 @@
  * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
  */
 
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] creates clean markup without framework dependencies
+ * [x] uses semantic button elements without framework styling
+ * [x] maintains minimal DOM structure
+ * [x] preserves custom classes without interference
+ */
+
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
@@ -21,6 +29,12 @@ test.describe('Vanilla specific behavior', () => {
     await installDomHelpers(page);
   });
 
+  /**
+   * Scenario: creates clean markup without framework dependencies
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with vanilla renderer
+   * Then wrapper has no framework-specific classes and clean semantic structure
+   */
   test('creates clean markup without framework dependencies', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
 
@@ -34,6 +48,12 @@ test.describe('Vanilla specific behavior', () => {
     await expect(wrapper).toHaveAttribute('data-touchspin-injected');
   });
 
+  /**
+   * Scenario: uses semantic button elements without framework styling
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with vanilla renderer
+   * Then buttons are visible with semantic classes but no framework-specific styling
+   */
   test('uses semantic button elements without framework styling', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
 
@@ -54,6 +74,12 @@ test.describe('Vanilla specific behavior', () => {
     expect(downClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/);
   });
 
+  /**
+   * Scenario: maintains minimal DOM structure
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with vanilla renderer including prefix and postfix
+   * Then DOM structure contains essential elements without excessive wrapper elements
+   */
   test('maintains minimal DOM structure', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
       prefix: '$',
@@ -76,6 +102,12 @@ test.describe('Vanilla specific behavior', () => {
     await expect(wrapper.locator('[data-touchspin-injected="down"]')).toBeVisible();
   });
 
+  /**
+   * Scenario: preserves custom classes without interference
+   * Given the fixture page is loaded and input has custom classes
+   * When TouchSpin initializes with vanilla renderer and custom button classes
+   * Then original input classes are preserved and custom button classes are applied
+   */
   test('preserves custom classes without interference', async ({ page }) => {
     // Add custom classes to input
     await page.evaluate(() => {

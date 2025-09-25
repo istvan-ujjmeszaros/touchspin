@@ -3,6 +3,13 @@
  * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
  */
 
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] uses Bootstrap 3 input-group-btn structure
+ * [x] applies Bootstrap 3 default button styling
+ * [x] structures prefix and postfix as input-group-addon
+ */
+
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
@@ -24,6 +31,12 @@ test.describe('Bootstrap 3 specific behavior', () => {
     await installDomHelpers(page);
   });
 
+  /**
+   * Scenario: uses Bootstrap 3 input-group-btn structure
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 3 renderer
+   * Then wrapper contains two input-group-btn containers with buttons inside
+   */
   test('uses Bootstrap 3 input-group-btn structure', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP3_RENDERER_URL);
 
@@ -47,6 +60,12 @@ test.describe('Bootstrap 3 specific behavior', () => {
     await expect(upParent).toHaveClass(/input-group-btn/);
   });
 
+  /**
+   * Scenario: applies Bootstrap 3 default button styling
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 3 renderer
+   * Then buttons have Bootstrap 3 default btn-default styling
+   */
   test('applies Bootstrap 3 default button styling', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP3_RENDERER_URL);
 
@@ -59,6 +78,12 @@ test.describe('Bootstrap 3 specific behavior', () => {
     await expect(downButton).toHaveClass(/btn-default/);
   });
 
+  /**
+   * Scenario: structures prefix and postfix as input-group-addon
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 3 renderer including prefix and postfix
+   * Then prefix and postfix use input-group-addon class and display correct text
+   */
   test('structures prefix and postfix as input-group-addon', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP3_RENDERER_URL, {
       prefix: '$',

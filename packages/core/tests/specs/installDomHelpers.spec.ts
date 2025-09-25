@@ -13,12 +13,12 @@ import { installDomHelpers } from '../__shared__/helpers/runtime/installDomHelpe
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
 
- /**
-  * Scenario: installs DOM helpers
-  * Given the fixture page is loaded
-  * When DOM helpers are installed
-  * Then TouchSpin can be initialized without errors
-  */
+/**
+ * Scenario: installs DOM helpers
+ * Given the fixture page is loaded
+ * When DOM helpers are installed
+ * Then TouchSpin can be initialized without errors
+ */
 test('installs DOM helpers', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
   await page.goto(testFixtureUrl);

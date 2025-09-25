@@ -3,6 +3,13 @@
  * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
  */
 
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] uses Bootstrap 4 input-group-append and input-group-prepend structure
+ * [x] applies Bootstrap 4 default button styling
+ * [x] structures prefix and postfix within input-group-prepend/append
+ */
+
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
@@ -24,6 +31,12 @@ test.describe('Bootstrap 4 specific behavior', () => {
     await installDomHelpers(page);
   });
 
+  /**
+   * Scenario: uses Bootstrap 4 input-group-append and input-group-prepend structure
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 4 renderer
+   * Then wrapper contains input-group-prepend and input-group-append with buttons inside
+   */
   test('uses Bootstrap 4 input-group-append and input-group-prepend structure', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP4_RENDERER_URL);
 
@@ -44,6 +57,12 @@ test.describe('Bootstrap 4 specific behavior', () => {
     await expect(upButton).toBeVisible();
   });
 
+  /**
+   * Scenario: applies Bootstrap 4 default button styling
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 4 renderer
+   * Then buttons have Bootstrap 4 default btn-outline-secondary styling
+   */
   test('applies Bootstrap 4 default button styling', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP4_RENDERER_URL);
 
@@ -56,6 +75,12 @@ test.describe('Bootstrap 4 specific behavior', () => {
     await expect(downButton).toHaveClass(/btn-outline-secondary/);
   });
 
+  /**
+   * Scenario: structures prefix and postfix within input-group-prepend/append
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with Bootstrap 4 renderer including prefix and postfix
+   * Then prefix is in input-group-prepend and postfix is in input-group-append with proper styling
+   */
   test('structures prefix and postfix within input-group-prepend/append', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP4_RENDERER_URL, {
       prefix: '$',

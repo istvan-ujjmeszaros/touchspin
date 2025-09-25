@@ -3,6 +3,14 @@
  * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
  */
 
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] uses utility-first classes for layout structure
+ * [x] applies Tailwind utility classes to buttons
+ * [x] creates responsive-friendly structure
+ * [x] maintains utility class customization
+ */
+
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
@@ -21,6 +29,12 @@ test.describe('Tailwind specific behavior', () => {
     await installDomHelpers(page);
   });
 
+  /**
+   * Scenario: uses utility-first classes for layout structure
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with tailwind renderer
+   * Then wrapper uses flexbox utilities and avoids framework-specific component classes
+   */
   test('uses utility-first classes for layout structure', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', TAILWIND_RENDERER_URL);
 
@@ -37,6 +51,12 @@ test.describe('Tailwind specific behavior', () => {
     await expect(wrapper).toHaveAttribute('data-touchspin-injected');
   });
 
+  /**
+   * Scenario: applies Tailwind utility classes to buttons
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with tailwind renderer
+   * Then buttons have utility-based styling and avoid framework-specific component classes
+   */
   test('applies Tailwind utility classes to buttons', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', TAILWIND_RENDERER_URL);
 
@@ -57,6 +77,12 @@ test.describe('Tailwind specific behavior', () => {
     expect(downClasses).not.toMatch(/(?:^|\s)btn(?:\s|$)|button-/);
   });
 
+  /**
+   * Scenario: creates responsive-friendly structure
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with tailwind renderer including prefix and postfix
+   * Then structure uses flexible layout with utility-styled prefix and postfix elements
+   */
   test('creates responsive-friendly structure', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', TAILWIND_RENDERER_URL, {
       prefix: '$',
@@ -91,6 +117,12 @@ test.describe('Tailwind specific behavior', () => {
     expect(postfixClasses).toMatch(/px-|py-|bg-|text-/);
   });
 
+  /**
+   * Scenario: maintains utility class customization
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with custom utility classes for buttons and prefix/postfix
+   * Then custom utility classes are properly applied to all elements
+   */
   test('maintains utility class customization', async ({ page }) => {
     await initializeTouchspinWithRenderer(page, 'test-input', TAILWIND_RENDERER_URL, {
       buttonup_class: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2',
