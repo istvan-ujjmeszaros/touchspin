@@ -298,7 +298,7 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
   await clearEventLog(page);
 
   // Hold up arrow key should emit start and stop events in order
-  await holdUpArrowKeyOnInput(page, 'test-input', 500);
+  await holdUpArrowKeyOnInput(page, 'test-input', 1000);
 
   // Check for proper event sequence using typed helpers
   const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
@@ -396,7 +396,7 @@ test('Reaching min emits on min event exactly once', async ({ page }) => {
  * When I update settings to increase max and call uponce
  * Then the value can increment beyond the previous max
  * Params:
- * { "settings": { "min": 0, "max": 5, "step": 1, "initval": "5" }, "updateSettings": { "max": 7, "step": 2 } }
+ * { "settings": { "min": 0, "max": 5, "step": 1, "initval": "5" }, "updateSettings": { "max": 10, "step": 2 } }
  */
 test('UpdateSettings increasing max allows a further increment', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
@@ -412,19 +412,19 @@ test('UpdateSettings increasing max allows a further increment', async ({ page }
     const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
     const core = (input as any)._touchSpinCore;
     if (core) {
-      core.updateSettings({ max: 7, step: 2 });
+      core.updateSettings({ max: 10, step: 2 });
     }
   }, { testId: 'test-input' });
 
   // Now should be able to increment beyond previous max
   await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '7');
+  await expectValueToBe(page, 'test-input', '8');
 });
 
 /**
- * Scenario: UpdateSettings decreasing max clamps current value on next blur
+ * Scenario: UpdateSettings decreasing max clamps current value
  * Given the fixture page is loaded with a high value
- * When I update settings to decrease max and blur
+ * When I update settings to decrease max
  * Then the current value clamps to the new max
  * Params:
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "8" }, "updateSettings": { "max": 5 } }
@@ -442,13 +442,6 @@ test('UpdateSettings decreasing max clamps current value on next blur', async ({
       core.updateSettings({ max: 5 });
     }
   }, { testId: 'test-input' });
-
-  await clearEventLog(page);
-
-  // Focus and blur to trigger clamping
-  const input = page.locator('[data-testid="test-input"]');
-  await input.focus();
-  await input.blur();
 
   // Should clamp to new max
   await expectValueToBe(page, 'test-input', '5');

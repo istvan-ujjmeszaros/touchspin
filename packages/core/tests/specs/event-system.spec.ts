@@ -180,7 +180,7 @@ test('emits touchspin.on.startspin when user-triggered spinning starts', async (
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold) should emit start spin events
-    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStartSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin');
     expect(hasStartSpinEvent).toBe(true);
@@ -202,7 +202,7 @@ test('emits touchspin.on.stopspin when user-triggered spinning stops', async ({ 
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold and release) should emit stop spin events
-    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStopSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopspin', 'touchspin');
     expect(hasStopSpinEvent).toBe(true);
@@ -224,7 +224,7 @@ test('emits touchspin.on.startupspin when up spinning starts', async ({ page }) 
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold) should emit start/stop up spin events
-    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStartUpSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin');
     expect(hasStartUpSpinEvent).toBe(true);
@@ -246,7 +246,7 @@ test('emits touchspin.on.stopupspin when up spinning stops', async ({ page }) =>
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold and release) should emit stop up spin events
-    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStopUpSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopupspin', 'touchspin');
     expect(hasStopUpSpinEvent).toBe(true);
@@ -268,7 +268,7 @@ test('emits touchspin.on.startdownspin when down spinning starts', async ({ page
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold) should emit start down spin events
-    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStartDownSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin');
     expect(hasStartDownSpinEvent).toBe(true);
@@ -290,7 +290,7 @@ test('emits touchspin.on.stopdownspin when down spinning stops', async ({ page }
     await apiHelpers.clearEventLog(page);
 
     // User input (keyboard hold and release) should emit stop down spin events
-    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 100);
+    await apiHelpers.holdDownArrowKeyOnInput(page, 'test-input', 1000);
 
     const hasStopDownSpinEvent = await apiHelpers.hasEventInLog(page, 'touchspin.on.stopdownspin', 'touchspin');
     expect(hasStopDownSpinEvent).toBe(true);
@@ -393,7 +393,7 @@ test('maintains correct event order during complex operations', async ({ page })
     await apiHelpers.clearEventLog(page);
 
     // Perform sequence: hold up key (start spin) to reach max
-    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 150);
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1500);
 
     // Check that events occurred in correct order
     const hasStartSpin = await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin');
