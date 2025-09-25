@@ -529,14 +529,14 @@ test.describe('Core boundary enforcement and validation', () => {
   });
 
   /**
-   * Scenario: callback_before_calculation can override boundary enforcement
+   * Scenario: callback_before_calculation values respect boundary enforcement
    * Given TouchSpin is initialized with boundaries and callback
    * When callback returns value outside boundaries
-   * Then callback value takes precedence over boundaries
+   * Then the value is clamped to respect boundaries
    * Params:
-   * { "settings": { "min": 0, "max": 10, "step": 1, "initval": 5 }, "callback_return": "15", "expected": 15 }
+   * { "settings": { "min": 0, "max": 10, "step": 1, "initval": 5 }, "callback_return": "15", "expected": 10 }
    */
-  test('callback_before_calculation can override boundary enforcement', async ({ page }) => {
+  test('callback_before_calculation values respect boundary enforcement', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
       min: 0, max: 10, step: 1, initval: 5
     });
@@ -555,8 +555,9 @@ test.describe('Core boundary enforcement and validation', () => {
     // Increment with callback that returns value outside boundaries
     await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    // Callback can override boundary enforcement
+    // Callback values are clamped to boundaries like any other value
+    // Values from callback_before_calculation cannot override boundary enforcement
     const value = await apiHelpers.getNumericValue(page, 'test-input');
-    expect(value).toBe(15); // Callback value takes precedence over boundaries
+    expect(value).toBe(10); // Boundaries are always enforced, callback value clamped to max
   });
 });
