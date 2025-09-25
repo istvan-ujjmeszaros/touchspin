@@ -40,7 +40,7 @@ import {
   setValueSilentlyAndBlur,
 } from '../__shared__/helpers/interactions/input';
 import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
-import { clearEventLog, countEventInLog, hasEventInLog } from '../__shared__/helpers/events/log';
+import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '../__shared__/helpers/events/log';
 import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
 import { getNumericValue } from '../__shared__/helpers/core/api';
 
@@ -222,6 +222,10 @@ test('Blur value above max clamps to max with single change event', async ({ pag
   // Should clamp to max with single change event
   const changeCount = await countEventInLog(page, 'change');
   test.expect(changeCount).toBe(1);
+  const nativeChanges = await getEventsOfType(page, 'native');
+  const changeEvents = nativeChanges.filter((entry) => entry.event === 'change');
+  test.expect(changeEvents.length).toBe(1);
+  test.expect(changeEvents[0]!.value).toBe('50');
 
   await expectValueToBe(page, 'test-input', '50');
 });
@@ -246,6 +250,10 @@ test('Blur value below min clamps to min with single change event', async ({ pag
   // Should clamp to min with single change event
   const changeCount = await countEventInLog(page, 'change');
   test.expect(changeCount).toBe(1);
+  const nativeChanges = await getEventsOfType(page, 'native');
+  const changeEvents = nativeChanges.filter((entry) => entry.event === 'change');
+  test.expect(changeEvents.length).toBe(1);
+  test.expect(changeEvents[0]!.value).toBe('10');
 
   await expectValueToBe(page, 'test-input', '10');
 });

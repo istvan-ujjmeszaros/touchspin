@@ -240,8 +240,7 @@ export class TouchSpinCore {
     this._handleUpKeyUp = this._handleUpKeyUp.bind(this);
     this._handleDownKeyDown = this._handleDownKeyDown.bind(this);
     this._handleDownKeyUp = this._handleDownKeyUp.bind(this);
-    this._handleInputChange = this._handleInputChange.bind(this);
-    this._handleInputBlur = this._handleInputBlur.bind(this);
+    this._handleWindowChangeCapture = this._handleWindowChangeCapture.bind(this);
     this._handleKeyDown = this._handleKeyDown.bind(this);
     this._handleKeyUp = this._handleKeyUp.bind(this);
     this._handleWheel = this._handleWheel.bind(this);
@@ -1090,8 +1089,9 @@ export class TouchSpinCore {
       default:
         out = Math.round(val / step) * step; break;
     }
+    const result = Number(out.toFixed(dec));
     // Normalize to configured decimals without string pipeline; formatting applies later
-    return Number(out.toFixed(dec));
+    return result;
   }
 
   /** Aligns a value to nearest step boundary using integer arithmetic. */
@@ -1286,10 +1286,9 @@ export class TouchSpinCore {
     document.addEventListener('mouseup', this._handleMouseUp);
     document.addEventListener('mouseleave', this._handleMouseUp);
     document.addEventListener('touchend', this._handleMouseUp);
+    window.addEventListener('change', this._handleWindowChangeCapture, true);
 
     // Input events (always attach these - they work without renderer UI)
-    this.input.addEventListener('change', this._handleInputChange, true); // Capture phase to intercept
-    this.input.addEventListener('blur', this._handleInputBlur);
     this.input.addEventListener('keydown', this._handleKeyDown);
     this.input.addEventListener('keyup', this._handleKeyUp);
     this.input.addEventListener('wheel', this._handleWheel);
@@ -1306,10 +1305,9 @@ export class TouchSpinCore {
     document.removeEventListener('mouseup', this._handleMouseUp);
     document.removeEventListener('mouseleave', this._handleMouseUp);
     document.removeEventListener('touchend', this._handleMouseUp);
+    window.removeEventListener('change', this._handleWindowChangeCapture, true);
 
     // Input events
-    this.input.removeEventListener('change', this._handleInputChange, true);
-    this.input.removeEventListener('blur', this._handleInputBlur);
     this.input.removeEventListener('keydown', this._handleKeyDown);
     this.input.removeEventListener('keyup', this._handleKeyUp);
     this.input.removeEventListener('wheel', this._handleWheel);
@@ -1394,27 +1392,18 @@ export class TouchSpinCore {
   }
 
   /**
-   * Intercept change events to prevent wrong values from propagating.
+   * Sanitize value before other capture listeners observe unsanitized input.
    * @private
    */
-  _handleInputChange(e: Event): void {
+  _handleWindowChangeCapture(e: Event): void {
+    const target = e.target as HTMLInputElement | null;
+    if (!target || target !== this.input) return;
     const currentValue = this.getValue();
-    const wouldBeSanitized = this._applyConstraints(currentValue);
-
-    if (isFinite(currentValue) && currentValue !== wouldBeSanitized) {
-      // This change event has wrong value - prevent it from propagating
-      e.stopImmediatePropagation();
-      // Don't sanitize here - blur handler will do it with correct change event
+    if (!isFinite(currentValue)) return;
+    const sanitized = this._applyConstraints(currentValue);
+    if (sanitized !== currentValue) {
+      this._setDisplay(sanitized, false);
     }
-    // If values match, let the change event through normally
-  }
-
-  /**
-   * Handle blur events on the input element for sanitization.
-   * @private
-   */
-  _handleInputBlur(e: FocusEvent): void {
-    this._checkValue(true);
   }
 
   /**
