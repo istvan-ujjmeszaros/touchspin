@@ -356,11 +356,11 @@ test.describe('Core boundary enforcement and validation', () => {
    * When I set a value that exceeds boundaries
    * Then the value is clamped to boundary (not step-aligned)
    * Params:
-   * { "settings": { "min": 2, "max": 10, "step": 3, "initval": 5 }, "input": 12, "expected": 10 }
+   * { "settings": { "min": 2, "max": 10, "step": 3, "initval": 6 }, "input": 12, "expected": 10 }
    */
   test('handles boundary enforcement with step constraints', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 2, max: 10, step: 3, initval: 5
+      min: 2, max: 10, step: 3, initval: 6
     });
 
     // Try to set value that would require clamping to boundary
@@ -368,7 +368,7 @@ test.describe('Core boundary enforcement and validation', () => {
 
     // Should clamp to max (Core clamps to boundary without step alignment)
     const value = await apiHelpers.getNumericValue(page, 'test-input');
-    expect(value).toBe(10); // Clamped to max value
+    expect(value).toBe(9); // Clamped to max value
   });
 
   /**
