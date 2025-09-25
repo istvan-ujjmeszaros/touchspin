@@ -29,7 +29,8 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
-    "build": "rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5",
+    "build": "yarn run build:deps && rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core,@touchspin/renderer-bootstrap3,@touchspin/renderer-bootstrap4,@touchspin/renderer-bootstrap5,@touchspin/renderer-tailwind run build",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --target es2018 --tsconfig tsconfig.build.json",
