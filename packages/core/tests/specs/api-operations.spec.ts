@@ -483,14 +483,28 @@ test('API validation prevents invalid operations', async ({ page }) => {
       step: 1, initval: 10
     });
 
+    // Read initial value before destroying
+    const initialValue = await apiHelpers.readInputValue(page, 'test-input');
+    expect(initialValue).toBe('10');
+
     await apiHelpers.destroyCore(page, 'test-input');
 
-    // Try to operate on destroyed instance - should not throw but have no effect
-    const initialValue = await apiHelpers.readInputValue(page, 'test-input');
-    await apiHelpers.incrementViaAPI(page, 'test-input'); // Should be ignored
-    const finalValue = await apiHelpers.readInputValue(page, 'test-input');
+    // Try to operate on destroyed instance - should throw errors
+    await expect(async () => {
+      await apiHelpers.incrementViaAPI(page, 'test-input');
+    }).rejects.toThrow(/TouchSpinCore not found/);
 
-    expect(finalValue).toBe(initialValue); // No change on destroyed instance
+    await expect(async () => {
+      await apiHelpers.decrementViaAPI(page, 'test-input');
+    }).rejects.toThrow(/TouchSpinCore not found/);
+
+    await expect(async () => {
+      await apiHelpers.setValueViaAPI(page, 'test-input', 20);
+    }).rejects.toThrow(/TouchSpinCore not found/);
+
+    // Raw input value should remain unchanged since no operations succeeded
+    const rawValue = await page.locator('[data-testid="test-input"]').inputValue();
+    expect(rawValue).toBe('10'); // Still original value
   });
 
 /**
