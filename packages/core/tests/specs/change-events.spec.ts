@@ -602,9 +602,20 @@ test('Blur strips non-numeric and parses leading trailing spaces', async ({ page
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 0 });
   await clearEventLog(page);
 
+  // Temporarily change input type to 'text' to allow non-numeric characters
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+    if (input) input.type = 'text';
+  }, { testId: 'test-input' });
+
   // Set value with non-numeric characters and spaces, then blur
-  // Note: Using setValueSilentlyAndBlur because HTML5 type="number" inputs reject non-numeric characters
   await setValueSilentlyAndBlur(page, 'test-input', '  42abc  ');
+
+  // Change back to number type (TouchSpin may rely on this)
+  await page.evaluate(({ testId }) => {
+    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+    if (input) input.type = 'number';
+  }, { testId: 'test-input' });
 
   // Should parse and keep only the numeric part
   await expectValueToBe(page, 'test-input', '42');
