@@ -926,7 +926,19 @@ export class TouchSpinCore {
       this.stopSpin();
     }
 
-    // Perform an immediate single step before starting timers (parity with jQuery plugin UX)
+    // Emit start events BEFORE the immediate step to get correct event order
+    // (start events → change event from step → stop events)
+    const direction_changed = (!this.spinning || this.direction !== dir);
+    if (direction_changed) {
+      this.spinning = true;
+      this.direction = dir;
+      this.spincount = 0;
+      // Match jQuery plugin event order: startspin then direction-specific
+      this.emit('startspin');
+      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
+    }
+
+    // Perform an immediate single step after emitting start events (parity with jQuery plugin UX)
     if (dir === 'up') this.upOnce(); else this.downOnce();
 
     // If we reached a boundary after the initial step, don't start continuous spin
@@ -936,17 +948,6 @@ export class TouchSpinCore {
     }
     if (dir === 'down' && this.settings.min !== null && v === this.settings.min) {
       return;
-    }
-
-    // If changing direction, reset counters
-    const direction_changed = (!this.spinning || this.direction !== dir);
-    if (direction_changed) {
-      this.spinning = true;
-      this.direction = dir;
-      this.spincount = 0;
-      // Match jQuery plugin event order: startspin then direction-specific
-      this.emit('startspin');
-      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
     }
 
     // Clear previous timers
