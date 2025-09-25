@@ -14,29 +14,63 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
       // Create a module map for imports
       const moduleMap: Record<string, any> = {};
 
+      const resolveModuleUrl = async (label: string, primary: string, fallback: string) => {
+        const tryResolve = async (url: string) => {
+          try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+          } catch {
+            return false;
+          }
+        };
+
+        if (await tryResolve(primary)) {
+          if (debug) console.log(`Resolved ${label} from ${primary}`);
+          return primary;
+        }
+
+        if (await tryResolve(fallback)) {
+          if (debug) console.log(`Resolved ${label} from fallback ${fallback}`);
+          return fallback;
+        }
+
+        throw new Error(`Unable to resolve ${label}. Checked ${primary} and ${fallback}`);
+      };
+
+      const resolveImport = async (label: string, moduleKey: string, primary: string, fallback: string) => {
+        const url = await resolveModuleUrl(label, primary, fallback);
+        const module = await import(url);
+        moduleMap[moduleKey] = module;
+        if (debug) console.log(`Loaded ${moduleKey} module`);
+      };
+
       // Load TouchSpin Core
-      try {
-        const coreModule = await import('/packages/core/dist/index.js');
-        moduleMap['@touchspin/core'] = coreModule;
-        if (debug) console.log('Loaded @touchspin/core module');
-      } catch (err) {
-        throw new Error(`Failed to load @touchspin/core: ${err}`);
-      }
+      await resolveImport(
+        '@touchspin/core',
+        '@touchspin/core',
+        '/packages/core/dist/index.js',
+        '/packages/core/devdist/index.js'
+      );
 
       // Load VanillaRenderer
-      try {
-        const vanillaModule = await import('/packages/renderers/vanilla/dist/index.js');
-        moduleMap['@touchspin/renderer-vanilla'] = vanillaModule;
-        if (debug) console.log('Loaded @touchspin/renderer-vanilla module');
-      } catch (err) {
-        throw new Error(`Failed to load @touchspin/renderer-vanilla: ${err}`);
-      }
+      await resolveImport(
+        '@touchspin/renderer-vanilla',
+        '@touchspin/renderer-vanilla',
+        '/packages/renderers/vanilla/dist/index.js',
+        '/packages/renderers/vanilla/devdist/index.js'
+      );
 
       // Store modules globally for the web component to use
       (window as any).__touchspinModules = moduleMap;
 
       // Now load the web component source and patch it
-      const response = await fetch('/packages/web-component/dist/index.js');
+      const componentUrl = await resolveModuleUrl(
+        '@touchspin/web-component',
+        '/packages/web-component/dist/index.js',
+        '/packages/web-component/devdist/index.js'
+      );
+
+      const response = await fetch(componentUrl);
       let componentSource = await response.text();
 
       // Replace import statements with references to our pre-loaded modules
