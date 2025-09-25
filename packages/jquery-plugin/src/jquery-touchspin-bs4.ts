@@ -7,7 +7,7 @@
  * - 100% backwards compatible with legacy TouchSpin
  */
 
-import { installWithRenderer } from './index';
+import { installWithRenderer } from './index.js';
 
 // Import Bootstrap 4 renderer - this will be bundled into the UMD build
 import { Bootstrap4Renderer } from '@touchspin/renderer-bootstrap4';
