@@ -51,14 +51,12 @@ test('integrates with Bootstrap 4 input-group component', async ({ page }) => {
   await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap4/devdist/index.js');
 
   // Verify TouchSpin creates proper Bootstrap 4 input-group structure
-  const inputGroup = page.locator('[data-testid="test-input-advanced-wrapper"]');
-  await expect(inputGroup).toHaveClass(/input-group/);
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+  await expect(elements.wrapper).toHaveClass(/input-group/);
 
   // Verify buttons have Bootstrap button classes
-  const upButton = page.locator('[data-testid="test-input-advanced-up"]');
-  const downButton = page.locator('[data-testid="test-input-advanced-down"]');
-  await expect(upButton).toHaveClass(/btn/);
-  await expect(downButton).toHaveClass(/btn/);
+  await expect(elements.upButton).toHaveClass(/btn/);
+  await expect(elements.downButton).toHaveClass(/btn/);
 
   // Test functionality works with Bootstrap styling
   await apiHelpers.clickUpButton(page, 'test-input-advanced');

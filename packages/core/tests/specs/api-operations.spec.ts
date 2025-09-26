@@ -520,8 +520,12 @@ test('API validation prevents invalid operations', async ({ page }) => {
     }).rejects.toThrow(/TouchSpinCore not found/);
 
     // Raw input value should remain unchanged since no operations succeeded
-    const rawValue = await page.locator('[data-testid="test-input"]').inputValue();
+    const rawValue = await apiHelpers.readInputValue(page, 'test-input');
     expect(rawValue).toBe('10'); // Still original value
+
+    // Wrapper should be gone
+    const wrapper = await apiHelpers.getTouchSpinWrapper(page, 'test-input', 100); // Small timeout
+    expect(wrapper).toBeNull();
   });
 
 /**

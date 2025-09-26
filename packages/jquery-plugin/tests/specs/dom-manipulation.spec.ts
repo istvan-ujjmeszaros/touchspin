@@ -267,18 +267,23 @@ test('supports custom button templates', async ({ page }) => {
     min: 0,
     max: 10,
     verticalbuttons: true,
-    verticalup: '<button class="custom-up-btn"><i class="bi bi-arrow-up"></i></button>',
-    verticaldown: '<button class="custom-down-btn"><i class="bi bi-arrow-down"></i></button>'
+    buttonup_class: 'custom-up-btn',
+    buttondown_class: 'custom-down-btn',
+    verticalup: '<i class="bi bi-arrow-up"></i>',
+    verticaldown: '<i class="bi bi-arrow-down"></i>'
   });
 
-  // Check custom templates are applied using Playwright locators
-  const upButton = page.locator('.custom-up-btn');
-  const downButton = page.locator('.custom-down-btn');
+  // Check custom templates are applied using proper helpers
+  const { upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   await expect(upButton).toBeVisible();
   await expect(downButton).toBeVisible();
 
-  // Check that icons exist within the buttons (they may be hidden but present)
+  // Verify custom classes are present
+  await expect(upButton).toHaveClass(/custom-up-btn/);
+  await expect(downButton).toHaveClass(/custom-down-btn/);
+
+  // Check that icons exist within the buttons
   await expect(upButton.locator('.bi-arrow-up')).toHaveCount(1);
   await expect(downButton.locator('.bi-arrow-down')).toHaveCount(1);
 });
@@ -430,8 +435,12 @@ test('supports RTL (right-to-left) layouts', async ({ page }) => {
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Verify RTL setup
-  await expect(page.locator('html[dir="rtl"]')).toBeVisible();
-  await expect(page.locator('body[dir="rtl"]')).toBeVisible();
+  const isRtl = await page.evaluate(() => {
+    const htmlDir = document.documentElement.getAttribute('dir');
+    const bodyDir = document.body.getAttribute('dir');
+    return htmlDir === 'rtl' && bodyDir === 'rtl';
+  });
+  expect(isRtl).toBe(true);
 
   // Verify TouchSpin elements exist and are visible
   await expect(wrapper).toBeVisible();
@@ -635,13 +644,17 @@ test('handles button positioning edge cases', async ({ page }) => {
 
   // Check button positioning in constrained layout using helpers
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  const container = page.locator('#constrained-container');
 
-  // Verify container exists and has expected size (allow some tolerance for browser differences)
-  await expect(container).toBeVisible();
-  const containerBox = await container.boundingBox();
-  expect(containerBox?.width).toBeGreaterThanOrEqual(120);
-  expect(containerBox?.width).toBeLessThanOrEqual(125); // Allow 5px tolerance
+  // Verify container exists and has expected size
+  const containerMetrics = await page.evaluate(() => {
+    const container = document.getElementById('constrained-container');
+    if (!container) return null;
+    return { width: container.offsetWidth, height: container.offsetHeight };
+  });
+
+  expect(containerMetrics).not.toBeNull();
+  expect(containerMetrics!.width).toBeGreaterThanOrEqual(120);
+  expect(containerMetrics!.width).toBeLessThanOrEqual(125); // Allow 5px tolerance
 
   // Verify TouchSpin elements are visible within the constrained space
   await expect(wrapper).toBeVisible();

@@ -99,7 +99,8 @@ test.describe('Bootstrap 5 specific behavior', () => {
     await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
 
     // Should preserve floating label structure
-    const floatingDiv = page.locator('.form-floating');
+    const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+    const floatingDiv = elements.wrapper.locator('.form-floating');
     const label = floatingDiv.locator('label[for="test-input"]');
 
     await expect(floatingDiv).toBeVisible();

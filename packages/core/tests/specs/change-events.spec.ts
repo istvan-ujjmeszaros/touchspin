@@ -32,6 +32,7 @@
  */
 
 import { test } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
 import {
   typeInInput,
@@ -105,7 +106,8 @@ test('does not trigger change event on blur when value unchanged', async ({ page
   await page.goto(testFixtureUrl);
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
   // Focus input but don't change value, then blur
-  await page.locator('[data-testid="test-input"]').focus();
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  await elements.input.focus();
   await page.keyboard.press('Tab');
   await expectValueToBe(page, 'test-input', '0');
   const changeEventCount = await countEventInLog(page, 'change');
@@ -466,8 +468,7 @@ test('Keyboard ArrowUp increments by step', async ({ page }) => {
   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5 });
   await clearEventLog(page);
 
-  // Focus input and press ArrowUp
-  const input = page.locator('[data-testid="test-input"]');
+  const { input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
   await input.focus();
   await page.keyboard.press('ArrowUp');
 
@@ -492,7 +493,7 @@ test('Wheel scrolling down decrements by step when enabled', async ({ page }) =>
   await clearEventLog(page);
 
   // Focus input and scroll down
-  const input = page.locator('[data-testid="test-input"]');
+  const { input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
   await input.focus();
   await input.hover();
   await page.mouse.wheel(0, 100); // Scroll down
