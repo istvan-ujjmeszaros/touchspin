@@ -25,7 +25,10 @@
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json --out-dir devdist && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-component/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-component/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../playwright-coverage.config.ts --project=chromium-coverage packages/web-component/tests"
   },
   "publishConfig": {
     "access": "public",

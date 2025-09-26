@@ -31,7 +31,8 @@
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap5Renderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap5",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --source-map --watch",
-    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap5/tests",
+    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap5/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap5/tests --ui",
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap5/tests"
   },
   "dependencies": {

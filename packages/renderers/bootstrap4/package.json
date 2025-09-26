@@ -30,7 +30,10 @@
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap4Renderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap4",
     "typecheck": "tsc --noEmit",
-    "watch:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map --watch"
+    "watch:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map --watch",
+    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap4/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap4/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap4/tests"
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"

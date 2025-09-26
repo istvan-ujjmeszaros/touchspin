@@ -64,7 +64,10 @@
     "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js rendererEntry=renderer.js",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js rendererEntry=renderer.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/core/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/core/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../playwright-coverage.config.ts --project=chromium-coverage packages/core/tests"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
