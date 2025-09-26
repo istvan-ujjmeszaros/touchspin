@@ -27,10 +27,11 @@
     "build": "rm -rf dist && yarn run build:types && yarn run build:js",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=TailwindRenderer.js",
+    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=TailwindRenderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer tailwind",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-tailwind.scss dist/touchspin-tailwind.css --style=expanded --source-map --watch",
-    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests",
+    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests --ui",
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/tailwind/tests"
   },
   "dependencies": {
@@ -61,6 +62,7 @@
   "devDependencies": {
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
+    "tailwindcss": "3.4.15",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"
   }
