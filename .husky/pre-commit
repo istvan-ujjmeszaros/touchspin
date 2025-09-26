@@ -33,5 +33,6 @@ fi
 # Run guards for test quality
 yarn guard:no-src-in-tests || { echo "❌ src-in-tests guard failed"; exit 1; }
 yarn guard:no-queryselector || { echo "❌ querySelector guard failed"; exit 1; }
+yarn guard:no-page-locator || { echo "❌ page.locator guard failed"; exit 1; }
 
 echo "✅ Pre-commit validation complete"
