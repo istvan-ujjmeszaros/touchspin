@@ -5,7 +5,7 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] integrates with Bootstrap 5 input-group component
+ * [x] integrates with Bootstrap 5 input-group component
  * [ ] supports Bootstrap 5 button styling and states
  * [ ] handles Bootstrap 5 form validation states
  * [ ] integrates with Bootstrap 5 sizing utilities
@@ -31,7 +31,7 @@
  * [ ] handles Bootstrap 5 dropdown integration
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 /**
@@ -42,8 +42,27 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "frameworkVersion": "bootstrap5", "componentType": "input-group", "expectedCompliance": "bootstrap5_specs" }
  */
-test.skip('integrates with Bootstrap 5 input-group component', async ({ page }) => {
-  // Implementation pending
+test('integrates with Bootstrap 5 input-group component', async ({ page }) => {
+  // Load Bootstrap 5 fixture with real Bootstrap assets
+  await page.goto('/packages/core/tests/__shared__/fixtures/bootstrap5-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  // Initialize TouchSpin with Bootstrap 5 renderer
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', '/packages/renderers/bootstrap5/devdist/index.js');
+
+  // Verify TouchSpin creates proper Bootstrap 5 input-group structure
+  const inputGroup = page.locator('[data-testid="test-input-wrapper"]');
+  await expect(inputGroup).toHaveClass(/input-group/);
+
+  // Verify buttons have Bootstrap button classes
+  const upButton = page.locator('[data-testid="test-input-up"]');
+  const downButton = page.locator('[data-testid="test-input-down"]');
+  await expect(upButton).toHaveClass(/btn/);
+  await expect(downButton).toHaveClass(/btn/);
+
+  // Test functionality works with Bootstrap styling
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
