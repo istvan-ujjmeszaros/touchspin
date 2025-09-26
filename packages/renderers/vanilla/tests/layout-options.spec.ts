@@ -98,9 +98,13 @@ test('creates vertical layout when specified', async ({ page }) => {
   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
   await apiHelpers.installDomHelpers(page);
 
+  // Load vanilla CSS for proper layout
+  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
+
   const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
   await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
     verticalbuttons: true,
+    initval: 0,
   });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -219,9 +223,13 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
   await apiHelpers.installDomHelpers(page);
 
+  // Load vanilla CSS for proper layout
+  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
+
   const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
   await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
-    verticalbuttons: false // Horizontal layout
+    verticalbuttons: false, // Horizontal layout
+    initval: 0
   });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -283,9 +291,13 @@ test('applies correct classes for vertical layout', async ({ page }) => {
   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
   await apiHelpers.installDomHelpers(page);
 
+  // Load vanilla CSS for proper layout
+  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
+
   const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
   await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
-    verticalbuttons: true // Vertical layout
+    verticalbuttons: true, // Vertical layout
+    initval: 0
   });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -442,6 +454,9 @@ test('maintains accessibility in both layouts', async ({ page }) => {
   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
   await apiHelpers.installDomHelpers(page);
 
+  // Load vanilla CSS for proper layout
+  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
+
   const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
 
   // Test horizontal layout accessibility
@@ -492,6 +507,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
 
   // Test keyboard navigation still works in vertical layout
   await input.focus();
+  await page.waitForTimeout(100); // Small delay to ensure focus is established
   await page.keyboard.press('ArrowUp');
   await apiHelpers.expectValueToBe(page, 'test-input', '51');
 
