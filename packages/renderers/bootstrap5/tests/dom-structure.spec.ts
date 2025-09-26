@@ -81,9 +81,13 @@ test.describe('Bootstrap 5 specific behavior', () => {
    * Then floating label structure is preserved and TouchSpin wrapper is visible
    */
   test('supports Bootstrap 5 floating labels compatibility', async ({ page }) => {
-    // Create floating label structure
+    // Wait for page ready flag then create floating label structure
+    await page.waitForFunction(() => window.testPageReady === true);
+
     await page.evaluate(() => {
       const input = document.getElementById('test-input') as HTMLInputElement;
+      if (!input) throw new Error('test-input not found');
+
       const floatingDiv = document.createElement('div');
       floatingDiv.className = 'form-floating';
 
@@ -91,7 +95,10 @@ test.describe('Bootstrap 5 specific behavior', () => {
       label.setAttribute('for', 'test-input');
       label.textContent = 'Amount';
 
-      input.parentNode!.insertBefore(floatingDiv, input);
+      const parent = input.parentNode;
+      if (!parent) throw new Error('input parent not found');
+
+      parent.insertBefore(floatingDiv, input);
       floatingDiv.appendChild(input);
       floatingDiv.appendChild(label);
     });

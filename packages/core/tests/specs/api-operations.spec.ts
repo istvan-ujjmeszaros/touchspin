@@ -34,7 +34,7 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { captureConsole } from '@touchspin/core/test-helpers';
+import { captureConsole, inputById, wrapperById } from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
   getCoreNumericValue,
@@ -520,12 +520,12 @@ test('API validation prevents invalid operations', async ({ page }) => {
     }).rejects.toThrow(/TouchSpinCore not found/);
 
     // Raw input value should remain unchanged since no operations succeeded
-    const rawValue = await apiHelpers.readInputValue(page, 'test-input');
+    const rawValue = await inputById(page, 'test-input').inputValue();
     expect(rawValue).toBe('10'); // Still original value
 
     // Wrapper should be gone
-    const wrapper = await apiHelpers.getTouchSpinWrapper(page, 'test-input', 100); // Small timeout
-    expect(wrapper).toBeNull();
+    const wrapper = wrapperById(page, 'test-input');
+    expect(await wrapper.count()).toBe(0);
   });
 
 /**
