@@ -1,11 +1,11 @@
 /**
  * Feature: Bootstrap 4 framework-specific integration and features
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap4/tests/fixtures/bootstrap4-fixture.html
  */
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] integrates with Bootstrap 4 input-group component
+ * [x] integrates with Bootstrap 4 input-group component
  * [ ] supports Bootstrap 4 button styling and states
  * [ ] handles Bootstrap 4 form validation states
  * [ ] integrates with Bootstrap 4 sizing utilities
@@ -42,8 +42,27 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "frameworkVersion": "bootstrap4", "componentType": "input-group", "expectedCompliance": "bootstrap4_specs", "structure": "prepend_append" }
  */
-test.skip('integrates with Bootstrap 4 input-group component', async ({ page }) => {
-  // Implementation pending
+test('integrates with Bootstrap 4 input-group component', async ({ page }) => {
+  // Load Bootstrap 4 fixture with real Bootstrap assets
+  await page.goto('/packages/renderers/bootstrap4/tests/fixtures/bootstrap4-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  // Initialize TouchSpin with Bootstrap 4 renderer on the advanced input (with input-group)
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap4/devdist/index.js');
+
+  // Verify TouchSpin creates proper Bootstrap 4 input-group structure
+  const inputGroup = page.locator('[data-testid="test-input-advanced-wrapper"]');
+  await apiHelpers.expectElementToHaveClass(page, inputGroup, 'input-group');
+
+  // Verify buttons have Bootstrap button classes
+  const upButton = page.locator('[data-testid="test-input-advanced-up"]');
+  const downButton = page.locator('[data-testid="test-input-advanced-down"]');
+  await apiHelpers.expectElementToHaveClass(page, upButton, 'btn');
+  await apiHelpers.expectElementToHaveClass(page, downButton, 'btn');
+
+  // Test functionality works with Bootstrap styling
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Bootstrap 4 - Demo</title>
+
+  <!-- Bootstrap 4 CSS (Local) -->
+  <link rel="stylesheet" href="../devdist/external/css/bootstrap.min.css">
+
+  <!-- TouchSpin CSS -->
+  <link rel="stylesheet" href="../dist/touchspin-bootstrap4.css" id="touchspin-css">
+
+  <!-- jQuery (required for Bootstrap 4) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Bootstrap 4 JS (Local) -->
+  <script src="../devdist/external/js/bootstrap.bundle.min.js"></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/dist/index.js",
+      "@touchspin/core/renderer": "../../../core/dist/renderer.js",
+      "@touchspin/renderers/bootstrap4": "../dist/index.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h4 class="card-title mb-0">TouchSpin Bootstrap 4 Demo</h4>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="demo-input" class="font-weight-bold">Demo Input:</label>
+              <input
+                type="number"
+                id="demo-input"
+                data-testid="demo-input"
+                class="form-control"
+                value="50"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <small class="form-text text-muted">
+                This input demonstrates TouchSpin with Bootstrap 4 styling.
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="demo-input-group" class="font-weight-bold">Input Group Demo:</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">#</span>
+                </div>
+                <input
+                  type="number"
+                  id="demo-input-group"
+                  data-testid="demo-input-group"
+                  class="form-control"
+                  value="25"
+                  min="0"
+                  max="100"
+                  step="5"
+                />
+                <div class="input-group-append">
+                  <span class="input-group-text text-muted">units</span>
+                </div>
+              </div>
+              <small class="form-text text-muted">
+                This demonstrates TouchSpin integration with Bootstrap 4 input groups.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {TouchSpin} from '@touchspin/core';
+    import Bootstrap4Renderer from '@touchspin/renderers/bootstrap4';
+
+    // Initialize TouchSpin on both inputs
+    new TouchSpin(document.getElementById('demo-input'), {
+      renderer: Bootstrap4Renderer,
+      min: 0,
+      max: 100,
+      step: 1
+    });
+
+    new TouchSpin(document.getElementById('demo-input-group'), {
+      renderer: Bootstrap4Renderer,
+      min: 0,
+      max: 100,
+      step: 5
+    });
+  </script>
+</body>
+</html>

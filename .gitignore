@@ -25,6 +25,10 @@ reports/
 dist/
 devdist/
 
+# Allow framework assets in devdist for offline functionality
+!packages/renderers/*/devdist/external/
+!packages/renderers/*/devdist/external/**
+
 # Obsolete planning/agent docs (ignored for local dev)
 **/*AGENT*.md
 **/*PLAN*.md

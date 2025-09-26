@@ -1,11 +1,11 @@
 /**
  * Feature: Bootstrap 3 framework-specific integration and features
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html
  */
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] integrates with Bootstrap 3 input-group component
+ * [x] integrates with Bootstrap 3 input-group component
  * [ ] supports Bootstrap 3 button styling and states
  * [ ] handles Bootstrap 3 form validation states
  * [ ] integrates with Bootstrap 3 sizing utilities
@@ -42,8 +42,27 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "frameworkVersion": "bootstrap3", "componentType": "input-group", "expectedCompliance": "bootstrap3_specs" }
  */
-test.skip('integrates with Bootstrap 3 input-group component', async ({ page }) => {
-  // Implementation pending
+test('integrates with Bootstrap 3 input-group component', async ({ page }) => {
+  // Load Bootstrap 3 fixture with real Bootstrap assets
+  await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await apiHelpers.installDomHelpers(page);
+
+  // Initialize TouchSpin with Bootstrap 3 renderer on the advanced input (with input-group)
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap3/devdist/index.js');
+
+  // Verify TouchSpin creates proper Bootstrap 3 input-group structure
+  const inputGroup = page.locator('[data-testid="test-input-advanced-wrapper"]');
+  await apiHelpers.expectElementToHaveClass(page, inputGroup, 'input-group');
+
+  // Verify buttons have Bootstrap button classes
+  const upButton = page.locator('[data-testid="test-input-advanced-up"]');
+  const downButton = page.locator('[data-testid="test-input-advanced-down"]');
+  await apiHelpers.expectElementToHaveClass(page, upButton, 'btn');
+  await apiHelpers.expectElementToHaveClass(page, downButton, 'btn');
+
+  // Test functionality works with Bootstrap styling
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**

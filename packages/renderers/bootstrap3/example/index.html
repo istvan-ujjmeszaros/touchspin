@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Bootstrap 3 - Demo</title>
+
+  <!-- Bootstrap 3 CSS (Local) -->
+  <link rel="stylesheet" href="../devdist/external/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../devdist/external/css/bootstrap-theme.min.css">
+
+  <!-- TouchSpin CSS -->
+  <link rel="stylesheet" href="../dist/touchspin-bootstrap3.css" id="touchspin-css">
+
+  <!-- jQuery (required for Bootstrap 3) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Bootstrap 3 JS (Local) -->
+  <script src="../devdist/external/js/bootstrap.min.js"></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/dist/index.js",
+      "@touchspin/core/renderer": "../../../core/dist/renderer.js",
+      "@touchspin/renderers/bootstrap3": "../dist/index.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2">
+        <div class="panel panel-primary" style="margin-top: 30px;">
+          <div class="panel-heading">
+            <h4 class="panel-title">TouchSpin Bootstrap 3 Demo</h4>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label for="demo-input" class="control-label">Demo Input:</label>
+              <input
+                type="number"
+                id="demo-input"
+                data-testid="demo-input"
+                class="form-control"
+                value="50"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <span class="help-block">
+                This input demonstrates TouchSpin with Bootstrap 3 styling.
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="demo-input-group" class="control-label">Input Group Demo:</label>
+              <div class="input-group">
+                <span class="input-group-addon">#</span>
+                <input
+                  type="number"
+                  id="demo-input-group"
+                  data-testid="demo-input-group"
+                  class="form-control"
+                  value="25"
+                  min="0"
+                  max="100"
+                  step="5"
+                />
+                <span class="input-group-addon">units</span>
+              </div>
+              <span class="help-block">
+                This demonstrates TouchSpin integration with Bootstrap 3 input groups.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {TouchSpin} from '@touchspin/core';
+    import Bootstrap3Renderer from '@touchspin/renderers/bootstrap3';
+
+    // Initialize TouchSpin on both inputs
+    new TouchSpin(document.getElementById('demo-input'), {
+      renderer: Bootstrap3Renderer,
+      min: 0,
+      max: 100,
+      step: 1
+    });
+
+    new TouchSpin(document.getElementById('demo-input-group'), {
+      renderer: Bootstrap3Renderer,
+      min: 0,
+      max: 100,
+      step: 5
+    });
+  </script>
+</body>
+</html>
