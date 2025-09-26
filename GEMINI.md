@@ -13,6 +13,88 @@
 
 **Philosophy:** Every test should be so simple that any developer can read the test name, understand what it tests, and fix it when behavior changes.
 
+## 🚨 CRITICAL: Test Simplicity Rules
+
+**NEVER overcomplicate tests. Keep them SIMPLE and SHORT.**
+
+### Framework Integration Testing Rules
+
+1. **Use Real Framework Dependencies**:
+  - For Bootstrap tests, add `bootstrap` as devDependency
+  - Create dedicated fixture with real CSS/JS loaded from node_modules
+  - NEVER manually inject CSS to mimic frameworks
+
+2. **Keep Tests Short and Focused**:
+  - Each test should be 10-30 lines maximum
+  - Test ONE specific behavior per test
+  - Avoid massive CSS injection blocks (page.addStyleTag with 50+ lines)
+  - Focus on functionality, not style mimicking
+
+3. **Framework Test Fixture Pattern**:
+   ```
+   packages/core/tests/__shared__/fixtures/
+   ├── test-fixture.html (vanilla)
+   ├── bootstrap5-fixture.html (with Bootstrap 5)
+   ├── bootstrap4-fixture.html (with Bootstrap 4)
+   └── tailwind-fixture.html (with Tailwind)
+   ```
+
+4. **Relative Path Rules for Fixtures**:
+  - **ALWAYS use relative paths** from the fixture file location, never absolute paths from server root
+  - **Example**: From `packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html` use `../../devdist/external/css/bootstrap.min.css`
+  - **NEVER use server root paths** like `/packages/renderers/bootstrap5/devdist/external/...`
+  - **Benefits**: Fixtures work with any server configuration, file:// URLs, and different deployment setups
+
+5. **Simple Test Structure Example**:
+   ```typescript
+   test('simple bootstrap integration', async ({ page }) => {
+     await page.goto('/fixtures/bootstrap5-fixture.html');
+     await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+
+     // Test the actual behavior, not CSS
+     await clickUpButton(page, 'test-input');
+     await expectValueToBe(page, 'test-input', '1');
+   });
+   ```
+
+### What NOT to Do (Anti-Patterns)
+
+❌ **NEVER inject massive CSS blocks**:
+```typescript
+await page.addStyleTag({
+  content: `
+    .btn { /* 50+ lines of CSS */ }
+    .form-control { /* 50+ lines of CSS */ }
+    // ... hundreds more lines
+  `
+});
+```
+
+❌ **NEVER write 100+ line test functions**
+❌ **NEVER manually recreate framework CSS**
+❌ **NEVER test styling details in integration tests**
+
+✅ **DO write simple, focused tests**:
+```typescript
+test('works with bootstrap buttons', async ({ page }) => {
+  await page.goto('/fixtures/bootstrap5-fixture.html');
+  await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+  await clickUpButton(page, 'test-input');
+  await expectValueToBe(page, 'test-input', '1');
+});
+```
+
+### Code Review Checkpoints
+
+Before implementing framework integration tests:
+- [ ] Is there a real framework dependency added?
+- [ ] Is there a dedicated fixture with framework assets?
+- [ ] Are individual tests under 30 lines?
+- [ ] Are we testing behavior, not recreating CSS?
+- [ ] Could this test be simpler?
+
+**If you find yourself writing CSS in tests, STOP and add the real framework dependency instead.**
+
 ### 🎯 Test Implementation Rules
 
 **CRITICAL**: Implement **EXISTING** test specifications only.
@@ -28,6 +110,7 @@
 * **Selectors**: Use `data-testid` selectors only, never CSS classes
 * **Coverage**: `yarn coverage:build` → `yarn coverage:all <path>` → view `reports/coverage/index.html`
 * **Helpers**: Don't modify shared helpers in `__tests__/helpers/` - keep stable
+* **No Webfont Icons**: Never use icon webfonts (Bootstrap Icons, Font Awesome, Glyphicons) in test fixtures. Use Unicode symbols (⚙️, 📝, 🗑️) or plain text labels instead. This ensures fixtures render consistently without external font dependencies.
 
 ## 📊 Coverage Roadmap
 
@@ -260,6 +343,32 @@ page.locator('[data-testid="test-input"]').click(); // Use helpers instead!
 ```
 
 **Why**: Helpers handle edge cases, provide performance optimizations, ensure consistency, and prevent regressions.
+
+### 🎯 Element Access Helper
+
+**Use `getTouchSpinElements()` for accessing multiple UI elements**:
+
+```typescript
+// ✅ CORRECT - Use the elements helper
+import * as apiHelpers from '@touchspin/core/test-helpers';
+const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+await elements.upButton.click();
+await elements.downButton.hover();
+
+// ❌ WRONG - Don't use raw locators
+const upButton = page.locator('[data-testid="test-input-up"]');
+const downButton = page.locator('[data-testid="test-input-down"]');
+```
+
+**Available Elements in TouchSpinElements**:
+- **wrapper**: Root wrapper around the TouchSpin input and controls
+- **input**: Underlying input element with the given data-testid
+- **upButton**: The "up" button (increment)
+- **downButton**: The "down" button (decrement)
+- **prefix**: Optional prefix element rendered before the input
+- **postfix**: Optional postfix element rendered after the input
+
+**Note**: HTML fixtures should use relative paths from the actual file location, never relative to the project root.
 
 ## 🖼️ Renderer Usage in Core Tests
 
