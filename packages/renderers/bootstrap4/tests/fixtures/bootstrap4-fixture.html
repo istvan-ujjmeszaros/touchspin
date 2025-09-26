@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 4 TouchSpin Test Fixture</title>
+
+    <!-- Bootstrap 4 CSS -->
+    <link href="/packages/renderers/bootstrap4/devdist/external/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap 4 JS -->
+    <script src="/packages/renderers/bootstrap4/devdist/external/js/bootstrap.bundle.min.js"></script>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "@touchspin/core": "/packages/core/devdist/index.js",
+        "@touchspin/core/renderer": "/packages/core/devdist/renderer.js",
+        "@touchspin/core/events": "/packages/core/devdist/events.js",
+        "@touchspin/renderer-bootstrap4": "/packages/renderers/bootstrap4/devdist/index.js",
+        "@touchspin/jquery-plugin": "/packages/jquery-plugin/devdist/index.js"
+      }
+    }
+    </script>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            ⚙️ Bootstrap 4 TouchSpin Test
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Simple test input for basic TouchSpin functionality -->
+                        <div class="form-group">
+                            <label for="test-input" class="font-weight-bold">Simple Input:</label>
+                            <input
+                                type="number"
+                                id="test-input"
+                                data-testid="test-input"
+                                class="form-control form-control-lg"
+                                value="50"
+                                name="test-input"
+                                placeholder="Enter value"
+                            />
+                            <small class="form-text text-muted">
+                                Standalone input for basic TouchSpin functionality tests.
+                            </small>
+                        </div>
+
+                        <!-- Advanced test input with Bootstrap 4 input-group -->
+                        <div class="form-group">
+                            <label for="test-input-advanced" class="font-weight-bold">Advanced Input Group:</label>
+                            <div class="input-group input-group-lg">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        #
+                                    </span>
+                                </div>
+                                <input
+                                    type="number"
+                                    id="test-input-advanced"
+                                    data-testid="test-input-advanced"
+                                    class="form-control"
+                                    value="50"
+                                    name="test-input-advanced"
+                                    placeholder="Enter value"
+                                />
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-muted">units</span>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                Input-group structure for testing Bootstrap 4 integration with TouchSpin controls.
+                            </small>
+                        </div>
+
+                        <!-- Container for dynamically injected inputs -->
+                        <div id="additional-inputs" class="border-top pt-3 mt-4" style="display: none;">
+                            <h6 class="text-muted mb-3">Additional Test Inputs</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event log section -->
+                <div class="card mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">
+                            📝 Event Log
+                        </h6>
+                        <button id="clear-log" class="btn btn-sm btn-outline-secondary">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <textarea
+                            id="event-log"
+                            data-testid="event-log"
+                            class="form-control border-0 rounded-0"
+                            rows="10"
+                            readonly
+                            placeholder="Event log will appear here..."
+                            style="resize: vertical; min-height: 200px; font-family: monospace; font-size: 12px;"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Hidden element for blur testing -->
+                <input type="hidden" id="blur-target" data-testid="blur-target" />
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Event logging setup (same as base fixture)
+        window.eventLog = [];
+
+        window.logEvent = function(event, detail = {}) {
+            const eventType = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+            const logEntry = { type: eventType, event, ...detail };
+            window.eventLog.push(logEntry);
+
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                const prefix = `[${eventType}]`;
+                let logText = '';
+                if (detail.target && detail.value !== undefined) {
+                    logText = `${prefix} ${detail.target}:${detail.value} ${event}\n`;
+                } else if (detail.target) {
+                    logText = `${prefix} ${detail.target} ${event}\n`;
+                } else {
+                    logText = `${prefix} ${event}\n`;
+                }
+                logElement.value += logText;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        };
+
+        window.clearEventLog = function() {
+            window.eventLog = [];
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                logElement.value = '';
+            }
+        };
+
+        // Clear log button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearButton = document.getElementById('clear-log');
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.clearEventLog();
+                });
+            }
+        });
+
+        // Helper to create additional inputs with Bootstrap 4 styling
+        window.createTestInput = function(id, options = {}) {
+            const container = document.getElementById('additional-inputs');
+            container.style.display = 'block';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.textContent = options.label || `Input ${id}:`;
+            label.className = 'font-weight-bold';
+            label.setAttribute('for', id);
+
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group';
+
+            // Add prepend text if specified
+            if (options.prependIcon) {
+                const prependDiv = document.createElement('div');
+                prependDiv.className = 'input-group-prepend';
+                const prependSpan = document.createElement('span');
+                prependSpan.className = 'input-group-text';
+                // Use simple text labels instead of icons
+                const iconMap = {
+                    'cog': '⚙️',
+                    'hashtag': '#',
+                    'list': '📝',
+                    'trash': '🗑️'
+                };
+                prependSpan.textContent = iconMap[options.prependIcon] || options.prependIcon;
+                prependDiv.appendChild(prependSpan);
+                inputGroup.appendChild(prependDiv);
+            }
+
+            const input = document.createElement('input');
+            input.type = options.type || 'number';
+            input.id = id;
+            input.setAttribute('data-testid', id);
+            input.className = 'form-control';
+            input.value = options.value || '50';
+            input.name = id;
+            input.placeholder = options.placeholder || 'Enter value';
+
+            if (options.min !== undefined) input.min = options.min;
+            if (options.max !== undefined) input.max = options.max;
+            if (options.step !== undefined) input.step = options.step;
+            if (options.disabled) input.disabled = true;
+            if (options.readonly) input.readOnly = true;
+
+            inputGroup.appendChild(input);
+
+            // Add append text if specified
+            if (options.appendText) {
+                const appendDiv = document.createElement('div');
+                appendDiv.className = 'input-group-append';
+                const appendSpan = document.createElement('span');
+                appendSpan.className = 'input-group-text text-muted';
+                appendSpan.textContent = options.appendText;
+                appendDiv.appendChild(appendSpan);
+                inputGroup.appendChild(appendDiv);
+            }
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(inputGroup);
+
+            // Add help text if specified
+            if (options.helpText) {
+                const helpDiv = document.createElement('small');
+                helpDiv.className = 'form-text text-muted';
+                helpDiv.textContent = options.helpText;
+                wrapper.appendChild(helpDiv);
+            }
+
+            container.appendChild(wrapper);
+            return input;
+        };
+
+        window.clearAdditionalInputs = function() {
+            const container = document.getElementById('additional-inputs');
+            container.innerHTML = '';
+            container.style.display = 'none';
+        };
+
+        window.testPageReady = true;
+    </script>
+</body>
+</html>

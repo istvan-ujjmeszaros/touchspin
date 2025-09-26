@@ -28,7 +28,7 @@
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
     "build:css": "yarn exec sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js",
+    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap3",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --source-map --watch"
   },
@@ -60,6 +60,7 @@
   "devDependencies": {
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
+    "bootstrap": "3.4.1",
     "sass": "^1.77.8",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"

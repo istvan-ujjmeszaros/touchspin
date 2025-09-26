@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap 5 TouchSpin Test Fixture</title>
+    <title>Bootstrap 3 TouchSpin Test Fixture</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 3 CSS -->
+    <link href="/packages/renderers/bootstrap3/devdist/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/packages/renderers/bootstrap3/devdist/external/css/bootstrap-theme.min.css" rel="stylesheet">
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 3 JS -->
+    <script src="/packages/renderers/bootstrap3/devdist/external/js/bootstrap.min.js"></script>
 
     <script type="importmap">
     {
@@ -20,72 +21,97 @@
         "@touchspin/core": "/packages/core/devdist/index.js",
         "@touchspin/core/renderer": "/packages/core/devdist/renderer.js",
         "@touchspin/core/events": "/packages/core/devdist/events.js",
-        "@touchspin/renderer-bootstrap5": "/packages/renderers/bootstrap5/devdist/index.js",
+        "@touchspin/renderer-bootstrap3": "/packages/renderers/bootstrap3/devdist/index.js",
         "@touchspin/jquery-plugin": "/packages/jquery-plugin/devdist/index.js"
       }
     }
     </script>
 </head>
 <body>
-    <div class="container-fluid py-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="card-title mb-0">
-                            <i class="bi bi-gear-fill me-2"></i>Bootstrap 5 TouchSpin Test
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-xl-6 col-xl-offset-3">
+                <div class="panel panel-primary" style="margin-top: 30px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            ⚙️ Bootstrap 3 TouchSpin Test
                         </h4>
                     </div>
-                    <div class="card-body">
-                        <!-- Primary test input with Bootstrap 5 input-group -->
-                        <div class="mb-4">
-                            <label for="test-input" class="form-label fw-semibold">Test Input:</label>
+                    <div class="panel-body">
+                        <!-- Simple test input for basic TouchSpin functionality -->
+                        <div class="form-group">
+                            <label for="test-input" class="control-label">Simple Input:</label>
+                            <input
+                                type="number"
+                                id="test-input"
+                                data-testid="test-input"
+                                class="form-control input-lg"
+                                value="50"
+                                name="test-input"
+                                placeholder="Enter value"
+                            />
+                            <span class="help-block">
+                                Standalone input for basic TouchSpin functionality tests.
+                            </span>
+                        </div>
+
+                        <!-- Advanced test input with Bootstrap 3 input-group -->
+                        <div class="form-group">
+                            <label for="test-input-advanced" class="control-label">Advanced Input Group:</label>
                             <div class="input-group input-group-lg">
-                                <span class="input-group-text">
-                                    <i class="bi bi-123"></i>
+                                <span class="input-group-addon">
+                                    #
                                 </span>
                                 <input
                                     type="number"
-                                    id="test-input"
-                                    data-testid="test-input"
+                                    id="test-input-advanced"
+                                    data-testid="test-input-advanced"
                                     class="form-control"
                                     value="50"
-                                    name="test-input"
+                                    name="test-input-advanced"
                                     placeholder="Enter value"
                                 />
-                                <span class="input-group-text text-muted">units</span>
+                                <span class="input-group-addon">units</span>
                             </div>
-                            <div class="form-text">
-                                This input demonstrates Bootstrap 5 integration with TouchSpin controls.
-                            </div>
+                            <span class="help-block">
+                                Input-group structure for testing Bootstrap 3 integration with TouchSpin controls.
+                            </span>
                         </div>
 
                         <!-- Container for dynamically injected inputs -->
-                        <div id="additional-inputs" class="border-top pt-3 mt-4" style="display: none;">
-                            <h6 class="text-muted mb-3">Additional Test Inputs</h6>
+                        <div id="additional-inputs" class="panel panel-default" style="display: none; margin-top: 20px;">
+                            <div class="panel-heading">
+                                <h6 class="panel-title">Additional Test Inputs</h6>
+                            </div>
+                            <div class="panel-body">
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Event log section -->
-                <div class="card mt-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-list-ul me-2"></i>Event Log
-                        </h6>
-                        <button id="clear-log" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-trash me-1"></i>Clear
-                        </button>
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <div class="pull-left">
+                            <h6 class="panel-title">
+                                📝 Event Log
+                            </h6>
+                        </div>
+                        <div class="pull-right">
+                            <button id="clear-log" class="btn btn-xs btn-default">
+                                🗑️ Clear
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body p-0">
+                    <div class="panel-body" style="padding: 0;">
                         <textarea
                             id="event-log"
                             data-testid="event-log"
-                            class="form-control border-0 rounded-0 font-monospace small"
+                            class="form-control"
                             rows="10"
                             readonly
                             placeholder="Event log will appear here..."
-                            style="resize: vertical; min-height: 200px;"
+                            style="border: none; border-radius: 0; resize: vertical; min-height: 200px; font-family: monospace; font-size: 12px;"
                         ></textarea>
                     </div>
                 </div>
@@ -140,29 +166,35 @@
             }
         });
 
-        // Helper to create additional inputs with Bootstrap 5 styling
+        // Helper to create additional inputs with Bootstrap 3 styling
         window.createTestInput = function(id, options = {}) {
             const container = document.getElementById('additional-inputs');
+            const panelBody = container.querySelector('.panel-body');
             container.style.display = 'block';
 
             const wrapper = document.createElement('div');
-            wrapper.className = 'mb-4';
+            wrapper.className = 'form-group';
 
             const label = document.createElement('label');
             label.textContent = options.label || `Input ${id}:`;
-            label.className = 'form-label fw-semibold';
+            label.className = 'control-label';
             label.setAttribute('for', id);
 
             const inputGroup = document.createElement('div');
             inputGroup.className = 'input-group';
 
-            // Add prepend icon if specified
+            // Add prepend text if specified
             if (options.prependIcon) {
                 const prependSpan = document.createElement('span');
-                prependSpan.className = 'input-group-text';
-                const icon = document.createElement('i');
-                icon.className = `bi bi-${options.prependIcon}`;
-                prependSpan.appendChild(icon);
+                prependSpan.className = 'input-group-addon';
+                // Use simple text labels instead of icons
+                const iconMap = {
+                    'cog': '⚙️',
+                    'th-large': '#',
+                    'list': '📝',
+                    'trash': '🗑️'
+                };
+                prependSpan.textContent = iconMap[options.prependIcon] || options.prependIcon;
                 inputGroup.appendChild(prependSpan);
             }
 
@@ -186,7 +218,7 @@
             // Add append text if specified
             if (options.appendText) {
                 const appendSpan = document.createElement('span');
-                appendSpan.className = 'input-group-text text-muted';
+                appendSpan.className = 'input-group-addon';
                 appendSpan.textContent = options.appendText;
                 inputGroup.appendChild(appendSpan);
             }
@@ -196,19 +228,20 @@
 
             // Add help text if specified
             if (options.helpText) {
-                const helpDiv = document.createElement('div');
-                helpDiv.className = 'form-text';
-                helpDiv.textContent = options.helpText;
-                wrapper.appendChild(helpDiv);
+                const helpSpan = document.createElement('span');
+                helpSpan.className = 'help-block';
+                helpSpan.textContent = options.helpText;
+                wrapper.appendChild(helpSpan);
             }
 
-            container.appendChild(wrapper);
+            panelBody.appendChild(wrapper);
             return input;
         };
 
         window.clearAdditionalInputs = function() {
             const container = document.getElementById('additional-inputs');
-            container.innerHTML = '';
+            const panelBody = container.querySelector('.panel-body');
+            panelBody.innerHTML = '';
             container.style.display = 'none';
         };
 

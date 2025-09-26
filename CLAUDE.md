@@ -104,6 +104,7 @@ Before implementing framework integration tests:
 * **Selectors**: Use `data-testid` selectors only, never CSS classes
 * **Coverage**: `yarn coverage:build` → `yarn coverage:all <path>` → view `reports/coverage/index.html`
 * **Helpers**: Don't modify shared helpers in `__tests__/helpers/` - keep stable
+* **No Webfont Icons**: Never use icon webfonts (Bootstrap Icons, Font Awesome, Glyphicons) in test fixtures. Use Unicode symbols (⚙️, 📝, 🗑️) or plain text labels instead. This ensures fixtures render consistently without external font dependencies.
 
 ## 📊 Coverage Roadmap
 
