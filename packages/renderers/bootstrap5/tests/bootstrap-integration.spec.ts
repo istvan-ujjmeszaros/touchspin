@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 5 framework-specific integration and features
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html
  */
 
 /*
@@ -44,25 +44,25 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('integrates with Bootstrap 5 input-group component', async ({ page }) => {
   // Load Bootstrap 5 fixture with real Bootstrap assets
-  await page.goto('/packages/core/tests/__shared__/fixtures/bootstrap5-fixture.html');
+  await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
   await apiHelpers.installDomHelpers(page);
 
-  // Initialize TouchSpin with Bootstrap 5 renderer
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', '/packages/renderers/bootstrap5/devdist/index.js');
+  // Initialize TouchSpin with Bootstrap 5 renderer on the advanced input (with input-group)
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap5/devdist/index.js');
 
   // Verify TouchSpin creates proper Bootstrap 5 input-group structure
-  const inputGroup = page.locator('[data-testid="test-input-wrapper"]');
+  const inputGroup = page.locator('[data-testid="test-input-advanced-wrapper"]');
   await expect(inputGroup).toHaveClass(/input-group/);
 
   // Verify buttons have Bootstrap button classes
-  const upButton = page.locator('[data-testid="test-input-up"]');
-  const downButton = page.locator('[data-testid="test-input-down"]');
+  const upButton = page.locator('[data-testid="test-input-advanced-up"]');
+  const downButton = page.locator('[data-testid="test-input-advanced-down"]');
   await expect(upButton).toHaveClass(/btn/);
   await expect(downButton).toHaveClass(/btn/);
 
   // Test functionality works with Bootstrap styling
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
