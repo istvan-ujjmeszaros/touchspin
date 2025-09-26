@@ -39,7 +39,13 @@
    └── tailwind-fixture.html (with Tailwind)
    ```
 
-4. **Simple Test Structure Example**:
+4. **Relative Path Rules for Fixtures**:
+   - **ALWAYS use relative paths** from the fixture file location, never absolute paths from server root
+   - **Example**: From `packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html` use `../../devdist/external/css/bootstrap.min.css`
+   - **NEVER use server root paths** like `/packages/renderers/bootstrap5/devdist/external/...`
+   - **Benefits**: Fixtures work with any server configuration, file:// URLs, and different deployment setups
+
+5. **Simple Test Structure Example**:
    ```typescript
    test('simple bootstrap integration', async ({ page }) => {
      await page.goto('/fixtures/bootstrap5-fixture.html');
