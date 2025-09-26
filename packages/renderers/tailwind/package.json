@@ -30,7 +30,7 @@
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=TailwindRenderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer tailwind",
     "typecheck": "tsc --noEmit",
     "watch:css": "sass src/styles/touchspin-tailwind.scss dist/touchspin-tailwind.css --style=expanded --source-map --watch",
-    "test": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests --reporter=list",
+    "test": "node ../../../scripts/page-locator-guard.mjs packages/renderers/tailwind/tests && PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests --reporter=list",
     "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/tailwind/tests --ui",
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/tailwind/tests"
   },

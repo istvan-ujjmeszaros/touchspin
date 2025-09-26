@@ -15,6 +15,10 @@ const GUARDS = [
   {
     name: 'No /src/ imports in tests',
     script: 'guard-no-src-in-tests.mjs'
+  },
+  {
+    name: 'No page.locator in test specs',
+    script: 'page-locator-guard.mjs'
   }
   // Add more guards here as needed:
   // { name: 'No helper bypass', script: 'guard-no-helper-bypass.mjs' },

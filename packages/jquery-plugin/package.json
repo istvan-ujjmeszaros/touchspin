@@ -39,7 +39,7 @@
     "build:umd-bs5": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
     "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
     "typecheck": "tsc --noEmit",
-    "test": "cd ../.. && playwright test packages/jquery-plugin/tests/",
+    "test": "node ../../scripts/page-locator-guard.mjs packages/jquery-plugin/tests && cd ../.. && playwright test packages/jquery-plugin/tests/",
     "test:ui": "cd ../.. && playwright test packages/jquery-plugin/tests/ --ui",
     "test:coverage": "cd ../.. && COVERAGE=1 playwright test packages/jquery-plugin/tests/"
   },
