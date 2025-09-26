@@ -38,17 +38,25 @@ const frameworkConfigs = {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
       'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js'
     }
+  },
+  'tailwind': {
+    dependency: 'tailwindcss',
+    packagePath: 'packages/renderers/tailwind',
+    files: {
+      'https://cdn.tailwindcss.com': 'js/tailwind.js'
+    }
   }
 };
 
 /**
- * Get expected Bootstrap version from package.json
+ * Get expected framework version from package.json
  */
 function getExpectedVersion(rendererName) {
   try {
     const packageJsonPath = join(projectRoot, frameworkConfigs[rendererName].packagePath, 'package.json');
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-    return packageJson.devDependencies?.bootstrap || packageJson.dependencies?.bootstrap;
+    const config = frameworkConfigs[rendererName];
+    return packageJson.devDependencies?.[config.dependency] || packageJson.dependencies?.[config.dependency];
   } catch (error) {
     return null;
   }

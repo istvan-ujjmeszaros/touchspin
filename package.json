@@ -73,6 +73,7 @@
     "extract-assets:bootstrap3": "node scripts/extract-framework-assets.mjs --renderer bootstrap3",
     "extract-assets:bootstrap4": "node scripts/extract-framework-assets.mjs --renderer bootstrap4",
     "extract-assets:bootstrap5": "node scripts/extract-framework-assets.mjs --renderer bootstrap5",
+    "extract-assets:tailwind": "node scripts/extract-framework-assets.mjs --renderer tailwind",
     "validate-assets": "node scripts/validate-framework-assets.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
