@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 5 renderer DOM structure assembly
- * Background: fixture = ../fixtures/bootstrap5-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html
  */
 
 /*
@@ -18,7 +18,7 @@ import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/c
 
 // Bootstrap 5 Renderer URL for tests
 const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
-const BOOTSTRAP5_FIXTURE = '../fixtures/bootstrap5-fixture.html';
+const BOOTSTRAP5_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html';
 
 // Run universal tests that all renderers must pass
 universalRendererSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE);

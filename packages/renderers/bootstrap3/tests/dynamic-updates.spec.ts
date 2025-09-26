@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 3 renderer dynamic updates and settings changes
- * Background: fixture = ../fixtures/bootstrap3-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html
  */
 
 /*

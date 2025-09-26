@@ -10,7 +10,7 @@ test.describe('renderer-b5: custom labels/classes render', () => {
     await collectCoverage(page, testInfo.title);
   });
   test('programmatic init applies texts and classes', async ({ page }) => {
-    await page.goto('../fixtures/bootstrap5-fixture.html');
+    await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
     await installDomHelpers(page);
 
     await initializeTouchspinWithBootstrap5(page, 'test-input', {

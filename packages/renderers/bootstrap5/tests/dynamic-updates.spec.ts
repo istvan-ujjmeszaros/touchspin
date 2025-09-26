@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 5 renderer dynamic updates and settings changes
- * Background: fixture = ../fixtures/bootstrap5-fixture.html
+ * Background: fixture = /packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html
  */
 
 /*

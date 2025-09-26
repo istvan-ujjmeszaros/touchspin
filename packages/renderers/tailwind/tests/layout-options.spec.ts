@@ -1,6 +1,6 @@
 /**
  * Feature: Tailwind renderer layout options and configurations
- * Background: fixture = ../fixtures/tailwind-fixture.html
+ * Background: fixture = /packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html
  */
 
 /*
