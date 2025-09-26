@@ -1,6 +1,6 @@
 /**
  * Feature: Tailwind renderer dynamic updates and utility class changes
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = ../fixtures/tailwind-fixture.html
  */
 
 /*

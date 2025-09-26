@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 4 renderer layout options and configurations
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = ../fixtures/bootstrap4-fixture.html
  */
 
 /*

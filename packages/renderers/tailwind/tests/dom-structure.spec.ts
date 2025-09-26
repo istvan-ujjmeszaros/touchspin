@@ -1,6 +1,6 @@
 /**
  * Feature: Tailwind renderer DOM structure assembly
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = ../fixtures/tailwind-fixture.html
  */
 
 /*
@@ -18,14 +18,15 @@ import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/c
 
 // Tailwind Renderer URL for tests
 const TAILWIND_RENDERER_URL = '/packages/renderers/tailwind/devdist/index.js';
+const TAILWIND_FIXTURE = '../fixtures/tailwind-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Tailwind', TAILWIND_RENDERER_URL);
+universalRendererSuite('Tailwind', TAILWIND_RENDERER_URL, TAILWIND_FIXTURE);
 
 // Tailwind-specific tests (utility-first CSS framework behavior)
 test.describe('Tailwind specific behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto(TAILWIND_FIXTURE);
     await installDomHelpers(page);
   });
 

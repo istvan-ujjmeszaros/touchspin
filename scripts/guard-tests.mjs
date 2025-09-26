@@ -19,6 +19,10 @@ const GUARDS = [
   {
     name: 'No page.locator in test specs',
     script: 'page-locator-guard.mjs'
+  },
+  {
+    name: 'No shared fixtures in framework renderers',
+    script: 'guard-no-shared-fixtures.mjs'
   }
   // Add more guards here as needed:
   // { name: 'No helper bypass', script: 'guard-no-helper-bypass.mjs' },

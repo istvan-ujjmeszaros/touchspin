@@ -1,6 +1,6 @@
 /**
  * Feature: Bootstrap 3 renderer DOM structure assembly
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = ../fixtures/bootstrap3-fixture.html
  */
 
 /*
@@ -17,17 +17,18 @@ import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/c
 
 // Bootstrap 3 Renderer URL for tests
 const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/index.js';
+const BOOTSTRAP3_FIXTURE = '../fixtures/bootstrap3-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL);
+universalRendererSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE);
 
 // Run Bootstrap family shared tests
-bootstrapSharedSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL);
+bootstrapSharedSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE);
 
 // Bootstrap 3-specific tests (not covered by shared suites)
 test.describe('Bootstrap 3 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto(BOOTSTRAP3_FIXTURE);
     await installDomHelpers(page);
   });
 

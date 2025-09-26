@@ -10,10 +10,11 @@ import { initializeTouchspinWithRenderer } from '../core/initialization';
  * different from other frameworks like Tailwind or Vanilla. These tests focus on
  * Bootstrap-specific patterns while remaining version-agnostic.
  */
-export function bootstrapSharedSuite(name: string, rendererUrl: string) {
+export function bootstrapSharedSuite(name: string, rendererUrl: string, fixturePath?: string) {
   test.describe(`Bootstrap shared behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+      const fixture = fixturePath || '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+      await page.goto(fixture);
       await installDomHelpers(page);
 
       // Ensure window.__ts is available before proceeding
