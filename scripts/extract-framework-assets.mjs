@@ -9,7 +9,6 @@ import { dirname, join } from 'path';
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'fs';
 import { createRequire } from 'module';
 import { execSync } from 'child_process';
-import https from 'https';
 import { URL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,35 +52,15 @@ const frameworkConfigs = {
 };
 
 /**
- * Fetch content from HTTP URL with redirect support
+ * Fetch content from HTTP URL using curl
  */
-async function fetchFromUrl(url, maxRedirects = 5) {
-  return new Promise((resolve, reject) => {
-    const request = https.get(url, (response) => {
-      // Handle redirects
-      if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
-        if (maxRedirects > 0) {
-          // Resolve relative redirects
-          const redirectUrl = new URL(response.headers.location, url).href;
-          console.log(`  ↗️  Redirecting to ${redirectUrl}`);
-          fetchFromUrl(redirectUrl, maxRedirects - 1).then(resolve).catch(reject);
-          return;
-        } else {
-          reject(new Error('Too many redirects'));
-          return;
-        }
-      }
-
-      if (response.statusCode !== 200) {
-        reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`));
-        return;
-      }
-
-      const chunks = [];
-      response.on('data', chunk => chunks.push(chunk));
-      response.on('end', () => resolve(Buffer.concat(chunks)));
-    }).on('error', reject);
-  });
+function fetchFromUrl(url) {
+  try {
+    console.log(`  📥 Downloading ${url}...`);
+    return execSync(`curl -L -s "${url}"`, { encoding: 'buffer', timeout: 30000 });
+  } catch (error) {
+    throw new Error(`Failed to download ${url}: ${error.message}`);
+  }
 }
 
 /**
@@ -136,8 +115,7 @@ async function extractAssets(rendererName) {
 
       if (sourcePath.startsWith('http://') || sourcePath.startsWith('https://')) {
         // Fetch from HTTP URL
-        console.log(`  📥 Downloading ${sourcePath}...`);
-        content = await fetchFromUrl(sourcePath);
+        content = fetchFromUrl(sourcePath);
       } else {
         // Use Yarn exec to read the file through PnP
         const command = `yarn exec node -e "const fs = require('fs'); const path = require('path'); const framework = path.dirname(require.resolve('${config.dependency}/package.json')); const content = fs.readFileSync(path.join(framework, '${sourcePath}')); process.stdout.write(content);"`;
