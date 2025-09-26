@@ -344,6 +344,32 @@ page.locator('[data-testid="test-input"]').click(); // Use helpers instead!
 
 **Why**: Helpers handle edge cases, provide performance optimizations, ensure consistency, and prevent regressions.
 
+### 🎯 Element Access Helper
+
+**Use `getTouchSpinElements()` for accessing multiple UI elements**:
+
+```typescript
+// ✅ CORRECT - Use the elements helper
+import * as apiHelpers from '@touchspin/core/test-helpers';
+const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+await elements.upButton.click();
+await elements.downButton.hover();
+
+// ❌ WRONG - Don't use raw locators
+const upButton = page.locator('[data-testid="test-input-up"]');
+const downButton = page.locator('[data-testid="test-input-down"]');
+```
+
+**Available Elements in TouchSpinElements**:
+- **wrapper**: Root wrapper around the TouchSpin input and controls
+- **input**: Underlying input element with the given data-testid
+- **upButton**: The "up" button (increment)
+- **downButton**: The "down" button (decrement)
+- **prefix**: Optional prefix element rendered before the input
+- **postfix**: Optional postfix element rendered after the input
+
+**Note**: HTML fixtures should use relative paths from the actual file location, never relative to the project root.
+
 ## 🖼️ Renderer Usage in Core Tests
 
 ### Problem
