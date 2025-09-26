@@ -18,14 +18,40 @@
   <!-- Bootstrap 3 JS (Local) -->
   <script src="../devdist/external/js/bootstrap.min.js"></script>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "@touchspin/core": "../../../core/dist/index.js",
-      "@touchspin/core/renderer": "../../../core/dist/renderer.js",
-      "@touchspin/renderers/bootstrap3": "../dist/index.js"
+  <script>
+    // Universal path detector for TouchSpin imports
+    // Detects environment and sets appropriate importmap paths
+    function createImportMap() {
+      const isYarnDev = window.location.port === '8866';
+      const isPhpStorm = window.location.pathname.includes('/bootstrap-touchspin-openai/');
+
+      let basePath;
+      if (isYarnDev) {
+        // Yarn dev server: use /packages/ paths
+        basePath = '/packages';
+      } else if (isPhpStorm) {
+        // PhpStorm server: use full project path
+        basePath = '/bootstrap-touchspin-openai/packages';
+      } else {
+        // Fallback: relative paths from example location
+        basePath = '../../..';
+      }
+
+      const importMap = {
+        "imports": {
+          "@touchspin/core": `${basePath}/core/devdist/index.js`,
+          "@touchspin/core/renderer": `${basePath}/core/devdist/renderer.js`,
+          "@touchspin/renderers/bootstrap3": `${basePath}/renderers/bootstrap3/devdist/index.js`
+        }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'importmap';
+      script.textContent = JSON.stringify(importMap, null, 2);
+      document.head.appendChild(script);
     }
-  }
+
+    createImportMap();
   </script>
 </head>
 <body>

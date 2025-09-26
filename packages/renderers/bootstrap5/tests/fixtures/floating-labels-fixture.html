@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 Floating Labels TouchSpin Test Fixture</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Universal Import Map - works with both yarn dev and PhpStorm servers -->
+    <script>
+        const pathname = window.location.pathname;
+        const port = window.location.port;
+
+        // Detect environment
+        const isYarnDev = port === '8866';
+        const isPHPStormWithProject = pathname.includes('/bootstrap-touchspin-openai/packages/');
+        const isPHPStormWithoutProject = !isYarnDev && pathname.startsWith('/packages/');
+
+        console.log('Environment detection:', {
+            pathname,
+            port,
+            isYarnDev,
+            isPHPStormWithProject,
+            isPHPStormWithoutProject
+        });
+
+        const importMap = {'imports': {}};
+
+        if (isYarnDev) {
+            // Yarn dev server - paths from project root without project name
+            importMap.imports['@touchspin/core'] = '/packages/core/devdist/index.js';
+            importMap.imports['@touchspin/core/renderer'] = '/packages/core/devdist/renderer.js';
+            importMap.imports['@touchspin/core/events'] = '/packages/core/devdist/events.js';
+            importMap.imports['@touchspin/renderer-bootstrap5'] = '/packages/renderers/bootstrap5/devdist/index.js';
+            importMap.imports['@touchspin/jquery-plugin'] = '/packages/jquery-plugin/devdist/index.js';
+        } else if (isPHPStormWithProject || isPHPStormWithoutProject) {
+            // PhpStorm - always needs project name in path
+            importMap.imports['@touchspin/core'] = '/bootstrap-touchspin-openai/packages/core/devdist/index.js';
+            importMap.imports['@touchspin/core/renderer'] = '/bootstrap-touchspin-openai/packages/core/devdist/renderer.js';
+            importMap.imports['@touchspin/core/events'] = '/bootstrap-touchspin-openai/packages/core/devdist/events.js';
+            importMap.imports['@touchspin/renderer-bootstrap5'] = '/bootstrap-touchspin-openai/packages/renderers/bootstrap5/devdist/index.js';
+            importMap.imports['@touchspin/jquery-plugin'] = '/bootstrap-touchspin-openai/packages/jquery-plugin/devdist/index.js';
+        } else {
+            // Fallback to relative paths
+            importMap.imports['@touchspin/core'] = '../../../../core/devdist/index.js';
+            importMap.imports['@touchspin/core/renderer'] = '../../../../core/devdist/renderer.js';
+            importMap.imports['@touchspin/core/events'] = '../../../../core/devdist/events.js';
+            importMap.imports['@touchspin/renderer-bootstrap5'] = '../../devdist/index.js';
+            importMap.imports['@touchspin/jquery-plugin'] = '../../../../jquery-plugin/devdist/index.js';
+        }
+
+        console.log('Using import map:', importMap);
+
+        const script = document.createElement('script');
+        script.type = 'importmap';
+        script.textContent = JSON.stringify(importMap);
+        document.head.appendChild(script);
+    </script>
+
+    <style>
+        /* Visual debugging helpers */
+        .debug-container {
+            border: 1px dashed #dee2e6;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 0.375rem;
+        }
+        .debug-container h5 {
+            margin-top: 0;
+            color: #495057;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Highlight floating label containers */
+        .form-floating {
+            position: relative;
+            border: 1px dashed #28a745 !important;
+            border-radius: 0.375rem;
+        }
+        .form-floating::before {
+            content: '.form-floating';
+            position: absolute;
+            top: -8px;
+            left: 8px;
+            background: #28a745;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            z-index: 10;
+        }
+
+        /* Highlight input groups */
+        .input-group.bootstrap-touchspin {
+            border: 1px dashed #dc3545;
+            border-radius: 0.375rem;
+        }
+        .input-group.bootstrap-touchspin::before {
+            content: '.input-group.bootstrap-touchspin';
+            position: absolute;
+            top: -8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            z-index: 10;
+        }
+
+        /* Test status indicators */
+        .test-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+        }
+        .test-status.success { background: #d4edda; color: #155724; }
+        .test-status.warning { background: #fff3cd; color: #856404; }
+        .test-status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <!-- Test page indicator -->
+    <script>
+        window.testPageReady = true;
+    </script>
+
+    <div class="container-fluid py-4">
+        <h1 class="mb-4">Bootstrap 5 Floating Labels TouchSpin Test</h1>
+        <p class="lead">Comprehensive test of TouchSpin with Bootstrap 5 floating labels</p>
+
+        <!-- Test 1: Basic Floating Label -->
+        <div class="debug-container">
+            <h5>Test 1: Basic Floating Label <span class="test-status info" id="test1-status">Ready</span></h5>
+            <p>Standard floating label with TouchSpin initialization</p>
+
+            <div class="form-floating mb-3" style="max-width: 300px;">
+                <input type="number" class="form-control" id="basic-floating" placeholder="0" value="50"
+                       data-testid="basic-floating">
+                <label for="basic-floating">Amount</label>
+            </div>
+        </div>
+
+        <!-- Test 2: Floating Label in Input Group -->
+        <div class="debug-container">
+            <h5>Test 2: Floating Label in Input Group <span class="test-status info" id="test2-status">Ready</span></h5>
+            <p>Pre-existing input group with floating labels and prefix/postfix</p>
+
+            <div class="input-group mb-3" style="max-width: 400px;">
+                <span class="input-group-text">$</span>
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="group-floating" placeholder="0" value="125"
+                           data-testid="group-floating">
+                    <label for="group-floating">Price</label>
+                </div>
+                <span class="input-group-text">.00</span>
+            </div>
+        </div>
+
+        <!-- Test 3: Multiple Floating Labels -->
+        <div class="debug-container">
+            <h5>Test 3: Multiple Floating Labels <span class="test-status info" id="test3-status">Ready</span></h5>
+            <p>Multiple inputs with floating labels for comprehensive testing</p>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="multi-1" placeholder="0" value="10"
+                               data-testid="multi-1">
+                        <label for="multi-1">Quantity</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="multi-2" placeholder="0" value="25"
+                               data-testid="multi-2">
+                        <label for="multi-2">Rate</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="multi-3" placeholder="0" value="250"
+                               data-testid="multi-3">
+                        <label for="multi-3">Total</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test 4: Vertical Button Layouts -->
+        <div class="debug-container">
+            <h5>Test 4: Vertical Buttons <span class="test-status info" id="test4-status">Ready</span></h5>
+            <p>Vertical TouchSpin controls with floating labels.</p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="vertical-basic" placeholder="0" value="8"
+                               data-testid="vertical-basic"
+                               data-bts-vertical-buttons="true"
+                               data-bts-min="0"
+                               data-bts-max="20">
+                        <label for="vertical-basic">Vertical (Basic)</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">€</span>
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="vertical-advanced" placeholder="0" value="120"
+                                   data-testid="vertical-advanced"
+                                   data-bts-vertical-buttons="true"
+                                   data-bts-vertical-up="▲"
+                                   data-bts-vertical-down="▼"
+                                   data-bts-step="10">
+                            <label for="vertical-advanced">Vertical (Advanced)</label>
+                        </div>
+                        <span class="input-group-text">.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test 4: Complex Form with Floating Labels -->
+        <div class="debug-container">
+            <h5>Test 5: Complex Form Layout <span class="test-status info" id="test5-status">Ready</span></h5>
+            <p>Real-world form layout with various floating label configurations</p>
+
+            <form class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="form-amount" placeholder="0" value="1000"
+                               data-testid="form-amount">
+                        <label for="form-amount">Amount</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">%</span>
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="form-percentage" placeholder="0" value="15"
+                                   data-testid="form-percentage">
+                            <label for="form-percentage">Tax Rate</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="form-total" placeholder="0" value="1150"
+                                   data-testid="form-total">
+                            <label for="form-total">Total Amount</label>
+                        </div>
+                        <span class="input-group-text">.00</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Test Control Panel -->
+        <div class="debug-container">
+            <h5>Test Control Panel</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <button id="init-all" class="btn btn-primary btn-sm">Re-Initialize All</button>
+                <button id="destroy-all" class="btn btn-danger btn-sm">Destroy All</button>
+                <button id="reset-all" class="btn btn-warning btn-sm">Reset All</button>
+                <button id="show-log" class="btn btn-secondary btn-sm">Show Console Log</button>
+            </div>
+        </div>
+
+        <!-- Test Results Display -->
+        <div class="debug-container">
+            <h5>Test Results</h5>
+            <div id="test-results" class="alert alert-light">
+                <small class="text-muted">Test results will appear here...</small>
+            </div>
+        </div>
+
+        <!-- Console Log Display -->
+        <div class="debug-container">
+            <h5>Console Log</h5>
+            <pre id="console-output" class="bg-light p-3 small" style="max-height: 300px; overflow-y: auto;">
+                <small class="text-muted">Console output will appear here...</small>
+            </pre>
+        </div>
+    </div>
+
+    <!-- Test Control Script -->
+    <script type="module">
+        // Enhanced console logging for tests
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        window.testLog = [];
+
+        function logToTest(level, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.join(' ');
+            window.testLog.push(`[${timestamp}] ${level.toUpperCase()}: ${message}`);
+            updateConsoleDisplay();
+        }
+
+        console.log = function(...args) {
+            logToTest('info', ...args);
+            originalLog.apply(console, arguments);
+        };
+
+        console.warn = function(...args) {
+            logToTest('warn', ...args);
+            originalWarn.apply(console, arguments);
+        };
+
+        console.error = function(...args) {
+            logToTest('error', ...args);
+            originalError.apply(console, arguments);
+        };
+
+        function updateConsoleDisplay() {
+            const output = document.getElementById('console-output');
+            output.textContent = window.testLog.slice(-20).join('\n');
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function updateTestStatus(testId, status, message) {
+            const statusEl = document.getElementById(`${testId}-status`);
+            statusEl.textContent = message;
+            statusEl.className = `test-status ${status}`;
+        }
+
+        function logTestResult(testName, result, details = '') {
+            const resultsEl = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = result ? 'success' : 'danger';
+            const statusIcon = result ? '✅' : '❌';
+
+            resultsEl.innerHTML += `
+                <div class="alert alert-${statusClass} alert-sm py-2 mb-1">
+                    <small><strong>${statusIcon} ${testName}</strong> [${timestamp}]</small>
+                    ${details ? `<br><small class="text-muted">${details}</small>` : ''}
+                </div>
+            `;
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+
+        // Make functions globally available for use in tests
+        window.updateTestStatus = updateTestStatus;
+        window.logTestResult = logTestResult;
+        window.updateConsoleDisplay = updateConsoleDisplay;
+
+        // Store TouchSpin instances for destroy functionality
+        window.touchspinInstances = {};
+
+        // Auto-initialize all TouchSpin instances
+        async function initializeAllTouchSpin() {
+            const { Bootstrap5Renderer } = await import('@touchspin/renderer-bootstrap5');
+            const { TouchSpinCore } = await import('@touchspin/core');
+
+            // Find all inputs with data-testid
+            const inputs = document.querySelectorAll('input[data-testid]');
+
+            inputs.forEach(input => {
+                const testId = input.dataset.testid;
+                try {
+                    // Destroy existing instance if any
+                    if (window.touchspinInstances[testId]) {
+                        window.touchspinInstances[testId].destroy();
+                    }
+
+                    // Create new TouchSpin instance
+                    const instance = new TouchSpinCore(input, {
+                        renderer: Bootstrap5Renderer
+                    });
+
+                    window.touchspinInstances[testId] = instance;
+                    console.log(`✅ Initialized TouchSpin on ${testId}`);
+                } catch (error) {
+                    console.error(`❌ Failed to initialize TouchSpin on ${testId}:`, error);
+                }
+            });
+        }
+
+        // Destroy all TouchSpin instances
+        function destroyAllTouchSpin() {
+            Object.keys(window.touchspinInstances).forEach(testId => {
+                try {
+                    window.touchspinInstances[testId].destroy();
+                    delete window.touchspinInstances[testId];
+                    console.log(`🗑️ Destroyed TouchSpin on ${testId}`);
+                } catch (error) {
+                    console.error(`❌ Failed to destroy TouchSpin on ${testId}:`, error);
+                }
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🏷️ Bootstrap 5 Floating Labels Test Fixture loaded');
+
+            // Auto-initialize all TouchSpin instances
+            await initializeAllTouchSpin();
+            console.log('📋 All TouchSpin instances auto-initialized');
+
+            // Set up test control buttons
+            document.getElementById('init-all').addEventListener('click', function() {
+                initializeAllTouchSpin();
+                console.log('🔄 Re-initialized all TouchSpin instances');
+            });
+
+            document.getElementById('destroy-all').addEventListener('click', function() {
+                destroyAllTouchSpin();
+                console.log('🗑️ Destroyed all TouchSpin instances');
+            });
+
+            document.getElementById('show-log').addEventListener('click', function() {
+                updateConsoleDisplay();
+                console.log('📝 Console log updated');
+            });
+
+            document.getElementById('reset-all').addEventListener('click', function() {
+                window.testLog = [];
+                document.getElementById('test-results').innerHTML = '<small class="text-muted">Test results will appear here...</small>';
+                document.getElementById('console-output').textContent = '';
+                console.log('🔄 Test environment reset');
+            });
+        });
+    </script>
+</body>
+</html>

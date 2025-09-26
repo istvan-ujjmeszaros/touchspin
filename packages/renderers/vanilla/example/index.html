@@ -4,14 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TouchSpin Vanilla Renderer — Example</title>
-    <!-- Import map for static serving (e.g., PHPStorm) -->
-    <script type="importmap">
-      {
-        "imports": {
-          "@touchspin/core": "../../../core/src/index.js",
-          "@touchspin/renderer-vanilla": "../src/index.js"
+    <!-- Universal Import Map - works with both yarn dev and PhpStorm servers -->
+    <script>
+        const pathname = window.location.pathname;
+        const port = window.location.port;
+
+        // Detect environment
+        const isYarnDev = port === '8866';
+        const isPHPStormWithProject = pathname.includes('/bootstrap-touchspin-openai/packages/');
+        const isPHPStormWithoutProject = !isYarnDev && pathname.startsWith('/packages/');
+
+        const importMap = {'imports': {}};
+
+        if (isYarnDev) {
+            // Yarn dev server - paths from project root without project name
+            importMap.imports['@touchspin/core'] = '/packages/core/devdist/index.js';
+            importMap.imports['@touchspin/renderer-vanilla'] = '/packages/renderers/vanilla/devdist/index.js';
+        } else if (isPHPStormWithProject || isPHPStormWithoutProject) {
+            // PhpStorm - always needs project name in path
+            importMap.imports['@touchspin/core'] = '/bootstrap-touchspin-openai/packages/core/devdist/index.js';
+            importMap.imports['@touchspin/renderer-vanilla'] = '/bootstrap-touchspin-openai/packages/renderers/vanilla/devdist/index.js';
+        } else {
+            // Fallback to relative paths
+            importMap.imports['@touchspin/core'] = '../../../core/devdist/index.js';
+            importMap.imports['@touchspin/renderer-vanilla'] = '../devdist/index.js';
         }
-      }
+
+        const script = document.createElement('script');
+        script.type = 'importmap';
+        script.textContent = JSON.stringify(importMap);
+        document.head.appendChild(script);
     </script>
     <!-- Direct CSS link for static serving (and works with Vite too) -->
     <link rel="stylesheet" href="../src/vanilla.css" />
