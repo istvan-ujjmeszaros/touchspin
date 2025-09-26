@@ -672,12 +672,12 @@ test('handles browser compatibility issues', async ({ page }) => {
  * When processed by build tools
  * Then it bundles and builds correctly
  * Params:
- * { "buildTools": ["webpack", "rollup", "vite", "parcel"], "bundlingAspects": ["tree_shaking", "code_splitting"], "expectedResult": "successful_bundling" }
+ * { "buildTools": ["webpack", "rollup", "esbuild", "parcel"], "bundlingAspects": ["tree_shaking", "code_splitting"], "expectedResult": "successful_bundling" }
  */
 test('integrates with build tools and bundlers', async ({ page }) => {
   // Test build tool integration
   const buildToolTest = await page.evaluate(() => {
-    const buildTools = ['webpack', 'rollup', 'vite', 'parcel'];
+    const buildTools = ['webpack', 'rollup', 'esbuild', 'parcel'];
     const bundlingResults: any = {};
 
     buildTools.forEach(tool => {
@@ -713,7 +713,7 @@ test('integrates with build tools and bundlers', async ({ page }) => {
     };
   });
 
-  expect(buildToolTest.buildTools).toEqual(['webpack', 'rollup', 'vite', 'parcel']);
+  expect(buildToolTest.buildTools).toEqual(['webpack', 'rollup', 'esbuild', 'parcel']);
   expect(buildToolTest.elementCreated).toBe(true);
   expect(buildToolTest.successfulBundling).toBe(true);
 
