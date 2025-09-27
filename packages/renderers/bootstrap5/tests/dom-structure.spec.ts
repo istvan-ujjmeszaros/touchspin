@@ -23,7 +23,7 @@ const BOOTSTRAP5_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/bootst
 // Run universal tests that all renderers must pass
 universalRendererSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE);
 
-// Run Bootstrap family shared tests
+// Run Bootstrap family shared tests using the Bootstrap 5 fixture
 bootstrapSharedSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE);
 
 // Bootstrap 5-specific tests (not covered by shared suites)

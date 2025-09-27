@@ -59,7 +59,9 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       await expect(existingWrapper).toHaveAttribute('data-touchspin-injected');
 
       // Should not create additional wrapper
-      const wrappers = page.locator('.input-group');
+      const wrappers = page
+        .locator('.input-group')
+        .filter({ has: page.getByTestId('test-input') });
       await expect(wrappers).toHaveCount(1);
     });
 

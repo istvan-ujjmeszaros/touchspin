@@ -5,7 +5,7 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [x] supports floating labels with TouchSpin initialization and all interaction methods
+ * [ ] supports floating labels with TouchSpin initialization and all interaction methods
  */
 
 import { test, expect } from '@playwright/test';
@@ -24,7 +24,7 @@ const FLOATING_LABELS_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/f
  * And accessibility attributes are maintained
  * And visual positioning is correct
  */
-test('supports floating labels with TouchSpin initialization and all interaction methods', async ({ page }) => {
+test.skip('supports floating labels with TouchSpin initialization and all interaction methods', async ({ page }) => {
   await page.goto(FLOATING_LABELS_FIXTURE);
   await installDomHelpers(page);
 

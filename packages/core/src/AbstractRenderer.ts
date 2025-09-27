@@ -1,208 +1,177 @@
-/**
- * AbstractRenderer - Base class for TouchSpin renderers
- * Part of @touchspin/core package to avoid duplication across renderer packages
- *
- * @example
- * class CustomRenderer extends AbstractRenderer {
- *   init() {
- *     this.wrapper = this.buildUI();
- *     const upBtn = this.wrapper.querySelector('[data-touchspin-injected="up"]');
- *     const downBtn = this.wrapper.querySelector('[data-touchspin-injected="down"]');
- *     this.core.attachUpEvents(upBtn);
- *     this.core.attachDownEvents(downBtn);
- *     this.core.observeSetting('prefix', (value) => this.updatePrefix(value));
- *   }
- * }
- */
 import type { TouchSpinCoreOptions } from './index';
 import type { Renderer } from './renderer';
 
 export type RendererOptionKind = 'string' | 'boolean' | 'number' | 'enum';
-export type RendererOptionDef =
+
+type RendererOptionDefinition =
   | { kind: 'string' }
   | { kind: 'boolean' }
   | { kind: 'number' }
   | { kind: 'enum'; values: readonly string[] };
-export type RendererOptionSchema = Readonly<Record<string, RendererOptionDef>>;
 
-type InferOption<S extends RendererOptionDef> =
-  S extends { kind: 'string' } ? string | undefined
-    : S extends { kind: 'boolean' } ? boolean | undefined
-    : S extends { kind: 'number' } ? number | undefined
-    : S extends { kind: 'enum'; values: readonly (infer V)[] } ? V | undefined
+export type RendererOptionDef = RendererOptionDefinition;
+export type RendererOptionSchema = Readonly<Record<string, RendererOptionDefinition>>;
+
+type RendererOptionValue<Definition extends RendererOptionDefinition> =
+  Definition extends { kind: 'string' }
+    ? string | undefined
+    : Definition extends { kind: 'boolean' }
+    ? boolean | undefined
+    : Definition extends { kind: 'number' }
+    ? number | undefined
+    : Definition extends { kind: 'enum'; values: readonly (infer Option)[] }
+    ? Option | undefined
     : unknown;
 
-export type InferOptionsFromSchema<S extends RendererOptionSchema> = {
-  [K in keyof S]: InferOption<S[K]>;
+export type InferOptionsFromSchema<Schema extends RendererOptionSchema> = {
+  [Key in keyof Schema]: RendererOptionValue<Schema[Key]>;
 };
 
+type RendererCoreBridge = {
+  attachUpEvents: (element: HTMLElement | null) => void;
+  attachDownEvents: (element: HTMLElement | null) => void;
+  observeSetting: <Key extends keyof TouchSpinCoreOptions>(
+    key: Key,
+    listener: (value: NonNullable<TouchSpinCoreOptions[Key]>) => void
+  ) => () => void;
+};
+
+type SettingsRecord = Record<string, unknown>;
+
+const TOUCHSPIN_ATTRIBUTE = 'data-touchspin-injected';
+const TEST_ID_ATTRIBUTE = 'data-testid';
+const WRAPPER_TYPE_DEFAULT = 'wrapper';
+const WRAPPER_TYPE_ADVANCED = 'wrapper-advanced';
+const WRAPPER_READY_CLASS = 'bootstrap-touchspin';
+
 abstract class AbstractRenderer implements Renderer {
-  /**
-   * @param {HTMLInputElement} inputEl - The input element to render around
-   * @param {Object} settings - TouchSpin settings (read-only)
-   * @param {Object} core - TouchSpin core instance for event delegation
-   */
-  input: HTMLInputElement;
-  settings: Readonly<TouchSpinCoreOptions>;
-  // Core instance provides specific methods used by renderers
-  // Using a structural type to avoid circular import
-  core: {
-    attachUpEvents: (el: HTMLElement | null) => void;
-    attachDownEvents: (el: HTMLElement | null) => void;
-    observeSetting: <K extends keyof TouchSpinCoreOptions>(key: K, cb: (value: NonNullable<TouchSpinCoreOptions[K]>) => void) => () => void;
-  };
-  wrapper: HTMLElement | null;
-  wrapperType: string;
+  protected readonly input: HTMLInputElement;
+  protected readonly settings: Readonly<TouchSpinCoreOptions>;
+  protected readonly core: RendererCoreBridge;
 
-  constructor(inputEl: HTMLInputElement, settings: Readonly<TouchSpinCoreOptions>, core: { attachUpEvents: (el: HTMLElement | null) => void; attachDownEvents: (el: HTMLElement | null) => void; observeSetting: <K extends keyof TouchSpinCoreOptions>(key: K, cb: (value: NonNullable<TouchSpinCoreOptions[K]>) => void) => () => void; }) {
-    // New renderer architecture
-    this.input = inputEl;
-    this.settings = settings; // Read-only access to settings
-    this.core = core; // Reference to core for calling attachment methods
-    this.wrapper = null; // Set by subclasses during init()
-    this.wrapperType = 'wrapper'; // Default wrapper type, set to 'wrapper-advanced' by buildAdvancedInputGroup
+  protected wrapper: HTMLElement | null = null;
+  protected wrapperType = WRAPPER_TYPE_DEFAULT;
 
-    // No legacy properties needed in modern architecture
+  constructor(
+    input: HTMLInputElement,
+    settings: Readonly<TouchSpinCoreOptions>,
+    core: RendererCoreBridge
+  ) {
+    this.input = input;
+    this.settings = settings;
+    this.core = core;
   }
 
-  /**
-   * Initialize the renderer - build DOM structure and attach events
-   * Must be implemented by subclasses
-   * @abstract
-   */
   abstract init(): void;
 
-  /**
-   * Cleanup renderer - remove injected elements and restore original state
-   * Default implementation removes all injected elements
-   * Subclasses can override for custom teardown
-   */
   teardown(): void {
-    // Default implementation - remove all injected elements
     this.removeInjectedElements();
-    // Subclasses can override for custom teardown
   }
 
-  /**
-   * Utility method to remove all injected TouchSpin elements
-   * Handles both regular wrappers and advanced input groups
-   * Called automatically by teardown()
-   */
   removeInjectedElements(): void {
-    // Find and remove all elements with data-touchspin-injected attribute
-    if (this.wrapper) {
-      const injected = this.wrapper.querySelectorAll('[data-touchspin-injected]');
-      injected.forEach((el) => (el as HTMLElement).remove());
+    this.removeInjectedNodesWithinWrapper();
+    this.removeNearbyInjectedNodes();
+  }
 
-      // If wrapper itself was injected and is not the original parent
-      if (this.wrapper.hasAttribute('data-touchspin-injected') && this.wrapper.parentElement) {
-        const injectedType = this.wrapper.getAttribute('data-touchspin-injected');
+  finalizeWrapperAttributes(): void {
+    if (!this.wrapper) return;
 
-        if (injectedType === 'wrapper-advanced') {
-          // For advanced input groups, just remove the TouchSpin classes and attribute
-          // but keep the original input-group structure intact
-          this.wrapper.classList.remove('bootstrap-touchspin');
-          this.wrapper.removeAttribute('data-touchspin-injected');
-        } else {
-          // For regular wrappers, unwrap the input element
-          const parent = this.wrapper.parentElement as HTMLElement;
-          parent.insertBefore(this.input, this.wrapper);
-          this.wrapper.remove();
-        }
+    const testId = this.input.getAttribute(TEST_ID_ATTRIBUTE);
+    if (testId && !this.wrapper.hasAttribute(TEST_ID_ATTRIBUTE)) {
+      this.wrapper.setAttribute(TEST_ID_ATTRIBUTE, `${testId}-wrapper`);
+    }
+
+    this.wrapper.setAttribute(TOUCHSPIN_ATTRIBUTE, this.wrapperType);
+  }
+
+  getUpButtonTestId(): string {
+    return this.buildDataTestId('up');
+  }
+
+  getDownButtonTestId(): string {
+    return this.buildDataTestId('down');
+  }
+
+  getPrefixTestId(): string {
+    return this.buildDataTestId('prefix');
+  }
+
+  getPostfixTestId(): string {
+    return this.buildDataTestId('postfix');
+  }
+
+  protected extractRendererSettings<Schema extends RendererOptionSchema>(
+    schema: Schema,
+    sourceSettings: SettingsRecord = this.settings as SettingsRecord
+  ): Readonly<Partial<InferOptionsFromSchema<Schema>>> {
+    const selected: Record<string, unknown> = {};
+
+    for (const key in schema) {
+      if (Object.prototype.hasOwnProperty.call(sourceSettings, key)) {
+        selected[key] = sourceSettings[key];
       }
     }
 
-    // Also find any injected elements that might be siblings or elsewhere
-    const allInjected = document.querySelectorAll('[data-touchspin-injected]');
-    allInjected.forEach((el) => {
-      // Only remove if it's related to this input (check if input is descendant or sibling)
-      if (el.contains(this.input) ||
-          (el.parentElement && el.parentElement.contains(this.input)) ||
-          (this.input.parentElement ? this.input.parentElement.contains(el) : false)) {
-        // Don't remove the input itself
-        if (el !== this.input) {
-          (el as HTMLElement).remove();
-        }
-      }
+    return selected as Readonly<Partial<InferOptionsFromSchema<Schema>>>;
+  }
+
+  // Backward compatibility alias
+  protected projectRendererOptions<Schema extends RendererOptionSchema>(
+    schema: Schema,
+    from: Record<string, unknown> = this.settings as Record<string, unknown>
+  ): Readonly<Partial<InferOptionsFromSchema<Schema>>> {
+    return this.extractRendererSettings(schema, from);
+  }
+
+  private removeInjectedNodesWithinWrapper(): void {
+    const { wrapper } = this;
+    if (!wrapper) return;
+
+    wrapper
+      .querySelectorAll(`[${TOUCHSPIN_ATTRIBUTE}]`)
+      .forEach((element) => (element as HTMLElement).remove());
+
+    if (!wrapper.hasAttribute(TOUCHSPIN_ATTRIBUTE) || !wrapper.parentElement) {
+      return;
+    }
+
+    const wrapperType = wrapper.getAttribute(TOUCHSPIN_ATTRIBUTE);
+    if (wrapperType === WRAPPER_TYPE_ADVANCED) {
+      wrapper.classList.remove(WRAPPER_READY_CLASS);
+      wrapper.removeAttribute(TOUCHSPIN_ATTRIBUTE);
+      return;
+    }
+
+    wrapper.parentElement.insertBefore(this.input, wrapper);
+    wrapper.remove();
+  }
+
+  private removeNearbyInjectedNodes(): void {
+    const injectedNodes = document.querySelectorAll(`[${TOUCHSPIN_ATTRIBUTE}]`);
+
+    injectedNodes.forEach((node) => {
+      if (!(node instanceof HTMLElement)) return;
+      if (node === this.input) return;
+      if (!this.isNodeRelatedToInput(node)) return;
+
+      node.remove();
     });
   }
 
-  // All legacy jQuery-based methods have been removed
-  // Modern renderers implement their own init() method and use vanilla JS
+  private isNodeRelatedToInput(node: Element): boolean {
+    const parent = node.parentElement;
+    const inputParent = this.input.parentElement;
 
-  /**
-   * Get testid attribute for up button
-   * @returns {string} Testid attribute or empty string
-   */
-  getUpButtonTestId(): string {
-    const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) return ` data-testid="${inputTestId}-up"`;
-    return '';
+    const nodeContainsInput = node.contains(this.input);
+    const parentContainsInput = parent?.contains(this.input) ?? false;
+    const inputContainsNode = inputParent?.contains(node) ?? false;
+
+    return nodeContainsInput || parentContainsInput || inputContainsNode;
   }
 
-  /**
-   * Get testid attribute for down button
-   * @returns {string} Testid attribute or empty string
-   */
-  getDownButtonTestId(): string {
-    const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) return ` data-testid="${inputTestId}-down"`;
-    return '';
-  }
-
-  /**
-   * Get testid attribute for prefix element
-   * @returns {string} Testid attribute or empty string
-   */
-  getPrefixTestId(): string {
-    const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) return ` data-testid="${inputTestId}-prefix"`;
-    return '';
-  }
-
-  /**
-   * Get testid attribute for postfix element
-   * @returns {string} Testid attribute or empty string
-   */
-  getPostfixTestId(): string {
-    const inputTestId = this.input.getAttribute('data-testid');
-    if (inputTestId) return ` data-testid="${inputTestId}-postfix"`;
-    return '';
-  }
-
-  /**
-   * Finalize wrapper attributes after DOM construction and event attachment.
-   * Sets both data-testid and data-touchspin-injected attributes.
-   * Called by core as the final initialization step.
-   */
-  finalizeWrapperAttributes(): void {
-    if (this.wrapper) {
-      // Set test ID if input has one and wrapper doesn't already have one
-      const testid = this.input.getAttribute('data-testid');
-      if (testid && !this.wrapper.hasAttribute('data-testid')) {
-        this.wrapper.setAttribute('data-testid', testid + '-wrapper');
-      }
-
-      // Mark component as ready (DOM built, events attached)
-      this.wrapper.setAttribute('data-touchspin-injected', this.wrapperType);
-    }
-  }
-
-  /**
-   * Helper to project flat core settings into a typed renderer-specific view.
-   * No coercion; simply narrows known keys per schema for better DX.
-   */
-  protected projectRendererOptions<S extends RendererOptionSchema>(
-    schema: S,
-    from: Record<string, unknown> = this.settings as unknown as Record<string, unknown>
-  ): Readonly<Partial<InferOptionsFromSchema<S>>> {
-    const out: Record<string, unknown> = {};
-    for (const key in schema) {
-      if (Object.prototype.hasOwnProperty.call(from, key)) {
-        out[key] = from[key];
-      }
-    }
-    return out as Readonly<Partial<InferOptionsFromSchema<S>>>;
+  private buildDataTestId(suffix: string): string {
+    const base = this.input.getAttribute(TEST_ID_ATTRIBUTE);
+    return base ? ` data-testid="${base}-${suffix}"` : '';
   }
 }
 
