@@ -31,7 +31,7 @@ const DEFAULTS = {
     buttonup_class: null,
     buttondown_class: null,
     buttonup_txt: '+',
-    buttondown_txt: '&minus;',
+    buttondown_txt: '&minus;2',
     callback_before_calculation: (v) => v,
     callback_after_calculation: (v) => v,
     renderer: null,
