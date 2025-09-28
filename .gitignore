@@ -23,7 +23,6 @@ reports/
 
 # Build outputs
 dist/
-devdist/
 
 # Allow framework assets in devdist for offline functionality
 !packages/renderers/*/devdist/external/

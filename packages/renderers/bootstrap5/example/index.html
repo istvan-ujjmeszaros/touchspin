@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../devdist/external/css/bootstrap.min.css">
 
   <!-- TouchSpin CSS -->
-  <link rel="stylesheet" href="../dist/touchspin-bootstrap5.css" id="touchspin-css">
+  <link rel="stylesheet" href="../devdist/touchspin-bootstrap5.css" id="touchspin-css">
 
   <!-- Import map that works in both local and server environments -->
   <script>
@@ -36,27 +36,27 @@
 
     if (isYarnDev) {
       // Yarn dev server - paths from project root without project name
-      importMap.imports['@touchspin/core'] = '/packages/core/dist/index.js';
-      importMap.imports['@touchspin/core/renderer'] = '/packages/core/dist/renderer.js';
-      importMap.imports['@touchspin/renderers/bootstrap5'] = '/packages/renderers/bootstrap5/dist/index.js';
+      importMap.imports['@touchspin/core'] = '/packages/core/devdist/index.js';
+      importMap.imports['@touchspin/core/renderer'] = '/packages/core/devdist/renderer.js';
+      importMap.imports['@touchspin/renderers/bootstrap5'] = '/packages/renderers/bootstrap5/devdist/index.js';
       if (touchspinCss) {
-        touchspinCss.href = '/packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css';
+        touchspinCss.href = '/packages/renderers/bootstrap5/devdist/touchspin-bootstrap5.css';
       }
     } else if (isPHPStormWithProject || isPHPStormWithoutProject) {
       // PHPStorm - always needs project name in path regardless of URL shown
-      importMap.imports['@touchspin/core'] = '/bootstrap-touchspin-openai/packages/core/dist/index.js';
-      importMap.imports['@touchspin/core/renderer'] = '/bootstrap-touchspin-openai/packages/core/dist/renderer.js';
-      importMap.imports['@touchspin/renderers/bootstrap5'] = '/bootstrap-touchspin-openai/packages/renderers/bootstrap5/dist/index.js';
+      importMap.imports['@touchspin/core'] = '/bootstrap-touchspin-openai/packages/core/devdist/index.js';
+      importMap.imports['@touchspin/core/renderer'] = '/bootstrap-touchspin-openai/packages/core/devdist/renderer.js';
+      importMap.imports['@touchspin/renderers/bootstrap5'] = '/bootstrap-touchspin-openai/packages/renderers/bootstrap5/devdist/index.js';
       if (touchspinCss) {
-        touchspinCss.href = '/bootstrap-touchspin-openai/packages/renderers/bootstrap5/dist/touchspin-bootstrap5.css';
+        touchspinCss.href = '/bootstrap-touchspin-openai/packages/renderers/bootstrap5/devdist/touchspin-bootstrap5.css';
       }
     } else {
       // Fallback to relative paths
-      importMap.imports['@touchspin/core'] = '../../../core/dist/index.js';
-      importMap.imports['@touchspin/core/renderer'] = '../../../core/dist/renderer.js';
-      importMap.imports['@touchspin/renderers/bootstrap5'] = '../dist/index.js';
+      importMap.imports['@touchspin/core'] = '../../../core/devdist/index.js';
+      importMap.imports['@touchspin/core/renderer'] = '../../../core/devdist/renderer.js';
+      importMap.imports['@touchspin/renderers/bootstrap5'] = '../devdist/index.js';
       if (touchspinCss) {
-        touchspinCss.href = '../dist/touchspin-bootstrap5.css';
+        touchspinCss.href = '../devdist/touchspin-bootstrap5.css';
       }
     }
 

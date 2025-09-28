@@ -9,6 +9,17 @@ echo "🐶 Husky pre-commit: Gherkin workflow validation"
 # Get list of staged files
 STAGED_FILES=$(git diff --cached --name-only)
 
+# Check if any source files changed (rebuild devdist if so)
+SRC_CHANGED=$(echo "$STAGED_FILES" | grep -E "packages/.*/src/.*\.(ts|tsx|js|jsx)$" || true)
+if [ -n "$SRC_CHANGED" ]; then
+  echo "📦 Source files changed, rebuilding devdist..."
+  yarn build:test || { echo "❌ DevDist build failed"; exit 1; }
+
+  # Stage ALL updated devdist files
+  git add packages/*/devdist packages/renderers/*/devdist
+  echo "✅ DevDist files rebuilt and staged"
+fi
+
 # Check if any helper files changed (regenerate lexicon if so)
 HELPER_CHANGED=$(echo "$STAGED_FILES" | grep -E "packages/.*/tests/__shared__/helpers/.*\.(ts|js)$" || true)
 if [ -n "$HELPER_CHANGED" ]; then
