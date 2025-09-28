@@ -1,0 +1,14 @@
+.tailwind-btn {
+  /* Ensure focus ring visible when Tailwind isn't present */
+  outline: none;
+}
+
+.tailwind-btn:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
+}
+
+.tailwind-addon {
+  /* Harmonize with typical Tailwind forms look */
+  line-height: 1.25;
+}

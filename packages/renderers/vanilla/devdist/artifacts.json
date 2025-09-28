@@ -1,0 +1,5 @@
+{
+  "esmEntry": "index.js",
+  "classModule": "VanillaRenderer.js",
+  "css": "themes/vanilla.css"
+}
