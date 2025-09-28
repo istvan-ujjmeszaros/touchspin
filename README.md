@@ -228,12 +228,21 @@ $('#price').TouchSpin({
 
 ---
 
+## Development
+
+For contributors and developers working on TouchSpin:
+
+- **[DEVELOPER_QUICK_DOCS.md](DEVELOPER_QUICK_DOCS.md)** — Quick start guide with essential commands and workflow tips
+- Dual development servers: `yarn dev` (port 8866, stable) or `yarn dev:hot` (port 3000, hot-reload)
+- PHPStorm integration configured for port 8866 by default
+
 ## Monorepo Documentation
 
 - [docs/index.md](docs/index.md) — architecture, migration, and extension guides
 - [ARCHITECTURE.md](ARCHITECTURE.md) — high-level summary of the modern modular build
 - [BUILDING.md](BUILDING.md) — running `yarn build`, `yarn build:test`, and workspace builds
 - [TESTING.md](TESTING.md) — Playwright, coverage, and guard scripts
+- [DEVELOPER_QUICK_DOCS.md](DEVELOPER_QUICK_DOCS.md) — quick workflow reference for contributors
 
 ---
 
