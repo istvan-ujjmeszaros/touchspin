@@ -643,29 +643,62 @@ When contributing tests, ensure:
 
 ---
 
-## 🔧 Important Development Workflow
+## 🔧 Improved Development Workflow
 
-### CRITICAL: Always Rebuild After Source Changes
+### 🎉 NEW: Watch Mode - No More Manual Rebuilds!
 
-**⚠️ NEVER FORGET**: After making ANY changes to source files (`/src/`), you MUST rebuild before running tests:
+**The DX nightmare is OVER!** You no longer need to manually rebuild after source changes.
 
+#### 🚀 Quick Start - Three Development Modes:
+
+**Option 1: Full Development Mode (Recommended)**
 ```bash
-yarn build
+yarn dev  # Starts watch + server + test UI
+# Edit source → Auto-compiles → Tests auto-refresh! 🎉
 ```
 
-**Why this is critical:**
-- Tests run against built artifacts in `/dist/` folders
-- Source changes don't take effect until rebuilt
-- Forgetting to rebuild leads to confusing test failures
-- This is the #1 cause of "my fix doesn't work" issues
+**Option 2: Watch Mode Only**
+```bash
+yarn watch:test  # Watch all packages for changes
+# In another terminal:
+yarn test        # Run tests anytime - no build needed!
+```
 
-**Workflow:**
-1. Edit source files (`packages/*/src/`)
-2. **ALWAYS run `yarn build`**
-3. Run tests
-4. Repeat
+**Option 3: Test Development**
+```bash
+yarn test:dev    # Watch + server + test UI in one command
+# Perfect for test-driven development
+```
 
-**Add this to your muscle memory** - every source change requires a rebuild!
+#### 📋 Available Commands:
+
+- **`yarn dev`** - Watch mode + static server
+- **`yarn watch`** - Watch all packages (production builds)
+- **`yarn watch:test`** - Watch all packages (test builds)
+- **`yarn test:dev`** - Watch + serve + test UI
+- **`yarn test`** - Run tests (no build needed with watch!)
+- **`yarn build:test`** - Manual build (for CI/troubleshooting)
+
+#### 🔧 How It Works:
+
+- **TypeScript watch** compiles `.ts` → `.js` automatically
+- **Tests use `/devdist/`** - auto-updated by watch mode
+- **No manual rebuilds** required during development
+- **Coverage still works** - runs build when needed
+
+#### 💡 Pro Tips:
+
+- Start with `yarn dev` and keep it running
+- Edit source files and see changes instantly
+- Use `yarn test` in another terminal when needed
+- For CI/production, still use `yarn build` and `yarn build:test`
+
+### 🔙 Legacy Workflow (CI Only):
+
+```bash
+yarn build:test  # Only needed for CI or troubleshooting
+yarn test        # Traditional workflow
+```
 
 ---
 
