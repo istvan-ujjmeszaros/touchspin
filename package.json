@@ -41,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
     "bootstrap": "^5.3.0",
+    "browser-sync": "^3.0.4",
     "concurrently": "^8.2.2",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^9.1.0",
@@ -58,6 +59,8 @@
   },
   "scripts": {
     "dev": "concurrently -n watch,serve \"yarn watch:test\" \"yarn serve\"",
+    "dev:hot": "concurrently -n watch,serve,hot-reload \"yarn watch:test\" \"yarn serve\" \"yarn hot-reload\"",
+    "hot-reload": "node scripts/hot-reload-server.mjs",
     "serve": "node scripts/static-server.mjs",
     "preview": "node scripts/static-server.mjs",
     "serve:root": "node scripts/static-server.mjs",
