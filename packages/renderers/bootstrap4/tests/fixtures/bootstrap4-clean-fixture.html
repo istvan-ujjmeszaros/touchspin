@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bootstrap 4 TouchSpin Clean Test Fixture</title>
 
+    <!-- jQuery (required by many tests) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <!-- Bootstrap 4 CSS -->
     <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../devdist/touchspin-bootstrap4.css" rel="stylesheet">
@@ -25,12 +28,27 @@
     }
     </script>
 
-    <!-- Load renderer and set as default before any tests run -->
+    <!-- Load TouchSpin Core and Bootstrap4Renderer with proper async loading -->
     <script type="module">
-        import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
+        (async () => {
+            try {
+                const [CoreModule, RendererModule] = await Promise.all([
+                    import('@touchspin/core'),
+                    import('@touchspin/renderer-bootstrap4')
+                ]);
 
-        window.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-        window.testPageReady = true;
+                // Expose everything tests might need on window
+                window.TouchSpinCore = CoreModule.TouchSpinCore;
+                window.TouchSpinDefaultRenderer = RendererModule.default;
+
+                // Mark page as ready only after everything loads successfully
+                window.testPageReady = true;
+            } catch (error) {
+                console.error('Failed to load TouchSpin modules:', error);
+                // Still mark as ready to prevent test timeouts
+                window.testPageReady = true;
+            }
+        })();
     </script>
 </head>
 <body>

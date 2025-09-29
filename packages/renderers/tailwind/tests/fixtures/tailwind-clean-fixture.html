@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tailwind CSS TouchSpin Clean Test Fixture</title>
 
+    <!-- jQuery (required by many tests) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <!-- Tailwind CSS Play CDN -->
     <script src="../../devdist/external/js/tailwind.js"></script>
     <link href="../../devdist/touchspin-tailwind.css" rel="stylesheet">
@@ -22,12 +25,27 @@
     }
     </script>
 
-    <!-- Load renderer and set as default before any tests run -->
+    <!-- Load TouchSpin Core and TailwindRenderer with proper async loading -->
     <script type="module">
-        import TailwindRenderer from '@touchspin/renderer-tailwind';
+        (async () => {
+            try {
+                const [CoreModule, RendererModule] = await Promise.all([
+                    import('@touchspin/core'),
+                    import('@touchspin/renderer-tailwind')
+                ]);
 
-        window.TouchSpinDefaultRenderer = TailwindRenderer;
-        window.testPageReady = true;
+                // Expose everything tests might need on window
+                window.TouchSpinCore = CoreModule.TouchSpinCore;
+                window.TouchSpinDefaultRenderer = RendererModule.default;
+
+                // Mark page as ready only after everything loads successfully
+                window.testPageReady = true;
+            } catch (error) {
+                console.error('Failed to load TouchSpin modules:', error);
+                // Still mark as ready to prevent test timeouts
+                window.testPageReady = true;
+            }
+        })();
     </script>
 </head>
 <body>

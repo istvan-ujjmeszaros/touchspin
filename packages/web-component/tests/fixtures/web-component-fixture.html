@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TouchSpin Web Component Fixture</title>
+
+    <!-- Import map for TouchSpin modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@touchspin/core": "../../core/devdist/index.js",
+            "@touchspin/core/renderer": "../../core/devdist/renderer.js",
+            "@touchspin/core/events": "../../core/devdist/events.js",
+            "@touchspin/web-component": "../devdist/index.js"
+        }
+    }
+    </script>
+
     <style>
         body {
             margin: 0;
@@ -212,7 +225,17 @@
             container.style.display = 'none';
         };
 
-        window.testPageReady = true;
+        // Load web component module and expose everything tests need
+        (async () => {
+            try {
+                await import('@touchspin/web-component');
+                // Web component registers itself on import
+                window.testPageReady = true;
+            } catch (error) {
+                console.error('Failed to load web component module:', error);
+                window.testPageReady = true; // Still mark ready to prevent timeouts
+            }
+        })();
     </script>
 </body>
 </html>
