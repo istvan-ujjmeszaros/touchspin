@@ -1,6 +1,6 @@
 /**
  * Feature: Button interaction edge cases (moved from core)
- * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html
+ * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html
  */
 
 /*
@@ -19,7 +19,7 @@ import { clearEventLog, countEventInLog } from '@touchspin/core/test-helpers';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
-const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html';
+const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**
  * Initialize TouchSpin with default renderer on clean fixture

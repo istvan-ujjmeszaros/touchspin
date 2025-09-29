@@ -1,6 +1,6 @@
 /**
  * Feature: Vanilla renderer DOM structure assembly
- * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html
+ * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html
  */
 
 /*
@@ -17,7 +17,7 @@ import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
 const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
-const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html';
+const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 // Run universal tests that all renderers must pass
 universalRendererSuite('Vanilla', VANILLA_RENDERER_URL, VANILLA_FIXTURE);
