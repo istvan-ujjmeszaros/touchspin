@@ -4,62 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TouchSpin Core - Minimal Test Fixture</title>
-    <script>
-        // Universal path detector for TouchSpin fixtures
-        const pathname = window.location.pathname;
-        const port = window.location.port;
-        const isYarnDev = port === '8866';
-        const isPHPStormWithProject = pathname.includes('/bootstrap-touchspin-openai/packages/');
-        const isPHPStormWithoutProject = !isYarnDev && pathname.startsWith('/packages/');
-
-        const importMap = {'imports': {}};
-
-        if (isYarnDev) {
-            // yarn dev server: paths from project root
-            importMap.imports = {
-                "@touchspin/core": "/packages/core/devdist/index.js",
-                "@touchspin/core/renderer": "/packages/core/devdist/renderer.js",
-                "@touchspin/core/events": "/packages/core/devdist/events.js",
-                "@touchspin/renderer-bootstrap3": "/packages/renderers/bootstrap3/devdist/index.js",
-                "@touchspin/renderer-bootstrap4": "/packages/renderers/bootstrap4/devdist/index.js",
-                "@touchspin/renderer-bootstrap5": "/packages/renderers/bootstrap5/devdist/index.js",
-                "@touchspin/renderer-tailwind": "/packages/renderers/tailwind/devdist/index.js",
-                "@touchspin/renderer-vanilla": "/packages/renderers/vanilla/devdist/index.js",
-                "@touchspin/jquery-plugin": "/packages/jquery-plugin/devdist/index.js"
-            };
-        } else if (isPHPStormWithProject || isPHPStormWithoutProject) {
-            // PHPStorm server: paths with project prefix
-            importMap.imports = {
-                "@touchspin/core": "/bootstrap-touchspin-openai/packages/core/devdist/index.js",
-                "@touchspin/core/renderer": "/bootstrap-touchspin-openai/packages/core/devdist/renderer.js",
-                "@touchspin/core/events": "/bootstrap-touchspin-openai/packages/core/devdist/events.js",
-                "@touchspin/renderer-bootstrap3": "/bootstrap-touchspin-openai/packages/renderers/bootstrap3/devdist/index.js",
-                "@touchspin/renderer-bootstrap4": "/bootstrap-touchspin-openai/packages/renderers/bootstrap4/devdist/index.js",
-                "@touchspin/renderer-bootstrap5": "/bootstrap-touchspin-openai/packages/renderers/bootstrap5/devdist/index.js",
-                "@touchspin/renderer-tailwind": "/bootstrap-touchspin-openai/packages/renderers/tailwind/devdist/index.js",
-                "@touchspin/renderer-vanilla": "/bootstrap-touchspin-openai/packages/renderers/vanilla/devdist/index.js",
-                "@touchspin/jquery-plugin": "/bootstrap-touchspin-openai/packages/jquery-plugin/devdist/index.js"
-            };
-        } else {
-            // Relative paths from fixture location: packages/core/tests/__shared__/fixtures/
-            importMap.imports = {
-                "@touchspin/core": "../../../devdist/index.js",
-                "@touchspin/core/renderer": "../../../devdist/renderer.js",
-                "@touchspin/core/events": "../../../devdist/events.js",
-                "@touchspin/renderer-bootstrap3": "../../../../renderers/bootstrap3/devdist/index.js",
-                "@touchspin/renderer-bootstrap4": "../../../../renderers/bootstrap4/devdist/index.js",
-                "@touchspin/renderer-bootstrap5": "../../../../renderers/bootstrap5/devdist/index.js",
-                "@touchspin/renderer-tailwind": "../../../../renderers/tailwind/devdist/index.js",
-                "@touchspin/renderer-vanilla": "../../../../renderers/vanilla/devdist/index.js",
-                "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-            };
-        }
-
-        // Inject the importmap
-        const script = document.createElement('script');
-        script.type = 'importmap';
-        script.textContent = JSON.stringify(importMap, null, 2);
-        document.head.appendChild(script);
+    <!-- Import map with relative paths - works universally -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@touchspin/core": "../../../devdist/index.js",
+        "@touchspin/core/renderer": "../../../devdist/renderer.js",
+        "@touchspin/core/events": "../../../devdist/events.js",
+        "@touchspin/renderer-bootstrap3": "../../../../renderers/bootstrap3/devdist/index.js",
+        "@touchspin/renderer-bootstrap4": "../../../../renderers/bootstrap4/devdist/index.js",
+        "@touchspin/renderer-bootstrap5": "../../../../renderers/bootstrap5/devdist/index.js",
+        "@touchspin/renderer-tailwind": "../../../../renderers/tailwind/devdist/index.js",
+        "@touchspin/renderer-vanilla": "../../../../renderers/vanilla/devdist/index.js",
+        "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
+      }
+    }
     </script>
     <style>
         body {

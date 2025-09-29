@@ -17,37 +17,15 @@
   <!-- Bootstrap 4 JS (Local) -->
   <script src="../devdist/external/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-    // Universal path detector for TouchSpin imports
-    // Detects environment and sets appropriate importmap paths
-    function createImportMap() {
-      const port = window.location.port;
-      const isDev = port === '8866' || port === '3000';
-
-      let basePath;
-      if (isDev) {
-        // Development server (static or hot-reload): use /packages/ paths
-        basePath = '/packages';
-      } else {
-        // File system or other: use relative paths from example location
-        basePath = '../../..';
-      }
-
-      const importMap = {
-        "imports": {
-          "@touchspin/core": `${basePath}/core/devdist/index.js`,
-          "@touchspin/core/renderer": `${basePath}/core/devdist/renderer.js`,
-          "@touchspin/renderers/bootstrap4": `${basePath}/renderers/bootstrap4/devdist/index.js`
-        }
-      };
-
-      const script = document.createElement('script');
-      script.type = 'importmap';
-      script.textContent = JSON.stringify(importMap, null, 2);
-      document.head.appendChild(script);
+  <!-- Import map with relative paths - works universally -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/devdist/index.js",
+      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
+      "@touchspin/renderers/bootstrap4": "../devdist/index.js"
     }
-
-    createImportMap();
+  }
   </script>
 </head>
 <body>

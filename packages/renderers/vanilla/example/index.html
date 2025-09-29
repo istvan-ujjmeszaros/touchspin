@@ -4,32 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TouchSpin Vanilla Renderer — Example</title>
-    <!-- Universal Import Map - works with both yarn dev and PhpStorm servers -->
-    <script>
-        const port = window.location.port;
-
-        // Detect development environment:
-        // - Static dev server: port 8866
-        // - Hot-reload server: port 3000
-        // - File system or other: use relative paths
-        const isDev = port === '8866' || port === '3000';
-
-        const importMap = {'imports': {}};
-
-        if (isDev) {
-            // Development server - use absolute paths from project root
-            importMap.imports['@touchspin/core'] = '/packages/core/devdist/index.js';
-            importMap.imports['@touchspin/renderer-vanilla'] = '/packages/renderers/vanilla/devdist/index.js';
-        } else {
-            // File system or other - use relative paths
-            importMap.imports['@touchspin/core'] = '../../../core/devdist/index.js';
-            importMap.imports['@touchspin/renderer-vanilla'] = '../devdist/index.js';
-        }
-
-        const script = document.createElement('script');
-        script.type = 'importmap';
-        script.textContent = JSON.stringify(importMap);
-        document.head.appendChild(script);
+    <!-- Import map with relative paths - works universally -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@touchspin/core": "../../../core/devdist/index.js",
+        "@touchspin/renderer-vanilla": "../devdist/index.js"
+      }
+    }
     </script>
     <!-- Direct CSS link for static serving (and works with Vite too) -->
     <link rel="stylesheet" href="../src/vanilla.css" />

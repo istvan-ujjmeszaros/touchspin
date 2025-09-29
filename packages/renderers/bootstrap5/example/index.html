@@ -11,48 +11,15 @@
   <!-- TouchSpin CSS -->
   <link rel="stylesheet" href="../devdist/touchspin-bootstrap5.css" id="touchspin-css">
 
-  <!-- Import map that works in both local and server environments -->
-  <script>
-    const port = window.location.port;
-
-    // Detect development environment:
-    // - Static dev server: port 8866
-    // - Hot-reload server: port 3000
-    // - File system or other: use relative paths
-    const isDev = port === '8866' || port === '3000';
-
-    console.log('Environment detection:', {
-      port,
-      isDev
-    });
-
-    const importMap = {'imports': {}};
-    const touchspinCss = document.getElementById('touchspin-css');
-
-    if (isDev) {
-      // Development server - use absolute paths from project root
-      importMap.imports['@touchspin/core'] = '/packages/core/devdist/index.js';
-      importMap.imports['@touchspin/core/renderer'] = '/packages/core/devdist/renderer.js';
-      importMap.imports['@touchspin/renderers/bootstrap5'] = '/packages/renderers/bootstrap5/devdist/index.js';
-      if (touchspinCss) {
-        touchspinCss.href = '/packages/renderers/bootstrap5/devdist/touchspin-bootstrap5.css';
-      }
-    } else {
-      // File system or other - use relative paths
-      importMap.imports['@touchspin/core'] = '../../../core/devdist/index.js';
-      importMap.imports['@touchspin/core/renderer'] = '../../../core/devdist/renderer.js';
-      importMap.imports['@touchspin/renderers/bootstrap5'] = '../devdist/index.js';
-      if (touchspinCss) {
-        touchspinCss.href = '../devdist/touchspin-bootstrap5.css';
-      }
+  <!-- Import map with relative paths - works universally -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/devdist/index.js",
+      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
+      "@touchspin/renderers/bootstrap5": "../devdist/index.js"
     }
-
-    console.log('Using import map:', importMap);
-
-    const script = document.createElement('script');
-    script.type = 'importmap';
-    script.textContent = JSON.stringify(importMap);
-    document.head.appendChild(script);
+  }
   </script>
 
   <style>
