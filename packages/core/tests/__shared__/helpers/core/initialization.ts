@@ -159,3 +159,53 @@ export async function initializeTouchspinWithRenderer(
   ].join(', ');
   await page.locator(sel).first().waitFor({ timeout: 5000 });
 }
+
+/**
+ * Initialize TouchSpin using pre-loaded modules from self-contained fixtures
+ *
+ * This function is designed for fixtures that have already loaded TouchSpinCore
+ * and the renderer onto window.TouchSpinCore and window.TouchSpinDefaultRenderer.
+ * It avoids dynamic imports that can cause "Execution context destroyed" errors.
+ */
+export async function initializeTouchspinWithPreloadedModules(
+  page: Page,
+  testId: string,
+  options: Record<string, unknown> = {}
+): Promise<void> {
+  await setupLogging(page);
+  await installDomHelpers(page);
+
+  await page.evaluate(({ testId, options }) => {
+    try {
+      // Use pre-loaded modules from the fixture
+      const TouchSpinCore = (globalThis as any).TouchSpinCore;
+      const Renderer = (globalThis as any).TouchSpinDefaultRenderer;
+
+      if (!TouchSpinCore) {
+        throw new Error('TouchSpinCore not found on window. Ensure the fixture has loaded the core module.');
+      }
+
+      if (!Renderer) {
+        throw new Error('TouchSpinDefaultRenderer not found on window. Ensure the fixture has loaded the renderer module.');
+      }
+
+      // eslint-disable-next-line -- Required in browser context
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+      if (!input) throw new Error(`Input with testId "${testId}" not found`);
+      if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
+
+      const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as any);
+      (input as any)['_touchSpinCore'] = core;
+      (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+    } catch (err) {
+      console.error('initializeTouchspinWithPreloadedModules failed:', err);
+      throw err;
+    }
+  }, { testId, options });
+
+  const sel = [
+    `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
+    `[data-testid=\"${testId}\"][data-touchspin-injected]`,
+  ].join(', ');
+  await page.locator(sel).first().waitFor({ timeout: 5000 });
+}

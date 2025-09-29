@@ -14,7 +14,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initializeTouchspinWithPreloadedModules } from '@touchspin/core/test-helpers';
 
 // Bootstrap 5 Renderer URL for tests
 const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
@@ -40,7 +40,7 @@ test.describe('Bootstrap 5 specific behavior', () => {
    * Then buttons are directly in input-group without append/prepend wrappers
    */
   test('uses Bootstrap 5 input-group-text for buttons', async ({ page }) => {
-    await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
+    await initializeTouchspinWithPreloadedModules(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -64,7 +64,7 @@ test.describe('Bootstrap 5 specific behavior', () => {
    * Then buttons have Bootstrap 5 default btn-outline-secondary styling
    */
   test('applies Bootstrap 5 default button styling', async ({ page }) => {
-    await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
+    await initializeTouchspinWithPreloadedModules(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -104,7 +104,7 @@ test.describe('Bootstrap 5 specific behavior', () => {
       floatingDiv.appendChild(label);
     });
 
-    await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
+    await initializeTouchspinWithPreloadedModules(page, 'test-input');
 
     // Should preserve floating label functionality
     // Note: Bootstrap 5 renderer creates its own wrapper, but the label should still be present and functional
@@ -134,7 +134,7 @@ test.describe('Bootstrap 5 specific behavior', () => {
       input.classList.add('is-valid');
     });
 
-    await initializeTouchspinWithRenderer(page, 'test-input', BOOTSTRAP5_RENDERER_URL);
+    await initializeTouchspinWithPreloadedModules(page, 'test-input');
 
     const input = page.getByTestId('test-input');
     const wrapper = page.getByTestId('test-input-wrapper');

@@ -24,6 +24,29 @@
         }
     }
     </script>
+
+    <!-- Load TouchSpin Core and TailwindRenderer with proper async loading -->
+    <script type="module">
+        (async () => {
+            try {
+                const [CoreModule, RendererModule] = await Promise.all([
+                    import('@touchspin/core'),
+                    import('@touchspin/renderer-tailwind')
+                ]);
+
+                // Expose everything tests might need on window
+                window.TouchSpinCore = CoreModule.TouchSpinCore;
+                window.TouchSpinDefaultRenderer = RendererModule.default;
+
+                // Mark page as ready only after everything loads successfully
+                window.testPageReady = true;
+            } catch (error) {
+                console.error('Failed to load TouchSpin modules:', error);
+                // Still mark as ready to prevent test timeouts
+                window.testPageReady = true;
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container-fluid py-4">
@@ -231,8 +254,6 @@
             container.innerHTML = '';
             container.classList.add('hidden');
         };
-
-        window.testPageReady = true;
     </script>
 
 </body>
