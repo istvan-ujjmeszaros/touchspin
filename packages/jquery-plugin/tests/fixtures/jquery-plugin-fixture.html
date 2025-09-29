@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TouchSpin jQuery Plugin Fixture</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .fixture-root {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+        }
+
+        .fixture-root h1 {
+            font-size: 1.6rem;
+            margin-top: 0;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-section input[type="number"],
+        .form-section input[type="text"] {
+            width: 100%;
+            max-width: 320px;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .event-log-card {
+            margin-top: 32px;
+        }
+
+        .event-log-card header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .event-log-card textarea {
+            width: 100%;
+            min-height: 220px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 12px;
+            resize: vertical;
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixture-root">
+        <h1>TouchSpin jQuery Fixture</h1>
+
+        <div class="form-section">
+            <label for="test-input">Primary Input</label>
+            <input
+                type="number"
+                id="test-input"
+                data-testid="test-input"
+                value="50"
+                name="test-input"
+                autocomplete="off"
+            />
+        </div>
+
+        <div id="additional-inputs" class="form-section" style="display: none;"></div>
+
+        <section class="event-log-card">
+            <header>
+                <h2 class="sr-only">Event Log</h2>
+                <span aria-hidden="true">Event Log</span>
+                <button id="clear-log" type="button">🗑 Clear</button>
+            </header>
+            <textarea
+                id="event-log"
+                data-testid="event-log"
+                readonly
+                placeholder="Event log will appear here..."
+            ></textarea>
+        </section>
+
+        <input type="hidden" id="blur-target" data-testid="blur-target" />
+    </div>
+
+    <script type="module">
+        function appendLogLine(text) {
+            const textarea = document.getElementById('event-log');
+            if (!textarea) return;
+            textarea.value += `${text}\n`;
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+
+        window.eventLog = [];
+
+        window.logEvent = function logEvent(event, detail = {}) {
+            const type = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+            const entry = { type, event, ...detail };
+            window.eventLog.push(entry);
+
+            const prefix = `[${type}]`;
+            if (detail.target && detail.value !== undefined) {
+                appendLogLine(`${prefix} ${detail.target}:${detail.value} ${event}`);
+            } else if (detail.target) {
+                appendLogLine(`${prefix} ${detail.target} ${event}`);
+            } else {
+                appendLogLine(`${prefix} ${event}`);
+            }
+        };
+
+        window.clearEventLog = function clearEventLog() {
+            window.eventLog = [];
+            const textarea = document.getElementById('event-log');
+            if (textarea) textarea.value = '';
+        };
+
+        document.getElementById('clear-log')?.addEventListener('click', (event) => {
+            event.preventDefault();
+            window.clearEventLog();
+        });
+
+        window.createTestInput = function createTestInput(id, options = {}) {
+            const container = document.getElementById('additional-inputs');
+            if (!container) return null;
+            container.style.display = 'block';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-section';
+
+            const label = document.createElement('label');
+            label.textContent = options.label || `Input ${id}`;
+            label.setAttribute('for', id);
+
+            const input = document.createElement('input');
+            input.type = options.type || 'number';
+            input.id = id;
+            input.setAttribute('data-testid', id);
+            input.value = options.value ?? '50';
+            input.name = id;
+            input.autocomplete = 'off';
+
+            if (options.min !== undefined) input.min = String(options.min);
+            if (options.max !== undefined) input.max = String(options.max);
+            if (options.step !== undefined) input.step = String(options.step);
+            if (options.disabled) input.disabled = true;
+            if (options.readonly) input.readOnly = true;
+
+            if (options.dataAttributes) {
+                Object.entries(options.dataAttributes).forEach(([attr, value]) => {
+                    input.setAttribute(attr, value);
+                });
+            }
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+
+            if (options.helpText) {
+                const help = document.createElement('small');
+                help.textContent = options.helpText;
+                help.style.display = 'block';
+                help.style.marginTop = '4px';
+                wrapper.appendChild(help);
+            }
+
+            container.appendChild(wrapper);
+            return input;
+        };
+
+        window.clearAdditionalInputs = function clearAdditionalInputs() {
+            const container = document.getElementById('additional-inputs');
+            if (!container) return;
+            container.innerHTML = '';
+            container.style.display = 'none';
+        };
+
+        window.testPageReady = true;
+    </script>
+</body>
+</html>

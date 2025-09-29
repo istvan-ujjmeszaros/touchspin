@@ -56,8 +56,8 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
       await resolveImport(
         '@touchspin/renderer-vanilla',
         '@touchspin/renderer-vanilla',
-        '/packages/renderers/vanilla/dist/index.js',
-        '/packages/renderers/vanilla/devdist/index.js'
+        '/packages/renderers/vanilla/dist/VanillaRenderer.js',
+        '/packages/renderers/vanilla/devdist/VanillaRenderer.js'
       );
 
       // Store modules globally for the web component to use
@@ -140,7 +140,7 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
  */
 export async function initializeWebComponentTest(page: Page, debug = false): Promise<void> {
   // Load the fixture page
-  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
 
   // Install DOM helpers
   await page.evaluate(() => {

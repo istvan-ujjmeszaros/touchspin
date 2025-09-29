@@ -1,6 +1,6 @@
 /**
  * Feature: Vanilla renderer dynamic updates and settings changes
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html
  */
 
 /*
@@ -34,6 +34,9 @@
 
 import { test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+
+const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
+const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html';
 
 /**
  * Scenario: updates button text dynamically

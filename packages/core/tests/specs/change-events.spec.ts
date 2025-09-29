@@ -1,83 +1,33 @@
 /**
- * Feature: Core change & boundary behaviors (sample spec)
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Feature: Core change & boundary behaviors (API methods only)
+ * Background: fixture = /packages/core/tests/fixtures/core-api-fixture.html
  */
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [x] increases value on click on up button and triggers change event
- * [x] decreases value on click on down button and triggers change event
  * [x] triggers change event on blur when value changed
  * [x] does not trigger change event on blur when value unchanged
  * [x] Mount does not emit change event
- * [x] Clicking up caps at max with only real transitions emitting change
- * [x] Clicking down caps at min with only real transitions emitting change
  * [x] Blur value above max clamps to max with single change event
  * [x] Blur value below min clamps to min with single change event
  * [x] Blur unchanged value does not emit change event
  * [x] Callable startupspin and stopspin emit start and stop events in order
- * [x] Button click increments value and emits spin start and stop events
- * [x] Reaching max emits on max event exactly once
- * [x] Reaching min emits on min event exactly once
- * [x] UpdateSettings increasing max allows a further increment
- * [x] UpdateSettings decreasing max clamps current value immediately
  * [x] Keyboard ArrowUp increments by step
  * [x] Wheel scrolling down decrements by step when enabled
- * [x] Decimal step increments and clamps correctly
  * [x] Decimal rounding on blur respects decimals option
- * [x] Destroy removes artifacts while other instance remains intact
  * [x] Programmatic value setting on text input preserves non-numeric values (no auto-sanitization)
- * [x] Uponce from max stays at max with no change event
- * [x] Range with negatives increments across zero correctly
  */
 
 import { test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
 import {
-  typeInInput,
   fillWithValueAndBlur,
-  fillWithValue,
-  setValueSilentlyAndBlur, selectAllInInput,
+  setValueSilentlyAndBlur,
 } from '../__shared__/helpers/interactions/input';
-import { clickUpButton, clickDownButton } from '../__shared__/helpers/interactions/buttons';
 import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
 import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '../__shared__/helpers/events/log';
-import { initializeTouchspinWithVanilla } from '../__shared__/helpers/core/initialization';
-import { getNumericValue } from '../__shared__/helpers/core/api';
-import { createAdditionalInput } from '../__shared__/helpers/test-utilities/fixtures';
-
- /**
-  * Scenario: increases value on click on up button and triggers change event
-  * Given the fixture page is loaded
-  * When I click the up button
-  * Then the value increases and change event is fired
-  */
-test('increases value on click on up button and triggers change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '1');
-  const changeEventCount = await countEventInLog(page, 'change');
-  test.expect(changeEventCount).toBe(1);
-});
-
- /**
-  * Scenario: decreases value on click on down button and triggers change event
-  * Given the fixture page is loaded
-  * When I click the down button
-  * Then the value decreases and change event is fired
-  */
-test('decreases value on click on down button and triggers change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '1' });
-  await clickDownButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '0');
-  const changeEventCount = await countEventInLog(page, 'change');
-  test.expect(changeEventCount).toBe(1);
-});
+import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
 
  /**
   * Scenario: triggers change event on blur when value changed
@@ -86,9 +36,9 @@ test('decreases value on click on down button and triggers change event', async 
   * Then a change event is fired
   */
 test('triggers change event on blur when value changed', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
   await fillWithValueAndBlur(page, 'test-input', '5');
   await expectValueToBe(page, 'test-input', '5');
   const changeEventCount = await countEventInLog(page, 'change');
@@ -102,12 +52,12 @@ test('triggers change event on blur when value changed', async ({ page }) => {
   * Then no change event is fired
   */
 test('does not trigger change event on blur when value unchanged', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
   // Focus input but don't change value, then blur
-  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  await elements.input.focus();
+  const input = page.getByTestId('test-input');
+  await input.focus();
   await page.keyboard.press('Tab');
   await expectValueToBe(page, 'test-input', '0');
   const changeEventCount = await countEventInLog(page, 'change');
@@ -123,87 +73,18 @@ test('does not trigger change event on blur when value unchanged', async ({ page
  * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "42" }, "expectEvents": [] }
  */
 test('Mount does not emit change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
   await clearEventLog(page);
 
   // Initialize TouchSpin - this should not emit change events
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 42 });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: 42 });
 
   const changeEventCount = await countEventInLog(page, 'change');
   test.expect(changeEventCount).toBe(0);
 
   // Verify the value was set correctly without change events
   await expectValueToBe(page, 'test-input', '42');
-});
-
-/**
- * Scenario: Clicking up caps at max with only real transitions emitting change
- * Given the fixture page is loaded with value near max
- * When I click the up button multiple times beyond max
- * Then the value caps at max and only real transitions emit change events
- * Params:
- * { "settings": { "min": 0, "max": 100, "step": 2, "initval": "96" }, "expectChangeCount": 2 }
- */
-test('Clicking up caps at max with only real transitions emitting change', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 2, min: 0, max: 100, initval: 96 });
-  await clearEventLog(page);
-
-  // Click up: 96 -> 98 (should emit change)
-  await clickUpButton(page, 'test-input');
-  let changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1);
-
-  // Click up: 98 -> 100 (should emit change)
-  await clickUpButton(page, 'test-input');
-  changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(2);
-
-  // Click up: 100 -> 100 (should NOT emit change - no real transition)
-  await clickUpButton(page, 'test-input');
-  changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(2); // Still 2, no new change event
-
-  await expectValueToBe(page, 'test-input', '100');
-});
-
-/**
- * Scenario: Clicking down caps at min with only real transitions emitting change
- * Given the fixture page is loaded with value near min
- * When I click the down button multiple times beyond min
- * Then the value caps at min and only real transitions emit change events
- * Params:
- * { "settings": { "min": 0, "max": 10, "step": 2, "initval": "6" }, "expectChangeCount": 3 }
- */
-test('Clicking down caps at min with only real transitions emitting change', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 2, min: 0, max: 10, initval: 6 });
-  await clearEventLog(page);
-
-  // Click down: 6 -> 4 (should emit change)
-  await clickDownButton(page, 'test-input');
-  let changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1);
-
-  // Click down: 4 -> 2 (should emit change)
-  await clickDownButton(page, 'test-input');
-  changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(2);
-
-  // Click down: 2 -> 0 (should emit change)
-  await clickDownButton(page, 'test-input');
-  changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(3);
-
-  // Click down: 0 -> 0 (should NOT emit change - no real transition)
-  await clickDownButton(page, 'test-input');
-  changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(3); // Still 3, no new change event
-
-  await expectValueToBe(page, 'test-input', '0');
 });
 
 /**
@@ -215,9 +96,9 @@ test('Clicking down caps at min with only real transitions emitting change', asy
  * { "settings": { "min": 0, "max": 50, "step": 5, "initval": "25" }, "expectChangeCount": 1 }
  */
 test('Blur value above max clamps to max with single change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 50, initval: 25 });
+  await initializeTouchspin(page, 'test-input', { step: 5, min: 0, max: 50, initval: 25 });
   await clearEventLog(page);
 
   // Type value above max and blur
@@ -243,9 +124,9 @@ test('Blur value above max clamps to max with single change event', async ({ pag
  * { "settings": { "min": 10, "max": 20, "step": 2, "initval": "12" }, "expectChangeCount": 1 }
  */
 test('Blur value below min clamps to min with single change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 2, min: 10, max: 20, initval: 12 });
+  await initializeTouchspin(page, 'test-input', { step: 2, min: 10, max: 20, initval: 12 });
   await clearEventLog(page);
 
   // Type value below min and blur
@@ -271,9 +152,9 @@ test('Blur value below min clamps to min with single change event', async ({ pag
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "7" }, "expectChangeCount": 0 }
  */
 test('Blur unchanged value does not emit change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 7 });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 10, initval: 7 });
   await clearEventLog(page);
 
   // Focus, type the same value, and blur
@@ -295,9 +176,9 @@ test('Blur unchanged value does not emit change event', async ({ page }) => {
  * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "50" }, "expectEvents": ["touchspin.on.startspin","touchspin.on.startupspin","touchspin.on.stopupspin","touchspin.on.stopspin"] }
  */
 test('Callable startupspin and stopspin emit start and stop events in order', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 50 });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: 50 });
   await clearEventLog(page);
 
   // Hold up arrow key should emit start and stop events in order
@@ -318,143 +199,6 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
 });
 
 /**
- * Scenario: Button click increments value and emits spin start and stop events
- * Given the fixture page is loaded
- * When I click the up button
- * Then the value increments and spin start and stop events are emitted
- * Params:
- * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "50" }, "expectEvents": ["touchspin.on.startspin","touchspin.on.stopspin"] }
- */
-test('Button click increments value and emits spin start and stop events', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 50 });
-  await clearEventLog(page);
-
-  // Click button - buttons ARE spinners and DO emit spin start/stop events
-  await clickUpButton(page, 'test-input');
-
-  // Check that spin events ARE emitted for button clicks (corrected expectation)
-  const hasStartSpin = await hasEventInLog(page, 'touchspin.on.startspin');
-  const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
-
-  test.expect(hasStartSpin).toBe(true);
-  test.expect(hasStopSpin).toBe(true);
-
-  // Should increment the value
-  await expectValueToBe(page, 'test-input', '51');
-});
-
-/**
- * Scenario: Reaching max emits on max event exactly once
- * Given the fixture page is loaded near max value
- * When I call uponce to reach max
- * Then on max event is emitted exactly once
- * Params:
- * { "settings": { "min": 0, "max": 10, "step": 10, "initval": "0" }, "expectEvents": ["touchspin.on.change","touchspin.on.max"] }
- */
-test('Reaching max emits on max event exactly once', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 10, min: 0, max: 10, initval: 0 });
-  await clearEventLog(page);
-
-  // Click up to reach max in one step
-  await clickUpButton(page, 'test-input');
-
-  // Check max event count using typed helper
-  const maxEventCount = await countEventInLog(page, 'touchspin.on.max');
-
-  test.expect(maxEventCount).toBe(1);
-  await expectValueToBe(page, 'test-input', '10');
-});
-
-/**
- * Scenario: Reaching min emits on min event exactly once
- * Given the fixture page is loaded at max value
- * When I click the down button to reach min
- * Then on min event is emitted exactly once
- * Params:
- * { "settings": { "min": 0, "max": 10, "step": 10, "initval": "10" }, "expectEvents": ["touchspin.on.change","touchspin.on.min"] }
- */
-test('Reaching min emits on min event exactly once', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 10, min: 0, max: 10, initval: 10 });
-  await clearEventLog(page);
-
-  // Click down to reach min in one step
-  await clickDownButton(page, 'test-input');
-
-  // Check min event count using typed helper
-  const minEventCount = await countEventInLog(page, 'touchspin.on.min');
-
-  test.expect(minEventCount).toBe(1);
-  await expectValueToBe(page, 'test-input', '0');
-});
-
-/**
- * Scenario: UpdateSettings increasing max allows a further increment
- * Given the fixture page is loaded at current max
- * When I update settings to increase max and call uponce
- * Then the value can increment beyond the previous max
- * Params:
- * { "settings": { "min": 0, "max": 5, "step": 1, "initval": "5" }, "updateSettings": { "max": 10, "step": 2 } }
- */
-test('UpdateSettings increasing max allows a further increment', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 5, initval: 5 });
-
-  // At max, should not be able to increment
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '5');
-
-  // Update settings to increase max and change step
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (core) {
-      core.updateSettings({ max: 10, step: 2 });
-    }
-  }, { testId: 'test-input' });
-
-  // Now should be able to increment beyond previous max
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '8');
-});
-
-/**
- * Scenario: UpdateSettings decreasing max clamps current value immediately
- * Given the fixture page is loaded with a high value
- * When I update settings to decrease max
- * Then the current value clamps to the new max immediately
- * Params:
- * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "8" }, "updateSettings": { "max": 5 } }
- */
-test('UpdateSettings decreasing max clamps current value immediately', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 8 });
-
-  // Update settings to decrease max
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (core) {
-      core.updateSettings({ max: 5 });
-    }
-  }, { testId: 'test-input' });
-
-  // Should clamp to new max
-  await expectValueToBe(page, 'test-input', '5');
-
-  // Should have emitted change event due to clamping
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1);
-});
-
-/**
  * Scenario: Keyboard ArrowUp increments by step
  * Given the fixture page is loaded
  * When I press ArrowUp on the input
@@ -463,12 +207,12 @@ test('UpdateSettings decreasing max clamps current value immediately', async ({ 
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "5" } }
  */
 test('Keyboard ArrowUp increments by step', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5 });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5 });
   await clearEventLog(page);
 
-  const { input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const input = page.getByTestId('test-input');
   await input.focus();
   await page.keyboard.press('ArrowUp');
 
@@ -487,41 +231,18 @@ test('Keyboard ArrowUp increments by step', async ({ page }) => {
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "5", "mousewheel": true } }
  */
 test('Wheel scrolling down decrements by step when enabled', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5, mousewheel: true });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5, mousewheel: true });
   await clearEventLog(page);
 
   // Focus input and scroll down
-  const { input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const input = page.getByTestId('test-input');
   await input.focus();
   await input.hover();
   await page.mouse.wheel(0, 100); // Scroll down
 
   await expectValueToBe(page, 'test-input', '4');
-
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1);
-});
-
-/**
- * Scenario: Decimal step increments and clamps correctly
- * Given the fixture page is loaded with decimal step
- * When I call uponce
- * Then the value increments by the decimal step amount
- * Params:
- * { "settings": { "min": 0, "max": 2, "step": 0.1, "initval": "1.0", "decimals": 1 } }
- */
-test('Decimal step increments and clamps correctly', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 0.1, min: 0, max: 2, initval: 1.0, decimals: 1 });
-  await clearEventLog(page);
-
-  // Click up to increment by decimal step
-  await clickUpButton(page, 'test-input');
-
-  await expectValueToBe(page, 'test-input', '1.1');
 
   const changeCount = await countEventInLog(page, 'change');
   test.expect(changeCount).toBe(1);
@@ -536,9 +257,9 @@ test('Decimal step increments and clamps correctly', async ({ page }) => {
  * { "settings": { "min": 0, "max": 9, "step": 0.01, "initval": "1.00", "decimals": 2 } }
  */
 test('Decimal rounding on blur respects decimals option', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 0.01, min: 0, max: 9, initval: 1.00, decimals: 2 });
+  await initializeTouchspin(page, 'test-input', { step: 0.01, min: 0, max: 9, initval: 1.00, decimals: 2 });
   await clearEventLog(page);
 
   // Type value with extra decimals and blur
@@ -546,44 +267,6 @@ test('Decimal rounding on blur respects decimals option', async ({ page }) => {
 
   // Should round to 2 decimal places
   await expectValueToBe(page, 'test-input', '1.23');
-
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(1);
-});
-
-/**
- * Scenario: Destroy removes artifacts while other instance remains intact
- * Given the fixture page is loaded with two TouchSpin instances
- * When I destroy one instance
- * Then its artifacts are removed but the other instance remains intact
- * Params:
- * { "settings": { "min": 0, "max": 9, "step": 1, "initval": "5" }, "inputOptions": { "id": "second-input", "value": "3" } }
- */
-test('Destroy removes artifacts while other instance remains intact', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-
-  // Create additional input for second instance using proper helper
-  await createAdditionalInput(page, 'second-input', { value: '3' });
-
-  // Initialize both instances
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 9, initval: 5 });
-  await initializeTouchspinWithVanilla(page, 'second-input', { step: 1, min: 0, max: 9, initval: 3 });
-
-  // Destroy first instance
-  await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (core) {
-      core.destroy();
-    }
-  });
-
-  await clearEventLog(page);
-
-  // Second instance should still work
-  await clickUpButton(page, 'second-input');
-  await expectValueToBe(page, 'second-input', '4');
 
   const changeCount = await countEventInLog(page, 'change');
   test.expect(changeCount).toBe(1);
@@ -598,9 +281,9 @@ test('Destroy removes artifacts while other instance remains intact', async ({ p
  * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "0" }, "inputType": "text" }
  */
 test('Programmatic value setting on text input preserves non-numeric values (no auto-sanitization)', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: 0, max: 100, initval: 0 });
+  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: 0 });
   await clearEventLog(page);
 
   // Temporarily change input type to 'text' to allow non-numeric characters
@@ -617,56 +300,4 @@ test('Programmatic value setting on text input preserves non-numeric values (no 
 
   const changeCount = await countEventInLog(page, 'change');
   test.expect(changeCount).toBe(0); // No change event fired = no sanitization
-});
-
-
-/**
- * Scenario: Uponce from max stays at max with no change event
- * Given the fixture page is loaded at max value
- * When I call uponce
- * Then the value stays at max with no change event
- * Params:
- * { "settings": { "min": 0, "max": 10, "step": 5, "initval": "10" }, "expectChangeCount": 0 }
- */
-test('Uponce from max stays at max with no change event', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, min: 0, max: 10, initval: 10 });
-  await clearEventLog(page);
-
-  // Click up when already at max - should not emit change event
-  await clickUpButton(page, 'test-input');
-
-  await expectValueToBe(page, 'test-input', '10');
-
-  // Should not emit change event since no value change occurred
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(0);
-});
-
-/**
- * Scenario: Range with negatives increments across zero correctly
- * Given the fixture page is loaded with negative range
- * When I call uponce from a negative value
- * Then the value increments correctly across zero
- * Params:
- * { "settings": { "min": -5, "max": 5, "step": 1, "initval": "-5" } }
- */
-test('Range with negatives increments across zero correctly', async ({ page }) => {
-  const testFixtureUrl = '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-  await page.goto(testFixtureUrl);
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, min: -5, max: 5, initval: -1 });
-  await clearEventLog(page);
-
-  // Increment from -1 to 0
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '0');
-
-  // Increment from 0 to 1
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '1');
-
-  // Should have 2 change events for the 2 increments
-  const changeCount = await countEventInLog(page, 'change');
-  test.expect(changeCount).toBe(2);
 });

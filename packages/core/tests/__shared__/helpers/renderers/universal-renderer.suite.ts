@@ -9,11 +9,10 @@ import { initializeTouchspinWithRenderer } from '../core/initialization';
  * Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.
  * These tests focus on functionality and data attributes, not framework-specific classes.
  */
-export function universalRendererSuite(name: string, rendererUrl: string, fixturePath?: string) {
+export function universalRendererSuite(name: string, rendererUrl: string, fixturePath: string) {
   test.describe(`Universal renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
-      const fixture = fixturePath || '/packages/core/tests/__shared__/fixtures/test-fixture.html';
-      await page.goto(fixture);
+      await page.goto(fixturePath);
       await installDomHelpers(page);
 
       // Ensure window.__ts is available before proceeding

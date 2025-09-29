@@ -1,6 +1,6 @@
 /**
  * Feature: Vanilla renderer DOM structure assembly
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html
  */
 
 /*
@@ -16,16 +16,16 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
-// Vanilla Renderer URL for tests
-const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/index.js';
+const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
+const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-clean-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Vanilla', VANILLA_RENDERER_URL);
+universalRendererSuite('Vanilla', VANILLA_RENDERER_URL, VANILLA_FIXTURE);
 
 // Vanilla-specific tests (framework-independent behavior)
 test.describe('Vanilla specific behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto(VANILLA_FIXTURE);
     await installDomHelpers(page);
   });
 

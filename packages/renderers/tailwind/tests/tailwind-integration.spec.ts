@@ -49,7 +49,7 @@ test.skip('integrates with Tailwind CSS configuration', async ({ page }) => {
   await apiHelpers.installDomHelpers(page);
 
   // Initialize TouchSpin with Tailwind renderer on the advanced input (with input-group equivalent)
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/tailwind/devdist/index.js');
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/tailwind/devdist/TailwindRenderer.js');
 
   // Verify TouchSpin creates proper structure with Tailwind utility classes
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');

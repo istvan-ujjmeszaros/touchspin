@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap 4 TouchSpin Test Fixture</title>
+    <title>Bootstrap 4 TouchSpin Clean Test Fixture</title>
 
     <!-- Bootstrap 4 CSS -->
     <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../devdist/touchspin-bootstrap4.css" rel="stylesheet">
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
     <!-- Bootstrap 4 JS -->
     <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
+    <!-- Import map with relative paths -->
     <script type="importmap">
     {
         "imports": {
             "@touchspin/core": "../../../../core/devdist/index.js",
             "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
             "@touchspin/core/events": "../../../../core/devdist/events.js",
-        "@touchspin/renderer-bootstrap4": "../../devdist/Bootstrap4Renderer.js",
+            "@touchspin/renderer-bootstrap4": "../../devdist/Bootstrap4Renderer.js",
             "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
         }
     }
+    </script>
+
+    <!-- Load renderer and set as default before any tests run -->
+    <script type="module">
+        import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
+
+        window.TouchSpinDefaultRenderer = Bootstrap4Renderer;
+        window.testPageReady = true;
     </script>
 </head>
 <body>
@@ -35,7 +40,7 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h4 class="card-title mb-0">
-                            ⚙️ Bootstrap 4 TouchSpin Test
+                            ⚙️ Bootstrap 4 TouchSpin Clean Test
                         </h4>
                     </div>
                     <div class="card-body">
@@ -120,7 +125,7 @@
     </div>
 
     <script type="module">
-        // Event logging setup (same as base fixture)
+        // Event logging setup
         window.eventLog = [];
 
         window.logEvent = function(event, detail = {}) {
@@ -245,9 +250,6 @@
             container.innerHTML = '';
             container.style.display = 'none';
         };
-
-        window.testPageReady = true;
     </script>
-
 </body>
 </html>

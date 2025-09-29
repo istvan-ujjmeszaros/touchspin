@@ -9,7 +9,7 @@
 ```typescript
 /**
  * Feature: Core value management
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+* Background: fixture = /packages/core/tests/fixtures/core-api-fixture.html
  */
 
 /*

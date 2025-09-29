@@ -39,8 +39,8 @@ Instead of shared core fixtures, use framework-specific fixtures:
   await page.goto('../fixtures/tailwind-fixture.html');
 
 ❌ WRONG:
-  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
-  await page.goto('/packages/core/tests/__shared__/fixtures/minimal-fixture.html');
+  await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
+  await page.goto('/packages/core/tests/fixtures/<anything>.html');
 
 Why framework-specific fixtures are required:
 - Proper CSS/JS dependencies for each framework version
@@ -144,7 +144,7 @@ function scanFileForSharedFixtures(filePath) {
       const lineNum = i + 1;
 
       // Look for any reference to shared core fixtures
-      if (line.includes('/packages/core/tests/__shared__/fixtures/')) {
+      if (line.includes('/packages/core/tests/fixtures/')) {
         violations.push({
           line: lineNum,
           content: line.trim(),

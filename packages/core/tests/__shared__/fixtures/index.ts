@@ -19,7 +19,6 @@ export function fixtureUrl(fixtureName: string): string {
 export const Fixtures = {
   minimal: 'minimal',
   multi: 'multi',
-  testFixture: 'test-fixture',
   abCompare: 'ab-compare',
 } as const;
 
@@ -29,6 +28,5 @@ export const Fixtures = {
 export const FixtureUrls = {
   minimal: fixtureUrl('minimal'),
   multi: fixtureUrl('multi'),
-  testFixture: fixtureUrl('test-fixture'),
   abCompare: fixtureUrl('ab-compare'),
 } as const;

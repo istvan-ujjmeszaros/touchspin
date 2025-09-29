@@ -16,7 +16,7 @@ import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/te
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
 // Bootstrap 3 Renderer URL for tests
-const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/index.js';
+const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/Bootstrap3Renderer.js';
 const BOOTSTRAP3_FIXTURE = '/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html';
 
 // Run universal tests that all renderers must pass

@@ -1,6 +1,6 @@
 /**
  * Feature: Core event system and emission
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/core/tests/fixtures/core-api-fixture.html
  */
 
 /*
@@ -47,7 +47,7 @@ import {
 
 test.describe('Core event system and emission', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);

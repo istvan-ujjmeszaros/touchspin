@@ -1,6 +1,6 @@
 /**
  * Feature: jQuery plugin initialization patterns
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html
  */
 
 /*
@@ -39,7 +39,7 @@ import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquer
 
 test.describe('jQuery plugin initialization patterns', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
 

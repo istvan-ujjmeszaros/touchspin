@@ -19,25 +19,25 @@ Here are the correct initialization patterns for each type of test in the projec
 
 Core tests focus on the fundamental business logic of TouchSpin, independent of any specific UI framework.
 
-**Key Helper:** `initializeTouchspinWithVanilla` from `@touchspin/core/test-helpers`
+**Key Helper:** `initializeTouchspin` from `@touchspin/core/test-helpers`
 
 **Example:** (`packages/core/tests/specs/api-operations.spec.ts`)
 
 ```typescript
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+import { initializeTouchspin } from '@touchspin/core/test-helpers';
 
 test.describe('Core API operations', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);
   });
 
   test('upOnce increments value by one step', async ({ page }) => {
-    await initializeTouchspinWithVanilla(page, 'test-input', {
+    await initializeTouchspin(page, 'test-input', {
       step: 2, initval: 10
     });
 
@@ -51,10 +51,9 @@ test.describe('Core API operations', () => {
 
 **Explanation:**
 
--   `initializeTouchspinWithVanilla` is imported from `@touchspin/core/test-helpers`.
--   It takes the `page` object, the `testId` of the input element, and an options object.
--   This helper creates a full TouchSpin Core instance with the VanillaRenderer, providing complete functionality including buttons and all API methods.
--   Tests can interact with the component via API calls (`incrementViaAPI`, `setValueViaAPI`, etc.), button clicks (`clickUpButton`, `clickDownButton`), or keyboard/wheel events.
+-   `initializeTouchspin` mounts the core engine without relying on any renderer. Use this for API, keyboard, or mouse-wheel behaviours that do not require renderer-specific DOM.
+-   Pass the Playwright `page`, the target `testId`, and any core options you need for the scenario.
+-   Renderer interactions (DOM structure, button styling, prefix/postfix injection, etc.) belong in the renderer packages where dedicated fixtures exist.
 
 ---
 
@@ -73,7 +72,7 @@ import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquer
 
 test.describe('jQuery plugin initialization', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html');
     await installJqueryPlugin(page);
   });
 
@@ -106,11 +105,11 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
-const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
+const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
 
 test.describe('Bootstrap 5 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
     await installDomHelpers(page);
   });
 

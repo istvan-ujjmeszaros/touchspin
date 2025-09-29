@@ -17,7 +17,7 @@ import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
 // Tailwind Renderer URL for tests
-const TAILWIND_RENDERER_URL = '/packages/renderers/tailwind/devdist/index.js';
+const TAILWIND_RENDERER_URL = '/packages/renderers/tailwind/devdist/TailwindRenderer.js';
 const TAILWIND_FIXTURE = '/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html';
 
 // Run universal tests that all renderers must pass

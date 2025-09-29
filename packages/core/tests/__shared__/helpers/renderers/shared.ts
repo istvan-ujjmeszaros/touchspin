@@ -3,10 +3,10 @@ import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinWithRenderer } from '../core/initialization';
 
-export function defineSharedRendererTests(name: string, rendererUrl: string) {
+export function defineSharedRendererTests(name: string, rendererUrl: string, fixturePath: string) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+      await page.goto(fixturePath);
       await installDomHelpers(page);
     });
 

@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component reactive attribute updates
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
  */
 
 /*

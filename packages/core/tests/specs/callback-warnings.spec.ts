@@ -1,6 +1,6 @@
 /**
  * Feature: Callback pairing warnings
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/core/tests/fixtures/core-api-fixture.html
  */
 
 /*
@@ -22,7 +22,7 @@ import { initializeTouchspin, updateSettingsViaAPI } from '../test-helpers/core-
 
 test.describe('TouchSpin callback pairing warnings', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+    await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
   });

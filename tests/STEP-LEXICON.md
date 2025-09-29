@@ -97,31 +97,31 @@
 ## renderers
 
 - **Bootstrap Family Shared Test Suite**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath?)`
+  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Bootstrap-specific patterns while remaining version-agnostic.**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath?)`
+  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **different from other frameworks like Tailwind or Vanilla. These tests focus on**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath?)`
+  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Tests behaviors that are common to ALL Bootstrap variants (3, 4, and 5) but**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath?)`
+  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.**
-  - `universalRendererSuite(name, rendererUrl, fixturePath?)`
+  - `universalRendererSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 - **These tests focus on functionality and data attributes, not framework-specific classes.**
-  - `universalRendererSuite(name, rendererUrl, fixturePath?)`
+  - `universalRendererSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 - **Universal Renderer Test Suite**
-  - `universalRendererSuite(name, rendererUrl, fixturePath?)`
+  - `universalRendererSuite(name, rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 ## test-utilities

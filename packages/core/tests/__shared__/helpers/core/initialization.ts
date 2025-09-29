@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
 import { inputById } from './selectors';
 import { setupLogging } from '../events/setup';
-import { coreUrl as coreRuntimeUrl, vanillaRendererClassUrl } from '../runtime/paths';
+import { coreUrl as coreRuntimeUrl } from '../runtime/paths';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { preFetchCheck } from '../test-utilities/network';
 
@@ -44,7 +44,20 @@ export async function initializeTouchspin(
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
     `[data-testid=\"${testId}\"][data-touchspin-injected]`,
   ].join(', ');
-  await page.locator(sel).first().waitFor({ timeout: 5000 });
+
+  try {
+    await page.locator(sel).first().waitFor({ timeout: 5000 });
+  } catch {
+    // No renderer applied; wait until the core instance is registered instead
+    await page.waitForFunction((id: string) => {
+      try {
+        window.__ts?.requireCoreByTestId(id);
+        return true;
+      } catch {
+        return false;
+      }
+    }, testId, { timeout: 5000 });
+  }
 }
 
 export async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
@@ -72,36 +85,6 @@ export async function initializeTouchspinWithBootstrap5(
  * Given TouchSpin is initialized on "{testId}" with {settings}
  * @note Uses vanilla renderer for core testing
  */
-export async function initializeTouchspinWithVanilla(
-  page: Page,
-  testId: string,
-  options: Partial<TouchSpinCoreOptions> = {}
-): Promise<void> {
-  await setupLogging(page);
-  await page.evaluate(async ({ testId, options, coreUrl, rendererUrl }) => {
-    const origin = (globalThis as any).location?.origin ?? '';
-    const { TouchSpinCore } = (await import(new URL(coreUrl, origin).href)) as unknown as {
-      TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
-    };
-    const rendererMod = (await import(new URL(rendererUrl, origin).href)) as unknown as { default?: unknown };
-    const VanillaRenderer = rendererMod.default as unknown;
-
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (!input) throw new Error(`Input with testId "${testId}" not found`);
-    if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
-
-    const core = new TouchSpinCore(input, { ...options, renderer: VanillaRenderer } as Partial<TouchSpinCoreOptions>);
-    (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
-    (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-  }, { testId, options, coreUrl: coreRuntimeUrl, rendererUrl: vanillaRendererClassUrl });
-
-  const sel2 = [
-    `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
-    `[data-testid=\"${testId}\"][data-touchspin-injected]`,
-  ].join(', ');
-  await page.locator(sel2).first().waitFor({ timeout: 5000 });
-}
-
 /* ──────────────────────────
  * Generic renderer initializer (by URL)
  * ────────────────────────── */
@@ -113,6 +96,12 @@ export async function initializeTouchspinWithRenderer(
   options: Partial<TouchSpinCoreOptions> = {},
   exportName?: string
 ): Promise<void> {
+  await page.waitForFunction(() => (globalThis as unknown as { testPageReady?: unknown }).testPageReady === true, {
+    timeout: 2000
+  }).catch(() => {
+    // Ignore readiness wait failures; fixture may not define testPageReady
+  });
+
   await setupLogging(page);
   await installDomHelpers(page);
 
@@ -135,12 +124,19 @@ export async function initializeTouchspinWithRenderer(
         throw new Error(`TouchSpinCore not found in module: ${coreUrl}`);
       }
 
-      // Import renderer module
-      const rendererModule = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
-      const Renderer = (exportName ? (rendererModule[exportName] as unknown) : (rendererModule.default as unknown)) ?? rendererModule.default;
+      // Resolve renderer: prefer module import, but allow fixtures to provide a default renderer globally
+      let Renderer: unknown;
+      const fallbackRenderer = (globalThis as unknown as { TouchSpinDefaultRenderer?: unknown }).TouchSpinDefaultRenderer;
+
+      if (fallbackRenderer && !exportName) {
+        Renderer = fallbackRenderer;
+      } else {
+        const rendererModule = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
+        Renderer = exportName ? rendererModule[exportName] ?? rendererModule.default : rendererModule.default ?? rendererModule[exportName ?? 'default'];
+      }
 
       if (!Renderer) {
-        throw new Error(`Renderer not found in module: ${rendererUrl} (export: ${exportName || 'default'})`);
+        throw new Error(`Renderer not found (module: ${rendererUrl}, export: ${exportName || 'default'})`);
       }
 
       // eslint-disable-next-line -- Required in browser context

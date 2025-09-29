@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap 4 TouchSpin Test Fixture</title>
+    <title>Bootstrap 5 TouchSpin Clean Test Fixture</title>
 
-    <!-- Bootstrap 4 CSS -->
+    <!-- Bootstrap 5 CSS -->
     <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../devdist/touchspin-bootstrap4.css" rel="stylesheet">
+    <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- Bootstrap 4 JS -->
+    <!-- Bootstrap 5 JS -->
     <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
+    <!-- Import map with relative paths -->
     <script type="importmap">
     {
         "imports": {
             "@touchspin/core": "../../../../core/devdist/index.js",
             "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
             "@touchspin/core/events": "../../../../core/devdist/events.js",
-        "@touchspin/renderer-bootstrap4": "../../devdist/Bootstrap4Renderer.js",
+            "@touchspin/renderer-bootstrap5": "../../devdist/Bootstrap5Renderer.js",
             "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
         }
     }
+    </script>
+
+    <!-- Load renderer and set as default before any tests run -->
+    <script type="module">
+        import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+
+        window.TouchSpinDefaultRenderer = Bootstrap5Renderer;
+        window.testPageReady = true;
     </script>
 </head>
 <body>
@@ -35,13 +40,13 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h4 class="card-title mb-0">
-                            ⚙️ Bootstrap 4 TouchSpin Test
+                            ⚙️ Bootstrap 5 TouchSpin Clean Test
                         </h4>
                     </div>
                     <div class="card-body">
                         <!-- Simple test input for basic TouchSpin functionality -->
-                        <div class="form-group">
-                            <label for="test-input" class="font-weight-bold">Simple Input:</label>
+                        <div class="mb-4">
+                            <label for="test-input" class="form-label fw-semibold">Simple Input:</label>
                             <input
                                 type="number"
                                 id="test-input"
@@ -51,20 +56,18 @@
                                 name="test-input"
                                 placeholder="Enter value"
                             />
-                            <small class="form-text text-muted">
+                            <div class="form-text">
                                 Standalone input for basic TouchSpin functionality tests.
-                            </small>
+                            </div>
                         </div>
 
-                        <!-- Advanced test input with Bootstrap 4 input-group -->
-                        <div class="form-group">
-                            <label for="test-input-advanced" class="font-weight-bold">Advanced Input Group:</label>
+                        <!-- Advanced test input with Bootstrap 5 input-group -->
+                        <div class="mb-4">
+                            <label for="test-input-advanced" class="form-label fw-semibold">Advanced Input Group:</label>
                             <div class="input-group input-group-lg">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        #
-                                    </span>
-                                </div>
+                                <span class="input-group-text">
+                                    #
+                                </span>
                                 <input
                                     type="number"
                                     id="test-input-advanced"
@@ -74,13 +77,11 @@
                                     name="test-input-advanced"
                                     placeholder="Enter value"
                                 />
-                                <div class="input-group-append">
-                                    <span class="input-group-text text-muted">units</span>
-                                </div>
+                                <span class="input-group-text text-muted">units</span>
                             </div>
-                            <small class="form-text text-muted">
-                                Input-group structure for testing Bootstrap 4 integration with TouchSpin controls.
-                            </small>
+                            <div class="form-text">
+                                Input-group structure for testing Bootstrap 5 integration with TouchSpin controls.
+                            </div>
                         </div>
 
                         <!-- Container for dynamically injected inputs -->
@@ -104,11 +105,11 @@
                         <textarea
                             id="event-log"
                             data-testid="event-log"
-                            class="form-control border-0 rounded-0"
+                            class="form-control border-0 rounded-0 font-monospace small"
                             rows="10"
                             readonly
                             placeholder="Event log will appear here..."
-                            style="resize: vertical; min-height: 200px; font-family: monospace; font-size: 12px;"
+                            style="resize: vertical; min-height: 200px;"
                         ></textarea>
                     </div>
                 </div>
@@ -120,7 +121,7 @@
     </div>
 
     <script type="module">
-        // Event logging setup (same as base fixture)
+        // Event logging setup
         window.eventLog = [];
 
         window.logEvent = function(event, detail = {}) {
@@ -163,17 +164,17 @@
             }
         });
 
-        // Helper to create additional inputs with Bootstrap 4 styling
+        // Helper to create additional inputs with Bootstrap 5 styling
         window.createTestInput = function(id, options = {}) {
             const container = document.getElementById('additional-inputs');
             container.style.display = 'block';
 
             const wrapper = document.createElement('div');
-            wrapper.className = 'form-group';
+            wrapper.className = 'mb-4';
 
             const label = document.createElement('label');
             label.textContent = options.label || `Input ${id}:`;
-            label.className = 'font-weight-bold';
+            label.className = 'form-label fw-semibold';
             label.setAttribute('for', id);
 
             const inputGroup = document.createElement('div');
@@ -181,20 +182,17 @@
 
             // Add prepend text if specified
             if (options.prependIcon) {
-                const prependDiv = document.createElement('div');
-                prependDiv.className = 'input-group-prepend';
                 const prependSpan = document.createElement('span');
                 prependSpan.className = 'input-group-text';
                 // Use simple text labels instead of icons
                 const iconMap = {
-                    'cog': '⚙️',
-                    'hashtag': '#',
+                    'gear': '⚙️',
+                    'hash': '#',
                     'list': '📝',
                     'trash': '🗑️'
                 };
                 prependSpan.textContent = iconMap[options.prependIcon] || options.prependIcon;
-                prependDiv.appendChild(prependSpan);
-                inputGroup.appendChild(prependDiv);
+                inputGroup.appendChild(prependSpan);
             }
 
             const input = document.createElement('input');
@@ -216,13 +214,10 @@
 
             // Add append text if specified
             if (options.appendText) {
-                const appendDiv = document.createElement('div');
-                appendDiv.className = 'input-group-append';
                 const appendSpan = document.createElement('span');
                 appendSpan.className = 'input-group-text text-muted';
                 appendSpan.textContent = options.appendText;
-                appendDiv.appendChild(appendSpan);
-                inputGroup.appendChild(appendDiv);
+                inputGroup.appendChild(appendSpan);
             }
 
             wrapper.appendChild(label);
@@ -230,8 +225,8 @@
 
             // Add help text if specified
             if (options.helpText) {
-                const helpDiv = document.createElement('small');
-                helpDiv.className = 'form-text text-muted';
+                const helpDiv = document.createElement('div');
+                helpDiv.className = 'form-text';
                 helpDiv.textContent = options.helpText;
                 wrapper.appendChild(helpDiv);
             }
@@ -245,9 +240,6 @@
             container.innerHTML = '';
             container.style.display = 'none';
         };
-
-        window.testPageReady = true;
     </script>
-
 </body>
 </html>

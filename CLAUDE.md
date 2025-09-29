@@ -148,18 +148,16 @@ const numericValue = await getNumericValue(page, 'test-input');
 expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
 ```
 
-#### Core Testing Strategy: Use Full Initialization
+#### Core Testing Strategy: Renderer-Free First
 
-**IMPORTANT**: For Core package tests that need full TouchSpin functionality, use `initializeTouchspinWithVanilla` which provides:
-- Complete TouchSpin Core instance with VanillaRenderer
-- All API methods (`upOnce()`, `downOnce()`, `setValue()`, etc.)
-- Button interactions (`clickUpButton()`, `clickDownButton()`)
-- Keyboard/wheel events
-- Full UI including buttons
+**IMPORTANT**: Core specs should exercise the engine without mounting a renderer. Use `initializeTouchspin` with `/packages/core/tests/fixtures/core-api-fixture.html` to cover API behaviours, keyboard and wheel interactions, and value-change events.
+
+If you need to make assertions about DOM markup, button layout, prefix/postfix injection, or renderer-specific classes, move those cases into the appropriate renderer package and use its dedicated clean fixture.
 
 **Core Testing Approaches**:
-1. **Full Functionality**: Use `initializeTouchspinWithVanilla` for comprehensive testing
-2. **Callback Testing Only**: Use `core-adapter.ts` stub for callback pairing validation tests
+1. **Engine & API behaviour**: `initializeTouchspin` (no renderer) + `core-api-fixture.html`
+2. **Renderer behaviour**: test inside the renderer package with its clean fixture and `initializeTouchspinWithRenderer`
+3. **Callback-only stubs**: `core-adapter.ts` for synthetic callback validation when no DOM is needed
 
 **Core Test File Status** (All syntax errors fixed):
 - `boundary-enforcement.spec.ts` - Placeholder tests for min/max enforcement
@@ -176,10 +174,10 @@ expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
 
 ```typescript
 // ❌ Pitfall: fixture value 50 with step 3 may become 51 during init
-await initializeTouchspinWithVanilla(page, 'test-input', { step: 3 });
+await initializeTouchspin(page, 'test-input', { step: 3 });
 
 // ✅ Prefer supplying a divisible init value
-await initializeTouchspinWithVanilla(page, 'test-input', { step: 3, initval: 48 });
+await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
 ```
 
 **Rule of thumb (from Handbook):**
@@ -247,8 +245,8 @@ await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
 
 **✅ CORRECT Core Test Pattern:**
 ```typescript
-// Use initval option with full initialization
-await initializeTouchspinWithVanilla(page, 'test-input', {
+// Use initval option with renderer-free initialization
+await initializeTouchspin(page, 'test-input', {
   step: 0.25,
   decimals: 2,
   initval: 10  // Sets value before Core initialization
@@ -258,10 +256,11 @@ expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10.25);
 ```
 
 **Key Differences:**
-- **`initializeTouchspinWithVanilla`**: Creates full TouchSpin Core with VanillaRenderer
+- **`initializeTouchspin`**: Mounts the core engine only—ideal for API, keyboard, mouse-wheel, and event tests
+- **`initializeTouchspinWithRenderer`**: Use inside renderer packages when you need framework-specific DOM assertions
 - **`initializeTouchspinJQuery`**: Uses jQuery wrapper with Bootstrap renderer
 - **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
-- **Full Core provides buttons and complete API**: All interaction methods available
+- **Full Core API via helpers**: All interaction methods (`incrementViaAPI`, `updateSettings`, etc.) remain available without the renderer
 
 ### Phase 3: Renderer Packages 📅 (Planned)
 
@@ -516,11 +515,11 @@ export async function clickUpButton(page: Page, testId: string) { ... }
 export async function expectValueToBe(page: Page, testId: string, expected: string) { ... }
 
 /**
- * Given I mount TouchSpin on "{testId}" with settings
+ * Given I mount TouchSpin core on "{testId}" with {settings}
  * Given TouchSpin is initialized on "{testId}" with {settings}
- * @note Multiple step phrases supported for flexibility
+ * @note Renderer-agnostic initialization for core specs
  */
-export async function initializeTouchspinWithVanilla(page, testId, settings) { ... }
+export async function initializeTouchspin(page, testId, settings) { ... }
 ```
 
 #### Doc-Comment Format
@@ -594,8 +593,8 @@ When Claude generates tests from Gherkin comments, these rules **must** be follo
 // Claude converts from test.skip to test, updates checklist [x]
 test('increases value on click on up button and triggers change event', async ({ page }) => {
   // Implementation using only lexicon steps
-  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
-  await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, initval: '0' });
+  await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
+  await initializeTouchspin(page, 'test-input', { step: 1, initval: '0' });
   await clickUpButton(page, 'test-input');
   await expectValueToBe(page, 'test-input', '1');
   // ... rest using lexicon steps
@@ -624,8 +623,8 @@ When converting a planned scenario from `test.skip()` to `test()`:
 - test.skip('increases value on click on up button and triggers change event', async ({ page }) => {
 + test('increases value on click on up button and triggers change event', async ({ page }) => {
 -   // Implementation pending
-+   await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
-+   await initializeTouchspinWithVanilla(page, 'test-input', { step: 1, initval: '0' });
++   await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
++   await initializeTouchspin(page, 'test-input', { step: 1, initval: '0' });
 +   await clickUpButton(page, 'test-input');
 +   await expectValueToBe(page, 'test-input', '1');
   });
@@ -760,10 +759,10 @@ expect(await getNumericValue(page, 'test-input')).toBe(10);      // Internal num
 
 ### 🔧 Critical Initialization Patterns
 
-**Core Tests** - Use `initializeTouchspinWithVanilla` for full functionality:
+**Core Tests** - Use `initializeTouchspin` (renderer-free engine):
 ```typescript
-import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
-await initializeTouchspinWithVanilla(page, 'test-input', { step: 2, initval: 10 });
+import { initializeTouchspin } from '@touchspin/core/test-helpers';
+await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
 ```
 
 **jQuery Plugin Tests** - Use `initializeTouchspinJQuery`:
@@ -787,9 +786,9 @@ await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
 3. **One Behavior per Test** - Simple, focused tests only
 
 ```typescript
-// ✅ CORRECT Pattern
-await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
-await apiHelpers.clickUpButton(page, 'test-input');
+// ✅ CORRECT Pattern (core test)
+await initializeTouchspin(page, 'test-input', { step: 5, initval: 10 });
+await apiHelpers.incrementViaAPI(page, 'test-input');
 await apiHelpers.expectValueToBe(page, 'test-input', '15');
 ```
 

@@ -48,7 +48,7 @@ test('integrates with Bootstrap 4 input-group component', async ({ page }) => {
   await apiHelpers.installDomHelpers(page);
 
   // Initialize TouchSpin with Bootstrap 4 renderer on the advanced input (with input-group)
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap4/devdist/index.js');
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input-advanced', '/packages/renderers/bootstrap4/devdist/Bootstrap4Renderer.js');
 
   // Verify TouchSpin creates proper Bootstrap 4 input-group structure
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');

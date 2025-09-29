@@ -108,7 +108,7 @@ test.skip('Triggers change event on blur when value changed', async ({ page }) =
  * Then a change event is fired
  */
 test('Triggers change event on blur when value changed', async ({ page }) => {
-  await initializeTouchspinWithVanilla(page, 'test-input', { initval: '0' });
+  await initializeTouchspin(page, 'test-input', { initval: '0' });
   await fillWithValueAndBlur(page, 'test-input', '5');
   await expectValueToBe(page, 'test-input', '5');
   const changeEventCount = await countEventInLog(page, 'change');

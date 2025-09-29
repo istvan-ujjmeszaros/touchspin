@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TouchSpin Web Component Fixture</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        main {
+            max-width: 760px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            padding: 32px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-top: 0;
+            color: #0f172a;
+        }
+
+        .input-slot {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-slot label {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .input-slot input[type="number"],
+        .input-slot input[type="text"] {
+            width: 100%;
+            max-width: 340px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f5;
+            background: #f8fafc;
+            font-size: 1rem;
+        }
+
+        .event-log {
+            margin-top: 32px;
+        }
+
+        .event-log header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .event-log textarea {
+            width: 100%;
+            min-height: 220px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f5;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 12px;
+            padding: 14px;
+            resize: vertical;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>TouchSpin Web Component Fixture</h1>
+
+        <section class="input-slot">
+            <label for="test-input">Primary Input</label>
+            <input
+                type="number"
+                id="test-input"
+                data-testid="test-input"
+                value="42"
+                name="test-input"
+                autocomplete="off"
+            />
+        </section>
+
+        <section id="additional-inputs" class="input-slot" style="display: none;"></section>
+
+        <section class="event-log">
+            <header>
+                <span aria-hidden="true">Event Log</span>
+                <button id="clear-log" type="button">🧹 Clear</button>
+            </header>
+            <textarea
+                id="event-log"
+                data-testid="event-log"
+                readonly
+                placeholder="Event log will appear here..."
+            ></textarea>
+        </section>
+
+        <input type="hidden" id="blur-target" data-testid="blur-target" />
+    </main>
+
+    <script type="module">
+        const appendLog = (line) => {
+            const log = document.getElementById('event-log');
+            if (!log) return;
+            log.value += `${line}\n`;
+            log.scrollTop = log.scrollHeight;
+        };
+
+        window.eventLog = [];
+
+        window.logEvent = function logEvent(event, detail = {}) {
+            const type = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+            const entry = { type, event, ...detail };
+            window.eventLog.push(entry);
+
+            const prefix = `[${type}]`;
+            if (detail.target && detail.value !== undefined) {
+                appendLog(`${prefix} ${detail.target}:${detail.value} ${event}`);
+            } else if (detail.target) {
+                appendLog(`${prefix} ${detail.target} ${event}`);
+            } else {
+                appendLog(`${prefix} ${event}`);
+            }
+        };
+
+        window.clearEventLog = function clearEventLog() {
+            window.eventLog = [];
+            const log = document.getElementById('event-log');
+            if (log) log.value = '';
+        };
+
+        document.getElementById('clear-log')?.addEventListener('click', (event) => {
+            event.preventDefault();
+            window.clearEventLog();
+        });
+
+        window.createTestInput = function createTestInput(id, options = {}) {
+            const container = document.getElementById('additional-inputs');
+            if (!container) return null;
+            container.style.display = 'block';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'input-slot';
+
+            const label = document.createElement('label');
+            label.textContent = options.label || `Input ${id}`;
+            label.setAttribute('for', id);
+
+            const input = document.createElement('input');
+            input.type = options.type || 'number';
+            input.id = id;
+            input.setAttribute('data-testid', id);
+            input.value = options.value ?? '0';
+            input.name = id;
+            input.autocomplete = 'off';
+
+            if (options.min !== undefined) input.min = String(options.min);
+            if (options.max !== undefined) input.max = String(options.max);
+            if (options.step !== undefined) input.step = String(options.step);
+            if (options.disabled) input.disabled = true;
+            if (options.readonly) input.readOnly = true;
+
+            if (options.dataAttributes) {
+                Object.entries(options.dataAttributes).forEach(([attr, value]) => {
+                    input.setAttribute(attr, value);
+                });
+            }
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+
+            if (options.helpText) {
+                const help = document.createElement('small');
+                help.textContent = options.helpText;
+                help.style.display = 'block';
+                help.style.marginTop = '4px';
+                wrapper.appendChild(help);
+            }
+
+            container.appendChild(wrapper);
+            return input;
+        };
+
+        window.clearAdditionalInputs = function clearAdditionalInputs() {
+            const container = document.getElementById('additional-inputs');
+            if (!container) return;
+            container.innerHTML = '';
+            container.style.display = 'none';
+        };
+
+        window.testPageReady = true;
+    </script>
+</body>
+</html>

@@ -13,7 +13,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
 // Bootstrap 5 Renderer URL for tests
-const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
+const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
 const FLOATING_LABELS_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
 
 /**

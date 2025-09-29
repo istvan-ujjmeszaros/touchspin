@@ -9,12 +9,12 @@ This guide is a practical cookbook for using the test helpers in the TouchSpin p
 
 ### Core Tests
 
-Use `initializeTouchspinWithVanilla` for core tests that provide full TouchSpin functionality.
+Use `initializeTouchspin` for renderer-free core tests.
 
 ```typescript
-import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
+import { initializeTouchspin } from '@touchspin/core/test-helpers';
 
-await initializeTouchspinWithVanilla(page, 'test-input', {
+await initializeTouchspin(page, 'test-input', {
   step: 5,
   initval: 10
 });
@@ -37,7 +37,7 @@ Use `initializeTouchspinWithRenderer` for testing specific renderers.
 ```typescript
 import { initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
-const RENDERER_URL = '/packages/renderers/bootstrap5/devdist/index.js';
+const RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
 await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
 ```
 
@@ -93,12 +93,12 @@ await apiHelpers.fillWithValueAndBlur(page, 'test-input', '75');
 
 ### Core API Interactions
 
-These helpers interact directly with the `TouchSpinCore` instance. **Note:** These only work with tests initialized using `initializeTouchspinWithVanilla`, `initializeTouchspinWithRenderer`, or jQuery plugin initialization, not with the stub `core-adapter`.
+These helpers interact directly with the `TouchSpinCore` instance. **Note:** Initialize using `initializeTouchspin` (core only), `initializeTouchspinWithRenderer`, or the jQuery plugin helpers—avoid the `core-adapter` stub when you need full API access.
 
 ```typescript
 // First, initialize with a method that provides full API access
-import { initializeTouchspinWithVanilla } from '@touchspin/core/test-helpers';
-await initializeTouchspinWithVanilla(page, 'test-input', { step: 5, initval: 10 });
+import { initializeTouchspin } from '@touchspin/core/test-helpers';
+await initializeTouchspin(page, 'test-input', { step: 5, initval: 10 });
 
 // Now API interactions work:
 // Increment the value via the API

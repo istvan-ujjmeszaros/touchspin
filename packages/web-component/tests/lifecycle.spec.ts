@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component lifecycle management
- * Background: fixture = /packages/core/tests/__shared__/fixtures/test-fixture.html
+ * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -527,7 +527,7 @@ test('handles early attribute access', async ({ page }) => {
  */
 test('supports late binding scenarios', async ({ page }) => {
   // Navigate to a fresh page without the web component script loaded
-  await page.goto('/packages/core/tests/__shared__/fixtures/test-fixture.html');
+  await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
   await apiHelpers.waitForPageReady(page);
 
   // Create touch-spin elements before script loading
