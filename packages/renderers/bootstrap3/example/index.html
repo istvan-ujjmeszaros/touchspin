@@ -22,18 +22,15 @@
     // Universal path detector for TouchSpin imports
     // Detects environment and sets appropriate importmap paths
     function createImportMap() {
-      const isYarnDev = window.location.port === '8866';
-      const isPhpStorm = window.location.pathname.includes('/bootstrap-touchspin-openai/');
+      const port = window.location.port;
+      const isDev = port === '8866' || port === '3000';
 
       let basePath;
-      if (isYarnDev) {
-        // Yarn dev server: use /packages/ paths
+      if (isDev) {
+        // Development server (static or hot-reload): use /packages/ paths
         basePath = '/packages';
-      } else if (isPhpStorm) {
-        // PhpStorm server: use full project path
-        basePath = '/bootstrap-touchspin-openai/packages';
       } else {
-        // Fallback: relative paths from example location
+        // File system or other: use relative paths from example location
         basePath = '../../..';
       }
 
