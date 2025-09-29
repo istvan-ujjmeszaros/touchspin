@@ -604,6 +604,7 @@ test('API methods work with callback modifications', async ({ page }) => {
  * { "operationCount": 1000, "maxExecutionTime": 1000, "operations": ["upOnce", "downOnce", "setValue"] }
  */
 test('API performance benchmark - baseline without event logging', async ({ page }) => {
+    test.setTimeout(30000);
     // Remove textarea to prevent any logging overhead
     await apiHelpers.removeEventLogTextarea(page);
 

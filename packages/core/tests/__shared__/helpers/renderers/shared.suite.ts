@@ -1,17 +1,19 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
-import { initializeTouchspinWithRenderer } from '../core/initialization';
+import { initializeTouchspinWithPreloadedModules } from '../core/initialization';
+import { waitForPageReady } from '../test-utilities/wait';
 
-export function sharedRendererSuite(name: string, rendererUrl: string, fixturePath: string) {
+export function sharedRendererSuite(name: string, _rendererUrl: string, fixturePath: string) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(fixturePath);
+      await waitForPageReady(page);
       await installDomHelpers(page);
     });
 
     test('horizontal: buttons/prefix/postfix render with texts/classes and focusability', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinWithPreloadedModules(page, 'test-input', {
         prefix: '$', postfix: 'kg',
         prefix_extraclass: 'x-prefix', postfix_extraclass: 'x-postfix',
         buttonup_txt: 'UP', buttondown_txt: 'DOWN',
@@ -33,7 +35,7 @@ export function sharedRendererSuite(name: string, rendererUrl: string, fixturePa
     });
 
     test('vertical: wrapper and button texts/classes; focusability toggle', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinWithPreloadedModules(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲', verticaldown: '▼',
         verticalupclass: 'v-up', verticaldownclass: 'v-down',
@@ -59,7 +61,7 @@ export function sharedRendererSuite(name: string, rendererUrl: string, fixturePa
     });
 
     test('rebuilds on prefix/postfix toggles', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinWithPreloadedModules(page, 'test-input', {
         prefix: '$', postfix: 'kg',
       });
       const w = page.getByTestId('test-input-wrapper');

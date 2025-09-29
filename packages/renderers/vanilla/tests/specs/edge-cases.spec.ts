@@ -6,7 +6,7 @@
 /*
  * CHECKLIST — Scenarios in this spec
  * [x] step=5, init 95: two ups => one change (100)
- * [x] forcestepdivisibility='none', step=5, init 97: two ups => one change (100)
+ * [x] forcestepdivisibility none, step=5, init 97: two ups => one change (100)
  * [x] at max: up => zero change; at min: down => zero change
  * [x] blur sanitization: raw 96 with step=5 => exactly one change to 95
  */
@@ -47,12 +47,12 @@ test('step=5, init 95: two ups => one change (100)', async ({ page }) => {
 });
 
 /**
- * Scenario: forcestepdivisibility='none', step=5, init 97: two ups => one change (100)
- * Given the fixture page is loaded with forcestepdivisibility='none', step=5 and init value 97
+ * Scenario: forcestepdivisibility none, step=5, init 97: two ups => one change (100)
+ * Given the fixture page is loaded with forcestepdivisibility none, step=5 and init value 97
  * When I click up button twice
  * Then value reaches max (100) with only one change event
  */
-test("forcestepdivisibility='none', step=5, init 97: two ups => one change (100)", async ({ page }) => {
+test('forcestepdivisibility none, step=5, init 97: two ups => one change (100)', async ({ page }) => {
   await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 100, initval: '97', forcestepdivisibility: 'none' });
   await clearEventLog(page);
   await clickUpButton(page, 'test-input');

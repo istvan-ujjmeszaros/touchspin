@@ -525,7 +525,7 @@ test('handles early attribute access', async ({ page }) => {
  */
 test('supports late binding scenarios', async ({ page }) => {
   // Navigate to a fresh page without the web component script loaded
-  await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
+  await page.goto('/packages/web-component/tests/fixtures/web-component-empty.html');
   await apiHelpers.waitForPageReady(page);
 
   // Create touch-spin elements before script loading
@@ -563,10 +563,30 @@ test('supports late binding scenarios', async ({ page }) => {
   expect(beforeUpgrade.element1Exists).toBe(true);
   expect(beforeUpgrade.element2Exists).toBe(true);
 
-  // Now load the web component script (late binding) using module-aware loader
-  await loadWebComponentWithDependencies(page);
+  // Now load the web component script (late binding) using a dynamically injected import map
+  await page.evaluate(() => {
+    if (!document.querySelector('script[type="importmap"][data-ts="late-binding"]')) {
+      const map = document.createElement('script');
+      map.type = 'importmap';
+      map.setAttribute('data-ts', 'late-binding');
+      map.textContent = JSON.stringify({
+        imports: {
+          '@touchspin/core': '/packages/core/devdist/index.js',
+          '@touchspin/core/renderer': '/packages/core/devdist/renderer.js',
+          '@touchspin/core/events': '/packages/core/devdist/events.js',
+          '@touchspin/web-component': '/packages/web-component/devdist/index.js',
+          '@touchspin/renderer-vanilla': '/packages/web-component/tests/fixtures/vanilla-renderer-shim.js'
+        }
+      });
+      document.head.appendChild(map);
+    }
+  });
 
-  await page.waitForTimeout(100);
+  await page.evaluate(async () => {
+    await import('@touchspin/web-component');
+  });
+
+  await page.waitForFunction(() => customElements.get('touchspin-input') !== undefined);
 
   // Test that elements are upgraded properly
   const afterUpgrade = await page.evaluate(() => {

@@ -52,6 +52,20 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
         '/packages/core/devdist/index.js'
       );
 
+      await resolveImport(
+        '@touchspin/core/renderer',
+        '@touchspin/core/renderer',
+        '/packages/core/dist/renderer.js',
+        '/packages/core/devdist/renderer.js'
+      );
+
+      await resolveImport(
+        '@touchspin/core/events',
+        '@touchspin/core/events',
+        '/packages/core/dist/events.js',
+        '/packages/core/devdist/events.js'
+      );
+
       // Load VanillaRenderer
       await resolveImport(
         '@touchspin/renderer-vanilla',
@@ -94,6 +108,30 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
             const [name, alias] = imp.split(' as ').map(s => s.trim());
             const finalName = alias || name;
             return `const ${finalName} = window.__touchspinModules['@touchspin/renderer-vanilla'].${name};`;
+          }).join('\n');
+        }
+      );
+
+      componentSource = componentSource.replace(
+        /import\s+\{([^}]+)\}\s+from\s+["']@touchspin\/core\/renderer["'];?/g,
+        (match, imports) => {
+          const cleanImports = imports.split(',').map((i: string) => i.trim());
+          return cleanImports.map((imp: string) => {
+            const [name, alias] = imp.split(' as ').map(s => s.trim());
+            const finalName = alias || name;
+            return `const ${finalName} = window.__touchspinModules['@touchspin/core/renderer'].${name};`;
+          }).join('\n');
+        }
+      );
+
+      componentSource = componentSource.replace(
+        /import\s+\{([^}]+)\}\s+from\s+["']@touchspin\/core\/events["'];?/g,
+        (match, imports) => {
+          const cleanImports = imports.split(',').map((i: string) => i.trim());
+          return cleanImports.map((imp: string) => {
+            const [name, alias] = imp.split(' as ').map(s => s.trim());
+            const finalName = alias || name;
+            return `const ${finalName} = window.__touchspinModules['@touchspin/core/events'].${name};`;
           }).join('\n');
         }
       );

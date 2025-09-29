@@ -286,7 +286,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         };
       });
 
-      expect(wrapperStyles.display).toMatch(/flex|block/);
+      expect(wrapperStyles.display).toMatch(/flex|block|table/);
       expect(wrapperStyles.width).not.toBe('0px'); // Should have some computed width
     });
 

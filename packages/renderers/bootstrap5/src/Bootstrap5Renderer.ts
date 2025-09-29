@@ -249,7 +249,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
     }
 
     button.className = this.getButtonClass(type, isVertical);
-    button.textContent = this.getButtonText(type, isVertical);
+    const rawLabel = this.getButtonSetting(type, isVertical);
+    const fallback = this.getButtonFallback(type);
+    this.applyButtonLabel(button, rawLabel, fallback);
 
     return button;
   }
@@ -339,16 +341,14 @@ class Bootstrap5Renderer extends AbstractRenderer {
     ]);
   }
 
-  private getButtonText(type: 'up' | 'down', isVertical = false): string {
-    const fallback = type === 'up' ? BUTTON_TEXT.UP : BUTTON_TEXT.DOWN;
+  private getButtonSetting(type: 'up' | 'down', isVertical: boolean): string | null | undefined {
+    return isVertical
+      ? (type === 'up' ? this.opts.verticalup : this.opts.verticaldown)
+      : (type === 'up' ? this.opts.buttonup_txt : this.opts.buttondown_txt);
+  }
 
-    if (isVertical) {
-      const raw = type === 'up' ? this.opts.verticalup : this.opts.verticaldown;
-      return this.resolveButtonLabel(raw, fallback);
-    }
-
-    const raw = type === 'up' ? this.opts.buttonup_txt : this.opts.buttondown_txt;
-    return this.resolveButtonLabel(raw, fallback);
+  private getButtonFallback(type: 'up' | 'down'): string {
+    return type === 'up' ? BUTTON_TEXT.UP : BUTTON_TEXT.DOWN;
   }
 
   private detectInputGroupSize(): string {
@@ -446,7 +446,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
     const verticalWrapper = this.findInjectedElement(INJECTED_TYPES.VERTICAL_WRAPPER);
-    const button = verticalWrapper?.querySelector(`[data-touchspin-injected="${type}"]`);
+    const button = verticalWrapper?.querySelector(`[data-touchspin-injected="${type}"]`) as HTMLElement | null | undefined;
 
     if (button) {
       this.initializeOptions(); // Refresh opts for current values
@@ -464,19 +464,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   updateVerticalButtonText(type: 'up' | 'down', text?: string): void {
     const verticalWrapper = this.findInjectedElement(INJECTED_TYPES.VERTICAL_WRAPPER);
-    const button = verticalWrapper?.querySelector(`[data-touchspin-injected="${type}"]`);
+    const button = verticalWrapper
+      ? verticalWrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`)
+      : null;
 
     if (button) {
-      const fallback = this.getButtonText(type, true);
-      button.textContent = this.resolveButtonLabel(text, fallback);
+      this.initializeOptions();
+      const fallback = this.getButtonFallback(type);
+      const raw = text ?? this.getButtonSetting(type, true);
+      this.applyButtonLabel(button, raw, fallback);
     }
   }
 
   updateButtonText(type: 'up' | 'down', text?: string): void {
     const button = this.findInjectedElement(type);
     if (button) {
-      const fallback = this.getButtonText(type, false);
-      button.textContent = this.resolveButtonLabel(text, fallback);
+      this.initializeOptions();
+      const fallback = this.getButtonFallback(type);
+      const raw = text ?? this.getButtonSetting(type, false);
+      this.applyButtonLabel(button, raw, fallback);
     }
   }
 
@@ -533,17 +539,41 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.postfixEl = null;
   }
 
-  private resolveButtonLabel(raw: string | null | undefined, fallback: string): string {
-    if (raw === undefined || raw === null || raw === '') {
-      return fallback;
+  private applyButtonLabel(button: HTMLElement, raw: string | null | undefined, fallback: string): void {
+    const { value, isHtml } = this.resolveButtonContent(raw, fallback);
+
+    if (isHtml) {
+      button.innerHTML = value;
+      return;
     }
 
-    const decoded = this.decodeHtml(raw);
+    button.textContent = value;
+  }
+
+  private resolveButtonContent(raw: string | null | undefined, fallback: string): { value: string; isHtml: boolean } {
+    if (raw === undefined || raw === null) {
+      return { value: fallback, isHtml: false };
+    }
+
+    const trimmed = raw.trim();
+    if (trimmed === '') {
+      return { value: fallback, isHtml: false };
+    }
+
+    if (this.containsHtml(trimmed)) {
+      return { value: trimmed, isHtml: true };
+    }
+
+    const decoded = this.decodeHtml(trimmed);
     if (decoded === undefined || decoded === '') {
-      return fallback;
+      return { value: fallback, isHtml: false };
     }
 
-    return decoded;
+    return { value: decoded, isHtml: false };
+  }
+
+  private containsHtml(value: string): boolean {
+    return /<\/?[a-zA-Z][\s\S]*>/.test(value);
   }
 
   private decodeHtml(value: string): string | undefined {
