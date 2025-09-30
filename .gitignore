@@ -24,9 +24,13 @@ reports/
 # Build outputs
 dist/
 
-# Allow framework assets in devdist for offline functionality
-!packages/renderers/*/devdist/external/
-!packages/renderers/*/devdist/external/**
+# Exclude all devdist build artifacts except external framework assets
+packages/*/devdist/
+packages/renderers/*/devdist/
+!packages/renderers/bootstrap*/devdist/external/
+!packages/renderers/bootstrap*/devdist/external/**
+!packages/renderers/tailwind/devdist/external/
+!packages/renderers/tailwind/devdist/external/**
 
 # Obsolete planning/agent docs (ignored for local dev)
 **/*AGENT*.md
