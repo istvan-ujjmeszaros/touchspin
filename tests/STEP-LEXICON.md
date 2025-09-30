@@ -204,16 +204,6 @@
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
   - Note: For dynamic import-based renderer loading
 
-- **Given I need jQuery and TouchSpin plugin available**
-  - `loadJQueryEnvironment(page, debug)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
-  - Note: Handles jQuery loading with retry logic
-
-- **Given I need jQuery available in the browser**
-  - `loadJQueryFromCDN(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads jQuery 3.6.0 from CDN with verification
-
 - **Given I need the jQuery plugin available**
   - `loadTouchSpinJQueryPlugin(page, options)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
@@ -308,11 +298,6 @@
   - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
   - Note: Simplified initialization for web component tests
 
-- **When I load jQuery from CDN**
-  - `loadJQueryFromCDN(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads jQuery 3.6.0 from CDN with verification
-
 - **When I load renderer module from "{rendererUrl}"**
   - `preloadRendererModule(page, rendererUrl)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
@@ -322,11 +307,6 @@
   - `loadScript(page, url, options)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
   - Note: Handles both absolute URLs and relative paths with proper error handling
-
-- **When I load the jQuery environment**
-  - `loadJQueryEnvironment(page, debug)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
-  - Note: Handles jQuery loading with retry logic
 
 - **When I load the web component environment**
   - `loadWebComponentEnvironment(page, debug)`

@@ -1,10 +1,9 @@
 import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { setupLogging } from '../events/setup';
-import { loadScript, loadJQueryFromCDN } from './script-loader';
+import { loadScript } from './script-loader';
 
 export interface TestEnvironmentOptions {
-  jquery?: boolean;
   webComponent?: boolean;
   renderer?: string;
   debug?: boolean;
@@ -37,10 +36,6 @@ export async function initializeTestEnvironment(
   // Load requested components in parallel where possible
   const loadPromises: Promise<void>[] = [];
 
-  if (options.jquery) {
-    loadPromises.push(loadJQueryEnvironment(page, debug));
-  }
-
   if (options.webComponent) {
     loadPromises.push(loadWebComponentEnvironment(page, debug));
   }
@@ -60,94 +55,6 @@ export async function initializeTestEnvironment(
   }
 }
 
-/**
- * When I load the jQuery environment
- * Given I need jQuery and TouchSpin plugin available
- * @note Handles jQuery loading with retry logic
- */
-export async function loadJQueryEnvironment(page: Page, debug = false): Promise<void> {
-  if (debug) console.log('Loading jQuery environment...');
-
-  // Check if jQuery is already available
-  const hasJQuery = await page.evaluate(() => typeof window.jQuery !== 'undefined');
-
-  if (!hasJQuery) {
-    if (debug) console.log('jQuery not found, loading from CDN...');
-    await loadJQueryFromCDN(page);
-  } else {
-    if (debug) console.log('jQuery already available');
-  }
-
-  // Load TouchSpin plugin with retry logic
-  const { url: pluginUrl, module: isModule } = await page.evaluate(async () => {
-    const origin = window.location.origin;
-    const distUrl = `${origin}/packages/jquery-plugin/dist/jquery-touchspin-bs5.js`;
-    const devdistUrl = `${origin}/packages/jquery-plugin/devdist/jquery-touchspin-bs5.js`;
-
-    try {
-      const response = await fetch(distUrl, { method: 'HEAD' });
-      if (response.ok) {
-        return { url: distUrl, module: false } as const;
-      }
-    } catch {
-      // Ignore network errors and fall through to devdist detection
-    }
-
-    const fallbackResponse = await fetch(devdistUrl, { method: 'HEAD' });
-    if (!fallbackResponse.ok) {
-      throw new Error(`TouchSpin jQuery bundle not found. Checked: ${distUrl}, ${devdistUrl}`);
-    }
-
-    return { url: devdistUrl, module: true } as const;
-  });
-
-  let attempts = 0;
-  const maxAttempts = 3;
-
-  while (attempts < maxAttempts) {
-    if (debug) console.log(`Loading TouchSpin plugin (attempt ${attempts + 1}/${maxAttempts})...`);
-
-    try {
-      await loadScript(page, pluginUrl, {
-        timeout: 5000,
-        attributes: isModule ? { type: 'module' } : {},
-      });
-
-      // Wait a moment for the script to execute
-      await page.waitForTimeout(100);
-
-      // Check if plugin loaded successfully
-      const isLoaded = await page.evaluate(() => {
-        // Check multiple jQuery references
-        return !!(
-          (window.$ && window.$.fn && window.$.fn.TouchSpin) ||
-          (window.jQuery && window.jQuery.fn && window.jQuery.fn.TouchSpin)
-        );
-      });
-
-      if (isLoaded) {
-        if (debug) console.log('TouchSpin plugin loaded successfully');
-
-        // Mark as ready
-        await page.evaluate(() => {
-          window.touchSpinReady = true;
-        });
-
-        return;
-      }
-    } catch (err) {
-      if (debug) console.log(`Plugin load attempt ${attempts + 1} failed:`, err);
-    }
-
-    attempts++;
-    if (attempts < maxAttempts) {
-      // Wait with exponential backoff
-      await page.waitForTimeout(100 * attempts);
-    }
-  }
-
-  throw new Error(`Failed to load TouchSpin jQuery plugin after ${maxAttempts} attempts`);
-}
 
 /**
  * When I load the web component environment
@@ -261,16 +168,6 @@ export async function verifyEnvironment(
   }
 
   const errors: string[] = [];
-
-  // Verify jQuery if requested
-  if (options.jquery) {
-    if (!diagnostics.hasJQuery && !diagnostics.has$) {
-      errors.push('jQuery not available');
-    }
-    if (!diagnostics.hasTouchSpinPlugin) {
-      errors.push('TouchSpin jQuery plugin not available');
-    }
-  }
 
   // Verify web component if requested
   if (options.webComponent) {

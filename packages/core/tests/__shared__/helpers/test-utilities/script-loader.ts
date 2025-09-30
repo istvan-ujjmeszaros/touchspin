@@ -100,31 +100,6 @@ export async function loadScript(page: Page, url: string, options: ScriptLoadOpt
   }, { url, timeout, crossOrigin, attributes, verifyFunction });
 }
 
-/**
- * When I load jQuery from CDN
- * Given I need jQuery available in the browser
- * @note Loads jQuery 3.6.0 from CDN with verification
- */
-export async function loadJQueryFromCDN(page: Page, options: ScriptLoadOptions = {}): Promise<void> {
-  const url = 'https://code.jquery.com/jquery-3.6.0.min.js';
-  await loadScript(page, url, {
-    timeout: 15000,
-    crossOrigin: 'anonymous',
-    verifyFunction: 'typeof window.jQuery !== "undefined"',
-    ...options
-  });
-
-  // Set up global references
-  await page.evaluate(() => {
-    const $ = window.jQuery;
-    if (!$) {
-      throw new Error('jQuery not available after loading');
-    }
-    const w = window as unknown as Record<string, unknown>;
-    if (!w['jQuery']) w['jQuery'] = $;
-    if (!w['$']) w['$'] = $;
-  });
-}
 
 /**
  * When I load TouchSpin web component
