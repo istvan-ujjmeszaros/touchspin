@@ -164,7 +164,7 @@ export async function initializeTouchspinWithRenderer(
  * Initialize TouchSpin using pre-loaded modules from self-contained fixtures
  *
  * This function is designed for fixtures that have already loaded TouchSpinCore
- * and the renderer onto window.TouchSpinCore and window.TouchSpinDefaultRenderer.
+ * and the renderer onto globalThis.TouchSpinCore and globalThis.TouchSpinDefaultRenderer.
  * It avoids dynamic imports that can cause "Execution context destroyed" errors.
  */
 export async function initializeTouchspinWithPreloadedModules(
