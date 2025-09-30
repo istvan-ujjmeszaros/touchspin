@@ -1,4 +1,5 @@
 {
   "esmEntry": "index.js",
-  "classModule": "Bootstrap5Renderer.js"
+  "classModule": "Bootstrap5Renderer.js",
+  "iifeEntry": "iife/Bootstrap5Renderer.global.js"
 }

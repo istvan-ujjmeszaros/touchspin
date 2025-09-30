@@ -1,4 +1,5 @@
 {
   "esmEntry": "index.js",
-  "rendererEntry": "renderer.js"
+  "rendererEntry": "renderer.js",
+  "iifeEntry": "iife/touchspin-core.js"
 }
