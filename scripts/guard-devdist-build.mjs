@@ -31,9 +31,9 @@ const REQUIRED_FILES = {
   'packages/core': ['index.js', 'renderer.js', 'artifacts.json'],
   'packages/jquery-plugin': ['index.js', 'artifacts.json'],
   'packages/web-component': ['index.js', 'artifacts.json'],
-  'packages/renderers/bootstrap3': ['index.js', 'Bootstrap3Renderer.js', 'artifacts.json'],
-  'packages/renderers/bootstrap4': ['index.js', 'Bootstrap4Renderer.js', 'artifacts.json'],
-  'packages/renderers/bootstrap5': ['index.js', 'Bootstrap5Renderer.js', 'artifacts.json'],
+  'packages/renderers/bootstrap3': ['index.js', 'Bootstrap3Renderer.js', 'iife/touchspin-bs3-complete.global.js', 'artifacts.json'],
+  'packages/renderers/bootstrap4': ['index.js', 'Bootstrap4Renderer.js', 'iife/touchspin-bs4-complete.global.js', 'artifacts.json'],
+  'packages/renderers/bootstrap5': ['index.js', 'Bootstrap5Renderer.js', 'iife/touchspin-bs5-complete.global.js', 'artifacts.json'],
   'packages/renderers/tailwind': ['index.js', 'TailwindRenderer.js', 'artifacts.json'],
   'packages/renderers/vanilla': ['index.js', 'VanillaRenderer.js', 'artifacts.json']
 };
@@ -84,6 +84,29 @@ function isDevdistStale(packagePath) {
   }
 }
 
+function buildDevdistTargeted(packagesToBuild) {
+  console.log('🔨 Building devdist artifacts for specific packages...');
+
+  for (const packagePath of packagesToBuild) {
+    console.log(`📦 Building ${packagePath}...`);
+    try {
+      const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
+      execSync(`yarn workspace ${packageName} run build:test`, {
+        cwd: projectRoot,
+        stdio: 'inherit',
+        timeout: 120000 // 2 minute timeout per package
+      });
+      console.log(`  ✅ ${packageName} build completed`);
+    } catch (error) {
+      console.error(`  ❌ ${packageName} build failed:`, error.message);
+      return false;
+    }
+  }
+
+  console.log('✅ Targeted DevDist build completed successfully');
+  return true;
+}
+
 function buildDevdist() {
   console.log('🔨 Building devdist artifacts...');
   try {
@@ -104,7 +127,7 @@ function main() {
   console.log('🔍 Checking devdist build artifacts...');
 
   const issues = [];
-  let needsBuild = false;
+  const packagesToBuild = [];
 
   // Check each package
   for (const packagePath of PACKAGES_WITH_DEVDIST) {
@@ -113,35 +136,35 @@ function main() {
     const existsCheck = checkDevdistExists(packagePath);
     if (!existsCheck.exists) {
       issues.push(`📦 ${packageName}: ${existsCheck.reason}`);
-      needsBuild = true;
+      packagesToBuild.push(packagePath);
       continue;
     }
 
     if (isDevdistStale(packagePath)) {
       issues.push(`📦 ${packageName}: devdist is stale (src newer than devdist)`);
-      needsBuild = true;
+      packagesToBuild.push(packagePath);
       continue;
     }
 
     console.log(`  ✅ ${packageName}: devdist up to date`);
   }
 
-  // If any issues found, try to build
-  if (needsBuild) {
+  // If any issues found, try to build only the affected packages
+  if (packagesToBuild.length > 0) {
     console.log('\n📋 Issues found:');
     for (const issue of issues) {
       console.log(`  ${issue}`);
     }
 
     console.log('');
-    if (!buildDevdist()) {
+    if (!buildDevdistTargeted(packagesToBuild)) {
       console.error('\n❌ DevDist guard failed: Unable to build required artifacts');
       process.exit(1);
     }
 
     // Re-check after build
     console.log('\n🔍 Verifying build results...');
-    for (const packagePath of PACKAGES_WITH_DEVDIST) {
+    for (const packagePath of packagesToBuild) {
       const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
       const existsCheck = checkDevdistExists(packagePath);
 
