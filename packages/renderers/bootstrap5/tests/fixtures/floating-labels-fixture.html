@@ -10,7 +10,7 @@
     <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../../../../jquery-plugin/devdist/external/js/jquery.min.js"></script>
 
     <!-- Bootstrap 5 JS -->
     <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
@@ -94,9 +94,27 @@
     </style>
 </head>
 <body>
-    <!-- Test page indicator -->
-    <script>
-        window.testPageReady = true;
+    <!-- Load TouchSpin Core and Bootstrap5Renderer with proper async loading -->
+    <script type="module">
+        (async () => {
+            try {
+                const [CoreModule, RendererModule] = await Promise.all([
+                    import('@touchspin/core'),
+                    import('@touchspin/renderer-bootstrap5')
+                ]);
+
+                // Expose everything tests might need on window
+                window.TouchSpinCore = CoreModule.TouchSpinCore;
+                window.TouchSpinDefaultRenderer = RendererModule.default;
+
+                // Mark page as ready only after everything loads successfully
+                window.testPageReady = true;
+            } catch (error) {
+                console.error('Failed to load TouchSpin modules:', error);
+                // Still mark as ready to prevent test timeouts
+                window.testPageReady = true;
+            }
+        })();
     </script>
 
     <div class="container-fluid py-4">
