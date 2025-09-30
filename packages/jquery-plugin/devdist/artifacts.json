@@ -1,6 +1,0 @@
-{
-  "esmEntry": "index.js",
-  "umdBs3Entry": "umd/jquery-touchspin-bs3.js",
-  "umdBs4Entry": "umd/jquery-touchspin-bs4.js",
-  "umdBs5Entry": "umd/jquery-touchspin-bs5.js"
-}

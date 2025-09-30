@@ -1,5 +1,0 @@
-{
-  "esmEntry": "index.js",
-  "rendererEntry": "renderer.js",
-  "iifeEntry": "iife/index.global.js"
-}
