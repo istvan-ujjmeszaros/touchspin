@@ -247,7 +247,7 @@
     </div>
 
     <!-- Test Control Script -->
-    <script type="module">
+    <script>
         // Enhanced console logging for tests
         const originalLog = console.log;
         const originalWarn = console.warn;
@@ -313,9 +313,15 @@
         window.touchspinInstances = {};
 
         // Auto-initialize all TouchSpin instances
-        async function initializeAllTouchSpin() {
-            const { Bootstrap5Renderer } = await import('@touchspin/renderer-bootstrap5');
-            const { TouchSpinCore } = await import('@touchspin/core');
+        function initializeAllTouchSpin() {
+            // Use global variables from IIFE build
+            const TouchSpinCore = window.TouchSpinCore;
+            const Bootstrap5Renderer = globalThis.TouchSpinDefaultRenderer;
+
+            if (!TouchSpinCore || !Bootstrap5Renderer) {
+                console.error('❌ TouchSpinCore or Bootstrap5Renderer not available globally');
+                return;
+            }
 
             // Find all inputs with data-testid
             const inputs = document.querySelectorAll('input[data-testid]');
@@ -355,11 +361,11 @@
         }
 
         // Initialize page
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('🏷️ Bootstrap 5 Floating Labels Test Fixture loaded');
 
             // Auto-initialize all TouchSpin instances
-            await initializeAllTouchSpin();
+            initializeAllTouchSpin();
             console.log('📋 All TouchSpin instances auto-initialized');
 
             // Set up test control buttons
