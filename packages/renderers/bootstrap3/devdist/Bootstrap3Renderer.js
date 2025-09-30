@@ -60,6 +60,18 @@ class Bootstrap3Renderer extends AbstractRenderer {
         this.core.attachUpEvents(upButton);
         this.core.attachDownEvents(downButton);
     }
+    /**
+     * Ensures input element is properly positioned within the input group before using it as reference
+     * Fixes DOM insertion bug when input loses parent-child relationship during rebuilds
+     */
+    ensureInputInGroup(existingInputGroup) {
+        // Check if input is already a direct child of the group
+        if (this.input.parentElement === existingInputGroup) {
+            return;
+        }
+        // If input is not in the group, append it (it may have been moved during DOM manipulations)
+        existingInputGroup.appendChild(this.input);
+    }
     buildInputGroup() {
         // Check if input is already inside an input-group
         const existingInputGroup = this.input.closest('.input-group');
@@ -177,6 +189,8 @@ class Bootstrap3Renderer extends AbstractRenderer {
         // Declare element references at function scope
         let prefixEl;
         let postfixEl;
+        // Ensure input is properly positioned in the group before using it as reference
+        this.ensureInputInGroup(existingInputGroup);
         if (this.settings.verticalbuttons) {
             // For vertical buttons: prefix -> input -> postfix -> vertical wrapper
             prefixEl = tempDiv.querySelector('[data-touchspin-injected="prefix"]');

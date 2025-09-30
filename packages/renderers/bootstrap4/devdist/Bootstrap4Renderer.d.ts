@@ -16,6 +16,11 @@ declare class Bootstrap4Renderer extends AbstractRenderer {
     buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement;
     _detectInputGroupSize(): string;
     buildAndAttachDOM(): void;
+    /**
+     * Ensures input element is properly positioned within the input group before using it as reference
+     * Fixes DOM insertion bug when input loses parent-child relationship during rebuilds
+     */
+    private ensureInputInGroup;
     updatePrefix(value: string | null | undefined): void;
     updatePostfix(value: string | null | undefined): void;
     updateButtonClass(type: 'up' | 'down', className?: string | null): void;

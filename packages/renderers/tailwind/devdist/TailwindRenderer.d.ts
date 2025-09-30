@@ -10,6 +10,11 @@ declare class TailwindRenderer extends AbstractRenderer {
     init(): void;
     buildInputGroup(): HTMLElement;
     buildBasicInputGroup(): HTMLElement;
+    /**
+     * Ensures the input element is a child of the given container.
+     * Fixes DOM insertion bug during layout rebuilds.
+     */
+    private ensureInputInContainer;
     buildAdvancedInputGroup(existingContainer: HTMLElement): HTMLElement;
     _detectInputSize(): string;
     _applySizeClasses(wrapper?: HTMLElement | null): void;

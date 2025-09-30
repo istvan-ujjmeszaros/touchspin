@@ -102,6 +102,16 @@ class TailwindRenderer extends AbstractRenderer {
         this.hideEmptyPrefixPostfix(wrapper);
         return wrapper;
     }
+    /**
+     * Ensures the input element is a child of the given container.
+     * Fixes DOM insertion bug during layout rebuilds.
+     */
+    ensureInputInContainer(existingContainer) {
+        if (this.input.parentElement === existingContainer) {
+            return;
+        }
+        existingContainer.appendChild(this.input);
+    }
     buildAdvancedInputGroup(existingContainer) {
         // Mark this as an advanced wrapper
         this.wrapperType = 'wrapper-advanced';
@@ -111,6 +121,8 @@ class TailwindRenderer extends AbstractRenderer {
         if (!existingWrapperTestId && inputTestId) {
             existingContainer.setAttribute('data-testid', `${inputTestId}-wrapper`);
         }
+        // Ensure input is in container before any insertBefore operations
+        this.ensureInputInContainer(existingContainer);
         const isVertical = this.settings.verticalbuttons;
         // Create elements HTML
         let elementsHtml;
