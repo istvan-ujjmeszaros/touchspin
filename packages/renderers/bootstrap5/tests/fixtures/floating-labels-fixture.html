@@ -15,18 +15,8 @@
     <!-- Bootstrap 5 JS -->
     <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../../core/devdist/events.js",
-            "@touchspin/renderer-bootstrap5": "../../devdist/Bootstrap5Renderer.js",
-            "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-        }
-    }
-    </script>
+    <!-- Enhanced IIFE build - single script with Core + Renderer -->
+    <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
 
     <style>
         /* Visual debugging helpers */
@@ -94,18 +84,6 @@
     </style>
 </head>
 <body>
-    <!-- Load TouchSpin Core and Bootstrap5Renderer with simplified default renderer setup -->
-    <script type="module">
-        import { TouchSpin } from '@touchspin/core';
-        import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-
-        // Set default renderer (README-recommended approach)
-        globalThis.TouchSpinDefaultRenderer = Bootstrap5Renderer;
-
-        // Maintain legacy compatibility for test helpers
-        window.TouchSpinCore = TouchSpin;
-        window.testPageReady = true;
-    </script>
 
     <div class="container-fluid py-4">
         <h1 class="mb-4">Bootstrap 5 Floating Labels TouchSpin Test</h1>

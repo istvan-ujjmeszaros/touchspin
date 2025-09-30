@@ -15,31 +15,8 @@
     <!-- Bootstrap 4 JS -->
     <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../../core/devdist/events.js",
-        "@touchspin/renderer-bootstrap4": "../../devdist/Bootstrap4Renderer.js",
-            "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-        }
-    }
-    </script>
-
-    <!-- Load TouchSpin Core and Bootstrap4Renderer with simplified default renderer setup -->
-    <script type="module">
-        import { TouchSpin } from '@touchspin/core';
-        import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
-
-        // Set default renderer (README-recommended approach)
-        globalThis.TouchSpinDefaultRenderer = Bootstrap4Renderer;
-
-        // Maintain legacy compatibility for test helpers
-        window.TouchSpinCore = TouchSpin;
-        window.testPageReady = true;
-    </script>
+    <!-- Enhanced IIFE build - single script with Core + Renderer -->
+    <script src="../../devdist/iife/touchspin-bs4-complete.global.js"></script>
 </head>
 <body>
     <div class="container-fluid py-4">

@@ -16,31 +16,8 @@
     <!-- Bootstrap 3 JS -->
     <script src="../../devdist/external/js/bootstrap.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../../core/devdist/events.js",
-        "@touchspin/renderer-bootstrap3": "../../devdist/Bootstrap3Renderer.js",
-            "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-        }
-    }
-    </script>
-
-    <!-- Load TouchSpin Core and Bootstrap3Renderer with simplified default renderer setup -->
-    <script type="module">
-        import { TouchSpin } from '@touchspin/core';
-        import Bootstrap3Renderer from '@touchspin/renderer-bootstrap3';
-
-        // Set default renderer (README-recommended approach)
-        globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
-
-        // Maintain legacy compatibility for test helpers
-        window.TouchSpinCore = TouchSpin;
-        window.testPageReady = true;
-    </script>
+    <!-- Enhanced IIFE build - single script with Core + Renderer -->
+    <script src="../../devdist/iife/touchspin-bs3-complete.global.js"></script>
 </head>
 <body>
     <div class="container-fluid">
