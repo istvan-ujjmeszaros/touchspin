@@ -6,18 +6,8 @@
     <title>TouchSpin jQuery Plugin Fixture</title>
     <script src="../../devdist/external/js/jquery.min.js"></script>
 
-    <!-- Import map for TouchSpin modules -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../core/devdist/events.js",
-            "@touchspin/jquery-plugin": "../../devdist/index.js",
-            "@touchspin/renderer-bootstrap5": "../renderers/bootstrap5/devdist/Bootstrap5Renderer.js"
-        }
-    }
-    </script>
+    <!-- TouchSpin jQuery Plugin UMD Build (includes Core + jQuery Plugin + Bootstrap5 Renderer) -->
+    <script src="../../devdist/umd/jquery-touchspin-bs5.js"></script>
 
     <style>
         body {
@@ -222,17 +212,8 @@
             container.style.display = 'none';
         };
 
-        // Load jQuery plugin module and expose everything tests need
-        (async () => {
-            try {
-                await import('@touchspin/jquery-plugin');
-                // jQuery plugin extends $ directly, so no need to expose separately
-                window.testPageReady = true;
-            } catch (error) {
-                console.error('Failed to load jQuery plugin:', error);
-                window.testPageReady = true; // Still mark ready to prevent timeouts
-            }
-        })();
+        // UMD build auto-registers jQuery plugin, just mark ready
+        window.testPageReady = true;
     </script>
 </body>
 </html>

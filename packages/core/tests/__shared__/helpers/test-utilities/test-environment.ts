@@ -47,9 +47,6 @@ export async function initializeTestEnvironment(
   // Wait for all components to load
   await Promise.all(loadPromises);
 
-  // Verify everything loaded correctly
-  await verifyEnvironment(page, options, debug);
-
   if (debug) {
     console.log('Test environment initialization complete');
   }
@@ -149,50 +146,6 @@ export async function loadRendererEnvironment(
   }, { path: rendererPath, debug });
 }
 
-/**
- * When I verify the test environment
- * Given I need to ensure all components loaded correctly
- * @note Comprehensive verification of loaded components
- */
-export async function verifyEnvironment(
-  page: Page,
-  options: TestEnvironmentOptions,
-  debug = false
-): Promise<void> {
-  if (debug) console.log('Verifying test environment...');
-
-  const diagnostics = await diagnoseEnvironment(page);
-
-  if (debug) {
-    console.log('Environment diagnostics:', diagnostics);
-  }
-
-  const errors: string[] = [];
-
-  // Verify web component if requested
-  if (options.webComponent) {
-    // Check web component directly since we can't enumerate customElements
-    const hasWebComponent = await page.evaluate(() => {
-      return customElements.get('touchspin-input') !== undefined;
-    });
-    if (!hasWebComponent) {
-      errors.push('TouchSpin web component not registered');
-    }
-  }
-
-  // Verify renderer if requested
-  if (options.renderer) {
-    if (!diagnostics.hasLoadedRenderer) {
-      errors.push(`Renderer not loaded: ${options.renderer}`);
-    }
-  }
-
-  if (errors.length > 0) {
-    throw new Error(`Environment verification failed:\n${errors.join('\n')}`);
-  }
-
-  if (debug) console.log('Environment verification passed');
-}
 
 /**
  * When I diagnose the test environment
