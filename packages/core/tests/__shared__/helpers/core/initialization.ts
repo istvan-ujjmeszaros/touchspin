@@ -161,13 +161,29 @@ export async function initializeTouchspinWithRenderer(
 }
 
 /**
- * Initialize TouchSpin using pre-loaded modules from self-contained fixtures
+ * Initialize TouchSpin from global variables set by IIFE bundles
  *
- * This function is designed for fixtures that have already loaded TouchSpinCore
- * and the renderer onto globalThis.TouchSpinCore and globalThis.TouchSpinDefaultRenderer.
- * It avoids dynamic imports that can cause "Execution context destroyed" errors.
+ * Uses `globalThis.TouchSpinCore` and `globalThis.TouchSpinDefaultRenderer`
+ * which are loaded by enhanced IIFE script tags in the fixture (e.g.,
+ * `touchspin-bs5-complete.global.js`).
+ *
+ * This approach avoids dynamic imports that can cause "Execution context
+ * destroyed" errors in Playwright tests.
+ *
+ * @param page - Playwright page object
+ * @param testId - data-testid of the input element
+ * @param options - TouchSpin configuration options
+ *
+ * @example
+ * ```typescript
+ * // In your fixture HTML:
+ * // <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
+ *
+ * // In your test:
+ * await initFromGlobals(page, 'test-input', { step: 5, min: 0, max: 100 });
+ * ```
  */
-export async function initializeTouchspinWithPreloadedModules(
+export async function initFromGlobals(
   page: Page,
   testId: string,
   options: Record<string, unknown> = {}

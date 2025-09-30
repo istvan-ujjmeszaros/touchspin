@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinWithPreloadedModules } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initFromGlobals } from '@touchspin/core/test-helpers';
 
 // Bootstrap 4 Renderer URL for tests
 const BOOTSTRAP4_RENDERER_URL = '/packages/renderers/bootstrap4/devdist/Bootstrap4Renderer.js';
@@ -39,7 +39,7 @@ test.describe('Bootstrap 4 specific behavior', () => {
    * Then wrapper contains input-group-prepend and input-group-append with buttons inside
    */
   test('uses Bootstrap 4 input-group-append and input-group-prepend structure', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input');
+    await initFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -65,7 +65,7 @@ test.describe('Bootstrap 4 specific behavior', () => {
    * Then buttons have Bootstrap 4 default btn-outline-secondary styling
    */
   test('applies Bootstrap 4 default button styling', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input');
+    await initFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -83,7 +83,7 @@ test.describe('Bootstrap 4 specific behavior', () => {
    * Then prefix is in input-group-prepend and postfix is in input-group-append with proper styling
    */
   test('structures prefix and postfix within input-group-prepend/append', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input', {
+    await initFromGlobals(page, 'test-input', {
       prefix: '$',
       postfix: 'USD'
     });

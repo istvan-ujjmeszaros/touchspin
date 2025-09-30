@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinWithPreloadedModules } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initFromGlobals } from '@touchspin/core/test-helpers';
 
 // Bootstrap 3 Renderer URL for tests
 const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/Bootstrap3Renderer.js';
@@ -39,7 +39,7 @@ test.describe('Bootstrap 3 specific behavior', () => {
    * Then wrapper contains two input-group-btn containers with buttons inside
    */
   test('uses Bootstrap 3 input-group-btn structure', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input');
+    await initFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -68,7 +68,7 @@ test.describe('Bootstrap 3 specific behavior', () => {
    * Then buttons have Bootstrap 3 default btn-default styling
    */
   test('applies Bootstrap 3 default button styling', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input');
+    await initFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -86,7 +86,7 @@ test.describe('Bootstrap 3 specific behavior', () => {
    * Then prefix and postfix use input-group-addon class and display correct text
    */
   test('structures prefix and postfix as input-group-addon', async ({ page }) => {
-    await initializeTouchspinWithPreloadedModules(page, 'test-input', {
+    await initFromGlobals(page, 'test-input', {
       prefix: '$',
       postfix: 'USD'
     });
