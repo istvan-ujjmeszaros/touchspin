@@ -37,7 +37,7 @@
     "build:umd-bs3": "tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
     "build:umd-bs4": "tsup src/jquery-touchspin-bs4.ts --format iife --global-name TouchSpinBS4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
     "build:umd-bs5": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
-    "build:test": "tsc -p tsconfig.testbuild.json && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
+    "build:test": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir devdist --external=none && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js",
     "watch": "tsup src/index.ts --format esm --watch --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
