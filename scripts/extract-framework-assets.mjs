@@ -48,6 +48,13 @@ const frameworkConfigs = {
     files: {
       'https://cdn.tailwindcss.com': 'js/tailwind.js'
     }
+  },
+  'jquery': {
+    dependency: 'jquery',
+    packagePath: 'packages/jquery-plugin',
+    files: {
+      'https://code.jquery.com/jquery-3.7.1.min.js': 'js/jquery.min.js'
+    }
   }
 };
 
@@ -149,6 +156,7 @@ async function main() {
     console.log('  node scripts/extract-framework-assets.mjs --renderer bootstrap4');
     console.log('  node scripts/extract-framework-assets.mjs --renderer bootstrap3');
     console.log('  node scripts/extract-framework-assets.mjs --renderer tailwind');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer jquery');
     return;
   }
 
