@@ -180,10 +180,10 @@ export async function initializeTouchspinWithRenderer(
  * // <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
  *
  * // In your test:
- * await initFromGlobals(page, 'test-input', { step: 5, min: 0, max: 100 });
+ * await initializeTouchspinFromGlobals(page, 'test-input', { step: 5, min: 0, max: 100 });
  * ```
  */
-export async function initFromGlobals(
+export async function initializeTouchspinFromGlobals(
   page: Page,
   testId: string,
   options: Record<string, unknown> = {}

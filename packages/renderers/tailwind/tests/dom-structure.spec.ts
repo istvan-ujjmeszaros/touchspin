@@ -14,7 +14,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initFromGlobals } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
 
 // Tailwind Renderer URL for tests
 const TAILWIND_RENDERER_URL = '/packages/renderers/tailwind/devdist/TailwindRenderer.js';
@@ -38,7 +38,7 @@ test.describe('Tailwind specific behavior', () => {
    * Then wrapper uses flexbox utilities and avoids framework-specific component classes
    */
   test('uses utility-first classes for layout structure', async ({ page }) => {
-    await initFromGlobals(page, 'test-input');
+    await initializeTouchspinFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -60,7 +60,7 @@ test.describe('Tailwind specific behavior', () => {
    * Then buttons have utility-based styling and avoid framework-specific component classes
    */
   test('applies Tailwind utility classes to buttons', async ({ page }) => {
-    await initFromGlobals(page, 'test-input');
+    await initializeTouchspinFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -86,7 +86,7 @@ test.describe('Tailwind specific behavior', () => {
    * Then structure uses flexible layout with utility-styled prefix and postfix elements
    */
   test('creates responsive-friendly structure', async ({ page }) => {
-    await initFromGlobals(page, 'test-input', {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
       prefix: '$',
       postfix: 'USD'
     });
@@ -126,7 +126,7 @@ test.describe('Tailwind specific behavior', () => {
    * Then custom utility classes are properly applied to all elements
    */
   test('maintains utility class customization', async ({ page }) => {
-    await initFromGlobals(page, 'test-input', {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
       buttonup_class: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2',
       buttondown_class: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2',
       prefix_extraclass: 'bg-gray-100 text-gray-700 px-3 py-2',
