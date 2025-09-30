@@ -232,42 +232,46 @@ test('supports responsive behavior', async ({ page }) => {
 test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/layout-options-fixture.html');
 
-  // TODO: There appears to be a bug in Bootstrap5Renderer where inputs nested in
-  // input-group-sm/input-group-lg containers get their input elements removed during
-  // initialization. For now, test size functionality using standard input.
+  // Test actual pre-existing size variant inputs (should work with fix)
+  // This will expose the bug if the renderer fix is not working properly
 
-  // Test standard input with size variations via CSS classes
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js');
+  // Test small size input in input-group-sm
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'size-sm-test', '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js');
 
-  // Apply small size class and test functionality
-  await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="test-input"]');
-    input.classList.add('form-control-sm');
-  });
+  // Verify input is still accessible and functional
+  await apiHelpers.expectValueToBe(page, 'size-sm-test', '50');
+  await apiHelpers.clickUpButton(page, 'size-sm-test');
+  await apiHelpers.expectValueToBe(page, 'size-sm-test', '51');
 
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+  // Test large size input in input-group-lg
+  await apiHelpers.initializeTouchspinWithRenderer(page, 'size-lg-test', '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js');
 
-  // Switch to vertical layout and test
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', { verticalbuttons: true });
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '52');
+  // Verify input is still accessible and functional
+  await apiHelpers.expectValueToBe(page, 'size-lg-test', '50');
+  await apiHelpers.clickUpButton(page, 'size-lg-test');
+  await apiHelpers.expectValueToBe(page, 'size-lg-test', '51');
 
-  // Apply large size class
-  await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="test-input"]');
-    input.classList.remove('form-control-sm');
-    input.classList.add('form-control-lg');
-  });
+  // Test layout switch on sized inputs (this was the critical bug trigger)
+  await apiHelpers.updateSettingsViaAPI(page, 'size-sm-test', { verticalbuttons: true });
+  await apiHelpers.clickUpButton(page, 'size-sm-test');
+  await apiHelpers.expectValueToBe(page, 'size-sm-test', '52');
 
-  // Test large size in vertical layout
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '53');
+  // Switch back to horizontal (this was where the DOM error occurred)
+  await apiHelpers.updateSettingsViaAPI(page, 'size-sm-test', { verticalbuttons: false });
 
-  // Switch back to horizontal to test large size there too
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', { verticalbuttons: false });
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '54');
+  // Verify it still works after layout switch back to horizontal
+  await apiHelpers.clickUpButton(page, 'size-sm-test');
+  await apiHelpers.expectValueToBe(page, 'size-sm-test', '53');
+
+  // Test the same cycle with large input
+  await apiHelpers.updateSettingsViaAPI(page, 'size-lg-test', { verticalbuttons: true });
+  await apiHelpers.clickUpButton(page, 'size-lg-test');
+  await apiHelpers.expectValueToBe(page, 'size-lg-test', '52');
+
+  // Switch large input back to horizontal
+  await apiHelpers.updateSettingsViaAPI(page, 'size-lg-test', { verticalbuttons: false });
+  await apiHelpers.clickUpButton(page, 'size-lg-test');
+  await apiHelpers.expectValueToBe(page, 'size-lg-test', '53');
 });
 
 /**

@@ -172,6 +172,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
         return upButton;
     }
     insertElementsIntoExistingGroup(existingInputGroup) {
+        // Ensure input is a child of the existing group before using it as a reference
+        this.ensureInputInGroup(existingInputGroup);
         if (!this.opts.verticalbuttons) {
             existingInputGroup.insertBefore(this.createDownButton(), this.input);
         }
@@ -193,6 +195,14 @@ class Bootstrap5Renderer extends AbstractRenderer {
                 : this.input.nextSibling;
             existingInputGroup.insertBefore(this.createUpButton(), insertionPoint);
         }
+    }
+    ensureInputInGroup(existingInputGroup) {
+        // Check if input is already a direct child of the group
+        if (this.input.parentElement === existingInputGroup) {
+            return;
+        }
+        // If input is not in the group, append it (it may have been moved during DOM manipulations)
+        existingInputGroup.appendChild(this.input);
     }
     // Element creation helpers
     createButton(type, isVertical = false) {

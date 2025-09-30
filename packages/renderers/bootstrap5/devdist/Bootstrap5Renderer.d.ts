@@ -24,6 +24,7 @@ declare class Bootstrap5Renderer extends AbstractRenderer {
     private findVerticalInsertionPoint;
     private findHorizontalInsertionPoint;
     private insertElementsIntoExistingGroup;
+    private ensureInputInGroup;
     private createButton;
     private createUpButton;
     private createDownButton;
