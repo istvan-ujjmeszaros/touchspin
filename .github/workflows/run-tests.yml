@@ -82,9 +82,6 @@ jobs:
       - name: Guard - no src imports in tests
         run: yarn guard:no-src-in-tests
 
-      - name: Build test artifacts (devdist)
-        run: yarn build:test
-
       - name: Run tests (Chromium)
         run: yarn test
 
