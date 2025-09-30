@@ -1239,7 +1239,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/jquery-plugin@workspace:*, @touchspin/jquery-plugin@workspace:packages/jquery-plugin":
+"@touchspin/jquery-plugin@workspace:packages/jquery-plugin":
   version: 0.0.0-use.local
   resolution: "@touchspin/jquery-plugin@workspace:packages/jquery-plugin"
   dependencies:
@@ -1268,7 +1268,6 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/jquery-plugin": "workspace:*"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:3.4.1"
     sass: "npm:^1.77.8"
@@ -1283,7 +1282,6 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/jquery-plugin": "workspace:*"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:4.6.2"
     sass: "npm:^1.77.8"
@@ -1298,7 +1296,6 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/jquery-plugin": "workspace:*"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:5.3.8"
     sass: "npm:^1.77.8"
