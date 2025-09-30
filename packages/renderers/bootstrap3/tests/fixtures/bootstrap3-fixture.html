@@ -29,27 +29,18 @@
     }
     </script>
 
-    <!-- Load TouchSpin Core and Bootstrap3Renderer with proper async loading -->
+    <!-- Load TouchSpin Core and Bootstrap3Renderer with simplified default renderer setup -->
     <script type="module">
-        (async () => {
-            try {
-                const [CoreModule, RendererModule] = await Promise.all([
-                    import('@touchspin/core'),
-                    import('@touchspin/renderer-bootstrap3')
-                ]);
+        import { TouchSpin } from '@touchspin/core';
+        import Bootstrap3Renderer from '@touchspin/renderer-bootstrap3';
 
-                // Expose everything tests might need on window
-                window.TouchSpinCore = CoreModule.TouchSpinCore;
-                window.TouchSpinDefaultRenderer = RendererModule.default;
+        // Set default renderer (README-recommended approach)
+        globalThis.TouchSpinDefaultRenderer = Bootstrap3Renderer;
 
-                // Mark page as ready only after everything loads successfully
-                window.testPageReady = true;
-            } catch (error) {
-                console.error('Failed to load TouchSpin modules:', error);
-                // Still mark as ready to prevent test timeouts
-                window.testPageReady = true;
-            }
-        })();
+        // Maintain legacy compatibility for test helpers
+        window.TouchSpinCore = TouchSpin;
+        window.TouchSpinDefaultRenderer = Bootstrap3Renderer;
+        window.testPageReady = true;
     </script>
 </head>
 <body>

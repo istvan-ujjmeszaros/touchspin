@@ -20,27 +20,18 @@
     }
     </script>
 
-    <!-- Load TouchSpin Core and VanillaRenderer with proper async loading -->
+    <!-- Load TouchSpin Core and VanillaRenderer with simplified default renderer setup -->
     <script type="module">
-        (async () => {
-            try {
-                const [CoreModule, RendererModule] = await Promise.all([
-                    import('@touchspin/core'),
-                    import('@touchspin/renderer-vanilla')
-                ]);
+        import { TouchSpin } from '@touchspin/core';
+        import VanillaRenderer from '@touchspin/renderer-vanilla';
 
-                // Expose everything tests might need on window
-                window.TouchSpinCore = CoreModule.TouchSpinCore;
-                window.TouchSpinDefaultRenderer = RendererModule.default;
+        // Set default renderer (README-recommended approach)
+        globalThis.TouchSpinDefaultRenderer = VanillaRenderer;
 
-                // Mark page as ready only after everything loads successfully
-                window.testPageReady = true;
-            } catch (error) {
-                console.error('Failed to load TouchSpin modules:', error);
-                // Still mark as ready to prevent test timeouts
-                window.testPageReady = true;
-            }
-        })();
+        // Maintain legacy compatibility for test helpers
+        window.TouchSpinCore = TouchSpin;
+        window.TouchSpinDefaultRenderer = VanillaRenderer;
+        window.testPageReady = true;
     </script>
 </head>
 <body>
