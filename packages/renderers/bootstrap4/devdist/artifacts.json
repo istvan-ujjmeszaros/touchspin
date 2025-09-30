@@ -1,4 +1,6 @@
 {
   "esmEntry": "index.js",
-  "classModule": "Bootstrap4Renderer.js"
+  "classModule": "Bootstrap4Renderer.js",
+  "iifeEntry": "iife/Bootstrap4Renderer.global.js",
+  "iifeComplete": "iife/touchspin-bs4-complete.global.js"
 }

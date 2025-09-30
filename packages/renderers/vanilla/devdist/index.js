@@ -1,9 +1,8 @@
 /**
- * @touchspin/vanilla-renderer
- * Vanilla CSS-based renderer for TouchSpin components
+ * @touchspin/vanilla-renderer - Test entry point
+ * Vanilla CSS-based renderer for TouchSpin components (without CSS imports for testing)
  */
 export { default as VanillaRenderer } from './VanillaRenderer.js';
 export { default } from './VanillaRenderer.js';
-// Note: CSS is loaded separately via <link> tag in HTML
-// import './themes/vanilla.css'; // Commented out - browsers can't import CSS as modules
+// CSS imports removed for test compatibility - CSS loaded separately
 //# sourceMappingURL=index.js.map
