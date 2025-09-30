@@ -563,21 +563,24 @@ test('supports late binding scenarios', async ({ page }) => {
   expect(beforeUpgrade.element1Exists).toBe(true);
   expect(beforeUpgrade.element2Exists).toBe(true);
 
-  // Now load the web component script (late binding) using a dynamically injected import map
-  await page.evaluate(() => {
+  // Now load the web component script (late binding) with import map
+  await page.evaluate(async () => {
     if (!document.querySelector('script[type="importmap"][data-ts="late-binding"]')) {
+      // Inject import map for late binding scenario
+      const importMap = {
+        "imports": {
+          "@touchspin/core": "/packages/core/devdist/index.js",
+          "@touchspin/core/renderer": "/packages/core/devdist/renderer.js",
+          "@touchspin/core/events": "/packages/core/devdist/events.js",
+          "@touchspin/web-component": "/packages/web-component/devdist/index.js",
+          "@touchspin/renderer-vanilla": "/packages/renderers/vanilla/devdist/index.js"
+        }
+      };
+
       const map = document.createElement('script');
       map.type = 'importmap';
       map.setAttribute('data-ts', 'late-binding');
-      map.textContent = JSON.stringify({
-        imports: {
-          '@touchspin/core': '/packages/core/devdist/index.js',
-          '@touchspin/core/renderer': '/packages/core/devdist/renderer.js',
-          '@touchspin/core/events': '/packages/core/devdist/events.js',
-          '@touchspin/web-component': '/packages/web-component/devdist/index.js',
-          '@touchspin/renderer-vanilla': '/packages/web-component/tests/fixtures/vanilla-renderer-shim.js'
-        }
-      });
+      map.textContent = JSON.stringify(importMap);
       document.head.appendChild(map);
     }
   });

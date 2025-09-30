@@ -252,7 +252,7 @@
 - **Given I need TouchSpin web component with all dependencies resolved**
   - `loadWebComponentWithDependencies(page, debug)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
-  - Note: Handles module resolution issues for web component testing
+  - Note: Assumes fixture already has static import map configured
 
 - **Helper to check if a warning contains specific text**
   - `hasWarningContaining(warnings, text)`
@@ -336,7 +336,7 @@
 - **When I load the web component with bundled dependencies**
   - `loadWebComponentWithDependencies(page, debug)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
-  - Note: Handles module resolution issues for web component testing
+  - Note: Assumes fixture already has static import map configured
 
 - **When I load TouchSpin jQuery plugin**
   - `loadTouchSpinJQueryPlugin(page, options)`

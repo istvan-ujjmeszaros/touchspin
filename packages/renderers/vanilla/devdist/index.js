@@ -4,6 +4,6 @@
  */
 export { default as VanillaRenderer } from './VanillaRenderer.js';
 export { default } from './VanillaRenderer.js';
-// Emit CSS for CDN/static usage
-import './themes/vanilla.css';
+// Note: CSS is loaded separately via <link> tag in HTML
+// import './themes/vanilla.css'; // Commented out - browsers can't import CSS as modules
 //# sourceMappingURL=index.js.map

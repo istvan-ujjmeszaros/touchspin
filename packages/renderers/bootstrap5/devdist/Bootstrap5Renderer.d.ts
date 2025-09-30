@@ -32,7 +32,8 @@ declare class Bootstrap5Renderer extends AbstractRenderer {
     private createVerticalButtonWrapper;
     private buildClasses;
     private getButtonClass;
-    private getButtonText;
+    private getButtonSetting;
+    private getButtonFallback;
     private detectInputGroupSize;
     private findInjectedElement;
     buildAndAttachDOM(): void;
@@ -51,7 +52,9 @@ declare class Bootstrap5Renderer extends AbstractRenderer {
     handleVerticalButtonsChange(_newValue: boolean): void;
     rebuildDOM(): void;
     private resetStateAfterRemoval;
-    private resolveButtonLabel;
+    private applyButtonLabel;
+    private resolveButtonContent;
+    private containsHtml;
     private decodeHtml;
 }
 export default Bootstrap5Renderer;

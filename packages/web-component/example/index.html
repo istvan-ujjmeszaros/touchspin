@@ -5,11 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TouchSpin Web Component Demo</title>
 
-  <!-- Use Vanilla renderer CSS for presentation (imported for HMR) -->
-  <script type="module">import '../../vanilla-renderer/src/themes/vanilla.css';</script>
+  <!-- Import map for module resolution -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../core/devdist/index.js",
+      "@touchspin/core/renderer": "../../core/devdist/renderer.js",
+      "@touchspin/core/events": "../../core/devdist/events.js",
+      "@touchspin/web-component": "../devdist/index.js",
+      "@touchspin/renderer-vanilla": "../../renderers/vanilla/devdist/index.js"
+    }
+  }
+  </script>
 
-  <!-- Register the custom element locally in dev -->
-  <script type="module">import '../src/index.ts';</script>
+  <!-- Use Vanilla renderer CSS for presentation -->
+  <link rel="stylesheet" href="../../renderers/vanilla/src/themes/vanilla.css">
+
+  <!-- Register the custom element using built version -->
+  <script type="module">import '@touchspin/web-component';</script>
 
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; }

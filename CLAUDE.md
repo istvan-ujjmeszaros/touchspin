@@ -850,6 +850,35 @@ console.log(await apiHelpers.getEventLog(page)); // See events
 await page.pause(); // Interactive debugging
 ```
 
+**Page Inspection Tool:**
+Use `yarn inspect` to analyze any page for console errors, network failures, and TouchSpin status:
+
+```bash
+# Inspect any page on the development server
+yarn inspect /packages/web-component/example/index.html
+yarn inspect /packages/core/tests/__shared__/fixtures/test-fixture.html
+
+# Returns JSON with:
+# - console errors/warnings
+# - network failures (404s, etc.)
+# - touchspinStatus (initialized/not initialized components)
+# - summary statistics
+```
+
+**Example output:**
+```json
+{
+  "summary": {
+    "totalConsoleErrors": 0,
+    "totalNetworkErrors": 0,
+    "touchspinInitialized": 3,
+    "touchspinNotInitialized": 0
+  }
+}
+```
+
+**IMPORTANT**: Always use `yarn inspect` instead of manually copying console messages, as it provides comprehensive and accurate debugging information.
+
 **Anti-Patterns:**
 - ❌ Never import from `/src/` in tests (use `/dist/`)
 - ❌ Never use `page.locator()` directly (use helpers)
