@@ -28,7 +28,10 @@
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
     "build:css": "yarn exec sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "tsc -p tsconfig.testbuild.json && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap3",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/jquery-plugin run build:test",
+    "build:umd": "tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --outDir devdist/umd --external=none",
+    "build:iife-complete": "tsup src/touchspin-bs3-complete.ts --format iife --global-name TouchSpinBS3Complete --no-dts --sourcemap --target es2020 --outDir devdist/iife --external=none",
+    "build:test": "yarn run build:deps && tsc -p tsconfig.testbuild.json && tsup src/Bootstrap3Renderer.ts --format iife --global-name Bootstrap3Renderer --sourcemap --target es2020 --outDir devdist/iife --external=none && yarn run build:iife-complete && yarn run build:umd && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js iifeEntry=iife/Bootstrap3Renderer.global.js iifeComplete=iife/touchspin-bs3-complete.global.js umdEntry=umd/jquery-touchspin-bs3.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap3",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
@@ -38,7 +41,8 @@
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap3/tests"
   },
   "dependencies": {
-    "@touchspin/core": "workspace:*"
+    "@touchspin/core": "workspace:*",
+    "@touchspin/jquery-plugin": "workspace:*"
   },
   "author": "TouchSpin Contributors",
   "repository": {
