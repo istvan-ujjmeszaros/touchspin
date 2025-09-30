@@ -42,6 +42,23 @@ jobs:
 
       - name: Validate pack (dry-run)
         run: |
-          cd "packages/${{ matrix.pkg##*@touchspin/ }}" || cd "packages/renderers/${{ matrix.pkg##*@touchspin/renderer- }}"
+          # Determine the correct package directory
+          PKG_NAME="${{ matrix.pkg }}"
+
+          if [[ "$PKG_NAME" == *"renderer-"* ]]; then
+            # Handle renderer packages: @touchspin/renderer-bootstrap3 -> packages/renderers/bootstrap3
+            RENDERER_NAME=$(echo "$PKG_NAME" | sed 's/@touchspin\/renderer-//')
+            PKG_DIR="packages/renderers/$RENDERER_NAME"
+          elif [[ "$PKG_NAME" == "@touchspin/vanilla-renderer" ]]; then
+            # Special case for vanilla renderer
+            PKG_DIR="packages/renderers/vanilla"
+          else
+            # Handle regular packages: @touchspin/core -> packages/core
+            PKG_NAME_ONLY=$(echo "$PKG_NAME" | sed 's/@touchspin\///')
+            PKG_DIR="packages/$PKG_NAME_ONLY"
+          fi
+
+          echo "Validating package in directory: $PKG_DIR"
+          cd "$PKG_DIR"
           npm pack --dry-run
 
