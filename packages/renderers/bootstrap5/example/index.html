@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TouchSpin Bootstrap 5 - Complete Demo</title>
 
-  <!-- Bootstrap 5 CSS (Local) -->
-  <link rel="stylesheet" href="../devdist/external/css/bootstrap.min.css">
+  <!-- Bootstrap 5 CSS (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- TouchSpin CSS -->
-  <link rel="stylesheet" href="../devdist/touchspin-bootstrap5.css" id="touchspin-css">
+  <link rel="stylesheet" href="../dist/touchspin-bootstrap5.css" id="touchspin-css">
 
   <!-- Import map with relative paths - works universally -->
   <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "../../../core/devdist/index.js",
-      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
-      "@touchspin/renderers/bootstrap5": "../devdist/index.js"
+      "@touchspin/core": "../../../core/dist/index.js",
+      "@touchspin/core/renderer": "../../../core/dist/renderer.js",
+      "@touchspin/renderers/bootstrap5": "../dist/index.js"
     }
   }
   </script>
@@ -32,21 +32,59 @@
     }
 
     .main-container {
-      display: flex;
+      display: grid;
+      grid-template-columns: 400px 1fr 450px;
       gap: 30px;
-      max-width: 1400px;
+      max-width: 1800px;
       margin: 0 auto;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1600px) {
       .main-container {
-        flex-direction: column;
+        grid-template-columns: 350px 1fr 420px;
+        gap: 25px;
+      }
+    }
+
+    @media (max-width: 1400px) {
+      .main-container {
+        grid-template-columns: 320px 1fr 380px;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr 400px;
+        gap: 20px;
+      }
+
+      /* Stack left sidebar items vertically in 2-column layout */
+      .left-sidebar {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .control-panel {
         position: static;
         width: 100%;
         max-height: none;
+      }
+
+      .left-sidebar {
+        position: static;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
       }
     }
 
@@ -60,15 +98,16 @@
       }
     }
 
-    .examples-section {
-      flex: 1;
+    .left-sidebar {
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    h1 {
-      color: #212529;
-      margin-bottom: 30px;
-      grid-column: 1 / -1;
+    .center-section {
+      flex: 1;
+      min-width: 0;
     }
 
     .example {
@@ -90,7 +129,6 @@
 
     /* Control Panel Styles */
     .control-panel {
-      width: 450px;
       position: sticky;
       top: 20px;
       max-height: calc(100vh - 40px);
@@ -101,7 +139,7 @@
     }
 
     .control-panel-header {
-      padding: 20px 20px 15px;
+      padding: 20px;
       border-bottom: 1px solid #dee2e6;
       position: sticky;
       top: 0;
@@ -110,11 +148,12 @@
       z-index: 10;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 15px;
     }
 
     .control-panel-header h2 {
-      margin: 0 0 10px;
+      margin: 0 0 5px;
       color: #212529;
       font-size: 1.25rem;
     }
@@ -132,46 +171,16 @@
       background: #f8f9fa;
       border: 1px solid #dee2e6;
       border-radius: 0.375rem;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       font-weight: 600;
-      width: 100%;
-      text-align: left;
       color: #212529;
-      gap: 10px;
-    }
-
-    .settings-header:hover,
-    .settings-header:focus-visible {
-      background: #e9ecef;
-      outline: none;
+      margin-bottom: -1px;
     }
 
     .settings-body {
-      display: none;
       padding: 15px;
       border: 1px solid #dee2e6;
       border-top: none;
       border-radius: 0 0 0.375rem 0.375rem;
-    }
-
-    .settings-section.open .settings-body {
-      display: block;
-    }
-
-    .chevron {
-      transition: transform 0.3s;
-    }
-
-    .settings-section.open .chevron {
-      transform: rotate(180deg);
-    }
-
-    .settings-body[aria-hidden="true"] {
-      display: none;
     }
 
     .control-group label {
@@ -249,31 +258,27 @@
       max-height: 400px;
       overflow-y: auto;
     }
-
-    /* Reset button */
-    .reset-section {
-      padding: 15px;
-      border-bottom: 1px solid #dee2e6;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
 <div class="main-container">
-  <!-- Examples Section -->
-  <div class="examples-section">
-    <h1>🎯 TouchSpin Bootstrap 5 - Complete Demo</h1>
-
-    <!-- Basic Example -->
+  <!-- Left Sidebar: Event Log & Method Testing -->
+  <div class="left-sidebar">
+    <!-- Method Testing -->
     <div class="example">
-      <h3>Interactive Demo with ALL Settings</h3>
-      <p>This input demonstrates all 41 TouchSpin configuration options. Use the control panel to test every setting in
-        real-time.</p>
-      <div class="spinner">
-        <input type="number" id="basic-spinner" min="0" max="100" value="50" step="1" class="form-control">
+      <h3>🔧 API Method Testing</h3>
+      <div class="method-buttons">
+        <button class="btn btn-primary btn-sm" id="test-up-once">upOnce()</button>
+        <button class="btn btn-primary btn-sm" id="test-down-once">downOnce()</button>
+        <button class="btn btn-success btn-sm" id="test-start-up">startUpSpin()</button>
+        <button class="btn btn-success btn-sm" id="test-start-down">startDownSpin()</button>
+        <button class="btn btn-warning btn-sm" id="test-stop-spin">stopSpin()</button>
+        <button class="btn btn-info btn-sm" id="test-set-random">setValue(random)</button>
+        <button class="btn btn-info btn-sm" id="test-get-value">getValue()</button>
+        <button class="btn btn-danger btn-sm" id="test-destroy">destroy()</button>
+        <button class="btn btn-secondary btn-sm" id="test-reinit">Re-Initialize</button>
       </div>
-      <h5 style="margin-top: 20px;">💻 Code Example (Non-Default Settings)</h5>
-      <pre class="code-block" id="basic-code-example">// Code will appear here...</pre>
+      <div class="method-feedback" id="method-feedback" role="status" aria-live="polite"></div>
     </div>
 
     <!-- Event Log -->
@@ -289,22 +294,20 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Method Testing -->
+  <!-- Center Section: Interactive Demo & Static Examples -->
+  <div class="center-section">
+    <!-- Basic Example -->
     <div class="example">
-      <h3>🔧 API Method Testing</h3>
-      <div class="method-buttons">
-        <button class="btn btn-primary" id="test-up-once">upOnce()</button>
-        <button class="btn btn-primary" id="test-down-once">downOnce()</button>
-        <button class="btn btn-success" id="test-start-up">startUpSpin()</button>
-        <button class="btn btn-success" id="test-start-down">startDownSpin()</button>
-        <button class="btn btn-warning" id="test-stop-spin">stopSpin()</button>
-        <button class="btn btn-info" id="test-set-random">setValue(random)</button>
-        <button class="btn btn-info" id="test-get-value">getValue()</button>
-        <button class="btn btn-danger" id="test-destroy">destroy()</button>
-        <button class="btn btn-secondary" id="test-reinit">Re-Initialize</button>
+      <h3>🎯 TouchSpin Bootstrap 5 - Interactive Demo with ALL Settings</h3>
+      <p>This input demonstrates all 41 TouchSpin configuration options. Use the control panel to test every setting in
+        real-time.</p>
+      <div class="spinner">
+        <input type="number" id="basic-spinner" min="0" max="100" value="50" step="1" class="form-control">
       </div>
-      <div class="method-feedback" id="method-feedback" role="status" aria-live="polite"></div>
+      <h5 style="margin-top: 20px;">💻 Code Example (Non-Default Settings)</h5>
+      <pre class="code-block" id="basic-code-example">// Code will appear here...</pre>
     </div>
 
     <!-- Static Examples Section -->
@@ -338,28 +341,21 @@
     </div>
   </div>
 
-  <!-- Control Panel -->
+  <!-- Right Sidebar: Control Panel -->
   <div class="control-panel">
     <div class="control-panel-header">
       <div>
         <h2>⚙️ TouchSpin Settings</h2>
         <small class="text-muted">All 41 Configuration Options</small>
       </div>
-    </div>
-
-    <!-- Reset Section -->
-    <div class="reset-section">
-      <button class="btn btn-outline-danger" id="reset-settings">🔄 Reset All Settings</button>
+      <button class="btn btn-sm btn-outline-danger" id="reset-settings">🔄 Reset</button>
     </div>
 
     <div class="control-sections">
       <!-- Basic Settings -->
-      <div class="settings-section open">
-        <button class="settings-header" type="button" aria-expanded="true" aria-controls="settings-basic">
-          <span>📊 Basic Settings</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-basic" role="region" aria-hidden="false">
+      <div class="settings-section">
+        <div class="settings-header">📊 Basic Settings</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Value</span>
@@ -387,11 +383,8 @@
 
       <!-- Prefix/Postfix -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-prefix">
-          <span>🏷️ Prefix & Postfix</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-prefix" role="region" aria-hidden="true">
+        <div class="settings-header">🏷️ Prefix & Postfix</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Prefix</span>
@@ -415,11 +408,8 @@
 
       <!-- State Controls -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-state">
-          <span>🔒 State & Behavior</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-state" role="region" aria-hidden="true">
+        <div class="settings-header">🔒 State & Behavior</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Input Type</span>
@@ -450,11 +440,8 @@
 
       <!-- Button Customization -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-buttons">
-          <span>🎨 Button Customization</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-buttons" role="region" aria-hidden="true">
+        <div class="settings-header">🎨 Button Customization</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Button Up Text</span>
@@ -498,11 +485,8 @@
 
       <!-- Advanced Settings -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-advanced">
-          <span>⚡ Advanced Settings</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-advanced" role="region" aria-hidden="true">
+        <div class="settings-header">⚡ Advanced Settings</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Force Step Divisibility</span>
@@ -535,11 +519,8 @@
 
       <!-- Boost Settings -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-boost">
-          <span>🚀 Boost Settings</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-boost" role="region" aria-hidden="true">
+        <div class="settings-header">🚀 Boost Settings</div>
+        <div class="settings-body">
           <div class="control-group">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="control-booster" checked>
@@ -563,11 +544,8 @@
 
       <!-- Callbacks -->
       <div class="settings-section">
-        <button class="settings-header" type="button" aria-expanded="false" aria-controls="settings-callbacks">
-          <span>🔗 Callback Functions</span>
-          <span class="chevron" aria-hidden="true">▼</span>
-        </button>
-        <div class="settings-body" id="settings-callbacks" role="region" aria-hidden="true">
+        <div class="settings-header">🔗 Callback Functions</div>
+        <div class="settings-body">
           <div class="control-group">
             <label>
               <span>Before Calculation (remove USD suffix)</span>
@@ -591,25 +569,6 @@
   import Bootstrap5Renderer from '@touchspin/renderers/bootstrap5';
 
   const STORAGE_KEY = 'touchspin-bootstrap5-settings';
-
-  function updateSectionState(section, expanded) {
-    section.classList.toggle('open', expanded);
-    const button = section.querySelector('.settings-header');
-    const body = section.querySelector('.settings-body');
-    if (button) button.setAttribute('aria-expanded', String(expanded));
-    if (body) body.setAttribute('aria-hidden', String(!expanded));
-  }
-
-  document.querySelectorAll('.settings-section').forEach((section) => {
-    const initialExpanded = section.classList.contains('open');
-    updateSectionState(section, initialExpanded);
-    const button = section.querySelector('.settings-header');
-    if (!button) return;
-    button.addEventListener('click', () => {
-      const isExpanded = button.getAttribute('aria-expanded') === 'true';
-      updateSectionState(section, !isExpanded);
-    });
-  });
 
   let basicSpinner = TouchSpin(document.getElementById('basic-spinner'), {
     renderer: Bootstrap5Renderer
@@ -961,9 +920,13 @@
     const disabled = raw.disabled;
     const readOnly = raw.readonly;
     const value = raw.value;
+    const min = raw.min;
+    const max = raw.max;
 
     const codeLines = ['<!-- HTML -->'];
     let inputMarkup = `<input type="${inputType}" id="myInput" value="${value}"`;
+    if (min !== '' && min !== null && min !== undefined) inputMarkup += ` min="${min}"`;
+    if (max !== '' && max !== null && max !== undefined) inputMarkup += ` max="${max}"`;
     if (disabled) inputMarkup += ' disabled';
     if (readOnly) inputMarkup += ' readonly';
     inputMarkup += '>';
