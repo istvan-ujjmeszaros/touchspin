@@ -8,11 +8,18 @@ const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').repla
 const DEFAULT_BASE = 'http://localhost:8866';
 const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
+// Allow controlling worker count via environment variable
+const workerCount = process.env.PLAYWRIGHT_WORKERS
+  ? parseInt(process.env.PLAYWRIGHT_WORKERS, 10)
+  : undefined; // undefined = Playwright default (50% of cores)
 
 export default defineConfig({
   testDir: './',
   testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/**/tests/**/*.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+
+  /* Control worker parallelization via PLAYWRIGHT_WORKERS env var */
+  workers: workerCount,
 
   /* Run tests in files in parallel */
   fullyParallel: false, // Keep sequential for now to match Jest behavior
