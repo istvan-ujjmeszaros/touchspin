@@ -107,6 +107,74 @@ function saveCSSVariables() {
   }
 }
 
+// Reset CSS variables to defaults
+function resetCSSVariables() {
+  const defaults = {
+    '--ts-wrapper-background-color': '#ffffff',
+    '--ts-wrapper-border-color': '#d1d5db',
+    '--ts-wrapper-border-width': '1px',
+    '--ts-wrapper-border-radius': '0.375rem',
+    '--ts-wrapper-box-shadow': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '--ts-wrapper-focus-border-color': '#3b82f6',
+    '--ts-wrapper-focus-box-shadow': '0 0 0 2px rgb(59 130 246 / 0.2), 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '--ts-wrapper-disabled-background-color': '#f9fafb',
+    '--ts-wrapper-disabled-opacity': '0.6',
+    '--ts-wrapper-readonly-background-color': '#f9fafb',
+    '--ts-input-text-color': '#111827',
+    '--ts-input-placeholder-color': '#6b7280',
+    '--ts-input-font-size': '1rem',
+    '--ts-input-padding': '0.5rem 0.75rem',
+    '--ts-button-background-color': '#f3f4f6',
+    '--ts-button-background-color-hover': '#e5e7eb',
+    '--ts-button-background-color-active': '#d1d5db',
+    '--ts-button-text-color': '#374151',
+    '--ts-button-font-weight': '500',
+    '--ts-button-padding': '0.5rem 0.75rem',
+    '--ts-button-disabled-opacity': '0.5',
+    '--ts-button-down-border-radius': '0.375rem 0 0 0.375rem',
+    '--ts-button-up-border-radius': '0 0.375rem 0.375rem 0',
+    '--ts-button-min-width': '2rem',
+    '--ts-addon-background-color': '#f9fafb',
+    '--ts-addon-text-color': '#6b7280',
+    '--ts-addon-padding': '0.5rem 0.75rem',
+    '--ts-vertical-button-background-color': '#f3f4f6',
+    '--ts-vertical-button-background-color-hover': '#e5e7eb',
+    '--ts-vertical-button-text-color': '#374151',
+    '--ts-vertical-button-border-color': '#d1d5db',
+    '--ts-vertical-button-border-width': '1px',
+    '--ts-vertical-button-padding': '0.25rem 0.5rem',
+    '--ts-vertical-button-font-size': '0.75rem',
+    '--ts-vertical-button-font-weight': '500',
+    '--ts-vertical-button-disabled-opacity': '0.5',
+    '--ts-vertical-button-up-border-radius': '0 0.25rem 0 0',
+    '--ts-vertical-button-down-border-radius': '0 0 0.25rem 0',
+    '--ts-vertical-button-min-width': '1.5rem',
+  };
+
+  // Apply defaults to CSS and form inputs
+  Object.entries(defaults).forEach(([varName, value]) => {
+    document.documentElement.style.setProperty(varName, value);
+    const textInput = document.querySelector(`input[data-var="${varName}"]`);
+    if (textInput) {
+      textInput.value = value;
+    }
+    // Update color picker if it's a color value
+    if (value.match(/^#[0-9A-Fa-f]{6}$/)) {
+      const colorPicker = document.querySelector(`input[data-var-color="${varName}"]`);
+      if (colorPicker) {
+        colorPicker.value = value;
+      }
+    }
+  });
+
+  // Clear from localStorage
+  try {
+    localStorage.removeItem(CSS_VARS_STORAGE_KEY);
+  } catch (e) {
+    console.warn('Failed to clear CSS variables from storage:', e);
+  }
+}
+
 // Initialize demo instance
 function initDemo() {
   const demoInput = document.getElementById('demo-input');
@@ -305,7 +373,8 @@ function attachControlListeners() {
     updateControls();
     initDemo();
     saveSettings();
-    logEvent('Settings reset to defaults');
+    resetCSSVariables();
+    logEvent('Settings and CSS variables reset to defaults');
   });
 
   // Clear log button
