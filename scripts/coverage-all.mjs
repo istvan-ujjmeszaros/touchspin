@@ -40,9 +40,10 @@ async function main() {
     }
   );
 
-  // Only merge and report if tests actually ran (status code 0 or test failures)
-  // Status code 1 from guards should not generate coverage reports
-  if (testStatus !== 1) {
+  // Generate coverage as long as tests actually ran (even if some failed)
+  // Exit 0 = all tests passed, Exit 1 = some tests failed (still generate coverage)
+  // Only abort on build/guard errors (exit code 2+) that prevent tests from running
+  if (testStatus === 0 || testStatus === 1) {
     runAndExit('yarn', ['coverage:merge']);
 
     console.log('📊 Generating reports...');
@@ -55,7 +56,7 @@ async function main() {
 
     console.log('✅ Coverage pipeline complete!');
   } else {
-    console.error('\n❌ Coverage pipeline aborted due to test failures or guard errors');
+    console.error('\n❌ Coverage pipeline aborted due to build or guard errors');
   }
 
   // Exit with test status so CI still sees failures

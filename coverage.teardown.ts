@@ -53,9 +53,9 @@ async function globalTeardown() {
 
       let abs = path.join(process.cwd(), p);          // /repo/packages/…/index.js
 
-      // Handle both /src/… and /dist/… paths
-      if (p.includes('/dist/')) {
-        // For dist files, return the built file path as-is if it exists (we rely on sourcemaps)
+      // Handle /src/…, /dist/…, and /devdist/… paths
+      if (p.includes('/dist/') || p.includes('/devdist/')) {
+        // For dist/devdist files, return the built file path as-is if it exists (we rely on sourcemaps)
         if (fs.existsSync(abs)) {
           return abs;
         }
@@ -114,6 +114,15 @@ async function globalTeardown() {
           // Track skipped URLs for debugging
           if (!skippedUrls.includes(entry.url)) {
             skippedUrls.push(entry.url);
+          }
+          continue;
+        }
+
+        // Skip external framework files (Bootstrap, jQuery, etc.) - we don't need coverage for third-party libs
+        if (localPath.includes('/devdist/external/')) {
+          if (!loggedPaths.has(localPath)) {
+            console.log(`⏭️  Skipping external file: ${localPath}`);
+            loggedPaths.add(localPath);
           }
           continue;
         }
