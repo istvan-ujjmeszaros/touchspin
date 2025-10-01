@@ -75,17 +75,6 @@ function initDemo() {
     renderer: VanillaRenderer
   });
 
-  // Attach event listeners
-  demoInput.addEventListener('touchspin.on.min', (e) => logEvent('touchspin.on.min', e.detail));
-  demoInput.addEventListener('touchspin.on.max', (e) => logEvent('touchspin.on.max', e.detail));
-  demoInput.addEventListener('touchspin.on.startspin', (e) => logEvent('touchspin.on.startspin', e.detail));
-  demoInput.addEventListener('touchspin.on.startupspin', (e) => logEvent('touchspin.on.startupspin', e.detail));
-  demoInput.addEventListener('touchspin.on.startdownspin', (e) => logEvent('touchspin.on.startdownspin', e.detail));
-  demoInput.addEventListener('touchspin.on.stopspin', (e) => logEvent('touchspin.on.stopspin', e.detail));
-  demoInput.addEventListener('touchspin.on.stopupspin', (e) => logEvent('touchspin.on.stopupspin', e.detail));
-  demoInput.addEventListener('touchspin.on.stopdownspin', (e) => logEvent('touchspin.on.stopdownspin', e.detail));
-  demoInput.addEventListener('change', (e) => logEvent('change', { value: e.target.value }));
-
   updateGeneratedCode();
 }
 
@@ -415,4 +404,17 @@ initStaticExamples();
 attachControlListeners();
 setupCSSVariables();
 setupCopyButton();
+
+// Attach event listeners to demo input (once, on page load)
+const demoInput = document.getElementById('demo-input');
+demoInput.addEventListener('touchspin.on.min', (e) => logEvent('touchspin.on.min', e.detail));
+demoInput.addEventListener('touchspin.on.max', (e) => logEvent('touchspin.on.max', e.detail));
+demoInput.addEventListener('touchspin.on.startspin', (e) => logEvent('touchspin.on.startspin', e.detail));
+demoInput.addEventListener('touchspin.on.startupspin', (e) => logEvent('touchspin.on.startupspin', e.detail));
+demoInput.addEventListener('touchspin.on.startdownspin', (e) => logEvent('touchspin.on.startdownspin', e.detail));
+demoInput.addEventListener('touchspin.on.stopspin', (e) => logEvent('touchspin.on.stopspin', e.detail));
+demoInput.addEventListener('touchspin.on.stopupspin', (e) => logEvent('touchspin.on.stopupspin', e.detail));
+demoInput.addEventListener('touchspin.on.stopdownspin', (e) => logEvent('touchspin.on.stopdownspin', e.detail));
+demoInput.addEventListener('change', (e) => logEvent('change', { value: e.target.value }));
+
 logEvent('TouchSpin Vanilla demo initialized with color pickers');
