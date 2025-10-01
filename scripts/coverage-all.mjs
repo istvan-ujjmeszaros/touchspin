@@ -32,11 +32,9 @@ async function main() {
   // Only build the test artifacts (devdist) needed for coverage
   runAndExit('yarn', ['build:test']);
 
-  console.log('🔍 Checking for src imports in tests...');
-  runAndExit('yarn', ['guard:no-src-in-tests']);
-
   console.log('🧪 Running tests with coverage...');
   // Use the no-build runner since we already built above
+  // The pre-test guard will handle remaining checks (src imports, page.locator, devdist)
   const testStatus = run(
     'yarn',
     ['coverage:run:nobuild', ...passThrough],
@@ -47,17 +45,24 @@ async function main() {
     }
   );
 
-  runAndExit('yarn', ['coverage:merge']);
+  // Only merge and report if tests actually ran (status code 0 or test failures)
+  // Status code 1 from guards should not generate coverage reports
+  if (testStatus !== 1) {
+    runAndExit('yarn', ['coverage:merge']);
 
-  console.log('📊 Generating reports...');
-  runAndExit('yarn', ['coverage:report']);
+    console.log('📊 Generating reports...');
+    runAndExit('yarn', ['coverage:report']);
 
-  if (open) {
-    console.log('🌐 Opening coverage report...');
-    await openBestEffort(resolve('reports/coverage/index.html'));
+    if (open) {
+      console.log('🌐 Opening coverage report...');
+      await openBestEffort(resolve('reports/coverage/index.html'));
+    }
+
+    console.log('✅ Coverage pipeline complete!');
+  } else {
+    console.error('\n❌ Coverage pipeline aborted due to test failures or guard errors');
   }
 
-  console.log('✅ Coverage pipeline complete!');
   // Exit with test status so CI still sees failures
   process.exit(testStatus);
 }

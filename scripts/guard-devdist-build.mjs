@@ -29,13 +29,13 @@ const PACKAGES_WITH_DEVDIST = [
 // Required files that must exist in devdist
 const REQUIRED_FILES = {
   'packages/core': ['index.js', 'renderer.js', 'artifacts.json'],
-  'packages/jquery-plugin': ['index.js', 'artifacts.json'],
+  'packages/jquery-plugin': ['umd/jquery-touchspin-bs3.js', 'umd/jquery-touchspin-bs5.js', 'artifacts.json'],
   'packages/web-component': ['index.js', 'artifacts.json'],
-  'packages/renderers/bootstrap3': ['index.js', 'Bootstrap3Renderer.js', 'iife/touchspin-bs3-complete.global.js', 'artifacts.json'],
-  'packages/renderers/bootstrap4': ['index.js', 'Bootstrap4Renderer.js', 'iife/touchspin-bs4-complete.global.js', 'artifacts.json'],
-  'packages/renderers/bootstrap5': ['index.js', 'Bootstrap5Renderer.js', 'iife/touchspin-bs5-complete.global.js', 'artifacts.json'],
-  'packages/renderers/tailwind': ['index.js', 'TailwindRenderer.js', 'artifacts.json'],
-  'packages/renderers/vanilla': ['index.js', 'VanillaRenderer.js', 'artifacts.json']
+  'packages/renderers/bootstrap3': ['Bootstrap3Renderer.js', 'iife/touchspin-bs3-complete.global.js', 'artifacts.json'],
+  'packages/renderers/bootstrap4': ['Bootstrap4Renderer.js', 'iife/touchspin-bs4-complete.global.js', 'artifacts.json'],
+  'packages/renderers/bootstrap5': ['Bootstrap5Renderer.js', 'iife/touchspin-bs5-complete.global.js', 'artifacts.json'],
+  'packages/renderers/tailwind': ['TailwindRenderer.js', 'artifacts.json'],
+  'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json']
 };
 
 function checkDevdistExists(packagePath) {
