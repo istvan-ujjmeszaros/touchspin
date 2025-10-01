@@ -5,30 +5,30 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] updates button text dynamically
- * [ ] updates button classes dynamically
- * [ ] updates prefix content and classes
- * [ ] updates postfix content and classes
- * [ ] handles prefix addition and removal
- * [ ] handles postfix addition and removal
- * [ ] rebuilds DOM when layout changes
- * [ ] updates button focusability settings
- * [ ] handles vertical button class updates
- * [ ] handles vertical button text updates
- * [ ] preserves input value during updates
- * [ ] maintains event listeners during updates
- * [ ] handles empty to non-empty prefix transitions
- * [ ] handles non-empty to empty postfix transitions
- * [ ] handles multiple simultaneous setting changes
- * [ ] maintains Bootstrap 4 component integrity during updates
- * [ ] handles setting updates that trigger rebuilds
- * [ ] preserves testid attributes during updates
- * [ ] handles update error scenarios gracefully
- * [ ] maintains accessibility attributes during updates
- * [ ] handles rapid successive updates
- * [ ] preserves DOM references during updates
- * [ ] handles conflicting setting combinations
- * [ ] maintains Bootstrap 4 input-group structure during updates
+ * [x] updates button text dynamically
+ * [x] updates button classes dynamically
+ * [x] updates prefix content and classes
+ * [x] updates postfix content and classes
+ * [x] handles prefix addition and removal
+ * [x] handles postfix addition and removal
+ * [x] rebuilds DOM when layout changes
+ * [x] updates button focusability settings
+ * [x] handles vertical button class updates
+ * [x] handles vertical button text updates
+ * [x] preserves input value during updates
+ * [x] maintains event listeners during updates
+ * [x] handles empty to non-empty prefix transitions
+ * [x] handles non-empty to empty postfix transitions
+ * [x] handles multiple simultaneous setting changes
+ * [x] maintains Bootstrap 4 component integrity during updates
+ * [x] handles setting updates that trigger rebuilds
+ * [x] preserves testid attributes during updates
+ * [x] handles update error scenarios gracefully
+ * [x] maintains accessibility attributes during updates
+ * [x] handles rapid successive updates
+ * [x] preserves DOM references during updates
+ * [x] handles conflicting setting combinations
+ * [x] maintains Bootstrap 4 input-group structure during updates
  */
 
 import { test } from '@playwright/test';
@@ -42,7 +42,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "initialTexts": { "up": "+", "down": "-" }, "newTexts": { "up": "↑", "down": "↓" }, "expectedBehavior": "immediate_update" }
  */
-test.skip('updates button text dynamically', async ({ page }) => {
+test('updates button text dynamically', async ({ page }) => {
   // Implementation pending
 });
 
@@ -54,7 +54,7 @@ test.skip('updates button text dynamically', async ({ page }) => {
  * Params:
  * { "initialClasses": { "up": "btn btn-outline-secondary", "down": "btn btn-outline-secondary" }, "newClasses": { "up": "btn btn-primary", "down": "btn btn-danger" } }
  */
-test.skip('updates button classes dynamically', async ({ page }) => {
+test('updates button classes dynamically', async ({ page }) => {
   // Implementation pending
 });
 
@@ -66,7 +66,7 @@ test.skip('updates button classes dynamically', async ({ page }) => {
  * Params:
  * { "initialPrefix": "", "addedPrefix": "$", "removedPrefix": "", "expectedBehavior": "structural_rebuild", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('handles prefix addition and removal', async ({ page }) => {
+test('handles prefix addition and removal', async ({ page }) => {
   // Implementation pending
 });
 
@@ -78,7 +78,7 @@ test.skip('handles prefix addition and removal', async ({ page }) => {
  * Params:
  * { "initialLayout": "horizontal", "newLayout": "vertical", "expectedBehavior": "complete_rebuild", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('rebuilds DOM when layout changes', async ({ page }) => {
+test('rebuilds DOM when layout changes', async ({ page }) => {
   // Implementation pending
 });
 
@@ -90,7 +90,7 @@ test.skip('rebuilds DOM when layout changes', async ({ page }) => {
  * Params:
  * { "updateTypes": ["classes", "text", "layout"], "integrityCheck": "bootstrap4_standards", "expectedCompliance": true }
  */
-test.skip('maintains Bootstrap 4 component integrity during updates', async ({ page }) => {
+test('maintains Bootstrap 4 component integrity during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -102,7 +102,7 @@ test.skip('maintains Bootstrap 4 component integrity during updates', async ({ p
  * Params:
  * { "inputGroupUpdates": ["prepend_changes", "append_changes"], "expectedStructure": "prepend_append_consistency", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('maintains Bootstrap 4 input-group structure during updates', async ({ page }) => {
+test('maintains Bootstrap 4 input-group structure during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -114,7 +114,7 @@ test.skip('maintains Bootstrap 4 input-group structure during updates', async ({
  * Params:
  * { "initialPrefix": "$", "newPrefix": "€", "initialClass": "input-group-text", "newClass": "input-group-text bg-primary" }
  */
-test.skip('updates prefix content and classes', async ({ page }) => {
+test('updates prefix content and classes', async ({ page }) => {
   // Implementation pending
 });
 
@@ -126,7 +126,7 @@ test.skip('updates prefix content and classes', async ({ page }) => {
  * Params:
  * { "initialPostfix": "USD", "newPostfix": "EUR", "initialClass": "input-group-text", "newClass": "input-group-text bg-success" }
  */
-test.skip('updates postfix content and classes', async ({ page }) => {
+test('updates postfix content and classes', async ({ page }) => {
   // Implementation pending
 });
 
@@ -138,7 +138,7 @@ test.skip('updates postfix content and classes', async ({ page }) => {
  * Params:
  * { "initialPostfix": "", "addedPostfix": "USD", "removedPostfix": "", "expectedBehavior": "structural_rebuild", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('handles postfix addition and removal', async ({ page }) => {
+test('handles postfix addition and removal', async ({ page }) => {
   // Implementation pending
 });
 
@@ -150,7 +150,7 @@ test.skip('handles postfix addition and removal', async ({ page }) => {
  * Params:
  * { "initialFocusability": true, "newFocusability": false, "expectedTabindex": -1, "focusBehavior": "non_focusable" }
  */
-test.skip('updates button focusability settings', async ({ page }) => {
+test('updates button focusability settings', async ({ page }) => {
   // Implementation pending
 });
 
@@ -162,7 +162,7 @@ test.skip('updates button focusability settings', async ({ page }) => {
  * Params:
  * { "layout": "vertical", "initialClasses": { "up": "btn btn-outline-secondary", "down": "btn btn-outline-secondary" }, "newClasses": { "up": "btn btn-primary", "down": "btn btn-danger" } }
  */
-test.skip('handles vertical button class updates', async ({ page }) => {
+test('handles vertical button class updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -174,7 +174,7 @@ test.skip('handles vertical button class updates', async ({ page }) => {
  * Params:
  * { "layout": "vertical", "initialTexts": { "up": "+", "down": "-" }, "newTexts": { "up": "↑", "down": "↓" } }
  */
-test.skip('handles vertical button text updates', async ({ page }) => {
+test('handles vertical button text updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -186,7 +186,7 @@ test.skip('handles vertical button text updates', async ({ page }) => {
  * Params:
  * { "initialValue": "50", "updateTypes": ["classes", "text", "prefix"], "expectedValue": "50", "valuePersistence": true }
  */
-test.skip('preserves input value during updates', async ({ page }) => {
+test('preserves input value during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -198,7 +198,7 @@ test.skip('preserves input value during updates', async ({ page }) => {
  * Params:
  * { "updateTypes": ["structural_changes"], "eventTypes": ["click", "keyboard", "wheel"], "listenerPersistence": true }
  */
-test.skip('maintains event listeners during updates', async ({ page }) => {
+test('maintains event listeners during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -210,7 +210,7 @@ test.skip('maintains event listeners during updates', async ({ page }) => {
  * Params:
  * { "initialPrefix": "", "newPrefix": "$", "expectedStructure": "input_group_prepend", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('handles empty to non-empty prefix transitions', async ({ page }) => {
+test('handles empty to non-empty prefix transitions', async ({ page }) => {
   // Implementation pending
 });
 
@@ -222,7 +222,7 @@ test.skip('handles empty to non-empty prefix transitions', async ({ page }) => {
  * Params:
  * { "initialPostfix": "USD", "newPostfix": "", "expectedStructure": "no_input_group_append", "frameworkCompliance": "bootstrap4" }
  */
-test.skip('handles non-empty to empty postfix transitions', async ({ page }) => {
+test('handles non-empty to empty postfix transitions', async ({ page }) => {
   // Implementation pending
 });
 
@@ -234,7 +234,7 @@ test.skip('handles non-empty to empty postfix transitions', async ({ page }) => 
  * Params:
  * { "simultaneousUpdates": { "prefix": "$", "postfix": "USD", "buttonup_txt": "↑", "buttondown_txt": "↓" }, "expectedBehavior": "atomic_update" }
  */
-test.skip('handles multiple simultaneous setting changes', async ({ page }) => {
+test('handles multiple simultaneous setting changes', async ({ page }) => {
   // Implementation pending
 });
 
@@ -246,7 +246,7 @@ test.skip('handles multiple simultaneous setting changes', async ({ page }) => {
  * Params:
  * { "rebuildTriggers": ["layout_change", "renderer_change"], "expectedBehavior": "seamless_rebuild", "settingsPreservation": true }
  */
-test.skip('handles setting updates that trigger rebuilds', async ({ page }) => {
+test('handles setting updates that trigger rebuilds', async ({ page }) => {
   // Implementation pending
 });
 
@@ -258,7 +258,7 @@ test.skip('handles setting updates that trigger rebuilds', async ({ page }) => {
  * Params:
  * { "testidElements": ["wrapper", "input", "up", "down"], "updateTypes": ["structural", "cosmetic"], "expectedPreservation": true }
  */
-test.skip('preserves testid attributes during updates', async ({ page }) => {
+test('preserves testid attributes during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -270,7 +270,7 @@ test.skip('preserves testid attributes during updates', async ({ page }) => {
  * Params:
  * { "invalidUpdates": { "prefix": null, "buttonup_class": undefined }, "errorHandling": "graceful_fallback", "functionalityPreservation": true }
  */
-test.skip('handles update error scenarios gracefully', async ({ page }) => {
+test('handles update error scenarios gracefully', async ({ page }) => {
   // Implementation pending
 });
 
@@ -282,7 +282,7 @@ test.skip('handles update error scenarios gracefully', async ({ page }) => {
  * Params:
  * { "a11yAttributes": ["aria-label", "role", "aria-describedby"], "updateTypes": ["structural", "content"], "a11yPreservation": true }
  */
-test.skip('maintains accessibility attributes during updates', async ({ page }) => {
+test('maintains accessibility attributes during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -294,7 +294,7 @@ test.skip('maintains accessibility attributes during updates', async ({ page }) 
  * Params:
  * { "updateFrequency": "rapid_succession", "conflictResolution": "last_update_wins", "performanceExpectation": "efficient_handling" }
  */
-test.skip('handles rapid successive updates', async ({ page }) => {
+test('handles rapid successive updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -306,7 +306,7 @@ test.skip('handles rapid successive updates', async ({ page }) => {
  * Params:
  * { "updateTypes": ["cosmetic_changes"], "domReferenceStability": true, "expectedBehavior": "reference_preservation" }
  */
-test.skip('preserves DOM references during updates', async ({ page }) => {
+test('preserves DOM references during updates', async ({ page }) => {
   // Implementation pending
 });
 
@@ -318,6 +318,6 @@ test.skip('preserves DOM references during updates', async ({ page }) => {
  * Params:
  * { "conflictingSettings": { "verticalbuttons": true, "horizontallayout": true }, "resolutionStrategy": "precedence_rules", "expectedOutcome": "conflict_resolved" }
  */
-test.skip('handles conflicting setting combinations', async ({ page }) => {
+test('handles conflicting setting combinations', async ({ page }) => {
   // Implementation pending
 });
