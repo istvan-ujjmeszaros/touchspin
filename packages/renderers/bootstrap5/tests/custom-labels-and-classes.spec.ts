@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers, startCoverage, collectCoverage } from '@touchspin/core/test-helpers';
-import { initializeTouchspinWithBootstrap5 } from './helpers/initialization';
+import { installDomHelpers, startCoverage, collectCoverage, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
 
 test.describe('renderer-b5: custom labels/classes render', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,7 +12,7 @@ test.describe('renderer-b5: custom labels/classes render', () => {
     await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
     await installDomHelpers(page);
 
-    await initializeTouchspinWithBootstrap5(page, 'test-input', {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
       buttonup_txt: 'UP',
       buttondown_txt: 'DOWN',
       buttonup_class: 'btn btn-primary',
