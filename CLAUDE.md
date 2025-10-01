@@ -49,7 +49,9 @@
    ```typescript
    test('simple bootstrap integration', async ({ page }) => {
      await page.goto('/fixtures/bootstrap5-fixture.html');
-     await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+     await initializeTouchspinFromGlobals(page, 'test-input', {
+       buttonup_class: 'btn btn-primary',
+     });
 
      // Test the actual behavior, not CSS
      await clickUpButton(page, 'test-input');
@@ -78,7 +80,9 @@ await page.addStyleTag({
 ```typescript
 test('works with bootstrap buttons', async ({ page }) => {
   await page.goto('/fixtures/bootstrap5-fixture.html');
-  await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn btn-primary',
+  });
   await clickUpButton(page, 'test-input');
   await expectValueToBe(page, 'test-input', '1');
 });
@@ -156,7 +160,7 @@ If you need to make assertions about DOM markup, button layout, prefix/postfix i
 
 **Core Testing Approaches**:
 1. **Engine & API behaviour**: `initializeTouchspin` (no renderer) + `core-api-fixture.html`
-2. **Renderer behaviour**: test inside the renderer package with its clean fixture and `initializeTouchspinWithRenderer`
+2. **Renderer behaviour**: test inside the renderer package with its clean fixture and `initializeTouchspinFromGlobals`
 3. **Callback-only stubs**: `core-adapter.ts` for synthetic callback validation when no DOM is needed
 
 **Core Test File Status** (All syntax errors fixed):
@@ -262,21 +266,28 @@ expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10.25);
 - **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
 - **Full Core API via helpers**: All interaction methods (`incrementViaAPI`, `updateSettings`, etc.) remain available without the renderer
 
-### Phase 3: Renderer Packages 📅 (Planned)
+### Phase 3: Renderer Packages 📅 (In Progress)
 
-* **Status**: Planned after core package foundation
+* **Status**: Bootstrap5 renderer tests started
 * **Coverage Target**: 100% each
 * **Packages**:
 
-  * `packages/renderers/bootstrap5/tests/` - Bootstrap 5 markup
-  * `packages/renderers/material/tests/` - Material Design
-  * `packages/renderers/tailwind/tests/` - Tailwind CSS
+  * `packages/renderers/bootstrap5/tests/` - Bootstrap 5 markup ✅ Started
+  * `packages/renderers/bootstrap3/tests/` - Bootstrap 3 markup 📅 Planned
+  * `packages/renderers/bootstrap4/tests/` - Bootstrap 4 markup 📅 Planned
+  * `packages/renderers/vanilla/tests/` - Vanilla renderer 📅 Planned
+  * `packages/renderers/tailwind/tests/` - Tailwind CSS 📅 Planned
 * **What to test**:
 
   * Framework-specific DOM structure
   * CSS class application
+  * Custom button text/classes
+  * Vertical layout options
+  * Prefix/postfix rendering
   * ARIA attributes
   * Theme integration
+
+* **Testing Pattern**: Use `initializeTouchspinFromGlobals()` with IIFE bundles (see Renderer Testing Patterns section)
 
 ### Phase 4: Integration & E2E 🔄 (Future)
 
@@ -772,12 +783,100 @@ await installJqueryPlugin(page);
 await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
 ```
 
-**Renderer Tests** - Use `initializeTouchspinWithRenderer`:
+**Renderer Tests** - Use `initializeTouchspinFromGlobals`:
 ```typescript
-import { initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
-await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
+import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+await initializeTouchspinFromGlobals(page, 'test-input', {
+  buttonup_txt: 'UP',
+  buttondown_txt: 'DOWN',
+  buttonup_class: 'btn btn-primary',
+});
 ```
 
+### 🎯 Renderer Testing Patterns
+
+**CRITICAL: Understanding Browser Module Resolution**
+
+Renderer packages compile to ESM modules that contain bare imports like:
+```javascript
+import { AbstractRenderer } from '@touchspin/core/renderer';
+```
+
+**Browsers cannot resolve these bare module specifiers** without an import map. This breaks dynamic imports in tests.
+
+**Solution: Use IIFE Bundles with Global Variables**
+
+The `initializeTouchspinFromGlobals()` helper loads IIFE bundles that expose global variables and have all dependencies bundled:
+
+```typescript
+// ✅ CORRECT - Renderer tests with IIFE bundles
+import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+
+await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+await initializeTouchspinFromGlobals(page, 'test-input', {
+  verticalbuttons: true,
+  buttonup_class: 'btn btn-success',
+});
+```
+
+**How it works:**
+1. Fixture loads IIFE bundle via `<script>` tag
+2. Bundle exposes `window.TouchSpinCore` and `window.Bootstrap5Renderer` globals
+3. Helper uses these globals to initialize without dynamic imports
+4. No module resolution issues in browser
+
+**When to use each pattern:**
+
+| Pattern | Use Case | Bundle Type |
+|---------|----------|-------------|
+| `initializeTouchspin()` | Core tests (no renderer) | N/A |
+| `initializeTouchspinFromGlobals()` | Framework renderer tests (Bootstrap, etc.) | IIFE with globals |
+| `initializeTouchspinWithRenderer()` | Vanilla renderer tests only | ESM (no bare imports) |
+| `initializeTouchspinJQuery()` | jQuery plugin tests | IIFE with globals |
+
+**External Framework Assets Strategy**
+
+Renderer packages commit external framework assets to `/devdist/external/` for offline CI:
+
+```
+packages/renderers/bootstrap5/
+  devdist/
+    external/          # ✅ Committed to git
+      css/
+        bootstrap.min.css
+      js/
+        bootstrap.bundle.min.js
+    *.js              # ❌ .gitignored (built artifacts)
+    *.d.ts            # ❌ .gitignored
+```
+
+**Why:**
+- CI runs in clean environment without node_modules
+- Tests need framework CSS/JS loaded in fixtures
+- Relative paths in fixtures require files to exist
+
+**Build Dependencies & Guards**
+
+The build system uses `build:deps` to ensure proper build order:
+
+```json
+// packages/jquery-plugin/package.json
+{
+  "scripts": {
+    "build:test": "yarn run build:deps && tsc -p tsconfig.testbuild.json && ..."
+  }
+}
+```
+
+**Purpose:**
+- Ensures renderer packages build before jquery-plugin
+- Provides `.d.ts` files for TypeScript compilation
+- Avoids "Cannot find module" errors in CI
+
+**Guards:**
+- `pre-dev` - Ensures packages built before `yarn dev`
+- `pre-test` - Ensures test builds before `yarn test`
+- Targeted builds avoid circular dependencies
 
 ### 🎯 Essential Best Practices
 
