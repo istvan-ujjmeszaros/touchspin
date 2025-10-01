@@ -39,8 +39,9 @@ let demoInstance = null;
 let staticInstances = [];
 let eventCount = 0;
 
-// Storage key
+// Storage keys
 const STORAGE_KEY = 'touchspin-vanilla-demo-settings';
+const CSS_VARS_STORAGE_KEY = 'touchspin-vanilla-css-vars';
 
 // Load settings from localStorage
 function loadSettings() {
@@ -61,6 +62,48 @@ function saveSettings() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSettings));
   } catch (e) {
     console.warn('Failed to save settings:', e);
+  }
+}
+
+// Load CSS variables from localStorage
+function loadCSSVariables() {
+  try {
+    const stored = localStorage.getItem(CSS_VARS_STORAGE_KEY);
+    if (stored) {
+      const vars = JSON.parse(stored);
+      Object.entries(vars).forEach(([varName, value]) => {
+        // Apply to DOM
+        document.documentElement.style.setProperty(varName, value);
+        // Update text input
+        const textInput = document.querySelector(`input[data-var="${varName}"]`);
+        if (textInput) {
+          textInput.value = value;
+        }
+        // Update color picker if it's a color value
+        if (value.match(/^#[0-9A-Fa-f]{6}$/)) {
+          const colorPicker = document.querySelector(`input[data-var-color="${varName}"]`);
+          if (colorPicker) {
+            colorPicker.value = value;
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn('Failed to load CSS variables:', e);
+  }
+}
+
+// Save CSS variables to localStorage
+function saveCSSVariables() {
+  try {
+    const vars = {};
+    document.querySelectorAll('[data-var]').forEach(input => {
+      const varName = input.getAttribute('data-var');
+      vars[varName] = input.value;
+    });
+    localStorage.setItem(CSS_VARS_STORAGE_KEY, JSON.stringify(vars));
+  } catch (e) {
+    console.warn('Failed to save CSS variables:', e);
   }
 }
 
@@ -350,6 +393,9 @@ function setupCSSVariables() {
       if (colorPicker && input.value.match(/^#[0-9A-Fa-f]{6}$/)) {
         colorPicker.value = input.value;
       }
+
+      // Save to localStorage
+      saveCSSVariables();
     });
   });
 
@@ -367,6 +413,9 @@ function setupCSSVariables() {
 
       // Apply to CSS
       document.documentElement.style.setProperty(varName, hexValue);
+
+      // Save to localStorage
+      saveCSSVariables();
     });
   });
 }
@@ -399,6 +448,7 @@ function setupCopyButton() {
 // Initialize
 loadSettings();
 updateControls();
+loadCSSVariables();
 initDemo();
 initStaticExamples();
 attachControlListeners();
