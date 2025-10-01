@@ -576,7 +576,7 @@ export class TouchSpinCore {
 
     // Check if already at max boundary before incrementing
     if (this.settings.max !== null && v === this.settings.max) {
-      // No event emission - just stop spinning if needed
+      this.emit('max'); // Emit event for feedback
       if (this.spinning && this.direction === 'up') {
         this.stopSpin();
       }
@@ -605,7 +605,7 @@ export class TouchSpinCore {
 
     // Check if already at min boundary before decrementing
     if (this.settings.min !== null && v === this.settings.min) {
-      // No event emission - just stop spinning if needed
+      this.emit('min'); // Emit event for feedback
       if (this.spinning && this.direction === 'down') {
         this.stopSpin();
       }
@@ -904,6 +904,7 @@ export class TouchSpinCore {
   emit(event: CoreEventName, detail?: unknown): void {
     const domEventName = `touchspin.on.${event}`;
     const customEvent = new CustomEvent(domEventName, {
+      detail,
       bubbles: true
       // cancelable: false (default) - no cancellation logic implemented yet
     });
@@ -916,6 +917,18 @@ export class TouchSpinCore {
    */
   _startSpin(dir: 'up' | 'down'): void {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
+
+    // Check if ALREADY at boundary before starting spin
+    // Emit min/max event as feedback, but don't start spinning
+    const currentValue = this.getValue();
+    if (dir === 'up' && this.settings.max !== null && currentValue === this.settings.max) {
+      this.emit('max');
+      return;
+    }
+    if (dir === 'down' && this.settings.min !== null && currentValue === this.settings.min) {
+      this.emit('min');
+      return;
+    }
 
     // If already spinning in the same direction, do nothing (idempotent)
     if (this.spinning && this.direction === dir) {

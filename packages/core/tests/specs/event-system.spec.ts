@@ -31,7 +31,11 @@
  * [x] supports event namespacing
  * [x] handles event emission during callbacks
  * [x] maintains event integrity during rapid operations
- * [x] emits boundary events only once per boundary reach
+ * [x] emits boundary events for each interaction at boundary
+ * [x] upOnce at max boundary emits max event without spin events
+ * [x] downOnce at min boundary emits min event without spin events
+ * [x] ArrowUp key at max boundary emits max event without spin events
+ * [x] ArrowDown key at min boundary emits min event without spin events
  * [x] handles event emission edge cases
  * [x] supports event listener removal
  * [x] maintains event backward compatibility
@@ -814,7 +818,7 @@ test('maintains event integrity during rapid operations', async ({ page }) => {
  * Params:
  * { "boundary": "max", "multipleAttempts": 5, "expectedEventCount": 1 }
  */
-test('emits boundary events only once per boundary reach', async ({ page }) => {
+test('emits boundary events for each interaction at boundary', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
       min: 0, max: 5, step: 1, initval: 4
     });
@@ -824,18 +828,126 @@ test('emits boundary events only once per boundary reach', async ({ page }) => {
     // Increment to reach max
     await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
 
-    // Try to increment again (should not emit another max event)
+    // Try to increment again (should emit max event each time as feedback)
     await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
     await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
 
-    // Should only have one max event despite multiple attempts
+    // Should have three max events (one for reaching, two for already-at-boundary feedback)
     const maxEventCount = await apiHelpers.countEventInLog(page, 'touchspin.on.max', 'touchspin');
-    expect(maxEventCount).toBe(1);
+    expect(maxEventCount).toBe(3);
 
     // Value should remain at max
     const value = await getCoreNumericValue(page, 'test-input');
     expect(value).toBe(5);
   });
+
+/**
+ * Scenario: upOnce at max boundary emits max event without spin events
+ * Given TouchSpin initialized at max value
+ * When upOnce() is called
+ * Then touchspin.on.max event is emitted
+ * And no spin events are emitted
+ * And value remains at max
+ */
+test('upOnce at max boundary emits max event without spin events', async ({ page }) => {
+  await initializeTouchspin(page, 'test-input', {
+    min: 0, max: 10, step: 1, initval: 10
+  });
+
+  await apiHelpers.clearEventLog(page);
+  await apiHelpers.incrementViaAPI(page, 'test-input'); // Call upOnce()
+
+  // Should emit max event
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+
+  // Should NOT emit spin events
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(false);
+
+  // Value should remain at max
+  expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10);
+});
+
+/**
+ * Scenario: downOnce at min boundary emits min event without spin events
+ * Given TouchSpin initialized at min value
+ * When downOnce() is called
+ * Then touchspin.on.min event is emitted
+ * And no spin events are emitted
+ * And value remains at min
+ */
+test('downOnce at min boundary emits min event without spin events', async ({ page }) => {
+  await initializeTouchspin(page, 'test-input', {
+    min: 0, max: 10, step: 1, initval: 0
+  });
+
+  await apiHelpers.clearEventLog(page);
+  await apiHelpers.decrementViaAPI(page, 'test-input'); // Call downOnce()
+
+  // Should emit min event
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+
+  // Should NOT emit spin events
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(false);
+
+  // Value should remain at min
+  expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(0);
+});
+
+/**
+ * Scenario: ArrowUp key at max boundary emits max event without spin events
+ * Given TouchSpin initialized at max value
+ * When ArrowUp key is pressed
+ * Then touchspin.on.max event is emitted
+ * And no spin events are emitted
+ * And value remains at max
+ */
+test('ArrowUp key at max boundary emits max event without spin events', async ({ page }) => {
+  await initializeTouchspin(page, 'test-input', {
+    min: 0, max: 10, step: 1, initval: 10
+  });
+
+  await apiHelpers.clearEventLog(page);
+  await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
+
+  // Should emit max event
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.max', 'touchspin')).toBe(true);
+
+  // Should NOT emit spin events
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startupspin', 'touchspin')).toBe(false);
+
+  // Value should remain at max
+  expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10);
+});
+
+/**
+ * Scenario: ArrowDown key at min boundary emits min event without spin events
+ * Given TouchSpin initialized at min value
+ * When ArrowDown key is pressed
+ * Then touchspin.on.min event is emitted
+ * And no spin events are emitted
+ * And value remains at min
+ */
+test('ArrowDown key at min boundary emits min event without spin events', async ({ page }) => {
+  await initializeTouchspin(page, 'test-input', {
+    min: 0, max: 10, step: 1, initval: 0
+  });
+
+  await apiHelpers.clearEventLog(page);
+  await apiHelpers.pressDownArrowKeyOnInput(page, 'test-input');
+
+  // Should emit min event
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.min', 'touchspin')).toBe(true);
+
+  // Should NOT emit spin events
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
+  expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startdownspin', 'touchspin')).toBe(false);
+
+  // Value should remain at min
+  expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(0);
+});
 
 /**
  * Scenario: handles event emission edge cases
