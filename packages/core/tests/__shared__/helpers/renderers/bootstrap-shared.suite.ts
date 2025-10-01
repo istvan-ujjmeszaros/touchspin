@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinWithRenderer } from '../core/initialization';
+import { startCoverage, collectCoverage } from '../test-utilities/coverage';
 
 /**
  * Bootstrap Family Shared Test Suite
@@ -13,6 +14,7 @@ import { initializeTouchspinWithRenderer } from '../core/initialization';
 export function bootstrapSharedSuite(name: string, rendererUrl: string, fixturePath: string) {
   test.describe(`Bootstrap shared behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
+      await startCoverage(page);
       await page.goto(fixturePath);
       await installDomHelpers(page);
 
@@ -20,6 +22,10 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       await page.evaluate(() => {
         if (!window.__ts) throw new Error('__ts not installed');
       });
+    });
+
+    test.afterEach(async ({ page }, testInfo) => {
+      await collectCoverage(page, testInfo.title);
     });
 
     // Bootstrap Input Group Structure

@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { waitForPageReady } from '../test-utilities/wait';
+import { startCoverage, collectCoverage } from '../test-utilities/coverage';
 
 /**
  * Universal Renderer Test Suite
@@ -13,6 +14,7 @@ import { waitForPageReady } from '../test-utilities/wait';
 export function universalRendererSuite(name: string, rendererUrl: string, fixturePath: string) {
   test.describe(`Universal renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
+      await startCoverage(page);
       await page.goto(fixturePath);
       await waitForPageReady(page); // Wait for async module loading in self-contained fixtures
       await installDomHelpers(page);
@@ -21,6 +23,10 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await page.evaluate(() => {
         if (!window.__ts) throw new Error('__ts not installed');
       });
+    });
+
+    test.afterEach(async ({ page }, testInfo) => {
+      await collectCoverage(page, testInfo.title);
     });
 
     // DOM Structure Tests (framework-agnostic)

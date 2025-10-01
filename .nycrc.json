@@ -1,5 +1,5 @@
 {
-  "all": false,
+  "all": true,
   "include": [
     "packages/*/src/**/*.{js,ts}",
     "packages/renderers/*/src/**/*.{js,ts}"

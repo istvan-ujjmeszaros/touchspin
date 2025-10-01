@@ -8,6 +8,8 @@ import path from 'path';
 export default defineConfig({
   ...baseConfig,
 
+  // Enable automatic coverage collection via test fixtures
+  testDir: './',
 
   // Use only chromium for coverage
   projects: [

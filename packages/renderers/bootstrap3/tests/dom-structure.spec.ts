@@ -13,7 +13,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initializeTouchspinFromGlobals, startCoverage, collectCoverage } from '@touchspin/core/test-helpers';
 
 // Bootstrap 3 Renderer URL for tests
 const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/Bootstrap3Renderer.js';
@@ -28,8 +28,13 @@ bootstrapSharedSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE)
 // Bootstrap 3-specific tests (not covered by shared suites)
 test.describe('Bootstrap 3 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
+    await startCoverage(page);
     await page.goto(BOOTSTRAP3_FIXTURE);
     await installDomHelpers(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await collectCoverage(page, testInfo.title);
   });
 
   /**
