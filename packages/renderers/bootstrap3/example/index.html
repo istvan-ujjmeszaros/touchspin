@@ -754,7 +754,8 @@
     input.type = controls.inputType.value || 'number';
     input.disabled = controls.disabled.checked;
     input.readOnly = controls.readonly.checked;
-    input.value = controls.value.value;
+    // Don't reset input.value here - preserve current spinner value
+    // input.value = controls.value.value;
     controls.maxboostedstep.disabled = controls.maxboostedstepFalse.checked;
   }
 
@@ -1068,7 +1069,9 @@
     const {options, value} = normalizeForSpinner(raw);
 
     basicSpinner.updateSettings(options);
-    basicSpinner.setValue(value);
+    // Don't call setValue() here - preserve current spinner value
+    // Only the "Initial Value" control input handler should call setValue()
+    // basicSpinner.setValue(value);
     postApplyControlState();
 
     if (applyCallbacks) {
