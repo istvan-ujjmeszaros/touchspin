@@ -26,18 +26,13 @@ function runAndExit(cmd, args, extraEnv = {}) {
 }
 
 async function main() {
-  console.log(`🎯 Running coverage in build mode${open ? ' (will open)' : ''}`);
-
-  console.log('📦 Building test packages...');
-  // Only build the test artifacts (devdist) needed for coverage
-  runAndExit('yarn', ['build:test']);
+  console.log(`🎯 Running coverage${open ? ' (will open)' : ''}`);
 
   console.log('🧪 Running tests with coverage...');
-  // Use the no-build runner since we already built above
-  // The pre-test guard will handle remaining checks (src imports, page.locator, devdist)
+  // The pre-test guard will check devdist and build only if needed (same as yarn test)
   const testStatus = run(
     'yarn',
-    ['coverage:run:nobuild', ...passThrough],
+    ['coverage:run', ...passThrough],
     {
       PW_COVERAGE: '1',
       TS_BUILD_TARGET: 'dev',
