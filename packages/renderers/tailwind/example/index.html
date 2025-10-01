@@ -3,750 +3,930 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TouchSpin Tailwind Demo</title>
+  <title>TouchSpin Tailwind - Complete Demo</title>
 
-  <!-- Tailwind CSS Play CDN (Local) -->
+  <!-- Tailwind CSS Play CDN -->
   <script src="../devdist/external/js/tailwind.js"></script>
 
-  <!-- TouchSpin styles (SCSS in dev for HMR) -->
-  <script type="module">import '../src/styles/touchspin-tailwind.scss';</script>
+  <!-- TouchSpin CSS -->
+  <link rel="stylesheet" href="../dist/touchspin-tailwind.css" id="touchspin-css">
+
+  <!-- Import map with relative paths - works universally -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/dist/index.js",
+      "@touchspin/core/renderer": "../../../core/dist/renderer.js",
+      "@touchspin/renderers/tailwind": "../dist/index.js"
+    }
+  }
+  </script>
 
   <style>
     body {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #f5f5f5;
-      color: #333;
+      background-color: #f9fafb;
+      color: #111827;
     }
 
     .main-container {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 400px 1fr 450px;
       gap: 30px;
-      max-width: 1400px;
+      max-width: 1800px;
       margin: 0 auto;
     }
 
-    .examples-section {
-      min-width: 0;
+    @media (max-width: 1600px) {
+      .main-container {
+        grid-template-columns: 350px 1fr 420px;
+        gap: 25px;
+      }
     }
 
-    h1 {
-      color: #333;
-      margin-bottom: 30px;
-      grid-column: 1 / -1;
+    @media (max-width: 1400px) {
+      .main-container {
+        grid-template-columns: 320px 1fr 380px;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr 400px;
+        gap: 20px;
+      }
+
+      .left-sidebar {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .control-panel {
+        position: static;
+        width: 100%;
+        max-height: none;
+      }
+
+      .left-sidebar {
+        position: static;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .example {
+        padding: 20px;
+      }
+    }
+
+    .left-sidebar {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .center-section {
+      flex: 1;
+      min-width: 0;
     }
 
     .example {
       background: white;
       padding: 30px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
       margin-bottom: 30px;
     }
 
     .example h3 {
       margin-top: 0;
-      color: #333;
+      color: #111827;
+      font-weight: 600;
     }
 
     .spinner {
       margin: 15px 0;
     }
 
-    .code-example {
-      background: #f5f5f5;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 15px;
-      margin: 15px 0;
-      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-      font-size: 13px;
-      overflow-x: auto;
-    }
-
-    /* Control Panel Styles */
     .control-panel {
       position: sticky;
       top: 20px;
       max-height: calc(100vh - 40px);
       overflow-y: auto;
       background: white;
-      border-radius: 6px;
-      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
     }
 
     .control-panel-header {
-      padding: 20px 20px 15px;
-      border-bottom: 1px solid #ddd;
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
       position: sticky;
       top: 0;
       background: white;
-      border-radius: 6px 6px 0 0;
+      border-radius: 0.5rem 0.5rem 0 0;
       z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
     }
 
     .control-panel-header h2 {
-      margin: 0 0 10px;
-      color: #333;
-      font-size: 18px;
+      margin: 0 0 5px;
+      color: #111827;
+      font-size: 1.25rem;
+      font-weight: 600;
     }
 
     .control-sections {
       padding: 20px;
     }
 
-    .control-sections .control-panel-section {
+    .settings-section {
       margin-bottom: 15px;
     }
 
-    .control-group {
+    .settings-header {
+      padding: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: -1px;
+    }
+
+    .settings-body {
       padding: 15px;
-    }
-
-    .control-group .form-group {
-      margin-bottom: 15px;
-    }
-
-    .control-group .form-group:last-child {
-      margin-bottom: 0;
+      border: 1px solid #e5e7eb;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
     }
 
     .control-group label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0;
-      font-weight: 500;
-    }
-
-    .control-group .form-control {
-      width: 120px;
-      margin-left: 10px;
-      padding: 6px 10px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-size: 13px;
-    }
-
-    .control-group .checkbox {
+      display: block;
       margin-bottom: 10px;
     }
 
-    .control-group .checkbox label {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      font-weight: normal;
-      cursor: pointer;
-      margin-bottom: 0;
-    }
-
-    .control-group .checkbox input[type="checkbox"] {
-      margin-right: 8px;
+    .control-group label span {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #6b7280;
+      font-size: 0.875rem;
     }
 
     .event-log {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 10px;
-      height: 120px;
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      max-height: 300px;
       overflow-y: auto;
-      font-family: monospace;
-      font-size: 12px;
+      background: #f9fafb;
+    }
+
+    .event-log-header {
+      padding: 10px 15px;
+      background: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
     }
 
     .event-entry {
-      margin: 2px 0;
-      color: #495057;
+      padding: 8px 15px;
+      border-bottom: 1px solid #f3f4f6;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.875rem;
     }
 
-    .event-entry.event-touchspin { color: #007bff; }
-    .event-entry.event-method { color: #28a745; }
-    .event-entry.event-error { color: #dc3545; }
-    .event-entry.event-info { color: #6c757d; }
-
-    .btn {
-      padding: 6px 12px;
-      margin: 2px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      background: #f8f9fa;
-      color: #495057;
-      cursor: pointer;
-      font-size: 12px;
+    .event-entry:last-child {
+      border-bottom: none;
     }
 
-    .btn:hover {
-      background: #e2e6ea;
-    }
-
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-      border-color: #dc3545;
-    }
-
-    .btn-danger:hover {
-      background: #c82333;
-    }
-
-    /* Tailwind TouchSpin specific styles */
-    .bootstrap-touchspin .input-group-btn {
-      position: relative;
-    }
-
-    .bootstrap-touchspin .input-group-btn:last-child > .btn {
-      margin-left: -1px;
-    }
-
-    .bootstrap-touchspin .input-group-btn:first-child > .btn {
-      margin-right: -1px;
-    }
-
-    /* Vertical button styles for Bootstrap 4 */
-    .bootstrap-touchspin-vertical-button-wrapper {
+    .method-buttons {
       display: flex;
-      flex-direction: column;
-      width: auto;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
     }
 
-    .bootstrap-touchspin-vertical-button-wrapper .btn {
-      border-radius: 0;
-      margin: 0;
-      height: 20px;
-      line-height: 1;
-      font-size: 12px;
-      padding: 2px 8px;
+    .method-buttons button {
+      flex: 1 1 100px;
     }
 
-    .bootstrap-touchspin-vertical-button-wrapper .btn:first-child {
-      border-top-left-radius: 0.25rem;
-      border-top-right-radius: 0.25rem;
-      border-bottom: 0;
+    .method-feedback {
+      margin-top: 10px;
+      min-height: 1.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
     }
 
-    .bootstrap-touchspin-vertical-button-wrapper .btn:last-child {
-      border-bottom-left-radius: 0.25rem;
-      border-bottom-right-radius: 0.25rem;
-      border-top: 0;
+    pre.code-block {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      padding: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 15px 0;
     }
   </style>
 </head>
 <body>
-  <div class="main-container">
-    <h1>TouchSpin Tailwind Demo</h1>
-
-    <div class="examples-section">
-      <!-- Basic Example -->
-      <div class="example">
-        <h3>Basic Usage</h3>
-        <p>Simple number input with TouchSpin controls.</p>
-        <div class="spinner">
-          <input type="number" id="basic" min="0" max="100" value="50" step="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="code-example" id="basic-code-example">
-          <!-- Will be populated by JavaScript -->
-        </div>
+<div class="main-container">
+  <!-- Left Sidebar: Event Log & Method Testing -->
+  <div class="left-sidebar">
+    <!-- Method Testing -->
+    <div class="example">
+      <h3>🔧 API Method Testing</h3>
+      <div class="method-buttons">
+        <button class="px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600" id="test-up-once">upOnce()</button>
+        <button class="px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600" id="test-down-once">downOnce()</button>
+        <button class="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600" id="test-start-up">startUpSpin()</button>
+        <button class="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600" id="test-start-down">startDownSpin()</button>
+        <button class="px-3 py-1.5 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600" id="test-stop-spin">stopSpin()</button>
+        <button class="px-3 py-1.5 bg-cyan-500 text-white text-sm rounded hover:bg-cyan-600" id="test-set-random">setValue(random)</button>
+        <button class="px-3 py-1.5 bg-cyan-500 text-white text-sm rounded hover:bg-cyan-600" id="test-get-value">getValue()</button>
+        <button class="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600" id="test-destroy">destroy()</button>
+        <button class="px-3 py-1.5 bg-gray-500 text-white text-sm rounded hover:bg-gray-600" id="test-reinit">Re-Initialize</button>
       </div>
-
-      <!-- Currency Example -->
-      <div class="example">
-        <h3>Currency Input</h3>
-        <div class="spinner">
-          <input type="number" id="currency" min="0" max="1000" value="25.50" step="0.50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 data-bts-prefix="$" data-bts-postfix=".00">
-        </div>
-        <div class="code-example">
-          $('#currency').TouchSpin({<br>
-          &nbsp;&nbsp;prefix: '$',<br>
-          &nbsp;&nbsp;postfix: '.00',<br>
-          &nbsp;&nbsp;step: 0.01<br>
-          });
-        </div>
-      </div>
-
-      <div class="example">
-        <h3>Vertical Buttons</h3>
-        <div class="spinner">
-          <input type="number" id="vertical" min="0" max="100" value="75" step="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 data-bts-vertical-buttons="true">
-        </div>
-        <div class="code-example">
-          $('#vertical').TouchSpin({<br>
-          &nbsp;&nbsp;verticalbuttons: true<br>
-          });
-        </div>
-      </div>
-
-      <div class="example">
-        <h3>Custom Button Text</h3>
-        <div class="spinner">
-          <input type="number" id="custom-text" min="1" max="10" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 data-bts-button-up-txt="▲" data-bts-button-down-txt="▼">
-        </div>
-        <div class="code-example">
-          $('#custom-text').TouchSpin({<br>
-          &nbsp;&nbsp;buttonup_txt: '▲',<br>
-          &nbsp;&nbsp;buttondown_txt: '▼'<br>
-          });
-        </div>
-      </div>
-
-      <div class="example">
-        <h3>Disabled State</h3>
-        <div class="spinner">
-          <input type="number" id="disabled" min="0" max="100" value="42" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" disabled>
-        </div>
-        <div class="code-example">
-          $('#disabled').TouchSpin(); // Input disabled via HTML
-        </div>
-      </div>
-
-      <div class="example" dir="rtl">
-        <h3>RTL Support</h3>
-        <div class="spinner">
-          <input type="number" id="rtl" min="0" max="100" value="33" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 data-bts-prefix="₪" data-bts-postfix=" ש״ח">
-        </div>
-        <div class="code-example">
-          &lt;div dir="rtl"&gt;<br>
-          &nbsp;&nbsp;$('#rtl').TouchSpin({<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;prefix: '₪',<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;postfix: ' ש״ח'<br>
-          &nbsp;&nbsp;});<br>
-          &lt;/div&gt;
-        </div>
-      </div>
+      <div class="method-feedback" id="method-feedback" role="status" aria-live="polite"></div>
     </div>
 
-    <div class="control-panel">
-      <div class="control-panel-header">
-        <h2>Interactive Controls</h2>
-        <p style="margin: 0; font-size: 13px; color: #777;">Interact with the basic spinner above</p>
-      </div>
-
-      <div class="control-sections">
-        <!-- Property Controls -->
-        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
-          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
-            <h4 class="font-semibold text-gray-800 m-0">Properties</h4>
-          </div>
-          <div class="control-group">
-            <div class="form-group">
-              <label>
-                <span>Initial Value</span>
-                <input type="number" id="control-value" value="50" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Minimum</span>
-                <input type="number" id="control-min" value="0" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Maximum</span>
-                <input type="number" id="control-max" value="100" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Step</span>
-                <input type="number" id="control-step" value="1" step="0.1" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Prefix</span>
-                <input type="text" id="control-prefix" placeholder="e.g. $" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Postfix</span>
-                <input type="text" id="control-postfix" placeholder="e.g. .00" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Decimal Places</span>
-                <input type="number" id="control-decimals" value="0" min="0" max="10" step="1" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Button Up Text</span>
-                <input type="text" id="control-buttonup-txt" value="+" class="form-control">
-              </label>
-            </div>
-            <div class="form-group">
-              <label>
-                <span>Button Down Text</span>
-                <input type="text" id="control-buttondown-txt" value="−" class="form-control">
-              </label>
-            </div>
-          </div>
+    <!-- Event Log -->
+    <div class="example">
+      <h3>📊 Event Monitor</h3>
+      <div class="event-log">
+        <div class="event-log-header">
+          <span class="font-medium">Event Log</span>
+          <button class="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded" id="clear-log">Clear</button>
         </div>
-
-        <!-- State Controls -->
-        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
-          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
-            <h4 class="font-semibold text-gray-800 m-0">State Controls</h4>
-          </div>
-          <div class="control-group">
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="control-disabled"> Disabled
-              </label>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="control-readonly"> Readonly
-              </label>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="control-vertical"> Vertical Buttons
-              </label>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="control-focusable"> Focusable Buttons
-              </label>
-            </div>
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" id="control-mousewheel" checked> Mouse Wheel
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Method Testing -->
-        <div class="control-panel-section bg-white border border-gray-200 rounded-lg mb-4">
-          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
-            <h4 class="font-semibold text-gray-800 m-0">Method Testing</h4>
-          </div>
-          <div class="control-group">
-            <button id="test-up-once" class="btn">upOnce()</button>
-            <button id="test-down-once" class="btn">downOnce()</button>
-            <br><br>
-            <button id="test-start-up" class="btn">startUpSpin()</button>
-            <button id="test-start-down" class="btn">startDownSpin()</button>
-            <button id="test-stop-spin" class="btn">stopSpin()</button>
-            <br><br>
-            <button id="test-set-random" class="btn">setValue(random)</button>
-            <button id="test-get-value" class="btn">getValue()</button>
-          </div>
-        </div>
-
-        <!-- Event Monitor -->
-        <div class="control-panel-section bg-white border border-gray-200 rounded-lg">
-          <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 rounded-t-lg">
-            <h4 class="font-semibold text-gray-800 m-0">Event Monitor</h4>
-          </div>
-          <div class="control-group">
-            <div class="event-log" id="event-log">
-              <div class="event-entry">Waiting for events...</div>
-            </div>
-            <br>
-            <button class="btn btn-danger" id="clear-log">Clear Log</button>
-          </div>
+        <div id="event-log-content">
+          <div class="event-entry">Waiting for events...</div>
         </div>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    // Import TouchSpin core and Tailwind renderer
-    // Dev: public APIs within workspace
-    import { TouchSpin } from '@touchspin/core';
-    import TailwindRenderer from '@touchspin/renderers/tailwind';
+  <!-- Center Section: Interactive Demo & Static Examples -->
+  <div class="center-section">
+    <div class="example">
+      <h3>🎨 Interactive TouchSpin Demo</h3>
+      <p class="text-gray-600 mb-4">Adjust the settings in the right panel to see changes in real-time.</p>
+      <div class="spinner">
+        <input type="number" id="demo-input" min="0" max="100" value="50" step="1" class="px-3 py-2 border border-gray-300 rounded">
+      </div>
+    </div>
 
-    // Initialize all TouchSpin instances
-    const basicSpinner = TouchSpin(document.getElementById('basic'), { renderer: TailwindRenderer });
-    TouchSpin(document.getElementById('currency'), { renderer: TailwindRenderer });
-    TouchSpin(document.getElementById('vertical'), { renderer: TailwindRenderer });
-    TouchSpin(document.getElementById('custom-text'), { renderer: TailwindRenderer });
-    TouchSpin(document.getElementById('disabled'), { renderer: TailwindRenderer });
-    TouchSpin(document.getElementById('rtl'), { renderer: TailwindRenderer });
+    <!-- Generated Code -->
+    <div class="example">
+      <h3>💻 Generated Code</h3>
+      <p class="text-gray-600 text-sm mb-2">Non-default settings only:</p>
+      <pre class="code-block" id="generated-code">// Initializing...</pre>
+    </div>
 
-    const basicCodeExample = document.getElementById('basic-code-example');
+    <!-- Static Examples -->
+    <div class="example">
+      <h3 class="text-xl font-semibold mb-4">📚 Static Examples</h3>
+      <p class="text-gray-600 mb-4">Pre-configured examples showing different TouchSpin configurations.</p>
 
-    // Generate code example from current control values
-    function generateCodeExample() {
-      const attributes = [];
-      
-      // Get values from controls
-      const min = controls.min.value;
-      const max = controls.max.value;
-      const value = controls.value.value;
-      const step = controls.step.value;
-      
-      // Always include basic HTML attributes
-      attributes.push(`type="number"`);
-      attributes.push(`class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"`);
-      if (min) attributes.push(`min="${min}"`);
-      if (max) attributes.push(`max="${max}"`);
-      if (value) attributes.push(`value="${value}"`);
-      if (step) attributes.push(`step="${step}"`);
-      
-      // Add TouchSpin data attributes for optional settings
-      const prefix = controls.prefix.value;
-      if (prefix) {
-        attributes.push(`data-bts-prefix="${prefix}"`);
+      <!-- Currency Example -->
+      <div class="example">
+        <h3>💰 Currency Example</h3>
+        <div class="spinner">
+          <input type="number" id="currency-example" min="0" max="1000" value="25.50" step="0.50" class="px-3 py-2 border border-gray-300 rounded">
+        </div>
+      </div>
+
+      <!-- Vertical Example -->
+      <div class="example">
+        <h3>📊 Vertical Buttons</h3>
+        <div class="spinner">
+          <input type="number" id="vertical-example" min="0" max="100" value="75" step="5" class="px-3 py-2 border border-gray-300 rounded">
+        </div>
+      </div>
+
+      <!-- Min/Max Example -->
+      <div class="example">
+        <h3>🎯 Min/Max Boundary</h3>
+        <div class="spinner">
+          <input type="number" id="boundary-example" min="10" max="50" value="30" step="5" class="px-3 py-2 border border-gray-300 rounded">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar: Settings Panel -->
+  <div class="control-panel">
+    <div class="control-panel-header">
+      <div>
+        <h2>⚙️ Settings</h2>
+        <p class="text-sm text-gray-500 mt-1">Configure demo instance</p>
+      </div>
+      <button class="px-3 py-1.5 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100" id="reset-settings">Reset</button>
+    </div>
+
+    <div class="control-sections">
+      <!-- Value & Range Settings -->
+      <div class="settings-section">
+        <div class="settings-header">📊 Value & Range</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Initial Value</span>
+              <input type="number" id="control-initval" value="50" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Minimum</span>
+              <input type="number" id="control-min" value="0" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Maximum</span>
+              <input type="number" id="control-max" value="100" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step</span>
+              <input type="number" id="control-step" value="1" step="0.1" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Decimal Places</span>
+              <input type="number" id="control-decimals" value="0" min="0" max="10" step="1" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>First Click Value (if empty)</span>
+              <input type="number" id="control-firstclickvalueifempty" placeholder="null (no change)" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Replacement Value (when invalid)</span>
+              <input type="text" id="control-replacementval" placeholder="e.g. 0" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-booster" checked class="mr-2 rounded">
+              <span>Enable Boost Acceleration</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Boostat (acceleration trigger)</span>
+              <input type="number" id="control-boostat" value="10" step="1" min="0" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Max Boosted Step</span>
+              <input type="number" id="control-maxboostedstep" value="10" step="1" min="1" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance Settings -->
+      <div class="settings-section">
+        <div class="settings-header">🎨 Appearance</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Prefix</span>
+              <input type="text" id="control-prefix" placeholder="e.g. $" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Postfix</span>
+              <input type="text" id="control-postfix" placeholder="e.g. kg" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Prefix Extra Class</span>
+              <input type="text" id="control-prefix-extraclass" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Postfix Extra Class</span>
+              <input type="text" id="control-postfix-extraclass" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button Settings -->
+      <div class="settings-section">
+        <div class="settings-header">🔘 Button Configuration</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Button Up Text</span>
+              <input type="text" id="control-buttonup-txt" value="+" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Down Text</span>
+              <input type="text" id="control-buttondown-txt" value="−" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Up Class</span>
+              <input type="text" id="control-buttonup-class" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Down Class</span>
+              <input type="text" id="control-buttondown-class" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-verticalbuttons" class="mr-2 rounded">
+              <span>Vertical Buttons</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Up Text</span>
+              <input type="text" id="control-verticalup" value="▲" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Down Text</span>
+              <input type="text" id="control-verticaldown" value="▼" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Up Class</span>
+              <input type="text" id="control-verticalupclass" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Down Class</span>
+              <input type="text" id="control-verticaldownclass" placeholder="CSS class" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Behavior Settings -->
+      <div class="settings-section">
+        <div class="settings-header">⚡ Behavior</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-forcestepdivisibility" checked class="mr-2 rounded">
+              <span>Force Step Divisibility</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step Interval (ms)</span>
+              <input type="number" id="control-stepinterval" value="100" min="10" step="10" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step Interval Delay (ms)</span>
+              <input type="number" id="control-stepintervaldelay" value="500" min="0" step="50" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded">
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-mousewheel" checked class="mr-2 rounded">
+              <span>Mouse Wheel Support</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Behavior Settings -->
+      <div class="settings-section">
+        <div class="settings-header">⌨️ Input Behavior</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-focusablebuttons" class="mr-2 rounded">
+              <span>Focusable Buttons</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" id="control-disabled" class="mr-2 rounded">
+              <span>Disabled</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { TouchSpin } from '@touchspin/core';
+  import TailwindRenderer from '@touchspin/renderers/tailwind';
+
+  // Default settings
+  const DEFAULT_SETTINGS = {
+    min: 0,
+    max: 100,
+    step: 1,
+    decimals: 0,
+    stepinterval: 100,
+    stepintervaldelay: 500,
+    initval: 50,
+    firstclickvalueifempty: null,
+    replacementval: '',
+    booster: true,
+    boostat: 10,
+    maxboostedstep: 10,
+    forcestepdivisibility: 'round',
+    verticalbuttons: false,
+    verticalup: '▲',
+    verticaldown: '▼',
+    verticalupclass: '',
+    verticaldownclass: '',
+    mousewheel: true,
+    focusablebuttons: false,
+    buttonup_txt: '+',
+    buttondown_txt: '−',
+    prefix: '',
+    postfix: '',
+    prefix_extraclass: '',
+    postfix_extraclass: '',
+    buttonup_class: '',
+    buttondown_class: ''
+  };
+
+  // Current settings
+  let currentSettings = { ...DEFAULT_SETTINGS };
+  let demoInstance = null;
+  let staticInstances = [];
+  let eventCount = 0;
+
+  // Storage key
+  const STORAGE_KEY = 'touchspin-tailwind-demo-settings';
+
+  // Load settings from localStorage
+  function loadSettings() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        currentSettings = { ...DEFAULT_SETTINGS, ...parsed };
       }
-      
-      const postfix = controls.postfix.value;
-      if (postfix) {
-        attributes.push(`data-bts-postfix="${postfix}"`);
+    } catch (e) {
+      console.warn('Failed to load settings:', e);
+    }
+  }
+
+  // Save settings to localStorage
+  function saveSettings() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSettings));
+    } catch (e) {
+      console.warn('Failed to save settings:', e);
+    }
+  }
+
+  // Initialize demo instance
+  function initDemo() {
+    const demoInput = document.getElementById('demo-input');
+    if (demoInstance) {
+      demoInstance.destroy();
+    }
+    demoInstance = TouchSpin(demoInput, {
+      ...currentSettings,
+      renderer: TailwindRenderer
+    });
+
+    // Attach event listeners
+    demoInput.addEventListener('touchspin.on.min', (e) => logEvent('touchspin.on.min', e.detail));
+    demoInput.addEventListener('touchspin.on.max', (e) => logEvent('touchspin.on.max', e.detail));
+    demoInput.addEventListener('touchspin.on.startspin', (e) => logEvent('touchspin.on.startspin', e.detail));
+    demoInput.addEventListener('touchspin.on.startupspin', (e) => logEvent('touchspin.on.startupspin', e.detail));
+    demoInput.addEventListener('touchspin.on.startdownspin', (e) => logEvent('touchspin.on.startdownspin', e.detail));
+    demoInput.addEventListener('touchspin.on.stopspin', (e) => logEvent('touchspin.on.stopspin', e.detail));
+    demoInput.addEventListener('touchspin.on.stopupspin', (e) => logEvent('touchspin.on.stopupspin', e.detail));
+    demoInput.addEventListener('touchspin.on.stopdownspin', (e) => logEvent('touchspin.on.stopdownspin', e.detail));
+    demoInput.addEventListener('change', (e) => logEvent('change', { value: e.target.value }));
+
+    updateGeneratedCode();
+  }
+
+  // Initialize static examples
+  function initStaticExamples() {
+    staticInstances.forEach(instance => instance.destroy());
+    staticInstances = [];
+
+    staticInstances.push(TouchSpin(document.getElementById('currency-example'), {
+      prefix: '$',
+      postfix: ' USD',
+      decimals: 2,
+      renderer: TailwindRenderer
+    }));
+
+    staticInstances.push(TouchSpin(document.getElementById('vertical-example'), {
+      verticalbuttons: true,
+      renderer: TailwindRenderer
+    }));
+
+    staticInstances.push(TouchSpin(document.getElementById('boundary-example'), {
+      min: 10,
+      max: 50,
+      step: 5,
+      renderer: TailwindRenderer
+    }));
+  }
+
+  // Event logging
+  function logEvent(eventName, detail = null) {
+    eventCount++;
+    const logContent = document.getElementById('event-log-content');
+    const entry = document.createElement('div');
+    entry.className = 'event-entry';
+    const detailStr = detail ? ' - ' + JSON.stringify(detail) : '';
+    entry.textContent = `[${eventCount}] ${eventName}${detailStr}`;
+
+    logContent.insertBefore(entry, logContent.firstChild);
+
+    // Limit log entries
+    while (logContent.children.length > 100) {
+      logContent.removeChild(logContent.lastChild);
+    }
+  }
+
+  // Update generated code
+  function updateGeneratedCode() {
+    const codeBlock = document.getElementById('generated-code');
+    const nonDefaults = {};
+
+    for (const [key, value] of Object.entries(currentSettings)) {
+      if (DEFAULT_SETTINGS[key] !== value) {
+        nonDefaults[key] = value;
       }
-      
-      const verticalButtons = controls.vertical.checked;
-      if (verticalButtons) {
-        attributes.push(`data-bts-vertical-buttons="true"`);
-      }
-      
-      // Add state attributes
-      const input = document.getElementById('basic');
-      if (input.disabled) {
-        attributes.push(`disabled`);
-      }
-      
-      if (input.readOnly) {
-        attributes.push(`readonly`);
-      }
-      
-      // Generate the HTML
-      const attributeString = attributes.join(' ');
-      let code = `&lt;input ${attributeString}&gt;\\n\\n`;
-      
-      // Add JavaScript initialization
-      code += `&lt;script type="module"&gt;\\n`;
-      code += `  import { TouchSpin } from '@touchspin/core';\\n`;
-      code += `  import TailwindRenderer from '@touchspin/renderers/tailwind';\\n\\n`;
-      code += `  TouchSpin(document.getElementById('myInput'), {\\n`;
-      code += `    renderer: TailwindRenderer\\n`;
-      code += `  });\\n`;
-      code += `&lt;/script&gt;`;
-      
-      return code;
     }
 
-    // Update the code example
-    function updateCodeExample() {
-      basicCodeExample.innerHTML = generateCodeExample().replace(/\\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;');
-    }
-
-    // Property controls
-    const controls = {
-      value: document.getElementById('control-value'),
-      min: document.getElementById('control-min'),
-      max: document.getElementById('control-max'),
-      step: document.getElementById('control-step'),
-      prefix: document.getElementById('control-prefix'),
-      postfix: document.getElementById('control-postfix'),
-      decimals: document.getElementById('control-decimals'),
-      buttonupTxt: document.getElementById('control-buttonup-txt'),
-      buttondownTxt: document.getElementById('control-buttondown-txt'),
-      disabled: document.getElementById('control-disabled'),
-      readonly: document.getElementById('control-readonly'),
-      vertical: document.getElementById('control-vertical'),
-      focusable: document.getElementById('control-focusable'),
-      mousewheel: document.getElementById('control-mousewheel')
-    };
-
-    // Event log
-    const eventLog = document.getElementById('event-log');
-    let eventCount = 0;
-
-    function addEventToLog(message, type = 'event-info') {
-      eventCount++;
-      const timestamp = new Date().toLocaleTimeString();
-      const entry = document.createElement('div');
-      entry.className = `event-entry ${type}`;
-      entry.textContent = `[${timestamp}] ${message}`;
-      
-      // Remove first entry if log gets too long
-      if (eventLog.children.length > 20) {
-        eventLog.removeChild(eventLog.firstChild);
+    if (Object.keys(nonDefaults).length === 0) {
+      codeBlock.textContent = '// All settings are at default values\nTouchSpin(element, {\n  renderer: TailwindRenderer\n});';
+    } else {
+      const lines = ['TouchSpin(element, {'];
+      for (const [key, value] of Object.entries(nonDefaults)) {
+        const formattedValue = typeof value === 'string' ? `'${value}'` : value;
+        lines.push(`  ${key}: ${formattedValue},`);
       }
-      
-      eventLog.appendChild(entry);
-      eventLog.scrollTop = eventLog.scrollHeight;
+      lines.push('  renderer: TailwindRenderer');
+      lines.push('});');
+      codeBlock.textContent = lines.join('\n');
     }
+  }
 
-    // Initialize log
-    addEventToLog('TouchSpin Tailwind Demo initialized', 'event-info');
+  // Update control values from current settings
+  function updateControls() {
+    document.getElementById('control-initval').value = currentSettings.initval;
+    document.getElementById('control-min').value = currentSettings.min;
+    document.getElementById('control-max').value = currentSettings.max;
+    document.getElementById('control-step').value = currentSettings.step;
+    document.getElementById('control-decimals').value = currentSettings.decimals;
+    document.getElementById('control-boostat').value = currentSettings.boostat;
+    document.getElementById('control-maxboostedstep').value = currentSettings.maxboostedstep;
+    document.getElementById('control-prefix').value = currentSettings.prefix;
+    document.getElementById('control-postfix').value = currentSettings.postfix;
+    document.getElementById('control-prefix-extraclass').value = currentSettings.prefix_extraclass;
+    document.getElementById('control-postfix-extraclass').value = currentSettings.postfix_extraclass;
+    document.getElementById('control-buttonup-txt').value = currentSettings.buttonup_txt;
+    document.getElementById('control-buttondown-txt').value = currentSettings.buttondown_txt;
+    document.getElementById('control-buttonup-class').value = currentSettings.buttonup_class;
+    document.getElementById('control-buttondown-class').value = currentSettings.buttondown_class;
+    document.getElementById('control-verticalup').value = currentSettings.verticalup;
+    document.getElementById('control-verticaldown').value = currentSettings.verticaldown;
+    document.getElementById('control-verticalupclass').value = currentSettings.verticalupclass;
+    document.getElementById('control-verticaldownclass').value = currentSettings.verticaldownclass;
+    document.getElementById('control-stepinterval').value = currentSettings.stepinterval;
+    document.getElementById('control-stepintervaldelay').value = currentSettings.stepintervaldelay;
+    document.getElementById('control-firstclickvalueifempty').value = currentSettings.firstclickvalueifempty || '';
+    document.getElementById('control-replacementval').value = currentSettings.replacementval;
+    document.getElementById('control-verticalbuttons').checked = currentSettings.verticalbuttons;
+    document.getElementById('control-mousewheel').checked = currentSettings.mousewheel;
+    document.getElementById('control-booster').checked = currentSettings.booster;
+    document.getElementById('control-focusablebuttons').checked = currentSettings.focusablebuttons;
+    document.getElementById('control-disabled').checked = false;
+    document.getElementById('control-forcestepdivisibility').checked = currentSettings.forcestepdivisibility === 'round';
+  }
 
-    // Property control event listeners
-    controls.value.addEventListener('input', (e) => {
-      const newValue = parseFloat(e.target.value);
-      if (!isNaN(newValue)) {
-        basicSpinner.setValue(newValue);
-        addEventToLog(`setValue(${newValue})`, 'event-method');
-        updateCodeExample();
-      }
+  // Attach control listeners
+  function attachControlListeners() {
+    // Number inputs
+    ['initval', 'min', 'max', 'step', 'decimals', 'boostat', 'maxboostedstep', 'stepinterval', 'stepintervaldelay'].forEach(key => {
+      document.getElementById(`control-${key}`).addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+          currentSettings[key] = value;
+          if (key === 'initval') {
+            demoInstance.setValue(value);
+          } else {
+            demoInstance.updateSettings({ [key]: value });
+          }
+          saveSettings();
+          updateGeneratedCode();
+        }
+      });
     });
 
-    controls.min.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ min: parseFloat(e.target.value) });
-      updateCodeExample();
+    // Text inputs
+    ['prefix', 'postfix', 'prefix_extraclass', 'postfix_extraclass', 'buttonup_txt', 'buttondown_txt',
+     'buttonup_class', 'buttondown_class', 'verticalup', 'verticaldown', 'verticalupclass', 'verticaldownclass', 'replacementval'].forEach(key => {
+      document.getElementById(`control-${key.replace('_', '-')}`).addEventListener('input', (e) => {
+        currentSettings[key] = e.target.value;
+        demoInstance.updateSettings({ [key]: e.target.value });
+        saveSettings();
+        updateGeneratedCode();
+      });
     });
 
-    controls.max.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ max: parseFloat(e.target.value) });
-      updateCodeExample();
+    // firstclickvalueifempty (special handling for null)
+    document.getElementById('control-firstclickvalueifempty').addEventListener('input', (e) => {
+      const value = e.target.value === '' ? null : parseFloat(e.target.value);
+      currentSettings.firstclickvalueifempty = value;
+      demoInstance.updateSettings({ firstclickvalueifempty: value });
+      saveSettings();
+      updateGeneratedCode();
     });
 
-    controls.step.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ step: parseFloat(e.target.value) });
-      updateCodeExample();
+    // Checkboxes
+    document.getElementById('control-verticalbuttons').addEventListener('change', (e) => {
+      currentSettings.verticalbuttons = e.target.checked;
+      initDemo();
+      saveSettings();
     });
 
-    controls.prefix.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ prefix: e.target.value });
-      updateCodeExample();
+    document.getElementById('control-mousewheel').addEventListener('change', (e) => {
+      currentSettings.mousewheel = e.target.checked;
+      demoInstance.updateSettings({ mousewheel: e.target.checked });
+      saveSettings();
+      updateGeneratedCode();
     });
 
-    controls.postfix.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ postfix: e.target.value });
-      updateCodeExample();
+    document.getElementById('control-booster').addEventListener('change', (e) => {
+      currentSettings.booster = e.target.checked;
+      demoInstance.updateSettings({ booster: e.target.checked });
+      saveSettings();
+      updateGeneratedCode();
     });
 
-    controls.decimals.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ decimals: parseInt(e.target.value) });
-      updateCodeExample();
+    document.getElementById('control-focusablebuttons').addEventListener('change', (e) => {
+      currentSettings.focusablebuttons = e.target.checked;
+      demoInstance.updateSettings({ focusablebuttons: e.target.checked });
+      saveSettings();
+      updateGeneratedCode();
     });
 
-    controls.buttonupTxt.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ buttonup_txt: e.target.value });
-      updateCodeExample();
-    });
-
-    controls.buttondownTxt.addEventListener('input', (e) => {
-      basicSpinner.updateSettings({ buttondown_txt: e.target.value });
-      updateCodeExample();
-    });
-
-    // State control event listeners
-    controls.disabled.addEventListener('change', (e) => {
-      const input = document.getElementById('basic');
+    document.getElementById('control-disabled').addEventListener('change', (e) => {
       if (e.target.checked) {
-        basicSpinner.disable();
-        input.disabled = true;
-        addEventToLog('disable()', 'event-method');
+        demoInstance.disable();
       } else {
-        basicSpinner.enable();
-        input.disabled = false;
-        addEventToLog('enable()', 'event-method');
+        demoInstance.enable();
       }
-      updateCodeExample();
     });
 
-    controls.readonly.addEventListener('change', (e) => {
-      const input = document.getElementById('basic');
-      if (e.target.checked) {
-        input.readOnly = true;
-      } else {
-        input.readOnly = false;
-      }
-      updateCodeExample();
+    document.getElementById('control-forcestepdivisibility').addEventListener('change', (e) => {
+      currentSettings.forcestepdivisibility = e.target.checked ? 'round' : 'none';
+      demoInstance.updateSettings({ forcestepdivisibility: currentSettings.forcestepdivisibility });
+      saveSettings();
+      updateGeneratedCode();
     });
 
-    controls.vertical.addEventListener('change', (e) => {
-      basicSpinner.updateSettings({ verticalbuttons: e.target.checked });
-      updateCodeExample();
-    });
-
-    controls.focusable.addEventListener('change', (e) => {
-      basicSpinner.updateSettings({ focusablebuttons: e.target.checked });
-      updateCodeExample();
-    });
-
-    controls.mousewheel.addEventListener('change', (e) => {
-      basicSpinner.updateSettings({ mousewheel: e.target.checked });
-      updateCodeExample();
-    });
-
-    // Method testing buttons
-    document.getElementById('test-up-once').addEventListener('click', () => {
-      basicSpinner.upOnce();
-      addEventToLog('upOnce() called', 'event-method');
-    });
-
-    document.getElementById('test-down-once').addEventListener('click', () => {
-      basicSpinner.downOnce();
-      addEventToLog('downOnce() called', 'event-method');
-    });
-
-    document.getElementById('test-start-up').addEventListener('click', () => {
-      basicSpinner.startUpSpin();
-      addEventToLog('startUpSpin() called', 'event-method');
-    });
-
-    document.getElementById('test-start-down').addEventListener('click', () => {
-      basicSpinner.startDownSpin();
-      addEventToLog('startDownSpin() called', 'event-method');
-    });
-
-    document.getElementById('test-stop-spin').addEventListener('click', () => {
-      basicSpinner.stopSpin();
-      addEventToLog('stopSpin() called', 'event-method');
-    });
-
-    document.getElementById('test-set-random').addEventListener('click', () => {
-      const randomValue = Math.floor(Math.random() * 100);
-      basicSpinner.setValue(randomValue);
-      addEventToLog(`setValue(${randomValue}) called`, 'event-method');
-    });
-
-    document.getElementById('test-get-value').addEventListener('click', () => {
-      const currentValue = basicSpinner.getValue();
-      addEventToLog(`getValue() returned: ${currentValue}`, 'event-method');
+    // Reset button
+    document.getElementById('reset-settings').addEventListener('click', () => {
+      currentSettings = { ...DEFAULT_SETTINGS };
+      updateControls();
+      initDemo();
+      saveSettings();
+      logEvent('Settings reset to defaults');
     });
 
     // Clear log button
     document.getElementById('clear-log').addEventListener('click', () => {
-      eventLog.innerHTML = '<div class="event-entry">Event log cleared</div>';
-      eventCount = 0;
+      document.getElementById('event-log-content').innerHTML = '<div class="event-entry">Log cleared</div>';
     });
 
-    // TouchSpin event listeners for the basic spinner
-    const basicInput = document.getElementById('basic');
-    basicInput.addEventListener('touchspin:start', (e) => {
-      addEventToLog(`touchspin:start - Direction: ${e.detail.direction}`, 'event-touchspin');
+    // API method testing buttons
+    document.getElementById('test-up-once').addEventListener('click', () => {
+      demoInstance.upOnce();
+      showMethodFeedback('upOnce() called');
+      logEvent('API: upOnce()');
     });
 
-    basicInput.addEventListener('touchspin:startspin', (e) => {
-      addEventToLog(`touchspin:startspin - Direction: ${e.detail.direction}`, 'event-touchspin');
+    document.getElementById('test-down-once').addEventListener('click', () => {
+      demoInstance.downOnce();
+      showMethodFeedback('downOnce() called');
+      logEvent('API: downOnce()');
     });
 
-    basicInput.addEventListener('touchspin:stopspin', (e) => {
-      addEventToLog('touchspin:stopspin', 'event-touchspin');
+    document.getElementById('test-start-up').addEventListener('click', () => {
+      demoInstance.startUpSpin();
+      showMethodFeedback('startUpSpin() called');
+      logEvent('API: startUpSpin()');
     });
 
-    basicInput.addEventListener('touchspin:min', (e) => {
-      addEventToLog(`touchspin:min - Value: ${e.detail.value}`, 'event-touchspin');
+    document.getElementById('test-start-down').addEventListener('click', () => {
+      demoInstance.startDownSpin();
+      showMethodFeedback('startDownSpin() called');
+      logEvent('API: startDownSpin()');
     });
 
-    basicInput.addEventListener('touchspin:max', (e) => {
-      addEventToLog(`touchspin:max - Value: ${e.detail.value}`, 'event-touchspin');
+    document.getElementById('test-stop-spin').addEventListener('click', () => {
+      demoInstance.stopSpin();
+      showMethodFeedback('stopSpin() called');
+      logEvent('API: stopSpin()');
     });
 
-    // Initialize controls with actual input values
-    const inputElement = document.getElementById('basic');
-    controls.value.value = inputElement.value || '';
-    controls.min.value = inputElement.min || '';
-    controls.max.value = inputElement.max || '';
-    controls.step.value = inputElement.step || '';
-    
-    // Initialize the code example
-    updateCodeExample();
-  </script>
+    document.getElementById('test-set-random').addEventListener('click', () => {
+      const randomValue = Math.floor(Math.random() * (currentSettings.max - currentSettings.min + 1)) + currentSettings.min;
+      demoInstance.setValue(randomValue);
+      showMethodFeedback(`setValue(${randomValue}) called`);
+      logEvent(`API: setValue(${randomValue})`);
+    });
+
+    document.getElementById('test-get-value').addEventListener('click', () => {
+      const value = demoInstance.getValue();
+      showMethodFeedback(`getValue() returned: ${value}`);
+      logEvent(`API: getValue() = ${value}`);
+    });
+
+    document.getElementById('test-destroy').addEventListener('click', () => {
+      demoInstance.destroy();
+      showMethodFeedback('destroy() called - instance destroyed');
+      logEvent('API: destroy()');
+    });
+
+    document.getElementById('test-reinit').addEventListener('click', () => {
+      initDemo();
+      showMethodFeedback('Instance re-initialized');
+      logEvent('API: Re-initialized');
+    });
+  }
+
+  // Show method feedback
+  function showMethodFeedback(message) {
+    const feedback = document.getElementById('method-feedback');
+    feedback.textContent = message;
+    feedback.style.color = '#059669';
+    setTimeout(() => {
+      feedback.textContent = '';
+    }, 3000);
+  }
+
+  // Initialize
+  loadSettings();
+  updateControls();
+  initDemo();
+  initStaticExamples();
+  attachControlListeners();
+  logEvent('TouchSpin Tailwind demo initialized');
+</script>
 </body>
 </html>
