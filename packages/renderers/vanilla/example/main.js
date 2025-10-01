@@ -257,11 +257,7 @@ function attachControlListeners() {
   });
 
   document.getElementById('control-disabled').addEventListener('change', (e) => {
-    if (e.target.checked) {
-      demoInstance.disable();
-    } else {
-      demoInstance.enable();
-    }
+    document.getElementById('demo-input').disabled = e.target.checked;
   });
 
   document.getElementById('control-forcestepdivisibility').addEventListener('change', (e) => {

@@ -188,7 +188,7 @@
       margin-bottom: 10px;
     }
 
-    .control-group label span {
+    .control-group label:not(.flex) span {
       display: block;
       margin-bottom: 5px;
       font-weight: 500;
@@ -825,11 +825,7 @@
     });
 
     document.getElementById('control-disabled').addEventListener('change', (e) => {
-      if (e.target.checked) {
-        demoInstance.disable();
-      } else {
-        demoInstance.enable();
-      }
+      document.getElementById('demo-input').disabled = e.target.checked;
     });
 
     document.getElementById('control-forcestepdivisibility').addEventListener('change', (e) => {
