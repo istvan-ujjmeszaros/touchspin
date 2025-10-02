@@ -26,7 +26,7 @@ export async function startCoverage(page: Page): Promise<void> {
   }
 }
 
-export async function collectCoverage(page: Page, testName: string): Promise<void> {
+export async function collectCoverage(page: Page, testName: string, testFile?: string): Promise<void> {
   // Use PW_COVERAGE as the single source of truth for coverage runs
   if (process.env.PW_COVERAGE !== '1') return;
   try {
@@ -39,7 +39,7 @@ export async function collectCoverage(page: Page, testName: string): Promise<voi
     const out = await cdp.send('Profiler.takePreciseCoverage');
     const result = (out as { result?: unknown }).result as Array<{ url?: string }> | undefined;
     if (result) {
-      await saveCoverageData(result, testName);
+      await saveCoverageData(result, testName, testFile);
     }
   } catch (err) {
 
@@ -49,7 +49,8 @@ export async function collectCoverage(page: Page, testName: string): Promise<voi
 
 export async function saveCoverageData(
   coverage: Array<{ url?: string }>,
-  testName: string
+  testName: string,
+  testFile?: string
 ): Promise<void> {
   const fs = await import('fs');
   const path = await import('path');
@@ -68,7 +69,31 @@ export async function saveCoverageData(
   });
 
   if (sourceCoverage.length > 0) {
-    const fileName = `${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+    // Create unique filename by detecting which renderer's IIFE bundle is loaded
+    // This identifies which fixture was actually used during the test
+    let rendererPrefix = '';
+    for (const entry of sourceCoverage) {
+      const url = entry.url || '';
+      // Check which renderer's IIFE bundle is loaded
+      if (url.includes('/bootstrap3/devdist/iife/')) {
+        rendererPrefix = 'bootstrap3_';
+        break;
+      } else if (url.includes('/bootstrap4/devdist/iife/')) {
+        rendererPrefix = 'bootstrap4_';
+        break;
+      } else if (url.includes('/bootstrap5/devdist/iife/')) {
+        rendererPrefix = 'bootstrap5_';
+        break;
+      } else if (url.includes('/tailwind/devdist/iife/')) {
+        rendererPrefix = 'tailwind_';
+        break;
+      } else if (url.includes('/vanilla/devdist/')) {
+        rendererPrefix = 'vanilla_';
+        break;
+      }
+    }
+
+    const fileName = `${rendererPrefix}${testName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
     const filePath = path.join(coverageDir, fileName);
     await fs.promises.writeFile(filePath, JSON.stringify(sourceCoverage, null, 2));
   }

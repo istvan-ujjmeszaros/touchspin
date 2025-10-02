@@ -34,7 +34,7 @@ const REQUIRED_FILES = {
   'packages/renderers/bootstrap3': ['Bootstrap3Renderer.js', 'iife/touchspin-bs3-complete.global.js', 'artifacts.json'],
   'packages/renderers/bootstrap4': ['Bootstrap4Renderer.js', 'iife/touchspin-bs4-complete.global.js', 'artifacts.json'],
   'packages/renderers/bootstrap5': ['Bootstrap5Renderer.js', 'iife/touchspin-bs5-complete.global.js', 'artifacts.json'],
-  'packages/renderers/tailwind': ['TailwindRenderer.js', 'artifacts.json'],
+  'packages/renderers/tailwind': ['TailwindRenderer.js', 'iife/touchspin-tailwind-complete.global.js', 'artifacts.json'],
   'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json']
 };
 

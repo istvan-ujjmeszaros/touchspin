@@ -26,7 +26,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     });
 
     test.afterEach(async ({ page }, testInfo) => {
-      await collectCoverage(page, testInfo.title);
+      await collectCoverage(page, testInfo.title, testInfo.file);
     });
 
     // DOM Structure Tests (framework-agnostic)

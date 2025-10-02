@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
-import { initializeTouchspinWithRenderer } from '../core/initialization';
+import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { startCoverage, collectCoverage } from '../test-utilities/coverage';
+import { waitForPageReady } from '../test-utilities/wait';
 
 /**
  * Bootstrap Family Shared Test Suite
@@ -16,6 +17,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test.beforeEach(async ({ page }) => {
       await startCoverage(page);
       await page.goto(fixturePath);
+      await waitForPageReady(page); // Wait for async module loading in self-contained fixtures
       await installDomHelpers(page);
 
       // Ensure window.__ts is available before proceeding
@@ -25,12 +27,12 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     });
 
     test.afterEach(async ({ page }, testInfo) => {
-      await collectCoverage(page, testInfo.title);
+      await collectCoverage(page, testInfo.title, testInfo.file);
     });
 
     // Bootstrap Input Group Structure
     test('creates input-group wrapper structure', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -55,7 +57,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         existingWrapper.appendChild(input);
       });
 
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       // Should use existing wrapper, not create new one
       const existingWrapper = page.getByTestId('existing-wrapper');
@@ -77,7 +79,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         input.className = 'form-control-sm';
       });
 
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -97,7 +99,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
     // Bootstrap Button Structure
     test('creates buttons with Bootstrap button classes', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_txt: 'UP',
         buttondown_txt: 'DOWN'
       });
@@ -116,7 +118,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     });
 
     test('applies custom button classes correctly', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_class: 'btn-primary custom-up',
         buttondown_class: 'btn-danger custom-down'
       });
@@ -137,7 +139,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
     // Bootstrap Prefix/Postfix Structure
     test('creates prefix with input-group addon structure', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
         prefix_extraclass: 'currency-prefix'
       });
@@ -154,7 +156,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     });
 
     test('creates postfix with input-group addon structure', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         postfix: 'USD',
         postfix_extraclass: 'currency-postfix'
       });
@@ -172,7 +174,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
     // Bootstrap Vertical Layout
     test('creates vertical layout with Bootstrap button group', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲',
         verticaldown: '▼'
@@ -206,7 +208,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       const input = page.getByTestId('test-input');
       await expect(input).not.toHaveClass(/form-control/);
 
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       // Should add form-control class while preserving existing classes
       await expect(input).toHaveClass(/form-control/);
@@ -214,7 +216,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     });
 
     test('removes form-control class during teardown', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       const input = page.getByTestId('test-input');
       await expect(input).toHaveClass(/form-control/);
@@ -249,7 +251,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
     // Bootstrap Element Order
     test('maintains proper Bootstrap input-group element order', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
         postfix: 'USD'
       });
@@ -276,7 +278,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
     // Bootstrap Responsiveness
     test('maintains Bootstrap responsive behavior', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -310,7 +312,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         }
       });
 
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl);
+      await initializeTouchspinFromGlobals(page, 'test-input');
 
       const input = page.getByTestId('test-input');
       const wrapper = page.getByTestId('test-input-wrapper');
