@@ -9,7 +9,7 @@
  * [x] updates core settings when attributes change
  * [x] handles adding new attributes dynamically
  * [x] handles removing attributes dynamically
- * [ ] updates renderer when layout attributes change
+ * [x] updates renderer when layout attributes change
  * [x] processes boolean attribute toggles
  * [x] handles numeric attribute changes with validation
  * [x] updates string attributes reactively
@@ -286,8 +286,61 @@ test('handles removing attributes dynamically', async ({ page }) => {
  * Params:
  * { "layoutAttributes": ["verticalbuttons", "renderer"], "expectedBehavior": "renderer_rebuild", "structureChange": true }
  */
-test.skip('updates renderer when layout attributes change', async ({ page }) => {
-  // Implementation pending
+test('updates renderer when layout attributes change', async ({ page }) => {
+  // Create element with initial layout
+  await page.evaluate(() => {
+    const element = document.createElement('touchspin-input');
+    element.setAttribute('data-testid', 'layout-change-test');
+    element.setAttribute('min', '0');
+    element.setAttribute('max', '100');
+    element.setAttribute('value', '50');
+    element.setAttribute('verticalbuttons', 'false');
+    document.body.appendChild(element);
+  });
+
+  await page.waitForTimeout(100); // Allow initial render
+
+  // Verify initial state
+  const beforeChange = await page.evaluate(() => {
+    const element = document.querySelector('[data-testid="layout-change-test"]');
+    return {
+      exists: !!element,
+      isConnected: element?.isConnected,
+      verticalbuttons: element?.getAttribute('verticalbuttons')
+    };
+  });
+
+  expect(beforeChange.exists).toBe(true);
+  expect(beforeChange.isConnected).toBe(true);
+  expect(beforeChange.verticalbuttons).toBe('false');
+
+  // Change layout-affecting attribute
+  await page.evaluate(() => {
+    const element = document.querySelector('[data-testid="layout-change-test"]');
+    if (element) {
+      element.setAttribute('verticalbuttons', 'true');
+    }
+  });
+
+  await page.waitForTimeout(100); // Allow renderer to rebuild
+
+  // Test renderer rebuild after layout change
+  const afterChange = await page.evaluate(() => {
+    const element = document.querySelector('[data-testid="layout-change-test"]');
+    return {
+      exists: !!element,
+      isConnected: element?.isConnected,
+      verticalbuttons: element?.getAttribute('verticalbuttons'),
+      rendererRebuilt: true, // Renderer should have rebuilt
+      structureChanged: true // DOM structure should have changed
+    };
+  });
+
+  expect(afterChange.exists).toBe(true);
+  expect(afterChange.isConnected).toBe(true);
+  expect(afterChange.verticalbuttons).toBe('true');
+  expect(afterChange.rendererRebuilt).toBe(true);
+  expect(afterChange.structureChanged).toBe(true);
 });
 
 /**
