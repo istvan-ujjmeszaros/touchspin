@@ -38,7 +38,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
 async function initializeTouchSpinOnCleanFixture(page, testId: string, settings = {}) {
   await page.goto(VANILLA_FIXTURE);
   await page.waitForFunction(() => window.testPageReady);
-  await apiHelpers.initializeTouchspinWithRenderer(page, testId, VANILLA_RENDERER_URL, settings);
+  await apiHelpers.initializeTouchSpin(page, testId, settings);
 }
 
  /**
@@ -297,7 +297,7 @@ test('Destroy removes artifacts while other instance remains intact', async ({ p
   await createAdditionalInput(page, 'second-input', { value: '3' });
 
   // Initialize second instance
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'second-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'second-input', {
     step: 1,
     min: 0,
     max: 9,

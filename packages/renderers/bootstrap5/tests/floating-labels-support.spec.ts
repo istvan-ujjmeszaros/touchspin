@@ -30,7 +30,7 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
 
   // Test 1: Basic floating label initialization
   console.log('🧪 Test 1: Basic floating label initialization');
-  await initializeTouchspinWithRenderer(page, 'basic-floating', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'basic-floating', BOOTSTRAP5_RENDERER_URL);
 
   // Verify floating label structure is preserved
   const basicFloatingLabel = page.getByRole('label', { name: 'Amount' });
@@ -43,7 +43,7 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
 
   // Test 2: Floating label in input group
   console.log('🧪 Test 2: Floating label in input group');
-  await initializeTouchspinWithRenderer(page, 'group-floating', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'group-floating', BOOTSTRAP5_RENDERER_URL);
 
   // Verify input group structure with floating labels
   const groupLabel = page.getByRole('label', { name: 'Price' });
@@ -57,9 +57,9 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
 
   // Test 3: Multiple floating labels
   console.log('🧪 Test 3: Multiple floating labels');
-  await initializeTouchspinWithRenderer(page, 'multi-1', BOOTSTRAP5_RENDERER_URL);
-  await initializeTouchspinWithRenderer(page, 'multi-2', BOOTSTRAP5_RENDERER_URL);
-  await initializeTouchspinWithRenderer(page, 'multi-3', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'multi-1', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'multi-2', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'multi-3', BOOTSTRAP5_RENDERER_URL);
 
   // Verify all labels are visible and functional
   const expectedLabels = ['Quantity', 'Rate', 'Total'];
@@ -76,9 +76,9 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
 
   // Test 4: Complex form layout
   console.log('🧪 Test 4: Complex form layout');
-  await initializeTouchspinWithRenderer(page, 'form-amount', BOOTSTRAP5_RENDERER_URL);
-  await initializeTouchspinWithRenderer(page, 'form-percentage', BOOTSTRAP5_RENDERER_URL);
-  await initializeTouchspinWithRenderer(page, 'form-total', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'form-amount', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'form-percentage', BOOTSTRAP5_RENDERER_URL);
+  await initializeTouchSpin(page, 'form-total', BOOTSTRAP5_RENDERER_URL);
 
   // Comprehensive interaction testing on the basic floating input
   console.log('🧪 Testing all interaction methods on basic floating label input');

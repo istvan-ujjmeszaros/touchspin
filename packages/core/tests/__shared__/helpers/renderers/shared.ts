@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
-import { initializeTouchspinWithRenderer } from '../core/initialization';
+import { initializeTouchSpin } from '../core/initialization';
 
 export function defineSharedRendererTests(name: string, rendererUrl: string, fixturePath: string) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
@@ -11,7 +11,7 @@ export function defineSharedRendererTests(name: string, rendererUrl: string, fix
     });
 
     test('horizontal: buttons/prefix/postfix render with texts/classes and focusability', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchSpin(page, 'test-input', {
         prefix: '$', postfix: 'kg',
         prefix_extraclass: 'x-prefix', postfix_extraclass: 'x-postfix',
         buttonup_txt: 'UP', buttondown_txt: 'DOWN',
@@ -33,7 +33,7 @@ export function defineSharedRendererTests(name: string, rendererUrl: string, fix
     });
 
     test('vertical: wrapper and button texts/classes; focusability toggle', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchSpin(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲', verticaldown: '▼',
         verticalupclass: 'v-up', verticaldownclass: 'v-down',
@@ -59,7 +59,7 @@ export function defineSharedRendererTests(name: string, rendererUrl: string, fix
     });
 
     test('rebuilds on prefix/postfix toggles', async ({ page }) => {
-      await initializeTouchspinWithRenderer(page, 'test-input', rendererUrl, {
+      await initializeTouchSpin(page, 'test-input', {
         prefix: '$', postfix: 'kg',
       });
       const w = page.getByTestId('test-input-wrapper');

@@ -27,7 +27,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
 async function initializeTouchSpinOnCleanFixture(page, testId: string, settings = {}) {
   await page.goto(VANILLA_FIXTURE);
   await page.waitForFunction(() => window.testPageReady);
-  await apiHelpers.initializeTouchspinWithRenderer(page, testId, VANILLA_RENDERER_URL, settings);
+  await apiHelpers.initializeTouchSpin(page, testId, settings);
 }
 
 /**
@@ -76,7 +76,7 @@ test('at max: up => zero change; at min: down => zero change', async ({ page }) 
   test.expect(c1).toBe(0);
 
   // Min case - reinitialize for clean state
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     step: 5,
     min: 0,
     max: 100,

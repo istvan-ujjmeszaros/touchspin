@@ -50,7 +50,7 @@ test('creates horizontal layout by default', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+  await apiHelpers.initializeTouchSpin(page, 'test-input');
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -103,7 +103,7 @@ test('creates vertical layout when specified', async ({ page }) => {
   // Load vanilla CSS for proper layout
   await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     initval: 0,
   });
@@ -163,7 +163,7 @@ test('handles layout switching dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     initval: 25,
     verticalbuttons: false // Start with horizontal
   });
@@ -201,7 +201,7 @@ test('handles layout switching dynamically', async ({ page }) => {
   // (Note: Actual layout switching via settings update would require updateSettings method)
 
   // For now, verify that re-initialization preserves value
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     initval: 26, // Keep same value
     verticalbuttons: true // Switch to vertical
   });
@@ -226,7 +226,7 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
   // Load vanilla CSS for proper layout
   await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: false, // Horizontal layout
     initval: 0
   });
@@ -293,7 +293,7 @@ test('applies correct classes for vertical layout', async ({ page }) => {
   // Load vanilla CSS for proper layout
   await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true, // Vertical layout
     initval: 0
   });
@@ -609,7 +609,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
 
 
   // Test horizontal layout accessibility
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: false,
     min: 0,
     max: 100,
@@ -637,7 +637,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
   await apiHelpers.expectValueToBe(page, 'test-input', '50');
 
   // Test vertical layout accessibility
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     min: 0,
     max: 100,

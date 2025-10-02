@@ -50,7 +50,7 @@ test('provides framework-independent implementation', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   // Verify TouchSpin is working
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -105,7 +105,7 @@ test('supports CSS variables for theming', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+  await apiHelpers.initializeTouchSpin(page, 'test-input');
 
   const { wrapper, upButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -134,7 +134,7 @@ test('handles minimal CSS dependencies', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -189,7 +189,7 @@ test('supports custom styling without conflicts', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     buttonup_class: 'my-custom-button',
     buttondown_class: 'my-custom-button',
     initval: 0
@@ -220,7 +220,7 @@ test('provides clean CSS class hierarchy', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -287,7 +287,7 @@ test('handles browser-specific CSS gracefully', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -370,10 +370,10 @@ test('supports CSS Grid and Flexbox layouts', async ({ page }) => {
   });
 
   // Initialize TouchSpin in Flexbox container
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'flex-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'flex-input', { initval: 0 });
 
   // Initialize TouchSpin in Grid container
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'grid-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'grid-input', { initval: 0 });
 
   const flexElements = await apiHelpers.getTouchSpinElements(page, 'flex-input');
   const gridElements = await apiHelpers.getTouchSpinElements(page, 'grid-input');
@@ -446,7 +446,7 @@ test('provides performant CSS animations', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -538,7 +538,7 @@ test('handles high contrast mode', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -610,7 +610,7 @@ test('supports RTL text direction', async ({ page }) => {
     `
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 50 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 50 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -662,7 +662,7 @@ test('provides semantic HTML without framework bloat', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -719,7 +719,7 @@ test('handles progressive enhancement', async ({ page }) => {
   expect(basicValue.isInput).toBe(true);
 
   // Progressive enhancement with TouchSpin
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 25 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 25 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -755,7 +755,7 @@ test('supports accessibility without framework dependencies', async ({ page }) =
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     min: 0,
     max: 100,
     initval: 50
@@ -801,7 +801,7 @@ test('provides keyboard navigation patterns', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     step: 1,
     initval: 10,
     focusablebuttons: true,
@@ -849,7 +849,7 @@ test('handles focus management independently', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+  await apiHelpers.initializeTouchSpin(page, 'test-input');
 
   const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -890,7 +890,7 @@ test('supports screen reader optimization', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     min: 0,
     max: 100,
     step: 5,
@@ -960,7 +960,7 @@ test('provides ARIA patterns without conflicts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
     min: 0,
     max: 100,
     step: 5,
@@ -1008,7 +1008,7 @@ test('handles mobile touch interactions', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { step: 2, initval: 10 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { step: 2, initval: 10 });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1069,7 +1069,7 @@ test('supports responsive design patterns', async ({ page }) => {
   // Test different viewport sizes
   await page.setViewportSize({ width: 320, height: 568 }); // Mobile
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1124,7 +1124,7 @@ test('provides cross-browser compatibility', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1168,7 +1168,7 @@ test('handles legacy browser support', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1240,7 +1240,7 @@ test('supports modern web standards', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1294,7 +1294,7 @@ test('provides lightweight DOM structure', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+  await apiHelpers.initializeTouchSpin(page, 'test-input');
 
   const { wrapper } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1349,7 +1349,7 @@ test('handles memory efficiency', async ({ page }) => {
 
   // Initialize multiple TouchSpin instances
   for (let i = 1; i <= 5; i++) {
-    await apiHelpers.initializeTouchspinWithRenderer(page, `memory-test-${i}`, VANILLA_RENDERER_URL, { initval: i * 10 });
+    await apiHelpers.initializeTouchSpin(page, `memory-test-${i}`, { initval: i * 10 });
   }
 
   // Test that all instances work
@@ -1396,7 +1396,7 @@ test('supports bundle size optimization', async ({ page }) => {
   await apiHelpers.installDomHelpers(page);
 
   // Check that bundle is loadable and functional
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -1459,7 +1459,7 @@ test('supports bundle size optimization', async ({ page }) => {
     document.body.appendChild(input2);
   });
 
-  await apiHelpers.initializeTouchspinWithRenderer(page, 'optimize-test', VANILLA_RENDERER_URL, { initval: 0 });
+  await apiHelpers.initializeTouchSpin(page, 'optimize-test', { initval: 0 });
 
   // Both instances should work independently
   await apiHelpers.clickUpButton(page, 'test-input');

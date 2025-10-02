@@ -14,7 +14,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
+import { installDomHelpers, initializeTouchSpin } from '@touchspin/core/test-helpers';
 
 const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
@@ -36,7 +36,7 @@ test.describe('Vanilla specific behavior', () => {
    * Then wrapper has no framework-specific classes and clean semantic structure
    */
   test('creates clean markup without framework dependencies', async ({ page }) => {
-    await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+    await initializeTouchSpin(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
 
@@ -55,7 +55,7 @@ test.describe('Vanilla specific behavior', () => {
    * Then buttons are visible with semantic classes but no framework-specific styling
    */
   test('uses semantic button elements without framework styling', async ({ page }) => {
-    await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL);
+    await initializeTouchSpin(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
     const upButton = wrapper.locator('[data-touchspin-injected="up"]');
@@ -81,7 +81,7 @@ test.describe('Vanilla specific behavior', () => {
    * Then DOM structure contains essential elements without excessive wrapper elements
    */
   test('maintains minimal DOM structure', async ({ page }) => {
-    await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+    await initializeTouchSpin(page, 'test-input', {
       prefix: '$',
       postfix: 'USD'
     });
@@ -115,7 +115,7 @@ test.describe('Vanilla specific behavior', () => {
       input.className = 'my-custom-input special-styling';
     });
 
-    await initializeTouchspinWithRenderer(page, 'test-input', VANILLA_RENDERER_URL, {
+    await initializeTouchSpin(page, 'test-input', {
       buttonup_class: 'custom-up-btn',
       buttondown_class: 'custom-down-btn'
     });

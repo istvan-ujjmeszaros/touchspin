@@ -81,14 +81,9 @@ export async function initializeTouchspinWithBootstrap5(
 }
 
 /**
- * Given I mount TouchSpin on "{testId}" with settings
- * Given TouchSpin is initialized on "{testId}" with {settings}
- * @note Uses vanilla renderer for core testing
+ * @deprecated Use initializeTouchSpin() instead. Dynamic imports with bare specifiers
+ * don't work in browsers without import maps. All fixtures now use globals.
  */
-/* ──────────────────────────
- * Generic renderer initializer (by URL)
- * ────────────────────────── */
-
 export async function initializeTouchspinWithRenderer(
   page: Page,
   testId: string,
@@ -96,79 +91,23 @@ export async function initializeTouchspinWithRenderer(
   options: Partial<TouchSpinCoreOptions> = {},
   exportName?: string
 ): Promise<void> {
-  await page.waitForFunction(() => (globalThis as unknown as { testPageReady?: unknown }).testPageReady === true, {
-    timeout: 2000
-  }).catch(() => {
-    // Ignore readiness wait failures; fixture may not define testPageReady
-  });
-
-  await setupLogging(page);
-  await installDomHelpers(page);
-
-  // Pre-check that modules are fetchable (better error messages)
-  await preFetchCheck(page, coreRuntimeUrl);
-  await preFetchCheck(page, rendererUrl);
-
-  const coreUrl = coreRuntimeUrl;
-  await page.evaluate(async ({ testId, options, rendererUrl, exportName, coreUrl }) => {
-    try {
-      const origin = (globalThis as any).location?.origin ?? '';
-
-      // Import core module
-      const coreModule = (await import(new URL(coreUrl, origin).href)) as unknown as {
-        TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
-      };
-      const { TouchSpinCore } = coreModule;
-
-      if (!TouchSpinCore) {
-        throw new Error(`TouchSpinCore not found in module: ${coreUrl}`);
-      }
-
-      // Resolve renderer: prefer module import, but allow fixtures to provide a default renderer globally
-      let Renderer: unknown;
-      const fallbackRenderer = (globalThis as unknown as { TouchSpinDefaultRenderer?: unknown }).TouchSpinDefaultRenderer;
-
-      if (fallbackRenderer && !exportName) {
-        Renderer = fallbackRenderer;
-      } else {
-        const rendererModule = (await import(new URL(rendererUrl, origin).href)) as unknown as Record<string, unknown> & { default?: unknown };
-        Renderer = exportName ? rendererModule[exportName] ?? rendererModule.default : rendererModule.default ?? rendererModule[exportName ?? 'default'];
-      }
-
-      if (!Renderer) {
-        throw new Error(`Renderer not found (module: ${rendererUrl}, export: ${exportName || 'default'})`);
-      }
-
-      // eslint-disable-next-line -- Required in browser context
-      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-      if (!input) throw new Error(`Input with testId "${testId}" not found`);
-      if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
-
-      const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as Partial<TouchSpinCoreOptions>);
-      (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
-      (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-    } catch (err) {
-      console.error('initializeTouchspinWithRenderer failed:', err);
-      throw err;
-    }
-  }, { testId, options, rendererUrl, exportName, coreUrl });
-
-  const sel = [
-    `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
-    `[data-testid=\"${testId}\"][data-touchspin-injected]`,
-  ].join(', ');
-  await page.locator(sel).first().waitFor({ timeout: 5000 });
+  // Just delegate to unified helper (fixture must have set up globals)
+  return initializeTouchSpin(page, testId, options as Record<string, unknown>);
 }
 
 /**
- * Initialize TouchSpin from global variables set by IIFE bundles
+ * Given I mount TouchSpin on "{testId}" with {settings}
+ * Given TouchSpin is initialized on "{testId}" with {settings}
  *
- * Uses `globalThis.TouchSpinCore` and `globalThis.TouchSpinDefaultRenderer`
- * which are loaded by enhanced IIFE script tags in the fixture (e.g.,
- * `touchspin-bs5-complete.global.js`).
+ * Initialize TouchSpin from global variables (IIFE bundles or import maps).
  *
- * This approach avoids dynamic imports that can cause "Execution context
- * destroyed" errors in Playwright tests.
+ * Core automatically detects `globalThis.TouchSpinDefaultRenderer` if present.
+ * If no renderer is found, Core initializes in renderer-free mode (keyboard/wheel only).
+ *
+ * Works with:
+ * - IIFE bundles (Bootstrap/Tailwind) via <script src="touchspin-complete.global.js">
+ * - Import maps (Vanilla) that set window.TouchSpinCore and window.TouchSpinDefaultRenderer
+ * - Core-only fixtures (no renderer) for API/keyboard/wheel tests
  *
  * @param page - Playwright page object
  * @param testId - data-testid of the input element
@@ -176,14 +115,14 @@ export async function initializeTouchspinWithRenderer(
  *
  * @example
  * ```typescript
- * // In your fixture HTML:
- * // <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
+ * // Renderer test (Bootstrap/Tailwind/Vanilla):
+ * await initializeTouchSpin(page, 'test-input', { step: 5, buttonup_txt: 'UP' });
  *
- * // In your test:
- * await initializeTouchspinFromGlobals(page, 'test-input', { step: 5, min: 0, max: 100 });
+ * // Core-only test (no renderer):
+ * await initializeTouchSpin(page, 'test-input', { step: 5, min: 0, max: 100 });
  * ```
  */
-export async function initializeTouchspinFromGlobals(
+export async function initializeTouchSpin(
   page: Page,
   testId: string,
   options: Record<string, unknown> = {}
@@ -193,16 +132,10 @@ export async function initializeTouchspinFromGlobals(
 
   await page.evaluate(({ testId, options }) => {
     try {
-      // Use pre-loaded modules from the fixture
       const TouchSpinCore = (globalThis as any).TouchSpinCore;
-      const Renderer = (globalThis as any).TouchSpinDefaultRenderer;
 
       if (!TouchSpinCore) {
         throw new Error('TouchSpinCore not found on window. Ensure the fixture has loaded the core module.');
-      }
-
-      if (!Renderer) {
-        throw new Error('TouchSpinDefaultRenderer not found on window. Ensure the fixture has loaded the renderer module.');
       }
 
       // eslint-disable-next-line -- Required in browser context
@@ -210,18 +143,44 @@ export async function initializeTouchspinFromGlobals(
       if (!input) throw new Error(`Input with testId "${testId}" not found`);
       if ((options as Record<string, unknown>).initval !== undefined) input.value = String((options as Record<string, unknown>).initval);
 
-      const core = new TouchSpinCore(input, { ...options, renderer: Renderer } as any);
+      // Core automatically checks globalThis.TouchSpinDefaultRenderer and uses it if present
+      const core = new TouchSpinCore(input, options);
       (input as any)['_touchSpinCore'] = core;
       (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
     } catch (err) {
-      console.error('initializeTouchspinWithPreloadedModules failed:', err);
+      console.error('initializeTouchSpin failed:', err);
       throw err;
     }
   }, { testId, options });
 
-  const sel = [
+  // Wait for initialization: try wrapper (with renderer) first, fallback to core registration (no renderer)
+  const wrapperSel = [
     `[data-testid=\"${testId}-wrapper\"][data-touchspin-injected]`,
     `[data-testid=\"${testId}\"][data-touchspin-injected]`,
   ].join(', ');
-  await page.locator(sel).first().waitFor({ timeout: 5000 });
+
+  try {
+    await page.locator(wrapperSel).first().waitFor({ timeout: 5000 });
+  } catch {
+    // No renderer applied; wait until the core instance is registered instead
+    await page.waitForFunction((id: string) => {
+      try {
+        window.__ts?.requireCoreByTestId(id);
+        return true;
+      } catch {
+        return false;
+      }
+    }, testId, { timeout: 5000 });
+  }
+}
+
+/**
+ * @deprecated Use initializeTouchSpin() instead. All renderers now use unified helper.
+ */
+export async function initializeTouchspinFromGlobals(
+  page: Page,
+  testId: string,
+  options: Record<string, unknown> = {}
+): Promise<void> {
+  return initializeTouchSpin(page, testId, options);
 }
