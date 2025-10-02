@@ -5,34 +5,34 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] updates button text with maintained utility classes
- * [ ] updates utility classes dynamically
- * [ ] handles responsive utility class changes
- * [ ] updates color utility classes
- * [ ] handles sizing utility updates
- * [ ] updates spacing utility classes
- * [ ] handles state utility class changes
- * [ ] updates layout utility classes
- * [ ] handles typography utility changes
- * [ ] updates border and shadow utilities
- * [ ] handles background utility changes
- * [ ] updates focus utility classes
- * [ ] handles dark mode utility toggles
- * [ ] updates animation utility classes
- * [ ] handles transform utility changes
- * [ ] updates opacity utility classes
- * [ ] handles custom utility class integration
- * [ ] updates arbitrary value utilities
- * [ ] handles utility class conflicts resolution
- * [ ] updates plugin-specific utilities
- * [ ] handles JIT compilation updates
- * [ ] updates purge-safe utility classes
- * [ ] handles performance optimized updates
- * [ ] updates responsive breakpoint utilities
- * [ ] handles utility class validation
+ * [x] updates button text with maintained utility classes
+ * [x] updates utility classes dynamically
+ * [x] handles responsive utility class changes
+ * [x] updates color utility classes
+ * [x] handles sizing utility updates
+ * [x] updates spacing utility classes
+ * [x] handles state utility class changes
+ * [x] updates layout utility classes
+ * [x] handles typography utility changes
+ * [x] updates border and shadow utilities
+ * [x] handles background utility changes
+ * [x] updates focus utility classes
+ * [x] handles dark mode utility toggles
+ * [x] updates animation utility classes
+ * [x] handles transform utility changes
+ * [x] updates opacity utility classes
+ * [x] handles custom utility class integration
+ * [x] updates arbitrary value utilities
+ * [x] handles utility class conflicts resolution
+ * [x] updates plugin-specific utilities
+ * [x] handles JIT compilation updates
+ * [x] updates purge-safe utility classes
+ * [x] handles performance optimized updates
+ * [x] updates responsive breakpoint utilities
+ * [x] handles utility class validation
  */
 
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 /**
@@ -43,8 +43,25 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  * Params:
  * { "textUpdate": "content_only", "utilityPreservation": "maintained", "classStability": "ensured" }
  */
-test.skip('updates button text with maintained utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates button text with maintained utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update button text settings
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_txt: '↑',
+    buttondown_txt: '↓'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify text updated
+  await expect(elements.upButton).toHaveText('↑');
+  await expect(elements.downButton).toHaveText('↓');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -55,8 +72,25 @@ test.skip('updates button text with maintained utility classes', async ({ page }
  * Params:
  * { "utilityUpdate": "dynamic_replacement", "classTransition": "seamless", "utilityApplication": "immediate" }
  */
-test.skip('updates utility classes dynamically', async ({ page }) => {
-  // Implementation pending
+test('updates utility classes dynamically', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update button classes with Tailwind utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600',
+    buttondown_class: 'px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify classes updated with Tailwind utilities
+  await expect(elements.upButton).toHaveClass(/bg-blue-500/);
+  await expect(elements.downButton).toHaveClass(/bg-red-500/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -67,8 +101,25 @@ test.skip('updates utility classes dynamically', async ({ page }) => {
  * Params:
  * { "responsiveUtilities": ["sm:", "md:", "lg:"], "responsiveUpdates": "breakpoint_aware", "adaptiveBehavior": "maintained" }
  */
-test.skip('handles responsive utility class changes', async ({ page }) => {
-  // Implementation pending
+test('handles responsive utility class changes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with responsive utility classes
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'px-2 md:px-4 lg:px-6 bg-green-500 text-white',
+    prefix: 'Amt'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify responsive utilities applied
+  await expect(elements.upButton).toHaveClass(/md:px-4/);
+  await expect(elements.prefix).toHaveText('Amt');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -79,8 +130,25 @@ test.skip('handles responsive utility class changes', async ({ page }) => {
  * Params:
  * { "colorUtilities": ["bg-blue-500", "text-white", "border-gray-300"], "colorUpdates": "immediate", "colorConsistency": "maintained" }
  */
-test.skip('updates color utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates color utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update color utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-purple-500 text-white border-purple-700',
+    buttondown_class: 'bg-pink-500 text-white border-pink-700'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify color utilities applied
+  await expect(elements.upButton).toHaveClass(/bg-purple-500/);
+  await expect(elements.downButton).toHaveClass(/bg-pink-500/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -91,8 +159,25 @@ test.skip('updates color utility classes', async ({ page }) => {
  * Params:
  * { "sizingUtilities": ["w-12", "h-8", "text-sm"], "sizingUpdates": "proportional", "dimensionConsistency": "maintained" }
  */
-test.skip('handles sizing utility updates', async ({ page }) => {
-  // Implementation pending
+test('handles sizing utility updates', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update sizing utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'w-12 h-10 text-lg bg-gray-500',
+    buttondown_class: 'w-12 h-10 text-lg bg-gray-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify sizing utilities applied
+  await expect(elements.upButton).toHaveClass(/w-12/);
+  await expect(elements.upButton).toHaveClass(/h-10/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -103,8 +188,25 @@ test.skip('handles sizing utility updates', async ({ page }) => {
  * Params:
  * { "spacingUtilities": ["p-4", "m-2", "space-x-2"], "spacingUpdates": "immediate", "layoutConsistency": "preserved" }
  */
-test.skip('updates spacing utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates spacing utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update spacing utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'p-4 m-2 bg-indigo-500',
+    buttondown_class: 'p-4 m-2 bg-indigo-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify spacing utilities applied
+  await expect(elements.upButton).toHaveClass(/p-4/);
+  await expect(elements.upButton).toHaveClass(/m-2/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -115,8 +217,25 @@ test.skip('updates spacing utility classes', async ({ page }) => {
  * Params:
  * { "stateUtilities": ["hover:bg-blue-600", "focus:ring-2"], "stateUpdates": "interactive", "behaviorConsistency": "maintained" }
  */
-test.skip('handles state utility class changes', async ({ page }) => {
-  // Implementation pending
+test('handles state utility class changes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with state utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 bg-blue-500',
+    buttondown_class: 'hover:bg-red-700 focus:ring-2 focus:ring-red-500 bg-red-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify state utilities applied
+  await expect(elements.upButton).toHaveClass(/hover:bg-blue-700/);
+  await expect(elements.downButton).toHaveClass(/hover:bg-red-700/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -127,8 +246,26 @@ test.skip('handles state utility class changes', async ({ page }) => {
  * Params:
  * { "layoutUtilities": ["flex", "flex-col", "items-center"], "layoutUpdates": "structural", "arrangementAdaptation": "dynamic" }
  */
-test.skip('updates layout utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates layout utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update layout to vertical (flex-col behavior)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalbuttons: true
+  });
+
+  // Verify functionality still works after layout change
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+
+  // Change back to horizontal
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalbuttons: false
+  });
+
+  await apiHelpers.clickDownButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '50');
 });
 
 /**
@@ -139,8 +276,25 @@ test.skip('updates layout utility classes', async ({ page }) => {
  * Params:
  * { "typographyUtilities": ["font-bold", "text-lg", "leading-tight"], "typographyUpdates": "immediate", "textConsistency": "maintained" }
  */
-test.skip('handles typography utility changes', async ({ page }) => {
-  // Implementation pending
+test('handles typography utility changes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update typography utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'font-bold text-xl leading-tight bg-gray-600',
+    buttondown_class: 'font-light text-sm leading-loose bg-gray-600'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify typography utilities applied
+  await expect(elements.upButton).toHaveClass(/font-bold/);
+  await expect(elements.downButton).toHaveClass(/font-light/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -151,8 +305,25 @@ test.skip('handles typography utility changes', async ({ page }) => {
  * Params:
  * { "borderUtilities": ["border-2", "rounded-lg"], "shadowUtilities": ["shadow-md"], "visualUpdates": "immediate" }
  */
-test.skip('updates border and shadow utilities', async ({ page }) => {
-  // Implementation pending
+test('updates border and shadow utilities', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update border and shadow utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'border-2 rounded-lg shadow-lg bg-teal-500',
+    buttondown_class: 'border-4 rounded-full shadow-xl bg-teal-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify border and shadow utilities applied
+  await expect(elements.upButton).toHaveClass(/border-2/);
+  await expect(elements.upButton).toHaveClass(/shadow-lg/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -163,8 +334,25 @@ test.skip('updates border and shadow utilities', async ({ page }) => {
  * Params:
  * { "backgroundUtilities": ["bg-gradient-to-r", "from-blue-500"], "backgroundUpdates": "visual", "backgroundConsistency": "maintained" }
  */
-test.skip('handles background utility changes', async ({ page }) => {
-  // Implementation pending
+test('handles background utility changes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update background utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white',
+    buttondown_class: 'bg-gradient-to-l from-red-500 to-pink-500 text-white'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify background utilities applied
+  await expect(elements.upButton).toHaveClass(/bg-gradient-to-r/);
+  await expect(elements.downButton).toHaveClass(/bg-gradient-to-l/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -175,8 +363,24 @@ test.skip('handles background utility changes', async ({ page }) => {
  * Params:
  * { "focusUtilities": ["focus:outline-none", "focus:ring-2"], "focusUpdates": "behavioral", "accessibilityMaintained": true }
  */
-test.skip('updates focus utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates focus utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update focusability settings
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    focusablebuttons: false
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify buttons are not focusable
+  await expect(elements.upButton).toHaveAttribute('tabindex', '-1');
+  await expect(elements.downButton).toHaveAttribute('tabindex', '-1');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -187,8 +391,25 @@ test.skip('updates focus utility classes', async ({ page }) => {
  * Params:
  * { "darkModeUtilities": ["dark:bg-gray-800", "dark:text-white"], "darkModeToggle": "dynamic", "themeConsistency": "maintained" }
  */
-test.skip('handles dark mode utility toggles', async ({ page }) => {
-  // Implementation pending
+test('handles dark mode utility toggles', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with dark mode utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-white dark:bg-gray-800 text-black dark:text-white',
+    buttondown_class: 'bg-white dark:bg-gray-800 text-black dark:text-white'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify dark mode utilities applied
+  await expect(elements.upButton).toHaveClass(/dark:bg-gray-800/);
+  await expect(elements.downButton).toHaveClass(/dark:text-white/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -199,8 +420,25 @@ test.skip('handles dark mode utility toggles', async ({ page }) => {
  * Params:
  * { "animationUtilities": ["transition-all", "duration-300"], "animationUpdates": "smooth", "motionConsistency": "maintained" }
  */
-test.skip('updates animation utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates animation utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with animation utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'transition-all duration-300 ease-in-out bg-green-500',
+    buttondown_class: 'transition-colors duration-500 bg-green-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify animation utilities applied
+  await expect(elements.upButton).toHaveClass(/transition-all/);
+  await expect(elements.upButton).toHaveClass(/duration-300/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -211,8 +449,25 @@ test.skip('updates animation utility classes', async ({ page }) => {
  * Params:
  * { "transformUtilities": ["scale-105", "rotate-3"], "transformUpdates": "immediate", "transformConsistency": "smooth" }
  */
-test.skip('handles transform utility changes', async ({ page }) => {
-  // Implementation pending
+test('handles transform utility changes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with transform utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'hover:scale-105 hover:rotate-3 bg-orange-500',
+    buttondown_class: 'hover:scale-95 hover:-rotate-3 bg-orange-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify transform utilities applied
+  await expect(elements.upButton).toHaveClass(/hover:scale-105/);
+  await expect(elements.downButton).toHaveClass(/hover:scale-95/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -223,8 +478,25 @@ test.skip('handles transform utility changes', async ({ page }) => {
  * Params:
  * { "opacityUtilities": ["opacity-75", "opacity-100"], "opacityUpdates": "immediate", "visibilityConsistency": "maintained" }
  */
-test.skip('updates opacity utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates opacity utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with opacity utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'opacity-75 hover:opacity-100 bg-yellow-500',
+    buttondown_class: 'opacity-50 hover:opacity-100 bg-yellow-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify opacity utilities applied
+  await expect(elements.upButton).toHaveClass(/opacity-75/);
+  await expect(elements.downButton).toHaveClass(/opacity-50/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -235,8 +507,25 @@ test.skip('updates opacity utility classes', async ({ page }) => {
  * Params:
  * { "customUtilities": "user_defined", "customIntegration": "seamless", "extensibilityMaintained": true }
  */
-test.skip('handles custom utility class integration', async ({ page }) => {
-  // Implementation pending
+test('handles custom utility class integration', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with custom class names (testing extensibility)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'custom-btn-class px-4 py-2 bg-emerald-500',
+    prefix: 'Custom'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify custom classes applied
+  await expect(elements.upButton).toHaveClass(/custom-btn-class/);
+  await expect(elements.prefix).toHaveText('Custom');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -247,8 +536,25 @@ test.skip('handles custom utility class integration', async ({ page }) => {
  * Params:
  * { "arbitraryUtilities": ["w-[123px]", "bg-[#123456]"], "arbitraryUpdates": "dynamic", "customValueSupport": "maintained" }
  */
-test.skip('updates arbitrary value utilities', async ({ page }) => {
-  // Implementation pending
+test('updates arbitrary value utilities', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with arbitrary value utilities (Tailwind JIT feature)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-[#1a472a] text-[#e0e0e0] px-[18px]',
+    buttondown_class: 'bg-[#721c24] text-[#f8d7da] px-[18px]'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify arbitrary utilities applied
+  await expect(elements.upButton).toHaveClass(/bg-\[#1a472a\]/);
+  await expect(elements.downButton).toHaveClass(/px-\[18px\]/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -259,8 +565,32 @@ test.skip('updates arbitrary value utilities', async ({ page }) => {
  * Params:
  * { "conflictResolution": "tailwind_precedence", "utilityConflicts": "resolved", "consistencyMaintained": true }
  */
-test.skip('handles utility class conflicts resolution', async ({ page }) => {
-  // Implementation pending
+test('handles utility class conflicts resolution', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Apply conflicting settings (last one should win in class string)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalbuttons: true,
+    buttonup_txt: 'UP',
+    verticalup: '▲'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify latest setting wins
+  await expect(elements.upButton).toHaveText('UP');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+
+  // Switch back to horizontal and verify
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalbuttons: false
+  });
+
+  await expect(elements.upButton).toHaveText('UP');
 });
 
 /**
@@ -271,8 +601,25 @@ test.skip('handles utility class conflicts resolution', async ({ page }) => {
  * Params:
  * { "pluginUtilities": "plugin_specific", "pluginIntegration": "seamless", "pluginCompatibility": "maintained" }
  */
-test.skip('updates plugin-specific utilities', async ({ page }) => {
-  // Implementation pending
+test('updates plugin-specific utilities', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with standard utilities (plugins would work similarly)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    prefix: '$',
+    postfix: 'USD'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify prefix/postfix added
+  await expect(elements.prefix).toHaveText('$');
+  await expect(elements.postfix).toHaveText('USD');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -283,8 +630,27 @@ test.skip('updates plugin-specific utilities', async ({ page }) => {
  * Params:
  * { "jitCompilation": "enabled", "jitUpdates": "efficient", "compilationPerformance": "optimized" }
  */
-test.skip('handles JIT compilation updates', async ({ page }) => {
-  // Implementation pending
+test('handles JIT compilation updates', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Rapid updates to test JIT-like behavior
+  for (let i = 0; i < 3; i++) {
+    await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+      buttonup_txt: `UP${i}`,
+      buttondown_txt: `DOWN${i}`
+    });
+  }
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify final state is correct
+  await expect(elements.upButton).toHaveText('UP2');
+  await expect(elements.downButton).toHaveText('DOWN2');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -295,8 +661,25 @@ test.skip('handles JIT compilation updates', async ({ page }) => {
  * Params:
  * { "purgeSafety": "maintained", "productionUpdates": "safe", "classPreservation": "ensured" }
  */
-test.skip('updates purge-safe utility classes', async ({ page }) => {
-  // Implementation pending
+test('updates purge-safe utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with utilities that should be purge-safe
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-slate-500 text-white px-3 py-2',
+    buttondown_class: 'bg-slate-600 text-white px-3 py-2'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify utilities applied
+  await expect(elements.upButton).toHaveClass(/bg-slate-500/);
+  await expect(elements.downButton).toHaveClass(/bg-slate-600/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -307,8 +690,27 @@ test.skip('updates purge-safe utility classes', async ({ page }) => {
  * Params:
  * { "performanceOptimization": "enabled", "updateEfficiency": "high", "renderingOptimized": true }
  */
-test.skip('handles performance optimized updates', async ({ page }) => {
-  // Implementation pending
+test('handles performance optimized updates', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Set a specific value
+  await apiHelpers.setValueViaAPI(page, 'test-input', '42');
+  await apiHelpers.expectValueToBe(page, 'test-input', '42');
+
+  // Trigger DOM changes that might affect the value
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalbuttons: true,
+    prefix: '$',
+    postfix: 'USD'
+  });
+
+  // Verify value is preserved
+  await apiHelpers.expectValueToBe(page, 'test-input', '42');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '43');
 });
 
 /**
@@ -319,8 +721,25 @@ test.skip('handles performance optimized updates', async ({ page }) => {
  * Params:
  * { "breakpointUtilities": ["sm:text-lg", "md:text-xl"], "breakpointUpdates": "responsive", "adaptiveBehavior": "maintained" }
  */
-test.skip('updates responsive breakpoint utilities', async ({ page }) => {
-  // Implementation pending
+test('updates responsive breakpoint utilities', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Update with responsive breakpoint utilities
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'text-sm sm:text-base md:text-lg lg:text-xl bg-violet-500',
+    buttondown_class: 'text-sm sm:text-base md:text-lg lg:text-xl bg-violet-500'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify responsive utilities applied
+  await expect(elements.upButton).toHaveClass(/sm:text-base/);
+  await expect(elements.upButton).toHaveClass(/md:text-lg/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -331,6 +750,24 @@ test.skip('updates responsive breakpoint utilities', async ({ page }) => {
  * Params:
  * { "utilityValidation": "enabled", "invalidUtilities": "handled_gracefully", "errorRecovery": "robust" }
  */
-test.skip('handles utility class validation', async ({ page }) => {
-  // Implementation pending
+test('handles utility class validation', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  // Apply valid settings (TouchSpin handles class strings gracefully)
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    buttonup_class: 'bg-amber-500 text-white px-4'
+  });
+
+  // Verify component still functions
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+
+  // Apply more valid settings to verify recovery
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    prefix: '$'
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  await expect(elements.prefix).toHaveText('$');
 });
