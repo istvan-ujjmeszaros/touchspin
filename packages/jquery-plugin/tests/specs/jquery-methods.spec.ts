@@ -41,6 +41,7 @@
  * [x] supports callable UPDATE_SETTINGS event
  * [x] supports callable DESTROY event
  * [x] handles updateSettings command without argument
+ * [x] handles initialization on non-input element
  */
 
 import { test, expect } from '@playwright/test';
@@ -1075,6 +1076,43 @@ test('supports asynchronous method patterns', async ({ page }) => {
     // Should still work - step should remain 5
     await apiHelpers.clickUpButton(page, 'test-input');
     await apiHelpers.expectValueToBe(page, 'test-input', '15');
+  });
+
+  /**
+   * Scenario: handles initialization on non-input element
+   * Given the fixture page has a non-input element
+   * When I try to initialize TouchSpin on a div
+   * Then it fails gracefully without errors
+   */
+  test('handles initialization on non-input element', async ({ page }) => {
+    await page.goto('/packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html');
+
+    // Create a div element (non-input)
+    const result = await page.evaluate(() => {
+      const $ = (window as any).$;
+
+      // Create a div and try to initialize TouchSpin on it
+      const div = $('<div id="not-an-input" data-testid="not-an-input"></div>');
+      $('body').append(div);
+
+      // Try to initialize - should return jQuery object but not actually initialize
+      const returnValue = div.TouchSpin({ min: 0, max: 100 });
+
+      // Check if TouchSpin was actually initialized (it shouldn't be)
+      const inputEl = document.getElementById('not-an-input') as any;
+      const hasInstance = inputEl && inputEl._touchSpinCore !== undefined;
+
+      return {
+        returnedJQuery: returnValue && returnValue.jquery !== undefined,
+        hasInstance: hasInstance
+      };
+    });
+
+    // Should return jQuery object for chaining
+    expect(result.returnedJQuery).toBe(true);
+
+    // But should NOT have created a TouchSpin instance
+    expect(result.hasInstance).toBe(false);
   });
 
 }); // Close test.describe block
