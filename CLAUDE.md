@@ -4,6 +4,8 @@
 
 **We are rewriting ALL tests from scratch** for maintainability and 100% coverage.
 
+**📋 IMPORTANT:** See `TEST_IMPLEMENTATION_ROADMAP.md` for the current test implementation status and roadmap. When implementing tests, always update both the roadmap file and the test file checklists to keep progress tracking accurate.
+
 ### Core Principles
 * **DIST-ONLY TESTS** - import built artifacts (`/dist/`), never `/src/`
 * **TESTID SELECTORS** - use `data-testid` selectors for reliability
