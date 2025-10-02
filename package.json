@@ -58,8 +58,8 @@
     "v8-to-istanbul": "^9.3.0"
   },
   "scripts": {
-    "dev": "node scripts/pre-dev.mjs && concurrently -n watch,serve \"yarn watch:test\" \"yarn serve\"",
-    "dev:hot": "node scripts/pre-dev.mjs && concurrently -n watch,serve,hot-reload \"yarn watch:test\" \"yarn serve\" \"yarn hot-reload\"",
+    "dev": "concurrently -n watch,serve \"yarn watch:test\" \"yarn serve\"",
+    "dev:hot": "concurrently -n watch,serve,hot-reload \"yarn watch:test\" \"yarn serve\" \"yarn hot-reload\"",
     "hot-reload": "node scripts/hot-reload-server.mjs",
     "serve": "node scripts/static-server.mjs",
     "preview": "node scripts/static-server.mjs",

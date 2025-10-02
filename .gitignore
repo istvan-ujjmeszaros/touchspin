@@ -1,6 +1,7 @@
 .hg
 .hgignore
 .idea
+!.idea/runConfigurations/
 *.log
 nbproject
 index_demo_site.html
