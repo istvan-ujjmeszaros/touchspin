@@ -252,7 +252,7 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
 /**
  * Scenario: updates disabled state dynamically
  * Given the fixture page is loaded with enabled TouchSpin
- * When disabled state is toggled via API
+ * When disabled state is toggled on the input element
  * Then all elements reflect the new disabled state
  * Params:
  * { "initialState": "enabled", "newState": "disabled", "stateUpdate": "comprehensive", "accessibilityUpdate": true }
@@ -261,20 +261,32 @@ test('updates disabled state dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
-  // Disable the component
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    disabled: true
+  // Disable the input element (TouchSpin watches this via MutationObserver)
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    if (input) input.disabled = true;
   });
+
+  // Wait for MutationObserver to react
+  await page.waitForTimeout(50);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Verify input is disabled
   await expect(elements.input).toBeDisabled();
 
-  // Re-enable the component
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    disabled: false
+  // Verify buttons are also disabled (TouchSpin behavior)
+  await expect(elements.upButton).toBeDisabled();
+  await expect(elements.downButton).toBeDisabled();
+
+  // Re-enable the input element
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    if (input) input.disabled = false;
   });
+
+  // Wait for MutationObserver to react
+  await page.waitForTimeout(50);
 
   // Verify functionality restored
   await apiHelpers.clickUpButton(page, 'test-input');
