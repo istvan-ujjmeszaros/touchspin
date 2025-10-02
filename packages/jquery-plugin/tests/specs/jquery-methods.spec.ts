@@ -40,6 +40,7 @@
  * [x] supports callable STOP_SPIN event
  * [x] supports callable UPDATE_SETTINGS event
  * [x] supports callable DESTROY event
+ * [x] handles updateSettings command without argument
  */
 
 import { test, expect } from '@playwright/test';
@@ -1054,6 +1055,26 @@ test('supports asynchronous method patterns', async ({ page }) => {
 
     // Verify destroyed
     expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(false);
+  });
+
+  /**
+   * Scenario: handles updateSettings command without argument
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I call updateSettings without an argument
+   * Then it uses empty settings object as fallback
+   */
+  test('handles updateSettings command without argument', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 5 });
+
+    // Call updateSettings without argument (tests the || {} fallback)
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('updateSettings');
+    });
+
+    // Should still work - step should remain 5
+    await apiHelpers.clickUpButton(page, 'test-input');
+    await apiHelpers.expectValueToBe(page, 'test-input', '15');
   });
 
 }); // Close test.describe block
