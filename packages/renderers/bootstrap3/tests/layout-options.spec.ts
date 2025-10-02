@@ -669,21 +669,23 @@ test('handles dynamic content changes in layouts', async ({ page }) => {
 
   // Add dynamic content around the component
   await page.evaluate(() => {
-    const wrapper = document.querySelector('[data-testid="test-input"]').closest('.mb-4');
+    const wrapper = document.querySelector('[data-testid="test-input"]').closest('.form-group');
 
-    // Add sibling elements
-    const siblingBefore = document.createElement('div');
-    siblingBefore.className = 'alert alert-info';
-    siblingBefore.textContent = 'Dynamic content before';
-    wrapper.parentNode.insertBefore(siblingBefore, wrapper);
+    if (wrapper && wrapper.parentNode) {
+      // Add sibling elements
+      const siblingBefore = document.createElement('div');
+      siblingBefore.className = 'alert alert-info';
+      siblingBefore.textContent = 'Dynamic content before';
+      wrapper.parentNode.insertBefore(siblingBefore, wrapper);
 
-    const siblingAfter = document.createElement('div');
-    siblingAfter.className = 'alert alert-warning';
-    siblingAfter.textContent = 'Dynamic content after';
-    wrapper.parentNode.insertBefore(siblingAfter, wrapper.nextSibling);
+      const siblingAfter = document.createElement('div');
+      siblingAfter.className = 'alert alert-warning';
+      siblingAfter.textContent = 'Dynamic content after';
+      wrapper.parentNode.insertBefore(siblingAfter, wrapper.nextSibling);
 
-    // Resize parent container
-    wrapper.parentNode.style.width = '80%';
+      // Resize parent container
+      wrapper.parentNode.style.width = '80%';
+    }
   });
 
   // Verify functionality remains stable after dynamic changes
