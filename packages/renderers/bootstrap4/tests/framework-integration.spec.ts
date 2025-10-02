@@ -200,7 +200,10 @@ test('integrates with Bootstrap 4 flex utilities', async ({ page }) => {
       label: 'Flex Container Test',
       helpText: 'Testing TouchSpin in flex layout'
     });
-    input.closest('.mb-4').classList.add('d-flex', 'flex-column');
+    const wrapper = input.closest('.form-group');
+    if (wrapper) {
+      wrapper.classList.add('d-flex', 'flex-column');
+    }
   });
 
   await apiHelpers.initializeTouchspinFromGlobals(page, 'flex-test');
@@ -511,14 +514,21 @@ test('integrates with Bootstrap 4 form layouts', async ({ page }) => {
       label: 'Horizontal Layout Test',
       helpText: 'Testing in horizontal form layout'
     });
-    const wrapper = input.closest('.mb-4');
-    wrapper.classList.add('row');
-    wrapper.querySelector('label').classList.add('col-sm-3', 'col-form-label');
-    const inputGroup = wrapper.querySelector('.input-group');
-    const colDiv = document.createElement('div');
-    colDiv.className = 'col-sm-9';
-    inputGroup.parentNode.insertBefore(colDiv, inputGroup);
-    colDiv.appendChild(inputGroup);
+    const wrapper = input.closest('.form-group');
+    if (wrapper) {
+      wrapper.classList.add('row');
+      const label = wrapper.querySelector('label');
+      if (label) {
+        label.classList.add('col-sm-3', 'col-form-label');
+      }
+      const inputGroup = wrapper.querySelector('.input-group');
+      if (inputGroup && inputGroup.parentNode) {
+        const colDiv = document.createElement('div');
+        colDiv.className = 'col-sm-9';
+        inputGroup.parentNode.insertBefore(colDiv, inputGroup);
+        colDiv.appendChild(inputGroup);
+      }
+    }
   });
 
   await apiHelpers.initializeTouchspinFromGlobals(page, 'form-layout-test');
@@ -708,7 +718,10 @@ test('handles Bootstrap 4 dropdown integration', async ({ page }) => {
       </ul>
     `;
 
-    input.closest('.mb-4').appendChild(dropdown);
+    const wrapper = input.closest('.form-group');
+    if (wrapper) {
+      wrapper.appendChild(dropdown);
+    }
   });
 
   await apiHelpers.initializeTouchspinFromGlobals(page, 'dropdown-test');
