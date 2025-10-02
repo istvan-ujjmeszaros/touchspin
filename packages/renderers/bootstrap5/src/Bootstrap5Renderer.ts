@@ -87,7 +87,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   // Initialization helpers
   private initializeOptions(): void {
-    this.opts = this.extractRendererSettings(bootstrap5Schema);
+    this.opts = this.filterRendererSettings(bootstrap5Schema);
   }
 
   private resetElementReferences(): void {

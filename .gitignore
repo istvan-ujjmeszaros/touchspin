@@ -15,8 +15,8 @@ tmp/
 # Test results and reports - consolidated under reports/
 reports/
 
-# Test run metadata
-**/test-results/.last-run.json
+# Test run metadata (Playwright test-results directories)
+**/test-results/
 
 # NYC coverage output
 .nyc_output/

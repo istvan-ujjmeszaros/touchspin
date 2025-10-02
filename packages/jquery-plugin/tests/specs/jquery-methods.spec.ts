@@ -30,6 +30,16 @@
  * [x] maintains backward compatibility for legacy methods
  * [x] handles method calls with callback functions
  * [x] supports asynchronous method patterns
+ * [x] supports startUpSpin method via jQuery interface
+ * [x] supports startDownSpin method via jQuery interface
+ * [x] supports stopSpin method via jQuery interface
+ * [x] supports callable UP_ONCE event
+ * [x] supports callable DOWN_ONCE event
+ * [x] supports callable START_UP_SPIN event
+ * [x] supports callable START_DOWN_SPIN event
+ * [x] supports callable STOP_SPIN event
+ * [x] supports callable UPDATE_SETTINGS event
+ * [x] supports callable DESTROY event
  */
 
 import { test, expect } from '@playwright/test';
@@ -776,6 +786,274 @@ test('supports asynchronous method patterns', async ({ page }) => {
     });
 
     expect(result).toBe(42);
+  });
+
+  /**
+   * Scenario: supports startUpSpin method via jQuery interface
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I call startUpSpin method
+   * Then continuous up spinning begins
+   */
+  test('supports startUpSpin method via jQuery interface', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 1 });
+
+    // Call startUpSpin method
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('startUpSpin');
+    });
+
+    // Wait briefly for spin to increment value
+    await page.waitForTimeout(100);
+
+    // Stop spinning
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('stopSpin');
+    });
+
+    // Value should have increased from initial
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBeGreaterThan(10);
+  });
+
+  /**
+   * Scenario: supports startDownSpin method via jQuery interface
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I call startDownSpin method
+   * Then continuous down spinning begins
+   */
+  test('supports startDownSpin method via jQuery interface', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 50, step: 1 });
+
+    // Call startDownSpin method
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('startDownSpin');
+    });
+
+    // Wait briefly for spin to decrement value
+    await page.waitForTimeout(100);
+
+    // Stop spinning
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('stopSpin');
+    });
+
+    // Value should have decreased from initial
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBeLessThan(50);
+  });
+
+  /**
+   * Scenario: supports stopSpin method via jQuery interface
+   * Given the fixture page is loaded with initialized TouchSpin and spinning is active
+   * When I call stopSpin method
+   * Then spinning stops immediately
+   */
+  test('supports stopSpin method via jQuery interface', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 1 });
+
+    // Start spinning
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('startUpSpin');
+    });
+
+    // Immediately stop
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      $('[data-testid="test-input"]').TouchSpin('stopSpin');
+    });
+
+    // Get value after stop
+    const valueAfterStop = await apiHelpers.getNumericValue(page, 'test-input');
+
+    // Wait to ensure spinning doesn't continue
+    await page.waitForTimeout(100);
+
+    // Value should remain stable
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBe(valueAfterStop);
+  });
+
+  /**
+   * Scenario: supports callable UP_ONCE event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger UP_ONCE event
+   * Then value increments once
+   */
+  test('supports callable UP_ONCE event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 5 });
+
+    // Trigger UP_ONCE event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.UP_ONCE);
+    });
+
+    await apiHelpers.expectValueToBe(page, 'test-input', '15');
+  });
+
+  /**
+   * Scenario: supports callable DOWN_ONCE event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger DOWN_ONCE event
+   * Then value decrements once
+   */
+  test('supports callable DOWN_ONCE event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 20, step: 5 });
+
+    // Trigger DOWN_ONCE event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.DOWN_ONCE);
+    });
+
+    await apiHelpers.expectValueToBe(page, 'test-input', '15');
+  });
+
+  /**
+   * Scenario: supports callable START_UP_SPIN event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger START_UP_SPIN event
+   * Then continuous up spinning begins
+   */
+  test('supports callable START_UP_SPIN event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 1 });
+
+    // Trigger START_UP_SPIN event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_UP_SPIN);
+    });
+
+    // Wait briefly for spin
+    await page.waitForTimeout(100);
+
+    // Stop spinning
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
+    });
+
+    // Value should have increased
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBeGreaterThan(10);
+  });
+
+  /**
+   * Scenario: supports callable START_DOWN_SPIN event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger START_DOWN_SPIN event
+   * Then continuous down spinning begins
+   */
+  test('supports callable START_DOWN_SPIN event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 50, step: 1 });
+
+    // Trigger START_DOWN_SPIN event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_DOWN_SPIN);
+    });
+
+    // Wait briefly for spin
+    await page.waitForTimeout(100);
+
+    // Stop spinning
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
+    });
+
+    // Value should have decreased
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBeLessThan(50);
+  });
+
+  /**
+   * Scenario: supports callable STOP_SPIN event
+   * Given the fixture page is loaded with initialized TouchSpin and spinning is active
+   * When I trigger STOP_SPIN event
+   * Then spinning stops immediately
+   */
+  test('supports callable STOP_SPIN event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 1 });
+
+    // Start spinning via event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_UP_SPIN);
+    });
+
+    // Immediately stop via event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
+    });
+
+    // Get value after stop
+    const valueAfterStop = await apiHelpers.getNumericValue(page, 'test-input');
+
+    // Wait to ensure spinning doesn't continue
+    await page.waitForTimeout(100);
+
+    // Value should remain stable
+    const finalValue = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(finalValue).toBe(valueAfterStop);
+  });
+
+  /**
+   * Scenario: supports callable UPDATE_SETTINGS event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger UPDATE_SETTINGS event with new settings
+   * Then settings are updated dynamically
+   */
+  test('supports callable UPDATE_SETTINGS event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10, step: 1 });
+
+    // Trigger UPDATE_SETTINGS event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.UPDATE_SETTINGS, [{ step: 10 }]);
+    });
+
+    // Click up button - should now increment by 10
+    await apiHelpers.clickUpButton(page, 'test-input');
+    await apiHelpers.expectValueToBe(page, 'test-input', '20');
+  });
+
+  /**
+   * Scenario: supports callable DESTROY event
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When I trigger DESTROY event
+   * Then TouchSpin instance is destroyed
+   */
+  test('supports callable DESTROY event', async ({ page }) => {
+    await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 100, initval: 10 });
+
+    // Verify initialized
+    expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);
+
+    // Trigger DESTROY event
+    await page.evaluate(() => {
+      const $ = (window as any).$;
+      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.DESTROY);
+    });
+
+    // Verify destroyed
+    expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(false);
   });
 
 }); // Close test.describe block

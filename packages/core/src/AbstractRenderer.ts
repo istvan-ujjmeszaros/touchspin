@@ -100,27 +100,19 @@ abstract class AbstractRenderer implements Renderer {
     return this.buildDataTestId('postfix');
   }
 
-  protected extractRendererSettings<Schema extends RendererOptionSchema>(
+  protected filterRendererSettings<Schema extends RendererOptionSchema>(
     schema: Schema,
     sourceSettings: SettingsRecord = this.settings as SettingsRecord
   ): Readonly<Partial<InferOptionsFromSchema<Schema>>> {
-    const selected: Record<string, unknown> = {};
+    const filteredSettings: Record<string, unknown> = {};
 
     for (const key in schema) {
       if (Object.prototype.hasOwnProperty.call(sourceSettings, key)) {
-        selected[key] = sourceSettings[key];
+        filteredSettings[key] = sourceSettings[key];
       }
     }
 
-    return selected as Readonly<Partial<InferOptionsFromSchema<Schema>>>;
-  }
-
-  // Backward compatibility alias
-  protected projectRendererOptions<Schema extends RendererOptionSchema>(
-    schema: Schema,
-    from: Record<string, unknown> = this.settings as Record<string, unknown>
-  ): Readonly<Partial<InferOptionsFromSchema<Schema>>> {
-    return this.extractRendererSettings(schema, from);
+    return filteredSettings as Readonly<Partial<InferOptionsFromSchema<Schema>>>;
   }
 
   private removeInjectedNodesWithinWrapper(): void {
