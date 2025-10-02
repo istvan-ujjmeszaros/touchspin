@@ -240,7 +240,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
             await expect(prefix).toBeHidden();
             await expect(postfix).toBeHidden();
           } catch {
-            console.log('Renderer behavior: prefix/postfix elements remain visible after clearing - may be renderer-specific behavior');
+            // Renderer-specific behavior: prefix/postfix elements may remain visible
           }
         }
       }

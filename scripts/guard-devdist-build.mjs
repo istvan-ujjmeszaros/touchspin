@@ -7,7 +7,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, statSync } from 'node:fs';
+import { existsSync, statSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,6 +65,45 @@ function checkDevdistExists(packagePath) {
   return { exists: true };
 }
 
+/**
+ * Recursively get the newest file mtime in a directory tree
+ */
+function getNewestFileMtime(dirPath) {
+  let newestMtime = 0;
+
+  function scanDir(dir) {
+    try {
+      const entries = readdirSync(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          // Skip node_modules and hidden directories
+          if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
+            continue;
+          }
+          scanDir(fullPath);
+        } else if (entry.isFile()) {
+          const stat = statSync(fullPath);
+          if (stat.mtime.getTime() > newestMtime) {
+            newestMtime = stat.mtime.getTime();
+          }
+        }
+      }
+    } catch (err) {
+      // Ignore errors (e.g., permission denied)
+    }
+  }
+
+  scanDir(dirPath);
+  return newestMtime;
+}
+
+/**
+ * Check if devdist is stale by comparing file modification times
+ * Returns true if ANY source file is newer than ANY devdist file
+ */
 function isDevdistStale(packagePath) {
   const srcPath = join(projectRoot, packagePath, 'src');
   const devdistPath = join(projectRoot, packagePath, 'devdist');
@@ -74,11 +113,11 @@ function isDevdistStale(packagePath) {
   }
 
   try {
-    const srcStat = statSync(srcPath);
-    const devdistStat = statSync(devdistPath);
+    const newestSrcMtime = getNewestFileMtime(srcPath);
+    const newestDevdistMtime = getNewestFileMtime(devdistPath);
 
-    // If src is newer than devdist, it's stale
-    return srcStat.mtime > devdistStat.mtime;
+    // If any source file is newer than any devdist file, it's stale
+    return newestSrcMtime > newestDevdistMtime;
   } catch {
     return false; // If we can't stat, assume not stale
   }

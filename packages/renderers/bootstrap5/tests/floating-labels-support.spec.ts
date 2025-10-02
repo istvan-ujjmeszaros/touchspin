@@ -29,7 +29,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await installDomHelpers(page);
 
   // Test 1: Basic floating label initialization
-  console.log('🧪 Test 1: Basic floating label initialization');
   await initializeTouchSpin(page, 'basic-floating', BOOTSTRAP5_RENDERER_URL);
 
   // Verify floating label structure is preserved
@@ -42,7 +41,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(basicInput).toHaveAccessibleName(/Amount/);
 
   // Test 2: Floating label in input group
-  console.log('🧪 Test 2: Floating label in input group');
   await initializeTouchSpin(page, 'group-floating', BOOTSTRAP5_RENDERER_URL);
 
   // Verify input group structure with floating labels
@@ -56,7 +54,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(groupWrapper.locator('.input-group-text').last()).toHaveText('.00');
 
   // Test 3: Multiple floating labels
-  console.log('🧪 Test 3: Multiple floating labels');
   await initializeTouchSpin(page, 'multi-1', BOOTSTRAP5_RENDERER_URL);
   await initializeTouchSpin(page, 'multi-2', BOOTSTRAP5_RENDERER_URL);
   await initializeTouchSpin(page, 'multi-3', BOOTSTRAP5_RENDERER_URL);
@@ -75,16 +72,13 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   }
 
   // Test 4: Complex form layout
-  console.log('🧪 Test 4: Complex form layout');
   await initializeTouchSpin(page, 'form-amount', BOOTSTRAP5_RENDERER_URL);
   await initializeTouchSpin(page, 'form-percentage', BOOTSTRAP5_RENDERER_URL);
   await initializeTouchSpin(page, 'form-total', BOOTSTRAP5_RENDERER_URL);
 
   // Comprehensive interaction testing on the basic floating input
-  console.log('🧪 Testing all interaction methods on basic floating label input');
 
   // Test button interactions
-  console.log('🔘 Testing button interactions');
   await apiHelpers.expectValueToBe(page, 'basic-floating', '50');
 
   await apiHelpers.clickUpButton(page, 'basic-floating');
@@ -94,7 +88,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await apiHelpers.expectValueToBe(page, 'basic-floating', '50');
 
   // Test keyboard interactions
-  console.log('⌨️ Testing keyboard interactions');
   await page.getByTestId('basic-floating').focus();
 
   // Arrow up key
@@ -106,7 +99,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await apiHelpers.expectValueToBe(page, 'basic-floating', '50');
 
   // Test API interactions
-  console.log('🔧 Testing API interactions');
   await apiHelpers.incrementViaAPI(page, 'basic-floating');
   await apiHelpers.expectValueToBe(page, 'basic-floating', '51');
 
@@ -118,7 +110,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await apiHelpers.expectValueToBe(page, 'basic-floating', '75');
 
   // Test wheel interactions (if input is focused)
-  console.log('🖱️ Testing wheel interactions');
   await page.getByTestId('basic-floating').focus();
 
   // Simulate wheel up
@@ -131,7 +122,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await apiHelpers.expectValueToBe(page, 'basic-floating', '75');
 
   // Verify DOM structure preservation after all interactions
-  console.log('🔍 Verifying DOM structure preservation');
 
   // Check that floating label is still present and functional
   await expect(basicFloatingLabel).toBeVisible();
@@ -147,7 +137,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(touchSpinWrapper).toHaveClass(/bootstrap-touchspin/);
 
   // Verify accessibility is maintained
-  console.log('♿ Verifying accessibility preservation');
   await expect(basicInput).toHaveAttribute('role', 'spinbutton');
   await expect(basicInput).toHaveAccessibleName(/Amount/);
 
@@ -156,7 +145,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(basicInput).toHaveAttribute('aria-valuetext', '75');
 
   // Test floating label behavior (CSS-driven)
-  console.log('🏷️ Testing floating label behavior');
 
   // Clear input to test floating behavior
   await page.getByTestId('basic-floating').fill('');
@@ -172,7 +160,6 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(basicFloatingLabel).toBeVisible();
 
   // Test complex input group with floating labels
-  console.log('🔄 Testing complex input group interactions');
 
   // Test the input group with prefix/postfix
   await apiHelpers.expectValueToBe(page, 'group-floating', '125');
@@ -190,5 +177,4 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   await expect(groupLabelFinal).toBeVisible();
   await expect(groupLabelFinal).toHaveText('Price');
 
-  console.log('✅ All floating labels tests completed successfully');
 });

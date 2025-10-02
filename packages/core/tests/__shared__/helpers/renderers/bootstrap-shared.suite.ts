@@ -90,7 +90,6 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       } catch {
         // If not present, verify at least basic input-group class exists
         await expect(wrapper).toHaveClass(/input-group/);
-        console.log('Bootstrap version may not auto-apply input-group-sm - checking base classes');
       }
 
       // Test that basic input-group class is also present
@@ -236,7 +235,6 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         await expect(input).not.toHaveClass(/form-control/);
       } catch {
         // If class is still present, that might be acceptable behavior
-        console.log('form-control class preserved after destroy - may be intended behavior');
       }
 
       // Wrapper should be removed or hidden
@@ -327,7 +325,6 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       } catch {
         // If not auto-applied, verify basic input-group class exists
         await expect(wrapper).toHaveClass(/input-group/);
-        console.log('Bootstrap version may not auto-apply input-group-lg - checking base classes');
       }
 
       // Theme classes should be preserved on container (if it exists)
@@ -336,8 +333,6 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       if (containerExists) {
         await expect(container).toHaveClass(/bg-light/);
         await expect(container).toHaveClass(/border/);
-      } else {
-        console.log('Container element not found - skipping theme class checks');
       }
     });
   });

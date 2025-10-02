@@ -190,10 +190,6 @@ test('Callable startupspin and stopspin emit start and stop events in order', as
   const hasStopUpSpin = await hasEventInLog(page, 'touchspin.on.stopupspin');
   const hasStopSpin = await hasEventInLog(page, 'touchspin.on.stopspin');
 
-  // Debug: Log all events to understand what's happening
-  const allEvents = await page.evaluate(() => window.eventLog || []);
-  console.log('All events logged:', allEvents.map(e => `${e.type}:${e.event}`));
-
   test.expect(hasStartSpin || hasStartUpSpin).toBe(true);
   test.expect(hasStopSpin || hasStopUpSpin).toBe(true);
 });
