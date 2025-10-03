@@ -119,6 +119,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   init(): void {
+    // AUTO-DETECT: Enable metadata tracking for complex DOM structures BEFORE any modifications
+    if (this.floatingContainer || this.initialInputGroup) {
+      this.enableMetadataTracking();
+    }
+
     this.initializeOptions();
     this.resetElementReferences();
     this.ensureFormControlClass();
@@ -127,31 +132,8 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   teardown(): void {
-    // CRITICAL: Extract .form-floating BEFORE super.teardown() to prevent deletion
-    // But restore input/label AFTER super.teardown() to prevent re-extraction
-    if (this.floatingContainer && this.floatingLabel) {
-      // Move .form-floating OUT of wrapper before super.teardown() deletes it
-      if (this.wrapper && this.wrapper.contains(this.floatingContainer)) {
-        this.wrapper.parentElement?.insertBefore(this.floatingContainer, this.wrapper);
-      }
-    }
-
     this.restoreFormControlClass();
-    super.teardown(); // This moves input out and removes wrapper
-
-    // NOW restore input and label back into floating container
-    // (after super.teardown() has finished moving input around)
-    if (this.floatingContainer && this.floatingLabel) {
-      // Ensure input is back in floating container
-      if (this.input.parentElement !== this.floatingContainer) {
-        // Insert as first child (Bootstrap 5 floating label requires input before label)
-        this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
-      }
-      // Ensure label is back in floating container (after input)
-      if (this.floatingLabel.parentElement !== this.floatingContainer) {
-        this.floatingContainer.appendChild(this.floatingLabel);
-      }
-    }
+    super.teardown(); // Handles everything via metadata tracking!
   }
 
   // Initialization helpers
@@ -166,14 +148,16 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   private ensureFormControlClass(): void {
     if (!this.input.classList.contains(CSS_CLASSES.FORM_CONTROL)) {
-      this.input.classList.add(CSS_CLASSES.FORM_CONTROL);
+      this.addTrackedClass(this.input, CSS_CLASSES.FORM_CONTROL);
       this.formControlAdded = true;
     }
   }
 
   private restoreFormControlClass(): void {
+    // Note: formControlAdded tracking is kept for backward compatibility,
+    // but metadata tracking will handle restoration automatically
     if (this.formControlAdded) {
-      this.input.classList.remove(CSS_CLASSES.FORM_CONTROL);
+      this.removeTrackedClass(this.input, CSS_CLASSES.FORM_CONTROL);
       this.formControlAdded = false;
     }
   }

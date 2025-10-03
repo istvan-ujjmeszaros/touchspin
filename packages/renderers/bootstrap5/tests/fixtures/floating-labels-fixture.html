@@ -364,9 +364,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏷️ Bootstrap 5 Floating Labels Test Fixture loaded');
 
-            // Auto-initialize all TouchSpin instances
-            initializeAllTouchSpin();
-            console.log('📋 All TouchSpin instances auto-initialized');
+            // DO NOT auto-initialize - tests will initialize manually
+            // initializeAllTouchSpin();
+            console.log('📋 Fixture ready - waiting for test initialization');
 
             // Set up test control buttons
             document.getElementById('init-all').addEventListener('click', function() {
