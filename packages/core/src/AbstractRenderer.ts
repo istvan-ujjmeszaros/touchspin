@@ -114,6 +114,7 @@ abstract class AbstractRenderer implements Renderer {
   protected enableMetadataTracking(): void {
     this.metadataTrackingEnabled = true;
     this.captureSnapshot();
+    console.log('[Metadata] Tracking enabled, snapshot captured');
   }
 
   /**
@@ -131,7 +132,7 @@ abstract class AbstractRenderer implements Renderer {
     let fingerprintId = 0;
     let nestedSetCounter = 0;
 
-    const assignNestedSet = (element: HTMLElement): void => {
+    const assignNestedSet = (element: HTMLElement, depth = 0): void => {
       const leftValue = nestedSetCounter++;
       let parentFingerprint: number | null = null;
 
@@ -155,23 +156,43 @@ abstract class AbstractRenderer implements Renderer {
         modifiedAttributes: {},
       };
 
+      // Log the element being tracked
+      const indent = '  '.repeat(depth);
+      const tag = element.tagName.toLowerCase();
+      const id = element.id ? `#${element.id}` : '';
+      const classes = element.className ? `.${element.className.split(' ').join('.')}` : '';
+      const label = `${tag}${id}${classes}`;
+      console.log(
+        `${indent}[Snapshot] fp:${element.__touchspinMeta.fingerprint} left:${leftValue} parent:${parentFingerprint} - ${label}`
+      );
+
       // Process children
       for (let i = 0; i < element.children.length; i++) {
         const child = element.children[i] as HTMLElement;
         if (!child.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
-          assignNestedSet(child);
+          assignNestedSet(child, depth + 1);
         }
       }
 
       // Set right value after processing all children
       element.__touchspinMeta.right = nestedSetCounter++;
+      console.log(
+        `${indent}[Snapshot] fp:${element.__touchspinMeta.fingerprint} right:${element.__touchspinMeta.right}`
+      );
     };
 
-    // Start recursive assignment from root's children
-    for (let i = 0; i < root.children.length; i++) {
-      const child = root.children[i] as HTMLElement;
-      if (!child.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
-        assignNestedSet(child);
+    console.log('[Snapshot] Building nested set hierarchy:');
+    // IMPORTANT: Start from root itself (e.g., .form-floating), not just its children
+    // This ensures the container is tracked along with its contents
+    if (!root.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
+      assignNestedSet(root);
+    } else {
+      // If root is a TouchSpin element, track its children
+      for (let i = 0; i < root.children.length; i++) {
+        const child = root.children[i] as HTMLElement;
+        if (!child.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
+          assignNestedSet(child);
+        }
       }
     }
   }
@@ -303,22 +324,30 @@ abstract class AbstractRenderer implements Renderer {
   private restoreFromMetadata(): void {
     if (!this.originalDOM) return;
 
+    console.log('[Restore] Starting metadata-based restoration');
+
     // Step 1: Find all elements with metadata (before any DOM changes)
     const elements = this.findMetadataElements();
+    console.log(`[Restore] Found ${elements.length} elements with metadata`);
 
     // Step 2: Reconstruct original hierarchy using nested set BEFORE removing wrapper
+    console.log('[Restore] Step 2: Reconstructing hierarchy from nested set...');
     this.reconstructHierarchyFromNestedSet(elements);
 
     // Step 3: Now safe to remove injected elements (user elements already moved out)
+    console.log('[Restore] Step 3: Removing injected elements...');
     this.removeInjectedElements();
 
     // Step 4: Restore states (classes/attributes)
+    console.log('[Restore] Step 4: Restoring element states...');
     elements.forEach((el) => this.restoreElementState(el));
 
     // Step 5: Cleanup metadata
+    console.log('[Restore] Step 5: Cleaning up metadata...');
     elements.forEach((el) => delete el.__touchspinMeta);
     this.originalDOM = null;
     this.metadataTrackingEnabled = false;
+    console.log('[Restore] Restoration complete');
   }
 
   /**
@@ -380,9 +409,24 @@ abstract class AbstractRenderer implements Renderer {
       return leftA - leftB;
     });
 
+    console.log('[Reconstruct] Processing elements in nested set order:');
+    sorted.forEach((el) => {
+      const meta = el.__touchspinMeta;
+      const tag = el.tagName.toLowerCase();
+      const id = el.id ? `#${el.id}` : '';
+      const classes = el.className ? `.${el.className.split(' ').slice(0, 2).join('.')}` : '';
+      console.log(
+        `  fp:${meta?.fingerprint} left:${meta?.left} right:${meta?.right} parent:${meta?.parentFingerprint} - ${tag}${id}${classes}`
+      );
+    });
+
     // Find the common ancestor (the container before TouchSpin wrapped it)
     const root = this.input.parentElement;
-    if (!root) return;
+    if (!root) {
+      console.log('[Reconstruct] ERROR: No root element found');
+      return;
+    }
+    console.log(`[Reconstruct] Root element: ${root.tagName.toLowerCase()}`);
 
     // Build a map of fingerprint -> element for quick lookups
     const elementMap = new Map<number, HTMLElement>();
@@ -397,18 +441,47 @@ abstract class AbstractRenderer implements Renderer {
       const meta = element.__touchspinMeta;
       if (!meta) return;
 
+      const tag = element.tagName.toLowerCase();
+      const id = element.id ? `#${element.id}` : '';
+      const classes = element.className
+        ? `.${element.className.split(' ').slice(0, 2).join('.')}`
+        : '';
+      const label = `${tag}${id}${classes}`;
+
       // Find parent
       let parentElement: HTMLElement | null = null;
       if (meta.parentFingerprint !== null) {
         parentElement = elementMap.get(meta.parentFingerprint) ?? null;
+        console.log(
+          `[Reconstruct] fp:${meta.fingerprint} ${label} - Looking for parent fp:${meta.parentFingerprint} - ${parentElement ? 'FOUND' : 'NOT FOUND'}`
+        );
+      } else {
+        console.log(
+          `[Reconstruct] fp:${meta.fingerprint} ${label} - No parent fingerprint (root-level element)`
+        );
       }
 
       // If no parent found, attach to root's parent (unwrap out of TouchSpin structure)
       if (!parentElement && root.parentElement) {
         parentElement = root.parentElement;
+        console.log(
+          `[Reconstruct] fp:${meta.fingerprint} ${label} - Using root.parentElement as fallback`
+        );
       }
 
-      if (!parentElement) return;
+      if (!parentElement) {
+        console.log(
+          `[Reconstruct] fp:${meta.fingerprint} ${label} - ERROR: No parent found, skipping`
+        );
+        return;
+      }
+
+      const parentTag = parentElement.tagName.toLowerCase();
+      const parentId = parentElement.id ? `#${parentElement.id}` : '';
+      const parentClasses = parentElement.className
+        ? `.${parentElement.className.split(' ').slice(0, 2).join('.')}`
+        : '';
+      const parentLabel = `${parentTag}${parentId}${parentClasses}`;
 
       // Find correct position among siblings (using left/right values)
       const siblings = Array.from(parentElement.children) as HTMLElement[];
@@ -424,8 +497,14 @@ abstract class AbstractRenderer implements Renderer {
 
       // Move element to correct position
       if (insertBefore) {
+        const sibTag = insertBefore.tagName.toLowerCase();
+        const sibId = insertBefore.id ? `#${insertBefore.id}` : '';
+        console.log(
+          `[Reconstruct] fp:${meta.fingerprint} ${label} - INSERT BEFORE ${sibTag}${sibId} in ${parentLabel}`
+        );
         parentElement.insertBefore(element, insertBefore);
       } else {
+        console.log(`[Reconstruct] fp:${meta.fingerprint} ${label} - APPEND to ${parentLabel}`);
         parentElement.appendChild(element);
       }
     });
