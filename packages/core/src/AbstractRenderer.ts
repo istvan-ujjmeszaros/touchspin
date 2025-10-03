@@ -89,10 +89,12 @@ abstract class AbstractRenderer implements Renderer {
   protected wrapper: HTMLElement | null = null;
   protected wrapperType = WRAPPER_TYPE_DEFAULT;
 
-  /** DOM snapshot for metadata-based restoration */
-  private originalDOM: HTMLElement | null = null;
   /** Whether metadata tracking is enabled for complex DOM cases */
   private metadataTrackingEnabled = false;
+  /** Original DOM structure snapshot */
+  private originalDOM: HTMLElement | null = null;
+  /** Original parent container (where root element should be restored to) */
+  private originalParentContainer: HTMLElement | null = null;
 
   constructor(
     input: HTMLInputElement,
@@ -125,6 +127,9 @@ abstract class AbstractRenderer implements Renderer {
     const root = this.input.parentElement;
     if (!root) return;
 
+    // Store the original parent container (where root should be restored to)
+    this.originalParentContainer = root.parentElement;
+
     // Clone the original DOM structure for position reference
     this.originalDOM = root.cloneNode(true) as HTMLElement;
 
@@ -132,14 +137,22 @@ abstract class AbstractRenderer implements Renderer {
     let fingerprintId = 0;
     let nestedSetCounter = 0;
 
-    const assignNestedSet = (element: HTMLElement, depth = 0): void => {
+    const assignNestedSet = (
+      element: HTMLElement,
+      depth = 0,
+      parentFp: number | null = null
+    ): void => {
       const leftValue = nestedSetCounter++;
-      let parentFingerprint: number | null = null;
 
-      // Find parent's fingerprint
-      const parent = element.parentElement;
-      if (parent && parent !== root.parentElement) {
-        parentFingerprint = parent.__touchspinMeta?.fingerprint ?? null;
+      // Use provided parent fingerprint (for root element)
+      // or find parent's fingerprint from DOM
+      let parentFingerprint: number | null = parentFp;
+
+      if (parentFingerprint === null) {
+        const parent = element.parentElement;
+        if (parent && parent !== root.parentElement) {
+          parentFingerprint = parent.__touchspinMeta?.fingerprint ?? null;
+        }
       }
 
       // Assign metadata
@@ -356,7 +369,24 @@ abstract class AbstractRenderer implements Renderer {
   private findMetadataElements(): HTMLElement[] {
     const elements: HTMLElement[] = [];
     const root = this.input.parentElement;
-    if (!root) return elements;
+    if (!root) {
+      console.log('[FindElements] ERROR: No root element (input.parentElement is null)');
+      return elements;
+    }
+
+    console.log(
+      `[FindElements] Searching from root: ${root.tagName.toLowerCase()}.${root.className.split(' ').slice(0, 2).join('.')}`
+    );
+
+    // Check if root itself has metadata
+    if (root.__touchspinMeta) {
+      console.log(
+        `[FindElements] Root has metadata fp:${root.__touchspinMeta.fingerprint} - ADDED`
+      );
+      elements.push(root);
+    } else {
+      console.log('[FindElements] Root has NO metadata');
+    }
 
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null);
     let node = walker.nextNode();
@@ -364,11 +394,17 @@ abstract class AbstractRenderer implements Renderer {
     while (node) {
       const element = node as HTMLElement;
       if (element.__touchspinMeta) {
+        const tag = element.tagName.toLowerCase();
+        const id = element.id ? `#${element.id}` : '';
+        console.log(
+          `[FindElements] Found fp:${element.__touchspinMeta.fingerprint} ${tag}${id} - ADDED`
+        );
         elements.push(element);
       }
       node = walker.nextNode();
     }
 
+    console.log(`[FindElements] Total elements found: ${elements.length}`);
     return elements;
   }
 
@@ -461,12 +497,19 @@ abstract class AbstractRenderer implements Renderer {
         );
       }
 
-      // If no parent found, attach to root's parent (unwrap out of TouchSpin structure)
-      if (!parentElement && root.parentElement) {
-        parentElement = root.parentElement;
-        console.log(
-          `[Reconstruct] fp:${meta.fingerprint} ${label} - Using root.parentElement as fallback`
-        );
+      // If no parent found, use original parent container (for root element)
+      if (!parentElement) {
+        if (this.originalParentContainer) {
+          parentElement = this.originalParentContainer;
+          console.log(
+            `[Reconstruct] fp:${meta.fingerprint} ${label} - Using originalParentContainer as fallback`
+          );
+        } else if (root.parentElement) {
+          parentElement = root.parentElement;
+          console.log(
+            `[Reconstruct] fp:${meta.fingerprint} ${label} - Using root.parentElement as fallback`
+          );
+        }
       }
 
       if (!parentElement) {
