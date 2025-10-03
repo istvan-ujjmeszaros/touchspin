@@ -10,6 +10,12 @@ export type RendererOptionKind = 'string' | 'boolean' | 'number' | 'enum';
 interface TouchSpinMeta {
   /** Unique fingerprint for position matching */
   fingerprint: number;
+  /** Nested set left value (for hierarchical position tracking) */
+  left: number;
+  /** Nested set right value (for hierarchical position tracking) */
+  right: number;
+  /** Parent element's fingerprint (null for root) */
+  parentFingerprint: number | null;
   /** Original classes before TouchSpin modifications */
   originalClasses: string[];
   /** Classes added by TouchSpin (to be removed on teardown) */
@@ -121,28 +127,52 @@ abstract class AbstractRenderer implements Renderer {
     // Clone the original DOM structure for position reference
     this.originalDOM = root.cloneNode(true) as HTMLElement;
 
-    // Walk the live DOM and fingerprint all user elements
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null);
+    // Walk the live DOM and assign nested set values + fingerprints
     let fingerprintId = 0;
+    let nestedSetCounter = 0;
 
-    let node = walker.nextNode();
-    while (node) {
-      const element = node as HTMLElement;
+    const assignNestedSet = (element: HTMLElement): void => {
+      const leftValue = nestedSetCounter++;
+      let parentFingerprint: number | null = null;
 
-      // Skip injected elements
-      if (!element.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
-        element.__touchspinMeta = {
-          fingerprint: fingerprintId++,
-          originalClasses: Array.from(element.classList),
-          addedClasses: [],
-          removedClasses: [],
-          originalAttributes: this.captureAttributes(element),
-          addedAttributes: [],
-          modifiedAttributes: {},
-        };
+      // Find parent's fingerprint
+      const parent = element.parentElement;
+      if (parent && parent !== root.parentElement) {
+        parentFingerprint = parent.__touchspinMeta?.fingerprint ?? null;
       }
 
-      node = walker.nextNode();
+      // Assign metadata
+      element.__touchspinMeta = {
+        fingerprint: fingerprintId++,
+        left: leftValue,
+        right: 0, // Will be set after processing children
+        parentFingerprint,
+        originalClasses: Array.from(element.classList),
+        addedClasses: [],
+        removedClasses: [],
+        originalAttributes: this.captureAttributes(element),
+        addedAttributes: [],
+        modifiedAttributes: {},
+      };
+
+      // Process children
+      for (let i = 0; i < element.children.length; i++) {
+        const child = element.children[i] as HTMLElement;
+        if (!child.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
+          assignNestedSet(child);
+        }
+      }
+
+      // Set right value after processing all children
+      element.__touchspinMeta.right = nestedSetCounter++;
+    };
+
+    // Start recursive assignment from root's children
+    for (let i = 0; i < root.children.length; i++) {
+      const child = root.children[i] as HTMLElement;
+      if (!child.hasAttribute(TOUCHSPIN_ATTRIBUTE)) {
+        assignNestedSet(child);
+      }
     }
   }
 
@@ -263,28 +293,29 @@ abstract class AbstractRenderer implements Renderer {
   }
 
   /**
-   * Restore DOM from metadata tracking.
-   * 1. Restore element states (classes/attributes)
-   * 2. Restore element positions
-   * 3. Remove injected elements
-   * 4. Cleanup metadata
+   * Restore DOM from metadata tracking using nested set hierarchy.
+   * 1. Collect all user elements (with metadata)
+   * 2. Reconstruct original DOM structure using nested set (before removing wrapper!)
+   * 3. Remove injected elements (now safe - user elements already moved out)
+   * 4. Restore element states (classes/attributes)
+   * 5. Cleanup metadata
    */
   private restoreFromMetadata(): void {
     if (!this.originalDOM) return;
 
-    // Find all elements with metadata
+    // Step 1: Find all elements with metadata (before any DOM changes)
     const elements = this.findMetadataElements();
 
-    // Step 1: Restore states (classes/attributes)
-    elements.forEach((el) => this.restoreElementState(el));
+    // Step 2: Reconstruct original hierarchy using nested set BEFORE removing wrapper
+    this.reconstructHierarchyFromNestedSet(elements);
 
-    // Step 2: Restore positions
-    this.restoreElementPositions(elements);
-
-    // Step 3: Remove injected elements
+    // Step 3: Now safe to remove injected elements (user elements already moved out)
     this.removeInjectedElements();
 
-    // Step 4: Cleanup metadata
+    // Step 4: Restore states (classes/attributes)
+    elements.forEach((el) => this.restoreElementState(el));
+
+    // Step 5: Cleanup metadata
     elements.forEach((el) => delete el.__touchspinMeta);
     this.originalDOM = null;
     this.metadataTrackingEnabled = false;
@@ -337,7 +368,72 @@ abstract class AbstractRenderer implements Renderer {
   }
 
   /**
+   * Reconstruct original DOM hierarchy using nested set values.
+   * This moves ALL user elements back to their original positions BEFORE removing wrapper.
+   * Uses left/right values to determine parent-child relationships and order.
+   */
+  private reconstructHierarchyFromNestedSet(elements: HTMLElement[]): void {
+    // Sort by left value (parent always processed before children)
+    const sorted = elements.sort((a, b) => {
+      const leftA = a.__touchspinMeta?.left ?? 0;
+      const leftB = b.__touchspinMeta?.left ?? 0;
+      return leftA - leftB;
+    });
+
+    // Find the common ancestor (the container before TouchSpin wrapped it)
+    const root = this.input.parentElement;
+    if (!root) return;
+
+    // Build a map of fingerprint -> element for quick lookups
+    const elementMap = new Map<number, HTMLElement>();
+    sorted.forEach((el) => {
+      if (el.__touchspinMeta) {
+        elementMap.set(el.__touchspinMeta.fingerprint, el);
+      }
+    });
+
+    // Reconstruct hierarchy using nested set relationships
+    sorted.forEach((element) => {
+      const meta = element.__touchspinMeta;
+      if (!meta) return;
+
+      // Find parent
+      let parentElement: HTMLElement | null = null;
+      if (meta.parentFingerprint !== null) {
+        parentElement = elementMap.get(meta.parentFingerprint) ?? null;
+      }
+
+      // If no parent found, attach to root's parent (unwrap out of TouchSpin structure)
+      if (!parentElement && root.parentElement) {
+        parentElement = root.parentElement;
+      }
+
+      if (!parentElement) return;
+
+      // Find correct position among siblings (using left/right values)
+      const siblings = Array.from(parentElement.children) as HTMLElement[];
+      let insertBefore: HTMLElement | null = null;
+
+      for (const sibling of siblings) {
+        const siblingMeta = sibling.__touchspinMeta;
+        if (siblingMeta && siblingMeta.left > meta.left) {
+          insertBefore = sibling;
+          break;
+        }
+      }
+
+      // Move element to correct position
+      if (insertBefore) {
+        parentElement.insertBefore(element, insertBefore);
+      } else {
+        parentElement.appendChild(element);
+      }
+    });
+  }
+
+  /**
    * Restore element positions from metadata fingerprints
+   * NOTE: This method is now replaced by reconstructHierarchyFromNestedSet() but kept for reference
    */
   private restoreElementPositions(elements: HTMLElement[]): void {
     if (!this.originalDOM) return;
@@ -481,6 +577,8 @@ abstract class AbstractRenderer implements Renderer {
       return;
     }
 
+    // User elements already moved out via reconstructHierarchyFromNestedSet()
+    // Safe to just remove the wrapper and move input out
     wrapper.parentElement.insertBefore(this.input, wrapper);
     wrapper.remove();
   }

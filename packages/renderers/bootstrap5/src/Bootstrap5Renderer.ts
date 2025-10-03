@@ -119,16 +119,38 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   init(): void {
-    // AUTO-DETECT: Enable metadata tracking for complex DOM structures BEFORE any modifications
+    // AUTO-DETECT: Enable metadata tracking FIRST (capture original structure)
     if (this.floatingContainer || this.initialInputGroup) {
       this.enableMetadataTracking();
     }
 
+    // Then fix any malformed DOM (this modifies structure, so must be after snapshot)
+    this.ensureFloatingLabelStructure();
+
     this.initializeOptions();
     this.resetElementReferences();
+    this.handleFloatingMargins(); // Handle margin classes before building
     this.ensureFormControlClass();
     this.buildAndAttachDOM();
     this.registerSettingObservers();
+  }
+
+  /**
+   * Ensure input and label are correctly positioned in .form-floating
+   * This runs BEFORE metadata tracking to fix any malformed DOM structure
+   */
+  private ensureFloatingLabelStructure(): void {
+    if (!this.floatingContainer || !this.floatingLabel) return;
+
+    // Ensure input is in floating container
+    if (this.input.parentElement !== this.floatingContainer) {
+      this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
+    }
+
+    // Ensure label is in floating container (after input)
+    if (this.floatingLabel.parentElement !== this.floatingContainer) {
+      this.floatingContainer.appendChild(this.floatingLabel);
+    }
   }
 
   teardown(): void {
@@ -160,6 +182,33 @@ class Bootstrap5Renderer extends AbstractRenderer {
       this.removeTrackedClass(this.input, CSS_CLASSES.FORM_CONTROL);
       this.formControlAdded = false;
     }
+  }
+
+  /**
+   * Handle margin classes on .form-floating
+   * Bootstrap margin classes (m*, mt*, mb*, etc.) on .form-floating break button height
+   * Move them to the wrapper instead, metadata tracking will restore on destroy
+   */
+  private handleFloatingMargins(): void {
+    if (!this.floatingContainer) return;
+
+    // Detect Bootstrap margin classes: m-*, mt-*, mb-*, ml-*, mr-*, mx-*, my-*
+    const marginClasses = Array.from(this.floatingContainer.classList).filter((cls) =>
+      /^m[tblrxy]?-\d+$/.test(cls)
+    );
+
+    // Move margin classes from floating container to wrapper (will be created later)
+    // Track this so metadata system can restore them on destroy
+    marginClasses.forEach((cls) => {
+      this.removeTrackedClass(this.floatingContainer!, cls);
+      // Note: We'll add to wrapper after it's created in buildAndAttachDOM
+      // Store them temporarily for now
+      if (!this.floatingContainer!.dataset.movedMargins) {
+        this.floatingContainer!.dataset.movedMargins = cls;
+      } else {
+        this.floatingContainer!.dataset.movedMargins += ` ${cls}`;
+      }
+    });
   }
 
   // DOM building
@@ -257,17 +306,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
       wrapper.appendChild(this.createUpButton());
     }
 
-    // Ensure input and label are correctly positioned inside .form-floating
-    if (this.floatingContainer && this.floatingLabel) {
-      // Ensure input is first child
-      if (this.input.parentElement !== this.floatingContainer) {
-        this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
-      }
-      // Ensure label is after input
-      if (this.floatingLabel.parentElement !== this.floatingContainer) {
-        this.floatingContainer.appendChild(this.floatingLabel);
-      }
-    }
+    // Note: Input and label should already be correctly positioned in .form-floating
+    // from the fixture. The metadata tracking system will preserve their positions.
+    // DO NOT move them here as it breaks metadata tracking.
 
     return wrapper;
   }
@@ -308,21 +349,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
     inputGroup.classList.add(CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
     this.wrapperType = 'wrapper-advanced';
 
-    // Ensure .form-floating is positioned correctly in input-group
-    if (this.floatingContainer && this.floatingContainer.parentElement !== inputGroup) {
-      // Move floating container into input-group if needed
-      inputGroup.appendChild(this.floatingContainer);
-    }
-
-    // Ensure input and label are inside .form-floating
-    if (this.floatingContainer) {
-      if (this.input.parentElement !== this.floatingContainer) {
-        this.floatingContainer.appendChild(this.input);
-      }
-      if (this.floatingLabel && this.floatingLabel.parentElement !== this.floatingContainer) {
-        this.floatingContainer.appendChild(this.floatingLabel);
-      }
-    }
+    // Note: .form-floating, input, and label should already be correctly positioned
+    // from the fixture. The metadata tracking system will preserve their positions.
+    // DO NOT move them here as it breaks metadata tracking.
 
     // Add buttons OUTSIDE .form-floating but INSIDE .input-group
     if (!this.opts.verticalbuttons) {
@@ -602,8 +631,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
   buildAndAttachDOM(): void {
     this.initializeOptions();
     this.wrapper = this.buildInputGroup();
+    this.applyMovedMargins(); // Apply margin classes that were moved from .form-floating
     this.storeElementReferences(this.wrapper);
     this.attachEventsToButtons();
+  }
+
+  /**
+   * Apply margin classes that were moved from .form-floating to wrapper
+   */
+  private applyMovedMargins(): void {
+    if (!this.wrapper || !this.floatingContainer) return;
+
+    const movedMargins = this.floatingContainer.dataset.movedMargins;
+    if (movedMargins) {
+      movedMargins.split(' ').forEach((cls) => {
+        this.addTrackedClass(this.wrapper!, cls);
+      });
+      // Clean up temporary storage
+      delete this.floatingContainer.dataset.movedMargins;
+    }
   }
 
   private storeElementReferences(wrapper: HTMLElement | null): void {
