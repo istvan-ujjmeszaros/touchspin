@@ -81,6 +81,7 @@ $zindex-dropdown: 1000 !default;
 }
 
 /* RTL support for vertical buttons */
+[dir="rtl"] .bootstrap-touchspin,
 .rtl .bootstrap-touchspin {
   .input-group-btn-vertical {
     .bootstrap-touchspin-up {
@@ -100,34 +101,47 @@ $zindex-dropdown: 1000 !default;
   .input-group-addon .input-group-btn-vertical .bootstrap-touchspin-up {
     border-radius: $border-radius-sm 0 0 0;
   }
+
+  /* Vertical button wrapper is last child: apply border-radius */
+  .bootstrap-touchspin-vertical-button-wrapper:last-child {
+    .input-group-btn-vertical {
+      .bootstrap-touchspin-up {
+        border-radius: $border-radius-sm 0 0 0;
+      }
+
+      .bootstrap-touchspin-down {
+        border-radius: 0 0 0 $border-radius-sm;
+      }
+    }
+  }
 }
 
-/* LTR: Reset border-radius when buttons are not in first/last position */
+/* LTR: Reset border-radius for HORIZONTAL buttons when not in first/last position */
 .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
-  /* Down button: only round left side if it's first child */
-  .bootstrap-touchspin-down:not(:first-child) {
+  /* Down button: only round left side if it's first child (exclude vertical buttons) */
+  > .bootstrap-touchspin-down:not(:first-child) {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
   }
 
-  /* Up button: only round right side if it's last child */
-  .bootstrap-touchspin-up:not(:last-child) {
+  /* Up button: only round right side if it's last child (exclude vertical buttons) */
+  > .bootstrap-touchspin-up:not(:last-child) {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
   }
 }
 
-/* RTL: Swap the logic for right-to-left layouts */
+/* RTL: Swap the logic for right-to-left layouts (horizontal buttons only) */
 [dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical),
 .rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
-  /* Down button in RTL: only round right side if it's first child */
-  .bootstrap-touchspin-down:not(:first-child) {
+  /* Down button in RTL: only round right side if it's first child (exclude vertical) */
+  > .bootstrap-touchspin-down:not(:first-child) {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
   }
 
-  /* Up button in RTL: only round left side if it's last child */
-  .bootstrap-touchspin-up:not(:last-child) {
+  /* Up button in RTL: only round left side if it's last child (exclude vertical) */
+  > .bootstrap-touchspin-up:not(:last-child) {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
   }
