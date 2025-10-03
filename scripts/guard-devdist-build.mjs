@@ -7,7 +7,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, statSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -147,10 +147,10 @@ function buildDevdistTargeted(packagesToBuild) {
 
   for (const packagePath of packagesToBuild) {
     console.log(`📦 Building ${packagePath}...`);
+    const packageName = packagePath
+      .replace('packages/', '@touchspin/')
+      .replace('renderers/', 'renderer-');
     try {
-      const packageName = packagePath
-        .replace('packages/', '@touchspin/')
-        .replace('renderers/', 'renderer-');
       execSync(`yarn workspace ${packageName} run build:test`, {
         cwd: projectRoot,
         stdio: 'inherit',

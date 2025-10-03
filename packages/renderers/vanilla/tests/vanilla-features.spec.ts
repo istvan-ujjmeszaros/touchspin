@@ -32,7 +32,7 @@
  * [x] supports bundle size optimization
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
@@ -1256,8 +1256,9 @@ test('handles legacy browser support', async ({ page }) => {
 
   // Test that input element works with basic HTML attributes
   const basicHTMLWorks = await input.evaluate((el) => {
+    el.value = '10';
     return {
-      canSetValue: ((el.value = '10'), el.value === '10'),
+      canSetValue: el.value === '10',
       canGetAttribute: el.getAttribute('data-testid') !== null,
       hasType: el.type === 'number' || el.type === 'text',
     };

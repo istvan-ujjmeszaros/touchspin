@@ -8,9 +8,12 @@
  * [ ] supports floating labels with TouchSpin initialization and all interaction methods
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { installDomHelpers, } from '@touchspin/core/test-helpers';
+import { initializeTouchspinWithRenderer, installDomHelpers } from '@touchspin/core/test-helpers';
+
+// Alias for readability in renderer tests
+const initializeTouchSpin = initializeTouchspinWithRenderer;
 
 // Bootstrap 5 Renderer URL for tests
 const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';

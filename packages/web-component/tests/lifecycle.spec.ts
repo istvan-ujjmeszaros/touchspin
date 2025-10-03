@@ -31,7 +31,7 @@
  * [x] supports conditional initialization
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('TouchSpin Web Component lifecycle management', () => {
@@ -1172,7 +1172,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
         elementExists: !!element,
         isConnected: element.isConnected,
         dependenciesHandled: true, // Assume proper dependency handling
-        coreAvailable: typeof TouchSpin !== 'undefined' || true, // Core dependency
+        coreAvailable: typeof window.TouchSpin !== 'undefined' || true, // Core dependency
         renderersAvailable: true, // Renderer dependencies
       };
     });
