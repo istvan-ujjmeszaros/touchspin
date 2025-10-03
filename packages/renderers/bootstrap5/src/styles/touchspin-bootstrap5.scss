@@ -102,14 +102,33 @@ $zindex-dropdown: 1000 !default;
   }
 }
 
-/* RTL support: Swap border-radius for up/down buttons in horizontal mode */
-[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical),
-.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
-  .bootstrap-touchspin-down {
-    border-radius: 0 $border-radius $border-radius 0 !important; /* Right side rounded in RTL */
+/* LTR: Reset border-radius when buttons are not in first/last position */
+.bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
+  /* Down button: only round left side if it's first child */
+  .bootstrap-touchspin-down:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
   }
 
-  .bootstrap-touchspin-up {
-    border-radius: $border-radius 0 0 $border-radius !important; /* Left side rounded in RTL */
+  /* Up button: only round right side if it's last child */
+  .bootstrap-touchspin-up:not(:last-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+}
+
+/* RTL: Swap the logic for right-to-left layouts */
+[dir="rtl"] .bootstrap-touchspin:not(.bootstrap-touchspin-vertical),
+.rtl .bootstrap-touchspin:not(.bootstrap-touchspin-vertical) {
+  /* Down button in RTL: only round right side if it's first child */
+  .bootstrap-touchspin-down:not(:first-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  /* Up button in RTL: only round left side if it's last child */
+  .bootstrap-touchspin-up:not(:last-child) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
   }
 }
