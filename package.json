@@ -34,6 +34,7 @@
   "docs": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/master.zip",
   "devDependencies": {
+    "@biomejs/biome": "^2.2.5",
     "@changesets/cli": "^2.27.7",
     "@eslint/js": "^9.33.0",
     "@playwright/test": "1.55.0",
@@ -47,8 +48,9 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "http-server": "^14.1.1",
-    "husky": "^8.0.0",
+    "husky": "^9.1.7",
     "jiti": "2.5.1",
+    "lint-staged": "^16.2.3",
     "nyc": "^17.1.0",
     "playwright": "^1.54.2",
     "prettier": "^3.3.3",
@@ -82,9 +84,10 @@
     "update-external-deps:tailwind": "node scripts/extract-framework-assets.mjs --renderer tailwind",
     "validate-assets": "node scripts/validate-framework-assets.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "format:check": "biome check .",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "changeset publish",
@@ -123,7 +126,7 @@
     "guard:tests": "node scripts/guard-tests.mjs all",
     "guard:esm-extensions": "node scripts/guard-esm-extensions.mjs",
     "lexicon:gen": "yarn node scripts/step-lexicon.mjs",
-    "postinstall": "husky install"
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*",
@@ -133,5 +136,10 @@
     "@touchspin/core": "workspace:*",
     "ci": "^2.3.0"
   },
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.10.3",
+  "lint-staged": {
+    "*.{js,ts,tsx,mjs,cjs,json,jsonc,md}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
+  }
 }
