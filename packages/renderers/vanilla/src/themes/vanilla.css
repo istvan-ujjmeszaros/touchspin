@@ -222,9 +222,12 @@
 /* Vertical button positioning - using shorthand border-radius */
 .ts-btn--vertical-up {
   border-radius: var(--ts-vertical-button-up-border-radius);
+  border-top: 0;
+  border-right: 0;
 }
 
 .ts-btn--vertical-down {
   border-radius: var(--ts-vertical-button-down-border-radius);
   border-top: 0;
+  border-right: 0;
 }
