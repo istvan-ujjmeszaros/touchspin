@@ -12,8 +12,16 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinFromGlobals, startCoverage, collectCoverage } from '@touchspin/core/test-helpers';
+import {
+  universalRendererSuite,
+  bootstrapSharedSuite,
+} from '@touchspin/core/test-helpers/renderers';
+import {
+  installDomHelpers,
+  initializeTouchspinFromGlobals,
+  startCoverage,
+  collectCoverage,
+} from '@touchspin/core/test-helpers';
 
 // Bootstrap 3 Renderer URL for tests
 const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/Bootstrap3Renderer.js';
@@ -93,7 +101,7 @@ test.describe('Bootstrap 3 specific behavior', () => {
   test('structures prefix and postfix as input-group-addon', async ({ page }) => {
     await initializeTouchspinFromGlobals(page, 'test-input', {
       prefix: '$',
-      postfix: 'USD'
+      postfix: 'USD',
     });
 
     const wrapper = page.getByTestId('test-input-wrapper');

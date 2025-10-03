@@ -151,7 +151,7 @@ function scanFileForPageLocator(filePath) {
         violations.push({
           line: lineNum,
           content: line.trim(),
-          file: relative(projectRoot, filePath)
+          file: relative(projectRoot, filePath),
         });
       }
     }
@@ -168,9 +168,13 @@ function main() {
   const targetPaths = process.argv.slice(2);
 
   if (targetPaths.length > 0) {
-    console.log(`🛡️  Page Locator Guard: Checking for forbidden page.locator usage in: ${targetPaths.join(', ')}`);
+    console.log(
+      `🛡️  Page Locator Guard: Checking for forbidden page.locator usage in: ${targetPaths.join(', ')}`
+    );
   } else {
-    console.log('🛡️  Page Locator Guard: Checking for forbidden page.locator usage in test spec files...');
+    console.log(
+      '🛡️  Page Locator Guard: Checking for forbidden page.locator usage in test spec files...'
+    );
   }
 
   const specFiles = findSpecFiles(targetPaths);
@@ -206,7 +210,9 @@ function main() {
     console.log();
   }
 
-  console.log(`🚨 Found ${totalViolations} page.locator violations in ${allViolations.length} files.`);
+  console.log(
+    `🚨 Found ${totalViolations} page.locator violations in ${allViolations.length} files.`
+  );
   console.log('💡 Fix these by using getTouchSpinElements() or specific helper functions.');
   console.log('📖 See CLAUDE.md "Element Access Helper" section for guidance.');
 

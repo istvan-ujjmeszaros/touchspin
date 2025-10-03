@@ -23,12 +23,12 @@ export type { TouchSpinUpdateSettingsData } from '@touchspin/core';
  */
 export function installJqueryTouchSpin($: JQueryStatic) {
   // Define the plugin with typed params and jQuery context
-  $.fn.TouchSpin = function(this: JQueryInst, options?: unknown, arg?: unknown): unknown {
+  $.fn.TouchSpin = function (this: JQueryInst, options?: unknown, arg?: unknown): unknown {
     // Command API - forward to core (core manages instance lifecycle)
     if (typeof options === 'string') {
       const cmd = String(options).toLowerCase();
       let ret: unknown;
-      this.each(function(this: Element) {
+      this.each(function (this: Element) {
         const inputEl = this as HTMLInputElement;
         const api = getTouchSpin(inputEl);
 
@@ -46,21 +46,38 @@ export function installJqueryTouchSpin($: JQueryStatic) {
         if (!api) return; // No instance exists - other commands ignored
 
         switch (cmd) {
-          case 'destroy': api.destroy(); break; // Core removes instance from element
-          case 'uponce': api.upOnce(); break;
-          case 'downonce': api.downOnce(); break;
-          case 'startupspin': api.startUpSpin(); break;
-          case 'startdownspin': api.startDownSpin(); break;
-          case 'stopspin': api.stopSpin(); break;
-          case 'updatesettings': api.updateSettings((arg as Record<string, unknown>) || {}); break;
-          case 'setvalue': case 'set': api.setValue(arg as number | string); break;
+          case 'destroy':
+            api.destroy();
+            break; // Core removes instance from element
+          case 'uponce':
+            api.upOnce();
+            break;
+          case 'downonce':
+            api.downOnce();
+            break;
+          case 'startupspin':
+            api.startUpSpin();
+            break;
+          case 'startdownspin':
+            api.startDownSpin();
+            break;
+          case 'stopspin':
+            api.stopSpin();
+            break;
+          case 'updatesettings':
+            api.updateSettings((arg as Record<string, unknown>) || {});
+            break;
+          case 'setvalue':
+          case 'set':
+            api.setValue(arg as number | string);
+            break;
         }
       });
       return ret === undefined ? this : (ret as unknown);
     }
 
     // Initialize - forward to core
-    return this.each(function(this: Element) {
+    return this.each(function (this: Element) {
       const $input = $(this as Element);
       const inputEl = this as HTMLInputElement;
 
@@ -72,12 +89,13 @@ export function installJqueryTouchSpin($: JQueryStatic) {
         return;
       }
 
-
       // Define jQuery teardown function that cleans up jQuery-specific resources
       const jqueryTeardown = () => {
         // Clean up ONLY the jQuery events that THIS plugin explicitly added
         // Based on the callable events below: UP_ONCE, DOWN_ONCE, START_UP_SPIN, START_DOWN_SPIN, STOP_SPIN, UPDATE_SETTINGS, DESTROY, blur.touchspin
-        $input.off(`${TouchSpinCallableEvent.UP_ONCE} ${TouchSpinCallableEvent.DOWN_ONCE} ${TouchSpinCallableEvent.START_UP_SPIN} ${TouchSpinCallableEvent.START_DOWN_SPIN} ${TouchSpinCallableEvent.STOP_SPIN} ${TouchSpinCallableEvent.UPDATE_SETTINGS} ${TouchSpinCallableEvent.DESTROY} blur.touchspin`);
+        $input.off(
+          `${TouchSpinCallableEvent.UP_ONCE} ${TouchSpinCallableEvent.DOWN_ONCE} ${TouchSpinCallableEvent.START_UP_SPIN} ${TouchSpinCallableEvent.START_DOWN_SPIN} ${TouchSpinCallableEvent.STOP_SPIN} ${TouchSpinCallableEvent.UPDATE_SETTINGS} ${TouchSpinCallableEvent.DESTROY} blur.touchspin`
+        );
       };
 
       // Register teardown with core so it's called on core destroy too
@@ -139,12 +157,15 @@ type TSRenderer = new (
 
 export function installWithRenderer(renderer: unknown): void {
   // Set the global default renderer consumed by core if no renderer is provided in options
-  (globalThis as unknown as { TouchSpinDefaultRenderer?: unknown }).TouchSpinDefaultRenderer = renderer;
+  (globalThis as unknown as { TouchSpinDefaultRenderer?: unknown }).TouchSpinDefaultRenderer =
+    renderer;
 
   const $ = (globalThis as unknown as { jQuery?: JQueryStatic }).jQuery;
   if ($) {
     installJqueryTouchSpin($);
   } else {
-    console.warn('installWithRenderer: jQuery not found on window. Call installJqueryTouchSpin($) manually.');
+    console.warn(
+      'installWithRenderer: jQuery not found on window. Call installJqueryTouchSpin($) manually.'
+    );
   }
 }

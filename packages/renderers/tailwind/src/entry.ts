@@ -3,7 +3,10 @@ import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchs
 import TailwindRenderer from './TailwindRenderer.js';
 
 // Create a wrapper that automatically sets the Tailwind renderer
-function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}): ReturnType<typeof CoreTouchSpin> {
+function TouchSpin(
+  element: HTMLInputElement,
+  options: Record<string, any> = {}
+): ReturnType<typeof CoreTouchSpin> {
   if (!(element instanceof HTMLInputElement)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }

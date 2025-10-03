@@ -37,7 +37,12 @@ async function initializeTouchSpinOnCleanFixture(page, testId: string, settings 
  * Then value reaches max (100) with only one change event
  */
 test('step=5, init 95: two ups => one change (100)', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 100, initval: '95' });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 5,
+    min: 0,
+    max: 100,
+    initval: '95',
+  });
   await clearEventLog(page);
   await clickUpButton(page, 'test-input');
   await clickUpButton(page, 'test-input');
@@ -52,8 +57,16 @@ test('step=5, init 95: two ups => one change (100)', async ({ page }) => {
  * When I click up button twice
  * Then value reaches max (100) with only one change event
  */
-test('forcestepdivisibility none, step=5, init 97: two ups => one change (100)', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 100, initval: '97', forcestepdivisibility: 'none' });
+test('forcestepdivisibility none, step=5, init 97: two ups => one change (100)', async ({
+  page,
+}) => {
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 5,
+    min: 0,
+    max: 100,
+    initval: '97',
+    forcestepdivisibility: 'none',
+  });
   await clearEventLog(page);
   await clickUpButton(page, 'test-input');
   await clickUpButton(page, 'test-input');
@@ -69,7 +82,12 @@ test('forcestepdivisibility none, step=5, init 97: two ups => one change (100)',
  * Then no change events are emitted
  */
 test('at max: up => zero change; at min: down => zero change', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 100, initval: '100' });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 5,
+    min: 0,
+    max: 100,
+    initval: '100',
+  });
   await clearEventLog(page);
   await clickUpButton(page, 'test-input');
   const c1 = await countEventInLog(page, 'change');
@@ -96,7 +114,12 @@ test('at max: up => zero change; at min: down => zero change', async ({ page }) 
  * Then value sanitizes to 95 with exactly one change event
  */
 test('blur sanitization: raw 96 with step=5 => exactly one change to 95', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 100, initval: '90' });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 5,
+    min: 0,
+    max: 100,
+    initval: '90',
+  });
   await clearEventLog(page);
   await fillWithValueAndBlur(page, 'test-input', '96');
   await expectValueToBe(page, 'test-input', '95');

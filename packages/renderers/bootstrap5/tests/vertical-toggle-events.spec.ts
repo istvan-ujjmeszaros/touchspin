@@ -20,14 +20,14 @@ test('toggling verticalbuttons 5 times should not duplicate change events', asyn
     min: 0,
     max: 100,
     initval: 50,
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   // Toggle verticalbuttons 5 times
   for (let i = 0; i < 5; i++) {
     await page.evaluate((toggleState) => {
       window.__ts!.requireCoreByTestId('test-input').updateSettings({
-        verticalbuttons: toggleState % 2 === 1
+        verticalbuttons: toggleState % 2 === 1,
       });
     }, i);
   }

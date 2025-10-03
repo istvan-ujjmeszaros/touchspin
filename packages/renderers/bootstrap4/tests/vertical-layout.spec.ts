@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers, startCoverage, collectCoverage, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import {
+  installDomHelpers,
+  startCoverage,
+  collectCoverage,
+  initializeTouchspinFromGlobals,
+} from '@touchspin/core/test-helpers';
 
 test.describe('renderer-b4: vertical layout', () => {
   test.beforeEach(async ({ page }) => {

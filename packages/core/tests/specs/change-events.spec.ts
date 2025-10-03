@@ -26,15 +26,20 @@ import {
   setValueSilentlyAndBlur,
 } from '../__shared__/helpers/interactions/input';
 import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
-import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '../__shared__/helpers/events/log';
+import {
+  clearEventLog,
+  countEventInLog,
+  getEventsOfType,
+  hasEventInLog,
+} from '../__shared__/helpers/events/log';
 import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
 
- /**
-  * Scenario: triggers change event on blur when value changed
-  * Given the fixture page is loaded
-  * When I change the value and blur the input
-  * Then a change event is fired
-  */
+/**
+ * Scenario: triggers change event on blur when value changed
+ * Given the fixture page is loaded
+ * When I change the value and blur the input
+ * Then a change event is fired
+ */
 test('triggers change event on blur when value changed', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
@@ -45,12 +50,12 @@ test('triggers change event on blur when value changed', async ({ page }) => {
   test.expect(changeEventCount).toBe(1);
 });
 
- /**
-  * Scenario: does not trigger change event on blur when value unchanged
-  * Given the fixture page is loaded
-  * When I blur the input without changing the value
-  * Then no change event is fired
-  */
+/**
+ * Scenario: does not trigger change event on blur when value unchanged
+ * Given the fixture page is loaded
+ * When I blur the input without changing the value
+ * Then no change event is fired
+ */
 test('does not trigger change event on blur when value unchanged', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
@@ -229,7 +234,13 @@ test('Keyboard ArrowUp increments by step', async ({ page }) => {
 test('Wheel scrolling down decrements by step when enabled', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 10, initval: 5, mousewheel: true });
+  await initializeTouchspin(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 10,
+    initval: 5,
+    mousewheel: true,
+  });
   await clearEventLog(page);
 
   // Focus input and scroll down
@@ -255,7 +266,13 @@ test('Wheel scrolling down decrements by step when enabled', async ({ page }) =>
 test('Decimal rounding on blur respects decimals option', async ({ page }) => {
   const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
-  await initializeTouchspin(page, 'test-input', { step: 0.01, min: 0, max: 9, initval: 1.00, decimals: 2 });
+  await initializeTouchspin(page, 'test-input', {
+    step: 0.01,
+    min: 0,
+    max: 9,
+    initval: 1.0,
+    decimals: 2,
+  });
   await clearEventLog(page);
 
   // Type value with extra decimals and blur
@@ -276,17 +293,22 @@ test('Decimal rounding on blur respects decimals option', async ({ page }) => {
  * Params:
  * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "0" }, "inputType": "text" }
  */
-test('Programmatic value setting on text input preserves non-numeric values (no auto-sanitization)', async ({ page }) => {
+test('Programmatic value setting on text input preserves non-numeric values (no auto-sanitization)', async ({
+  page,
+}) => {
   const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
   await page.goto(testFixtureUrl);
   await initializeTouchspin(page, 'test-input', { step: 1, min: 0, max: 100, initval: 0 });
   await clearEventLog(page);
 
   // Temporarily change input type to 'text' to allow non-numeric characters
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (input) input.type = 'text';
-  }, { testId: 'test-input' });
+  await page.evaluate(
+    ({ testId }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+      if (input) input.type = 'text';
+    },
+    { testId: 'test-input' }
+  );
 
   // Set value with non-numeric characters and spaces, then blur
   await setValueSilentlyAndBlur(page, 'test-input', '  42abc  ');

@@ -14,38 +14,38 @@ const projectRoot = join(__dirname, '..');
 
 // Framework configuration (must match extract-framework-assets.mjs)
 const frameworkConfigs = {
-  'bootstrap3': {
+  bootstrap3: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap3',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
       'dist/css/bootstrap-theme.min.css': 'css/bootstrap-theme.min.css',
-      'dist/js/bootstrap.min.js': 'js/bootstrap.min.js'
-    }
+      'dist/js/bootstrap.min.js': 'js/bootstrap.min.js',
+    },
   },
-  'bootstrap4': {
+  bootstrap4: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap4',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
-      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js'
-    }
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
   },
-  'bootstrap5': {
+  bootstrap5: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap5',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
-      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js'
-    }
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
   },
-  'tailwind': {
+  tailwind: {
     dependency: 'tailwindcss',
     packagePath: 'packages/renderers/tailwind',
     files: {
-      'https://cdn.tailwindcss.com': 'js/tailwind.js'
-    }
-  }
+      'https://cdn.tailwindcss.com': 'js/tailwind.js',
+    },
+  },
 };
 
 /**
@@ -53,10 +53,17 @@ const frameworkConfigs = {
  */
 function getExpectedVersion(rendererName) {
   try {
-    const packageJsonPath = join(projectRoot, frameworkConfigs[rendererName].packagePath, 'package.json');
+    const packageJsonPath = join(
+      projectRoot,
+      frameworkConfigs[rendererName].packagePath,
+      'package.json'
+    );
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
     const config = frameworkConfigs[rendererName];
-    return packageJson.devDependencies?.[config.dependency] || packageJson.dependencies?.[config.dependency];
+    return (
+      packageJson.devDependencies?.[config.dependency] ||
+      packageJson.dependencies?.[config.dependency]
+    );
   } catch (error) {
     return null;
   }
@@ -113,7 +120,9 @@ function validateRenderer(rendererName) {
   // Summary
   const totalSizeKB = Math.round(totalSize / 1024);
   if (allValid) {
-    console.log(`  ✨ All assets valid (${Object.keys(config.files).length} files, ${totalSizeKB} KB total)`);
+    console.log(
+      `  ✨ All assets valid (${Object.keys(config.files).length} files, ${totalSizeKB} KB total)`
+    );
     if (expectedVersion) {
       console.log(`  📦 Expected version: ${expectedVersion}`);
     }

@@ -20,7 +20,9 @@ export async function setupLogging(page: Page): Promise<void> {
 
     // Skip entirely if no event-log textarea exists
     if (!document.getElementById('event-log')) {
-      console.log('[setupLogging] No event-log textarea found - skipping all event listener registration');
+      console.log(
+        '[setupLogging] No event-log textarea found - skipping all event listener registration'
+      );
       window.__tsLoggingSetup = true; // Mark as setup to prevent re-runs
       return; // No event listeners registered at all
     }
@@ -69,10 +71,14 @@ export async function setupLogging(page: Page): Promise<void> {
         ev,
         (e: Event) => {
           // Early return if no textarea, not visible, or disabled
-          const eventLogTextarea = document.getElementById('event-log') as HTMLTextAreaElement | null;
-          if (!eventLogTextarea ||
-              eventLogTextarea.style.display === 'none' ||
-              eventLogTextarea.disabled) {
+          const eventLogTextarea = document.getElementById(
+            'event-log'
+          ) as HTMLTextAreaElement | null;
+          if (
+            !eventLogTextarea ||
+            eventLogTextarea.style.display === 'none' ||
+            eventLogTextarea.disabled
+          ) {
             return;
           }
 
@@ -101,9 +107,11 @@ export async function setupLogging(page: Page): Promise<void> {
       (e: Event) => {
         // Early return if no textarea, not visible, or disabled
         const eventLogTextarea = document.getElementById('event-log') as HTMLTextAreaElement | null;
-        if (!eventLogTextarea ||
-            eventLogTextarea.style.display === 'none' ||
-            eventLogTextarea.disabled) {
+        if (
+          !eventLogTextarea ||
+          eventLogTextarea.style.display === 'none' ||
+          eventLogTextarea.disabled
+        ) {
           return;
         }
 

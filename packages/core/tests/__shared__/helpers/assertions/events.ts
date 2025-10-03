@@ -25,11 +25,7 @@ export async function expectEventFired(
 /**
  * Then the "{eventName}" event is not fired
  */
-export async function expectNoEvent(
-  page: Page,
-  eventName: string,
-  timeout = 1000
-): Promise<void> {
+export async function expectNoEvent(page: Page, eventName: string, timeout = 1000): Promise<void> {
   try {
     await expectEventFired(page, eventName, timeout);
     throw new Error(`Expected event '${eventName}' NOT to be fired, but it appeared in the log.`);

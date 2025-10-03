@@ -8,6 +8,3 @@ declare global {
     Bootstrap4Renderer: typeof Bootstrap4Renderer;
   }
 }
-
-export {};
-

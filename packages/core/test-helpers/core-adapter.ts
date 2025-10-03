@@ -26,59 +26,85 @@ export async function initializeTouchspin(
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await installDomHelpers(page);
-  await page.evaluate(() => { if (!window.__ts) throw new Error('__ts not installed'); });
+  await page.evaluate(() => {
+    if (!window.__ts) throw new Error('__ts not installed');
+  });
   await setupLogging(page);
 
   // Pre-check that core module is fetchable
   await preFetchCheck(page, coreRuntimeUrl);
 
   // Separate callback functions from serializable options
-  const { callback_before_calculation, callback_after_calculation, ...serializableOptions } = options;
+  const { callback_before_calculation, callback_after_calculation, ...serializableOptions } =
+    options;
   const hasCallbacks = !!(callback_before_calculation || callback_after_calculation);
 
-  await page.evaluate(async ({ testId, options, coreUrl }) => {
-    const origin = (globalThis as any).location?.origin ?? '';
-    const url = new URL(coreUrl, origin).href;
-    const { TouchSpinCore } = (await import(url)) as unknown as {
-      TouchSpinCore: new (input: HTMLInputElement, opts: Partial<TouchSpinCoreOptions>) => unknown;
-    };
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (!input) throw new Error(`Input with testId "${testId}" not found`);
+  await page.evaluate(
+    async ({ testId, options, coreUrl }) => {
+      const origin = (globalThis as any).location?.origin ?? '';
+      const url = new URL(coreUrl, origin).href;
+      const { TouchSpinCore } = (await import(url)) as unknown as {
+        TouchSpinCore: new (
+          input: HTMLInputElement,
+          opts: Partial<TouchSpinCoreOptions>
+        ) => unknown;
+      };
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+      if (!input) throw new Error(`Input with testId "${testId}" not found`);
 
-    // Set initial value if provided
-    if (options.initval !== undefined) input.value = String(options.initval);
+      // Set initial value if provided
+      if (options.initval !== undefined) input.value = String(options.initval);
 
-    const core = new TouchSpinCore(input, options);
-    (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
+      const core = new TouchSpinCore(input, options);
+      (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
 
-    // Initialize DOM event handling
-    (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
+      // Initialize DOM event handling
+      (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
 
-    // Core now dispatches DOM CustomEvents directly, no manual bridging needed
-  }, { testId, options: serializableOptions, coreUrl: coreRuntimeUrl });
+      // Core now dispatches DOM CustomEvents directly, no manual bridging needed
+    },
+    { testId, options: serializableOptions, coreUrl: coreRuntimeUrl }
+  );
 
   // Set up callbacks after initialization if they exist
   if (hasCallbacks) {
-    await page.evaluate(({ testId, beforeCalc, afterCalc }) => {
-      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-      const core = (input as any)._touchSpinCore;
-      if (core && core.updateSettings) {
-        const callbackOptions: any = {};
-        if (beforeCalc) {
-          // Recreate the callback function in the browser context
-          callbackOptions.callback_before_calculation = new Function('value', beforeCalc) as (value: string) => string;
+    await page.evaluate(
+      ({ testId, beforeCalc, afterCalc }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+        const core = (input as any)._touchSpinCore;
+        if (core && core.updateSettings) {
+          const callbackOptions: any = {};
+          if (beforeCalc) {
+            // Recreate the callback function in the browser context
+            callbackOptions.callback_before_calculation = new Function('value', beforeCalc) as (
+              value: string
+            ) => string;
+          }
+          if (afterCalc) {
+            // Recreate the callback function in the browser context
+            callbackOptions.callback_after_calculation = new Function('value', afterCalc) as (
+              value: string
+            ) => string;
+          }
+          core.updateSettings(callbackOptions);
         }
-        if (afterCalc) {
-          // Recreate the callback function in the browser context
-          callbackOptions.callback_after_calculation = new Function('value', afterCalc) as (value: string) => string;
-        }
-        core.updateSettings(callbackOptions);
+      },
+      {
+        testId,
+        beforeCalc: callback_before_calculation
+          ? callback_before_calculation
+              .toString()
+              .replace(/^[^{]*{/, '')
+              .replace(/}[^}]*$/, '')
+          : null,
+        afterCalc: callback_after_calculation
+          ? callback_after_calculation
+              .toString()
+              .replace(/^[^{]*{/, '')
+              .replace(/}[^}]*$/, '')
+          : null,
       }
-    }, {
-      testId,
-      beforeCalc: callback_before_calculation ? callback_before_calculation.toString().replace(/^[^{]*{/, '').replace(/}[^}]*$/, '') : null,
-      afterCalc: callback_after_calculation ? callback_after_calculation.toString().replace(/^[^{]*{/, '').replace(/}[^}]*$/, '') : null
-    });
+    );
   }
 
   // Wait for initialization to complete
@@ -114,7 +140,6 @@ export async function getCoreNumericValue(page: Page, testId: string): Promise<n
 export async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
   const input = inputById(page, testId);
   return await input.evaluate((inputEl: HTMLInputElement) => {
-    return !!((inputEl as any)._touchSpinCore);
+    return !!(inputEl as any)._touchSpinCore;
   });
 }
-

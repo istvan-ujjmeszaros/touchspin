@@ -37,14 +37,20 @@ test.describe('TouchSpin callback pairing warnings', () => {
    * When TouchSpin initializes with only callback_before_calculation
    * Then a console warning is emitted
    */
-  test('warns when only callback_before_calculation is provided on initialization', async ({ page }) => {
+  test('warns when only callback_before_calculation is provided on initialization', async ({
+    page,
+  }) => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', {
-      callback_before_calculation: function(val) { return String(val).replace('$', ''); }
+      callback_before_calculation: (val) => String(val).replace('$', ''),
     });
 
-    expect(warnings).toContainEqual(expect.stringContaining('callback_before_calculation is defined but callback_after_calculation is missing'));
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_before_calculation is defined but callback_after_calculation is missing'
+      )
+    );
   });
 
   /**
@@ -53,14 +59,20 @@ test.describe('TouchSpin callback pairing warnings', () => {
    * When TouchSpin initializes with only callback_after_calculation
    * Then a console warning is emitted
    */
-  test('warns when only callback_after_calculation is provided on initialization', async ({ page }) => {
+  test('warns when only callback_after_calculation is provided on initialization', async ({
+    page,
+  }) => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', {
-      callback_after_calculation: function(val) { return '$' + val; }
+      callback_after_calculation: (val) => '$' + val,
     });
 
-    expect(warnings).toContainEqual(expect.stringContaining('callback_after_calculation is defined but callback_before_calculation is missing'));
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_after_calculation is defined but callback_before_calculation is missing'
+      )
+    );
   });
 
   /**
@@ -73,8 +85,8 @@ test.describe('TouchSpin callback pairing warnings', () => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', {
-      callback_before_calculation: function(val) { return String(val).replace('$', ''); },
-      callback_after_calculation: function(val) { return '$' + val; }
+      callback_before_calculation: (val) => String(val).replace('$', ''),
+      callback_after_calculation: (val) => '$' + val,
     });
 
     expect(warnings).toHaveLength(0);
@@ -100,16 +112,22 @@ test.describe('TouchSpin callback pairing warnings', () => {
    * When updateSettings adds only callback_before_calculation
    * Then a console warning is emitted
    */
-  test('warns when only callback_before_calculation is provided via updateSettings', async ({ page }) => {
+  test('warns when only callback_before_calculation is provided via updateSettings', async ({
+    page,
+  }) => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', { step: 5 });
 
     await updateSettingsViaAPI(page, 'test-input', {
-      callback_before_calculation: function(val) { return String(val).replace('$', ''); }
+      callback_before_calculation: (val) => String(val).replace('$', ''),
     });
 
-    expect(warnings).toContainEqual(expect.stringContaining('callback_before_calculation is defined but callback_after_calculation is missing'));
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_before_calculation is defined but callback_after_calculation is missing'
+      )
+    );
   });
 
   /**
@@ -118,16 +136,22 @@ test.describe('TouchSpin callback pairing warnings', () => {
    * When updateSettings adds only callback_after_calculation
    * Then a console warning is emitted
    */
-  test('warns when only callback_after_calculation is provided via updateSettings', async ({ page }) => {
+  test('warns when only callback_after_calculation is provided via updateSettings', async ({
+    page,
+  }) => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', { step: 5 });
 
     await updateSettingsViaAPI(page, 'test-input', {
-      callback_after_calculation: function(val) { return '$' + val; }
+      callback_after_calculation: (val) => '$' + val,
     });
 
-    expect(warnings).toContainEqual(expect.stringContaining('callback_after_calculation is defined but callback_before_calculation is missing'));
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_after_calculation is defined but callback_before_calculation is missing'
+      )
+    );
   });
 
   /**
@@ -142,13 +166,13 @@ test.describe('TouchSpin callback pairing warnings', () => {
     await initializeTouchspin(page, 'test-input', { step: 5 });
 
     await updateSettingsViaAPI(page, 'test-input', {
-      callback_before_calculation: function(val) { return String(val).replace('$', ''); },
-      callback_after_calculation: function(val) { return '$' + val; }
+      callback_before_calculation: (val) => String(val).replace('$', ''),
+      callback_after_calculation: (val) => '$' + val,
     });
 
     // Since both callbacks are provided, no warning should be present
-    const callbackWarnings = warnings.filter(w =>
-      w.includes('callback_before_calculation') || w.includes('callback_after_calculation')
+    const callbackWarnings = warnings.filter(
+      (w) => w.includes('callback_before_calculation') || w.includes('callback_after_calculation')
     );
     expect(callbackWarnings).toHaveLength(0);
   });
@@ -163,15 +187,19 @@ test.describe('TouchSpin callback pairing warnings', () => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', {
-      callback_before_calculation: function(val) { return String(val).replace('$', ''); },
-      callback_after_calculation: function(val) { return '$' + val; }
+      callback_before_calculation: (val) => String(val).replace('$', ''),
+      callback_after_calculation: (val) => '$' + val,
     });
 
     // Remove the before callback by setting it to null/undefined
     await updateSettingsViaAPI(page, 'test-input', {
-      callback_before_calculation: undefined  // Remove the callback
+      callback_before_calculation: undefined, // Remove the callback
     });
 
-    expect(warnings).toContainEqual(expect.stringContaining('callback_after_calculation is defined but callback_before_calculation is missing'));
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_after_calculation is defined but callback_before_calculation is missing'
+      )
+    );
   });
 });

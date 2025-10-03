@@ -93,7 +93,7 @@ function findFrameworkRendererTests(targetPaths = []) {
     }
 
     // Filter to only framework renderer files
-    return files.filter(file => isFrameworkRendererTest(file));
+    return files.filter((file) => isFrameworkRendererTest(file));
   }
 
   // Default behavior: scan bootstrap* and tailwind renderer tests
@@ -128,9 +128,11 @@ function findFrameworkRendererTests(targetPaths = []) {
 function isFrameworkRendererTest(filePath) {
   const normalizedPath = filePath.replace(/\\/g, '/');
   return (
-    normalizedPath.includes('/packages/renderers/bootstrap') ||
-    normalizedPath.includes('/packages/renderers/tailwind')
-  ) && normalizedPath.includes('/tests/') && !normalizedPath.includes('/packages/renderers/vanilla');
+    (normalizedPath.includes('/packages/renderers/bootstrap') ||
+      normalizedPath.includes('/packages/renderers/tailwind')) &&
+    normalizedPath.includes('/tests/') &&
+    !normalizedPath.includes('/packages/renderers/vanilla')
+  );
 }
 
 function scanFileForSharedFixtures(filePath) {
@@ -148,7 +150,7 @@ function scanFileForSharedFixtures(filePath) {
         violations.push({
           line: lineNum,
           content: line.trim(),
-          file: relative(projectRoot, filePath)
+          file: relative(projectRoot, filePath),
         });
       }
     }
@@ -165,9 +167,13 @@ function main() {
   const targetPaths = process.argv.slice(2);
 
   if (targetPaths.length > 0) {
-    console.log(`🛡️  Shared Fixture Guard: Checking for shared core fixture usage in: ${targetPaths.join(', ')}`);
+    console.log(
+      `🛡️  Shared Fixture Guard: Checking for shared core fixture usage in: ${targetPaths.join(', ')}`
+    );
   } else {
-    console.log('🛡️  Shared Fixture Guard: Checking for shared core fixture usage in framework renderer tests...');
+    console.log(
+      '🛡️  Shared Fixture Guard: Checking for shared core fixture usage in framework renderer tests...'
+    );
   }
 
   const testFiles = findFrameworkRendererTests(targetPaths);
@@ -184,7 +190,9 @@ function main() {
 
   if (allViolations.length === 0) {
     console.log('✅ Guard passed: No shared core fixture usage found in framework renderer tests.');
-    console.log(`🎯 All ${testFiles.length} framework renderer test files use proper version-specific fixtures.`);
+    console.log(
+      `🎯 All ${testFiles.length} framework renderer test files use proper version-specific fixtures.`
+    );
     process.exit(0);
   }
 
@@ -203,9 +211,13 @@ function main() {
     console.log();
   }
 
-  console.log(`🚨 Found ${totalViolations} shared fixture violations in ${allViolations.length} files.`);
+  console.log(
+    `🚨 Found ${totalViolations} shared fixture violations in ${allViolations.length} files.`
+  );
   console.log('💡 Fix these by using framework-specific fixtures from ../fixtures/ directory.');
-  console.log('📖 Each renderer should use its own version-specific fixture with proper CSS/JS dependencies.');
+  console.log(
+    '📖 Each renderer should use its own version-specific fixture with proper CSS/JS dependencies.'
+  );
 
   process.exit(1);
 }

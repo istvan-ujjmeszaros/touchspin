@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { installDomHelpers, startCoverage, collectCoverage, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import {
+  installDomHelpers,
+  startCoverage,
+  collectCoverage,
+  initializeTouchspinFromGlobals,
+} from '@touchspin/core/test-helpers';
 
 test.describe('renderer-b4: custom labels/classes render', () => {
   test.beforeEach(async ({ page }) => {

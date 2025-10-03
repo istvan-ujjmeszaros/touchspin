@@ -52,7 +52,6 @@ export async function initializeTestEnvironment(
   }
 }
 
-
 /**
  * When I load the web component environment
  * Given I need the TouchSpin web component registered
@@ -103,10 +102,9 @@ export async function loadWebComponentEnvironment(page: Page, debug = false): Pr
   }, debug);
 
   // Wait for custom element to be fully defined
-  await page.waitForFunction(
-    () => customElements.get('touchspin-input') !== undefined,
-    { timeout: 5000 }
-  );
+  await page.waitForFunction(() => customElements.get('touchspin-input') !== undefined, {
+    timeout: 5000,
+  });
 
   if (debug) console.log('Web component environment loaded');
 }
@@ -123,29 +121,31 @@ export async function loadRendererEnvironment(
 ): Promise<void> {
   if (debug) console.log(`Loading renderer environment: ${rendererPath}`);
 
-  await page.evaluate(async ({ path, debug }) => {
-    try {
-      const origin = window.location.origin;
-      const url = new URL(path, origin).href;
+  await page.evaluate(
+    async ({ path, debug }) => {
+      try {
+        const origin = window.location.origin;
+        const url = new URL(path, origin).href;
 
-      if (debug) console.log(`Importing renderer from: ${url}`);
+        if (debug) console.log(`Importing renderer from: ${url}`);
 
-      const module = await import(url);
+        const module = await import(url);
 
-      if (!module.default && !Object.keys(module).length) {
-        throw new Error(`Renderer module appears to be empty: ${path}`);
+        if (!module.default && !Object.keys(module).length) {
+          throw new Error(`Renderer module appears to be empty: ${path}`);
+        }
+
+        // Store reference for later use
+        (window as any).__loadedRenderer = module.default || module;
+
+        if (debug) console.log('Renderer loaded successfully');
+      } catch (err) {
+        throw new Error(`Failed to load renderer: ${err}`);
       }
-
-      // Store reference for later use
-      (window as any).__loadedRenderer = module.default || module;
-
-      if (debug) console.log('Renderer loaded successfully');
-    } catch (err) {
-      throw new Error(`Failed to load renderer: ${err}`);
-    }
-  }, { path: rendererPath, debug });
+    },
+    { path: rendererPath, debug }
+  );
 }
-
 
 /**
  * When I diagnose the test environment
@@ -176,12 +176,12 @@ export async function diagnoseEnvironment(page: Page): Promise<{
         (window.jQuery && window.jQuery.fn && window.jQuery.fn.TouchSpin) ||
         (window.$ && window.$.fn && window.$.fn.TouchSpin)
       ),
-      customElements: [],  // Note: customElements doesn't have enumeration API
+      customElements: [], // Note: customElements doesn't have enumeration API
       scripts: Array.from(document.scripts)
-        .map(s => s.src)
-        .filter(src => src && !src.includes('playwright')),
+        .map((s) => s.src)
+        .filter((src) => src && !src.includes('playwright')),
       hasLoadedRenderer: !!(window as any).__loadedRenderer,
-      errors
+      errors,
     };
   });
 }

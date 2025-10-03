@@ -20,7 +20,7 @@ console.log('🔍 DevDist build artifacts...');
 try {
   execSync('node scripts/guard-devdist-build.mjs', {
     cwd: projectRoot,
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
   console.log('✅ DevDist build artifacts passed\n');
 } catch (error) {

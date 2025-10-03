@@ -23,19 +23,39 @@ const PACKAGES_WITH_DEVDIST = [
   'packages/renderers/bootstrap4',
   'packages/renderers/bootstrap5',
   'packages/renderers/tailwind',
-  'packages/renderers/vanilla'
+  'packages/renderers/vanilla',
 ];
 
 // Required files that must exist in devdist
 const REQUIRED_FILES = {
   'packages/core': ['index.js', 'renderer.js', 'artifacts.json'],
-  'packages/jquery-plugin': ['umd/jquery-touchspin-bs3.js', 'umd/jquery-touchspin-bs5.js', 'artifacts.json'],
+  'packages/jquery-plugin': [
+    'umd/jquery-touchspin-bs3.js',
+    'umd/jquery-touchspin-bs5.js',
+    'artifacts.json',
+  ],
   'packages/web-component': ['index.js', 'artifacts.json'],
-  'packages/renderers/bootstrap3': ['Bootstrap3Renderer.js', 'iife/touchspin-bs3-complete.global.js', 'artifacts.json'],
-  'packages/renderers/bootstrap4': ['Bootstrap4Renderer.js', 'iife/touchspin-bs4-complete.global.js', 'artifacts.json'],
-  'packages/renderers/bootstrap5': ['Bootstrap5Renderer.js', 'iife/touchspin-bs5-complete.global.js', 'artifacts.json'],
-  'packages/renderers/tailwind': ['TailwindRenderer.js', 'iife/touchspin-tailwind-complete.global.js', 'artifacts.json'],
-  'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json']
+  'packages/renderers/bootstrap3': [
+    'Bootstrap3Renderer.js',
+    'iife/touchspin-bs3-complete.global.js',
+    'artifacts.json',
+  ],
+  'packages/renderers/bootstrap4': [
+    'Bootstrap4Renderer.js',
+    'iife/touchspin-bs4-complete.global.js',
+    'artifacts.json',
+  ],
+  'packages/renderers/bootstrap5': [
+    'Bootstrap5Renderer.js',
+    'iife/touchspin-bs5-complete.global.js',
+    'artifacts.json',
+  ],
+  'packages/renderers/tailwind': [
+    'TailwindRenderer.js',
+    'iife/touchspin-tailwind-complete.global.js',
+    'artifacts.json',
+  ],
+  'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json'],
 };
 
 function checkDevdistExists(packagePath) {
@@ -58,7 +78,7 @@ function checkDevdistExists(packagePath) {
   if (missingFiles.length > 0) {
     return {
       exists: false,
-      reason: `missing required files: ${missingFiles.join(', ')}`
+      reason: `missing required files: ${missingFiles.join(', ')}`,
     };
   }
 
@@ -129,11 +149,13 @@ function buildDevdistTargeted(packagesToBuild) {
   for (const packagePath of packagesToBuild) {
     console.log(`📦 Building ${packagePath}...`);
     try {
-      const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
+      const packageName = packagePath
+        .replace('packages/', '@touchspin/')
+        .replace('renderers/', 'renderer-');
       execSync(`yarn workspace ${packageName} run build:test`, {
         cwd: projectRoot,
         stdio: 'inherit',
-        timeout: 120000 // 2 minute timeout per package
+        timeout: 120000, // 2 minute timeout per package
       });
       console.log(`  ✅ ${packageName} build completed`);
     } catch (error) {
@@ -152,7 +174,7 @@ function buildDevdist() {
     execSync('yarn build:test', {
       cwd: projectRoot,
       stdio: 'inherit',
-      timeout: 300000 // 5 minute timeout
+      timeout: 300000, // 5 minute timeout
     });
     console.log('✅ DevDist build completed successfully');
     return true;
@@ -170,7 +192,9 @@ function main() {
 
   // Check each package
   for (const packagePath of PACKAGES_WITH_DEVDIST) {
-    const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
+    const packageName = packagePath
+      .replace('packages/', '@touchspin/')
+      .replace('renderers/', 'renderer-');
 
     const existsCheck = checkDevdistExists(packagePath);
     if (!existsCheck.exists) {
@@ -204,7 +228,9 @@ function main() {
     // Re-check after build
     console.log('\n🔍 Verifying build results...');
     for (const packagePath of packagesToBuild) {
-      const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
+      const packageName = packagePath
+        .replace('packages/', '@touchspin/')
+        .replace('renderers/', 'renderer-');
       const existsCheck = checkDevdistExists(packagePath);
 
       if (!existsCheck.exists) {

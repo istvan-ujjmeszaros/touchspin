@@ -51,5 +51,3 @@ declare global {
     testPageReady?: boolean;
   }
 }
-
-export {};

@@ -48,7 +48,7 @@ test('toggling verticalbuttons 5 times should not duplicate change events', asyn
     if (!logContent) return 0;
 
     const entries = Array.from(logContent.querySelectorAll('.event-entry'));
-    return entries.filter(entry => entry.textContent?.includes('change')).length;
+    return entries.filter((entry) => entry.textContent?.includes('change')).length;
   });
 
   // Should have exactly 1 change event, not 5+

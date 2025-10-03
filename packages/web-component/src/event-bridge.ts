@@ -16,7 +16,7 @@ export const EVENT_NAME_MAP: Record<(typeof CORE_EVENTS)[keyof typeof CORE_EVENT
   [CORE_EVENTS.START_DOWN]: 'touchspin-start-down',
   [CORE_EVENTS.STOP_SPIN]: 'touchspin-stop-spin',
   [CORE_EVENTS.STOP_UP]: 'touchspin-stop-up',
-  [CORE_EVENTS.STOP_DOWN]: 'touchspin-stop-down'
+  [CORE_EVENTS.STOP_DOWN]: 'touchspin-stop-down',
 };
 
 /**
@@ -40,7 +40,7 @@ export function bridgeEvents(
     'touchspin.on.startdownspin': 'touchspin-start-down',
     'touchspin.on.stopspin': 'touchspin-stop-spin',
     'touchspin.on.stopupspin': 'touchspin-stop-up',
-    'touchspin.on.stopdownspin': 'touchspin-stop-down'
+    'touchspin.on.stopdownspin': 'touchspin-stop-down',
   };
 
   // Listen for Core DOM CustomEvents and re-dispatch with web-component naming
@@ -50,10 +50,10 @@ export function bridgeEvents(
         detail: {
           value: touchspinInstance.getValue(),
           instance: touchspinInstance,
-          originalEvent: e
+          originalEvent: e,
         },
         bubbles: true,
-        cancelable: true
+        cancelable: true,
       });
 
       element.dispatchEvent(customEvent);
@@ -75,10 +75,10 @@ export function bridgeEvents(
         detail: {
           value: (e.target as HTMLInputElement).value,
           originalEvent: e,
-          instance: touchspinInstance
+          instance: touchspinInstance,
         },
         bubbles: true,
-        cancelable: true
+        cancelable: true,
       });
 
       element.dispatchEvent(customEvent);
@@ -98,6 +98,6 @@ export function bridgeEvents(
 export function getAvailableEvents(): string[] {
   return [
     ...Object.values(EVENT_NAME_MAP),
-    'touchspin-change' // Input change event
+    'touchspin-change', // Input change event
   ];
 }

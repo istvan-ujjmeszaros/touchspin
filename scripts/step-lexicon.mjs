@@ -9,19 +9,31 @@
 // extracts step descriptions from preceding /** ... */ doc-comments,
 // and generates a categorized markdown file at tests/STEP-LEXICON.md
 
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 
 const ROOTS = process.argv.slice(2);
-const DEFAULT_ROOTS = ["packages/**/tests/__shared__/helpers"];
-const START_DIRS = ROOTS.length ? ROOTS.map(p => path.resolve(p)) : expandGlobs(DEFAULT_ROOTS);
+const DEFAULT_ROOTS = ['packages/**/tests/__shared__/helpers'];
+const START_DIRS = ROOTS.length ? ROOTS.map((p) => path.resolve(p)) : expandGlobs(DEFAULT_ROOTS);
 const FILE_REGEX = /\.(ts|tsx|js|jsx)$/i;
-const OUTPUT_PATH = "tests/STEP-LEXICON.md";
+const OUTPUT_PATH = 'tests/STEP-LEXICON.md';
 
 // Common junk to skip while walking
 const IGNORE_DIRS = new Set([
-  "node_modules", ".git", "dist", "build", "coverage", ".next", "out",
-  ".turbo", ".cache", ".yarn", ".pnpm", ".idea", ".vscode", "tmp"
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  'coverage',
+  '.next',
+  'out',
+  '.turbo',
+  '.cache',
+  '.yarn',
+  '.pnpm',
+  '.idea',
+  '.vscode',
+  'tmp',
 ]);
 
 // ---------- fs helpers ----------
@@ -32,10 +44,11 @@ function expandGlobs(globs) {
     const parts = glob.split('/');
     if (parts[0] === 'packages' && parts[1] === '**') {
       try {
-        const packageDirs = fs.readdirSync('packages', { withFileTypes: true })
-          .filter(d => d.isDirectory())
-          .map(d => path.join('packages', d.name, ...parts.slice(2)))
-          .filter(d => {
+        const packageDirs = fs
+          .readdirSync('packages', { withFileTypes: true })
+          .filter((d) => d.isDirectory())
+          .map((d) => path.join('packages', d.name, ...parts.slice(2)))
+          .filter((d) => {
             try {
               return fs.existsSync(d) && fs.statSync(d).isDirectory();
             } catch {
@@ -54,7 +67,7 @@ function expandGlobs(globs) {
       }
     }
   }
-  return dirs.map(d => path.resolve(d));
+  return dirs.map((d) => path.resolve(d));
 }
 
 function walk(dir, acc = []) {
@@ -77,9 +90,9 @@ function walk(dir, acc = []) {
 
 function readFile(file) {
   try {
-    return fs.readFileSync(file, "utf8");
+    return fs.readFileSync(file, 'utf8');
   } catch {
-    return "";
+    return '';
   }
 }
 
@@ -104,10 +117,8 @@ function extractExportedFunctions(src, filePath) {
       if (docComment) {
         const steps = extractStepsFromComment(docComment);
         // Filter out meaningless steps (artifacts like "/**" or single characters)
-        const meaningfulSteps = steps.filter(step =>
-          step.length > 3 &&
-          !step.match(/^\/?\*+\/?$/) &&
-          step.includes(' ')  // Require at least one space (proper sentence)
+        const meaningfulSteps = steps.filter(
+          (step) => step.length > 3 && !step.match(/^\/?\*+\/?$/) && step.includes(' ') // Require at least one space (proper sentence)
         );
 
         if (meaningfulSteps.length > 0) {
@@ -121,7 +132,7 @@ function extractExportedFunctions(src, filePath) {
               signature,
               filePath: toRelativePath(filePath),
               category,
-              notes
+              notes,
             });
           }
         }
@@ -140,8 +151,14 @@ function extractSignature(line) {
     // Clean up parameters - remove types and default values for simpler display
     const cleanParams = params
       .split(',')
-      .map(p => p.trim().replace(/:\s*[^=,]+/g, '').replace(/\s*=\s*[^,]+/g, '').trim())
-      .filter(p => p.length > 0)
+      .map((p) =>
+        p
+          .trim()
+          .replace(/:\s*[^=,]+/g, '')
+          .replace(/\s*=\s*[^,]+/g, '')
+          .trim()
+      )
+      .filter((p) => p.length > 0)
       .join(', ');
     return `${name}(${cleanParams})`;
   }
@@ -184,7 +201,10 @@ function extractStepsFromComment(commentLines) {
   const steps = [];
 
   for (const line of commentLines) {
-    const cleaned = line.replace(/^\s*\/?\*+\s?/, '').replace(/\*\/\s*$/, '').trim();
+    const cleaned = line
+      .replace(/^\s*\/?\*+\s?/, '')
+      .replace(/\*\/\s*$/, '')
+      .trim();
 
     // Skip empty lines and @note lines
     if (cleaned === '' || cleaned.startsWith('@')) continue;
@@ -202,7 +222,10 @@ function extractNotesFromComment(commentLines) {
   const notes = [];
 
   for (const line of commentLines) {
-    const cleaned = line.replace(/^\s*\/?\*+\s?/, '').replace(/\*\/\s*$/, '').trim();
+    const cleaned = line
+      .replace(/^\s*\/?\*+\s?/, '')
+      .replace(/\*\/\s*$/, '')
+      .trim();
 
     if (cleaned.startsWith('@note ')) {
       notes.push(cleaned.substring(6)); // Remove '@note ' prefix
@@ -215,7 +238,7 @@ function extractNotesFromComment(commentLines) {
 function getCategoryFromPath(filePath) {
   // Extract category from path like packages/core/tests/__shared__/helpers/interactions/buttons.ts
   const parts = filePath.split(path.sep);
-  const helpersIndex = parts.findIndex(p => p === 'helpers');
+  const helpersIndex = parts.findIndex((p) => p === 'helpers');
 
   if (helpersIndex !== -1 && helpersIndex < parts.length - 1) {
     return parts[helpersIndex + 1]; // e.g., 'interactions', 'assertions'
@@ -256,9 +279,7 @@ function generateMarkdown(functionData) {
     const functions = categories.get(category);
 
     // Sort functions by step description
-    functions.sort((a, b) =>
-      a.step.toLowerCase().localeCompare(b.step.toLowerCase())
-    );
+    functions.sort((a, b) => a.step.toLowerCase().localeCompare(b.step.toLowerCase()));
 
     markdown += `## ${category}\n\n`;
 
@@ -328,5 +349,7 @@ const markdown = generateMarkdown(allFunctions);
 writeFileAtomically(OUTPUT_PATH, markdown);
 
 console.log(`\n✅ Generated ${OUTPUT_PATH}`);
-console.log(`   📊 ${allFunctions.length} steps from ${functionsFound} functions in ${totalFiles} files`);
-console.log(`   📁 Categories: ${new Set(allFunctions.map(f => f.category)).size}`);
+console.log(
+  `   📊 ${allFunctions.length} steps from ${functionsFound} functions in ${totalFiles} files`
+);
+console.log(`   📁 Categories: ${new Set(allFunctions.map((f) => f.category)).size}`);

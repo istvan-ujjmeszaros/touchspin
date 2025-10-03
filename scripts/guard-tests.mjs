@@ -14,16 +14,16 @@ const ROOT = path.dirname(__dirname);
 const GUARDS = [
   {
     name: 'No /src/ imports in tests',
-    script: 'guard-no-src-in-tests.mjs'
+    script: 'guard-no-src-in-tests.mjs',
   },
   {
     name: 'No page.locator in test specs',
-    script: 'page-locator-guard.mjs'
+    script: 'page-locator-guard.mjs',
   },
   {
     name: 'No shared fixtures in framework renderers',
-    script: 'guard-no-shared-fixtures.mjs'
-  }
+    script: 'guard-no-shared-fixtures.mjs',
+  },
   // Add more guards here as needed:
   // { name: 'No helper bypass', script: 'guard-no-helper-bypass.mjs' },
   // { name: 'No hardcoded hosts', script: 'guard-no-hardcoded-hosts.mjs' }
@@ -34,7 +34,7 @@ async function runGuard(guard) {
     const scriptPath = path.join(__dirname, guard.script);
     const child = spawn('node', [scriptPath], {
       cwd: ROOT,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
 
     child.on('close', (code) => {

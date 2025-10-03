@@ -30,15 +30,11 @@ async function main() {
 
   console.log('🧪 Running tests with coverage...');
   // The pre-test guard will check devdist and build only if needed (same as yarn test)
-  const testStatus = run(
-    'yarn',
-    ['coverage:run', ...passThrough],
-    {
-      PW_COVERAGE: '1',
-      TS_BUILD_TARGET: 'dev',
-      PLAYWRIGHT_TSCONFIG: 'tsconfig.playwright.json'
-    }
-  );
+  const testStatus = run('yarn', ['coverage:run', ...passThrough], {
+    PW_COVERAGE: '1',
+    TS_BUILD_TARGET: 'dev',
+    PLAYWRIGHT_TSCONFIG: 'tsconfig.playwright.json',
+  });
 
   // Generate coverage as long as tests actually ran (even if some failed)
   // Exit 0 = all tests passed, Exit 1 = some tests failed (still generate coverage)
@@ -63,7 +59,7 @@ async function main() {
   process.exit(testStatus);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Coverage pipeline failed:', err);
   process.exit(1);
 });
@@ -74,14 +70,15 @@ async function openBestEffort(fileAbsPath) {
   const isMac = process.platform === 'darwin';
   const isLinux = process.platform === 'linux';
   const isWSL =
-    !!process.env.WSL_DISTRO_NAME ||
-    (isLinux && release().toLowerCase().includes('microsoft'));
+    !!process.env.WSL_DISTRO_NAME || (isLinux && release().toLowerCase().includes('microsoft'));
 
   // In WSL we can use wslview (preferred). For PowerShell/cmd we need Windows-style path.
   let winPath = null;
   if (isWSL) {
     try {
-      winPath = execSync(`wslpath -w ${JSON.stringify(fileAbsPath)}`, { stdio: ['ignore', 'pipe', 'ignore'] })
+      winPath = execSync(`wslpath -w ${JSON.stringify(fileAbsPath)}`, {
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
         .toString()
         .trim();
     } catch {
@@ -102,7 +99,7 @@ async function openBestEffort(fileAbsPath) {
       ['gio', ['open', fileAbsPath]],
       ['gnome-open', [fileAbsPath]],
       ['kde-open', [fileAbsPath]],
-      ['sensible-browser', [fileAbsPath]],
+      ['sensible-browser', [fileAbsPath]]
     );
   }
 
@@ -111,7 +108,7 @@ async function openBestEffort(fileAbsPath) {
     if (winPath) {
       candidates.push(
         ['powershell.exe', ['-NoProfile', '-NonInteractive', 'Start-Process', winPath]],
-        ['cmd.exe', ['/c', 'start', '', winPath]],
+        ['cmd.exe', ['/c', 'start', '', winPath]]
       );
     }
   }
@@ -119,7 +116,10 @@ async function openBestEffort(fileAbsPath) {
   if (isWin && !isWSL) {
     // `start` must be invoked via cmd; empty title arg required.
     candidates.push(['cmd', ['/c', 'start', '', fileAbsPath]]);
-    candidates.push(['powershell', ['-NoProfile', '-NonInteractive', 'Start-Process', fileAbsPath]]);
+    candidates.push([
+      'powershell',
+      ['-NoProfile', '-NonInteractive', 'Start-Process', fileAbsPath],
+    ]);
   }
 
   // Final fallback: do nothing but print the path.

@@ -27,18 +27,15 @@ export default defineConfig({
           args: [
             '--disable-background-timer-throttling',
             '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding'
-          ]
-        }
+            '--disable-renderer-backgrounding',
+          ],
+        },
       },
-    }
+    },
   ],
 
   // Reporter configuration
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'reports/playwright', open: 'never' }]
-  ],
+  reporter: [['list'], ['html', { outputFolder: 'reports/playwright', open: 'never' }]],
 
   // Global setup/teardown for coverage
   globalSetup: './coverage.setup.ts',

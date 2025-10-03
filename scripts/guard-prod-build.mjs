@@ -89,7 +89,9 @@ function isDistStale(packagePath) {
  * Guard and rebuild a single package's production dist/ if needed
  */
 function guardAndRebuild(packagePath) {
-  const packageName = packagePath.replace('packages/', '@touchspin/').replace('renderers/', 'renderer-');
+  const packageName = packagePath
+    .replace('packages/', '@touchspin/')
+    .replace('renderers/', 'renderer-');
 
   if (isDistStale(packagePath)) {
     console.log(`📦 ${packageName}: Production dist/ is stale, rebuilding...`);
@@ -97,7 +99,7 @@ function guardAndRebuild(packagePath) {
       execSync('yarn build', {
         cwd: join(projectRoot, packagePath),
         stdio: 'inherit',
-        timeout: 120000 // 2 minute timeout
+        timeout: 120000, // 2 minute timeout
       });
       console.log(`✅ ${packageName}: Production build complete`);
     } catch (error) {

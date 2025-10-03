@@ -26,7 +26,7 @@ const watchFiles = [
   '!node_modules/**/*',
   '!dist/**/*',
   '!coverage/**/*',
-  '!reports/**/*'
+  '!reports/**/*',
 ];
 
 console.log(`🔥 Starting hot-reload server...`);
@@ -41,7 +41,7 @@ bs.init({
   port: HOT_RELOAD_PORT,
 
   // Files to watch
-  files: watchFiles.map(pattern => path.join(PROJECT_ROOT, pattern)),
+  files: watchFiles.map((pattern) => path.join(PROJECT_ROOT, pattern)),
 
   // Browser-sync options
   open: false, // Don't auto-open browser (user can do it manually)
@@ -65,14 +65,14 @@ bs.init({
           console.log(`🔄 ${req.method} ${req.url}`);
         }
         next();
-      }
-    }
+      },
+    },
   ],
 
   // UI configuration
   ui: {
-    port: HOT_RELOAD_PORT + 1 // Browser-sync UI on port 3001
-  }
+    port: HOT_RELOAD_PORT + 1, // Browser-sync UI on port 3001
+  },
 });
 
 // Enhanced logging for file changes

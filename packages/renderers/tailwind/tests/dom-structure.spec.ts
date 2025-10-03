@@ -75,7 +75,7 @@ test.describe('Tailwind specific behavior', () => {
     expect(downClasses).toMatch(/bg-|border|px-|py-|text-/);
 
     // Should not have framework-specific component classes (but allow touchspin-specific ones)
-    expect(upClasses).not.toMatch(/(?:^|\s)btn(?:\s|$)|button-/);  // Avoid standalone 'btn' but allow 'tailwind-btn'
+    expect(upClasses).not.toMatch(/(?:^|\s)btn(?:\s|$)|button-/); // Avoid standalone 'btn' but allow 'tailwind-btn'
     expect(downClasses).not.toMatch(/(?:^|\s)btn(?:\s|$)|button-/);
   });
 
@@ -88,7 +88,7 @@ test.describe('Tailwind specific behavior', () => {
   test('creates responsive-friendly structure', async ({ page }) => {
     await initializeTouchspinFromGlobals(page, 'test-input', {
       prefix: '$',
-      postfix: 'USD'
+      postfix: 'USD',
     });
 
     const wrapper = page.getByTestId('test-input-wrapper');
@@ -130,7 +130,7 @@ test.describe('Tailwind specific behavior', () => {
       buttonup_class: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2',
       buttondown_class: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2',
       prefix_extraclass: 'bg-gray-100 text-gray-700 px-3 py-2',
-      postfix_extraclass: 'bg-gray-100 text-gray-700 px-3 py-2'
+      postfix_extraclass: 'bg-gray-100 text-gray-700 px-3 py-2',
     });
 
     const wrapper = page.getByTestId('test-input-wrapper');

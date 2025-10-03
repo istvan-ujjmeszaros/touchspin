@@ -29,19 +29,19 @@ const GUARDS = [
   {
     name: 'No /src/ imports in tests',
     script: 'guard-no-src-in-tests.mjs',
-    description: 'Prevents direct imports from /src/ in tests (must use /dist/)'
+    description: 'Prevents direct imports from /src/ in tests (must use /dist/)',
   },
   {
     name: 'No page.locator in test specs',
     script: 'page-locator-guard.mjs',
     description: 'Ensures tests use helper functions instead of direct page.locator()',
-    needsTestPath: true
+    needsTestPath: true,
   },
   {
     name: 'DevDist build artifacts',
     script: 'guard-devdist-build.mjs',
-    description: 'Checks and builds devdist artifacts if missing/stale'
-  }
+    description: 'Checks and builds devdist artifacts if missing/stale',
+  },
   // Future guards can be added here:
   // { name: 'No helper bypass', script: 'guard-no-helper-bypass.mjs' },
   // { name: 'No hardcoded hosts', script: 'guard-no-hardcoded-hosts.mjs' }
@@ -59,7 +59,7 @@ async function runGuard(guard, testPath) {
 
     const child = spawn('node', args, {
       cwd: ROOT,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
 
     child.on('close', (code) => {

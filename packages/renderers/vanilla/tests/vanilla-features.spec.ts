@@ -53,14 +53,17 @@ test('provides framework-independent implementation', async ({ page }) => {
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
   // Verify TouchSpin is working
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
   await expect(wrapper).toBeVisible();
   await expect(upButton).toBeVisible();
   await expect(downButton).toBeVisible();
   await expect(input).toBeVisible();
 
   // Check that no framework-specific classes are present
-  const wrapperClasses = await wrapper.getAttribute('class') || '';
+  const wrapperClasses = (await wrapper.getAttribute('class')) || '';
   expect(wrapperClasses).not.toMatch(/bootstrap|mui|ant|chakra|tailwind/i);
 
   // Verify functionality works
@@ -102,7 +105,7 @@ test('supports CSS variables for theming', async ({ page }) => {
       .touchspin-button:hover {
         background-color: var(--touchspin-focus);
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input');
@@ -136,7 +139,10 @@ test('handles minimal CSS dependencies', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify basic functionality works without external stylesheets
   await expect(wrapper).toBeVisible();
@@ -154,8 +160,9 @@ test('handles minimal CSS dependencies', async ({ page }) => {
 
   // Check that no heavy external dependencies are loaded
   const externalStylesheets = await page.evaluate(() => {
-    return Array.from(document.styleSheets).filter(sheet =>
-      sheet.href && !sheet.href.includes('localhost') && !sheet.href.includes('127.0.0.1')
+    return Array.from(document.styleSheets).filter(
+      (sheet) =>
+        sheet.href && !sheet.href.includes('localhost') && !sheet.href.includes('127.0.0.1')
     ).length;
   });
   expect(externalStylesheets).toBe(0);
@@ -186,16 +193,19 @@ test('supports custom styling without conflicts', async ({ page }) => {
         border: none;
         border-radius: 8px;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     buttonup_class: 'my-custom-button',
     buttondown_class: 'my-custom-button',
-    initval: 0
+    initval: 0,
   });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify wrapper has default classes (wrapper_class not supported in vanilla renderer)
   await expect(wrapper).toHaveClass(/ts-wrapper/);
@@ -222,23 +232,26 @@ test('provides clean CSS class hierarchy', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check wrapper has logical class naming
-  const wrapperClasses = await wrapper.getAttribute('class') || '';
+  const wrapperClasses = (await wrapper.getAttribute('class')) || '';
   expect(wrapperClasses).toMatch(/ts-wrapper/);
   expect(wrapperClasses.split(/\s+/).length).toBeLessThanOrEqual(5); // Not excessive classes
 
   // Check button classes are semantic
-  const upButtonClasses = await upButton.getAttribute('class') || '';
-  const downButtonClasses = await downButton.getAttribute('class') || '';
+  const upButtonClasses = (await upButton.getAttribute('class')) || '';
+  const downButtonClasses = (await downButton.getAttribute('class')) || '';
 
   expect(upButtonClasses).toMatch(/ts-/); // Namespaced prefix
   expect(downButtonClasses).toMatch(/ts-/);
 
   // Verify no class conflicts (no duplicate classes)
   const allClasses = [wrapperClasses, upButtonClasses, downButtonClasses].join(' ').split(/\s+/);
-  const uniqueClasses = new Set(allClasses.filter(c => c.length > 0));
+  const uniqueClasses = new Set(allClasses.filter((c) => c.length > 0));
 
   // Each element should have unique, non-conflicting classes
   expect(upButtonClasses).not.toBe(downButtonClasses); // Buttons should have different classes
@@ -246,9 +259,9 @@ test('provides clean CSS class hierarchy', async ({ page }) => {
   // Check class hierarchy is logical (prefix-based)
   const hasConsistentNaming = await page.evaluate(() => {
     const elements = document.querySelectorAll('[data-testid="test-input-wrapper"] [class*="ts-"]');
-    return Array.from(elements).every(el => {
+    return Array.from(elements).every((el) => {
       const classList = Array.from(el.classList);
-      return classList.some(cls => cls.startsWith('ts-'));
+      return classList.some((cls) => cls.startsWith('ts-'));
     });
   });
 
@@ -284,12 +297,15 @@ test('handles browser-specific CSS gracefully', async ({ page }) => {
         -moz-user-select: none;
         user-select: none;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify elements render correctly despite browser-specific CSS
   await expect(wrapper).toBeVisible();
@@ -297,11 +313,11 @@ test('handles browser-specific CSS gracefully', async ({ page }) => {
   await expect(downButton).toBeVisible();
 
   // Check that CSS is applied and working
-  const wrapperDisplay = await wrapper.evaluate(el => getComputedStyle(el).display);
+  const wrapperDisplay = await wrapper.evaluate((el) => getComputedStyle(el).display);
   expect(wrapperDisplay).toBeTruthy();
 
   // Test that user-select works (elements should not be selectable if CSS works)
-  const userSelectWorks = await upButton.evaluate(el => {
+  const userSelectWorks = await upButton.evaluate((el) => {
     const style = getComputedStyle(el);
     const userSelect = style.userSelect || style.webkitUserSelect || style.mozUserSelect;
     return userSelect !== undefined;
@@ -341,7 +357,7 @@ test('supports CSS Grid and Flexbox layouts', async ({ page }) => {
         grid-template-columns: 1fr 1fr;
         gap: 20px;
       }
-    `
+    `,
   });
 
   // Create containers for layout testing
@@ -443,12 +459,15 @@ test('provides performant CSS animations', async ({ page }) => {
       .ts-button:hover {
         transition: background-color 0.15s ease-in-out;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify elements are visible (animation completed)
   await expect(wrapper).toBeVisible();
@@ -456,7 +475,7 @@ test('provides performant CSS animations', async ({ page }) => {
   await expect(downButton).toBeVisible();
 
   // Check that animations are GPU-accelerated (using transform/opacity)
-  const usesGPUAcceleration = await wrapper.evaluate(el => {
+  const usesGPUAcceleration = await wrapper.evaluate((el) => {
     const style = getComputedStyle(el);
     const animation = style.animation || style.webkitAnimation;
     return animation.includes('fadeIn') || animation !== 'none';
@@ -464,7 +483,7 @@ test('provides performant CSS animations', async ({ page }) => {
   expect(usesGPUAcceleration).toBeTruthy();
 
   // Test that transitions are defined
-  const buttonHasTransition = await upButton.evaluate(el => {
+  const buttonHasTransition = await upButton.evaluate((el) => {
     const style = getComputedStyle(el);
     const transition = style.transition || style.webkitTransition;
     return transition && transition !== 'none' && transition !== 'all 0s ease 0s';
@@ -535,12 +554,15 @@ test('handles high contrast mode', async ({ page }) => {
         background-color: #000 !important;
         color: #fff !important;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify elements are visible in high contrast
   await expect(wrapper).toBeVisible();
@@ -549,19 +571,19 @@ test('handles high contrast mode', async ({ page }) => {
   await expect(input).toBeVisible();
 
   // Check that borders are defined (important for high contrast visibility)
-  const wrapperBorder = await wrapper.evaluate(el => {
+  const wrapperBorder = await wrapper.evaluate((el) => {
     const style = getComputedStyle(el);
     return style.borderWidth;
   });
   expect(wrapperBorder).toBeTruthy();
 
   // Check button contrast
-  const buttonContrast = await upButton.evaluate(el => {
+  const buttonContrast = await upButton.evaluate((el) => {
     const style = getComputedStyle(el);
     return {
       hasBackground: style.backgroundColor && style.backgroundColor !== 'rgba(0, 0, 0, 0)',
       hasBorder: style.borderWidth && style.borderWidth !== '0px',
-      hasColor: style.color && style.color !== 'rgba(0, 0, 0, 0)'
+      hasColor: style.color && style.color !== 'rgba(0, 0, 0, 0)',
     };
   });
 
@@ -607,12 +629,15 @@ test('supports RTL text direction', async ({ page }) => {
       [dir="rtl"] input {
         text-align: right;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 50 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify elements render correctly in RTL
   await expect(wrapper).toBeVisible();
@@ -627,7 +652,7 @@ test('supports RTL text direction', async ({ page }) => {
   expect(isRTL).toBe(true);
 
   // Check wrapper direction
-  const wrapperDirection = await wrapper.evaluate(el => getComputedStyle(el).direction);
+  const wrapperDirection = await wrapper.evaluate((el) => getComputedStyle(el).direction);
   expect(wrapperDirection).toBe('rtl');
 
   // Verify functionality works in RTL mode
@@ -646,7 +671,7 @@ test('supports RTL text direction', async ({ page }) => {
   await apiHelpers.expectValueToBe(page, 'test-input', '50');
 
   // Verify text alignment for input
-  const inputTextAlign = await input.evaluate(el => getComputedStyle(el).textAlign);
+  const inputTextAlign = await input.evaluate((el) => getComputedStyle(el).textAlign);
   expect(inputTextAlign).toMatch(/right|start/); // RTL should align right or start
 });
 
@@ -664,11 +689,14 @@ test('provides semantic HTML without framework bloat', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check semantic button elements
-  expect(await upButton.evaluate(el => el.tagName)).toBe('BUTTON');
-  expect(await downButton.evaluate(el => el.tagName)).toBe('BUTTON');
+  expect(await upButton.evaluate((el) => el.tagName)).toBe('BUTTON');
+  expect(await downButton.evaluate((el) => el.tagName)).toBe('BUTTON');
 
   // Verify proper button types
   await expect(upButton).toHaveAttribute('type', 'button');
@@ -683,7 +711,7 @@ test('provides semantic HTML without framework bloat', async ({ page }) => {
   expect(divCount).toBeLessThanOrEqual(3); // Minimal structural divs only
 
   // Verify clean class names (no framework prefixes)
-  const wrapperClasses = await wrapper.getAttribute('class') || '';
+  const wrapperClasses = (await wrapper.getAttribute('class')) || '';
   expect(wrapperClasses).not.toMatch(/^(bs-|mui-|ant-|chakra-)/);
 
   // Ensure data-testid attributes are preserved for testing
@@ -709,7 +737,7 @@ test('handles progressive enhancement', async ({ page }) => {
     return {
       canSetValue: input.value === '25',
       isVisible: input.offsetParent !== null,
-      isInput: input.tagName === 'INPUT'
+      isInput: input.tagName === 'INPUT',
     };
   });
 
@@ -721,7 +749,10 @@ test('handles progressive enhancement', async ({ page }) => {
   // Progressive enhancement with TouchSpin
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 25 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Enhanced functionality should be available
   await expect(wrapper).toBeVisible();
@@ -758,10 +789,13 @@ test('supports accessibility without framework dependencies', async ({ page }) =
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     min: 0,
     max: 100,
-    initval: 50
+    initval: 50,
   });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check ARIA attributes are present
   await expect(input).toHaveAttribute('role', 'spinbutton');
@@ -894,7 +928,7 @@ test('supports screen reader optimization', async ({ page }) => {
     min: 0,
     max: 100,
     step: 5,
-    initval: 50
+    initval: 50,
   });
 
   const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -933,12 +967,12 @@ test('supports screen reader optimization', async ({ page }) => {
   expect(hiddenElements).toBe(0); // No essential elements should be hidden
 
   // Test that screen readers can identify the control type
-  const controlIdentification = await input.evaluate(el => {
+  const controlIdentification = await input.evaluate((el) => {
     return {
       hasRole: el.hasAttribute('role'),
       roleValue: el.getAttribute('role'),
       hasAriaValueNow: el.hasAttribute('aria-valuenow'),
-      tagName: el.tagName
+      tagName: el.tagName,
     };
   });
 
@@ -964,7 +998,7 @@ test('provides ARIA patterns without conflicts', async ({ page }) => {
     min: 0,
     max: 100,
     step: 5,
-    initval: 25
+    initval: 25,
   });
 
   const { input, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -979,14 +1013,16 @@ test('provides ARIA patterns without conflicts', async ({ page }) => {
   await expect(upButton).toHaveAttribute('aria-label');
   await expect(downButton).toHaveAttribute('aria-label');
 
-  const upLabel = await upButton.getAttribute('aria-label') || '';
-  const downLabel = await downButton.getAttribute('aria-label') || '';
+  const upLabel = (await upButton.getAttribute('aria-label')) || '';
+  const downLabel = (await downButton.getAttribute('aria-label')) || '';
   expect(upLabel.toLowerCase()).toMatch(/increase|increment|up/);
   expect(downLabel.toLowerCase()).toMatch(/decrease|decrement|down/);
 
   // Verify no conflicting ARIA attributes
-  const inputAttrs = await input.evaluate(el => Array.from(el.attributes).map(attr => attr.name));
-  const ariaAttrs = inputAttrs.filter(attr => attr.startsWith('aria-'));
+  const inputAttrs = await input.evaluate((el) =>
+    Array.from(el.attributes).map((attr) => attr.name)
+  );
+  const ariaAttrs = inputAttrs.filter((attr) => attr.startsWith('aria-'));
   expect(ariaAttrs).not.toContain('aria-hidden'); // Should not be hidden
   expect(ariaAttrs).not.toContain('aria-disabled'); // Should not be disabled by default
 
@@ -1010,7 +1046,10 @@ test('handles mobile touch interactions', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { step: 2, initval: 10 });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify touch-friendly button sizes (should be at least 24px for basic usability)
   const upSize = await upButton.boundingBox();
@@ -1032,7 +1071,7 @@ test('handles mobile touch interactions', async ({ page }) => {
   await apiHelpers.expectValueToBe(page, 'test-input', '10');
 
   // Test that elements are properly configured for touch
-  const touchAction = await upButton.evaluate(el => getComputedStyle(el).touchAction);
+  const touchAction = await upButton.evaluate((el) => getComputedStyle(el).touchAction);
   expect(touchAction).not.toBe('none'); // Should allow some touch actions
 
   // Verify touch targets don't overlap inappropriately
@@ -1045,8 +1084,14 @@ test('handles mobile touch interactions', async ({ page }) => {
     const downRect = down.getBoundingClientRect();
 
     // Check if buttons overlap significantly
-    const overlapX = Math.max(0, Math.min(upRect.right, downRect.right) - Math.max(upRect.left, downRect.left));
-    const overlapY = Math.max(0, Math.min(upRect.bottom, downRect.bottom) - Math.max(upRect.top, downRect.top));
+    const overlapX = Math.max(
+      0,
+      Math.min(upRect.right, downRect.right) - Math.max(upRect.left, downRect.left)
+    );
+    const overlapY = Math.max(
+      0,
+      Math.min(upRect.bottom, downRect.bottom) - Math.max(upRect.top, downRect.top)
+    );
 
     return overlapX > 5 && overlapY > 5; // Allow small overlaps but not significant ones
   });
@@ -1071,7 +1116,10 @@ test('supports responsive design patterns', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Should be visible and functional on mobile
   await expect(wrapper).toBeVisible();
@@ -1126,7 +1174,10 @@ test('provides cross-browser compatibility', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Test core functionality
   await expect(wrapper).toBeVisible();
@@ -1148,7 +1199,7 @@ test('provides cross-browser compatibility', async ({ page }) => {
     return {
       hasCSGrid: getComputedStyle(document.body).display === 'grid',
       hasWebComponents: !!window.customElements,
-      usesES6Modules: true // We assume this since we're loading ES modules
+      usesES6Modules: true, // We assume this since we're loading ES modules
     };
   });
 
@@ -1170,7 +1221,10 @@ test('handles legacy browser support', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify basic functionality (baseline features that work everywhere)
   await expect(wrapper).toBeVisible();
@@ -1191,7 +1245,7 @@ test('handles legacy browser support', async ({ page }) => {
       hasQuerySelector: typeof document.querySelector === 'function',
       hasAddEventListener: typeof addEventListener === 'function',
       hasGetAttribute: typeof Element.prototype.getAttribute === 'function',
-      hasSetAttribute: typeof Element.prototype.setAttribute === 'function'
+      hasSetAttribute: typeof Element.prototype.setAttribute === 'function',
     };
   });
 
@@ -1201,11 +1255,11 @@ test('handles legacy browser support', async ({ page }) => {
   expect(usesBasicAPIs.hasSetAttribute).toBe(true);
 
   // Test that input element works with basic HTML attributes
-  const basicHTMLWorks = await input.evaluate(el => {
+  const basicHTMLWorks = await input.evaluate((el) => {
     return {
-      canSetValue: (el.value = '10', el.value === '10'),
+      canSetValue: ((el.value = '10'), el.value === '10'),
       canGetAttribute: el.getAttribute('data-testid') !== null,
-      hasType: el.type === 'number' || el.type === 'text'
+      hasType: el.type === 'number' || el.type === 'text',
     };
   });
 
@@ -1220,7 +1274,7 @@ test('handles legacy browser support', async ({ page }) => {
       * { display: block !important; }
       button { display: inline-block !important; }
       input { display: inline-block !important; }
-    `
+    `,
   });
 
   // Should still be functional
@@ -1251,7 +1305,7 @@ test('supports modern web standards', async ({ page }) => {
       supportsES6: typeof Map === 'function' && typeof Set === 'function',
       supportsPromises: typeof Promise === 'function',
       supportsQuerySelector: typeof document.querySelector === 'function',
-      supportsEventListeners: typeof addEventListener === 'function'
+      supportsEventListeners: typeof addEventListener === 'function',
     };
   });
 
@@ -1264,12 +1318,12 @@ test('supports modern web standards', async ({ page }) => {
     content: `
       :root { --test-color: #ff0000; }
       .test-modern { color: var(--test-color); }
-    `
+    `,
   });
 
   // Apply custom property class and verify support
-  await wrapper.evaluate(el => el.classList.add('test-modern'));
-  const supportsCustomProperties = await wrapper.evaluate(el => {
+  await wrapper.evaluate((el) => el.classList.add('test-modern'));
+  const supportsCustomProperties = await wrapper.evaluate((el) => {
     const color = getComputedStyle(el).color;
     return color.includes('255, 0, 0') || color === 'rgb(255, 0, 0)' || color === '#ff0000';
   });
@@ -1346,7 +1400,6 @@ test('handles memory efficiency', async ({ page }) => {
     }
   });
 
-
   // Initialize multiple TouchSpin instances
   for (let i = 1; i <= 5; i++) {
     await apiHelpers.initializeTouchSpin(page, `memory-test-${i}`, { initval: i * 10 });
@@ -1368,7 +1421,7 @@ test('handles memory efficiency', async ({ page }) => {
     return {
       totalElements: allElements,
       touchspinElements: touchspinElements,
-      ratio: touchspinElements / allElements
+      ratio: touchspinElements / allElements,
     };
   });
 
@@ -1398,7 +1451,10 @@ test('supports bundle size optimization', async ({ page }) => {
   // Check that bundle is loadable and functional
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify functionality works (bundle is functional)
   await expect(wrapper).toBeVisible();
@@ -1414,7 +1470,7 @@ test('supports bundle size optimization', async ({ page }) => {
       // Check for minification indicators (no excessive whitespace in global scope)
       hasMinifiedCode: true, // Assume build process minifies
       // Check that we don't have excessive scripts
-      hasReasonableScriptCount: scripts.length < 50
+      hasReasonableScriptCount: scripts.length < 50,
     };
   });
 
@@ -1425,7 +1481,7 @@ test('supports bundle size optimization', async ({ page }) => {
     // Check if modern module features are used
     return {
       supportsModules: 'noModule' in document.createElement('script'),
-      hasESModuleSupport: true
+      hasESModuleSupport: true,
     };
   });
 
@@ -1434,13 +1490,13 @@ test('supports bundle size optimization', async ({ page }) => {
   // Test that only necessary code is executed (no unused features loaded)
   const codeEfficiency = await page.evaluate(() => {
     // Check that TouchSpin doesn't pollute global namespace excessively
-    const touchspinGlobals = Object.keys(window).filter(key =>
-      key.toLowerCase().includes('touchspin') || key.toLowerCase().includes('vanilla')
+    const touchspinGlobals = Object.keys(window).filter(
+      (key) => key.toLowerCase().includes('touchspin') || key.toLowerCase().includes('vanilla')
     );
 
     return {
       globalCount: touchspinGlobals.length,
-      hasMinimalGlobals: touchspinGlobals.length < 10 // Should be minimal
+      hasMinimalGlobals: touchspinGlobals.length < 10, // Should be minimal
     };
   });
 

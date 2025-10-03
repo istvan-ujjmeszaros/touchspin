@@ -14,7 +14,7 @@ const roots = [
 ];
 
 const offenders = [];
-const rx = /from\s+['\"](\.\/|\.\.\/)[^'\"]*['\"]/g; // any relative import
+const rx = /from\s+['"](\.\/|\.\.\/)[^'"]*['"]/g; // any relative import
 const hasJs = (p) => p.endsWith('.js') || p.endsWith('.mjs');
 
 for (const root of roots) {
@@ -25,7 +25,7 @@ for (const root of roots) {
     const txt = fs.readFileSync(full, 'utf8');
     let m;
     while ((m = rx.exec(txt))) {
-      const spec = m[0].match(/['\"]([^'\"]+)['\"]/)[1];
+      const spec = m[0].match(/['"]([^'"]+)['"]/)[1];
       if (!hasJs(spec)) offenders.push(`${full} -> ${spec}`);
     }
   }
@@ -40,4 +40,3 @@ if (offenders.length) {
 } else {
   console.log('✅ ESM guard: all relative imports use ".js"');
 }
-

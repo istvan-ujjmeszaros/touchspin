@@ -10,21 +10,33 @@
 //   REQUIRE_CHECKLIST=1  -> fail if a spec file has no checklist
 //   VERBOSE=1            -> print per-file OK messages
 
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 
 const ROOTS = process.argv.slice(2);
-const START_DIRS = ROOTS.length ? ROOTS.map(p => path.resolve(p)) : [process.cwd()];
+const START_DIRS = ROOTS.length ? ROOTS.map((p) => path.resolve(p)) : [process.cwd()];
 const SPEC_REGEX = /\.spec\.ts$/i;
 
 // common junk to skip while walking
 const IGNORE_DIRS = new Set([
-  "node_modules", ".git", "dist", "build", "coverage", ".next", "out",
-  ".turbo", ".cache", ".yarn", ".pnpm", ".idea", ".vscode", "tmp"
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  'coverage',
+  '.next',
+  'out',
+  '.turbo',
+  '.cache',
+  '.yarn',
+  '.pnpm',
+  '.idea',
+  '.vscode',
+  'tmp',
 ]);
 
-const REQUIRE_CHECKLIST = process.env.REQUIRE_CHECKLIST === "1";
-const VERBOSE = process.env.VERBOSE === "1";
+const REQUIRE_CHECKLIST = process.env.REQUIRE_CHECKLIST === '1';
+const VERBOSE = process.env.VERBOSE === '1';
 
 // ---------- fs helpers ----------
 function walk(dir, acc = []) {
@@ -47,29 +59,29 @@ function walk(dir, acc = []) {
 
 function readFile(file) {
   try {
-    return fs.readFileSync(file, "utf8");
+    return fs.readFileSync(file, 'utf8');
   } catch {
-    return "";
+    return '';
   }
 }
 
 // ---------- parsing ----------
 function parseChecklistBlock(src) {
   // Look for our checklist header; assume it's inside a /* ... */ block.
-  const anchor = src.indexOf("CHECKLIST — Scenarios in this spec");
+  const anchor = src.indexOf('CHECKLIST — Scenarios in this spec');
   if (anchor === -1) return null;
 
-  const blockStart = src.lastIndexOf("/*", anchor);
-  const blockEnd = src.indexOf("*/", anchor);
+  const blockStart = src.lastIndexOf('/*', anchor);
+  const blockEnd = src.indexOf('*/', anchor);
   if (blockStart === -1 || blockEnd === -1) return null;
 
   const raw = src.slice(blockStart, blockEnd + 2);
-  const lines = raw.split(/\r?\n/).map(l => l.replace(/^\s*\*\s?/, "").trim());
+  const lines = raw.split(/\r?\n/).map((l) => l.replace(/^\s*\*\s?/, '').trim());
 
   const items = [];
   for (const ln of lines) {
     const m = ln.match(/^\[(x| )\]\s+(.+)$/i);
-    if (m) items.push({ checked: m[1].toLowerCase() === "x", title: m[2].trim() });
+    if (m) items.push({ checked: m[1].toLowerCase() === 'x', title: m[2].trim() });
   }
   if (!items.length) return null;
   return { raw, items };
@@ -117,17 +129,24 @@ function validateSpec(file) {
 
   if (!checklist) {
     if (REQUIRE_CHECKLIST) {
-      errors.push("Missing checklist block at top of file.");
+      errors.push('Missing checklist block at top of file.');
     } else if (VERBOSE) {
       console.log(`(i) ${file}: no checklist found — skipping validation`);
     }
-    return { ok: !REQUIRE_CHECKLIST, errors, warnings, implementedTests, skippedTests, checklistItems: [] };
+    return {
+      ok: !REQUIRE_CHECKLIST,
+      errors,
+      warnings,
+      implementedTests,
+      skippedTests,
+      checklistItems: [],
+    };
   }
 
   const items = checklist.items;
-  const checklistTitles = items.map(i => i.title);
-  const implementedMarked = new Set(items.filter(i => i.checked).map(i => i.title));
-  const unimplementedMarked = new Set(items.filter(i => !i.checked).map(i => i.title));
+  const checklistTitles = items.map((i) => i.title);
+  const implementedMarked = new Set(items.filter((i) => i.checked).map((i) => i.title));
+  const unimplementedMarked = new Set(items.filter((i) => !i.checked).map((i) => i.title));
   const implementedTestSet = new Set(implementedTests);
   const skippedTestSet = new Set(skippedTests);
 
@@ -135,7 +154,9 @@ function validateSpec(file) {
   for (const title of implementedMarked) {
     if (!implementedTestSet.has(title)) {
       if (skippedTestSet.has(title)) {
-        errors.push(`Marked as implemented [x] but test is skipped: "${title}" — either implement or flip to [ ].`);
+        errors.push(
+          `Marked as implemented [x] but test is skipped: "${title}" — either implement or flip to [ ].`
+        );
       } else {
         errors.push(`Marked as implemented [x] but test not found: "${title}"`);
       }
@@ -146,7 +167,9 @@ function validateSpec(file) {
   for (const title of unimplementedMarked) {
     if (!skippedTestSet.has(title)) {
       if (implementedTestSet.has(title)) {
-        errors.push(`Scenario is unchecked [ ] but test is implemented: "${title}" — flip it to [x].`);
+        errors.push(
+          `Scenario is unchecked [ ] but test is implemented: "${title}" — flip it to [x].`
+        );
       } else {
         errors.push(`Scenario is unchecked [ ] but no test.skip() found: "${title}"`);
       }
@@ -174,15 +197,17 @@ function validateSpec(file) {
   // duplicate titles checks
   const dupChecklist = findDuplicates(checklistTitles);
   if (dupChecklist.length) {
-    errors.push(`Duplicate scenario titles in checklist: ${dupChecklist.map(s => `"${s}"`).join(", ")}`);
+    errors.push(
+      `Duplicate scenario titles in checklist: ${dupChecklist.map((s) => `"${s}"`).join(', ')}`
+    );
   }
   const dupImplemented = findDuplicates(implementedTests);
   if (dupImplemented.length) {
-    errors.push(`Duplicate test() titles: ${dupImplemented.map(s => `"${s}"`).join(", ")}`);
+    errors.push(`Duplicate test() titles: ${dupImplemented.map((s) => `"${s}"`).join(', ')}`);
   }
   const dupSkipped = findDuplicates(skippedTests);
   if (dupSkipped.length) {
-    errors.push(`Duplicate test.skip() titles: ${dupSkipped.map(s => `"${s}"`).join(", ")}`);
+    errors.push(`Duplicate test.skip() titles: ${dupSkipped.map((s) => `"${s}"`).join(', ')}`);
   }
 
   return {
@@ -191,12 +216,13 @@ function validateSpec(file) {
     warnings,
     implementedTests,
     skippedTests,
-    checklistItems: items
+    checklistItems: items,
   };
 }
 
 // ---------- run ----------
-let total = 0, failed = 0;
+let total = 0,
+  failed = 0;
 for (const root of START_DIRS) {
   const files = walk(root);
   for (const file of files) {

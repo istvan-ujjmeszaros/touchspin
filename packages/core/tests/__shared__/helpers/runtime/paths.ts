@@ -2,7 +2,11 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const isDevBuild = typeof process !== 'undefined' && process && process.env && (process.env.TS_BUILD_TARGET === 'dev' || process.env.PW_COVERAGE === '1');
+const isDevBuild =
+  typeof process !== 'undefined' &&
+  process &&
+  process.env &&
+  (process.env.TS_BUILD_TARGET === 'dev' || process.env.PW_COVERAGE === '1');
 const TARGET = isDevBuild ? 'devdist' : 'dist';
 
 type ArtifactManifest = Record<string, string>;
@@ -25,7 +29,9 @@ function loadManifest(packageSubPath: string): ArtifactManifest {
     return parsed;
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
-    throw new Error(`Unable to load artifacts manifest at ${manifestPath}: ${reason}\nDid you run the package build for ${packageSubPath}?`);
+    throw new Error(
+      `Unable to load artifacts manifest at ${manifestPath}: ${reason}\nDid you run the package build for ${packageSubPath}?`
+    );
   }
 }
 

@@ -20,7 +20,9 @@ export async function expectButtonToBeDisabled(
   const target = button === 'up' ? upButtonIn(wrapper) : downButtonIn(wrapper);
   await target.waitFor({ state: 'attached', timeout });
   if (!(await target.isDisabled())) {
-    throw new Error(`Expected "${button}" button to be disabled for "${testId}", but it is enabled.`);
+    throw new Error(
+      `Expected "${button}" button to be disabled for "${testId}", but it is enabled.`
+    );
   }
 }
 
@@ -37,6 +39,8 @@ export async function expectButtonToBeEnabled(
   const target = button === 'up' ? upButtonIn(wrapper) : downButtonIn(wrapper);
   await target.waitFor({ state: 'attached', timeout });
   if (await target.isDisabled()) {
-    throw new Error(`Expected "${button}" button to be enabled for "${testId}", but it is disabled.`);
+    throw new Error(
+      `Expected "${button}" button to be enabled for "${testId}", but it is disabled.`
+    );
   }
 }

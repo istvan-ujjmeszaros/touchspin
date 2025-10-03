@@ -16,10 +16,8 @@ export const inputById = (page: Page, testId: string): Locator =>
 export const wrapperById = (page: Page, testId: string): Locator =>
   page.getByTestId(`${testId}-wrapper`);
 
-export const injected = (
-  wrapper: Locator,
-  role: InjectedRole
-): Locator => wrapper.locator(`[data-touchspin-injected="${role}"]`).first();
+export const injected = (wrapper: Locator, role: InjectedRole): Locator =>
+  wrapper.locator(`[data-touchspin-injected="${role}"]`).first();
 
 export const upButtonIn = (wrapper: Locator): Locator => injected(wrapper, 'up');
 export const downButtonIn = (wrapper: Locator): Locator => injected(wrapper, 'down');

@@ -26,10 +26,7 @@
         "main_file": "tmp/jquery.bootstrap-touchspin.legacy.js",
         "size_lines": 873,
         "pattern": "Self-contained jQuery plugin with UMD wrapper",
-        "dependencies": [
-          "jQuery",
-          "Bootstrap CSS framework"
-        ],
+        "dependencies": ["jQuery", "Bootstrap CSS framework"],
         "build_output": "Single concatenated/minified file"
       },
       "architectural_patterns": [
@@ -75,9 +72,7 @@
       "public_api": {
         "initialization": {
           "method": "$(selector).TouchSpin(options)",
-          "parameters": [
-            "options: TouchSpinOptions"
-          ]
+          "parameters": ["options: TouchSpinOptions"]
         },
         "interaction": {
           "type": "Callable events only",
@@ -109,11 +104,7 @@
         "main_file": "src/jquery.bootstrap-touchspin.js",
         "size_lines": 1502,
         "pattern": "Self-contained jQuery plugin with renderer abstraction",
-        "dependencies": [
-          "jQuery",
-          "Bootstrap CSS framework",
-          "RendererFactory"
-        ],
+        "dependencies": ["jQuery", "Bootstrap CSS framework", "RendererFactory"],
         "build_output": "dist/jquery.bootstrap-touchspin.js"
       },
       "architectural_patterns": [
@@ -162,9 +153,7 @@
       "public_api": {
         "initialization": {
           "method": "$(selector).TouchSpin(options)",
-          "parameters": [
-            "options: TouchSpinOptions"
-          ]
+          "parameters": ["options: TouchSpinOptions"]
         },
         "commands": {
           "destroy": "Cleanup and restore original input",
@@ -193,28 +182,15 @@
         "packages": {
           "core": {
             "path": "packages/core/src/",
-            "files": [
-              "index.js",
-              "AbstractRenderer.js",
-              "renderer-interface.js"
-            ],
+            "files": ["index.js", "AbstractRenderer.js", "renderer-interface.js"],
             "description": "Framework-agnostic core logic",
-            "exports": [
-              "TouchSpinCore",
-              "TouchSpin",
-              "getTouchSpin",
-              "CORE_EVENTS"
-            ]
+            "exports": ["TouchSpinCore", "TouchSpin", "getTouchSpin", "CORE_EVENTS"]
           },
           "jquery-plugin": {
             "path": "packages/jquery-plugin/src/",
-            "files": [
-              "index.js"
-            ],
+            "files": ["index.js"],
             "description": "jQuery wrapper that bridges to core",
-            "exports": [
-              "installJqueryTouchSpin"
-            ]
+            "exports": ["installJqueryTouchSpin"]
           },
           "renderers": {
             "bootstrap3": "packages/renderers/bootstrap3/src/",
@@ -363,21 +339,14 @@
             ]
           }
         ],
-        "exports": [
-          "TouchSpin",
-          "getTouchSpin",
-          "CORE_EVENTS"
-        ]
+        "exports": ["TouchSpin", "getTouchSpin", "CORE_EVENTS"]
       },
       {
         "id": "wrapper",
         "name": "jQuery Wrapper",
         "file": "packages/jquery-plugin/src/index.js",
         "type": "adapter",
-        "publicApi": [
-          "installJqueryTouchSpin($)",
-          "$(...).TouchSpin(options|command)"
-        ],
+        "publicApi": ["installJqueryTouchSpin($)", "$(...).TouchSpin(options|command)"],
         "bridges": {
           "commands": {
             "destroy": "api.destroy()",
@@ -475,22 +444,9 @@
       "stopdownspin"
     ],
     "valueFlow": {
-      "formatting": [
-        "callback_before_calculation",
-        "decimals",
-        "callback_after_calculation"
-      ],
-      "constraints": [
-        "min",
-        "max",
-        "step",
-        "forcestepdivisibility"
-      ],
-      "booster": [
-        "booster",
-        "boostat",
-        "maxboostedstep"
-      ]
+      "formatting": ["callback_before_calculation", "decimals", "callback_after_calculation"],
+      "constraints": ["min", "max", "step", "forcestepdivisibility"],
+      "booster": ["booster", "boostat", "maxboostedstep"]
     }
   }
 }

@@ -8,6 +8,3 @@ declare global {
     TailwindRenderer: typeof TailwindRenderer;
   }
 }
-
-export {};
-

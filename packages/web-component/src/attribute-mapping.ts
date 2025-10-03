@@ -28,7 +28,7 @@ export function attributeToSetting(attrName: string): string {
     'mouse-wheel': 'mousewheel',
     'init-val': 'initval',
     'replacement-val': 'replacementval',
-    'focusable-buttons': 'focusablebuttons'
+    'focusable-buttons': 'focusablebuttons',
   } as const satisfies Record<string, string>;
 
   return (mapping as Record<string, string>)[attrName] || attrName;
@@ -46,9 +46,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
   if (value === '') return true; // Boolean attributes present without value
 
   // Boolean settings
-  const booleanSettings = [
-    'verticalbuttons', 'mousewheel', 'booster', 'focusablebuttons'
-  ] as const;
+  const booleanSettings = ['verticalbuttons', 'mousewheel', 'booster', 'focusablebuttons'] as const;
 
   if ((booleanSettings as readonly string[]).includes(settingName)) {
     return value === 'true' || value === '';
@@ -56,8 +54,15 @@ export function parseAttributeValue(value: string | null, settingName: string): 
 
   // Number settings
   const numberSettings = [
-    'min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay',
-    'boostat', 'maxboostedstep', 'firstclickvalueifempty'
+    'min',
+    'max',
+    'step',
+    'decimals',
+    'stepinterval',
+    'stepintervaldelay',
+    'boostat',
+    'maxboostedstep',
+    'firstclickvalueifempty',
   ] as const;
 
   if ((numberSettings as readonly string[]).includes(settingName)) {
@@ -119,5 +124,5 @@ export const OBSERVED_ATTRIBUTES = [
   'step-interval-delay',
   'booster',
   'boost-at',
-  'max-boosted-step'
- ] as const;
+  'max-boosted-step',
+] as const;

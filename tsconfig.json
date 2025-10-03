@@ -24,7 +24,7 @@
     "dist",
     "reports",
     "tmp",
-    
+
     "**/playwright*.config.*",
     "**/types/**",
     "**/tests/**",

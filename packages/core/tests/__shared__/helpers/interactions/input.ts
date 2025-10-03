@@ -52,9 +52,7 @@ export async function fillWithValueAndBlur(
   try {
     await page.waitForFunction(
       ({ testId, before }) => {
-        const el = document.querySelector(
-          `[data-testid="${testId}"]`
-        ) as HTMLInputElement | null;
+        const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
         return !!el && el.value !== before;
       },
       { testId, before },
@@ -79,10 +77,13 @@ export async function setValueSilentlyAndBlur(
   const input = inputById(page, testId);
   if ((await input.count()) === 0) throw new Error(`Input not found for "${testId}".`);
   await input.focus();
-  await page.evaluate(({ testId, value }) => {
-    const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-    if (el) el.value = value;
-  }, { testId, value });
+  await page.evaluate(
+    ({ testId, value }) => {
+      const el = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+      if (el) el.value = value;
+    },
+    { testId, value }
+  );
   await page.keyboard.press('Tab');
 }
 

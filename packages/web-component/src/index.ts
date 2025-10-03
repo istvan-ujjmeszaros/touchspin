@@ -14,7 +14,12 @@ if (!customElements.get('touchspin-input')) {
 export { TouchSpinInput };
 
 // Export utilities for advanced usage
-export { getSettingsFromAttributes, attributeToSetting, parseAttributeValue, OBSERVED_ATTRIBUTES } from './attribute-mapping.js';
+export {
+  getSettingsFromAttributes,
+  attributeToSetting,
+  parseAttributeValue,
+  OBSERVED_ATTRIBUTES,
+} from './attribute-mapping.js';
 export { bridgeEvents, EVENT_NAME_MAP, getAvailableEvents } from './event-bridge.js';
 
 // Default export for convenience

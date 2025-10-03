@@ -34,10 +34,13 @@ export default defineConfig({
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['html', {
-      outputFolder: 'reports/playwright'
-    }],
-    ['list']
+    [
+      'html',
+      {
+        outputFolder: 'reports/playwright',
+      },
+    ],
+    ['list'],
   ],
 
   /* Configure output directories */
@@ -65,7 +68,7 @@ export default defineConfig({
   /* Global timeout */
   timeout: 15000,
   expect: {
-    timeout: 3000
+    timeout: 3000,
   },
 
   /* Configure projects for major browsers */
@@ -91,10 +94,10 @@ export default defineConfig({
           args: [
             '--force-prefers-reduced-motion',
             '--disable-web-security',
-            '--disable-features=IsolateOrigins,site-per-process'
-          ]
-        }
-      }
+            '--disable-features=IsolateOrigins,site-per-process',
+          ],
+        },
+      },
     },
 
     // Uncomment to test other browsers

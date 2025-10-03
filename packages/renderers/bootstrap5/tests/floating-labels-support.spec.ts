@@ -14,7 +14,8 @@ import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/co
 
 // Bootstrap 5 Renderer URL for tests
 const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
-const FLOATING_LABELS_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
+const FLOATING_LABELS_FIXTURE =
+  '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
 
 /**
  * Scenario: supports floating labels with TouchSpin initialization and all interaction methods
@@ -24,7 +25,9 @@ const FLOATING_LABELS_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/f
  * And accessibility attributes are maintained
  * And visual positioning is correct
  */
-test.skip('supports floating labels with TouchSpin initialization and all interaction methods', async ({ page }) => {
+test.skip('supports floating labels with TouchSpin initialization and all interaction methods', async ({
+  page,
+}) => {
   await page.goto(FLOATING_LABELS_FIXTURE);
   await installDomHelpers(page);
 
@@ -176,5 +179,4 @@ test.skip('supports floating labels with TouchSpin initialization and all intera
   const groupLabelFinal = page.getByRole('label', { name: 'Price' });
   await expect(groupLabelFinal).toBeVisible();
   await expect(groupLabelFinal).toHaveText('Price');
-
 });

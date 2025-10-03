@@ -32,10 +32,7 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import {
-  initializeTouchspin,
-  getCoreNumericValue
-} from '../../test-helpers/core-adapter';
+import { initializeTouchspin, getCoreNumericValue } from '../../test-helpers/core-adapter';
 
 test.describe('Core boundary enforcement and validation', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,7 +56,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('clamps value to maximum on blur when exceeding max', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 1, initval: 5
+      min: 0,
+      max: 10,
+      step: 1,
+      initval: 5,
     });
 
     // Type value above maximum and blur
@@ -80,7 +80,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('clamps value to minimum on blur when below min', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 5, max: 20, step: 1, initval: 10
+      min: 5,
+      max: 20,
+      step: 1,
+      initval: 10,
     });
 
     // Type value below minimum and blur
@@ -101,7 +104,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('prevents increment beyond maximum value', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 1, initval: 10
+      min: 0,
+      max: 10,
+      step: 1,
+      initval: 10,
     });
 
     // Try to increment beyond maximum
@@ -122,7 +128,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('prevents decrement below minimum value', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 5, max: 20, step: 1, initval: 5
+      min: 5,
+      max: 20,
+      step: 1,
+      initval: 5,
     });
 
     // Try to decrement below minimum
@@ -143,7 +152,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('allows increment up to exact maximum value', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 1, initval: 9
+      min: 0,
+      max: 10,
+      step: 1,
+      initval: 9,
     });
 
     // Increment to maximum
@@ -164,7 +176,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('allows decrement down to exact minimum value', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 5, max: 20, step: 1, initval: 6
+      min: 5,
+      max: 20,
+      step: 1,
+      initval: 6,
     });
 
     // Decrement to minimum
@@ -185,7 +200,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles boundary updates dynamically via updateSettings', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 20, step: 1, initval: 15
+      min: 0,
+      max: 20,
+      step: 1,
+      initval: 15,
     });
 
     // Update boundaries
@@ -206,7 +224,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('clamps current value when max is reduced dynamically', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 20, step: 1, initval: 18
+      min: 0,
+      max: 20,
+      step: 1,
+      initval: 18,
     });
 
     // Reduce maximum below current value
@@ -227,7 +248,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('adjusts current value when min is increased dynamically', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 20, step: 1, initval: 3
+      min: 0,
+      max: 20,
+      step: 1,
+      initval: 3,
     });
 
     // Increase minimum above current value
@@ -248,7 +272,11 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles decimal boundaries correctly', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 1.5, max: 8.7, step: 0.1, decimals: 1, initval: 5.0
+      min: 1.5,
+      max: 8.7,
+      step: 0.1,
+      decimals: 1,
+      initval: 5.0,
     });
 
     // Try to go beyond decimal boundaries
@@ -271,7 +299,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('enforces boundaries with negative ranges', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: -10, max: -2, step: 1, initval: -5
+      min: -10,
+      max: -2,
+      step: 1,
+      initval: -5,
     });
 
     // Test negative boundary enforcement
@@ -294,7 +325,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles edge case where min equals max', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 5, max: 5, step: 1, initval: 5
+      min: 5,
+      max: 5,
+      step: 1,
+      initval: 5,
     });
 
     // Should not allow any increment/decrement
@@ -317,7 +351,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('preserves value when within new boundaries after update', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 20, step: 1, initval: 10
+      min: 0,
+      max: 20,
+      step: 1,
+      initval: 10,
     });
 
     // Update boundaries but keep current value within range
@@ -338,7 +375,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('emits appropriate events when clamping occurs', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 1, initval: 5
+      min: 0,
+      max: 10,
+      step: 1,
+      initval: 5,
     });
 
     await apiHelpers.clearEventLog(page);
@@ -360,7 +400,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles boundary enforcement with step constraints', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 2, max: 10, step: 3, initval: 6
+      min: 2,
+      max: 10,
+      step: 3,
+      initval: 6,
     });
 
     // Try to set value that would require clamping to boundary
@@ -381,7 +424,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('preserves value when within boundaries after settings update', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 3, initval: 3
+      min: 0,
+      max: 10,
+      step: 3,
+      initval: 3,
     });
 
     // Update max boundary but keep current value within range
@@ -402,7 +448,11 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles floating point precision in boundary checks', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0.1, max: 0.9, step: 0.1, decimals: 1, initval: 0.5
+      min: 0.1,
+      max: 0.9,
+      step: 0.1,
+      decimals: 1,
+      initval: 0.5,
     });
 
     // Test precision with small decimal values
@@ -425,7 +475,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('enforces boundaries on programmatic setValue calls', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 10, max: 20, step: 1, initval: 15
+      min: 10,
+      max: 20,
+      step: 1,
+      initval: 15,
     });
 
     // Programmatic setValue should enforce boundaries
@@ -448,7 +501,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles boundary edge cases with very large numbers', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 1000000, max: 9999999, step: 1, initval: 5000000
+      min: 1000000,
+      max: 9999999,
+      step: 1,
+      initval: 5000000,
     });
 
     // Test with large numbers
@@ -471,7 +527,10 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('maintains boundary integrity during rapid operations', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 5, step: 1, initval: 3
+      min: 0,
+      max: 5,
+      step: 1,
+      initval: 3,
     });
 
     // Rapid increments should not exceed boundary
@@ -497,7 +556,10 @@ test.describe('Core boundary enforcement and validation', () => {
 
     // Initialize with value outside boundaries
     await initializeTouchspin(page, 'test-input2', {
-      min: 10, max: 20, step: 1, initval: 25
+      min: 10,
+      max: 20,
+      step: 1,
+      initval: 25,
     });
 
     // Should clamp initial value to boundaries
@@ -515,7 +577,11 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('handles zero-width ranges correctly', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 7.5, max: 7.5, step: 0.1, decimals: 1, initval: 7.5
+      min: 7.5,
+      max: 7.5,
+      step: 0.1,
+      decimals: 1,
+      initval: 7.5,
     });
 
     // Any operation should maintain the fixed value
@@ -538,19 +604,25 @@ test.describe('Core boundary enforcement and validation', () => {
    */
   test('callback_before_calculation values respect boundary enforcement', async ({ page }) => {
     await initializeTouchspin(page, 'test-input', {
-      min: 0, max: 10, step: 1, initval: 5
+      min: 0,
+      max: 10,
+      step: 1,
+      initval: 5,
     });
 
     // Set callback after initialization via page evaluation
-    await page.evaluate(({ testId }) => {
-      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-      const core = (input as any)._touchSpinCore;
-      if (core) {
-        core.updateSettings({
-          callback_before_calculation: () => '15' // Return value outside boundaries
-        });
-      }
-    }, { testId: 'test-input' });
+    await page.evaluate(
+      ({ testId }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+        const core = (input as any)._touchSpinCore;
+        if (core) {
+          core.updateSettings({
+            callback_before_calculation: () => '15', // Return value outside boundaries
+          });
+        }
+      },
+      { testId: 'test-input' }
+    );
 
     // Increment with callback that returns value outside boundaries
     await apiHelpers.incrementViaAPI(page, 'test-input');

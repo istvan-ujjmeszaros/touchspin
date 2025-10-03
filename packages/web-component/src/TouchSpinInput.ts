@@ -5,7 +5,12 @@
 
 import { TouchSpin, getTouchSpin } from '@touchspin/core';
 import { VanillaRenderer } from '@touchspin/renderer-vanilla';
-import { getSettingsFromAttributes, OBSERVED_ATTRIBUTES, attributeToSetting, parseAttributeValue } from './attribute-mapping.js';
+import {
+  getSettingsFromAttributes,
+  OBSERVED_ATTRIBUTES,
+  attributeToSetting,
+  parseAttributeValue,
+} from './attribute-mapping.js';
 import { bridgeEvents } from './event-bridge.js';
 
 /**
@@ -103,7 +108,8 @@ export class TouchSpinInput extends HTMLElement {
    */
   _initialize(): void {
     // Find or create input element
-    this._input = (this.querySelector('input[type="number"]') || this.querySelector('input')) as HTMLInputElement | null;
+    this._input = (this.querySelector('input[type="number"]') ||
+      this.querySelector('input')) as HTMLInputElement | null;
 
     if (!this._input) {
       this._input = document.createElement('input');
@@ -125,7 +131,10 @@ export class TouchSpinInput extends HTMLElement {
     this._applyInputAttributes();
 
     // Initialize TouchSpin
-    this._touchspin = TouchSpin(this._input, settings as unknown as import('@touchspin/core').TouchSpinCoreOptions);
+    this._touchspin = TouchSpin(
+      this._input,
+      settings as unknown as import('@touchspin/core').TouchSpinCoreOptions
+    );
 
     // Bridge events
     if (this._touchspin) {
@@ -210,7 +219,7 @@ export class TouchSpinInput extends HTMLElement {
    */
   _cleanup(): void {
     // Cleanup event bridge
-    this._eventUnsubscribers.forEach(unsubscribe => unsubscribe());
+    this._eventUnsubscribers.forEach((unsubscribe) => unsubscribe());
     this._eventUnsubscribers = [];
 
     // Destroy TouchSpin instance
@@ -226,7 +235,7 @@ export class TouchSpinInput extends HTMLElement {
    * Get/set current value
    */
   get value(): string | number {
-    return this._touchspin ? this._touchspin.getValue() : (this._input ? this._input.value : '');
+    return this._touchspin ? this._touchspin.getValue() : this._input ? this._input.value : '';
   }
 
   set value(val: string | number) {
@@ -241,7 +250,8 @@ export class TouchSpinInput extends HTMLElement {
   }
 
   set min(val: string | number | null) {
-    if (val === null) this.removeAttribute('min'); else this.setAttribute('min', String(val));
+    if (val === null) this.removeAttribute('min');
+    else this.setAttribute('min', String(val));
   }
 
   /**
@@ -252,7 +262,8 @@ export class TouchSpinInput extends HTMLElement {
   }
 
   set max(val: string | number | null) {
-    if (val === null) this.removeAttribute('max'); else this.setAttribute('max', String(val));
+    if (val === null) this.removeAttribute('max');
+    else this.setAttribute('max', String(val));
   }
 
   /**
@@ -263,7 +274,8 @@ export class TouchSpinInput extends HTMLElement {
   }
 
   set step(val: string | number | null) {
-    if (val === null) this.removeAttribute('step'); else this.setAttribute('step', String(val));
+    if (val === null) this.removeAttribute('step');
+    else this.setAttribute('step', String(val));
   }
 
   /**

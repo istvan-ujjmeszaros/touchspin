@@ -8,16 +8,20 @@ const port = process.env.PORT ? Number(process.env.PORT) : 8866;
 const server = http.createServer(async (req, res) => {
   try {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
-    let fsPath = path.join(root, url);
+    const fsPath = path.join(root, url);
     const st = await stat(fsPath).catch(() => null);
     if (!st) {
-      res.statusCode = 404; res.end('Not found'); return;
+      res.statusCode = 404;
+      res.end('Not found');
+      return;
     }
     if (st.isDirectory()) {
       // Minimal index for directories
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-store');
-      res.end(`<!doctype html><meta charset=\"utf-8\"><title>Index</title><h1>Index of ${url}</h1>`);
+      res.end(
+        `<!doctype html><meta charset="utf-8"><title>Index</title><h1>Index of ${url}</h1>`
+      );
       return;
     }
     // Basic content-type guessing
@@ -33,7 +37,8 @@ const server = http.createServer(async (req, res) => {
     const buf = await readFile(fsPath);
     res.end(buf);
   } catch (err) {
-    res.statusCode = 500; res.end(String(err));
+    res.statusCode = 500;
+    res.end(String(err));
   }
 });
 

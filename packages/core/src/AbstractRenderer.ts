@@ -12,16 +12,17 @@ type RendererOptionDefinition =
 export type RendererOptionDef = RendererOptionDefinition;
 export type RendererOptionSchema = Readonly<Record<string, RendererOptionDefinition>>;
 
-type RendererOptionValue<Definition extends RendererOptionDefinition> =
-  Definition extends { kind: 'string' }
-    ? string | undefined
-    : Definition extends { kind: 'boolean' }
+type RendererOptionValue<Definition extends RendererOptionDefinition> = Definition extends {
+  kind: 'string';
+}
+  ? string | undefined
+  : Definition extends { kind: 'boolean' }
     ? boolean | undefined
     : Definition extends { kind: 'number' }
-    ? number | undefined
-    : Definition extends { kind: 'enum'; values: readonly (infer Option)[] }
-    ? Option | undefined
-    : unknown;
+      ? number | undefined
+      : Definition extends { kind: 'enum'; values: readonly (infer Option)[] }
+        ? Option | undefined
+        : unknown;
 
 export type InferOptionsFromSchema<Schema extends RendererOptionSchema> = {
   [Key in keyof Schema]: RendererOptionValue<Schema[Key]>;
@@ -107,7 +108,7 @@ abstract class AbstractRenderer implements Renderer {
     const filteredSettings: Record<string, unknown> = {};
 
     for (const key in schema) {
-      if (Object.prototype.hasOwnProperty.call(sourceSettings, key)) {
+      if (Object.hasOwn(sourceSettings, key)) {
         filteredSettings[key] = sourceSettings[key];
       }
     }

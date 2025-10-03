@@ -1,5 +1,8 @@
 import { test as base } from '@playwright/test';
-import { startCoverage, collectCoverage } from './packages/core/tests/__shared__/helpers/test-utilities/coverage';
+import {
+  startCoverage,
+  collectCoverage,
+} from './packages/core/tests/__shared__/helpers/test-utilities/coverage';
 
 /**
  * Global test fixture that automatically handles coverage collection

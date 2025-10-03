@@ -14,21 +14,7 @@
     "bootstrap": ">=3.0.0"
   },
   "license": "MIT",
-  "main": [
-    "src/jquery.bootstrap-touchspin.css",
-    "src/jquery.bootstrap-touchspin.js"
-  ],
-  "keywords": [
-    "jquery",
-    "plugin",
-    "bootstrap",
-    "ui"
-  ],
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+  "main": ["src/jquery.bootstrap-touchspin.css", "src/jquery.bootstrap-touchspin.js"],
+  "keywords": ["jquery", "plugin", "bootstrap", "ui"],
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"]
 }

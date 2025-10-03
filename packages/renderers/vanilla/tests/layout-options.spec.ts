@@ -52,7 +52,10 @@ test('creates horizontal layout by default', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input');
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   await expect(wrapper).toBeVisible();
   await expect(upButton).toBeVisible();
@@ -80,8 +83,7 @@ test('creates horizontal layout by default', async ({ page }) => {
       upLeft: upRect.left,
       downLeft: downRect.left,
       horizontalAlignment:
-        Math.abs(inputRect.top - upRect.top) < 10 &&
-        Math.abs(inputRect.top - downRect.top) < 10
+        Math.abs(inputRect.top - upRect.top) < 10 && Math.abs(inputRect.top - downRect.top) < 10,
     };
   });
 
@@ -108,7 +110,10 @@ test('creates vertical layout when specified', async ({ page }) => {
     initval: 0,
   });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   await expect(wrapper).toBeVisible();
   await expect(upButton).toBeVisible();
@@ -124,7 +129,7 @@ test('creates vertical layout when specified', async ({ page }) => {
       return {
         upBelowInput: false,
         downBelowUp: false,
-        verticalAlignment: false
+        verticalAlignment: false,
       };
     }
 
@@ -138,7 +143,7 @@ test('creates vertical layout when specified', async ({ page }) => {
       downTop: downRect.top,
       upBelowInput: upRect.top > inputRect.bottom - 5,
       downBelowUp: downRect.top > upRect.bottom - 5,
-      verticalAlignment: Math.abs(upRect.left - downRect.left) < 10
+      verticalAlignment: Math.abs(upRect.left - downRect.left) < 10,
     };
   });
 
@@ -165,10 +170,13 @@ test('handles layout switching dynamically', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     initval: 25,
-    verticalbuttons: false // Start with horizontal
+    verticalbuttons: false, // Start with horizontal
   });
 
-  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Verify horizontal layout initially
   const initialLayout = await page.evaluate(() => {
@@ -183,7 +191,8 @@ test('handles layout switching dynamically', async ({ page }) => {
     const downRect = downBtn.getBoundingClientRect();
 
     return {
-      isHorizontal: Math.abs(inputRect.top - upRect.top) < 10 && Math.abs(inputRect.top - downRect.top) < 10
+      isHorizontal:
+        Math.abs(inputRect.top - upRect.top) < 10 && Math.abs(inputRect.top - downRect.top) < 10,
     };
   });
 
@@ -203,7 +212,7 @@ test('handles layout switching dynamically', async ({ page }) => {
   // For now, verify that re-initialization preserves value
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     initval: 26, // Keep same value
-    verticalbuttons: true // Switch to vertical
+    verticalbuttons: true, // Switch to vertical
   });
 
   // Verify functionality still works after layout change concept
@@ -228,13 +237,16 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: false, // Horizontal layout
-    initval: 0
+    initval: 0,
   });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check that wrapper has horizontal-related classes
-  const wrapperClasses = await wrapper.getAttribute('class') || '';
+  const wrapperClasses = (await wrapper.getAttribute('class')) || '';
 
   // Should have touchspin wrapper class
   expect(wrapperClasses).toMatch(/touchspin|wrapper/i);
@@ -243,8 +255,8 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
   expect(wrapperClasses).not.toMatch(/vertical/i);
 
   // Buttons should have appropriate classes for horizontal layout
-  const upClasses = await upButton.getAttribute('class') || '';
-  const downClasses = await downButton.getAttribute('class') || '';
+  const upClasses = (await upButton.getAttribute('class')) || '';
+  const downClasses = (await downButton.getAttribute('class')) || '';
 
   // Should have button-related classes
   expect(upClasses).toMatch(/button|btn|up/i);
@@ -265,9 +277,10 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
     const downRect = down.getBoundingClientRect();
 
     return {
-      isHorizontalLayout: Math.abs(inputRect.top - upRect.top) < 15 && Math.abs(inputRect.top - downRect.top) < 15,
+      isHorizontalLayout:
+        Math.abs(inputRect.top - upRect.top) < 15 && Math.abs(inputRect.top - downRect.top) < 15,
       wrapperDisplay: wrapperStyle.display,
-      buttonsOnSameLine: Math.abs(upRect.top - downRect.top) < 15
+      buttonsOnSameLine: Math.abs(upRect.top - downRect.top) < 15,
     };
   });
 
@@ -295,20 +308,23 @@ test('applies correct classes for vertical layout', async ({ page }) => {
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true, // Vertical layout
-    initval: 0
+    initval: 0,
   });
 
-  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const { wrapper, upButton, downButton } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check that wrapper has appropriate classes
-  const wrapperClasses = await wrapper.getAttribute('class') || '';
+  const wrapperClasses = (await wrapper.getAttribute('class')) || '';
 
   // Should have touchspin wrapper class
   expect(wrapperClasses).toMatch(/touchspin|wrapper/i);
 
   // Buttons should have appropriate classes
-  const upClasses = await upButton.getAttribute('class') || '';
-  const downClasses = await downButton.getAttribute('class') || '';
+  const upClasses = (await upButton.getAttribute('class')) || '';
+  const downClasses = (await downButton.getAttribute('class')) || '';
 
   expect(upClasses).toMatch(/button|btn|up/i);
   expect(downClasses).toMatch(/button|btn|down/i);
@@ -330,7 +346,7 @@ test('applies correct classes for vertical layout', async ({ page }) => {
       buttonsStackedVertically: Math.abs(upRect.top - downRect.top) > 10, // Should be vertically separated
       inputPosition: inputRect.left,
       upPosition: upRect.left,
-      downPosition: downRect.left
+      downPosition: downRect.left,
     };
   });
 
@@ -385,7 +401,7 @@ test('positions buttons correctly in vertical mode', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -417,7 +433,7 @@ test('handles prefix/postfix with horizontal layout', async ({ page }) => {
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -447,7 +463,7 @@ test('handles prefix/postfix with vertical layout', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -475,7 +491,7 @@ test('maintains proper spacing in layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -522,7 +538,7 @@ test('handles container constraints gracefully', async ({ page }) => {
 
   // Test vertical layout in constrained container
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -543,14 +559,14 @@ test('supports custom layout modifications', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'custom-up-btn',
-    verticaldownclass: 'custom-down-btn'
+    verticaldownclass: 'custom-down-btn',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Verify custom classes are applied
-  const upClasses = await elements.upButton.getAttribute('class') || '';
-  const downClasses = await elements.downButton.getAttribute('class') || '';
+  const upClasses = (await elements.upButton.getAttribute('class')) || '';
+  const downClasses = (await elements.downButton.getAttribute('class')) || '';
 
   expect(upClasses).toContain('custom-up-btn');
   expect(downClasses).toContain('custom-down-btn');
@@ -607,7 +623,6 @@ test('maintains accessibility in both layouts', async ({ page }) => {
   // Load vanilla CSS for proper layout
   await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
-
   // Test horizontal layout accessibility
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: false,
@@ -617,7 +632,10 @@ test('maintains accessibility in both layouts', async ({ page }) => {
     focusablebuttons: true,
   });
 
-  let { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  let { wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  );
 
   // Check ARIA attributes in horizontal layout
   await expect(input).toHaveAttribute('role', 'spinbutton');
@@ -645,7 +663,10 @@ test('maintains accessibility in both layouts', async ({ page }) => {
     focusablebuttons: true,
   });
 
-  ({ wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(page, 'test-input'));
+  ({ wrapper, upButton, downButton, input } = await apiHelpers.getTouchSpinElements(
+    page,
+    'test-input'
+  ));
 
   // Check ARIA attributes are preserved in vertical layout
   await expect(input).toHaveAttribute('role', 'spinbutton');
@@ -670,12 +691,16 @@ test('maintains accessibility in both layouts', async ({ page }) => {
   // Verify no accessibility conflicts between layouts
   const accessibilityCheck = await page.evaluate(() => {
     const input = document.querySelector('[data-testid="test-input"]') as HTMLElement;
-    const buttons = document.querySelectorAll('[data-testid*="test-input"][data-testid*="button"], [data-testid*="test-input-up"], [data-testid*="test-input-down"]');
+    const buttons = document.querySelectorAll(
+      '[data-testid*="test-input"][data-testid*="button"], [data-testid*="test-input-up"], [data-testid*="test-input-down"]'
+    );
 
     return {
       inputHasRole: input.hasAttribute('role'),
-      allButtonsHaveLabels: Array.from(buttons).every(btn => btn.hasAttribute('aria-label')),
-      noHiddenElements: Array.from(buttons).every(btn => btn.getAttribute('aria-hidden') !== 'true')
+      allButtonsHaveLabels: Array.from(buttons).every((btn) => btn.hasAttribute('aria-label')),
+      noHiddenElements: Array.from(buttons).every(
+        (btn) => btn.getAttribute('aria-hidden') !== 'true'
+      ),
     };
   });
 
@@ -700,11 +725,11 @@ test('optimizes performance for layout changes', async ({ page }) => {
   // Perform multiple layout switches rapidly
   for (let i = 0; i < 5; i++) {
     await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-      verticalbuttons: true
+      verticalbuttons: true,
     });
 
     await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-      verticalbuttons: false
+      verticalbuttons: false,
     });
   }
 
@@ -725,7 +750,7 @@ test('handles edge cases in layout switching', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    initval: 75
+    initval: 75,
   });
 
   // Verify initial value and horizontal layout functionality
@@ -735,7 +760,7 @@ test('handles edge cases in layout switching', async ({ page }) => {
 
   // Change to vertical layout and verify state is preserved
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.expectValueToBe(page, 'test-input', '76');
@@ -744,7 +769,7 @@ test('handles edge cases in layout switching', async ({ page }) => {
 
   // Switch back to horizontal layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   await apiHelpers.expectValueToBe(page, 'test-input', '77');
@@ -767,12 +792,12 @@ test('supports CSS customization per layout', async ({ page }) => {
   // Test horizontal layout with custom classes
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     buttonup_class: 'custom-h-up',
-    buttondown_class: 'custom-h-down'
+    buttondown_class: 'custom-h-down',
   });
 
   const horizontalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  const hUpClasses = await horizontalElements.upButton.getAttribute('class') || '';
-  const hDownClasses = await horizontalElements.downButton.getAttribute('class') || '';
+  const hUpClasses = (await horizontalElements.upButton.getAttribute('class')) || '';
+  const hDownClasses = (await horizontalElements.downButton.getAttribute('class')) || '';
 
   expect(hUpClasses).toContain('custom-h-up');
   expect(hDownClasses).toContain('custom-h-down');
@@ -784,12 +809,12 @@ test('supports CSS customization per layout', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'custom-v-up',
-    verticaldownclass: 'custom-v-down'
+    verticaldownclass: 'custom-v-down',
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  const vUpClasses = await verticalElements.upButton.getAttribute('class') || '';
-  const vDownClasses = await verticalElements.downButton.getAttribute('class') || '';
+  const vUpClasses = (await verticalElements.upButton.getAttribute('class')) || '';
+  const vDownClasses = (await verticalElements.downButton.getAttribute('class')) || '';
 
   expect(vUpClasses).toContain('custom-v-up');
   expect(vDownClasses).toContain('custom-v-down');
@@ -825,7 +850,7 @@ test('maintains proper tab order in layouts', async ({ page }) => {
 
   // Switch to vertical layout and verify tab order is maintained
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -850,7 +875,7 @@ test('handles focus management across layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    focusablebuttons: true
+    focusablebuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -865,7 +890,7 @@ test('handles focus management across layouts', async ({ page }) => {
   // Switch to vertical layout and test focus management
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
-    focusablebuttons: true
+    focusablebuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -895,7 +920,7 @@ test('supports keyboard navigation in both modes', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     min: 0,
     max: 100,
-    initval: 50
+    initval: 50,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -910,7 +935,7 @@ test('supports keyboard navigation in both modes', async ({ page }) => {
 
   // Switch to vertical layout and test keyboard navigation
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -964,7 +989,7 @@ test('handles dynamic content in layouts', async ({ page }) => {
 
   // Switch to vertical layout and test with dynamic content
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -998,7 +1023,7 @@ test('maintains semantic structure across layouts', async ({ page }) => {
 
   // Switch to vertical layout and verify semantic structure is preserved
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -1031,7 +1056,7 @@ test('handles browser compatibility for layouts', async ({ page }) => {
 
   // Switch to vertical layout and verify functionality
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -1077,7 +1102,7 @@ test('supports layout inheritance patterns', async ({ page }) => {
 
   // Test vertical layout with inheritance
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -1115,7 +1140,7 @@ test('handles nested layout scenarios', async ({ page }) => {
 
   // Test vertical layout in nested scenario
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'test-input');

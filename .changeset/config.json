@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.3.1/schema.json",
-  "changelog": ["@changesets/changelog-git", {"repo": "istvan-ujjmeszaros/bootstrap-touchspin"}],
+  "changelog": ["@changesets/changelog-git", { "repo": "istvan-ujjmeszaros/bootstrap-touchspin" }],
   "commit": false,
   "access": "public",
   "baseBranch": "main",

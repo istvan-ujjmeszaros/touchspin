@@ -17,45 +17,45 @@ const projectRoot = join(__dirname, '..');
 
 // Framework configuration for asset extraction
 const frameworkConfigs = {
-  'bootstrap3': {
+  bootstrap3: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap3',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
       'dist/css/bootstrap-theme.min.css': 'css/bootstrap-theme.min.css',
-      'dist/js/bootstrap.min.js': 'js/bootstrap.min.js'
-    }
+      'dist/js/bootstrap.min.js': 'js/bootstrap.min.js',
+    },
   },
-  'bootstrap4': {
+  bootstrap4: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap4',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
-      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js'
-    }
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
   },
-  'bootstrap5': {
+  bootstrap5: {
     dependency: 'bootstrap',
     packagePath: 'packages/renderers/bootstrap5',
     files: {
       'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
-      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js'
-    }
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
   },
-  'tailwind': {
+  tailwind: {
     dependency: 'tailwindcss',
     packagePath: 'packages/renderers/tailwind',
     files: {
-      'https://cdn.tailwindcss.com': 'js/tailwind.js'
-    }
+      'https://cdn.tailwindcss.com': 'js/tailwind.js',
+    },
   },
-  'jquery': {
+  jquery: {
     dependency: 'jquery',
     packagePath: 'packages/jquery-plugin',
     files: {
-      'https://code.jquery.com/jquery-3.7.1.min.js': 'js/jquery.min.js'
-    }
-  }
+      'https://code.jquery.com/jquery-3.7.1.min.js': 'js/jquery.min.js',
+    },
+  },
 };
 
 /**
@@ -126,7 +126,10 @@ async function extractAssets(rendererName) {
       } else {
         // Use Yarn exec to read the file through PnP
         const command = `yarn exec node -e "const fs = require('fs'); const path = require('path'); const framework = path.dirname(require.resolve('${config.dependency}/package.json')); const content = fs.readFileSync(path.join(framework, '${sourcePath}')); process.stdout.write(content);"`;
-        content = execSync(command, { encoding: 'buffer', cwd: join(projectRoot, config.packagePath) });
+        content = execSync(command, {
+          encoding: 'buffer',
+          cwd: join(projectRoot, config.packagePath),
+        });
       }
 
       writeFileSync(targetFile, content);
@@ -137,7 +140,9 @@ async function extractAssets(rendererName) {
     }
   }
 
-  console.log(`📦 ${rendererName}: Copied ${copiedCount}/${Object.keys(config.files).length} assets\n`);
+  console.log(
+    `📦 ${rendererName}: Copied ${copiedCount}/${Object.keys(config.files).length} assets\n`
+  );
   return copiedCount > 0;
 }
 
@@ -181,7 +186,9 @@ async function main() {
         successCount++;
       }
     }
-    console.log(`🎯 Completed: ${successCount}/${Object.keys(frameworkConfigs).length} renderers processed successfully`);
+    console.log(
+      `🎯 Completed: ${successCount}/${Object.keys(frameworkConfigs).length} renderers processed successfully`
+    );
   } else {
     console.log('Usage: --renderer <name> or --all');
     console.log('Available renderers:', Object.keys(frameworkConfigs).join(', '));

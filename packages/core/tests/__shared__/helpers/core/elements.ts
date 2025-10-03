@@ -40,7 +40,11 @@ export async function expectTouchSpinDestroyed(page: Page, testId: string): Prom
 }
 
 /** Wait until the input is marked as injected by TouchSpin. */
-export async function waitForTouchspinInitialized(page: Page, testId: string, timeout = 5000): Promise<void> {
+export async function waitForTouchspinInitialized(
+  page: Page,
+  testId: string,
+  timeout = 5000
+): Promise<void> {
   const selector = [
     `[data-testid="${testId}-wrapper"][data-touchspin-injected]`,
     `[data-testid="${testId}"][data-touchspin-injected]`,

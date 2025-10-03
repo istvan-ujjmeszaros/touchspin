@@ -52,7 +52,7 @@ test('updates button text dynamically', async ({ page }) => {
   // Update button text settings
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_txt: '↑',
-    buttondown_txt: '↓'
+    buttondown_txt: '↓',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -81,7 +81,7 @@ test('updates button classes dynamically', async ({ page }) => {
   // Update button classes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'custom-up-btn',
-    buttondown_class: 'custom-down-btn'
+    buttondown_class: 'custom-down-btn',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -106,13 +106,13 @@ test('updates button classes dynamically', async ({ page }) => {
 test('updates prefix content dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    prefix: '$'
+    prefix: '$',
   });
 
   // Update prefix content
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     prefix: '€',
-    prefix_extraclass: 'euro-currency'
+    prefix_extraclass: 'euro-currency',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -137,13 +137,13 @@ test('updates prefix content dynamically', async ({ page }) => {
 test('updates postfix content dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   // Update postfix content
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     postfix: 'EUR',
-    postfix_extraclass: 'euro-code'
+    postfix_extraclass: 'euro-code',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -171,16 +171,16 @@ test('handles prefix addition and removal', async ({ page }) => {
 
   // Add prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: '$'
+    prefix: '$',
   });
 
-  let elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
   await expect(elements.prefix).toBeVisible();
   await expect(elements.prefix).toHaveText('$');
 
   // Remove prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: ''
+    prefix: '',
   });
 
   // Verify functionality still works after changes
@@ -202,16 +202,16 @@ test('handles postfix addition and removal', async ({ page }) => {
 
   // Add postfix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    postfix: 'kg'
+    postfix: 'kg',
   });
 
-  let elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
   await expect(elements.postfix).toBeVisible();
   await expect(elements.postfix).toHaveText('kg');
 
   // Remove postfix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    postfix: ''
+    postfix: '',
   });
 
   // Verify functionality still works after changes
@@ -233,7 +233,7 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
 
   // Change to vertical layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works after layout change
@@ -242,7 +242,7 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
 
   // Change back to horizontal
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   await apiHelpers.clickDownButton(page, 'test-input');
@@ -310,7 +310,7 @@ test('handles multiple simultaneous updates', async ({ page }) => {
     prefix: '$',
     buttonup_txt: 'UP',
     verticalbuttons: true,
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -345,7 +345,7 @@ test('preserves input value during updates', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   // Verify value is preserved
@@ -372,7 +372,7 @@ test('maintains event listeners during updates', async ({ page }) => {
   // Update settings that cause DOM changes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'custom-up',
-    prefix: '$'
+    prefix: '$',
   });
 
   // Test that event listeners still work
@@ -397,7 +397,7 @@ test('handles empty to non-empty transitions', async ({ page }) => {
 
   // Add prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: '$'
+    prefix: '$',
   });
 
   // Verify prefix was created and inserted
@@ -407,7 +407,7 @@ test('handles empty to non-empty transitions', async ({ page }) => {
 
   // Add postfix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -431,17 +431,17 @@ test('handles non-empty to empty transitions', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
-    postfix: 'kg'
+    postfix: 'kg',
   });
 
   // Remove prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: ''
+    prefix: '',
   });
 
   // Remove postfix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    postfix: ''
+    postfix: '',
   });
 
   // Verify functionality still works
@@ -464,7 +464,7 @@ test('updates accessibility attributes dynamically', async ({ page }) => {
   // Apply updates that affect accessibility
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
-    focusablebuttons: false
+    focusablebuttons: false,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -496,7 +496,7 @@ test('handles rapid successive updates', async ({ page }) => {
   for (let i = 0; i < 3; i++) {
     await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
       buttonup_txt: `UP${i}`,
-      buttondown_txt: `DOWN${i}`
+      buttondown_txt: `DOWN${i}`,
     });
   }
 
@@ -526,7 +526,7 @@ test('maintains DOM references during updates', async ({ page }) => {
   // Apply non-structural update
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_txt: 'NEW_UP',
-    buttonup_class: 'custom-primary'
+    buttonup_class: 'custom-primary',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -556,7 +556,7 @@ test('handles conflicting setting combinations', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     buttonup_txt: 'UP',
-    verticalup: '▲'
+    verticalup: '▲',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -570,7 +570,7 @@ test('handles conflicting setting combinations', async ({ page }) => {
 
   // Switch back to horizontal and verify precedence changes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   // Now horizontal setting should apply
@@ -592,7 +592,7 @@ test('preserves testid attributes during updates', async ({ page }) => {
   // Apply updates that trigger DOM changes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
-    prefix: '$'
+    prefix: '$',
   });
 
   // Verify testid attributes preserved
@@ -621,7 +621,7 @@ test('handles update error scenarios gracefully', async ({ page }) => {
 
   // Try to apply potentially problematic settings (TouchSpin should handle gracefully)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    buttonup_class: 'custom-success'
+    buttonup_class: 'custom-success',
   });
 
   // Verify component still functions
@@ -630,7 +630,7 @@ test('handles update error scenarios gracefully', async ({ page }) => {
 
   // Apply more valid settings to verify recovery
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: '$'
+    prefix: '$',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -654,7 +654,7 @@ test('optimizes performance during updates', async ({ page }) => {
 
   for (let i = 0; i < 5; i++) {
     await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-      buttonup_txt: `UP-${i}`
+      buttonup_txt: `UP-${i}`,
     });
   }
 
@@ -684,13 +684,13 @@ test('optimizes performance during updates', async ({ page }) => {
 test('handles custom class updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'initial-up-class'
+    buttonup_class: 'initial-up-class',
   });
 
   // Update to new custom classes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'updated-up-class custom-btn',
-    buttondown_class: 'updated-down-class custom-btn'
+    buttondown_class: 'updated-down-class custom-btn',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -722,7 +722,7 @@ test('maintains browser compatibility during updates', async ({ page }) => {
     buttonup_txt: '↑',
     prefix: '$',
     verticalbuttons: true,
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -753,7 +753,7 @@ test('handles CSS variable updates', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'custom-styled-btn',
     prefix: '$',
-    prefix_extraclass: 'custom-prefix-style'
+    prefix_extraclass: 'custom-prefix-style',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -783,7 +783,7 @@ test('preserves semantic structure during updates', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -809,14 +809,14 @@ test('preserves semantic structure during updates', async ({ page }) => {
 test('handles animation-friendly updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'animated-btn'
+    buttonup_class: 'animated-btn',
   });
 
   // Apply updates that should not break animations
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_txt: '↑',
     buttondown_txt: '↓',
-    prefix: '$'
+    prefix: '$',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');

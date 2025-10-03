@@ -24,7 +24,7 @@
           "implementation": "$.fn.TouchSpin = function(options) { return this.each(...) }"
         },
         {
-          "pattern": "Closure-based State Management", 
+          "pattern": "Closure-based State Management",
           "description": "Simple closure variables with no advanced patterns",
           "implementation": "Local variables in plugin function closure"
         },
@@ -41,11 +41,18 @@
       ],
       "state_management": {
         "type": "Basic closure-based",
-        "scope": "Function-local variables only", 
+        "scope": "Function-local variables only",
         "persistence": "jQuery .data() API with simple flags",
         "variables": [
-          "settings", "originalinput", "container", "elements", "value",
-          "spinning", "spincount", "_detached_prefix", "_detached_postfix"
+          "settings",
+          "originalinput",
+          "container",
+          "elements",
+          "value",
+          "spinning",
+          "spincount",
+          "_detached_prefix",
+          "_detached_postfix"
         ],
         "identification": "Global _currentSpinnerId counter",
         "duplicate_prevention": "alreadyinitialized flag only"
@@ -59,8 +66,12 @@
           "type": "Callable events only",
           "description": "No command API - only triggerable events",
           "events": [
-            "touchspin.destroy", "touchspin.uponce", "touchspin.downonce",
-            "touchspin.startupspin", "touchspin.startdownspin", "touchspin.stopspin",
+            "touchspin.destroy",
+            "touchspin.uponce",
+            "touchspin.downonce",
+            "touchspin.startupspin",
+            "touchspin.startdownspin",
+            "touchspin.stopspin",
             "touchspin.updatesettings"
           ]
         },
@@ -101,7 +112,7 @@
           "implementation": "RendererFactory.createRenderer() method"
         },
         {
-          "pattern": "Command API Pattern", 
+          "pattern": "Command API Pattern",
           "description": "Programmatic method calls via plugin",
           "implementation": "$(selector).TouchSpin('methodName', args)"
         }
@@ -111,8 +122,15 @@
         "scope": "Function-local variables with WeakMap backup",
         "persistence": "jQuery .data() API + WeakMap fallback",
         "variables": [
-          "settings", "value", "spinning", "spincount", "elements",
-          "container", "renderer", "_detached_prefix", "_detached_postfix"
+          "settings",
+          "value",
+          "spinning",
+          "spincount",
+          "elements",
+          "container",
+          "renderer",
+          "_detached_prefix",
+          "_detached_postfix"
         ],
         "features": {
           "weakmap_storage": true,
@@ -127,7 +145,7 @@
         },
         "commands": {
           "destroy": "Cleanup and restore original input",
-          "uponce": "Increment value once", 
+          "uponce": "Increment value once",
           "downonce": "Decrement value once",
           "startupspin": "Start continuous increment",
           "startdownspin": "Start continuous decrement",
@@ -146,7 +164,7 @@
       }
     },
     "new": {
-      "name": "Modular Multi-Package Architecture", 
+      "name": "Modular Multi-Package Architecture",
       "description": "Complete architectural rewrite with framework-agnostic core and separate renderer packages",
       "file_structure": {
         "packages": {
@@ -210,8 +228,14 @@
         "persistence": "Element property with WeakMap fallback",
         "key": "_touchSpinCore",
         "properties": [
-          "input", "settings", "spinning", "spincount", "direction",
-          "_events", "_teardownCallbacks", "_settingObservers"
+          "input",
+          "settings",
+          "spinning",
+          "spincount",
+          "direction",
+          "_events",
+          "_teardownCallbacks",
+          "_settingObservers"
         ],
         "features": {
           "framework_agnostic": true,
@@ -226,8 +250,17 @@
           "jquery": "$(selector).TouchSpin(options)"
         },
         "methods": [
-          "upOnce", "downOnce", "startUpSpin", "startDownSpin", "stopSpin",
-          "updateSettings", "getValue", "setValue", "destroy", "on", "off"
+          "upOnce",
+          "downOnce",
+          "startUpSpin",
+          "startDownSpin",
+          "stopSpin",
+          "updateSettings",
+          "getValue",
+          "setValue",
+          "destroy",
+          "on",
+          "off"
         ],
         "features": {
           "framework_independence": true,
@@ -264,7 +297,7 @@
         "compatibility": "Event timing and behavior preserved across all versions"
       },
       "startDownSpin": {
-        "legacy": "startDownSpin() - internal function, called via trigger('touchspin.startdownspin')", 
+        "legacy": "startDownSpin() - internal function, called via trigger('touchspin.startdownspin')",
         "in_between": "startDownSpin() - internal function, accessible via command API",
         "new": "TouchSpinCore.startDownSpin() - public method",
         "evolution": "trigger → command API → direct method call",
@@ -274,7 +307,7 @@
         "legacy": "stopSpin() - internal function, called via trigger('touchspin.stopspin')",
         "in_between": "stopSpin() - internal function, accessible via command API",
         "new": "TouchSpinCore.stopSpin() - public method",
-        "evolution": "trigger → command API → direct method call", 
+        "evolution": "trigger → command API → direct method call",
         "compatibility": "Event order and cleanup logic preserved"
       },
       "updateSettings": {
@@ -345,7 +378,7 @@
         "replacement": "Constructor renderer option"
       },
       {
-        "method": "_hideEmptyPrefixPostfix", 
+        "method": "_hideEmptyPrefixPostfix",
         "reason": "Delegated to renderer implementation",
         "replacement": "Renderer.hideEmptyPrefixPostfix()"
       },
@@ -362,7 +395,7 @@
         "purpose": "Framework-agnostic event handling"
       },
       {
-        "method": "observeSetting", 
+        "method": "observeSetting",
         "description": "Observer pattern for setting changes",
         "purpose": "Renderer notification of setting updates"
       },
@@ -388,7 +421,7 @@
       "external": [
         {
           "name": "jQuery",
-          "version": ">=1.9", 
+          "version": ">=1.9",
           "usage": "Core dependency for all DOM manipulation and events",
           "scope": "global",
           "mandatory": true
@@ -413,7 +446,7 @@
         {
           "name": "jQuery",
           "version": ">=1.9",
-          "usage": "Core dependency for DOM manipulation and events", 
+          "usage": "Core dependency for DOM manipulation and events",
           "scope": "global",
           "mandatory": true
         },
@@ -448,7 +481,7 @@
           "mandatory": false
         },
         {
-          "name": "Bootstrap CSS", 
+          "name": "Bootstrap CSS",
           "version": "3.x/4.x/5.x",
           "usage": "Optional - only required for Bootstrap renderer packages",
           "scope": "renderer packages only",
@@ -462,7 +495,7 @@
           "dependents": ["jquery-plugin", "all renderers"]
         },
         {
-          "name": "AbstractRenderer", 
+          "name": "AbstractRenderer",
           "description": "Base class for all renderer implementations",
           "location": "packages/core/src/AbstractRenderer.js"
         }
@@ -492,13 +525,22 @@
     "legacy": {
       "pattern": "Simple jQuery trigger-based system",
       "notification_events": [
-        "touchspin.on.min", "touchspin.on.max", "touchspin.on.startspin",
-        "touchspin.on.stopspin", "touchspin.on.startupspin", "touchspin.on.startdownspin",
-        "touchspin.on.stopupspin", "touchspin.on.stopdownspin"
+        "touchspin.on.min",
+        "touchspin.on.max",
+        "touchspin.on.startspin",
+        "touchspin.on.stopspin",
+        "touchspin.on.startupspin",
+        "touchspin.on.startdownspin",
+        "touchspin.on.stopupspin",
+        "touchspin.on.stopdownspin"
       ],
       "callable_events": [
-        "touchspin.destroy", "touchspin.uponce", "touchspin.downonce",
-        "touchspin.startupspin", "touchspin.startdownspin", "touchspin.stopspin",
+        "touchspin.destroy",
+        "touchspin.uponce",
+        "touchspin.downonce",
+        "touchspin.startupspin",
+        "touchspin.startdownspin",
+        "touchspin.stopspin",
         "touchspin.updatesettings"
       ],
       "flow": "DOM Events → jQuery Events → Internal Functions",
@@ -511,18 +553,29 @@
     "in_between": {
       "pattern": "jQuery event system with command API",
       "notification_events": [
-        "touchspin.on.min", "touchspin.on.max", "touchspin.on.startspin",
-        "touchspin.on.stopspin", "touchspin.on.startupspin", "touchspin.on.startdownspin",
-        "touchspin.on.stopupspin", "touchspin.on.stopdownspin"
+        "touchspin.on.min",
+        "touchspin.on.max",
+        "touchspin.on.startspin",
+        "touchspin.on.stopspin",
+        "touchspin.on.startupspin",
+        "touchspin.on.startdownspin",
+        "touchspin.on.stopupspin",
+        "touchspin.on.stopdownspin"
       ],
       "callable_events": [
-        "touchspin.destroy", "touchspin.uponce", "touchspin.downonce",
-        "touchspin.startupspin", "touchspin.startdownspin", "touchspin.stopspin",
+        "touchspin.destroy",
+        "touchspin.uponce",
+        "touchspin.downonce",
+        "touchspin.startupspin",
+        "touchspin.startdownspin",
+        "touchspin.stopspin",
         "touchspin.updatesettings"
       ],
       "command_api": [
-        "$(selector).TouchSpin('destroy')", "$(selector).TouchSpin('uponce')",
-        "$(selector).TouchSpin('downonce')", "$(selector).TouchSpin('getvalue')",
+        "$(selector).TouchSpin('destroy')",
+        "$(selector).TouchSpin('uponce')",
+        "$(selector).TouchSpin('downonce')",
+        "$(selector).TouchSpin('getvalue')",
         "$(selector).TouchSpin('setvalue', v)"
       ],
       "flow": "DOM Events → jQuery Events → Internal Functions (via trigger OR command API)",
@@ -535,8 +588,14 @@
     "new": {
       "pattern": "Observer pattern with framework-agnostic event system",
       "core_events": [
-        "min", "max", "startspin", "stopspin",
-        "startupspin", "startdownspin", "stopupspin", "stopdownspin"
+        "min",
+        "max",
+        "startspin",
+        "stopspin",
+        "startupspin",
+        "startdownspin",
+        "stopupspin",
+        "stopdownspin"
       ],
       "flow": "DOM Events → Core Events → Wrapper Events (if applicable)",
       "bridging": {
@@ -544,7 +603,7 @@
         "native": "Core events available directly via on/off methods"
       },
       "characteristics": {
-        "api_style": "direct method calls + framework-agnostic events", 
+        "api_style": "direct method calls + framework-agnostic events",
         "command_api": "replaced by direct method calls",
         "event_abstraction": "framework-agnostic with optional jQuery bridge"
       }
@@ -572,7 +631,7 @@
       }
     },
     "new": {
-      "input_processing": "DOM value → callback_before_calculation → parsing → constraint application → callback_after_calculation → DOM display", 
+      "input_processing": "DOM value → callback_before_calculation → parsing → constraint application → callback_after_calculation → DOM display",
       "state_storage": "TouchSpinCore instance properties",
       "settings_flow": "defaults → data attributes → options parameter → sanitization → observer notifications",
       "characteristics": {
@@ -588,7 +647,7 @@
         "description": "Configuration interface for jQuery plugin",
         "properties": {
           "min": "number|null - Minimum value",
-          "max": "number|null - Maximum value", 
+          "max": "number|null - Maximum value",
           "step": "number - Increment/decrement amount",
           "decimals": "number - Decimal places to display",
           "initval": "string - Initial value if input empty",
@@ -614,7 +673,7 @@
         "properties": {
           "min": "number|null - Minimum value",
           "max": "number|null - Maximum value",
-          "step": "number - Step amount", 
+          "step": "number - Step amount",
           "decimals": "number - Decimal precision",
           "renderer": "Function - Renderer class constructor",
           "callback_before_calculation": "TouchSpinCalcCallback",
@@ -625,7 +684,7 @@
         "description": "Public API interface returned by toPublicApi()",
         "methods": {
           "upOnce": "() => void - Increment once",
-          "downOnce": "() => void - Decrement once", 
+          "downOnce": "() => void - Decrement once",
           "startUpSpin": "() => void - Start continuous increment",
           "startDownSpin": "() => void - Start continuous decrement",
           "stopSpin": "() => void - Stop spinning",
@@ -718,8 +777,18 @@
     },
     "benefits_by_stage": {
       "legacy": ["Simple, working jQuery plugin", "Basic TouchSpin functionality"],
-      "in_between": ["Bootstrap version flexibility", "Enhanced validation", "Command API convenience"],
-      "new": ["Framework agnostic core", "Tree-shakable modules", "Pluggable renderer system", "Reduced bundle size for non-jQuery users", "Better testability and maintainability"]
+      "in_between": [
+        "Bootstrap version flexibility",
+        "Enhanced validation",
+        "Command API convenience"
+      ],
+      "new": [
+        "Framework agnostic core",
+        "Tree-shakable modules",
+        "Pluggable renderer system",
+        "Reduced bundle size for non-jQuery users",
+        "Better testability and maintainability"
+      ]
     }
   }
 }

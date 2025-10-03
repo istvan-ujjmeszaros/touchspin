@@ -27,70 +27,91 @@ export async function setValueViaAPI(
   testId: string,
   value: number | string
 ): Promise<void> {
-  await page.evaluate(({ testId, value }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.setValue(value);
-  }, { testId, value });
+  await page.evaluate(
+    ({ testId, value }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.setValue(value);
+    },
+    { testId, value }
+  );
 }
 
 /**
  * When I destroy the TouchSpin instance on "{testId}"
  */
 export async function destroyCore(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.destroy();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.destroy();
+    },
+    { testId }
+  );
 }
 
 /**
  * When I increment "{testId}" via API
  */
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.upOnce();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.upOnce();
+    },
+    { testId }
+  );
 }
 
 /**
  * When I decrement "{testId}" via API
  */
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.downOnce();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.downOnce();
+    },
+    { testId }
+  );
 }
 
 /**
  * When I start up spin on "{testId}" via API
  */
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.startUpSpin();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.startUpSpin();
+    },
+    { testId }
+  );
 }
 
 /**
  * When I start down spin on "{testId}" via API
  */
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.startDownSpin();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.startDownSpin();
+    },
+    { testId }
+  );
 }
 
 /**
  * When I stop spin on "{testId}" via API
  */
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
-  await page.evaluate(({ testId }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.stopSpin();
-  }, { testId });
+  await page.evaluate(
+    ({ testId }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.stopSpin();
+    },
+    { testId }
+  );
 }
 
 /**
@@ -101,19 +122,28 @@ export async function updateSettingsViaAPI(
   testId: string,
   newSettings: Partial<TouchSpinCoreOptions>
 ): Promise<void> {
-  await page.evaluate(({ testId, newSettings }) => {
-    const core = window.__ts!.requireCoreByTestId(testId);
-    core.updateSettings(newSettings);
-  }, { testId, newSettings });
+  await page.evaluate(
+    ({ testId, newSettings }) => {
+      const core = window.__ts!.requireCoreByTestId(testId);
+      core.updateSettings(newSettings);
+    },
+    { testId, newSettings }
+  );
 }
 
 /**
  * When I get the public API for "{testId}"
  */
-export async function getPublicAPI(page: Page, testId: string): Promise<TouchSpinCorePublicAPI | null> {
-  return page.evaluate(({ testId }) => {
-    return window.__ts!.requireCoreByTestId(testId);
-  }, { testId });
+export async function getPublicAPI(
+  page: Page,
+  testId: string
+): Promise<TouchSpinCorePublicAPI | null> {
+  return page.evaluate(
+    ({ testId }) => {
+      return window.__ts!.requireCoreByTestId(testId);
+    },
+    { testId }
+  );
 }
 
 /**
@@ -123,12 +153,15 @@ export async function getAppliedSettings(
   page: Page,
   testId: string
 ): Promise<TouchSpinCoreOptions> {
-  return page.evaluate(({ testId }) => {
-    const input = window.__ts!.requireInputByTestId(testId) as HTMLInputElement & {
-      _touchSpinCore?: { settings: TouchSpinCoreOptions };
-    };
-    const core = input._touchSpinCore;
-    if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
-    return JSON.parse(JSON.stringify(core.settings)) as TouchSpinCoreOptions;
-  }, { testId });
+  return page.evaluate(
+    ({ testId }) => {
+      const input = window.__ts!.requireInputByTestId(testId) as HTMLInputElement & {
+        _touchSpinCore?: { settings: TouchSpinCoreOptions };
+      };
+      const core = input._touchSpinCore;
+      if (!core) throw new Error(`TouchSpinCore not found for "${testId}"`);
+      return JSON.parse(JSON.stringify(core.settings)) as TouchSpinCoreOptions;
+    },
+    { testId }
+  );
 }

@@ -12,7 +12,10 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
+import {
+  universalRendererSuite,
+  bootstrapSharedSuite,
+} from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
 
 // Bootstrap 4 Renderer URL for tests
@@ -38,7 +41,9 @@ test.describe('Bootstrap 4 specific behavior', () => {
    * When TouchSpin initializes with Bootstrap 4 renderer
    * Then wrapper contains input-group-prepend and input-group-append with buttons inside
    */
-  test('uses Bootstrap 4 input-group-append and input-group-prepend structure', async ({ page }) => {
+  test('uses Bootstrap 4 input-group-append and input-group-prepend structure', async ({
+    page,
+  }) => {
     await initializeTouchspinFromGlobals(page, 'test-input');
 
     const wrapper = page.getByTestId('test-input-wrapper');
@@ -85,7 +90,7 @@ test.describe('Bootstrap 4 specific behavior', () => {
   test('structures prefix and postfix within input-group-prepend/append', async ({ page }) => {
     await initializeTouchspinFromGlobals(page, 'test-input', {
       prefix: '$',
-      postfix: 'USD'
+      postfix: 'USD',
     });
 
     const wrapper = page.getByTestId('test-input-wrapper');

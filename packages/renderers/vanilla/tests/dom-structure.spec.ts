@@ -70,7 +70,7 @@ test.describe('Vanilla specific behavior', () => {
     const downClasses = await downButton.getAttribute('class');
 
     // Should avoid Bootstrap/framework classes but allow TouchSpin's semantic classes like ts-btn
-    expect(upClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/);  // Avoid standalone 'btn' but allow 'ts-btn'
+    expect(upClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/); // Avoid standalone 'btn' but allow 'ts-btn'
     expect(downClasses || '').not.toMatch(/(?:^|\s)btn(?:\s|$)|button-|input-group/);
   });
 
@@ -83,7 +83,7 @@ test.describe('Vanilla specific behavior', () => {
   test('maintains minimal DOM structure', async ({ page }) => {
     await initializeTouchSpin(page, 'test-input', {
       prefix: '$',
-      postfix: 'USD'
+      postfix: 'USD',
     });
 
     const wrapper = page.getByTestId('test-input-wrapper');
@@ -117,7 +117,7 @@ test.describe('Vanilla specific behavior', () => {
 
     await initializeTouchSpin(page, 'test-input', {
       buttonup_class: 'custom-up-btn',
-      buttondown_class: 'custom-down-btn'
+      buttondown_class: 'custom-down-btn',
     });
 
     const input = page.getByTestId('test-input');

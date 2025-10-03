@@ -4,7 +4,6 @@ const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').repla
 const DEFAULT_BASE = 'http://localhost:8866';
 const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
-
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/?(*.)+(spec|test).[jt]s?(x)',
@@ -15,10 +14,13 @@ export default defineConfig({
   maxFailures: process.env.CI ? 1 : undefined,
 
   reporter: [
-    ['html', {
-      outputFolder: '../../reports/playwright/jquery-plugin'
-    }],
-    ['list']
+    [
+      'html',
+      {
+        outputFolder: '../../reports/playwright/jquery-plugin',
+      },
+    ],
+    ['list'],
   ],
 
   outputDir: '../../reports/test-results/jquery-plugin',
@@ -34,7 +36,7 @@ export default defineConfig({
 
   timeout: 15000,
   expect: {
-    timeout: 3000
+    timeout: 3000,
   },
 
   projects: [

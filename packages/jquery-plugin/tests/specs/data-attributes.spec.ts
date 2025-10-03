@@ -50,16 +50,20 @@ test.describe('jQuery plugin data attributes', () => {
     await apiHelpers.collectCoverage(page, testInfo.title);
   });
 
-/**
- * Scenario: reads basic numeric settings from data attributes
- * Given the fixture page is loaded with numeric data attributes
- * When TouchSpin initializes
- * Then numeric settings are read correctly
- * Params:
- * { "dataAttributes": "data-bts-step='5' data-bts-min='0' data-bts-max='100'", "expectedSettings": { "step": 5, "min": 0, "max": 100 } }
- */
+  /**
+   * Scenario: reads basic numeric settings from data attributes
+   * Given the fixture page is loaded with numeric data attributes
+   * When TouchSpin initializes
+   * Then numeric settings are read correctly
+   * Params:
+   * { "dataAttributes": "data-bts-step='5' data-bts-min='0' data-bts-max='100'", "expectedSettings": { "step": 5, "min": 0, "max": 100 } }
+   */
   test('reads basic numeric settings from data attributes', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-step': '5', 'data-bts-min': '0', 'data-bts-max': '100' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': '5',
+      'data-bts-min': '0',
+      'data-bts-max': '100',
+    });
     await initializeTouchspinJQuery(page, 'test-input');
     const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
     expect(settings.step).toBe(5);
@@ -67,16 +71,19 @@ test.describe('jQuery plugin data attributes', () => {
     expect(settings.max).toBe(100);
   });
 
-/**
- * Scenario: handles data-bts-min and data-bts-max attributes
- * Given the fixture page is loaded with boundary data attributes
- * When TouchSpin initializes
- * Then min and max boundaries are applied correctly
- * Params:
- * { "dataMin": "10", "dataMax": "50", "expectedBoundaries": { "min": 10, "max": 50 } }
- */
+  /**
+   * Scenario: handles data-bts-min and data-bts-max attributes
+   * Given the fixture page is loaded with boundary data attributes
+   * When TouchSpin initializes
+   * Then min and max boundaries are applied correctly
+   * Params:
+   * { "dataMin": "10", "dataMax": "50", "expectedBoundaries": { "min": 10, "max": 50 } }
+   */
   test('handles data-bts-min and data-bts-max attributes', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-min': '10', 'data-bts-max': '50' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-min': '10',
+      'data-bts-max': '50',
+    });
     await initializeTouchspinJQuery(page, 'test-input', { initval: 30 });
     await apiHelpers.setValueViaAPI(page, 'test-input', '5');
     await apiHelpers.expectValueToBe(page, 'test-input', '10');
@@ -84,76 +91,88 @@ test.describe('jQuery plugin data attributes', () => {
     await apiHelpers.expectValueToBe(page, 'test-input', '50');
   });
 
-/**
- * Scenario: processes data-bts-step attribute correctly
- * Given the fixture page is loaded with step data attribute
- * When TouchSpin initializes
- * Then step value is applied correctly
- * Params:
- * { "dataStep": "2.5", "dataDecimals": "1", "expectedStep": 2.5, "operation": "increment", "expectedIncrement": 2.5 }
- */
+  /**
+   * Scenario: processes data-bts-step attribute correctly
+   * Given the fixture page is loaded with step data attribute
+   * When TouchSpin initializes
+   * Then step value is applied correctly
+   * Params:
+   * { "dataStep": "2.5", "dataDecimals": "1", "expectedStep": 2.5, "operation": "increment", "expectedIncrement": 2.5 }
+   */
   test('processes data-bts-step attribute correctly', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-step': '2.5', 'data-bts-decimals': '1' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': '2.5',
+      'data-bts-decimals': '1',
+    });
     await initializeTouchspinJQuery(page, 'test-input', { initval: 5 });
     await apiHelpers.clickUpButton(page, 'test-input');
     await apiHelpers.expectValueToBe(page, 'test-input', '7.5');
   });
 
-/**
- * Scenario: supports data-bts-decimals precision setting
- * Given the fixture page is loaded with decimals data attribute
- * When TouchSpin initializes
- * Then decimal precision is applied correctly
- * Params:
- * { "dataDecimals": "2", "inputValue": "1.2345", "expectedDisplay": "1.23" }
- */
+  /**
+   * Scenario: supports data-bts-decimals precision setting
+   * Given the fixture page is loaded with decimals data attribute
+   * When TouchSpin initializes
+   * Then decimal precision is applied correctly
+   * Params:
+   * { "dataDecimals": "2", "inputValue": "1.2345", "expectedDisplay": "1.23" }
+   */
   test('supports data-bts-decimals precision setting', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-decimals': '2', 'data-bts-step': '0.0001' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-decimals': '2',
+      'data-bts-step': '0.0001',
+    });
     await initializeTouchspinJQuery(page, 'test-input');
     await apiHelpers.setValueViaAPI(page, 'test-input', '1.2345');
     await apiHelpers.expectValueToBe(page, 'test-input', '1.23');
   });
 
-/**
- * Scenario: handles data-bts-prefix and data-bts-postfix text
- * Given the fixture page is loaded with prefix/postfix data attributes
- * When TouchSpin initializes
- * Then prefix and postfix text are displayed correctly
- * Params:
- * { "dataPrefix": "$", "dataPostfix": "USD", "expectedDisplay": "$_input_USD" }
- */
+  /**
+   * Scenario: handles data-bts-prefix and data-bts-postfix text
+   * Given the fixture page is loaded with prefix/postfix data attributes
+   * When TouchSpin initializes
+   * Then prefix and postfix text are displayed correctly
+   * Params:
+   * { "dataPrefix": "$", "dataPostfix": "USD", "expectedDisplay": "$_input_USD" }
+   */
   test('handles data-bts-prefix and data-bts-postfix text', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-prefix': '$', 'data-bts-postfix': 'USD' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-prefix': '$',
+      'data-bts-postfix': 'USD',
+    });
     await initializeTouchspinJQuery(page, 'test-input');
     const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
     await expect(prefix).toHaveText('$');
     await expect(postfix).toHaveText('USD');
   });
 
-/**
- * Scenario: processes boolean data attributes correctly
- * Given the fixture page is loaded with boolean data attributes
- * When TouchSpin initializes
- * Then boolean values are interpreted correctly
- * Params:
- * { "booleanAttributes": ["data-bts-mousewheel='true'", "data-bts-vertical-buttons='false'"], "expectedValues": { "mousewheel": true, "verticalbuttons": false } }
- */
+  /**
+   * Scenario: processes boolean data attributes correctly
+   * Given the fixture page is loaded with boolean data attributes
+   * When TouchSpin initializes
+   * Then boolean values are interpreted correctly
+   * Params:
+   * { "booleanAttributes": ["data-bts-mousewheel='true'", "data-bts-vertical-buttons='false'"], "expectedValues": { "mousewheel": true, "verticalbuttons": false } }
+   */
   test('processes boolean data attributes correctly', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-mousewheel': 'true', 'data-bts-vertical-buttons': 'false' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-mousewheel': 'true',
+      'data-bts-vertical-buttons': 'false',
+    });
     await initializeTouchspinJQuery(page, 'test-input');
     const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
     expect(settings.mousewheel).toBe(true);
     expect(settings.verticalbuttons).toBe(false);
   });
 
-/**
- * Scenario: supports data-bts-vertical-buttons layout option
- * Given the fixture page is loaded with vertical buttons data attribute
- * When TouchSpin initializes
- * Then buttons are arranged vertically
- * Params:
- * { "dataVerticalbuttons": "true", "expectedLayout": "vertical_button_arrangement" }
- */
+  /**
+   * Scenario: supports data-bts-vertical-buttons layout option
+   * Given the fixture page is loaded with vertical buttons data attribute
+   * When TouchSpin initializes
+   * Then buttons are arranged vertically
+   * Params:
+   * { "dataVerticalbuttons": "true", "expectedLayout": "vertical_button_arrangement" }
+   */
   test('supports data-bts-vertical-buttons layout option', async ({ page }) => {
     await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-vertical-buttons': 'true' });
     await initializeTouchspinJQuery(page, 'test-input');
@@ -161,14 +180,14 @@ test.describe('jQuery plugin data attributes', () => {
     await expect(wrapper.locator('[data-touchspin-injected="vertical-wrapper"]')).toBeVisible();
   });
 
-/**
- * Scenario: handles data-bts-mousewheel enable/disable
- * Given the fixture page is loaded with mousewheel data attribute
- * When TouchSpin initializes
- * Then mousewheel behavior is configured correctly
- * Params:
- * { "dataMousewheel": "false", "expectedBehavior": "mousewheel_disabled" }
- */
+  /**
+   * Scenario: handles data-bts-mousewheel enable/disable
+   * Given the fixture page is loaded with mousewheel data attribute
+   * When TouchSpin initializes
+   * Then mousewheel behavior is configured correctly
+   * Params:
+   * { "dataMousewheel": "false", "expectedBehavior": "mousewheel_disabled" }
+   */
   test('handles data-bts-mousewheel enable/disable', async ({ page }) => {
     await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-mousewheel': 'false' });
     await initializeTouchspinJQuery(page, 'test-input', { initval: 10 });
@@ -176,14 +195,14 @@ test.describe('jQuery plugin data attributes', () => {
     await apiHelpers.expectValueToBe(page, 'test-input', '10');
   });
 
-/**
- * Scenario: processes data-bts-init-val initial value
- * Given the fixture page is loaded with initial value data attribute
- * When TouchSpin initializes
- * Then the initial value is set correctly
- * Params:
- * { "dataInitval": "42", "expectedInitialValue": "42" }
- */
+  /**
+   * Scenario: processes data-bts-init-val initial value
+   * Given the fixture page is loaded with initial value data attribute
+   * When TouchSpin initializes
+   * Then the initial value is set correctly
+   * Params:
+   * { "dataInitval": "42", "expectedInitialValue": "42" }
+   */
   test('processes data-bts-init-val initial value', async ({ page }) => {
     await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-init-val': '42' });
     await page.evaluate(() => {
@@ -194,16 +213,19 @@ test.describe('jQuery plugin data attributes', () => {
     await apiHelpers.expectValueToBe(page, 'test-input', '42');
   });
 
-/**
- * Scenario: supports data-bts-forcestepdivisibility options
- * Given the fixture page is loaded with step divisibility data attribute
- * When TouchSpin initializes
- * Then step divisibility is enforced correctly
- * Params:
- * { "dataForcestepdivisibility": "round", "inputValue": "8", "step": 3, "expectedValue": "9" }
- */
+  /**
+   * Scenario: supports data-bts-forcestepdivisibility options
+   * Given the fixture page is loaded with step divisibility data attribute
+   * When TouchSpin initializes
+   * Then step divisibility is enforced correctly
+   * Params:
+   * { "dataForcestepdivisibility": "round", "inputValue": "8", "step": 3, "expectedValue": "9" }
+   */
   test('supports data-bts-forcestepdivisibility options', async ({ page }) => {
-    await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-force-step-divisibility': 'round', 'data-bts-step': '3' });
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-force-step-divisibility': 'round',
+      'data-bts-step': '3',
+    });
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement | null;
       if (input) input.value = '8';
@@ -212,46 +234,46 @@ test.describe('jQuery plugin data attributes', () => {
     await apiHelpers.expectValueToBe(page, 'test-input', '9');
   });
 
-/**
- * Scenario: handles complex data attribute values
- * Given the fixture page is loaded with complex data values
- * When TouchSpin initializes
- * Then complex values are parsed correctly
- * Params:
- * { "complexData": "data-callback='function(val) { return val * 2; }'", "expectedBehavior": "callback_function_parsed" }
- */
-test('handles complex data attribute values', async ({ page }) => {
-  // Test with decimal numbers, negative values, and long strings
-  await apiHelpers.setDataAttributes(page, 'test-input', {
-    'data-bts-step': '0.25',
-    'data-bts-min': '-10.5',
-    'data-bts-max': '999.99',
-    'data-bts-decimals': '2',
-    'data-bts-prefix': 'Value: ',
-    'data-bts-postfix': ' (complex units)'
+  /**
+   * Scenario: handles complex data attribute values
+   * Given the fixture page is loaded with complex data values
+   * When TouchSpin initializes
+   * Then complex values are parsed correctly
+   * Params:
+   * { "complexData": "data-callback='function(val) { return val * 2; }'", "expectedBehavior": "callback_function_parsed" }
+   */
+  test('handles complex data attribute values', async ({ page }) => {
+    // Test with decimal numbers, negative values, and long strings
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': '0.25',
+      'data-bts-min': '-10.5',
+      'data-bts-max': '999.99',
+      'data-bts-decimals': '2',
+      'data-bts-prefix': 'Value: ',
+      'data-bts-postfix': ' (complex units)',
+    });
+    await initializeTouchspinJQuery(page, 'test-input', { initval: 5 });
+
+    const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
+    expect(settings.step).toBe(0.25);
+    expect(settings.min).toBe(-10.5);
+    expect(settings.max).toBe(999.99);
+    expect(settings.decimals).toBe(2);
+
+    const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+    await expect(prefix).toHaveText('Value: ');
+    await expect(postfix).toHaveText(' (complex units)');
   });
-  await initializeTouchspinJQuery(page, 'test-input', { initval: 5 });
 
-  const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
-  expect(settings.step).toBe(0.25);
-  expect(settings.min).toBe(-10.5);
-  expect(settings.max).toBe(999.99);
-  expect(settings.decimals).toBe(2);
-
-  const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  await expect(prefix).toHaveText('Value: ');
-  await expect(postfix).toHaveText(' (complex units)');
-});
-
-/**
- * Scenario: processes JSON-formatted data attributes
- * Given the fixture page is loaded with JSON data attributes
- * When TouchSpin initializes
- * Then JSON values are parsed correctly
- * Params:
- * { "jsonData": "data-settings='{\"min\": 0, \"max\": 100, \"step\": 5}'", "expectedSettings": { "min": 0, "max": 100, "step": 5 } }
- */
-test('processes JSON-formatted data attributes', async ({ page }) => {
+  /**
+   * Scenario: processes JSON-formatted data attributes
+   * Given the fixture page is loaded with JSON data attributes
+   * When TouchSpin initializes
+   * Then JSON values are parsed correctly
+   * Params:
+   * { "jsonData": "data-settings='{\"min\": 0, \"max\": 100, \"step\": 5}'", "expectedSettings": { "min": 0, "max": 100, "step": 5 } }
+   */
+  test('processes JSON-formatted data attributes', async ({ page }) => {
     // Create input with JSON-formatted data attribute
     await apiHelpers.createAdditionalInput(page, 'json-input', { value: '10' });
 
@@ -285,88 +307,91 @@ test('processes JSON-formatted data attributes', async ({ page }) => {
     expect(hasJsonSupport).toBeDefined();
   });
 
-/**
- * Scenario: handles kebab-case data attributes correctly
- * Given the fixture page is loaded with kebab-case data attributes
- * When TouchSpin initializes
- * Then kebab-case attributes are recognized and applied
- * Params:
- * { "attributes": ["data-bts-mouse-wheel", "data-bts-vertical-buttons", "data-bts-step-interval"], "expectedBehavior": "all_recognized" }
- */
-test('handles kebab-case data attributes correctly', async ({ page }) => {
-  // Test that kebab-case attributes from the mapping work correctly
-  await apiHelpers.setDataAttributes(page, 'test-input', {
-    'data-bts-mouse-wheel': 'true',        // maps to mousewheel
-    'data-bts-vertical-buttons': 'true',   // maps to verticalbuttons
-    'data-bts-step-interval': '100',       // maps to stepinterval
-    'data-bts-max-boosted-step': '10',     // maps to maxboostedstep
-    'data-bts-force-step-divisibility': 'round'  // maps to forcestepdivisibility
+  /**
+   * Scenario: handles kebab-case data attributes correctly
+   * Given the fixture page is loaded with kebab-case data attributes
+   * When TouchSpin initializes
+   * Then kebab-case attributes are recognized and applied
+   * Params:
+   * { "attributes": ["data-bts-mouse-wheel", "data-bts-vertical-buttons", "data-bts-step-interval"], "expectedBehavior": "all_recognized" }
+   */
+  test('handles kebab-case data attributes correctly', async ({ page }) => {
+    // Test that kebab-case attributes from the mapping work correctly
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-mouse-wheel': 'true', // maps to mousewheel
+      'data-bts-vertical-buttons': 'true', // maps to verticalbuttons
+      'data-bts-step-interval': '100', // maps to stepinterval
+      'data-bts-max-boosted-step': '10', // maps to maxboostedstep
+      'data-bts-force-step-divisibility': 'round', // maps to forcestepdivisibility
+    });
+    await initializeTouchspinJQuery(page, 'test-input', { initval: 10 });
+
+    const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
+    expect(settings.mousewheel).toBe(true);
+    expect(settings.verticalbuttons).toBe(true);
+    expect(settings.stepinterval).toBe(100);
+    expect(settings.maxboostedstep).toBe(10);
+    expect(settings.forcestepdivisibility).toBe('round');
   });
-  await initializeTouchspinJQuery(page, 'test-input', { initval: 10 });
 
-  const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
-  expect(settings.mousewheel).toBe(true);
-  expect(settings.verticalbuttons).toBe(true);
-  expect(settings.stepinterval).toBe(100);
-  expect(settings.maxboostedstep).toBe(10);
-  expect(settings.forcestepdivisibility).toBe('round');
-});
+  /**
+   * Scenario: handles data attribute precedence over options
+   * Given the fixture page is loaded with conflicting data attributes and options
+   * When TouchSpin initializes
+   * Then precedence rules are applied correctly
+   * Params:
+   * { "dataAttribute": "data-bts-step='5'", "optionValue": "step: 3", "expectedPrecedence": "data_attribute_wins" }
+   */
+  test('handles data attribute precedence over options', async ({ page }) => {
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': '5',
+      'data-bts-min': '10',
+    });
+    // Options should override data attributes (options take precedence)
+    await initializeTouchspinJQuery(page, 'test-input', { step: 3, min: 5, initval: 12 });
 
-/**
- * Scenario: handles data attribute precedence over options
- * Given the fixture page is loaded with conflicting data attributes and options
- * When TouchSpin initializes
- * Then precedence rules are applied correctly
- * Params:
- * { "dataAttribute": "data-bts-step='5'", "optionValue": "step: 3", "expectedPrecedence": "data_attribute_wins" }
- */
-test('handles data attribute precedence over options', async ({ page }) => {
-  await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-step': '5', 'data-bts-min': '10' });
-  // Options should override data attributes (options take precedence)
-  await initializeTouchspinJQuery(page, 'test-input', { step: 3, min: 5, initval: 12 });
-
-  const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
-  expect(settings.step).toBe(3); // Option value wins
-  expect(settings.min).toBe(5);  // Option value wins
-});
-
-/**
- * Scenario: validates data attribute values during initialization
- * Given the fixture page is loaded with invalid data attribute values
- * When TouchSpin initializes
- * Then validation occurs and invalid values are handled
- * Params:
- * { "invalidData": "data-bts-step='invalid' data-bts-min='abc'", "expectedBehavior": "use_defaults_for_invalid" }
- */
-test('validates data attribute values during initialization', async ({ page }) => {
-  await apiHelpers.setDataAttributes(page, 'test-input', {
-    'data-bts-step': 'invalid',
-    'data-bts-min': 'abc',
-    'data-bts-max': 'xyz',
-    'data-bts-decimals': 'notanumber'
+    const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
+    expect(settings.step).toBe(3); // Option value wins
+    expect(settings.min).toBe(5); // Option value wins
   });
-  await initializeTouchspinJQuery(page, 'test-input', { initval: 10 });
 
-  const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
-  // Invalid values should either fall back to defaults or be null/undefined but not cause crashes
-  expect(settings.step === null || typeof settings.step === 'number').toBe(true);
-  expect(settings.min === null || typeof settings.min === 'number').toBe(true);
-  expect(settings.max === null || typeof settings.max === 'number').toBe(true);
-  expect(settings.decimals === null || typeof settings.decimals === 'number').toBe(true);
+  /**
+   * Scenario: validates data attribute values during initialization
+   * Given the fixture page is loaded with invalid data attribute values
+   * When TouchSpin initializes
+   * Then validation occurs and invalid values are handled
+   * Params:
+   * { "invalidData": "data-bts-step='invalid' data-bts-min='abc'", "expectedBehavior": "use_defaults_for_invalid" }
+   */
+  test('validates data attribute values during initialization', async ({ page }) => {
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': 'invalid',
+      'data-bts-min': 'abc',
+      'data-bts-max': 'xyz',
+      'data-bts-decimals': 'notanumber',
+    });
+    await initializeTouchspinJQuery(page, 'test-input', { initval: 10 });
 
-  // The component should still function correctly despite invalid attributes
-  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
-});
+    const settings = await apiHelpers.getAppliedSettings(page, 'test-input');
+    // Invalid values should either fall back to defaults or be null/undefined but not cause crashes
+    expect(settings.step === null || typeof settings.step === 'number').toBe(true);
+    expect(settings.min === null || typeof settings.min === 'number').toBe(true);
+    expect(settings.max === null || typeof settings.max === 'number').toBe(true);
+    expect(settings.decimals === null || typeof settings.decimals === 'number').toBe(true);
 
-/**
- * Scenario: supports dynamic data attribute updates
- * Given the fixture page is loaded with initialized TouchSpin
- * When data attributes are changed dynamically
- * Then TouchSpin responds to the changes
- * Params:
- * { "dynamicUpdate": "change_data_step_from_1_to_5", "expectedBehavior": "configuration_updated" }
- */
-test('supports dynamic data attribute updates', async ({ page }) => {
+    // The component should still function correctly despite invalid attributes
+    await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+  });
+
+  /**
+   * Scenario: supports dynamic data attribute updates
+   * Given the fixture page is loaded with initialized TouchSpin
+   * When data attributes are changed dynamically
+   * Then TouchSpin responds to the changes
+   * Params:
+   * { "dynamicUpdate": "change_data_step_from_1_to_5", "expectedBehavior": "configuration_updated" }
+   */
+  test('supports dynamic data attribute updates', async ({ page }) => {
     // Initialize with initial data attributes
     await apiHelpers.setDataAttributes(page, 'test-input', { 'data-bts-step': '1' });
     await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20, initval: 10 });
@@ -400,67 +425,67 @@ test('supports dynamic data attribute updates', async ({ page }) => {
     expect(value).toBeGreaterThan(10); // Should have incremented
   });
 
-/**
- * Scenario: handles malformed data attribute values gracefully
- * Given the fixture page is loaded with malformed data attributes
- * When TouchSpin initializes
- * Then malformed values are handled gracefully
- * Params:
- * { "malformedData": ["data-bts-step=''", "data-bts-min='null'", "data-bts-max='undefined'"], "expectedBehavior": "graceful_fallback" }
- */
-test('handles malformed data attribute values gracefully', async ({ page }) => {
-  await apiHelpers.setDataAttributes(page, 'test-input', {
-    'data-bts-step': '',
-    'data-bts-min': 'null',
-    'data-bts-max': 'undefined',
-    'data-bts-decimals': ' ',
-    'data-bts-mousewheel': 'maybe'
+  /**
+   * Scenario: handles malformed data attribute values gracefully
+   * Given the fixture page is loaded with malformed data attributes
+   * When TouchSpin initializes
+   * Then malformed values are handled gracefully
+   * Params:
+   * { "malformedData": ["data-bts-step=''", "data-bts-min='null'", "data-bts-max='undefined'"], "expectedBehavior": "graceful_fallback" }
+   */
+  test('handles malformed data attribute values gracefully', async ({ page }) => {
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-step': '',
+      'data-bts-min': 'null',
+      'data-bts-max': 'undefined',
+      'data-bts-decimals': ' ',
+      'data-bts-mousewheel': 'maybe',
+    });
+    await initializeTouchspinJQuery(page, 'test-input', { initval: 5 });
+
+    // Should not crash and should use sensible defaults
+    await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
+    await apiHelpers.clickUpButton(page, 'test-input');
+    const value = await apiHelpers.getNumericValue(page, 'test-input');
+    expect(typeof value).toBe('number');
+    expect(value).toBeGreaterThan(5);
   });
-  await initializeTouchspinJQuery(page, 'test-input', { initval: 5 });
 
-  // Should not crash and should use sensible defaults
-  await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
-  await apiHelpers.clickUpButton(page, 'test-input');
-  const value = await apiHelpers.getNumericValue(page, 'test-input');
-  expect(typeof value).toBe('number');
-  expect(value).toBeGreaterThan(5);
-});
+  /**
+   * Scenario: processes data attributes with special characters
+   * Given the fixture page is loaded with special character data attributes
+   * When TouchSpin initializes
+   * Then special characters are handled correctly
+   * Params:
+   * { "specialCharData": "data-bts-prefix='$€£' data-bts-postfix='±∞'", "expectedBehavior": "special_chars_preserved" }
+   */
+  test('processes data attributes with special characters', async ({ page }) => {
+    await apiHelpers.setDataAttributes(page, 'test-input', {
+      'data-bts-prefix': '$€£',
+      'data-bts-postfix': '±∞',
+    });
+    await initializeTouchspinJQuery(page, 'test-input');
 
-/**
- * Scenario: processes data attributes with special characters
- * Given the fixture page is loaded with special character data attributes
- * When TouchSpin initializes
- * Then special characters are handled correctly
- * Params:
- * { "specialCharData": "data-bts-prefix='$€£' data-bts-postfix='±∞'", "expectedBehavior": "special_chars_preserved" }
- */
-test('processes data attributes with special characters', async ({ page }) => {
-  await apiHelpers.setDataAttributes(page, 'test-input', {
-    'data-bts-prefix': '$€£',
-    'data-bts-postfix': '±∞'
+    const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+    await expect(prefix).toHaveText('$€£');
+    await expect(postfix).toHaveText('±∞');
   });
-  await initializeTouchspinJQuery(page, 'test-input');
 
-  const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
-  await expect(prefix).toHaveText('$€£');
-  await expect(postfix).toHaveText('±∞');
-});
-
-/**
- * Scenario: supports localized data attribute values
- * Given the fixture page is loaded with localized data attributes
- * When TouchSpin initializes
- * Then localization is handled correctly
- * Params:
- * { "localizedData": "data-decimal-separator=',' data-thousand-separator='.'", "expectedBehavior": "localization_applied" }
- */
-test('supports localized data attribute values', async ({ page }) => {
+  /**
+   * Scenario: supports localized data attribute values
+   * Given the fixture page is loaded with localized data attributes
+   * When TouchSpin initializes
+   * Then localization is handled correctly
+   * Params:
+   * { "localizedData": "data-decimal-separator=',' data-thousand-separator='.'", "expectedBehavior": "localization_applied" }
+   */
+  test('supports localized data attribute values', async ({ page }) => {
     // Test with localized decimal separator (comma instead of period)
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-bts-step': '0,5', // European decimal notation
       'data-bts-decimals': '1',
       'data-bts-prefix': '€ ', // Euro symbol
-      'data-bts-postfix': ' EUR'
+      'data-bts-postfix': ' EUR',
     });
 
     // Initialize with localized settings
@@ -476,7 +501,7 @@ test('supports localized data attribute values', async ({ page }) => {
           decimals: 1,
           prefix: '€ ',
           postfix: ' EUR',
-          initval: 5
+          initval: 5,
         });
         return true;
       } catch {
@@ -499,15 +524,15 @@ test('supports localized data attribute values', async ({ page }) => {
     }
   });
 
-/**
- * Scenario: handles data attribute inheritance patterns
- * Given the fixture page is loaded with nested elements with data attributes
- * When TouchSpin initializes
- * Then attribute inheritance works correctly
- * Params:
- * { "inheritancePattern": "parent_container_sets_defaults", "expectedBehavior": "attribute_inheritance" }
- */
-test('handles data attribute inheritance patterns', async ({ page }) => {
+  /**
+   * Scenario: handles data attribute inheritance patterns
+   * Given the fixture page is loaded with nested elements with data attributes
+   * When TouchSpin initializes
+   * Then attribute inheritance works correctly
+   * Params:
+   * { "inheritancePattern": "parent_container_sets_defaults", "expectedBehavior": "attribute_inheritance" }
+   */
+  test('handles data attribute inheritance patterns', async ({ page }) => {
     // Create container with default data attributes
     await page.evaluate(() => {
       const container = document.querySelector('.container');
@@ -524,7 +549,7 @@ test('handles data attribute inheritance patterns', async ({ page }) => {
     await initializeTouchspinJQuery(page, 'inherit-input', {
       step: 2,
       decimals: 1,
-      initval: 10
+      initval: 10,
     });
 
     const hasInheritanceSupport = true; // Successfully initialized with helper
@@ -539,21 +564,21 @@ test('handles data attribute inheritance patterns', async ({ page }) => {
     expect(hasInheritanceSupport).toBeDefined();
   });
 
-/**
- * Scenario: processes conditional data attributes
- * Given the fixture page is loaded with conditional data attributes
- * When TouchSpin initializes
- * Then conditional logic is applied correctly
- * Params:
- * { "conditionalData": "data-if-mobile='true' data-mobile-step='2'", "expectedBehavior": "conditional_processing" }
- */
-test('processes conditional data attributes', async ({ page }) => {
+  /**
+   * Scenario: processes conditional data attributes
+   * Given the fixture page is loaded with conditional data attributes
+   * When TouchSpin initializes
+   * Then conditional logic is applied correctly
+   * Params:
+   * { "conditionalData": "data-if-mobile='true' data-mobile-step='2'", "expectedBehavior": "conditional_processing" }
+   */
+  test('processes conditional data attributes', async ({ page }) => {
     // Set up conditional data attributes based on screen size
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-bts-desktop-step': '5',
       'data-bts-mobile-step': '1',
       'data-bts-desktop-max': '100',
-      'data-bts-mobile-max': '50'
+      'data-bts-mobile-max': '50',
     });
 
     // Simulate conditional processing based on viewport
@@ -563,13 +588,13 @@ test('processes conditional data attributes', async ({ page }) => {
         const input = $('[data-testid="test-input"]');
         const isMobile = window.innerWidth < 768; // Simple mobile detection
 
-        const step = isMobile ?
-          parseInt(input.attr('data-bts-mobile-step') || '1') :
-          parseInt(input.attr('data-bts-desktop-step') || '5');
+        const step = isMobile
+          ? parseInt(input.attr('data-bts-mobile-step') || '1')
+          : parseInt(input.attr('data-bts-desktop-step') || '5');
 
-        const max = isMobile ?
-          parseInt(input.attr('data-bts-mobile-max') || '50') :
-          parseInt(input.attr('data-bts-desktop-max') || '100');
+        const max = isMobile
+          ? parseInt(input.attr('data-bts-mobile-max') || '50')
+          : parseInt(input.attr('data-bts-desktop-max') || '100');
 
         input.TouchSpin({ step, max, initval: 10 });
         return { step, max, isMobile };
@@ -591,20 +616,20 @@ test('processes conditional data attributes', async ({ page }) => {
     expect(conditionResult).toBeDefined();
   });
 
-/**
- * Scenario: supports data attribute templating
- * Given the fixture page is loaded with templated data attributes
- * When TouchSpin initializes
- * Then template variables are resolved correctly
- * Params:
- * { "templateData": "data-bts-min='{{minValue}}' data-bts-max='{{maxValue}}'", "templateVars": { "minValue": 0, "maxValue": 100 }, "expectedBehavior": "template_resolved" }
- */
-test('supports data attribute templating', async ({ page }) => {
+  /**
+   * Scenario: supports data attribute templating
+   * Given the fixture page is loaded with templated data attributes
+   * When TouchSpin initializes
+   * Then template variables are resolved correctly
+   * Params:
+   * { "templateData": "data-bts-min='{{minValue}}' data-bts-max='{{maxValue}}'", "templateVars": { "minValue": 0, "maxValue": 100 }, "expectedBehavior": "template_resolved" }
+   */
+  test('supports data attribute templating', async ({ page }) => {
     // Set up template-like data attributes
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-bts-min-template': '{{baseValue}}',
       'data-bts-max-template': '{{baseValue * 10}}',
-      'data-bts-step-template': '{{baseValue / 5}}'
+      'data-bts-step-template': '{{baseValue / 5}}',
     });
 
     // Simulate template processing
@@ -642,20 +667,20 @@ test('supports data attribute templating', async ({ page }) => {
     expect(templateResult.templateProcessed).toBeDefined();
   });
 
-/**
- * Scenario: handles data attribute conflicts resolution
- * Given the fixture page is loaded with conflicting data attributes
- * When TouchSpin initializes
- * Then conflicts are resolved according to precedence rules
- * Params:
- * { "conflicts": ["data-bts-step='1'", "data-touchspin-step='5'"], "expectedResolution": "specific_attribute_wins" }
- */
-test('handles data attribute conflicts resolution', async ({ page }) => {
+  /**
+   * Scenario: handles data attribute conflicts resolution
+   * Given the fixture page is loaded with conflicting data attributes
+   * When TouchSpin initializes
+   * Then conflicts are resolved according to precedence rules
+   * Params:
+   * { "conflicts": ["data-bts-step='1'", "data-touchspin-step='5'"], "expectedResolution": "specific_attribute_wins" }
+   */
+  test('handles data attribute conflicts resolution', async ({ page }) => {
     // Set conflicting data attributes (data-bts vs data-touchspin vs inline options)
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-bts-step': '2',
       'data-touchspin-step': '3',
-      'data-step': '4'
+      'data-step': '4',
     });
 
     // Initialize with inline options that should take precedence
@@ -665,12 +690,12 @@ test('handles data attribute conflicts resolution', async ({ page }) => {
         // Test precedence: inline options > data-bts > data-touchspin > data-step
         $('[data-testid="test-input"]').TouchSpin({
           step: 5, // Inline should win
-          initval: 10
+          initval: 10,
         });
 
         return {
           resolved: true,
-          finalStep: 5 // inline option should take precedence
+          finalStep: 5, // inline option should take precedence
         };
       } catch {
         $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 10 });
@@ -688,21 +713,21 @@ test('handles data attribute conflicts resolution', async ({ page }) => {
     expect(conflictResult.finalStep).toBe(5);
   });
 
-/**
- * Scenario: maintains data attribute backward compatibility
- * Given the fixture page is loaded with legacy data attribute formats
- * When TouchSpin initializes
- * Then legacy formats continue to work
- * Params:
- * { "legacyFormat": "data-bts-step='5'", "expectedBehavior": "backward_compatible" }
- */
-test('maintains data attribute backward compatibility', async ({ page }) => {
+  /**
+   * Scenario: maintains data attribute backward compatibility
+   * Given the fixture page is loaded with legacy data attribute formats
+   * When TouchSpin initializes
+   * Then legacy formats continue to work
+   * Params:
+   * { "legacyFormat": "data-bts-step='5'", "expectedBehavior": "backward_compatible" }
+   */
+  test('maintains data attribute backward compatibility', async ({ page }) => {
     // Test legacy data attribute formats
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-step': '3', // Legacy format
       'data-min': '0',
       'data-max': '20',
-      'data-prefix': '$'
+      'data-prefix': '$',
     });
 
     // Test that legacy attributes still work
@@ -723,13 +748,13 @@ test('maintains data attribute backward compatibility', async ({ page }) => {
           min: parseInt(legacyMin || '0'),
           max: parseInt(legacyMax || '10'),
           prefix: legacyPrefix || '',
-          initval: 6
+          initval: 6,
         });
 
         return {
           legacySupport: true,
           step: parseInt(legacyStep),
-          prefix: legacyPrefix
+          prefix: legacyPrefix,
         };
       } catch {
         $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 6 });
@@ -748,20 +773,20 @@ test('maintains data attribute backward compatibility', async ({ page }) => {
     expect(backwardCompatResult.prefix).toBe('$');
   });
 
-/**
- * Scenario: supports custom data attribute extensions
- * Given the fixture page is loaded with custom data attributes
- * When TouchSpin initializes with custom attribute handlers
- * Then custom attributes are processed correctly
- * Params:
- * { "customAttribute": "data-custom-behavior='special'", "customHandler": "registered", "expectedBehavior": "custom_processing" }
- */
-test('supports custom data attribute extensions', async ({ page }) => {
+  /**
+   * Scenario: supports custom data attribute extensions
+   * Given the fixture page is loaded with custom data attributes
+   * When TouchSpin initializes with custom attribute handlers
+   * Then custom attributes are processed correctly
+   * Params:
+   * { "customAttribute": "data-custom-behavior='special'", "customHandler": "registered", "expectedBehavior": "custom_processing" }
+   */
+  test('supports custom data attribute extensions', async ({ page }) => {
     // Test custom/extended data attributes
     await apiHelpers.setDataAttributes(page, 'test-input', {
       'data-bts-custom-theme': 'dark',
       'data-bts-animation-speed': '300',
-      'data-bts-validation-mode': 'strict'
+      'data-bts-validation-mode': 'strict',
     });
 
     // Test that custom attributes can be read and processed
@@ -778,14 +803,14 @@ test('supports custom data attribute extensions', async ({ page }) => {
         // Initialize TouchSpin (custom attributes might not affect core functionality)
         input.TouchSpin({
           step: 1,
-          initval: 5
+          initval: 5,
         });
 
         return {
           customAttributesFound: !!customTheme && !!animationSpeed && !!validationMode,
           theme: customTheme,
           speed: parseInt(animationSpeed || '0'),
-          validation: validationMode
+          validation: validationMode,
         };
       } catch {
         $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 5 });
@@ -806,5 +831,4 @@ test('supports custom data attribute extensions', async ({ page }) => {
     const finalValue2 = await apiHelpers.getNumericValue(page, 'test-input');
     expect(finalValue2).toBeGreaterThan(5); // Should have incremented from 5
   });
-
 });

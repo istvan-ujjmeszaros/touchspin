@@ -27,7 +27,7 @@ export enum TouchSpinCallableEvent {
   STOP_SPIN = 'touchspin.stopspin',
 
   /** Destroy the TouchSpin instance */
-  DESTROY = 'touchspin.destroy'
+  DESTROY = 'touchspin.destroy',
 }
 
 /**
@@ -57,7 +57,7 @@ export enum TouchSpinEmittedEvent {
   ON_STOP_UP_SPIN = 'touchspin.on.stopupspin',
 
   /** Fired when downward spinning stops */
-  ON_STOP_DOWN_SPIN = 'touchspin.on.stopdownspin'
+  ON_STOP_DOWN_SPIN = 'touchspin.on.stopdownspin',
 }
 
 /**

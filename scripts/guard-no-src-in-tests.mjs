@@ -11,7 +11,8 @@ const offenders = [];
 
 function walk(dir, isTestDir = false) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name.startsWith('.git')) continue;
+    if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name.startsWith('.git'))
+      continue;
     const p = path.join(dir, entry.name);
 
     // Check if we're in a test directory or entering one

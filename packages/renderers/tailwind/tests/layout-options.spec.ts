@@ -70,7 +70,7 @@ test('creates horizontal layout with Tailwind flex utilities', async ({ page }) 
 test('creates vertical layout with Tailwind flex-col utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -103,7 +103,7 @@ test('handles layout switching with utility class changes', async ({ page }) => 
 
   // Switch to vertical layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works after layout switch
@@ -112,7 +112,7 @@ test('handles layout switching with utility class changes', async ({ page }) => 
 
   // Switch back to horizontal
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   await apiHelpers.clickDownButton(page, 'test-input');
@@ -165,7 +165,7 @@ test('handles container queries with Tailwind utilities', async ({ page }) => {
 
   // Test vertical layout in constrained container
   await apiHelpers.updateSettingsViaAPI(page, 'constrained-test', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works with vertical layout in constraints
@@ -187,7 +187,7 @@ test('handles container queries with Tailwind utilities', async ({ page }) => {
 test('manages spacing with Tailwind gap utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -215,7 +215,7 @@ test('manages spacing with Tailwind gap utilities', async ({ page }) => {
 test('handles alignment with Tailwind alignment utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -285,7 +285,7 @@ test('applies justify-content utilities', async ({ page }) => {
 
   // Switch to vertical layout and verify appropriate structure
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -310,7 +310,7 @@ test('handles flex-wrap utilities when needed', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -351,7 +351,7 @@ test('manages order utilities for element arrangement', async ({ page }) => {
 
   // Switch to vertical layout and verify order is maintained
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -412,7 +412,7 @@ test('handles basis utilities for flex basis control', async ({ page }) => {
 
   // Switch to vertical and test
   await apiHelpers.updateSettingsViaAPI(page, 'grid-test', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   await apiHelpers.clickUpButton(page, 'grid-test');
@@ -437,7 +437,7 @@ test('creates grid layouts when appropriate', async ({ page }) => {
 
   // Test vertical layout in grid
   await apiHelpers.updateSettingsViaAPI(page, 'grid-test', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works with vertical layout in grid
@@ -509,7 +509,7 @@ test('manages grid auto utilities', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'bg-green-500 text-white v-up',
-    verticaldownclass: 'bg-yellow-500 text-white v-down'
+    verticaldownclass: 'bg-yellow-500 text-white v-down',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -536,7 +536,7 @@ test('applies grid placement utilities', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalup: '▲',
-    verticaldown: '▼'
+    verticaldown: '▼',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -563,7 +563,7 @@ test('handles aspect ratio utilities', async ({ page }) => {
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -605,7 +605,7 @@ test('creates container utilities for width constraints', async ({ page }) => {
 
   // Switch to vertical layout and verify accessibility is maintained
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -630,7 +630,7 @@ test('applies max-width utilities for responsive containers', async ({ page }) =
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'bg-green-500 text-white custom-up',
-    verticaldownclass: 'bg-red-500 text-white custom-down'
+    verticaldownclass: 'bg-red-500 text-white custom-down',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -660,7 +660,7 @@ test('applies max-width utilities for responsive containers', async ({ page }) =
 test('handles overflow utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    initval: 75
+    initval: 75,
   });
 
   // Verify initial value and horizontal layout functionality
@@ -670,7 +670,7 @@ test('handles overflow utilities', async ({ page }) => {
 
   // Change to vertical layout and verify state is preserved
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // State should be preserved after layout change
@@ -682,7 +682,7 @@ test('handles overflow utilities', async ({ page }) => {
 
   // Switch back to horizontal layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   // State should still be preserved
@@ -709,7 +709,7 @@ test('manages position utilities for layout', async ({ page }) => {
 
   // Test vertical layout in nested scenario
   await apiHelpers.updateSettingsViaAPI(page, 'nested-test', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works with vertical layout in nested structure
@@ -742,12 +742,14 @@ test('applies z-index utilities for layering', async ({ page }) => {
 
     // Add sibling elements
     const siblingBefore = document.createElement('div');
-    siblingBefore.className = 'bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4';
+    siblingBefore.className =
+      'bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4';
     siblingBefore.textContent = 'Dynamic content before';
     wrapper.parentNode.insertBefore(siblingBefore, wrapper);
 
     const siblingAfter = document.createElement('div');
-    siblingAfter.className = 'bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-4';
+    siblingAfter.className =
+      'bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-4';
     siblingAfter.textContent = 'Dynamic content after';
     wrapper.parentNode.insertBefore(siblingAfter, wrapper.nextSibling);
 
@@ -761,7 +763,7 @@ test('applies z-index utilities for layering', async ({ page }) => {
 
   // Switch to vertical layout and test with dynamic content
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality works with vertical layout and dynamic content
@@ -799,7 +801,7 @@ test('handles display utilities for layout control', async ({ page }) => {
 
   // Switch to vertical layout and verify Tailwind structure is maintained
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   const verticalElements = await apiHelpers.getTouchSpinElements(page, 'test-input');

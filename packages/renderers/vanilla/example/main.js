@@ -30,7 +30,7 @@ const DEFAULT_SETTINGS = {
   prefix_extraclass: '',
   postfix_extraclass: '',
   buttonup_class: '',
-  buttondown_class: ''
+  buttondown_class: '',
 };
 
 // Current settings
@@ -97,7 +97,7 @@ function loadCSSVariables() {
 function saveCSSVariables() {
   try {
     const vars = {};
-    document.querySelectorAll('[data-var]').forEach(input => {
+    document.querySelectorAll('[data-var]').forEach((input) => {
       const varName = input.getAttribute('data-var');
       vars[varName] = input.value;
     });
@@ -116,7 +116,8 @@ function resetCSSVariables() {
     '--ts-wrapper-border-radius': '0.375rem',
     '--ts-wrapper-box-shadow': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     '--ts-wrapper-focus-border-color': '#3b82f6',
-    '--ts-wrapper-focus-box-shadow': '0 0 0 2px rgb(59 130 246 / 0.2), 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    '--ts-wrapper-focus-box-shadow':
+      '0 0 0 2px rgb(59 130 246 / 0.2), 0 1px 2px 0 rgb(0 0 0 / 0.05)',
     '--ts-wrapper-disabled-background-color': '#f9fafb',
     '--ts-wrapper-disabled-opacity': '0.6',
     '--ts-wrapper-readonly-background-color': '#f9fafb',
@@ -183,7 +184,7 @@ function initDemo() {
   }
   demoInstance = TouchSpin(demoInput, {
     ...currentSettings,
-    renderer: VanillaRenderer
+    renderer: VanillaRenderer,
   });
 
   updateGeneratedCode();
@@ -191,27 +192,33 @@ function initDemo() {
 
 // Initialize static examples
 function initStaticExamples() {
-  staticInstances.forEach(instance => instance.destroy());
+  staticInstances.forEach((instance) => instance.destroy());
   staticInstances = [];
 
-  staticInstances.push(TouchSpin(document.getElementById('currency-example'), {
-    prefix: '$',
-    postfix: ' USD',
-    decimals: 2,
-    renderer: VanillaRenderer
-  }));
+  staticInstances.push(
+    TouchSpin(document.getElementById('currency-example'), {
+      prefix: '$',
+      postfix: ' USD',
+      decimals: 2,
+      renderer: VanillaRenderer,
+    })
+  );
 
-  staticInstances.push(TouchSpin(document.getElementById('vertical-example'), {
-    verticalbuttons: true,
-    renderer: VanillaRenderer
-  }));
+  staticInstances.push(
+    TouchSpin(document.getElementById('vertical-example'), {
+      verticalbuttons: true,
+      renderer: VanillaRenderer,
+    })
+  );
 
-  staticInstances.push(TouchSpin(document.getElementById('boundary-example'), {
-    min: 10,
-    max: 50,
-    step: 5,
-    renderer: VanillaRenderer
-  }));
+  staticInstances.push(
+    TouchSpin(document.getElementById('boundary-example'), {
+      min: 10,
+      max: 50,
+      step: 5,
+      renderer: VanillaRenderer,
+    })
+  );
 }
 
 // Event logging
@@ -243,7 +250,8 @@ function updateGeneratedCode() {
   }
 
   if (Object.keys(nonDefaults).length === 0) {
-    codeBlock.textContent = '// All settings are at default values\nTouchSpin(element, {\n  renderer: VanillaRenderer\n});';
+    codeBlock.textContent =
+      '// All settings are at default values\nTouchSpin(element, {\n  renderer: VanillaRenderer\n});';
   } else {
     const lines = ['TouchSpin(element, {'];
     for (const [key, value] of Object.entries(nonDefaults)) {
@@ -279,20 +287,32 @@ function updateControls() {
   document.getElementById('control-verticaldownclass').value = currentSettings.verticaldownclass;
   document.getElementById('control-stepinterval').value = currentSettings.stepinterval;
   document.getElementById('control-stepintervaldelay').value = currentSettings.stepintervaldelay;
-  document.getElementById('control-firstclickvalueifempty').value = currentSettings.firstclickvalueifempty || '';
+  document.getElementById('control-firstclickvalueifempty').value =
+    currentSettings.firstclickvalueifempty || '';
   document.getElementById('control-replacementval').value = currentSettings.replacementval;
   document.getElementById('control-verticalbuttons').checked = currentSettings.verticalbuttons;
   document.getElementById('control-mousewheel').checked = currentSettings.mousewheel;
   document.getElementById('control-booster').checked = currentSettings.booster;
   document.getElementById('control-focusablebuttons').checked = currentSettings.focusablebuttons;
   document.getElementById('control-disabled').checked = false;
-  document.getElementById('control-forcestepdivisibility').checked = currentSettings.forcestepdivisibility === 'round';
+  document.getElementById('control-forcestepdivisibility').checked =
+    currentSettings.forcestepdivisibility === 'round';
 }
 
 // Attach control listeners
 function attachControlListeners() {
   // Number inputs
-  ['initval', 'min', 'max', 'step', 'decimals', 'boostat', 'maxboostedstep', 'stepinterval', 'stepintervaldelay'].forEach(key => {
+  [
+    'initval',
+    'min',
+    'max',
+    'step',
+    'decimals',
+    'boostat',
+    'maxboostedstep',
+    'stepinterval',
+    'stepintervaldelay',
+  ].forEach((key) => {
     document.getElementById(`control-${key}`).addEventListener('input', (e) => {
       const value = parseFloat(e.target.value);
       if (!isNaN(value)) {
@@ -309,8 +329,21 @@ function attachControlListeners() {
   });
 
   // Text inputs
-  ['prefix', 'postfix', 'prefix_extraclass', 'postfix_extraclass', 'buttonup_txt', 'buttondown_txt',
-   'buttonup_class', 'buttondown_class', 'verticalup', 'verticaldown', 'verticalupclass', 'verticaldownclass', 'replacementval'].forEach(key => {
+  [
+    'prefix',
+    'postfix',
+    'prefix_extraclass',
+    'postfix_extraclass',
+    'buttonup_txt',
+    'buttondown_txt',
+    'buttonup_class',
+    'buttondown_class',
+    'verticalup',
+    'verticaldown',
+    'verticalupclass',
+    'verticaldownclass',
+    'replacementval',
+  ].forEach((key) => {
     document.getElementById(`control-${key.replace('_', '-')}`).addEventListener('input', (e) => {
       currentSettings[key] = e.target.value;
       demoInstance.updateSettings({ [key]: e.target.value });
@@ -379,7 +412,8 @@ function attachControlListeners() {
 
   // Clear log button
   document.getElementById('clear-log').addEventListener('click', () => {
-    document.getElementById('event-log-content').innerHTML = '<div class="event-entry">Log cleared</div>';
+    document.getElementById('event-log-content').innerHTML =
+      '<div class="event-entry">Log cleared</div>';
   });
 
   // API method testing buttons
@@ -414,7 +448,9 @@ function attachControlListeners() {
   });
 
   document.getElementById('test-set-random').addEventListener('click', () => {
-    const randomValue = Math.floor(Math.random() * (currentSettings.max - currentSettings.min + 1)) + currentSettings.min;
+    const randomValue =
+      Math.floor(Math.random() * (currentSettings.max - currentSettings.min + 1)) +
+      currentSettings.min;
     demoInstance.setValue(randomValue);
     showMethodFeedback(`setValue(${randomValue}) called`);
     logEvent(`API: setValue(${randomValue})`);
@@ -452,7 +488,7 @@ function showMethodFeedback(message) {
 // CSS Variables management
 function setupCSSVariables() {
   // Setup text input listeners for all CSS variables
-  document.querySelectorAll('[data-var]').forEach(input => {
+  document.querySelectorAll('[data-var]').forEach((input) => {
     input.addEventListener('input', () => {
       const varName = input.getAttribute('data-var');
       document.documentElement.style.setProperty(varName, input.value);
@@ -469,7 +505,7 @@ function setupCSSVariables() {
   });
 
   // Setup native color picker listeners
-  document.querySelectorAll('[data-var-color]').forEach(colorInput => {
+  document.querySelectorAll('[data-var-color]').forEach((colorInput) => {
     colorInput.addEventListener('input', () => {
       const varName = colorInput.getAttribute('data-var-color');
       const hexValue = colorInput.value;
@@ -496,7 +532,8 @@ function setupCopyButton() {
 
   copyBtn?.addEventListener('click', async () => {
     const vars = Array.from(document.querySelectorAll('[data-var]'));
-    const entries = vars.map(el => [el.getAttribute('data-var'), el.value])
+    const entries = vars
+      .map((el) => [el.getAttribute('data-var'), el.value])
       .sort((a, b) => a[0].localeCompare(b[0]));
     const block = `:root {\n${entries.map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}`;
 
@@ -504,7 +541,7 @@ function setupCopyButton() {
       await navigator.clipboard.writeText(block);
       if (copiedMsg) {
         copiedMsg.style.display = 'inline';
-        setTimeout(() => copiedMsg.style.display = 'none', 1500);
+        setTimeout(() => (copiedMsg.style.display = 'none'), 1500);
       }
     } catch (err) {
       console.warn('Clipboard unavailable, logging block:', block);
@@ -528,12 +565,24 @@ setupCopyButton();
 const demoInput = document.getElementById('demo-input');
 demoInput.addEventListener('touchspin.on.min', (e) => logEvent('touchspin.on.min', e.detail));
 demoInput.addEventListener('touchspin.on.max', (e) => logEvent('touchspin.on.max', e.detail));
-demoInput.addEventListener('touchspin.on.startspin', (e) => logEvent('touchspin.on.startspin', e.detail));
-demoInput.addEventListener('touchspin.on.startupspin', (e) => logEvent('touchspin.on.startupspin', e.detail));
-demoInput.addEventListener('touchspin.on.startdownspin', (e) => logEvent('touchspin.on.startdownspin', e.detail));
-demoInput.addEventListener('touchspin.on.stopspin', (e) => logEvent('touchspin.on.stopspin', e.detail));
-demoInput.addEventListener('touchspin.on.stopupspin', (e) => logEvent('touchspin.on.stopupspin', e.detail));
-demoInput.addEventListener('touchspin.on.stopdownspin', (e) => logEvent('touchspin.on.stopdownspin', e.detail));
+demoInput.addEventListener('touchspin.on.startspin', (e) =>
+  logEvent('touchspin.on.startspin', e.detail)
+);
+demoInput.addEventListener('touchspin.on.startupspin', (e) =>
+  logEvent('touchspin.on.startupspin', e.detail)
+);
+demoInput.addEventListener('touchspin.on.startdownspin', (e) =>
+  logEvent('touchspin.on.startdownspin', e.detail)
+);
+demoInput.addEventListener('touchspin.on.stopspin', (e) =>
+  logEvent('touchspin.on.stopspin', e.detail)
+);
+demoInput.addEventListener('touchspin.on.stopupspin', (e) =>
+  logEvent('touchspin.on.stopupspin', e.detail)
+);
+demoInput.addEventListener('touchspin.on.stopdownspin', (e) =>
+  logEvent('touchspin.on.stopdownspin', e.detail)
+);
 demoInput.addEventListener('change', (e) => logEvent('change', { value: e.target.value }));
 
 logEvent('TouchSpin Vanilla demo initialized with color pickers');

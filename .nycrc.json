@@ -1,9 +1,6 @@
 {
   "all": true,
-  "include": [
-    "packages/*/src/**/*.{js,ts}",
-    "packages/renderers/*/src/**/*.{js,ts}"
-  ],
+  "include": ["packages/*/src/**/*.{js,ts}", "packages/renderers/*/src/**/*.{js,ts}"],
   "exclude": [
     "**/*.test.{js,ts}",
     "**/*.spec.{js,ts}",
@@ -14,12 +11,7 @@
     "scripts/**",
     "*.config.{js,ts}"
   ],
-  "reporter": [
-    "text",
-    "html",
-    "lcov",
-    "json"
-  ],
+  "reporter": ["text", "html", "lcov", "json"],
   "report-dir": "reports/coverage",
   "temp-dir": ".nyc_output",
   "check-coverage": false,

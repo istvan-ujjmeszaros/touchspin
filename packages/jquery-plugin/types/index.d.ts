@@ -1,5 +1,10 @@
 import type { JQueryStatic } from 'jquery';
-import type { TouchSpinCoreOptions, TouchSpinCallableEvent, TouchSpinEmittedEvent, TouchSpinUpdateSettingsData } from '@touchspin/core';
+import type {
+  TouchSpinCoreOptions,
+  TouchSpinCallableEvent,
+  TouchSpinEmittedEvent,
+  TouchSpinUpdateSettingsData,
+} from '@touchspin/core';
 import type { TSRenderer } from '@touchspin/core/renderer';
 
 // Re-export event types from core
@@ -31,5 +36,3 @@ declare module 'jquery' {
     TouchSpin(command: TouchSpinJQuery.Command, arg?: unknown): unknown;
   }
 }
-
-export {};

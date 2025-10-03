@@ -21,18 +21,20 @@ export async function startCoverage(page: Page): Promise<void> {
     await cdp.send('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
     (page as PageWithCDP).__cdpSession = cdp;
   } catch (err) {
-
     console.error('Failed to start CDP coverage:', err);
   }
 }
 
-export async function collectCoverage(page: Page, testName: string, testFile?: string): Promise<void> {
+export async function collectCoverage(
+  page: Page,
+  testName: string,
+  testFile?: string
+): Promise<void> {
   // Use PW_COVERAGE as the single source of truth for coverage runs
   if (process.env.PW_COVERAGE !== '1') return;
   try {
     const cdp = (page as PageWithCDP).__cdpSession;
     if (!cdp) {
-
       console.warn(`No CDP session found for test: ${testName}`);
       return;
     }
@@ -42,7 +44,6 @@ export async function collectCoverage(page: Page, testName: string, testFile?: s
       await saveCoverageData(result, testName, testFile);
     }
   } catch (err) {
-
     console.error(`Coverage collection error for ${testName}:`, err);
   }
 }

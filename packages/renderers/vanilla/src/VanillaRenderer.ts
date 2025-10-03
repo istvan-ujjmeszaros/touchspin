@@ -21,8 +21,12 @@ class VanillaRenderer extends AbstractRenderer {
     // Find created elements and store references
     const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');
     const downButtonEl = wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]') as HTMLElement | null;
-    this.postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]') as HTMLElement | null;
+    this.prefixEl = wrapper.querySelector(
+      '[data-touchspin-injected="prefix"]'
+    ) as HTMLElement | null;
+    this.postfixEl = wrapper.querySelector(
+      '[data-touchspin-injected="postfix"]'
+    ) as HTMLElement | null;
 
     // Attach core event handlers to buttons
     const upButton = upButtonEl instanceof HTMLElement ? upButtonEl : null;
@@ -33,18 +37,36 @@ class VanillaRenderer extends AbstractRenderer {
     // Register for setting changes
     this.core.observeSetting('prefix', (newValue) => this.updatePrefix(newValue));
     this.core.observeSetting('postfix', (newValue) => this.updatePostfix(newValue));
-    this.core.observeSetting('buttonup_class', (newValue) => this.updateButtonClass('up', newValue));
-    this.core.observeSetting('buttondown_class', (newValue) => this.updateButtonClass('down', newValue));
-    this.core.observeSetting('verticalupclass', (newValue) => this.updateVerticalButtonClass('up', newValue));
-    this.core.observeSetting('verticaldownclass', (newValue) => this.updateVerticalButtonClass('down', newValue));
-    this.core.observeSetting('verticalup', (newValue) => this.updateVerticalButtonText('up', newValue));
-    this.core.observeSetting('verticaldown', (newValue) => this.updateVerticalButtonText('down', newValue));
+    this.core.observeSetting('buttonup_class', (newValue) =>
+      this.updateButtonClass('up', newValue)
+    );
+    this.core.observeSetting('buttondown_class', (newValue) =>
+      this.updateButtonClass('down', newValue)
+    );
+    this.core.observeSetting('verticalupclass', (newValue) =>
+      this.updateVerticalButtonClass('up', newValue)
+    );
+    this.core.observeSetting('verticaldownclass', (newValue) =>
+      this.updateVerticalButtonClass('down', newValue)
+    );
+    this.core.observeSetting('verticalup', (newValue) =>
+      this.updateVerticalButtonText('up', newValue)
+    );
+    this.core.observeSetting('verticaldown', (newValue) =>
+      this.updateVerticalButtonText('down', newValue)
+    );
     this.core.observeSetting('buttonup_txt', (newValue) => this.updateButtonText('up', newValue));
-    this.core.observeSetting('buttondown_txt', (newValue) => this.updateButtonText('down', newValue));
+    this.core.observeSetting('buttondown_txt', (newValue) =>
+      this.updateButtonText('down', newValue)
+    );
     this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefixClasses());
     this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfixClasses());
-    this.core.observeSetting('verticalbuttons', (newValue) => this.handleVerticalButtonsChange(newValue));
-    this.core.observeSetting('focusablebuttons', (newValue) => this.updateButtonFocusability(newValue));
+    this.core.observeSetting('verticalbuttons', (newValue) =>
+      this.handleVerticalButtonsChange(newValue)
+    );
+    this.core.observeSetting('focusablebuttons', (newValue) =>
+      this.updateButtonFocusability(newValue)
+    );
   }
 
   buildInputGroup(): HTMLElement {
@@ -123,10 +145,10 @@ class VanillaRenderer extends AbstractRenderer {
     `;
   }
 
-
   hideEmptyPrefixPostfix(wrapper: HTMLElement | null = this.wrapper) {
     const prefixEl = this.prefixEl || wrapper?.querySelector('[data-touchspin-injected="prefix"]');
-    const postfixEl = this.postfixEl || wrapper?.querySelector('[data-touchspin-injected="postfix"]');
+    const postfixEl =
+      this.postfixEl || wrapper?.querySelector('[data-touchspin-injected="postfix"]');
 
     if (prefixEl && (!this.settings.prefix || this.settings.prefix === '')) {
       prefixEl.style.display = 'none';
@@ -175,7 +197,9 @@ class VanillaRenderer extends AbstractRenderer {
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
     if (!this.wrapper) return;
-    const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    const verticalWrapper = this.wrapper.querySelector(
+      '[data-touchspin-injected="vertical-wrapper"]'
+    );
     if (!verticalWrapper) return;
 
     const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
@@ -189,7 +213,9 @@ class VanillaRenderer extends AbstractRenderer {
 
   updateVerticalButtonText(type: 'up' | 'down', text?: string): void {
     if (!this.wrapper) return;
-    const verticalWrapper = this.wrapper.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    const verticalWrapper = this.wrapper.querySelector(
+      '[data-touchspin-injected="vertical-wrapper"]'
+    );
     if (!verticalWrapper) return;
 
     const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
@@ -248,8 +274,12 @@ class VanillaRenderer extends AbstractRenderer {
     // Find created elements and store references
     const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');
     const downButtonEl = wrapper.querySelector('[data-touchspin-injected="down"]');
-    this.prefixEl = wrapper.querySelector('[data-touchspin-injected="prefix"]') as HTMLElement | null;
-    this.postfixEl = wrapper.querySelector('[data-touchspin-injected="postfix"]') as HTMLElement | null;
+    this.prefixEl = wrapper.querySelector(
+      '[data-touchspin-injected="prefix"]'
+    ) as HTMLElement | null;
+    this.postfixEl = wrapper.querySelector(
+      '[data-touchspin-injected="postfix"]'
+    ) as HTMLElement | null;
 
     // Attach core event handlers to buttons
     const upButton = upButtonEl instanceof HTMLElement ? upButtonEl : null;
@@ -261,9 +291,11 @@ class VanillaRenderer extends AbstractRenderer {
   updateButtonFocusability(newValue: boolean): void {
     // Find all buttons and update their tabindex
     if (!this.wrapper) return;
-    const buttons = this.wrapper.querySelectorAll('[data-touchspin-injected="up"], [data-touchspin-injected="down"]');
+    const buttons = this.wrapper.querySelectorAll(
+      '[data-touchspin-injected="up"], [data-touchspin-injected="down"]'
+    );
     const tabindex = newValue ? '0' : '-1';
-    buttons.forEach(button => {
+    buttons.forEach((button) => {
       button.setAttribute('tabindex', tabindex);
     });
   }

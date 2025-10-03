@@ -145,7 +145,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     wrapper.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP,
       sizeClass,
-      CSS_CLASSES.BOOTSTRAP_TOUCHSPIN
+      CSS_CLASSES.BOOTSTRAP_TOUCHSPIN,
     ]);
     return wrapper;
   }
@@ -226,12 +226,12 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     if (this.opts.verticalbuttons) {
       const insertionPoint = this.opts.postfix
-        ? existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null
+        ? (existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null)
         : this.input.nextSibling;
       existingInputGroup.insertBefore(this.createVerticalButtonWrapper(), insertionPoint);
     } else {
       const insertionPoint = this.opts.postfix
-        ? existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null
+        ? (existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null)
         : this.input.nextSibling;
       existingInputGroup.insertBefore(this.createUpButton(), insertionPoint);
     }
@@ -282,7 +282,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     element.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
       'bootstrap-touchspin-prefix',
-      this.opts.prefix_extraclass
+      this.opts.prefix_extraclass,
     ]);
     element.setAttribute('data-touchspin-injected', INJECTED_TYPES.PREFIX);
     element.textContent = this.opts.prefix || '';
@@ -300,7 +300,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     element.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
       'bootstrap-touchspin-postfix',
-      this.opts.postfix_extraclass
+      this.opts.postfix_extraclass,
     ]);
     element.setAttribute('data-touchspin-injected', INJECTED_TYPES.POSTFIX);
     element.textContent = this.opts.postfix || '';
@@ -317,7 +317,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const wrapper = document.createElement('span');
     wrapper.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
-      'bootstrap-touchspin-vertical-button-wrapper'
+      'bootstrap-touchspin-vertical-button-wrapper',
     ]);
     wrapper.setAttribute('data-touchspin-injected', INJECTED_TYPES.VERTICAL_WRAPPER);
 
@@ -337,27 +337,29 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   private getButtonClass(type: 'up' | 'down', isVertical = false): string {
-    const baseClass = type === 'up'
-      ? (this.opts.buttonup_class || CSS_CLASSES.DEFAULT_BUTTON)
-      : (this.opts.buttondown_class || CSS_CLASSES.DEFAULT_BUTTON);
+    const baseClass =
+      type === 'up'
+        ? this.opts.buttonup_class || CSS_CLASSES.DEFAULT_BUTTON
+        : this.opts.buttondown_class || CSS_CLASSES.DEFAULT_BUTTON;
 
-    const verticalClass = isVertical && type === 'up'
-      ? (this.opts.verticalupclass || CSS_CLASSES.DEFAULT_BUTTON)
-      : isVertical && type === 'down'
-        ? (this.opts.verticaldownclass || CSS_CLASSES.DEFAULT_BUTTON)
-        : '';
+    const verticalClass =
+      isVertical && type === 'up'
+        ? this.opts.verticalupclass || CSS_CLASSES.DEFAULT_BUTTON
+        : isVertical && type === 'down'
+          ? this.opts.verticaldownclass || CSS_CLASSES.DEFAULT_BUTTON
+          : '';
 
-    return this.buildClasses([
-      baseClass,
-      verticalClass,
-      `bootstrap-touchspin-${type}`
-    ]);
+    return this.buildClasses([baseClass, verticalClass, `bootstrap-touchspin-${type}`]);
   }
 
   private getButtonSetting(type: 'up' | 'down', isVertical: boolean): string | null | undefined {
     return isVertical
-      ? (type === 'up' ? this.opts.verticalup : this.opts.verticaldown)
-      : (type === 'up' ? this.opts.buttonup_txt : this.opts.buttondown_txt);
+      ? type === 'up'
+        ? this.opts.verticalup
+        : this.opts.verticaldown
+      : type === 'up'
+        ? this.opts.buttonup_txt
+        : this.opts.buttondown_txt;
   }
 
   private getButtonFallback(type: 'up' | 'down'): string {
@@ -404,18 +406,38 @@ class Bootstrap5Renderer extends AbstractRenderer {
   private registerSettingObservers(): void {
     this.core.observeSetting('prefix', (value) => this.updatePrefix(value as string));
     this.core.observeSetting('postfix', (value) => this.updatePostfix(value as string));
-    this.core.observeSetting('buttonup_class', (value) => this.updateButtonClass('up', value as string));
-    this.core.observeSetting('buttondown_class', (value) => this.updateButtonClass('down', value as string));
-    this.core.observeSetting('verticalupclass', (value) => this.updateVerticalButtonClass('up', value as string));
-    this.core.observeSetting('verticaldownclass', (value) => this.updateVerticalButtonClass('down', value as string));
-    this.core.observeSetting('verticalup', (value) => this.updateVerticalButtonText('up', value as string));
-    this.core.observeSetting('verticaldown', (value) => this.updateVerticalButtonText('down', value as string));
-    this.core.observeSetting('buttonup_txt', (value) => this.updateButtonText('up', value as string));
-    this.core.observeSetting('buttondown_txt', (value) => this.updateButtonText('down', value as string));
+    this.core.observeSetting('buttonup_class', (value) =>
+      this.updateButtonClass('up', value as string)
+    );
+    this.core.observeSetting('buttondown_class', (value) =>
+      this.updateButtonClass('down', value as string)
+    );
+    this.core.observeSetting('verticalupclass', (value) =>
+      this.updateVerticalButtonClass('up', value as string)
+    );
+    this.core.observeSetting('verticaldownclass', (value) =>
+      this.updateVerticalButtonClass('down', value as string)
+    );
+    this.core.observeSetting('verticalup', (value) =>
+      this.updateVerticalButtonText('up', value as string)
+    );
+    this.core.observeSetting('verticaldown', (value) =>
+      this.updateVerticalButtonText('down', value as string)
+    );
+    this.core.observeSetting('buttonup_txt', (value) =>
+      this.updateButtonText('up', value as string)
+    );
+    this.core.observeSetting('buttondown_txt', (value) =>
+      this.updateButtonText('down', value as string)
+    );
     this.core.observeSetting('prefix_extraclass', () => this.updatePrefixClasses());
     this.core.observeSetting('postfix_extraclass', () => this.updatePostfixClasses());
-    this.core.observeSetting('verticalbuttons', (value) => this.handleVerticalButtonsChange(value as boolean));
-    this.core.observeSetting('focusablebuttons', (value) => this.updateButtonFocusability(value as boolean));
+    this.core.observeSetting('verticalbuttons', (value) =>
+      this.handleVerticalButtonsChange(value as boolean)
+    );
+    this.core.observeSetting('focusablebuttons', (value) =>
+      this.updateButtonFocusability(value as boolean)
+    );
   }
 
   // Update methods
@@ -452,25 +474,29 @@ class Bootstrap5Renderer extends AbstractRenderer {
     if (button) {
       button.className = this.buildClasses([
         className || CSS_CLASSES.DEFAULT_BUTTON,
-        `bootstrap-touchspin-${type}`
+        `bootstrap-touchspin-${type}`,
       ]);
     }
   }
 
   updateVerticalButtonClass(type: 'up' | 'down', className: string | null | undefined): void {
     const verticalWrapper = this.findInjectedElement(INJECTED_TYPES.VERTICAL_WRAPPER);
-    const button = verticalWrapper?.querySelector(`[data-touchspin-injected="${type}"]`) as HTMLElement | null | undefined;
+    const button = verticalWrapper?.querySelector(`[data-touchspin-injected="${type}"]`) as
+      | HTMLElement
+      | null
+      | undefined;
 
     if (button) {
       this.initializeOptions(); // Refresh opts for current values
-      const baseClass = type === 'up'
-        ? (this.opts.buttonup_class ?? CSS_CLASSES.DEFAULT_BUTTON)
-        : (this.opts.buttondown_class ?? CSS_CLASSES.DEFAULT_BUTTON);
+      const baseClass =
+        type === 'up'
+          ? (this.opts.buttonup_class ?? CSS_CLASSES.DEFAULT_BUTTON)
+          : (this.opts.buttondown_class ?? CSS_CLASSES.DEFAULT_BUTTON);
 
       button.className = this.buildClasses([
         baseClass,
         className ?? CSS_CLASSES.DEFAULT_BUTTON,
-        `bootstrap-touchspin-${type}`
+        `bootstrap-touchspin-${type}`,
       ]);
     }
   }
@@ -505,7 +531,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       this.prefixEl.className = this.buildClasses([
         CSS_CLASSES.INPUT_GROUP_TEXT,
         'bootstrap-touchspin-prefix',
-        this.opts.prefix_extraclass
+        this.opts.prefix_extraclass,
       ]);
     }
   }
@@ -516,7 +542,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
       this.postfixEl.className = this.buildClasses([
         CSS_CLASSES.INPUT_GROUP_TEXT,
         'bootstrap-touchspin-postfix',
-        this.opts.postfix_extraclass
+        this.opts.postfix_extraclass,
       ]);
     }
   }
@@ -524,10 +550,12 @@ class Bootstrap5Renderer extends AbstractRenderer {
   updateButtonFocusability(newValue: boolean): void {
     if (!this.wrapper) return;
 
-    const buttons = this.wrapper.querySelectorAll(`${SELECTORS.UP_BUTTON}, ${SELECTORS.DOWN_BUTTON}`);
+    const buttons = this.wrapper.querySelectorAll(
+      `${SELECTORS.UP_BUTTON}, ${SELECTORS.DOWN_BUTTON}`
+    );
     const tabindex = newValue ? '0' : '-1';
 
-    buttons.forEach(button => {
+    buttons.forEach((button) => {
       button.setAttribute('tabindex', tabindex);
     });
   }
@@ -552,7 +580,11 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.postfixEl = null;
   }
 
-  private applyButtonLabel(button: HTMLElement, raw: string | null | undefined, fallback: string): void {
+  private applyButtonLabel(
+    button: HTMLElement,
+    raw: string | null | undefined,
+    fallback: string
+  ): void {
     const { value, isHtml } = this.resolveButtonContent(raw, fallback);
 
     if (isHtml) {
@@ -563,7 +595,10 @@ class Bootstrap5Renderer extends AbstractRenderer {
     button.textContent = value;
   }
 
-  private resolveButtonContent(raw: string | null | undefined, fallback: string): { value: string; isHtml: boolean } {
+  private resolveButtonContent(
+    raw: string | null | undefined,
+    fallback: string
+  ): { value: string; isHtml: boolean } {
     if (raw === undefined || raw === null) {
       return { value: fallback, isHtml: false };
     }

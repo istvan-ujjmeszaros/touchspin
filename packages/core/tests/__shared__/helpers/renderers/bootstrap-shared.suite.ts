@@ -66,9 +66,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       await expect(existingWrapper).toHaveAttribute('data-touchspin-injected');
 
       // Should not create additional wrapper
-      const wrappers = page
-        .locator('.input-group')
-        .filter({ has: page.getByTestId('test-input') });
+      const wrappers = page.locator('.input-group').filter({ has: page.getByTestId('test-input') });
       await expect(wrappers).toHaveCount(1);
     });
 
@@ -100,7 +98,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test('creates buttons with Bootstrap button classes', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_txt: 'UP',
-        buttondown_txt: 'DOWN'
+        buttondown_txt: 'DOWN',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -119,7 +117,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test('applies custom button classes correctly', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_class: 'btn-primary custom-up',
-        buttondown_class: 'btn-danger custom-down'
+        buttondown_class: 'btn-danger custom-down',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -140,7 +138,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test('creates prefix with input-group addon structure', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
-        prefix_extraclass: 'currency-prefix'
+        prefix_extraclass: 'currency-prefix',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -157,7 +155,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test('creates postfix with input-group addon structure', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         postfix: 'USD',
-        postfix_extraclass: 'currency-postfix'
+        postfix_extraclass: 'currency-postfix',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -176,7 +174,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       await initializeTouchspinFromGlobals(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲',
-        verticaldown: '▼'
+        verticaldown: '▼',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -187,7 +185,9 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       // Vertical wrapper should use Bootstrap button group structure
       await expect(verticalWrapper).toBeVisible();
       // Different Bootstrap versions may use different wrapper patterns
-      await expect(verticalWrapper).toHaveClass(/btn-group-vertical|bootstrap-touchspin-vertical-button-wrapper/);
+      await expect(verticalWrapper).toHaveClass(
+        /btn-group-vertical|bootstrap-touchspin-vertical-button-wrapper/
+      );
 
       // Buttons should still have Bootstrap classes
       await expect(upButton).toHaveClass(/btn/);
@@ -251,7 +251,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
     test('maintains proper Bootstrap input-group element order', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
-        postfix: 'USD'
+        postfix: 'USD',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -284,11 +284,11 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
       await expect(wrapper).toHaveClass(/input-group/);
 
       // Should not have fixed width that breaks responsiveness
-      const wrapperStyles = await wrapper.evaluate(el => {
+      const wrapperStyles = await wrapper.evaluate((el) => {
         const styles = window.getComputedStyle(el);
         return {
           display: styles.display,
-          width: styles.width
+          width: styles.width,
         };
       });
 
@@ -329,7 +329,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
       // Theme classes should be preserved on container (if it exists)
       const container = page.locator('.container');
-      const containerExists = await container.count() > 0;
+      const containerExists = (await container.count()) > 0;
       if (containerExists) {
         await expect(container).toHaveClass(/bg-light/);
         await expect(container).toHaveClass(/border/);

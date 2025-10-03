@@ -50,6 +50,9 @@ try {
   await writeFile(manifestPath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
   console.log(`Artifacts manifest written to ${manifestPath}`);
 } catch (error) {
-  console.error(`Failed to write manifest at ${manifestPath}:`, error instanceof Error ? error.message : error);
+  console.error(
+    `Failed to write manifest at ${manifestPath}:`,
+    error instanceof Error ? error.message : error
+  );
   process.exit(1);
 }

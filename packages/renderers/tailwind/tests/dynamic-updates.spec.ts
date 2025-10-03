@@ -50,7 +50,7 @@ test('updates button text with maintained utility classes', async ({ page }) => 
   // Update button text settings
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_txt: '↑',
-    buttondown_txt: '↓'
+    buttondown_txt: '↓',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -79,7 +79,7 @@ test('updates utility classes dynamically', async ({ page }) => {
   // Update button classes with Tailwind utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600',
-    buttondown_class: 'px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+    buttondown_class: 'px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -108,7 +108,7 @@ test('handles responsive utility class changes', async ({ page }) => {
   // Update with responsive utility classes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'px-2 md:px-4 lg:px-6 bg-green-500 text-white',
-    prefix: 'Amt'
+    prefix: 'Amt',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -137,7 +137,7 @@ test('updates color utility classes', async ({ page }) => {
   // Update color utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'bg-purple-500 text-white border-purple-700',
-    buttondown_class: 'bg-pink-500 text-white border-pink-700'
+    buttondown_class: 'bg-pink-500 text-white border-pink-700',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -166,7 +166,7 @@ test('handles sizing utility updates', async ({ page }) => {
   // Update sizing utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'w-12 h-10 text-lg bg-gray-500',
-    buttondown_class: 'w-12 h-10 text-lg bg-gray-500'
+    buttondown_class: 'w-12 h-10 text-lg bg-gray-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -195,7 +195,7 @@ test('updates spacing utility classes', async ({ page }) => {
   // Update spacing utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'p-4 m-2 bg-indigo-500',
-    buttondown_class: 'p-4 m-2 bg-indigo-500'
+    buttondown_class: 'p-4 m-2 bg-indigo-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -224,7 +224,7 @@ test('handles state utility class changes', async ({ page }) => {
   // Update with state utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 bg-blue-500',
-    buttondown_class: 'hover:bg-red-700 focus:ring-2 focus:ring-red-500 bg-red-500'
+    buttondown_class: 'hover:bg-red-700 focus:ring-2 focus:ring-red-500 bg-red-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -252,7 +252,7 @@ test('updates layout utility classes', async ({ page }) => {
 
   // Update layout to vertical (flex-col behavior)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: true
+    verticalbuttons: true,
   });
 
   // Verify functionality still works after layout change
@@ -261,7 +261,7 @@ test('updates layout utility classes', async ({ page }) => {
 
   // Change back to horizontal
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   await apiHelpers.clickDownButton(page, 'test-input');
@@ -283,7 +283,7 @@ test('handles typography utility changes', async ({ page }) => {
   // Update typography utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'font-bold text-xl leading-tight bg-gray-600',
-    buttondown_class: 'font-light text-sm leading-loose bg-gray-600'
+    buttondown_class: 'font-light text-sm leading-loose bg-gray-600',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -312,7 +312,7 @@ test('updates border and shadow utilities', async ({ page }) => {
   // Update border and shadow utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'border-2 rounded-lg shadow-lg bg-teal-500',
-    buttondown_class: 'border-4 rounded-full shadow-xl bg-teal-500'
+    buttondown_class: 'border-4 rounded-full shadow-xl bg-teal-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -341,7 +341,7 @@ test('handles background utility changes', async ({ page }) => {
   // Update background utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white',
-    buttondown_class: 'bg-gradient-to-l from-red-500 to-pink-500 text-white'
+    buttondown_class: 'bg-gradient-to-l from-red-500 to-pink-500 text-white',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -369,7 +369,7 @@ test('updates focus utility classes', async ({ page }) => {
 
   // Update focusability settings
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    focusablebuttons: false
+    focusablebuttons: false,
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -398,7 +398,7 @@ test('handles dark mode utility toggles', async ({ page }) => {
   // Update with dark mode utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'bg-white dark:bg-gray-800 text-black dark:text-white',
-    buttondown_class: 'bg-white dark:bg-gray-800 text-black dark:text-white'
+    buttondown_class: 'bg-white dark:bg-gray-800 text-black dark:text-white',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -427,7 +427,7 @@ test('updates animation utility classes', async ({ page }) => {
   // Update with animation utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'transition-all duration-300 ease-in-out bg-green-500',
-    buttondown_class: 'transition-colors duration-500 bg-green-500'
+    buttondown_class: 'transition-colors duration-500 bg-green-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -456,7 +456,7 @@ test('handles transform utility changes', async ({ page }) => {
   // Update with transform utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'hover:scale-105 hover:rotate-3 bg-orange-500',
-    buttondown_class: 'hover:scale-95 hover:-rotate-3 bg-orange-500'
+    buttondown_class: 'hover:scale-95 hover:-rotate-3 bg-orange-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -485,7 +485,7 @@ test('updates opacity utility classes', async ({ page }) => {
   // Update with opacity utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'opacity-75 hover:opacity-100 bg-yellow-500',
-    buttondown_class: 'opacity-50 hover:opacity-100 bg-yellow-500'
+    buttondown_class: 'opacity-50 hover:opacity-100 bg-yellow-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -514,7 +514,7 @@ test('handles custom utility class integration', async ({ page }) => {
   // Update with custom class names (testing extensibility)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'custom-btn-class px-4 py-2 bg-emerald-500',
-    prefix: 'Custom'
+    prefix: 'Custom',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -543,7 +543,7 @@ test('updates arbitrary value utilities', async ({ page }) => {
   // Update with arbitrary value utilities (Tailwind JIT feature)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'bg-[#1a472a] text-[#e0e0e0] px-[18px]',
-    buttondown_class: 'bg-[#721c24] text-[#f8d7da] px-[18px]'
+    buttondown_class: 'bg-[#721c24] text-[#f8d7da] px-[18px]',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -573,7 +573,7 @@ test('handles utility class conflicts resolution', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     buttonup_txt: 'UP',
-    verticalup: '▲'
+    verticalup: '▲',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -587,7 +587,7 @@ test('handles utility class conflicts resolution', async ({ page }) => {
 
   // Switch back to horizontal and verify
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    verticalbuttons: false
+    verticalbuttons: false,
   });
 
   await expect(elements.upButton).toHaveText('UP');
@@ -608,7 +608,7 @@ test('updates plugin-specific utilities', async ({ page }) => {
   // Update with standard utilities (plugins would work similarly)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -638,7 +638,7 @@ test('handles JIT compilation updates', async ({ page }) => {
   for (let i = 0; i < 3; i++) {
     await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
       buttonup_txt: `UP${i}`,
-      buttondown_txt: `DOWN${i}`
+      buttondown_txt: `DOWN${i}`,
     });
   }
 
@@ -668,7 +668,7 @@ test('updates purge-safe utility classes', async ({ page }) => {
   // Update with utilities that should be purge-safe
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'bg-slate-500 text-white px-3 py-2',
-    buttondown_class: 'bg-slate-600 text-white px-3 py-2'
+    buttondown_class: 'bg-slate-600 text-white px-3 py-2',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -702,7 +702,7 @@ test('handles performance optimized updates', async ({ page }) => {
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
-    postfix: 'USD'
+    postfix: 'USD',
   });
 
   // Verify value is preserved
@@ -728,7 +728,7 @@ test('updates responsive breakpoint utilities', async ({ page }) => {
   // Update with responsive breakpoint utilities
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
     buttonup_class: 'text-sm sm:text-base md:text-lg lg:text-xl bg-violet-500',
-    buttondown_class: 'text-sm sm:text-base md:text-lg lg:text-xl bg-violet-500'
+    buttondown_class: 'text-sm sm:text-base md:text-lg lg:text-xl bg-violet-500',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -756,7 +756,7 @@ test('handles utility class validation', async ({ page }) => {
 
   // Apply valid settings (TouchSpin handles class strings gracefully)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    buttonup_class: 'bg-amber-500 text-white px-4'
+    buttonup_class: 'bg-amber-500 text-white px-4',
   });
 
   // Verify component still functions
@@ -765,7 +765,7 @@ test('handles utility class validation', async ({ page }) => {
 
   // Apply more valid settings to verify recovery
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix: '$'
+    prefix: '$',
   });
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');

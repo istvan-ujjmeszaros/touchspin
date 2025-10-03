@@ -28,7 +28,7 @@ const FORBIDDEN_PATTERNS = [
   /\.querySelector\s*\(/,
   /\.getElementById\s*\(/,
   /\.getElementsByClassName\s*\(/,
-  /\.querySelectorAll\s*\(/
+  /\.querySelectorAll\s*\(/,
 ];
 
 // Exceptions for specific patterns that are allowed
@@ -47,7 +47,7 @@ const ALLOWED_EXCEPTIONS = [
   // Allow in bootstrap-shared.suite.ts (renderer test suite)
   /bootstrap-shared\.suite\.ts$/,
   // Allow runtime helper functions (these run in browser context, not test context)
-  /runtime\//
+  /runtime\//,
 ];
 
 // Directories to scan for test helper files
@@ -55,7 +55,7 @@ const TEST_HELPER_DIRS = [
   'packages/core/test-helpers',
   'packages/core/tests/__shared__/helpers',
   'packages/jquery-plugin/test-helpers',
-  'packages/web-components/test-helpers'
+  'packages/web-components/test-helpers',
 ];
 
 // File extensions to check
@@ -69,8 +69,6 @@ function findTestHelperFiles() {
     try {
       scanDirectory(fullDir, files);
     } catch (error) {
-      // Directory might not exist yet, skip it
-      continue;
     }
   }
 
@@ -105,14 +103,17 @@ function checkFile(filePath) {
     for (const pattern of FORBIDDEN_PATTERNS) {
       if (pattern.test(line)) {
         // Check if this line is covered by an allowed exception
-        const isException = ALLOWED_EXCEPTIONS.some(exception => {
+        const isException = ALLOWED_EXCEPTIONS.some((exception) => {
           // Check the file path itself for pattern matches
           const filePathMatch = exception.test(filePath);
           if (filePathMatch) return true;
 
           // For page.evaluate and page.waitForFunction, we need special handling
           // because the block can be very large (30+ lines)
-          if (exception.source.includes('page\\.evaluate') || exception.source.includes('page\\.waitForFunction')) {
+          if (
+            exception.source.includes('page\\.evaluate') ||
+            exception.source.includes('page\\.waitForFunction')
+          ) {
             // Check if we're inside a page.evaluate or page.waitForFunction block
             // by looking for the pattern and tracking braces/parentheses
             const isInsidePageEvaluate = isInsideEvaluateBlock(lines, i);
@@ -132,7 +133,7 @@ function checkFile(filePath) {
           violations.push({
             line: lineNumber,
             content: line.trim(),
-            pattern: pattern.source
+            pattern: pattern.source,
           });
         }
       }
@@ -217,7 +218,9 @@ function main() {
   }
 
   if (totalViolations > 0) {
-    console.log(`\n💥 GUARD FAILED: Found ${totalViolations} forbidden querySelector usage(s) in ${violationFiles} file(s)`);
+    console.log(
+      `\n💥 GUARD FAILED: Found ${totalViolations} forbidden querySelector usage(s) in ${violationFiles} file(s)`
+    );
     console.log(`\n🚨 CRITICAL RULE VIOLATION:`);
     console.log(`   Test helpers MUST use Playwright locators and helper functions.`);
     console.log(`   NEVER use document.querySelector() or similar DOM methods.`);
@@ -226,7 +229,9 @@ function main() {
     console.log(`   • wrapperById(page, testId) - for wrapper elements`);
     console.log(`   • input.evaluate((el) => { ... }) - for element-specific evaluation`);
     console.log(`   • Existing helper functions from the test-helpers package`);
-    console.log(`\n📖 See CLAUDE.md section "🚨 CRITICAL: NO DIRECT DOM MANIPULATION" for details.`);
+    console.log(
+      `\n📖 See CLAUDE.md section "🚨 CRITICAL: NO DIRECT DOM MANIPULATION" for details.`
+    );
     process.exit(1);
   }
 

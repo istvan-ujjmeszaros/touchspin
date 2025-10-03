@@ -13,7 +13,10 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { universalRendererSuite, bootstrapSharedSuite } from '@touchspin/core/test-helpers/renderers';
+import {
+  universalRendererSuite,
+  bootstrapSharedSuite,
+} from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
 
 // Bootstrap 5 Renderer URL for tests

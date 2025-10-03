@@ -26,7 +26,12 @@ import { expectValueToBe } from '@touchspin/core/test-helpers';
 import { fillWithValueAndBlur, setValueSilentlyAndBlur } from '@touchspin/core/test-helpers';
 import { clickUpButton, clickDownButton } from '@touchspin/core/test-helpers';
 import { holdUpArrowKeyOnInput } from '@touchspin/core/test-helpers';
-import { clearEventLog, countEventInLog, getEventsOfType, hasEventInLog } from '@touchspin/core/test-helpers';
+import {
+  clearEventLog,
+  countEventInLog,
+  getEventsOfType,
+  hasEventInLog,
+} from '@touchspin/core/test-helpers';
 import { createAdditionalInput } from '@touchspin/core/test-helpers';
 
 const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
@@ -41,28 +46,38 @@ async function initializeTouchSpinOnCleanFixture(page, testId: string, settings 
   await apiHelpers.initializeTouchSpin(page, testId, settings);
 }
 
- /**
-  * Scenario: increases value on click on up button and triggers change event
-  * Given the fixture page is loaded
-  * When I click the up button
-  * Then the value increases and change event is fired
-  */
+/**
+ * Scenario: increases value on click on up button and triggers change event
+ * Given the fixture page is loaded
+ * When I click the up button
+ * Then the value increases and change event is fired
+ */
 test('increases value on click on up button and triggers change event', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 100, initval: '0' });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 100,
+    initval: '0',
+  });
   await clickUpButton(page, 'test-input');
   await expectValueToBe(page, 'test-input', '1');
   const changeEventCount = await countEventInLog(page, 'change');
   test.expect(changeEventCount).toBe(1);
 });
 
- /**
-  * Scenario: decreases value on click on down button and triggers change event
-  * Given the fixture page is loaded
-  * When I click the down button
-  * Then the value decreases and change event is fired
-  */
+/**
+ * Scenario: decreases value on click on down button and triggers change event
+ * Given the fixture page is loaded
+ * When I click the down button
+ * Then the value decreases and change event is fired
+ */
 test('decreases value on click on down button and triggers change event', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 100, initval: '1' });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 100,
+    initval: '1',
+  });
   await clickDownButton(page, 'test-input');
   await expectValueToBe(page, 'test-input', '0');
   const changeEventCount = await countEventInLog(page, 'change');
@@ -78,7 +93,12 @@ test('decreases value on click on down button and triggers change event', async 
  * { "settings": { "min": 0, "max": 100, "step": 2, "initval": "96" }, "expectChangeCount": 2 }
  */
 test('Clicking up caps at max with only real transitions emitting change', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 2, min: 0, max: 100, initval: 96 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 2,
+    min: 0,
+    max: 100,
+    initval: 96,
+  });
   await clearEventLog(page);
 
   // Click up: 96 -> 98 (should emit change)
@@ -108,7 +128,12 @@ test('Clicking up caps at max with only real transitions emitting change', async
  * { "settings": { "min": 0, "max": 10, "step": 2, "initval": "6" }, "expectChangeCount": 3 }
  */
 test('Clicking down caps at min with only real transitions emitting change', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 2, min: 0, max: 10, initval: 6 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 2,
+    min: 0,
+    max: 10,
+    initval: 6,
+  });
   await clearEventLog(page);
 
   // Click down: 6 -> 4 (should emit change)
@@ -143,7 +168,12 @@ test('Clicking down caps at min with only real transitions emitting change', asy
  * { "settings": { "min": 0, "max": 100, "step": 1, "initval": "50" }, "expectEvents": ["touchspin.on.startspin","touchspin.on.stopspin"] }
  */
 test('Button click increments value and emits spin start and stop events', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 100, initval: 50 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 100,
+    initval: 50,
+  });
   await clearEventLog(page);
 
   // Click button - buttons ARE spinners and DO emit spin start/stop events
@@ -169,7 +199,12 @@ test('Button click increments value and emits spin start and stop events', async
  * { "settings": { "min": 0, "max": 10, "step": 10, "initval": "0" }, "expectEvents": ["touchspin.on.change","touchspin.on.max"] }
  */
 test('Reaching max emits on max event exactly once', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 10, min: 0, max: 10, initval: 0 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 10,
+    min: 0,
+    max: 10,
+    initval: 0,
+  });
   await clearEventLog(page);
 
   // Click up to reach max in one step
@@ -191,7 +226,12 @@ test('Reaching max emits on max event exactly once', async ({ page }) => {
  * { "settings": { "min": 0, "max": 10, "step": 10, "initval": "10" }, "expectEvents": ["touchspin.on.change","touchspin.on.min"] }
  */
 test('Reaching min emits on min event exactly once', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 10, min: 0, max: 10, initval: 10 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 10,
+    min: 0,
+    max: 10,
+    initval: 10,
+  });
   await clearEventLog(page);
 
   // Click down to reach min in one step
@@ -213,20 +253,28 @@ test('Reaching min emits on min event exactly once', async ({ page }) => {
  * { "settings": { "min": 0, "max": 5, "step": 1, "initval": "5" }, "updateSettings": { "max": 10, "step": 2 } }
  */
 test('UpdateSettings increasing max allows a further increment', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 5, initval: 5 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 5,
+    initval: 5,
+  });
 
   // At max, should not be able to increment
   await clickUpButton(page, 'test-input');
   await expectValueToBe(page, 'test-input', '5');
 
   // Update settings to increase max and change step
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (core) {
-      core.updateSettings({ max: 10, step: 2 });
-    }
-  }, { testId: 'test-input' });
+  await page.evaluate(
+    ({ testId }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core) {
+        core.updateSettings({ max: 10, step: 2 });
+      }
+    },
+    { testId: 'test-input' }
+  );
 
   // Now should be able to increment beyond previous max
   await clickUpButton(page, 'test-input');
@@ -242,16 +290,24 @@ test('UpdateSettings increasing max allows a further increment', async ({ page }
  * { "settings": { "min": 0, "max": 10, "step": 1, "initval": "8" }, "updateSettings": { "max": 5 } }
  */
 test('UpdateSettings decreasing max clamps current value immediately', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 10, initval: 8 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 10,
+    initval: 8,
+  });
 
   // Update settings to decrease max
-  await page.evaluate(({ testId }) => {
-    const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-    const core = (input as any)._touchSpinCore;
-    if (core) {
-      core.updateSettings({ max: 5 });
-    }
-  }, { testId: 'test-input' });
+  await page.evaluate(
+    ({ testId }) => {
+      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      if (core) {
+        core.updateSettings({ max: 5 });
+      }
+    },
+    { testId: 'test-input' }
+  );
 
   // Should clamp to new max
   await expectValueToBe(page, 'test-input', '5');
@@ -270,7 +326,13 @@ test('UpdateSettings decreasing max clamps current value immediately', async ({ 
  * { "settings": { "min": 0, "max": 2, "step": 0.1, "initval": "1.0", "decimals": 1 } }
  */
 test('Decimal step increments and clamps correctly', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 0.1, min: 0, max: 2, initval: 1.0, decimals: 1 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 0.1,
+    min: 0,
+    max: 2,
+    initval: 1.0,
+    decimals: 1,
+  });
   await clearEventLog(page);
 
   // Click up to increment by decimal step
@@ -291,7 +353,12 @@ test('Decimal step increments and clamps correctly', async ({ page }) => {
  * { "settings": { "min": 0, "max": 9, "step": 1, "initval": "5" }, "inputOptions": { "id": "second-input", "value": "3" } }
  */
 test('Destroy removes artifacts while other instance remains intact', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: 0, max: 9, initval: 5 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: 0,
+    max: 9,
+    initval: 5,
+  });
 
   // Create additional input for second instance using proper helper
   await createAdditionalInput(page, 'second-input', { value: '3' });
@@ -332,7 +399,12 @@ test('Destroy removes artifacts while other instance remains intact', async ({ p
  * { "settings": { "min": 0, "max": 10, "step": 5, "initval": "10" }, "expectChangeCount": 0 }
  */
 test('Uponce from max stays at max with no change event', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 5, min: 0, max: 10, initval: 10 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 5,
+    min: 0,
+    max: 10,
+    initval: 10,
+  });
   await clearEventLog(page);
 
   // Click up when already at max - should not emit change event
@@ -354,7 +426,12 @@ test('Uponce from max stays at max with no change event', async ({ page }) => {
  * { "settings": { "min": -5, "max": 5, "step": 1, "initval": "-5" } }
  */
 test('Range with negatives increments across zero correctly', async ({ page }) => {
-  await initializeTouchSpinOnCleanFixture(page, 'test-input', { step: 1, min: -5, max: 5, initval: -1 });
+  await initializeTouchSpinOnCleanFixture(page, 'test-input', {
+    step: 1,
+    min: -5,
+    max: 5,
+    initval: -1,
+  });
   await clearEventLog(page);
 
   // Increment from -1 to 0

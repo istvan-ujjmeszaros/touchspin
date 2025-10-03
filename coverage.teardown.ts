@@ -12,8 +12,7 @@ async function globalTeardown() {
     return;
   }
 
-  const coverageFiles = fs.readdirSync(playwrightCoverageDir)
-    .filter(f => f.endsWith('.json'));
+  const coverageFiles = fs.readdirSync(playwrightCoverageDir).filter((f) => f.endsWith('.json'));
 
   if (coverageFiles.length === 0) {
     console.log('No coverage files found in', playwrightCoverageDir);
@@ -21,37 +20,45 @@ async function globalTeardown() {
     // Check old location
     const oldCoverageDir = path.join(process.cwd(), 'reports', 'coverage');
     if (fs.existsSync(oldCoverageDir)) {
-      const oldFiles = fs.readdirSync(oldCoverageDir).filter(f => f.endsWith('.json') && f !== 'coverage-final.json');
+      const oldFiles = fs
+        .readdirSync(oldCoverageDir)
+        .filter((f) => f.endsWith('.json') && f !== 'coverage-final.json');
       if (oldFiles.length > 0) {
-        console.log(`Found ${oldFiles.length} old coverage files in ${oldCoverageDir} - these are being incorrectly counted!`);
+        console.log(
+          `Found ${oldFiles.length} old coverage files in ${oldCoverageDir} - these are being incorrectly counted!`
+        );
       }
     }
     return;
   }
 
-  console.log(`\n📊 Processing ${coverageFiles.length} coverage files from ${playwrightCoverageDir}...`);
+  console.log(
+    `\n📊 Processing ${coverageFiles.length} coverage files from ${playwrightCoverageDir}...`
+  );
 
   // Create output directory for individual Istanbul JSON files
   const istanbulJsonDir = path.join(process.cwd(), 'reports', 'istanbul-json');
   fs.mkdirSync(istanbulJsonDir, { recursive: true });
 
   // DEBUG: Log environment variables
-  console.log(`🔧 Environment: TS_BUILD_TARGET=${process.env.TS_BUILD_TARGET}, PW_COVERAGE=${process.env.PW_COVERAGE}, COVERAGE=${process.env.COVERAGE}`);
+  console.log(
+    `🔧 Environment: TS_BUILD_TARGET=${process.env.TS_BUILD_TARGET}, PW_COVERAGE=${process.env.PW_COVERAGE}, COVERAGE=${process.env.COVERAGE}`
+  );
 
   function toLocalPath(rawUrl: string): string | null {
     try {
       const u = new URL(rawUrl);
-      let p = decodeURIComponent(u.pathname);         // e.g. /packages/jquery-plugin/src/index.js or /packages/jquery-plugin/dist/index.js
+      let p = decodeURIComponent(u.pathname); // e.g. /packages/jquery-plugin/src/index.js or /packages/jquery-plugin/dist/index.js
 
       // Ignore bundler/dev-server internals if present (none expected now)
 
       const ix = p.indexOf('/packages/');
       if (ix === -1) return null;
 
-      p = p.slice(ix + 1);                            // drop leading slash before 'packages'
+      p = p.slice(ix + 1); // drop leading slash before 'packages'
       p = p.replace(/\\/g, '/');
 
-      let abs = path.join(process.cwd(), p);          // /repo/packages/…/index.js
+      let abs = path.join(process.cwd(), p); // /repo/packages/…/index.js
 
       // Handle /src/…, /dist/…, and /devdist/… paths
       if (p.includes('/dist/') || p.includes('/devdist/')) {
@@ -103,10 +110,16 @@ async function globalTeardown() {
 
         // Only log unique URLs
         if (!loggedUrls.has(entry.url)) {
-          const expectedTarget = entry.url.includes('/src/') ? 'SRC' :
-                               entry.url.includes('/devdist/') ? 'DEVDIST' :
-                               entry.url.includes('/dist/') ? 'DIST' : 'OTHER';
-          console.log(`🔍 Processing URL [${expectedTarget}]: ${entry.url} → ${localPath || 'SKIPPED'}`);
+          const expectedTarget = entry.url.includes('/src/')
+            ? 'SRC'
+            : entry.url.includes('/devdist/')
+              ? 'DEVDIST'
+              : entry.url.includes('/dist/')
+                ? 'DIST'
+                : 'OTHER';
+          console.log(
+            `🔍 Processing URL [${expectedTarget}]: ${entry.url} → ${localPath || 'SKIPPED'}`
+          );
           loggedUrls.add(entry.url);
         }
 
@@ -180,20 +193,30 @@ async function globalTeardown() {
   console.log(`   Istanbul files generated: ${filesProcessed}`);
 
   // Show core files specifically
-  const coreIndexUrls = allRawUrls.filter(url => url.includes('/core/') && url.includes('index.js'));
-  const rendererUrls = allRawUrls.filter(url => url.includes('/renderer') || url.includes('Renderer'));
+  const coreIndexUrls = allRawUrls.filter(
+    (url) => url.includes('/core/') && url.includes('index.js')
+  );
+  const rendererUrls = allRawUrls.filter(
+    (url) => url.includes('/renderer') || url.includes('Renderer')
+  );
 
   console.log(`\n🔍 KEY FILES ANALYSIS:`);
   console.log(`   Core index.js URLs: ${coreIndexUrls.length} → ${coreIndexUrls.join(', ')}`);
-  console.log(`   Renderer URLs: ${rendererUrls.length} → ${rendererUrls.slice(0, 3).join(', ')}${rendererUrls.length > 3 ? '...' : ''}`);
+  console.log(
+    `   Renderer URLs: ${rendererUrls.length} → ${rendererUrls.slice(0, 3).join(', ')}${rendererUrls.length > 3 ? '...' : ''}`
+  );
 
   // Show devdist vs dist breakdown
-  const devdistUrls = allRawUrls.filter(url => url.includes('/devdist/'));
-  const distUrls = allRawUrls.filter(url => url.includes('/dist/'));
+  const devdistUrls = allRawUrls.filter((url) => url.includes('/devdist/'));
+  const distUrls = allRawUrls.filter((url) => url.includes('/dist/'));
 
   console.log(`\n📁 BUILD TARGET ANALYSIS:`);
-  console.log(`   DEVDIST URLs: ${devdistUrls.length} → ${devdistUrls.slice(0, 2).join(', ')}${devdistUrls.length > 2 ? '...' : ''}`);
-  console.log(`   DIST URLs: ${distUrls.length} → ${distUrls.slice(0, 2).join(', ')}${distUrls.length > 2 ? '...' : ''}`);
+  console.log(
+    `   DEVDIST URLs: ${devdistUrls.length} → ${devdistUrls.slice(0, 2).join(', ')}${devdistUrls.length > 2 ? '...' : ''}`
+  );
+  console.log(
+    `   DIST URLs: ${distUrls.length} → ${distUrls.slice(0, 2).join(', ')}${distUrls.length > 2 ? '...' : ''}`
+  );
 
   if (skippedUrls.length > 0) {
     console.log(`\n⚠️  SKIPPED URLs (first 5): ${skippedUrls.slice(0, 5).join(', ')}`);
@@ -204,7 +227,9 @@ async function globalTeardown() {
     console.log(`📁 Individual Istanbul JSON files saved to ${istanbulJsonDir}`);
     console.log('💡 Run "yarn coverage:merge && yarn coverage:report" to generate final reports');
   } else {
-    console.log('\n❌ No source coverage collected - check if tests are running and importing project files');
+    console.log(
+      '\n❌ No source coverage collected - check if tests are running and importing project files'
+    );
   }
 }
 

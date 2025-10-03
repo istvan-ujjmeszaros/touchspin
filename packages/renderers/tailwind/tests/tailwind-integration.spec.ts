@@ -126,7 +126,7 @@ test('integrates with Tailwind CSS JIT mode', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Test that JIT-compiled utilities work
-  await elements.wrapper.evaluate(el => el.classList.add('gap-[5px]'));
+  await elements.wrapper.evaluate((el) => el.classList.add('gap-[5px]'));
   await expect(elements.wrapper).toHaveClass(/gap-\[5px\]/);
 
   // Test functionality with JIT utilities
@@ -149,7 +149,7 @@ test('supports Tailwind CSS arbitrary values', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('arbitrary-test', {
       label: 'Arbitrary Values Test',
-      helpText: 'Testing with Tailwind arbitrary values'
+      helpText: 'Testing with Tailwind arbitrary values',
     });
     input.closest('.flex').classList.add('w-[calc(100%-2rem)]');
   });
@@ -180,7 +180,7 @@ test('handles Tailwind CSS custom variants', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('variant-test', {
       label: 'Custom Variants Test',
-      helpText: 'Testing with Tailwind custom variants'
+      helpText: 'Testing with Tailwind custom variants',
     });
     input.closest('.mb-4').classList.add('group');
   });
@@ -190,7 +190,7 @@ test('handles Tailwind CSS custom variants', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'variant-test');
 
   // Add group-hover variant utility
-  await elements.upButton.evaluate(el => el.classList.add('group-hover:bg-blue-600'));
+  await elements.upButton.evaluate((el) => el.classList.add('group-hover:bg-blue-600'));
 
   // Test functionality with custom variants
   await apiHelpers.clickUpButton(page, 'variant-test');
@@ -212,7 +212,7 @@ test('integrates with Tailwind CSS design tokens', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Apply Tailwind design token utilities (colors, spacing, etc.)
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.classList.add('bg-blue-600', 'text-white', 'px-3', 'py-2');
   });
 
@@ -287,7 +287,7 @@ test('integrates with Tailwind CSS dark mode', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add dark mode utility classes
-  await elements.input.evaluate(el => {
+  await elements.input.evaluate((el) => {
     el.classList.add('dark:bg-gray-800', 'dark:text-white');
   });
 
@@ -311,7 +311,7 @@ test('supports Tailwind CSS animations', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add Tailwind animation utilities
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.classList.add('transition', 'duration-150', 'ease-in-out');
   });
 
@@ -335,7 +335,7 @@ test('handles Tailwind CSS transforms', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add Tailwind transform utilities
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.classList.add('hover:scale-105', 'active:scale-95', 'transform', 'transition');
   });
 
@@ -359,7 +359,7 @@ test('integrates with Tailwind CSS typography', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Apply Tailwind typography utilities
-  await elements.input.evaluate(el => {
+  await elements.input.evaluate((el) => {
     el.classList.add('text-lg', 'font-medium');
   });
 
@@ -383,7 +383,7 @@ test('supports Tailwind CSS forms plugin', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('forms-plugin-test', {
       label: 'Forms Plugin Test',
-      helpText: 'Testing @tailwindcss/forms plugin integration'
+      helpText: 'Testing @tailwindcss/forms plugin integration',
     });
     input.classList.add('form-input'); // forms plugin utility
   });
@@ -410,7 +410,7 @@ test('handles Tailwind CSS aspect ratio plugin', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('aspect-test', {
       label: 'Aspect Ratio Test',
-      helpText: 'Testing aspect ratio plugin integration'
+      helpText: 'Testing aspect ratio plugin integration',
     });
     const wrapper = input.closest('.mb-4');
     wrapper.classList.add('aspect-w-16', 'aspect-h-9');
@@ -438,7 +438,7 @@ test('integrates with Tailwind CSS container queries', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('container-query-test', {
       label: 'Container Query Test',
-      helpText: 'Testing container query integration'
+      helpText: 'Testing container query integration',
     });
     input.closest('.mb-4').classList.add('@container');
   });
@@ -466,7 +466,7 @@ test('supports Tailwind CSS utility-first philosophy', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Check that wrapper uses utility classes
-  const wrapperClasses = await elements.wrapper.evaluate(el => el.className);
+  const wrapperClasses = await elements.wrapper.evaluate((el) => el.className);
   expect(wrapperClasses).toMatch(/flex|inline-flex|grid/);
 
   // Test functionality follows utility-first approach
@@ -489,7 +489,7 @@ test('handles Tailwind CSS class precedence', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Apply overlapping utilities (later classes in HTML take precedence in Tailwind)
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.classList.add('bg-blue-500', 'bg-red-500'); // Last one should apply
   });
 
@@ -558,7 +558,7 @@ test('handles Tailwind CSS performance optimization', async ({ page }) => {
     for (let i = 1; i <= 5; i++) {
       window.createTestInput(`perf-test-${i}`, {
         label: `Performance Test ${i}`,
-        helpText: `Testing performance optimization ${i}`
+        helpText: `Testing performance optimization ${i}`,
       });
     }
   });
@@ -589,7 +589,7 @@ test('integrates with Tailwind CSS ecosystem tools', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add data attributes used by ecosystem tools
-  await elements.wrapper.evaluate(el => {
+  await elements.wrapper.evaluate((el) => {
     el.setAttribute('x-data', '{ open: false }'); // Alpine.js syntax
   });
 
@@ -616,7 +616,7 @@ test('supports Tailwind CSS custom properties', async ({ page }) => {
         --custom-primary: #3b82f6;
         --custom-spacing: 1rem;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -624,7 +624,7 @@ test('supports Tailwind CSS custom properties', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Apply custom properties via utility classes
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.style.setProperty('background-color', 'var(--custom-primary)');
     el.style.setProperty('padding', 'var(--custom-spacing)');
   });
@@ -672,7 +672,7 @@ test('integrates with Tailwind CSS framework patterns', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('framework-pattern-test', {
       label: 'Framework Pattern Test',
-      helpText: 'Testing Tailwind framework integration patterns'
+      helpText: 'Testing Tailwind framework integration patterns',
     });
     // Add framework-like data attributes
     input.setAttribute('data-component', 'touchspin');

@@ -33,7 +33,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('creates wrapper and button elements with data attributes', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_txt: 'UP',
-        buttondown_txt: 'DOWN'
+        buttondown_txt: 'DOWN',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -56,7 +56,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
         prefix: '$',
         postfix: 'USD',
         prefix_extraclass: 'custom-prefix',
-        postfix_extraclass: 'custom-postfix'
+        postfix_extraclass: 'custom-postfix',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -76,7 +76,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('handles empty prefix and postfix gracefully', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '',
-        postfix: ''
+        postfix: '',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -102,7 +102,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await initializeTouchspinFromGlobals(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲',
-        verticaldown: '▼'
+        verticaldown: '▼',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -120,7 +120,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('manages focusability and tabindex correctly', async ({ page }) => {
       // Test with focusable buttons
       await initializeTouchspinFromGlobals(page, 'test-input', {
-        focusablebuttons: true
+        focusablebuttons: true,
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -155,7 +155,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('updates button text dynamically', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_txt: 'UP',
-        buttondown_txt: 'DOWN'
+        buttondown_txt: 'DOWN',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -170,7 +170,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           buttonup_txt: '↑',
-          buttondown_txt: '↓'
+          buttondown_txt: '↓',
         })
       );
 
@@ -184,8 +184,8 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await initializeTouchspinFromGlobals(page, 'test-input');
 
       const wrapper = page.getByTestId('test-input-wrapper');
-      let prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
-      let postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
+      const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
+      const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
 
       // Initially no prefix/postfix (elements either don't exist or are empty)
       // Different renderers may handle this differently
@@ -204,7 +204,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           prefix: '$',
-          postfix: 'USD'
+          postfix: 'USD',
         })
       );
 
@@ -218,7 +218,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           prefix: '',
-          postfix: ''
+          postfix: '',
         })
       );
 
@@ -249,11 +249,11 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('switches between horizontal and vertical layouts', async ({ page }) => {
       // Start with horizontal layout
       await initializeTouchspinFromGlobals(page, 'test-input', {
-        verticalbuttons: false
+        verticalbuttons: false,
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
-      let verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
+      const verticalWrapper = wrapper.locator('[data-touchspin-injected="vertical-wrapper"]');
 
       // Initially no vertical wrapper
       await expect(verticalWrapper).toBeHidden();
@@ -263,7 +263,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           verticalbuttons: true,
           verticalup: '▲',
-          verticaldown: '▼'
+          verticaldown: '▼',
         })
       );
 
@@ -273,7 +273,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       // Switch back to horizontal
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
-          verticalbuttons: false
+          verticalbuttons: false,
         })
       );
 
@@ -284,7 +284,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     // State Preservation Tests
     test('preserves input value during DOM updates', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
-        initval: '50'
+        initval: '50',
       });
 
       const input = page.getByTestId('test-input');
@@ -295,7 +295,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       // Trigger DOM rebuild with prefix addition
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
-          prefix: '$'
+          prefix: '$',
         })
       );
 
@@ -306,7 +306,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await input.fill('75');
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
-          postfix: 'USD'
+          postfix: 'USD',
         })
       );
 
@@ -317,7 +317,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('maintains button functionality after updates', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         initval: '10',
-        step: 5
+        step: 5,
       });
 
       const input = page.getByTestId('test-input');
@@ -332,7 +332,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           prefix: '$',
           buttonup_txt: '↑',
-          buttondown_txt: '↓'
+          buttondown_txt: '↓',
         })
       );
 
@@ -366,7 +366,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
     test('handles custom classes correctly', async ({ page }) => {
       await initializeTouchspinFromGlobals(page, 'test-input', {
         buttonup_class: 'custom-up-class',
-        buttondown_class: 'custom-down-class'
+        buttondown_class: 'custom-down-class',
       });
 
       const wrapper = page.getByTestId('test-input-wrapper');
@@ -381,7 +381,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       await page.evaluate(() =>
         window.__ts!.requireCoreByTestId('test-input').updateSettings({
           buttonup_class: 'new-up-class',
-          buttondown_class: 'new-down-class'
+          buttondown_class: 'new-down-class',
         })
       );
 

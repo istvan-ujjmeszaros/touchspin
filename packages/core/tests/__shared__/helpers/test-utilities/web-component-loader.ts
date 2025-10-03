@@ -21,10 +21,9 @@ export async function loadWebComponentWithDependencies(page: Page, debug = false
   }, debug);
 
   // Final verification
-  await page.waitForFunction(
-    () => customElements.get('touchspin-input') !== undefined,
-    { timeout: 5000 }
-  );
+  await page.waitForFunction(() => customElements.get('touchspin-input') !== undefined, {
+    timeout: 5000,
+  });
 }
 
 /**
@@ -50,7 +49,7 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
           const input = document.querySelector(`[data-testid="${id}"]`) as any;
           if (!input?._touchSpinCore) throw new Error(`TouchSpin not initialized on: ${id}`);
           return input._touchSpinCore;
-        }
+        },
       };
     }
   });
@@ -64,27 +63,35 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
       window.__eventLog = [];
 
       // Capture TouchSpin events
-      document.addEventListener('touchspin-change', (e) => {
-        window.__eventLog.push({
-          type: 'touchspin',
-          event: 'change',
-          target: (e.target as any)?.dataset?.testid,
-          value: (e as CustomEvent).detail?.value
-        });
-      }, true);
+      document.addEventListener(
+        'touchspin-change',
+        (e) => {
+          window.__eventLog.push({
+            type: 'touchspin',
+            event: 'change',
+            target: (e.target as any)?.dataset?.testid,
+            value: (e as CustomEvent).detail?.value,
+          });
+        },
+        true
+      );
 
       // Capture native events
-      document.addEventListener('change', (e) => {
-        const target = e.target as HTMLInputElement;
-        if (target.tagName === 'INPUT') {
-          window.__eventLog.push({
-            type: 'native',
-            event: 'change',
-            target: target.dataset?.testid,
-            value: target.value
-          });
-        }
-      }, true);
+      document.addEventListener(
+        'change',
+        (e) => {
+          const target = e.target as HTMLInputElement;
+          if (target.tagName === 'INPUT') {
+            window.__eventLog.push({
+              type: 'native',
+              event: 'change',
+              target: target.dataset?.testid,
+              value: target.value,
+            });
+          }
+        },
+        true
+      );
     }
   });
 

@@ -48,7 +48,6 @@ export interface TouchSpinCoreOptions {
   buttondown_txt?: string;
 }
 
-
 const DEFAULTS: Required<Omit<TouchSpinCoreOptions, 'renderer'>> & { renderer: null } = {
   min: 0,
   max: 100,
@@ -85,7 +84,15 @@ const DEFAULTS: Required<Omit<TouchSpinCoreOptions, 'renderer'>> & { renderer: n
 
 const INSTANCE_KEY = '_touchSpinCore' as const;
 
-type CoreEventName = 'min' | 'max' | 'startspin' | 'startupspin' | 'startdownspin' | 'stopspin' | 'stopupspin' | 'stopdownspin';
+type CoreEventName =
+  | 'min'
+  | 'max'
+  | 'startspin'
+  | 'startupspin'
+  | 'startdownspin'
+  | 'stopspin'
+  | 'stopupspin'
+  | 'stopdownspin';
 
 export class TouchSpinCore {
   input: HTMLInputElement;
@@ -113,23 +120,30 @@ export class TouchSpinCore {
    * @param {TouchSpinCoreOptions} current
    * @returns {Partial<TouchSpinCoreOptions>}
    */
-  static sanitizePartialSettings(partial: Partial<TouchSpinCoreOptions>, current: TouchSpinCoreOptions): Partial<TouchSpinCoreOptions> {
+  static sanitizePartialSettings(
+    partial: Partial<TouchSpinCoreOptions>,
+    current: TouchSpinCoreOptions
+  ): Partial<TouchSpinCoreOptions> {
     const out = { ...partial };
 
-    if (Object.prototype.hasOwnProperty.call(partial, 'step')) {
+    if (Object.hasOwn(partial, 'step')) {
       const n = Number(partial.step);
-      out.step = (isFinite(n) && n > 0) ? n : 1;
+      out.step = isFinite(n) && n > 0 ? n : 1;
     }
 
-    if (Object.prototype.hasOwnProperty.call(partial, 'decimals')) {
+    if (Object.hasOwn(partial, 'decimals')) {
       const n = Number(partial.decimals);
-      out.decimals = (isFinite(n) && n >= 0) ? Math.floor(n) : 0;
+      out.decimals = isFinite(n) && n >= 0 ? Math.floor(n) : 0;
     }
 
-    const hasMin = Object.prototype.hasOwnProperty.call(partial, 'min');
-    const hasMax = Object.prototype.hasOwnProperty.call(partial, 'max');
+    const hasMin = Object.hasOwn(partial, 'min');
+    const hasMax = Object.hasOwn(partial, 'max');
     if (hasMin) {
-      if (partial.min === null || partial.min === undefined || (typeof partial.min === 'string' && partial.min === '')) {
+      if (
+        partial.min === null ||
+        partial.min === undefined ||
+        (typeof partial.min === 'string' && partial.min === '')
+      ) {
         out.min = null;
       } else {
         const n = Number(partial.min);
@@ -137,7 +151,11 @@ export class TouchSpinCore {
       }
     }
     if (hasMax) {
-      if (partial.max === null || partial.max === undefined || (typeof partial.max === 'string' && partial.max === '')) {
+      if (
+        partial.max === null ||
+        partial.max === undefined ||
+        (typeof partial.max === 'string' && partial.max === '')
+      ) {
         out.max = null;
       } else {
         const n = Number(partial.max);
@@ -145,21 +163,26 @@ export class TouchSpinCore {
       }
     }
     if (
-      hasMin && hasMax &&
-      out.min != null && out.max != null &&
-      typeof out.min === 'number' && typeof out.max === 'number' &&
+      hasMin &&
+      hasMax &&
+      out.min != null &&
+      out.max != null &&
+      typeof out.min === 'number' &&
+      typeof out.max === 'number' &&
       out.min > out.max
     ) {
-      const tmp = out.min; out.min = out.max; out.max = tmp;
+      const tmp = out.min;
+      out.min = out.max;
+      out.max = tmp;
     }
 
-    if (Object.prototype.hasOwnProperty.call(partial, 'stepinterval')) {
+    if (Object.hasOwn(partial, 'stepinterval')) {
       const n = Number(partial.stepinterval);
-      out.stepinterval = (isFinite(n) && n >= 0) ? n : DEFAULTS.stepinterval;
+      out.stepinterval = isFinite(n) && n >= 0 ? n : DEFAULTS.stepinterval;
     }
-    if (Object.prototype.hasOwnProperty.call(partial, 'stepintervaldelay')) {
+    if (Object.hasOwn(partial, 'stepintervaldelay')) {
       const n = Number(partial.stepintervaldelay);
-      out.stepintervaldelay = (isFinite(n) && n >= 0) ? n : DEFAULTS.stepintervaldelay;
+      out.stepintervaldelay = isFinite(n) && n >= 0 ? n : DEFAULTS.stepintervaldelay;
     }
 
     return out;
@@ -181,13 +204,16 @@ export class TouchSpinCore {
 
     // Allow global default options (e.g., to set a global default renderer or defaults)
     /** @type {Partial<TouchSpinCoreOptions>} */
-    const globalDefaults = (typeof globalThis !== 'undefined' &&
-      (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> }).TouchSpinDefaultOptions)
-      ? TouchSpinCore.sanitizePartialSettings(
-          (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> }).TouchSpinDefaultOptions!,
-          DEFAULTS
-        )
-      : {};
+    const globalDefaults =
+      typeof globalThis !== 'undefined' &&
+      (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> })
+        .TouchSpinDefaultOptions
+        ? TouchSpinCore.sanitizePartialSettings(
+            (globalThis as unknown as { TouchSpinDefaultOptions?: Partial<TouchSpinCoreOptions> })
+              .TouchSpinDefaultOptions!,
+            DEFAULTS
+          )
+        : {};
 
     /** @type {TouchSpinCoreOptions} */
     this.settings = Object.assign({}, DEFAULTS, globalDefaults, dataAttrs, opts);
@@ -202,7 +228,9 @@ export class TouchSpinCore {
         this.settings.renderer = g.TouchSpinDefaultRenderer;
       } else {
         // Allow no renderer for keyboard/wheel-only functionality
-        console.warn('TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.');
+        console.warn(
+          'TouchSpin: No renderer specified (renderer: null). Only keyboard/wheel events will work. Consider using Bootstrap3/4/5Renderer or TailwindRenderer for UI.'
+        );
       }
     }
 
@@ -252,7 +280,11 @@ export class TouchSpinCore {
         settings: Readonly<Record<string, unknown>>,
         core: unknown
       ) => Renderer;
-      this.renderer = new Ctor(inputEl, this.settings as unknown as Readonly<Record<string, unknown>>, this);
+      this.renderer = new Ctor(
+        inputEl,
+        this.settings as unknown as Readonly<Record<string, unknown>>,
+        this
+      );
       this.renderer.init();
     }
 
@@ -331,13 +363,21 @@ export class TouchSpinCore {
 
     // min/max
     // Preserve explicit nulls; coerce other values to numbers or null
-    if (this.settings.min === null || this.settings.min === undefined || (typeof this.settings.min === 'string' && this.settings.min === '')) {
+    if (
+      this.settings.min === null ||
+      this.settings.min === undefined ||
+      (typeof this.settings.min === 'string' && this.settings.min === '')
+    ) {
       this.settings.min = null;
     } else {
       const minNum = Number(this.settings.min);
       this.settings.min = isFinite(minNum) ? minNum : null;
     }
-    if (this.settings.max === null || this.settings.max === undefined || (typeof this.settings.max === 'string' && this.settings.max === '')) {
+    if (
+      this.settings.max === null ||
+      this.settings.max === undefined ||
+      (typeof this.settings.max === 'string' && this.settings.max === '')
+    ) {
       this.settings.max = null;
     } else {
       const maxNum = Number(this.settings.max);
@@ -345,7 +385,11 @@ export class TouchSpinCore {
     }
 
     // Ensure min <= max when both present
-    if (this.settings.min !== null && this.settings.max !== null && this.settings.min > this.settings.max) {
+    if (
+      this.settings.min !== null &&
+      this.settings.max !== null &&
+      this.settings.min > this.settings.max
+    ) {
       // Swap to maintain logical bounds
       const tmp = this.settings.min;
       this.settings.min = this.settings.max;
@@ -379,8 +423,11 @@ export class TouchSpinCore {
 
     // Only check if callbacks are set (not default)
     const defaultCallback = (v: string) => v;
-    if (!this.settings.callback_after_calculation ||
-        this.settings.callback_after_calculation.toString() === defaultCallback.toString()) return;
+    if (
+      !this.settings.callback_after_calculation ||
+      this.settings.callback_after_calculation.toString() === defaultCallback.toString()
+    )
+      return;
 
     // Test the callback with a sample value
     const testValue = '123.45';
@@ -391,9 +438,11 @@ export class TouchSpinCore {
     if (!/^-?\d*\.?\d*$/.test(afterResult)) {
       console.warn(
         'TouchSpin: Detected formatting callback that adds non-numeric characters. ' +
-        'Converting input from type="number" to type="text" to support formatting like "' + afterResult + '". ' +
-        'This ensures compatibility with custom formatting while maintaining full TouchSpin functionality. ' +
-        'The original type will be restored when TouchSpin is destroyed.'
+          'Converting input from type="number" to type="text" to support formatting like "' +
+          afterResult +
+          '". ' +
+          'This ensures compatibility with custom formatting while maintaining full TouchSpin functionality. ' +
+          'The original type will be restored when TouchSpin is destroyed.'
       );
 
       // Capture original attributes before making any changes
@@ -418,18 +467,23 @@ export class TouchSpinCore {
     if (this._originalAttributes !== null) return; // Already captured
 
     const attributesToTrack = [
-      'role', 'aria-valuemin', 'aria-valuemax',
-      'aria-valuenow', 'aria-valuetext',
-      'min', 'max', 'step'
+      'role',
+      'aria-valuemin',
+      'aria-valuemax',
+      'aria-valuenow',
+      'aria-valuetext',
+      'min',
+      'max',
+      'step',
     ];
 
     this._originalAttributes = {
       type: this.input.getAttribute('type'),
-      attributes: new Map()
+      attributes: new Map(),
     };
 
     // Store original values (null if attribute didn't exist)
-    attributesToTrack.forEach(attr => {
+    attributesToTrack.forEach((attr) => {
       this._originalAttributes!.attributes.set(attr, this.input.getAttribute(attr));
     });
   }
@@ -444,9 +498,12 @@ export class TouchSpinCore {
 
     // Strip formatting from value if converting back to number
     const currentValue = this.input.value;
-    if (currentValue && this.settings.callback_before_calculation &&
-        this._originalAttributes.type === 'number' &&
-        this.input.getAttribute('type') === 'text') {
+    if (
+      currentValue &&
+      this.settings.callback_before_calculation &&
+      this._originalAttributes.type === 'number' &&
+      this.input.getAttribute('type') === 'text'
+    ) {
       const numericValue = this.settings.callback_before_calculation(currentValue);
       this.input.value = numericValue;
     }
@@ -504,19 +561,21 @@ export class TouchSpinCore {
       buttondown_class: 'button-down-class',
       buttonup_class: 'button-up-class',
       buttondown_txt: 'button-down-txt',
-      buttonup_txt: 'button-up-txt'
+      buttonup_txt: 'button-up-txt',
     };
 
     const parsed: Partial<TouchSpinCoreOptions> = {};
 
     // Parse data-bts-* attributes
-    for (const [optionName, attrName] of Object.entries(attributeMap) as Array<[keyof TouchSpinCoreOptions, string]>) {
+    for (const [optionName, attrName] of Object.entries(attributeMap) as Array<
+      [keyof TouchSpinCoreOptions, string]
+    >) {
       const fullAttrName = `data-bts-${attrName}`;
       if (inputEl.hasAttribute(fullAttrName)) {
         const rawValue = inputEl.getAttribute(fullAttrName);
         // Assign strongly typed value
 
-        // @ts-ignore - narrow via optionName switch
+        // @ts-expect-error - narrow via optionName switch
         parsed[optionName] = this._coerceAttributeValue(optionName as string, rawValue ?? '');
       }
     }
@@ -526,11 +585,17 @@ export class TouchSpinCore {
       if (inputEl.hasAttribute(nativeAttr)) {
         const rawValue = inputEl.getAttribute(nativeAttr);
         if ((parsed as Record<string, unknown>)[nativeAttr] !== undefined) {
-          console.warn(`Both "data-bts-${nativeAttr}" and "${nativeAttr}" attributes specified. Native attribute takes precedence.`, inputEl);
+          console.warn(
+            `Both "data-bts-${nativeAttr}" and "${nativeAttr}" attributes specified. Native attribute takes precedence.`,
+            inputEl
+          );
         }
 
-        // @ts-ignore
-        parsed[nativeAttr as keyof TouchSpinCoreOptions] = this._coerceAttributeValue(nativeAttr, rawValue ?? '');
+        // @ts-expect-error
+        parsed[nativeAttr as keyof TouchSpinCoreOptions] = this._coerceAttributeValue(
+          nativeAttr,
+          rawValue ?? ''
+        );
       }
     }
 
@@ -555,8 +620,19 @@ export class TouchSpinCore {
     }
 
     // Numeric attributes
-    if (['min', 'max', 'step', 'decimals', 'stepinterval', 'stepintervaldelay',
-         'boostat', 'maxboostedstep', 'firstclickvalueifempty'].includes(optionName)) {
+    if (
+      [
+        'min',
+        'max',
+        'step',
+        'decimals',
+        'stepinterval',
+        'stepintervaldelay',
+        'boostat',
+        'maxboostedstep',
+        'firstclickvalueifempty',
+      ].includes(optionName)
+    ) {
       const num = parseFloat(rawValue);
       return isNaN(num) ? rawValue : num;
     }
@@ -664,7 +740,12 @@ export class TouchSpinCore {
 
     // If step/min/max changed and step != 1, align bounds to step like the jQuery plugin
     const step = Number(this.settings.step || 1);
-    if ((sanitizedPartial.step !== undefined || sanitizedPartial.min !== undefined || sanitizedPartial.max !== undefined) && step !== 1) {
+    if (
+      (sanitizedPartial.step !== undefined ||
+        sanitizedPartial.min !== undefined ||
+        sanitizedPartial.max !== undefined) &&
+      step !== 1
+    ) {
       if (this.settings.max !== null) {
         this.settings.max = this._alignToStep(Number(this.settings.max), step, 'down');
       }
@@ -678,7 +759,7 @@ export class TouchSpinCore {
       if (oldSettings[key] !== this.settings[key]) {
         const observers = this._settingObservers.get(String(key));
         if (observers) {
-          observers.forEach(callback => {
+          observers.forEach((callback) => {
             try {
               callback(this.settings[key] as unknown, oldSettings[key] as unknown);
             } catch (error) {
@@ -766,7 +847,7 @@ export class TouchSpinCore {
     this._detachDOMEventListeners();
 
     // Call all registered teardown callbacks (for wrapper cleanup)
-    this._teardownCallbacks.forEach(callback => {
+    this._teardownCallbacks.forEach((callback) => {
       try {
         callback();
       } catch (error) {
@@ -836,7 +917,7 @@ export class TouchSpinCore {
 
     this._upButton = element;
     element.addEventListener('mousedown', this._handleUpMouseDown);
-    element.addEventListener('touchstart', this._handleUpMouseDown, {passive: false});
+    element.addEventListener('touchstart', this._handleUpMouseDown, { passive: false });
 
     // Add keyboard event listeners if focusable buttons are enabled
     if (this.settings.focusablebuttons) {
@@ -861,7 +942,7 @@ export class TouchSpinCore {
 
     this._downButton = element;
     element.addEventListener('mousedown', this._handleDownMouseDown);
-    element.addEventListener('touchstart', this._handleDownMouseDown, {passive: false});
+    element.addEventListener('touchstart', this._handleDownMouseDown, { passive: false });
 
     // Add keyboard event listeners if focusable buttons are enabled
     if (this.settings.focusablebuttons) {
@@ -880,7 +961,13 @@ export class TouchSpinCore {
    * @param {Function} callback - Function to call when setting changes (newValue, oldValue)
    * @returns {Function} Unsubscribe function
    */
-  observeSetting<K extends keyof TouchSpinCoreOptions>(settingName: K, callback: (newValue: NonNullable<TouchSpinCoreOptions[K]>, oldValue?: TouchSpinCoreOptions[K]) => void): () => void {
+  observeSetting<K extends keyof TouchSpinCoreOptions>(
+    settingName: K,
+    callback: (
+      newValue: NonNullable<TouchSpinCoreOptions[K]>,
+      oldValue?: TouchSpinCoreOptions[K]
+    ) => void
+  ): () => void {
     const key = String(settingName);
     if (!this._settingObservers.has(key)) {
       this._settingObservers.set(key, new Set());
@@ -905,7 +992,7 @@ export class TouchSpinCore {
     const domEventName = `touchspin.on.${event}`;
     const customEvent = new CustomEvent(domEventName, {
       detail,
-      bubbles: true
+      bubbles: true,
       // cancelable: false (default) - no cancellation logic implemented yet
     });
     this.input.dispatchEvent(customEvent);
@@ -941,18 +1028,20 @@ export class TouchSpinCore {
 
     // Emit start events BEFORE the immediate step to get correct event order
     // (start events → change event from step → stop events)
-    const direction_changed = (!this.spinning || this.direction !== dir);
+    const direction_changed = !this.spinning || this.direction !== dir;
     if (direction_changed) {
       this.spinning = true;
       this.direction = dir;
       this.spincount = 0;
       // Match jQuery plugin event order: startspin then direction-specific
       this.emit('startspin');
-      if (dir === 'up') this.emit('startupspin'); else this.emit('startdownspin');
+      if (dir === 'up') this.emit('startupspin');
+      else this.emit('startdownspin');
     }
 
     // Perform an immediate single step after emitting start events (parity with jQuery plugin UX)
-    if (dir === 'up') this.upOnce(); else this.downOnce();
+    if (dir === 'up') this.upOnce();
+    else this.downOnce();
 
     // If we reached a boundary after the initial step, don't start continuous spin
     const v = this.getValue();
@@ -978,10 +1067,18 @@ export class TouchSpinCore {
   }
 
   _clearSpinTimers(): void {
-    try { if (this._spinDelayTimeout) { clearTimeout(this._spinDelayTimeout); } } catch {
+    try {
+      if (this._spinDelayTimeout) {
+        clearTimeout(this._spinDelayTimeout);
+      }
+    } catch {
       // Ignore timer cleanup errors
     }
-    try { if (this._spinIntervalTimer) { clearInterval(this._spinIntervalTimer); } } catch {
+    try {
+      if (this._spinIntervalTimer) {
+        clearInterval(this._spinIntervalTimer);
+      }
+    } catch {
       // Ignore timer cleanup errors
     }
     this._spinDelayTimeout = null;
@@ -1004,7 +1101,7 @@ export class TouchSpinCore {
       // Apply booster only if enabled
       if (this.settings.booster) {
         const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
-        stepCandidate = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+        stepCandidate = 2 ** Math.floor(this.spincount / boostat) * base;
       }
       let step = stepCandidate;
       if (mbs && isFinite(mbs) && stepCandidate > Number(mbs)) {
@@ -1023,8 +1120,8 @@ export class TouchSpinCore {
     if (typeof this.settings.firstclickvalueifempty === 'number') {
       return this.settings.firstclickvalueifempty;
     }
-    const min = (typeof this.settings.min === 'number') ? this.settings.min : 0;
-    const max = (typeof this.settings.max === 'number') ? this.settings.max : min;
+    const min = typeof this.settings.min === 'number' ? this.settings.min : 0;
+    const max = typeof this.settings.max === 'number' ? this.settings.max : min;
     return (min + max) / 2;
   }
 
@@ -1044,7 +1141,7 @@ export class TouchSpinCore {
     const base = this.settings.step || 1;
     if (!this.settings.booster) return base;
     const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
-    let boosted = Math.pow(2, Math.floor(this.spincount / boostat)) * base;
+    let boosted = 2 ** Math.floor(this.spincount / boostat) * base;
     const mbs = this.settings.maxboostedstep;
     if (mbs && isFinite(mbs)) {
       const cap = Number(mbs);
@@ -1061,14 +1158,18 @@ export class TouchSpinCore {
     let out;
     switch (mode) {
       case 'floor':
-        out = Math.floor(val / step) * step; break;
+        out = Math.floor(val / step) * step;
+        break;
       case 'ceil':
-        out = Math.ceil(val / step) * step; break;
+        out = Math.ceil(val / step) * step;
+        break;
       case 'none':
-        out = val; break;
+        out = val;
+        break;
       case 'round':
       default:
-        out = Math.round(val / step) * step; break;
+        out = Math.round(val / step) * step;
+        break;
     }
     const result = Number(out.toFixed(dec));
     // Normalize to configured decimals without string pipeline; formatting applies later
@@ -1080,16 +1181,21 @@ export class TouchSpinCore {
     if (step === 0) return val;
     let k = 1;
     const s = step;
-    while (((s * k) % 1) !== 0 && k < 1e6) k *= 10;
+    while ((s * k) % 1 !== 0 && k < 1e6) k *= 10;
     const V = Math.round(val * k);
     const S = Math.round(step * k);
     const r = V % S;
     if (r === 0) return val;
-    return (dir === 'down' ? (V - r) : (V + (S - r))) / k;
+    return (dir === 'down' ? V - r : V + (S - r)) / k;
   }
 
   /** Format and write to input, optionally emit change if different. */
-  _setDisplay(num: number, mayTriggerChange: boolean, forceTrigger: boolean = false, onlyTriggerIfSanitized: boolean = false): string {
+  _setDisplay(
+    num: number,
+    mayTriggerChange: boolean,
+    forceTrigger: boolean = false,
+    onlyTriggerIfSanitized: boolean = false
+  ): string {
     const prev = String(this.input.value ?? '');
     const next = this._formatDisplay(num);
     this.input.value = next;
@@ -1098,7 +1204,10 @@ export class TouchSpinCore {
     // Emit change based on context:
     // - For programmatic setValue: only if sanitized (forceTrigger)
     // - For user interactions: if sanitized OR display changed
-    if (mayTriggerChange && (onlyTriggerIfSanitized ? forceTrigger : (forceTrigger || prev !== next))) {
+    if (
+      mayTriggerChange &&
+      (onlyTriggerIfSanitized ? forceTrigger : forceTrigger || prev !== next)
+    ) {
       // mirror plugin behavior: trigger a native change event
       this.input.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -1118,7 +1227,8 @@ export class TouchSpinCore {
    */
   _spinStep(dir: 'up' | 'down'): void {
     this.spincount++;
-    if (dir === 'up') this.upOnce(); else this.downOnce();
+    if (dir === 'up') this.upOnce();
+    else this.downOnce();
   }
 
   /** Sanitize current input value and update display; optionally emits change. */
@@ -1137,12 +1247,15 @@ export class TouchSpinCore {
     }
     const min = this.settings.min ?? null;
     const max = this.settings.max ?? null;
-    if (typeof min === 'number') el.setAttribute('aria-valuemin', String(min)); else el.removeAttribute('aria-valuemin');
-    if (typeof max === 'number') el.setAttribute('aria-valuemax', String(max)); else el.removeAttribute('aria-valuemax');
+    if (typeof min === 'number') el.setAttribute('aria-valuemin', String(min));
+    else el.removeAttribute('aria-valuemin');
+    if (typeof max === 'number') el.setAttribute('aria-valuemax', String(max));
+    else el.removeAttribute('aria-valuemax');
     const raw = el.value;
     const before = this.settings.callback_before_calculation || ((v) => v);
     const num = parseFloat(before(String(raw)));
-    if (isFinite(num)) el.setAttribute('aria-valuenow', String(num)); else el.removeAttribute('aria-valuenow');
+    if (isFinite(num)) el.setAttribute('aria-valuenow', String(num));
+    else el.removeAttribute('aria-valuenow');
     el.setAttribute('aria-valuetext', String(raw));
   }
 
@@ -1223,7 +1336,8 @@ export class TouchSpinCore {
     // Check step attribute
     if (nativeStep !== null) {
       const parsedStep = nativeStep === '' ? undefined : parseFloat(nativeStep);
-      const stepNum: number | undefined = parsedStep !== undefined && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : undefined;
+      const stepNum: number | undefined =
+        parsedStep !== undefined && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : undefined;
       if (stepNum !== this.settings.step) {
         newSettings.step = stepNum ?? 1;
         needsUpdate = true;
@@ -1328,7 +1442,8 @@ export class TouchSpinCore {
    */
   _handleUpKeyDown(e: KeyboardEvent): void {
     // Only handle Enter and Space keys
-    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      // Enter or Space
       e.preventDefault();
       // Ignore auto-repeat while holding the key
       if (e.repeat) return;
@@ -1342,7 +1457,8 @@ export class TouchSpinCore {
    */
   _handleUpKeyUp(e: KeyboardEvent): void {
     // Only handle Enter and Space keys
-    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      // Enter or Space
       this.stopSpin();
     }
   }
@@ -1353,7 +1469,8 @@ export class TouchSpinCore {
    */
   _handleDownKeyDown(e: KeyboardEvent): void {
     // Only handle Enter and Space keys
-    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      // Enter or Space
       e.preventDefault();
       // Ignore auto-repeat while holding the key
       if (e.repeat) return;
@@ -1367,7 +1484,8 @@ export class TouchSpinCore {
    */
   _handleDownKeyUp(e: KeyboardEvent): void {
     // Only handle Enter and Space keys
-    if (e.keyCode === 13 || e.keyCode === 32) { // Enter or Space
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      // Enter or Space
       this.stopSpin();
     }
   }
@@ -1449,7 +1567,11 @@ export class TouchSpinCore {
           if (mutation.type === 'attributes') {
             if (mutation.attributeName === 'disabled' || mutation.attributeName === 'readonly') {
               this._updateButtonDisabledState();
-            } else if (mutation.attributeName === 'min' || mutation.attributeName === 'max' || mutation.attributeName === 'step') {
+            } else if (
+              mutation.attributeName === 'min' ||
+              mutation.attributeName === 'max' ||
+              mutation.attributeName === 'step'
+            ) {
               this._syncSettingsFromNativeAttributes();
             }
           }
@@ -1458,7 +1580,7 @@ export class TouchSpinCore {
 
       this._mutationObserver.observe(this.input, {
         attributes: true,
-        attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step']
+        attributeFilter: ['disabled', 'readonly', 'min', 'max', 'step'],
       });
     }
   }
@@ -1488,20 +1610,22 @@ export class TouchSpinCore {
    */
   _checkCallbackPairing(): void {
     const defCb = (v: string) => v;
-    const hasBefore = this.settings.callback_before_calculation &&
+    const hasBefore =
+      this.settings.callback_before_calculation &&
       this.settings.callback_before_calculation.toString() !== defCb.toString();
-    const hasAfter = this.settings.callback_after_calculation &&
+    const hasAfter =
+      this.settings.callback_after_calculation &&
       this.settings.callback_after_calculation.toString() !== defCb.toString();
 
     if (hasBefore && !hasAfter) {
       console.warn(
         'TouchSpin: callback_before_calculation is defined but callback_after_calculation is missing. ' +
-        'These callbacks should be used together - one removes formatting, the other adds it back.'
+          'These callbacks should be used together - one removes formatting, the other adds it back.'
       );
     } else if (!hasBefore && hasAfter) {
       console.warn(
         'TouchSpin: callback_after_calculation is defined but callback_before_calculation is missing. ' +
-        'These callbacks should be used together - one removes formatting, the other adds it back.'
+          'These callbacks should be used together - one removes formatting, the other adds it back.'
       );
     }
   }
@@ -1521,7 +1645,10 @@ export interface TouchSpinCorePublicAPI {
   registerTeardown: (callback: () => void) => () => void;
   attachUpEvents: (el: HTMLElement | null) => void;
   attachDownEvents: (el: HTMLElement | null) => void;
-  observeSetting: <K extends keyof TouchSpinCoreOptions>(key: K, cb: (value: NonNullable<TouchSpinCoreOptions[K]>, prev?: TouchSpinCoreOptions[K]) => void) => () => void;
+  observeSetting: <K extends keyof TouchSpinCoreOptions>(
+    key: K,
+    cb: (value: NonNullable<TouchSpinCoreOptions[K]>, prev?: TouchSpinCoreOptions[K]) => void
+  ) => () => void;
 }
 
 /**
@@ -1530,7 +1657,10 @@ export interface TouchSpinCorePublicAPI {
  * @param {Partial<TouchSpinCoreOptions>=} opts
  * @returns {TouchSpinCorePublicAPI|null}
  */
-export function TouchSpin(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCoreOptions>): TouchSpinCorePublicAPI | null {
+export function TouchSpin(
+  inputEl: HTMLInputElement,
+  opts?: Partial<TouchSpinCoreOptions>
+): TouchSpinCorePublicAPI | null {
   // Check if element is an input (graceful handling for public API)
   if (!inputEl || inputEl.nodeName !== 'INPUT') {
     console.warn('Must be an input.');
@@ -1541,7 +1671,9 @@ export function TouchSpin(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCor
   if (opts !== undefined) {
     // Destroy existing instance if it exists (destroy() removes itself from element)
     if ((inputEl as WithCoreElement)[INSTANCE_KEY]) {
-      console.warn('TouchSpin: Destroying existing instance and reinitializing. Consider using updateSettings() instead.');
+      console.warn(
+        'TouchSpin: Destroying existing instance and reinitializing. Consider using updateSettings() instead.'
+      );
       (inputEl as WithCoreElement)[INSTANCE_KEY]!.destroy();
     }
 
@@ -1584,7 +1716,10 @@ export function getTouchSpin(inputEl: HTMLInputElement): TouchSpinCorePublicAPI 
  * @returns {TouchSpinCorePublicAPI}
  * @deprecated Use TouchSpin() instead
  */
-export function createPublicApi(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCoreOptions>): TouchSpinCorePublicAPI | null {
+export function createPublicApi(
+  inputEl: HTMLInputElement,
+  opts?: Partial<TouchSpinCoreOptions>
+): TouchSpinCorePublicAPI | null {
   return TouchSpin(inputEl, opts);
 }
 
@@ -1606,7 +1741,10 @@ export const CORE_EVENTS = Object.freeze({
  * @param {Partial<TouchSpinCoreOptions>=} opts
  * @returns {TouchSpinCore}
  */
-export function attach(inputEl: HTMLInputElement, opts?: Partial<TouchSpinCoreOptions>): TouchSpinCore {
+export function attach(
+  inputEl: HTMLInputElement,
+  opts?: Partial<TouchSpinCoreOptions>
+): TouchSpinCore {
   return new TouchSpinCore(inputEl, opts ?? {});
 }
 

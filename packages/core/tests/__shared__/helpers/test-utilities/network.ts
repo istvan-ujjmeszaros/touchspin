@@ -19,14 +19,14 @@ export async function preFetchCheck(page: Page, url: string): Promise<void> {
         url: res.url,
         headers: {
           contentType: res.headers.get('content-type'),
-          server: res.headers.get('server')
-        }
+          server: res.headers.get('server'),
+        },
       };
     } catch (error: any) {
       return {
         ok: false,
         error: error.message || 'Failed to fetch',
-        url: fetchUrl
+        url: fetchUrl,
       };
     }
   }, url);
@@ -39,7 +39,9 @@ export async function preFetchCheck(page: Page, url: string): Promise<void> {
       errorDetails.push(`Network error: ${response.error}`);
       errorDetails.push('');
       errorDetails.push('Possible causes:');
-      errorDetails.push('1. Web server not running (check that playwright webServer is configured)');
+      errorDetails.push(
+        '1. Web server not running (check that playwright webServer is configured)'
+      );
       errorDetails.push('2. Incorrect port configuration (expected port 8866)');
       errorDetails.push('3. File not built (run "yarn build:test" first)');
     } else {
@@ -73,9 +75,7 @@ export async function preFetchCheck(page: Page, url: string): Promise<void> {
  * @throws Error with details about all failed resources
  */
 export async function preFetchCheckMultiple(page: Page, urls: string[]): Promise<void> {
-  const results = await Promise.allSettled(
-    urls.map(url => preFetchCheck(page, url))
-  );
+  const results = await Promise.allSettled(urls.map((url) => preFetchCheck(page, url)));
 
   const failures = results
     .map((result, index) => ({ result, url: urls[index] }))

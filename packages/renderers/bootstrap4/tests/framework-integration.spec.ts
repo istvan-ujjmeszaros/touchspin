@@ -101,7 +101,7 @@ test('handles Bootstrap 4 form validation states', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add validation classes and verify they're preserved
-  await elements.input.evaluate(el => el.classList.add('is-valid'));
+  await elements.input.evaluate((el) => el.classList.add('is-valid'));
   await expect(elements.input).toHaveClass(/is-valid/);
 
   // Test functionality still works with validation classes
@@ -124,7 +124,7 @@ test('integrates with Bootstrap 4 sizing utilities', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('size-test', {
       label: 'Small Size Test',
-      helpText: 'Testing small input group size'
+      helpText: 'Testing small input group size',
     });
     input.classList.add('form-control-sm');
     input.closest('.input-group').classList.add('input-group-sm');
@@ -152,8 +152,8 @@ test('supports Bootstrap 4 color scheme and themes', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add theme variant and verify functionality
-  await elements.upButton.evaluate(el => el.classList.add('btn-primary'));
-  await elements.downButton.evaluate(el => el.classList.add('btn-primary'));
+  await elements.upButton.evaluate((el) => el.classList.add('btn-primary'));
+  await elements.downButton.evaluate((el) => el.classList.add('btn-primary'));
 
   // Test that themed buttons still work
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -198,7 +198,7 @@ test('integrates with Bootstrap 4 flex utilities', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('flex-test', {
       label: 'Flex Container Test',
-      helpText: 'Testing TouchSpin in flex layout'
+      helpText: 'Testing TouchSpin in flex layout',
     });
     const wrapper = input.closest('.form-group');
     if (wrapper) {
@@ -228,7 +228,7 @@ test('supports Bootstrap 4 spacing utilities', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('spacing-test', {
       label: 'Spacing Test',
-      helpText: 'Testing with Bootstrap spacing utilities'
+      helpText: 'Testing with Bootstrap spacing utilities',
     });
     input.closest('.input-group').classList.add('m-3', 'p-2');
   });
@@ -255,7 +255,7 @@ test('handles Bootstrap 4 border utilities', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('border-test', {
       label: 'Border Test',
-      helpText: 'Testing with Bootstrap border utilities'
+      helpText: 'Testing with Bootstrap border utilities',
     });
     input.classList.add('border-primary', 'rounded');
   });
@@ -307,7 +307,7 @@ test('supports Bootstrap 4 disabled states', async ({ page }) => {
     const input = window.createTestInput('disabled-test', {
       label: 'Disabled Test',
       disabled: true,
-      helpText: 'Testing disabled state'
+      helpText: 'Testing disabled state',
     });
   });
 
@@ -334,7 +334,7 @@ test('handles Bootstrap 4 form control variants', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('variant-test', {
       label: 'Form Control Variant Test',
-      helpText: 'Testing form control variants'
+      helpText: 'Testing form control variants',
     });
     input.classList.add('form-control-lg');
   });
@@ -384,7 +384,7 @@ test('supports Bootstrap 4 button group behavior', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add button group classes
-  await elements.wrapper.evaluate(el => {
+  await elements.wrapper.evaluate((el) => {
     const buttonGroup = el.querySelector('.input-group-append') || el.querySelector('.btn-group');
     if (buttonGroup) {
       buttonGroup.classList.add('btn-group');
@@ -440,7 +440,7 @@ test('integrates with Bootstrap 4 custom properties', async ({ page }) => {
         --bs-primary: #custom-color;
         --bs-border-radius: 0.5rem;
       }
-    `
+    `,
   });
 
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -512,7 +512,7 @@ test('integrates with Bootstrap 4 form layouts', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('form-layout-test', {
       label: 'Horizontal Layout Test',
-      helpText: 'Testing in horizontal form layout'
+      helpText: 'Testing in horizontal form layout',
     });
     const wrapper = input.closest('.form-group');
     if (wrapper) {
@@ -597,7 +597,7 @@ test('handles Bootstrap 4 input group sizing', async ({ page }) => {
     // Small size
     const smallInput = window.createTestInput('size-sm-test', {
       label: 'Small Input Group',
-      helpText: 'Testing small input group'
+      helpText: 'Testing small input group',
     });
     smallInput.classList.add('form-control-sm');
     smallInput.closest('.input-group').classList.add('input-group-sm');
@@ -605,7 +605,7 @@ test('handles Bootstrap 4 input group sizing', async ({ page }) => {
     // Large size
     const largeInput = window.createTestInput('size-lg-test', {
       label: 'Large Input Group',
-      helpText: 'Testing large input group'
+      helpText: 'Testing large input group',
     });
     largeInput.classList.add('form-control-lg');
     largeInput.closest('.input-group').classList.add('input-group-lg');
@@ -637,7 +637,7 @@ test('integrates with Bootstrap 4 validation feedback', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('validation-feedback-test', {
       label: 'Validation Feedback Test',
-      helpText: 'Testing validation feedback integration'
+      helpText: 'Testing validation feedback integration',
     });
     input.classList.add('is-invalid');
 
@@ -673,12 +673,12 @@ test('supports Bootstrap 4 tooltip integration', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Add tooltip attributes to buttons
-  await elements.upButton.evaluate(el => {
+  await elements.upButton.evaluate((el) => {
     el.setAttribute('title', 'Increase value');
     el.setAttribute('data-bs-toggle', 'tooltip');
   });
 
-  await elements.downButton.evaluate(el => {
+  await elements.downButton.evaluate((el) => {
     el.setAttribute('title', 'Decrease value');
     el.setAttribute('data-bs-toggle', 'tooltip');
   });
@@ -703,7 +703,7 @@ test('handles Bootstrap 4 dropdown integration', async ({ page }) => {
   await page.evaluate(() => {
     const input = window.createTestInput('dropdown-test', {
       label: 'Dropdown Integration Test',
-      helpText: 'Testing TouchSpin with nearby dropdown'
+      helpText: 'Testing TouchSpin with nearby dropdown',
     });
 
     const dropdown = document.createElement('div');

@@ -9,10 +9,16 @@ export type TSJQueryRenderer = {
   buildInputGroup: () => JQuery<unknown>;
   buildAdvancedInputGroup: (originalinput: JQuery<unknown>) => JQuery<unknown>;
   initElements: (container: JQuery<unknown>) => TSJQueryElements;
-  hideEmptyPrefixPostfix: () => { _detached_prefix: JQuery<unknown> | null; _detached_postfix: JQuery<unknown> | null };
+  hideEmptyPrefixPostfix: () => {
+    _detached_prefix: JQuery<unknown> | null;
+    _detached_postfix: JQuery<unknown> | null;
+  };
   updatePrefixPostfix: (
     newsettings: Partial<Record<string, unknown>>,
-    detached: { _detached_prefix: JQuery<unknown> | null; _detached_postfix: JQuery<unknown> | null }
+    detached: {
+      _detached_prefix: JQuery<unknown> | null;
+      _detached_postfix: JQuery<unknown> | null;
+    }
   ) => void;
 };
 
@@ -21,4 +27,3 @@ export type TSJQueryRendererFactory = (
   settings: Record<string, unknown>,
   originalinput: JQuery<unknown>
 ) => TSJQueryRenderer;
-

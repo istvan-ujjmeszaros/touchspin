@@ -11,7 +11,7 @@ import type { Page } from '@playwright/test';
  */
 export function captureConsoleWarnings(page: Page): string[] {
   const warnings: string[] = [];
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'warning') {
       warnings.push(msg.text());
     }
@@ -25,7 +25,7 @@ export function captureConsoleWarnings(page: Page): string[] {
  */
 export function captureConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'error') {
       errors.push(msg.text());
     }
@@ -39,7 +39,7 @@ export function captureConsoleErrors(page: Page): string[] {
  */
 export function captureConsoleLogs(page: Page): string[] {
   const logs: string[] = [];
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     if (msg.type() === 'log') {
       logs.push(msg.text());
     }
@@ -65,10 +65,10 @@ export function captureConsole(page: Page): {
   const consoleOutput = {
     warnings: [] as string[],
     errors: [] as string[],
-    logs: [] as string[]
+    logs: [] as string[],
   };
 
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     const type = msg.type();
     const text = msg.text();
 
@@ -93,7 +93,7 @@ export function captureConsole(page: Page): {
  * expect(hasWarningContaining(warnings, 'callback_before_calculation')).toBe(true);
  */
 export function hasWarningContaining(warnings: string[], text: string): boolean {
-  return warnings.some(warning => warning.includes(text));
+  return warnings.some((warning) => warning.includes(text));
 }
 
 /**
@@ -105,7 +105,5 @@ export function hasWarningContaining(warnings: string[], text: string): boolean 
  * expect(hasWarningsContaining(warnings, ['callback_before', 'missing'])).toBe(true);
  */
 export function hasWarningsContaining(warnings: string[], texts: string[]): boolean {
-  return warnings.some(warning =>
-    texts.every(text => warning.includes(text))
-  );
+  return warnings.some((warning) => texts.every((text) => warning.includes(text)));
 }
