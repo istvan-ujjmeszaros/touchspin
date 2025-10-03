@@ -49,6 +49,7 @@ $zindex-dropdown: 1000 !default;
 
     .bootstrap-touchspin-up {
       border-radius: 0 $border-radius-sm 0 0;
+      border-bottom: 0; // Remove double border between buttons
       top: 0;
     }
 
