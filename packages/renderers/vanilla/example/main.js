@@ -1,5 +1,5 @@
 import { TouchSpin } from '@touchspin/core';
-import { VanillaRenderer } from '@touchspin/renderers/vanilla';
+import VanillaRenderer from '@touchspin/renderers/vanilla';
 
 // Default settings
 const DEFAULT_SETTINGS = {
