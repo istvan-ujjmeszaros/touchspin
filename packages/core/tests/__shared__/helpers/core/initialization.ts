@@ -72,28 +72,9 @@ export async function isCoreInitialized(page: Page, testId: string): Promise<boo
   }, { testId });
 }
 
-export async function initializeTouchspinWithBootstrap5(
-  page: Page,
-  testId: string,
-  options: Partial<TouchSpinCoreOptions> = {}
-): Promise<void> {
-  throw new Error('initializeTouchspinWithBootstrap5 was removed from core test helpers. Use renderer-local helpers instead.');
-}
-
-/**
- * @deprecated Use initializeTouchSpin() instead. Dynamic imports with bare specifiers
- * don't work in browsers without import maps. All fixtures now use globals.
- */
-export async function initializeTouchspinWithRenderer(
-  page: Page,
-  testId: string,
-  rendererUrl: string,
-  options: Partial<TouchSpinCoreOptions> = {},
-  exportName?: string
-): Promise<void> {
-  // Just delegate to unified helper (fixture must have set up globals)
-  return initializeTouchSpin(page, testId, options as Record<string, unknown>);
-}
+// Removed deprecated helpers:
+// - initializeTouchspinWithBootstrap5 (use renderer-local helpers)
+// - initializeTouchspinWithRenderer (use initializeTouchSpin with globals)
 
 /**
  * Given I mount TouchSpin on "{testId}" with {settings}
@@ -175,7 +156,8 @@ export async function initializeTouchSpin(
 }
 
 /**
- * @deprecated Use initializeTouchSpin() instead. All renderers now use unified helper.
+ * Alias for initializeTouchSpin() - maintained for backward compatibility.
+ * Both names are equally valid.
  */
 export async function initializeTouchspinFromGlobals(
   page: Page,
