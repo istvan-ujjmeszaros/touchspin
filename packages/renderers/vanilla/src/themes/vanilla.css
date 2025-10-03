@@ -36,6 +36,8 @@
   --ts-button-font-weight: 500;
   --ts-button-padding: 0.5rem 0.75rem;
   --ts-button-disabled-opacity: 0.5;
+  --ts-button-border-width: 1px;
+  --ts-button-border-color: #d1d5db;
 
   /* Button Border Radius (Shorthand Format) */
   --ts-button-down-border-radius: 0;
@@ -120,7 +122,7 @@
   background-color: var(--ts-button-background-color);
   color: var(--ts-button-text-color);
   font-weight: var(--ts-button-font-weight);
-  border: 0;
+  border: var(--ts-button-border-width) solid var(--ts-button-border-color);
   cursor: pointer;
   user-select: none;
   min-width: var(--ts-button-min-width);
@@ -146,19 +148,25 @@
 /* Button positioning - using shorthand border-radius */
 .ts-btn--down {
   border-radius: var(--ts-button-down-border-radius);
+  border-left: 0; /* Remove border touching input */
 }
 
 .ts-btn--up {
   border-radius: var(--ts-button-up-border-radius);
+  border-right: 0; /* Remove border touching down button or input */
 }
 
-/* RTL support - flip button border radius for right-to-left languages */
+/* RTL support - flip button border radius and borders for right-to-left languages */
 :dir(rtl) .ts-btn--down {
   border-radius: var(--ts-button-up-border-radius);
+  border-left: var(--ts-button-border-width) solid var(--ts-button-border-color);
+  border-right: 0;
 }
 
 :dir(rtl) .ts-btn--up {
   border-radius: var(--ts-button-down-border-radius);
+  border-right: var(--ts-button-border-width) solid var(--ts-button-border-color);
+  border-left: 0;
 }
 
 /* Addon styling */
@@ -232,4 +240,15 @@
   border-top: 0;
   border-right: 0;
   border-bottom: 0;
+}
+
+/* RTL support for vertical buttons */
+:dir(rtl) .ts-btn--vertical-up {
+  border-right: var(--ts-vertical-button-border-width) solid var(--ts-vertical-button-border-color);
+  border-left: 0;
+}
+
+:dir(rtl) .ts-btn--vertical-down {
+  border-right: var(--ts-vertical-button-border-width) solid var(--ts-vertical-button-border-color);
+  border-left: 0;
 }

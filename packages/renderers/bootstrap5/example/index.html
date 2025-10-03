@@ -342,6 +342,26 @@
         </div>
       </div>
 
+      <!-- Advanced Input Group with Prefix/Postfix (Horizontal) -->
+      <div class="example">
+        <h3>Input Group with Prefix & Postfix (Horizontal)</h3>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" id="input-group-horizontal" min="0" max="999.99" value="49.99" step="0.01" class="form-control">
+          <span class="input-group-text">.00</span>
+        </div>
+      </div>
+
+      <!-- Advanced Input Group with Prefix/Postfix (Vertical) -->
+      <div class="example">
+        <h3>Input Group with Prefix & Postfix (Vertical)</h3>
+        <div class="input-group">
+          <span class="input-group-text">€</span>
+          <input type="number" id="input-group-vertical" min="0" max="999.99" value="79.99" step="0.01" class="form-control">
+          <span class="input-group-text">.00</span>
+        </div>
+      </div>
+
       <!-- Floating Label Example (Basic) -->
       <div class="example">
         <h3>Floating Label (Basic)</h3>
@@ -635,6 +655,18 @@
 
   TouchSpin(document.getElementById('minmax'), {
     renderer: Bootstrap5Renderer
+  });
+
+  // Advanced Input Group Examples
+  TouchSpin(document.getElementById('input-group-horizontal'), {
+    renderer: Bootstrap5Renderer,
+    decimals: 2
+  });
+
+  TouchSpin(document.getElementById('input-group-vertical'), {
+    renderer: Bootstrap5Renderer,
+    verticalbuttons: true,
+    decimals: 2
   });
 
   // Floating Label Examples

@@ -380,6 +380,34 @@
             </div>
           </div>
         </div>
+
+        <!-- Advanced Input Group with Prefix/Postfix (Horizontal) -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Input Group with Prefix & Postfix (Horizontal)</h3>
+          </div>
+          <div class="panel-body">
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="number" id="input-group-horizontal" min="0" max="999.99" value="49.99" step="0.01" class="form-control">
+              <span class="input-group-addon">.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Input Group with Prefix/Postfix (Vertical) -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Input Group with Prefix & Postfix (Vertical)</h3>
+          </div>
+          <div class="panel-body">
+            <div class="input-group">
+              <span class="input-group-addon">€</span>
+              <input type="number" id="input-group-vertical" min="0" max="999.99" value="79.99" step="0.01" class="form-control">
+              <span class="input-group-addon">.00</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -638,6 +666,18 @@
 
   TouchSpin(document.getElementById('minmax'), {
     renderer: Bootstrap3Renderer
+  });
+
+  // Advanced Input Group Examples
+  TouchSpin(document.getElementById('input-group-horizontal'), {
+    renderer: Bootstrap3Renderer,
+    decimals: 2
+  });
+
+  TouchSpin(document.getElementById('input-group-vertical'), {
+    renderer: Bootstrap3Renderer,
+    verticalbuttons: true,
+    decimals: 2
   });
 
   const controls = {
