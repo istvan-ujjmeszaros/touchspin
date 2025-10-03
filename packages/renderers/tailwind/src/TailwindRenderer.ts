@@ -341,7 +341,7 @@ class TailwindRenderer extends AbstractRenderer {
     return `
       <div class="flex flex-col" data-touchspin-injected="vertical-wrapper">
         <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-gray-300 rounded-tr tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-gray-300 rounded-br tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-b-0 border-gray-300 rounded-br tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
       </div>
     `;
   }
@@ -360,7 +360,9 @@ class TailwindRenderer extends AbstractRenderer {
         const baseClasses =
           'inline-flex items-center justify-center px-2 py-1 text-xs font-medium border border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed';
         const roundingClass =
-          type === 'up' ? 'rounded-tr border-t-0 border-r-0' : 'rounded-br border-t-0 border-r-0';
+          type === 'up'
+            ? 'rounded-tr border-t-0 border-r-0'
+            : 'rounded-br border-t-0 border-r-0 border-b-0';
         button.className = `${baseClasses} ${roundingClass} ${className || 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`;
       }
     }
