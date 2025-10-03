@@ -6,11 +6,12 @@ export type ForceStepDivisibility = 'none' | 'floor' | 'round' | 'ceil';
 
 export type TouchSpinCalcCallback = (value: string) => string;
 
+export type { TouchSpinUpdateSettingsData } from './events.js';
 // Export event types
 export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events.js';
-export type { TouchSpinUpdateSettingsData } from './events.js';
 
 import type { Renderer, RendererConstructor } from './renderer.js';
+
 type WithCoreElement = HTMLInputElement & { [INSTANCE_KEY]?: TouchSpinCore };
 
 export interface TouchSpinCoreOptions {
@@ -110,6 +111,7 @@ export class TouchSpinCore {
     attributes: Map<string, string | null>;
   } | null = null;
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
+  private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
   renderer?: Renderer;
   /**
@@ -401,7 +403,8 @@ export class TouchSpinCore {
 
     // stepintervaldelay
     const sid = Number(this.settings.stepintervaldelay);
-    if (!Number.isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
+    if (!Number.isFinite(sid) || sid < 0)
+      this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
 
     // Validate callbacks and handle input type conversion if needed
     this._validateCallbacks();
@@ -1335,7 +1338,9 @@ export class TouchSpinCore {
     if (nativeStep !== null) {
       const parsedStep = nativeStep === '' ? undefined : parseFloat(nativeStep);
       const stepNum: number | undefined =
-        parsedStep !== undefined && Number.isFinite(parsedStep) && parsedStep > 0 ? parsedStep : undefined;
+        parsedStep !== undefined && Number.isFinite(parsedStep) && parsedStep > 0
+          ? parsedStep
+          : undefined;
       if (stepNum !== this.settings.step) {
         newSettings.step = stepNum ?? 1;
         needsUpdate = true;
