@@ -127,20 +127,31 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   teardown(): void {
-    // Restore floating label structure if it was modified
+    // CRITICAL: Extract .form-floating BEFORE super.teardown() to prevent deletion
+    // But restore input/label AFTER super.teardown() to prevent re-extraction
+    if (this.floatingContainer && this.floatingLabel) {
+      // Move .form-floating OUT of wrapper before super.teardown() deletes it
+      if (this.wrapper && this.wrapper.contains(this.floatingContainer)) {
+        this.wrapper.parentElement?.insertBefore(this.floatingContainer, this.wrapper);
+      }
+    }
+
+    this.restoreFormControlClass();
+    super.teardown(); // This moves input out and removes wrapper
+
+    // NOW restore input and label back into floating container
+    // (after super.teardown() has finished moving input around)
     if (this.floatingContainer && this.floatingLabel) {
       // Ensure input is back in floating container
       if (this.input.parentElement !== this.floatingContainer) {
-        this.floatingContainer.appendChild(this.input);
+        // Insert as first child (Bootstrap 5 floating label requires input before label)
+        this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
       }
       // Ensure label is back in floating container (after input)
       if (this.floatingLabel.parentElement !== this.floatingContainer) {
         this.floatingContainer.appendChild(this.floatingLabel);
       }
     }
-
-    this.restoreFormControlClass();
-    super.teardown();
   }
 
   // Initialization helpers

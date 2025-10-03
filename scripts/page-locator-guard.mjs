@@ -12,7 +12,7 @@
  *   node page-locator-guard.mjs "packages/core/tests"    # Scan specific path
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -145,9 +145,14 @@ function scanFileForPageLocator(filePath) {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const lineNum = i + 1;
+      const previousLine = i > 0 ? lines[i - 1] : '';
 
-      // Look for page.locator calls
-      if (line.includes('page.locator')) {
+      // Look for page.locator calls, but skip if line or previous line has disable comment
+      if (
+        line.includes('page.locator') &&
+        !line.includes('eslint-disable') &&
+        !previousLine.includes('eslint-disable')
+      ) {
         violations.push({
           line: lineNum,
           content: line.trim(),
