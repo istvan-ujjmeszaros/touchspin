@@ -61,8 +61,8 @@
   --ts-vertical-button-disabled-opacity: 0.5;
 
   /* Vertical Button Border Radius (Shorthand Format) */
-  --ts-vertical-button-up-border-radius: 0 0.375rem 0 0;
-  --ts-vertical-button-down-border-radius: 0 0 0.375rem 0;
+  --ts-vertical-button-up-border-radius: 0;
+  --ts-vertical-button-down-border-radius: 0;
 
   /* Vertical Button Min Width (for square buttons) */
   --ts-vertical-button-min-width: 1.5rem;
@@ -76,6 +76,7 @@
   box-shadow: var(--ts-wrapper-box-shadow);
   border: var(--ts-wrapper-border-width) solid var(--ts-wrapper-border-color);
   background-color: var(--ts-wrapper-background-color);
+  overflow: hidden;
 }
 
 /* Focus state for entire wrapper */
