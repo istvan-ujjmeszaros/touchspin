@@ -32,7 +32,6 @@
  */
 
 import { test } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
 
 /**
  * Scenario: updates button text dynamically

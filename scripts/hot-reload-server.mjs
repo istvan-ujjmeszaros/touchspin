@@ -59,7 +59,7 @@ bs.init({
   middleware: [
     {
       route: '',
-      handle: (req, res, next) => {
+      handle: (req, _res, next) => {
         // Log requests to help with debugging
         if (req.url !== '/browser-sync/socket.io/' && !req.url.startsWith('/browser-sync/')) {
           console.log(`🔄 ${req.method} ${req.url}`);

@@ -616,21 +616,21 @@ test.describe('Core event system and emission', () => {
       const propagationOrder: string[] = [];
 
       // Listener on input (target)
-      input.addEventListener('change', (e) => {
+      input.addEventListener('change', (_e) => {
         propagationOrder.push('input-target');
         (window as any).__propagationOrder = propagationOrder;
       });
 
       // Listener on wrapper (bubbling)
       if (wrapper) {
-        wrapper.addEventListener('change', (e) => {
+        wrapper.addEventListener('change', (_e) => {
           propagationOrder.push('wrapper-bubble');
           (window as any).__propagationOrder = propagationOrder;
         });
       }
 
       // Listener on document (bubbling)
-      document_el.addEventListener('change', (e) => {
+      document_el.addEventListener('change', (_e) => {
         propagationOrder.push('document-bubble');
         (window as any).__propagationOrder = propagationOrder;
       });
@@ -715,7 +715,7 @@ test.describe('Core event system and emission', () => {
       const input = document.getElementById('test-input') as HTMLInputElement;
       let eventFired = false;
 
-      input.addEventListener('change', (e) => {
+      input.addEventListener('change', (_e) => {
         eventFired = true;
         (window as any).__changeEventFired = eventFired;
 
@@ -726,7 +726,7 @@ test.describe('Core event system and emission', () => {
     });
 
     // Record start time just before operation
-    const startTime = await page.evaluate(() => performance.now());
+    const _startTime = await page.evaluate(() => performance.now());
 
     // Trigger synchronous operation (keyboard input)
     await apiHelpers.pressUpArrowKeyOnInput(page, 'test-input');
@@ -853,7 +853,7 @@ test.describe('Core event system and emission', () => {
       step: 1,
       initval: 5,
       callback_before_calculation: (value) => {
-        return String(parseInt(value) + 1); // Add extra increment
+        return String(parseInt(value, 10) + 1); // Add extra increment
       },
     });
 
@@ -1127,7 +1127,7 @@ test.describe('Core event system and emission', () => {
       let callCount = 0;
 
       // Create named function for removal
-      function changeHandler(e: Event) {
+      function changeHandler(_e: Event) {
         callCount++;
         (window as any).__listenerCallCount = callCount;
       }

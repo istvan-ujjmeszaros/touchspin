@@ -238,7 +238,7 @@ function extractNotesFromComment(commentLines) {
 function getCategoryFromPath(filePath) {
   // Extract category from path like packages/core/tests/__shared__/helpers/interactions/buttons.ts
   const parts = filePath.split(path.sep);
-  const helpersIndex = parts.findIndex((p) => p === 'helpers');
+  const helpersIndex = parts.indexOf('helpers');
 
   if (helpersIndex !== -1 && helpersIndex < parts.length - 1) {
     return parts[helpersIndex + 1]; // e.g., 'interactions', 'assertions'
@@ -311,7 +311,7 @@ function ensureDirectoryExists(filePath) {
 
 function writeFileAtomically(filePath, content) {
   ensureDirectoryExists(filePath);
-  const tempPath = filePath + '.tmp';
+  const tempPath = `${filePath}.tmp`;
   fs.writeFileSync(tempPath, content, 'utf8');
   fs.renameSync(tempPath, filePath);
 }

@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import v8toIstanbul from 'v8-to-istanbul';
 
 async function globalTeardown() {
   const playwrightCoverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
-  const nycOutputDir = path.join(process.cwd(), '.nyc_output');
+  const _nycOutputDir = path.join(process.cwd(), '.nyc_output');
 
   // Check if we have any coverage files
   if (!fs.existsSync(playwrightCoverageDir)) {

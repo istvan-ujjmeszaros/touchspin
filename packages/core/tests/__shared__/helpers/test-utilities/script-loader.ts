@@ -11,8 +11,6 @@ export interface ScriptLoadOptions {
   crossOrigin?: string;
   /** Additional attributes to set on script element */
   attributes?: Record<string, string>;
-  /** Function to verify script loaded successfully */
-  verifyFunction?: string;
 }
 
 /**
@@ -25,25 +23,17 @@ export async function loadScript(
   url: string,
   options: ScriptLoadOptions = {}
 ): Promise<void> {
-  const { timeout = 10000, crossOrigin, attributes = {}, verifyFunction } = options;
+  const { timeout = 10000, crossOrigin, attributes = {} } = options;
 
   await page.evaluate(
-    async ({ url, timeout, crossOrigin, attributes, verifyFunction }) => {
+    async ({ url, timeout, crossOrigin, attributes }) => {
       return new Promise<void>((resolve, reject) => {
         // Check if already loaded
         const existingScript = document.querySelector(`script[src="${url}"]`);
-        if (existingScript && verifyFunction) {
-          try {
-            // eslint-disable-next-line no-eval
-            const isLoaded = eval(verifyFunction);
-            if (isLoaded) {
-              console.log(`Script already loaded: ${url}`);
-              resolve();
-              return;
-            }
-          } catch {
-            // Verification failed, proceed with loading
-          }
+        if (existingScript) {
+          console.log(`Script already loaded: ${url}`);
+          resolve();
+          return;
         }
 
         console.log(`Loading script: ${url}`);
@@ -61,23 +51,7 @@ export async function loadScript(
 
         script.onload = () => {
           console.log(`Script loaded successfully: ${url}`);
-
-          // Verify if verification function provided
-          if (verifyFunction) {
-            try {
-              // eslint-disable-next-line no-eval
-              const isLoaded = eval(verifyFunction);
-              if (isLoaded) {
-                resolve();
-              } else {
-                reject(new Error(`Script loaded but verification failed: ${url}`));
-              }
-            } catch (err) {
-              reject(new Error(`Script verification error for ${url}: ${err}`));
-            }
-          } else {
-            resolve();
-          }
+          resolve();
         };
 
         script.onerror = (err) => {
@@ -103,7 +77,7 @@ export async function loadScript(
         document.head.appendChild(script);
       });
     },
-    { url, timeout, crossOrigin, attributes, verifyFunction }
+    { url, timeout, crossOrigin, attributes }
   );
 }
 
@@ -119,10 +93,9 @@ export async function loadTouchSpinWebComponent(
   const baseUrl = await page.evaluate(() => window.location.origin);
   const url = `${baseUrl}/packages/web-component/dist/index.js`;
 
-  // Load script without immediate verification (custom elements register async)
+  // Load script
   await loadScript(page, url, {
     timeout: 10000,
-    // Don't verify immediately, custom element registration happens after import
     ...options,
   });
 
@@ -138,7 +111,7 @@ export async function loadTouchSpinWebComponent(
 /**
  * When I load TouchSpin jQuery plugin
  * Given I need the jQuery plugin available
- * @note Loads the IIFE build with Bootstrap5 renderer
+ * @note Loads the IIFE build with Bootstrap5 renderer and verifies jQuery plugin registered
  */
 export async function loadTouchSpinJQueryPlugin(
   page: Page,
@@ -149,9 +122,20 @@ export async function loadTouchSpinJQueryPlugin(
 
   await loadScript(page, url, {
     timeout: 10000,
-    verifyFunction: 'window.jQuery && window.jQuery.fn && window.jQuery.fn.TouchSpin',
     ...options,
   });
+
+  // Verify jQuery plugin is registered
+  await page.waitForFunction(
+    () => {
+      return (
+        typeof window.jQuery !== 'undefined' &&
+        window.jQuery.fn &&
+        typeof window.jQuery.fn.TouchSpin === 'function'
+      );
+    },
+    { timeout: 5000 }
+  );
 }
 
 /**
@@ -174,35 +158,4 @@ export async function preloadRendererModule(page: Page, rendererUrl: string): Pr
       throw new Error(`Failed to fetch renderer module: ${url} - ${err}`);
     }
   }, fullUrl);
-}
-
-/**
- * When I verify script availability
- * Given I need to check if required scripts are loaded
- * @note Centralized verification for multiple script dependencies
- */
-export async function verifyScriptAvailability(
-  page: Page,
-  checks: Record<string, string>
-): Promise<void> {
-  const results = await page.evaluate((checks) => {
-    const results: Record<string, boolean> = {};
-    Object.entries(checks).forEach(([name, checkFunction]) => {
-      try {
-        // eslint-disable-next-line no-eval
-        results[name] = eval(checkFunction);
-      } catch {
-        results[name] = false;
-      }
-    });
-    return results;
-  }, checks);
-
-  const failures = Object.entries(results)
-    .filter(([, success]) => !success)
-    .map(([name]) => name);
-
-  if (failures.length > 0) {
-    throw new Error(`Script availability check failed: ${failures.join(', ')}`);
-  }
 }

@@ -19,7 +19,6 @@
  */
 
 import { test } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
 import {
   fillWithValueAndBlur,
@@ -115,7 +114,7 @@ test('Blur value above max clamps to max with single change event', async ({ pag
   const nativeChanges = await getEventsOfType(page, 'native');
   const changeEvents = nativeChanges.filter((entry) => entry.event === 'change');
   test.expect(changeEvents.length).toBe(1);
-  test.expect(changeEvents[0]!.value).toBe('50');
+  test.expect(changeEvents[0]?.value).toBe('50');
 
   await expectValueToBe(page, 'test-input', '50');
 });
@@ -143,7 +142,7 @@ test('Blur value below min clamps to min with single change event', async ({ pag
   const nativeChanges = await getEventsOfType(page, 'native');
   const changeEvents = nativeChanges.filter((entry) => entry.event === 'change');
   test.expect(changeEvents.length).toBe(1);
-  test.expect(changeEvents[0]!.value).toBe('10');
+  test.expect(changeEvents[0]?.value).toBe('10');
 
   await expectValueToBe(page, 'test-input', '10');
 });

@@ -5,7 +5,6 @@ import { setupLogging } from '../tests/__shared__/helpers/events/setup';
 import { coreUrl as coreRuntimeUrl } from '../tests/__shared__/helpers/runtime/paths';
 import { installDomHelpers } from '../tests/__shared__/helpers/runtime/installDomHelpers';
 import { preFetchCheck } from '../tests/__shared__/helpers/test-utilities/network';
-import { readInputValue } from '../tests/__shared__/helpers/interactions/input';
 
 /**
  * Core Package Test Adapter
@@ -56,7 +55,7 @@ export async function initializeTouchspin(
       if (options.initval !== undefined) input.value = String(options.initval);
 
       const core = new TouchSpinCore(input, options);
-      (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
+      (input as unknown as Record<string, unknown>)._touchSpinCore = core as unknown;
 
       // Initialize DOM event handling
       (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
@@ -72,7 +71,7 @@ export async function initializeTouchspin(
       ({ testId, beforeCalc, afterCalc }) => {
         const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
         const core = (input as any)._touchSpinCore;
-        if (core && core.updateSettings) {
+        if (core?.updateSettings) {
           const callbackOptions: any = {};
           if (beforeCalc) {
             // Recreate the callback function in the browser context
@@ -114,7 +113,7 @@ export async function initializeTouchspin(
   await page.waitForFunction(
     ({ testId }) => {
       const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-      return input && input.hasAttribute('data-touchspin-injected');
+      return input?.hasAttribute('data-touchspin-injected');
     },
     { testId },
     { timeout: 5000 }

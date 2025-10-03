@@ -410,7 +410,7 @@ test.describe('jQuery plugin data attributes', () => {
       try {
         // Try to update settings based on new data attribute
         const newStep = $('[data-testid="test-input"]').attr('data-bts-step');
-        $('[data-testid="test-input"]').TouchSpin('updateSettings', { step: parseInt(newStep) });
+        $('[data-testid="test-input"]').TouchSpin('updateSettings', { step: parseInt(newStep, 10) });
         return true;
       } catch {
         return false;
@@ -589,12 +589,12 @@ test.describe('jQuery plugin data attributes', () => {
         const isMobile = window.innerWidth < 768; // Simple mobile detection
 
         const step = isMobile
-          ? parseInt(input.attr('data-bts-mobile-step') || '1')
-          : parseInt(input.attr('data-bts-desktop-step') || '5');
+          ? parseInt(input.attr('data-bts-mobile-step') || '1', 10)
+          : parseInt(input.attr('data-bts-desktop-step') || '5', 10);
 
         const max = isMobile
-          ? parseInt(input.attr('data-bts-mobile-max') || '50')
-          : parseInt(input.attr('data-bts-desktop-max') || '100');
+          ? parseInt(input.attr('data-bts-mobile-max') || '50', 10)
+          : parseInt(input.attr('data-bts-desktop-max') || '100', 10);
 
         input.TouchSpin({ step, max, initval: 10 });
         return { step, max, isMobile };
@@ -645,9 +645,9 @@ test.describe('jQuery plugin data attributes', () => {
         const stepTemplate = input.attr('data-bts-step-template') || '1';
 
         // Replace templates with actual values
-        const min = parseInt(minTemplate.replace('{{baseValue}}', String(baseValue)));
-        const max = parseInt(maxTemplate.replace('{{baseValue * 10}}', String(baseValue * 10)));
-        const step = parseInt(stepTemplate.replace('{{baseValue / 5}}', String(baseValue / 5)));
+        const min = parseInt(minTemplate.replace('{{baseValue}}', String(baseValue)), 10);
+        const max = parseInt(maxTemplate.replace('{{baseValue * 10}}', String(baseValue * 10)), 10);
+        const step = parseInt(stepTemplate.replace('{{baseValue / 5}}', String(baseValue / 5)), 10);
 
         input.TouchSpin({ min, max, step, initval: 25 });
         return { min, max, step, templateProcessed: true };
@@ -744,16 +744,16 @@ test.describe('jQuery plugin data attributes', () => {
 
         // Initialize with legacy data attributes
         input.TouchSpin({
-          step: parseInt(legacyStep || '1'),
-          min: parseInt(legacyMin || '0'),
-          max: parseInt(legacyMax || '10'),
+          step: parseInt(legacyStep || '1', 10),
+          min: parseInt(legacyMin || '0', 10),
+          max: parseInt(legacyMax || '10', 10),
           prefix: legacyPrefix || '',
           initval: 6,
         });
 
         return {
           legacySupport: true,
-          step: parseInt(legacyStep),
+          step: parseInt(legacyStep, 10),
           prefix: legacyPrefix,
         };
       } catch {
@@ -809,7 +809,7 @@ test.describe('jQuery plugin data attributes', () => {
         return {
           customAttributesFound: !!customTheme && !!animationSpeed && !!validationMode,
           theme: customTheme,
-          speed: parseInt(animationSpeed || '0'),
+          speed: parseInt(animationSpeed || '0', 10),
           validation: validationMode,
         };
       } catch {

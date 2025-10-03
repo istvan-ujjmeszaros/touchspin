@@ -45,7 +45,7 @@ export async function initializeTouchspin(
         typeof options.callback_before_calculation === 'string'
       ) {
         options.callback_before_calculation = new Function(
-          'return ' + options.callback_before_calculation
+          `return ${options.callback_before_calculation}`
         )();
       }
       if (
@@ -53,7 +53,7 @@ export async function initializeTouchspin(
         typeof options.callback_after_calculation === 'string'
       ) {
         options.callback_after_calculation = new Function(
-          'return ' + options.callback_after_calculation
+          `return ${options.callback_after_calculation}`
         )();
       }
 
@@ -145,7 +145,7 @@ export async function updateSettingsViaAPI(
         typeof newSettings.callback_before_calculation === 'string'
       ) {
         newSettings.callback_before_calculation = new Function(
-          'return ' + newSettings.callback_before_calculation
+          `return ${newSettings.callback_before_calculation}`
         )();
       }
       if (
@@ -153,7 +153,7 @@ export async function updateSettingsViaAPI(
         typeof newSettings.callback_after_calculation === 'string'
       ) {
         newSettings.callback_after_calculation = new Function(
-          'return ' + newSettings.callback_after_calculation
+          `return ${newSettings.callback_after_calculation}`
         )();
       }
 

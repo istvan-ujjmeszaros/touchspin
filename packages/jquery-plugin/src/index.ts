@@ -135,7 +135,7 @@ export function installJqueryTouchSpin($: JQueryStatic) {
       // Handle jQuery-triggered blur events for backward compatibility
       // jQuery's .trigger('blur') doesn't fire native addEventListener('blur')
       $input.on('blur.touchspin', () => {
-        const core = (inputEl as unknown as Record<string, unknown>)['_touchSpinCore'] as
+        const core = (inputEl as unknown as Record<string, unknown>)._touchSpinCore as
           | { _checkValue?: (finalize: boolean) => void }
           | undefined;
         core?._checkValue?.(true);

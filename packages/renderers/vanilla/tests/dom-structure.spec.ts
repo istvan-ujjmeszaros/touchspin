@@ -12,7 +12,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
 import { installDomHelpers, initializeTouchSpin } from '@touchspin/core/test-helpers';
 

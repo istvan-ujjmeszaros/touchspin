@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { startCoverage, collectCoverage } from '../test-utilities/coverage';
@@ -12,7 +11,7 @@ import { waitForPageReady } from '../test-utilities/wait';
  * different from other frameworks like Tailwind or Vanilla. These tests focus on
  * Bootstrap-specific patterns while remaining version-agnostic.
  */
-export function bootstrapSharedSuite(name: string, rendererUrl: string, fixturePath: string) {
+export function bootstrapSharedSuite(name: string, _rendererUrl: string, fixturePath: string) {
   test.describe(`Bootstrap shared behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await startCoverage(page);
@@ -53,7 +52,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
         existingWrapper.className = 'input-group existing-class';
         existingWrapper.setAttribute('data-testid', 'existing-wrapper');
 
-        input.parentNode!.insertBefore(existingWrapper, input);
+        input.parentNode?.insertBefore(existingWrapper, input);
         existingWrapper.appendChild(input);
       });
 
@@ -222,7 +221,7 @@ export function bootstrapSharedSuite(name: string, rendererUrl: string, fixtureP
 
       // Destroy the instance
       await page.evaluate(() => {
-        const input = document.getElementById('test-input') as HTMLInputElement;
+        const _input = document.getElementById('test-input') as HTMLInputElement;
         const touchspinInstance = (window as any).__ts?.requireCoreByTestId('test-input');
         if (touchspinInstance) {
           touchspinInstance.destroy();

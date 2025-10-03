@@ -11,7 +11,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import * as apiHelpers from '@touchspin/core/test-helpers';
 import {
   universalRendererSuite,
   bootstrapSharedSuite,

@@ -1,13 +1,13 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import fs from 'fs';
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
-import path from 'path';
-import { createHash } from 'crypto';
-import { EOL } from 'os';
-import esmModule, { createRequire, isBuiltin } from 'module';
-import assert from 'assert';
+import fs from 'node:fs';
+import { URL as URL$1, fileURLToPath, pathToFileURL } from 'node:url';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { EOL } from 'node:os';
+import esmModule, { createRequire, isBuiltin } from 'node:module';
+import assert from 'node:assert';
 
 const SAFE_TIME = 456789e3;
 
@@ -273,8 +273,8 @@ async function copyFileViaIndex(
   );
   let AtomicBehavior;
   ((AtomicBehavior2) => {
-    AtomicBehavior2[(AtomicBehavior2['Lock'] = 0)] = 'Lock';
-    AtomicBehavior2[(AtomicBehavior2['Rename'] = 1)] = 'Rename';
+    AtomicBehavior2[(AtomicBehavior2.Lock = 0)] = 'Lock';
+    AtomicBehavior2[(AtomicBehavior2.Rename = 1)] = 'Rename';
   })(AtomicBehavior || (AtomicBehavior = {}));
   let atomicBehavior = 1 /* Rename */;
   let indexStat = await maybeLStat(destinationFs, indexPath);
@@ -346,13 +346,13 @@ async function copyFileViaIndex(
 }
 async function copyFileDirect(
   prelayout,
-  postlayout,
+  _postlayout,
   destinationFs,
   destination,
   destinationStat,
   sourceFs,
   source,
-  sourceStat,
+  _sourceStat,
   opts
 ) {
   if (destinationStat !== null) {
@@ -409,13 +409,13 @@ async function copyFile(
 }
 async function copySymlink(
   prelayout,
-  postlayout,
+  _postlayout,
   destinationFs,
   destination,
   destinationStat,
   sourceFs,
   source,
-  sourceStat,
+  _sourceStat,
   opts
 ) {
   if (destinationStat !== null) {
@@ -1984,7 +1984,7 @@ function resolvePackageTargetString(
   base,
   pattern,
   internal,
-  conditions
+  _conditions
 ) {
   if (subpath !== '' && !pattern && target[target.length - 1] !== '/')
     throwInvalidPackageTarget(match, target, packageJSONUrl, internal, base);

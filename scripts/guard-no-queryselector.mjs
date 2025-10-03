@@ -9,9 +9,9 @@
  * This enforces the use of proper Playwright locators and helper functions.
  */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join, extname, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, extname, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -68,7 +68,7 @@ function findTestHelperFiles() {
     const fullDir = join(projectRoot, dir);
     try {
       scanDirectory(fullDir, files);
-    } catch (error) {
+    } catch (_error) {
     }
   }
 
@@ -207,7 +207,7 @@ function main() {
       violationFiles++;
       totalViolations += violations.length;
 
-      const relativePath = file.replace(projectRoot + '/', '');
+      const relativePath = file.replace(`${projectRoot}/`, '');
       console.log(`\n❌ ${relativePath}`);
 
       for (const violation of violations) {

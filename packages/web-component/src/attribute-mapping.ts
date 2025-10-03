@@ -67,7 +67,7 @@ export function parseAttributeValue(value: string | null, settingName: string): 
 
   if ((numberSettings as readonly string[]).includes(settingName)) {
     const num = Number(value);
-    return isNaN(num) ? null : num;
+    return Number.isNaN(num) ? null : num;
   }
 
   // String settings - return as-is

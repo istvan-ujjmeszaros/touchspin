@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
-import { spawn } from 'child_process';
-import { createServer } from 'http';
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:http';
 
 (async () => {
   const path = process.argv[2];

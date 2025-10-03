@@ -29,7 +29,7 @@ export async function setValueViaAPI(
 ): Promise<void> {
   await page.evaluate(
     ({ testId, value }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.setValue(value);
     },
     { testId, value }
@@ -42,7 +42,7 @@ export async function setValueViaAPI(
 export async function destroyCore(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.destroy();
     },
     { testId }
@@ -55,7 +55,7 @@ export async function destroyCore(page: Page, testId: string): Promise<void> {
 export async function incrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.upOnce();
     },
     { testId }
@@ -68,7 +68,7 @@ export async function incrementViaAPI(page: Page, testId: string): Promise<void>
 export async function decrementViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.downOnce();
     },
     { testId }
@@ -81,7 +81,7 @@ export async function decrementViaAPI(page: Page, testId: string): Promise<void>
 export async function startUpSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.startUpSpin();
     },
     { testId }
@@ -94,7 +94,7 @@ export async function startUpSpinViaAPI(page: Page, testId: string): Promise<voi
 export async function startDownSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.startDownSpin();
     },
     { testId }
@@ -107,7 +107,7 @@ export async function startDownSpinViaAPI(page: Page, testId: string): Promise<v
 export async function stopSpinViaAPI(page: Page, testId: string): Promise<void> {
   await page.evaluate(
     ({ testId }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.stopSpin();
     },
     { testId }
@@ -124,7 +124,7 @@ export async function updateSettingsViaAPI(
 ): Promise<void> {
   await page.evaluate(
     ({ testId, newSettings }) => {
-      const core = window.__ts!.requireCoreByTestId(testId);
+      const core = window.__ts?.requireCoreByTestId(testId);
       core.updateSettings(newSettings);
     },
     { testId, newSettings }
@@ -140,7 +140,7 @@ export async function getPublicAPI(
 ): Promise<TouchSpinCorePublicAPI | null> {
   return page.evaluate(
     ({ testId }) => {
-      return window.__ts!.requireCoreByTestId(testId);
+      return window.__ts?.requireCoreByTestId(testId);
     },
     { testId }
   );
@@ -155,7 +155,7 @@ export async function getAppliedSettings(
 ): Promise<TouchSpinCoreOptions> {
   return page.evaluate(
     ({ testId }) => {
-      const input = window.__ts!.requireInputByTestId(testId) as HTMLInputElement & {
+      const input = window.__ts?.requireInputByTestId(testId) as HTMLInputElement & {
         _touchSpinCore?: { settings: TouchSpinCoreOptions };
       };
       const core = input._touchSpinCore;

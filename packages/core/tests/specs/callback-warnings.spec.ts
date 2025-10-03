@@ -65,7 +65,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
     const warnings = captureConsoleWarnings(page);
 
     await initializeTouchspin(page, 'test-input', {
-      callback_after_calculation: (val) => '$' + val,
+      callback_after_calculation: (val) => `$${val}`,
     });
 
     expect(warnings).toContainEqual(
@@ -86,7 +86,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
 
     await initializeTouchspin(page, 'test-input', {
       callback_before_calculation: (val) => String(val).replace('$', ''),
-      callback_after_calculation: (val) => '$' + val,
+      callback_after_calculation: (val) => `$${val}`,
     });
 
     expect(warnings).toHaveLength(0);
@@ -144,7 +144,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
     await initializeTouchspin(page, 'test-input', { step: 5 });
 
     await updateSettingsViaAPI(page, 'test-input', {
-      callback_after_calculation: (val) => '$' + val,
+      callback_after_calculation: (val) => `$${val}`,
     });
 
     expect(warnings).toContainEqual(
@@ -167,7 +167,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
 
     await updateSettingsViaAPI(page, 'test-input', {
       callback_before_calculation: (val) => String(val).replace('$', ''),
-      callback_after_calculation: (val) => '$' + val,
+      callback_after_calculation: (val) => `$${val}`,
     });
 
     // Since both callbacks are provided, no warning should be present
@@ -188,7 +188,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
 
     await initializeTouchspin(page, 'test-input', {
       callback_before_calculation: (val) => String(val).replace('$', ''),
-      callback_after_calculation: (val) => '$' + val,
+      callback_after_calculation: (val) => `$${val}`,
     });
 
     // Remove the before callback by setting it to null/undefined

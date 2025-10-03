@@ -179,7 +179,7 @@ hr {
   font-weight: normal;
   background-color: #bc451b;
   color: #fff;
-  vertical-align: middle !important;
+  vertical-align: middle;
 }
 
 code {

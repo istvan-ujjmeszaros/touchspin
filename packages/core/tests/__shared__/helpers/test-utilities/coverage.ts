@@ -51,10 +51,10 @@ export async function collectCoverage(
 export async function saveCoverageData(
   coverage: Array<{ url?: string }>,
   testName: string,
-  testFile?: string
+  _testFile?: string
 ): Promise<void> {
-  const fs = await import('fs');
-  const path = await import('path');
+  const fs = await import('node:fs');
+  const path = await import('node:path');
 
   const coverageDir = path.join(process.cwd(), 'reports', 'playwright-coverage');
   if (!fs.existsSync(coverageDir)) fs.mkdirSync(coverageDir, { recursive: true });

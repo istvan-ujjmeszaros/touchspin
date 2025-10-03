@@ -1,9 +1,6 @@
 import type { JQueryStatic } from 'jquery';
 import type {
   TouchSpinCoreOptions,
-  TouchSpinCallableEvent,
-  TouchSpinEmittedEvent,
-  TouchSpinUpdateSettingsData,
 } from '@touchspin/core';
 import type { TSRenderer } from '@touchspin/core/renderer';
 

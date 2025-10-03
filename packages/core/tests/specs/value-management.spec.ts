@@ -29,7 +29,7 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspin, getCoreNumericValue } from '../../test-helpers/core-adapter';
+import { initializeTouchspin, } from '../../test-helpers/core-adapter';
 
 test.describe('Core value management and normalization', () => {
   test.beforeEach(async ({ page }) => {

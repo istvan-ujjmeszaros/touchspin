@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchSpin } from '../core/initialization';
 
-export function defineSharedRendererTests(name: string, rendererUrl: string, fixturePath: string) {
+export function defineSharedRendererTests(name: string, _rendererUrl: string, fixturePath: string) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(fixturePath);
@@ -69,7 +68,7 @@ export function defineSharedRendererTests(name: string, rendererUrl: string, fix
 
       // Toggle focusability true
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: true })
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: true })
       );
       await expect(up.first()).toHaveAttribute('tabindex', '0');
       await expect(down.first()).toHaveAttribute('tabindex', '0');
@@ -88,7 +87,7 @@ export function defineSharedRendererTests(name: string, rendererUrl: string, fix
 
       // Remove both → renderer should rebuild or hide appropriately
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({ prefix: '', postfix: '' })
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({ prefix: '', postfix: '' })
       );
       // Either hidden or removed; assert not visible
       await expect(prefix).toBeHidden();

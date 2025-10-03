@@ -34,7 +34,7 @@ for (const root of roots) {
 if (offenders.length) {
   console.error(
     '❌ ESM guard: relative imports missing ".js" extension:\n' +
-      offenders.map((s) => '  - ' + s).join('\n')
+      offenders.map((s) => `  - ${s}`).join('\n')
   );
   process.exit(1);
 } else {

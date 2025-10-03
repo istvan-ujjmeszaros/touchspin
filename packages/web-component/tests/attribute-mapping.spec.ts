@@ -408,7 +408,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
       // Simulate validation logic
       const validateNumeric = (value: string) => {
         const num = parseFloat(value);
-        return !isNaN(num) && isFinite(num);
+        return !Number.isNaN(num) && Number.isFinite(num);
       };
 
       const validateBoolean = (value: string) => {
@@ -417,12 +417,12 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
 
       const validateStep = (value: string) => {
         const num = parseFloat(value);
-        return !isNaN(num) && isFinite(num) && num > 0;
+        return !Number.isNaN(num) && Number.isFinite(num) && num > 0;
       };
 
       const validateDecimals = (value: string) => {
         const num = parseInt(value, 10);
-        return !isNaN(num) && num >= 0;
+        return !Number.isNaN(num) && num >= 0;
       };
 
       return {
@@ -519,7 +519,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
       const gracefulParseNumber = (value: string | null, fallback: number) => {
         if (!value) return fallback;
         const parsed = parseFloat(value);
-        return isNaN(parsed) || !isFinite(parsed) ? fallback : parsed;
+        return Number.isNaN(parsed) || !Number.isFinite(parsed) ? fallback : parsed;
       };
 
       const gracefulParseBoolean = (value: string | null, fallback: boolean) => {
@@ -1004,7 +1004,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
         const attrValue = element?.getAttribute(attrName);
         try {
           return attrValue ? JSON.parse(attrValue) : null;
-        } catch (e) {
+        } catch (_e) {
           return null;
         }
       };
@@ -1368,7 +1368,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
     expect(a11yTest.accessibilityAttributes['aria-label']).toBe('Quantity selector');
     expect(a11yTest.accessibilityAttributes['aria-describedby']).toBe('help-text');
     expect(a11yTest.accessibilityAttributes['aria-labelledby']).toBe('label-id');
-    expect(a11yTest.accessibilityAttributes['role']).toBe('spinbutton');
+    expect(a11yTest.accessibilityAttributes.role).toBe('spinbutton');
     expect(a11yTest.accessibilityAttributes['aria-valuemin']).toBe('0');
     expect(a11yTest.accessibilityAttributes['aria-valuemax']).toBe('100');
     expect(a11yTest.accessibilityAttributes['aria-valuenow']).toBe('50');
@@ -1995,7 +1995,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
             };
 
             return simpleEval(expr);
-          } catch (e) {
+          } catch (_e) {
             return false;
           }
         };
@@ -2151,7 +2151,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
           const numValue = parseFloat(attrValue);
 
           if (propSchema.type === 'number') {
-            if (isNaN(numValue)) {
+            if (Number.isNaN(numValue)) {
               return { valid: false, error: 'Expected number' };
             }
             if (propSchema.minimum !== undefined && numValue < propSchema.minimum) {
@@ -2225,10 +2225,10 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
     expect(schemaTest.schemaAttributes['schema-strict']).toBe('true');
     expect(schemaTest.schemaAttributes['schema-validate-on']).toBe('change,init');
     expect(schemaTest.schemaAttributes['schema-error-action']).toBe('warn');
-    expect(schemaTest.schemaAttributes['min']).toBe('10');
-    expect(schemaTest.schemaAttributes['max']).toBe('900');
-    expect(schemaTest.schemaAttributes['step']).toBe('5');
-    expect(schemaTest.schemaAttributes['decimals']).toBe('2');
+    expect(schemaTest.schemaAttributes.min).toBe('10');
+    expect(schemaTest.schemaAttributes.max).toBe('900');
+    expect(schemaTest.schemaAttributes.step).toBe('5');
+    expect(schemaTest.schemaAttributes.decimals).toBe('2');
 
     // Verify parsed schema
     expect(schemaTest.processedSchema.schema).toEqual({
@@ -2299,7 +2299,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
         const nestedStructure: any = {};
 
         // Get all attributes that contain dots
-        const attributes = Array.from(element!.attributes);
+        const attributes = Array.from(element?.attributes);
         const nestedAttrs = attributes.filter((attr) => attr.name.includes('.'));
 
         nestedAttrs.forEach((attr) => {
@@ -2321,7 +2321,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
           let parsedValue: any = value;
 
           // Try to parse as number
-          if (!isNaN(parseFloat(value)) && isFinite(parseFloat(value))) {
+          if (!Number.isNaN(parseFloat(value)) && Number.isFinite(parseFloat(value))) {
             parsedValue = parseFloat(value);
           }
           // Try to parse as boolean
@@ -2675,7 +2675,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
         const handler = element?.getAttribute('extension-handler');
 
         // Find all attributes matching extension prefixes
-        const attributes = Array.from(element!.attributes);
+        const attributes = Array.from(element?.attributes);
         const customAttributes: any = {};
 
         registry.forEach((prefix) => {
@@ -2693,7 +2693,7 @@ test.describe('TouchSpin Web Component attribute to property mapping', () => {
             if (value.startsWith('{') && value.endsWith('}')) {
               try {
                 value = JSON.parse(value);
-              } catch (e) {
+              } catch (_e) {
                 // Keep as string if not valid JSON
               }
             }

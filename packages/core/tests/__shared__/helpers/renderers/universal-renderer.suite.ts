@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { waitForPageReady } from '../test-utilities/wait';
@@ -11,7 +10,7 @@ import { startCoverage, collectCoverage } from '../test-utilities/coverage';
  * Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.
  * These tests focus on functionality and data attributes, not framework-specific classes.
  */
-export function universalRendererSuite(name: string, rendererUrl: string, fixturePath: string) {
+export function universalRendererSuite(name: string, _rendererUrl: string, fixturePath: string) {
   test.describe(`Universal renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await startCoverage(page);
@@ -132,7 +131,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Update to non-focusable
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: false })
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: false })
       );
 
       await expect(upButton).toHaveAttribute('tabindex', '-1');
@@ -168,7 +167,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Update button text
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           buttonup_txt: '↑',
           buttondown_txt: '↓',
         })
@@ -202,7 +201,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Add prefix and postfix
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           prefix: '$',
           postfix: 'USD',
         })
@@ -216,7 +215,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Remove them
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           prefix: '',
           postfix: '',
         })
@@ -260,7 +259,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Switch to vertical layout
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           verticalbuttons: true,
           verticalup: '▲',
           verticaldown: '▼',
@@ -272,7 +271,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Switch back to horizontal
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           verticalbuttons: false,
         })
       );
@@ -294,7 +293,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Trigger DOM rebuild with prefix addition
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           prefix: '$',
         })
       );
@@ -305,7 +304,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
       // Change value and trigger another rebuild
       await input.fill('75');
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           postfix: 'USD',
         })
       );
@@ -329,7 +328,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Trigger DOM changes
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           prefix: '$',
           buttonup_txt: '↑',
           buttondown_txt: '↓',
@@ -349,7 +348,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Trigger multiple updates that cause DOM rebuilds
       await page.evaluate(() => {
-        const core = window.__ts!.requireCoreByTestId('test-input');
+        const core = window.__ts?.requireCoreByTestId('test-input');
         core.updateSettings({ prefix: '$' });
         core.updateSettings({ postfix: 'USD' });
         core.updateSettings({ verticalbuttons: true });
@@ -379,7 +378,7 @@ export function universalRendererSuite(name: string, rendererUrl: string, fixtur
 
       // Update custom classes
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({
           buttonup_class: 'new-up-class',
           buttondown_class: 'new-down-class',
         })

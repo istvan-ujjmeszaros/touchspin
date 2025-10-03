@@ -110,7 +110,6 @@ export class TouchSpinCore {
     attributes: Map<string, string | null>;
   } | null = null;
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
-  private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
   renderer?: Renderer;
   /**
@@ -122,18 +121,18 @@ export class TouchSpinCore {
    */
   static sanitizePartialSettings(
     partial: Partial<TouchSpinCoreOptions>,
-    current: TouchSpinCoreOptions
+    _current: TouchSpinCoreOptions
   ): Partial<TouchSpinCoreOptions> {
     const out = { ...partial };
 
     if (Object.hasOwn(partial, 'step')) {
       const n = Number(partial.step);
-      out.step = isFinite(n) && n > 0 ? n : 1;
+      out.step = Number.isFinite(n) && n > 0 ? n : 1;
     }
 
     if (Object.hasOwn(partial, 'decimals')) {
       const n = Number(partial.decimals);
-      out.decimals = isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+      out.decimals = Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
     }
 
     const hasMin = Object.hasOwn(partial, 'min');
@@ -147,7 +146,7 @@ export class TouchSpinCore {
         out.min = null;
       } else {
         const n = Number(partial.min);
-        out.min = isFinite(n) ? n : null;
+        out.min = Number.isFinite(n) ? n : null;
       }
     }
     if (hasMax) {
@@ -159,7 +158,7 @@ export class TouchSpinCore {
         out.max = null;
       } else {
         const n = Number(partial.max);
-        out.max = isFinite(n) ? n : null;
+        out.max = Number.isFinite(n) ? n : null;
       }
     }
     if (
@@ -178,11 +177,11 @@ export class TouchSpinCore {
 
     if (Object.hasOwn(partial, 'stepinterval')) {
       const n = Number(partial.stepinterval);
-      out.stepinterval = isFinite(n) && n >= 0 ? n : DEFAULTS.stepinterval;
+      out.stepinterval = Number.isFinite(n) && n >= 0 ? n : DEFAULTS.stepinterval;
     }
     if (Object.hasOwn(partial, 'stepintervaldelay')) {
       const n = Number(partial.stepintervaldelay);
-      out.stepintervaldelay = isFinite(n) && n >= 0 ? n : DEFAULTS.stepintervaldelay;
+      out.stepintervaldelay = Number.isFinite(n) && n >= 0 ? n : DEFAULTS.stepintervaldelay;
     }
 
     return out;
@@ -224,7 +223,7 @@ export class TouchSpinCore {
     if (!this.settings.renderer) {
       // Check for global default renderer
       const g = globalThis as unknown as { TouchSpinDefaultRenderer?: RendererConstructor };
-      if (typeof g !== 'undefined' && g.TouchSpinDefaultRenderer) {
+      if (g?.TouchSpinDefaultRenderer) {
         this.settings.renderer = g.TouchSpinDefaultRenderer;
       } else {
         // Allow no renderer for keyboard/wheel-only functionality
@@ -347,7 +346,7 @@ export class TouchSpinCore {
   _sanitizeSettings(): void {
     // step
     const stepNum = Number(this.settings.step);
-    if (!isFinite(stepNum) || stepNum <= 0) {
+    if (!Number.isFinite(stepNum) || stepNum <= 0) {
       this.settings.step = 1;
     } else {
       this.settings.step = stepNum;
@@ -355,7 +354,7 @@ export class TouchSpinCore {
 
     // decimals
     const decNum = Number(this.settings.decimals);
-    if (!isFinite(decNum) || decNum < 0) {
+    if (!Number.isFinite(decNum) || decNum < 0) {
       this.settings.decimals = 0;
     } else {
       this.settings.decimals = Math.floor(decNum);
@@ -371,7 +370,7 @@ export class TouchSpinCore {
       this.settings.min = null;
     } else {
       const minNum = Number(this.settings.min);
-      this.settings.min = isFinite(minNum) ? minNum : null;
+      this.settings.min = Number.isFinite(minNum) ? minNum : null;
     }
     if (
       this.settings.max === null ||
@@ -381,7 +380,7 @@ export class TouchSpinCore {
       this.settings.max = null;
     } else {
       const maxNum = Number(this.settings.max);
-      this.settings.max = isFinite(maxNum) ? maxNum : null;
+      this.settings.max = Number.isFinite(maxNum) ? maxNum : null;
     }
 
     // Ensure min <= max when both present
@@ -398,11 +397,11 @@ export class TouchSpinCore {
 
     // stepinterval
     const si = Number(this.settings.stepinterval);
-    if (!isFinite(si) || si < 0) this.settings.stepinterval = DEFAULTS.stepinterval;
+    if (!Number.isFinite(si) || si < 0) this.settings.stepinterval = DEFAULTS.stepinterval;
 
     // stepintervaldelay
     const sid = Number(this.settings.stepintervaldelay);
-    if (!isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
+    if (!Number.isFinite(sid) || sid < 0) this.settings.stepintervaldelay = DEFAULTS.stepintervaldelay;
 
     // Validate callbacks and handle input type conversion if needed
     this._validateCallbacks();
@@ -484,7 +483,7 @@ export class TouchSpinCore {
 
     // Store original values (null if attribute didn't exist)
     attributesToTrack.forEach((attr) => {
-      this._originalAttributes!.attributes.set(attr, this.input.getAttribute(attr));
+      this._originalAttributes?.attributes.set(attr, this.input.getAttribute(attr));
     });
   }
 
@@ -634,7 +633,7 @@ export class TouchSpinCore {
       ].includes(optionName)
     ) {
       const num = parseFloat(rawValue);
-      return isNaN(num) ? rawValue : num;
+      return Number.isNaN(num) ? rawValue : num;
     }
 
     // String attributes - return as-is
@@ -788,13 +787,13 @@ export class TouchSpinCore {
     if (raw === '') return NaN;
     const before = this.settings.callback_before_calculation || ((v) => v);
     const num = parseFloat(before(String(raw)));
-    return isNaN(num) ? NaN : num;
+    return Number.isNaN(num) ? NaN : num;
   }
 
   setValue(v: number | string): void {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
     const parsed = Number(v);
-    if (!isFinite(parsed)) return;
+    if (!Number.isFinite(parsed)) return;
     const adjusted = this._applyConstraints(parsed);
     const wasSanitized = parsed !== adjusted;
     this._setDisplay(adjusted, true, wasSanitized, true);
@@ -839,7 +838,7 @@ export class TouchSpinCore {
     this.stopSpin();
 
     // Renderer cleans up its added elements
-    if (this.renderer && this.renderer.teardown) {
+    if (this.renderer?.teardown) {
       this.renderer.teardown();
     }
 
@@ -1092,7 +1091,7 @@ export class TouchSpinCore {
    */
   _nextValue(dir: 'up' | 'down', current: number): number {
     let v = current;
-    if (isNaN(v)) {
+    if (Number.isNaN(v)) {
       v = this._valueIfIsNaN();
     } else {
       const base = this.settings.step || 1;
@@ -1104,7 +1103,7 @@ export class TouchSpinCore {
         stepCandidate = 2 ** Math.floor(this.spincount / boostat) * base;
       }
       let step = stepCandidate;
-      if (mbs && isFinite(mbs) && stepCandidate > Number(mbs)) {
+      if (mbs && Number.isFinite(mbs) && stepCandidate > Number(mbs)) {
         step = Number(mbs);
         // Align current value to the boosted step grid when clamped (parity with jQuery plugin)
         v = Math.round(v / step) * step;
@@ -1143,7 +1142,7 @@ export class TouchSpinCore {
     const boostat = Math.max(1, parseInt(String(this.settings.boostat || 10), 10));
     let boosted = 2 ** Math.floor(this.spincount / boostat) * base;
     const mbs = this.settings.maxboostedstep;
-    if (mbs && isFinite(mbs)) {
+    if (mbs && Number.isFinite(mbs)) {
       const cap = Number(mbs);
       if (boosted > cap) boosted = cap;
     }
@@ -1166,7 +1165,6 @@ export class TouchSpinCore {
       case 'none':
         out = val;
         break;
-      case 'round':
       default:
         out = Math.round(val / step) * step;
         break;
@@ -1234,7 +1232,7 @@ export class TouchSpinCore {
   /** Sanitize current input value and update display; optionally emits change. */
   _checkValue(mayTriggerChange: boolean): void {
     const v = this.getValue();
-    if (!isFinite(v)) return;
+    if (!Number.isFinite(v)) return;
     const adjusted = this._applyConstraints(v);
     const wasSanitized = v !== adjusted;
     this._setDisplay(adjusted, !!mayTriggerChange, wasSanitized);
@@ -1254,7 +1252,7 @@ export class TouchSpinCore {
     const raw = el.value;
     const before = this.settings.callback_before_calculation || ((v) => v);
     const num = parseFloat(before(String(raw)));
-    if (isFinite(num)) el.setAttribute('aria-valuenow', String(num));
+    if (Number.isFinite(num)) el.setAttribute('aria-valuenow', String(num));
     else el.removeAttribute('aria-valuenow');
     el.setAttribute('aria-valuetext', String(raw));
   }
@@ -1269,7 +1267,7 @@ export class TouchSpinCore {
     if (this.input.getAttribute('type') === 'number') {
       // Sync min attribute
       const min = this.settings.min ?? null;
-      if (typeof min === 'number' && isFinite(min)) {
+      if (typeof min === 'number' && Number.isFinite(min)) {
         this.input.setAttribute('min', String(min));
       } else {
         this.input.removeAttribute('min');
@@ -1277,7 +1275,7 @@ export class TouchSpinCore {
 
       // Sync max attribute
       const max = this.settings.max ?? null;
-      if (typeof max === 'number' && isFinite(max)) {
+      if (typeof max === 'number' && Number.isFinite(max)) {
         this.input.setAttribute('max', String(max));
       } else {
         this.input.removeAttribute('max');
@@ -1285,7 +1283,7 @@ export class TouchSpinCore {
 
       // Sync step attribute
       const step = this.settings.step;
-      if (typeof step === 'number' && isFinite(step) && step > 0) {
+      if (typeof step === 'number' && Number.isFinite(step) && step > 0) {
         this.input.setAttribute('step', String(step));
       } else {
         this.input.removeAttribute('step');
@@ -1308,7 +1306,7 @@ export class TouchSpinCore {
     // Check min attribute
     if (nativeMin !== null) {
       const parsedMin = nativeMin === '' ? null : parseFloat(nativeMin);
-      const minNum = parsedMin !== null && isFinite(parsedMin) ? parsedMin : null;
+      const minNum = parsedMin !== null && Number.isFinite(parsedMin) ? parsedMin : null;
       if (minNum !== this.settings.min) {
         newSettings.min = minNum;
         needsUpdate = true;
@@ -1322,7 +1320,7 @@ export class TouchSpinCore {
     // Check max attribute
     if (nativeMax !== null) {
       const parsedMax = nativeMax === '' ? null : parseFloat(nativeMax);
-      const maxNum = parsedMax !== null && isFinite(parsedMax) ? parsedMax : null;
+      const maxNum = parsedMax !== null && Number.isFinite(parsedMax) ? parsedMax : null;
       if (maxNum !== this.settings.max) {
         newSettings.max = maxNum;
         needsUpdate = true;
@@ -1337,7 +1335,7 @@ export class TouchSpinCore {
     if (nativeStep !== null) {
       const parsedStep = nativeStep === '' ? undefined : parseFloat(nativeStep);
       const stepNum: number | undefined =
-        parsedStep !== undefined && isFinite(parsedStep) && parsedStep > 0 ? parsedStep : undefined;
+        parsedStep !== undefined && Number.isFinite(parsedStep) && parsedStep > 0 ? parsedStep : undefined;
       if (stepNum !== this.settings.step) {
         newSettings.step = stepNum ?? 1;
         needsUpdate = true;
@@ -1432,7 +1430,7 @@ export class TouchSpinCore {
    * Handle mouseup/touchend/mouseleave to stop spinning.
    * @private
    */
-  _handleMouseUp(e: MouseEvent | TouchEvent): void {
+  _handleMouseUp(_e: MouseEvent | TouchEvent): void {
     this.stopSpin();
   }
 
@@ -1498,7 +1496,7 @@ export class TouchSpinCore {
     const target = e.target as HTMLInputElement | null;
     if (!target || target !== this.input) return;
     const currentValue = this.getValue();
-    if (!isFinite(currentValue)) return;
+    if (!Number.isFinite(currentValue)) return;
     const sanitized = this._applyConstraints(currentValue);
     if (sanitized !== currentValue) {
       this._setDisplay(sanitized, false);
@@ -1674,7 +1672,7 @@ export function TouchSpin(
       console.warn(
         'TouchSpin: Destroying existing instance and reinitializing. Consider using updateSettings() instead.'
       );
-      (inputEl as WithCoreElement)[INSTANCE_KEY]!.destroy();
+      (inputEl as WithCoreElement)[INSTANCE_KEY]?.destroy();
     }
 
     // Create new instance and store on element

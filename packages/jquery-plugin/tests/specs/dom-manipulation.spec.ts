@@ -34,7 +34,6 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { captureConsole } from '@touchspin/core/test-helpers';
 import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
 
 test.describe('jQuery plugin DOM manipulation', () => {
@@ -73,7 +72,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     const wrapperExists = await page.evaluate(() => {
       const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
       const input = document.querySelector('[data-testid="test-input"]');
-      return wrapper && wrapper.contains(input);
+      return wrapper?.contains(input);
     });
 
     expect(wrapperExists).toBe(true);
@@ -113,7 +112,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Check prefix element
     const prefixExists = await page.evaluate(() => {
       const prefixElement = document.querySelector('[data-testid="test-input-prefix"]');
-      return prefixElement && prefixElement.textContent?.includes('Amount:');
+      return prefixElement?.textContent?.includes('Amount:');
     });
 
     expect(prefixExists).toBe(true);
@@ -134,7 +133,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Check postfix element
     const postfixExists = await page.evaluate(() => {
       const postfixElement = document.querySelector('[data-testid="test-input-postfix"]');
-      return postfixElement && postfixElement.textContent?.includes('units');
+      return postfixElement?.textContent?.includes('units');
     });
 
     expect(postfixExists).toBe(true);
@@ -237,7 +236,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Pre-create a wrapper structure
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const wrapper = document.createElement('div');
         wrapper.className = 'input-group';
         wrapper.setAttribute('data-testid', 'test-input-wrapper');
@@ -304,7 +303,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Pre-create Bootstrap input group structure
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const inputGroup = document.createElement('div');
         inputGroup.className = 'input-group';
 
@@ -346,7 +345,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Set up responsive grid structure
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const container = document.createElement('div');
         container.className = 'container-fluid';
 
@@ -549,9 +548,9 @@ test.describe('jQuery plugin DOM manipulation', () => {
       return {
         wrapperVisible: wrapper.offsetHeight > 0,
         buttonVisible: upButton.offsetHeight > 0,
-        wrapperZIndex: wrapperZIndex !== 'auto' ? parseInt(wrapperZIndex) : 0,
-        buttonZIndex: buttonZIndex !== 'auto' ? parseInt(buttonZIndex) : 0,
-        overlayZIndex: parseInt(overlayZIndex),
+        wrapperZIndex: wrapperZIndex !== 'auto' ? parseInt(wrapperZIndex, 10) : 0,
+        buttonZIndex: buttonZIndex !== 'auto' ? parseInt(buttonZIndex, 10) : 0,
+        overlayZIndex: parseInt(overlayZIndex, 10),
       };
     });
 
@@ -641,7 +640,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Create constrained container
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const constrainedContainer = document.createElement('div');
         constrainedContainer.style.cssText =
           'width: 120px; height: 40px; overflow: hidden; border: 1px solid #ccc;';
@@ -669,8 +668,8 @@ test.describe('jQuery plugin DOM manipulation', () => {
     });
 
     expect(containerMetrics).not.toBeNull();
-    expect(containerMetrics!.width).toBeGreaterThanOrEqual(120);
-    expect(containerMetrics!.width).toBeLessThanOrEqual(125); // Allow 5px tolerance
+    expect(containerMetrics?.width).toBeGreaterThanOrEqual(120);
+    expect(containerMetrics?.width).toBeLessThanOrEqual(125); // Allow 5px tolerance
 
     // Verify TouchSpin elements are visible within the constrained space
     await expect(wrapper).toBeVisible();
@@ -690,7 +689,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Create complex nested DOM structure
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const form = document.createElement('form');
         form.id = 'test-form';
         form.method = 'POST';
@@ -1001,7 +1000,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Create nested container structure (3 levels deep)
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const level1 = document.createElement('div');
         level1.className = 'level-1-container';
         level1.id = 'level-1';
@@ -1067,7 +1066,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Create form structure
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input && input.parentElement) {
+      if (input?.parentElement) {
         const form = document.createElement('form');
         form.id = 'test-form';
         form.method = 'POST';
@@ -1150,7 +1149,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
         afterInput.setAttribute('data-testid', 'after-input');
 
         const testInput = document.querySelector('[data-testid="test-input"]');
-        if (testInput && testInput.parentElement) {
+        if (testInput?.parentElement) {
           testInput.parentElement.insertBefore(beforeInput, testInput);
           testInput.parentElement.insertBefore(afterInput, testInput.nextSibling);
         }

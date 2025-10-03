@@ -11,7 +11,6 @@
 import { execSync } from 'node:child_process';
 import { existsSync, statSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const projectRoot = join(__dirname, '..');
@@ -46,7 +45,7 @@ function getNewestFileMtime(dirPath) {
           }
         }
       }
-    } catch (err) {
+    } catch (_err) {
       // Ignore errors (e.g., permission denied)
     }
   }

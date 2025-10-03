@@ -10,7 +10,7 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { installDomHelpers, } from '@touchspin/core/test-helpers';
 
 // Bootstrap 5 Renderer URL for tests
 const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';

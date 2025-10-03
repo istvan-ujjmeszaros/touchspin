@@ -34,7 +34,6 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { captureConsole } from '@touchspin/core/test-helpers';
 import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
 
 test.describe('jQuery plugin initialization patterns', () => {
@@ -615,7 +614,7 @@ test.describe('jQuery plugin initialization patterns', () => {
         max: 20,
         callback_after_calculation: (value) => {
           callbackCalled = true;
-          return value + ' units';
+          return `${value} units`;
         },
       });
 

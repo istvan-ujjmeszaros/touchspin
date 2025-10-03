@@ -671,7 +671,7 @@ test('handles dynamic content changes in layouts', async ({ page }) => {
   await page.evaluate(() => {
     const wrapper = document.querySelector('[data-testid="test-input"]').closest('.form-group');
 
-    if (wrapper && wrapper.parentNode) {
+    if (wrapper?.parentNode) {
       // Add sibling elements
       const siblingBefore = document.createElement('div');
       siblingBefore.className = 'alert alert-info';

@@ -271,7 +271,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
    */
   test('handles reconnection after disconnection', async ({ page }) => {
     // Create element and store reference
-    const elementReference = await page.evaluate(() => {
+    const _elementReference = await page.evaluate(() => {
       const element = document.createElement('touchspin-input');
       element.setAttribute('data-testid', 'reconnect-test');
       element.setAttribute('value', '30');
@@ -864,7 +864,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('manages timing of initialization', async ({ page }) => {
     // Test initialization timing in different document states
     const timingTest = await page.evaluate(() => {
-      const results = [];
+      const _results = [];
 
       // Create element in current document state
       const element1 = document.createElement('touchspin-input');
@@ -1104,7 +1104,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('supports concurrent lifecycle operations', async ({ page }) => {
     // Test concurrent operations
     const concurrentTest = await page.evaluate(() => {
-      const operations = [];
+      const _operations = [];
       const elements = [];
 
       // Perform concurrent operations

@@ -341,7 +341,7 @@ test('supports Bootstrap 5 disabled states', async ({ page }) => {
 
   // Create disabled input
   await page.evaluate(() => {
-    const input = window.createTestInput('disabled-test', {
+    const _input = window.createTestInput('disabled-test', {
       label: 'Disabled Test',
       disabled: true,
       helpText: 'Testing disabled state',

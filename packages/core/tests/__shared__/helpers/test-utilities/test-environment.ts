@@ -173,8 +173,8 @@ export async function diagnoseEnvironment(page: Page): Promise<{
       hasJQuery: typeof window.jQuery !== 'undefined',
       has$: typeof window.$ !== 'undefined',
       hasTouchSpinPlugin: !!(
-        (window.jQuery && window.jQuery.fn && window.jQuery.fn.TouchSpin) ||
-        (window.$ && window.$.fn && window.$.fn.TouchSpin)
+        (window.jQuery?.fn?.TouchSpin) ||
+        (window.$?.fn?.TouchSpin)
       ),
       customElements: [], // Note: customElements doesn't have enumeration API
       scripts: Array.from(document.scripts)

@@ -304,7 +304,7 @@ test('supports Bootstrap 3 disabled states', async ({ page }) => {
 
   // Create disabled input
   await page.evaluate(() => {
-    const input = window.createTestInput('disabled-test', {
+    const _input = window.createTestInput('disabled-test', {
       label: 'Disabled Test',
       disabled: true,
       helpText: 'Testing disabled state',
@@ -522,7 +522,7 @@ test('integrates with Bootstrap 3 form layouts', async ({ page }) => {
         label.classList.add('col-sm-3', 'col-form-label');
       }
       const inputGroup = wrapper.querySelector('.input-group');
-      if (inputGroup && inputGroup.parentNode) {
+      if (inputGroup?.parentNode) {
         const colDiv = document.createElement('div');
         colDiv.className = 'col-sm-9';
         inputGroup.parentNode.insertBefore(colDiv, inputGroup);

@@ -227,7 +227,7 @@ function logEvent(eventName, detail = null) {
   const logContent = document.getElementById('event-log-content');
   const entry = document.createElement('div');
   entry.className = 'event-entry';
-  const detailStr = detail ? ' - ' + JSON.stringify(detail) : '';
+  const detailStr = detail ? ` - ${JSON.stringify(detail)}` : '';
   entry.textContent = `[${eventCount}] ${eventName}${detailStr}`;
 
   logContent.insertBefore(entry, logContent.firstChild);
@@ -315,7 +315,7 @@ function attachControlListeners() {
   ].forEach((key) => {
     document.getElementById(`control-${key}`).addEventListener('input', (e) => {
       const value = parseFloat(e.target.value);
-      if (!isNaN(value)) {
+      if (!Number.isNaN(value)) {
         currentSettings[key] = value;
         if (key === 'initval') {
           demoInstance.setValue(value);
@@ -543,7 +543,7 @@ function setupCopyButton() {
         copiedMsg.style.display = 'inline';
         setTimeout(() => (copiedMsg.style.display = 'none'), 1500);
       }
-    } catch (err) {
+    } catch (_err) {
       console.warn('Clipboard unavailable, logging block:', block);
       alert('Clipboard not available. See console for the CSS block.');
       console.log(block);

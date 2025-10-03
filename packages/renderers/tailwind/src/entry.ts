@@ -22,7 +22,7 @@ function TouchSpin(
 TouchSpin.get = getTouchSpin;
 TouchSpin.destroy = (element: HTMLInputElement) => {
   const instance = getTouchSpin(element);
-  if (instance && instance.destroy) {
+  if (instance?.destroy) {
     instance.destroy();
     return true;
   }

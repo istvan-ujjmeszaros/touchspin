@@ -4,12 +4,10 @@
  * Usage: node scripts/extract-framework-assets.mjs [--renderer bootstrap3|bootstrap4|bootstrap5] [--all]
  */
 
-import { fileURLToPath, pathToFileURL } from 'url';
-import { dirname, join } from 'path';
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'fs';
-import { createRequire } from 'module';
-import { execSync } from 'child_process';
-import { URL } from 'url';
+import { fileURLToPath, } from 'node:url';
+import { dirname, join } from 'node:path';
+import { writeFileSync, mkdirSync, } from 'node:fs';
+import { execSync } from 'node:child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

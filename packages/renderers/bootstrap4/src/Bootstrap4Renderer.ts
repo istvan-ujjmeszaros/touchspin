@@ -50,8 +50,8 @@ class Bootstrap4Renderer extends AbstractRenderer {
     this.core.observeSetting('buttondown_txt', (newValue) =>
       this.updateButtonText('down', newValue)
     );
-    this.core.observeSetting('prefix_extraclass', (newValue) => this.updatePrefixClasses());
-    this.core.observeSetting('postfix_extraclass', (newValue) => this.updatePostfixClasses());
+    this.core.observeSetting('prefix_extraclass', (_newValue) => this.updatePrefixClasses());
+    this.core.observeSetting('postfix_extraclass', (_newValue) => this.updatePostfixClasses());
     this.core.observeSetting('verticalbuttons', (newValue) =>
       this.handleVerticalButtonsChange(newValue)
     );
@@ -438,7 +438,7 @@ class Bootstrap4Renderer extends AbstractRenderer {
     }
   }
 
-  handleVerticalButtonsChange(newValue: boolean): void {
+  handleVerticalButtonsChange(_newValue: boolean): void {
     // Remove old DOM and rebuild with new layout
     this.rebuildDOM();
   }

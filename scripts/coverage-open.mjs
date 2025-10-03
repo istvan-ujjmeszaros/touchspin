@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { spawnSync, execSync } from 'child_process';
-import { existsSync } from 'fs';
-import { resolve } from 'path';
-import { release } from 'os';
+import { spawnSync, execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { release } from 'node:os';
 
 console.log('🌐 Opening coverage report...');
 

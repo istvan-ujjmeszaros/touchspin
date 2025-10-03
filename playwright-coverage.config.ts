@@ -1,6 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 import baseConfig from './playwright.config';
-import path from 'path';
 
 /**
  * Playwright configuration for coverage collection

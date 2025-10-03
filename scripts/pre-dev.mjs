@@ -7,8 +7,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const projectRoot = join(__dirname, '..');
@@ -23,7 +22,7 @@ try {
     stdio: 'inherit',
   });
   console.log('✅ DevDist build artifacts passed\n');
-} catch (error) {
+} catch (_error) {
   console.error('❌ DevDist build artifacts failed');
   process.exit(1);
 }

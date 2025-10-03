@@ -3,7 +3,7 @@
  * Standards-based custom element providing TouchSpin functionality
  */
 
-import { TouchSpin, getTouchSpin } from '@touchspin/core';
+import { TouchSpin, } from '@touchspin/core';
 import { VanillaRenderer } from '@touchspin/renderer-vanilla';
 import {
   getSettingsFromAttributes,
@@ -97,7 +97,7 @@ export class TouchSpinInput extends HTMLElement {
     const settingName = attributeToSetting(name);
     const value = parseAttributeValue(newValue, settingName);
 
-    if (this._touchspin && this._touchspin.updateSettings) {
+    if (this._touchspin?.updateSettings) {
       this._touchspin.updateSettings({ [settingName]: value });
     }
   }
@@ -223,7 +223,7 @@ export class TouchSpinInput extends HTMLElement {
     this._eventUnsubscribers = [];
 
     // Destroy TouchSpin instance
-    if (this._touchspin && this._touchspin.destroy) {
+    if (this._touchspin?.destroy) {
       this._touchspin.destroy();
     }
     this._touchspin = null;
@@ -314,7 +314,7 @@ export class TouchSpinInput extends HTMLElement {
    * Increment value once
    */
   upOnce(): void {
-    if (this._touchspin && this._touchspin.upOnce) {
+    if (this._touchspin?.upOnce) {
       this._touchspin.upOnce();
     }
   }
@@ -323,7 +323,7 @@ export class TouchSpinInput extends HTMLElement {
    * Decrement value once
    */
   downOnce(): void {
-    if (this._touchspin && this._touchspin.downOnce) {
+    if (this._touchspin?.downOnce) {
       this._touchspin.downOnce();
     }
   }
@@ -332,7 +332,7 @@ export class TouchSpinInput extends HTMLElement {
    * Start spinning up
    */
   startUpSpin(): void {
-    if (this._touchspin && this._touchspin.startUpSpin) {
+    if (this._touchspin?.startUpSpin) {
       this._touchspin.startUpSpin();
     }
   }
@@ -341,7 +341,7 @@ export class TouchSpinInput extends HTMLElement {
    * Start spinning down
    */
   startDownSpin(): void {
-    if (this._touchspin && this._touchspin.startDownSpin) {
+    if (this._touchspin?.startDownSpin) {
       this._touchspin.startDownSpin();
     }
   }
@@ -350,7 +350,7 @@ export class TouchSpinInput extends HTMLElement {
    * Stop spinning
    */
   stopSpin(): void {
-    if (this._touchspin && this._touchspin.stopSpin) {
+    if (this._touchspin?.stopSpin) {
       this._touchspin.stopSpin();
     }
   }
@@ -360,7 +360,7 @@ export class TouchSpinInput extends HTMLElement {
    * @param {Object} options - Settings to update
    */
   updateSettings(options: Record<string, unknown>): void {
-    if (this._touchspin && this._touchspin.updateSettings) {
+    if (this._touchspin?.updateSettings) {
       this._touchspin.updateSettings(options);
     }
   }

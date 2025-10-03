@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { waitForPageReady } from '../test-utilities/wait';
@@ -71,7 +70,7 @@ export function sharedRendererSuite(name: string, _rendererUrl: string, fixtureP
 
       // Toggle focusability true
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: true })
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({ focusablebuttons: true })
       );
       await expect(up.first()).toHaveAttribute('tabindex', '0');
       await expect(down.first()).toHaveAttribute('tabindex', '0');
@@ -90,7 +89,7 @@ export function sharedRendererSuite(name: string, _rendererUrl: string, fixtureP
 
       // Remove both → renderer should rebuild or hide appropriately
       await page.evaluate(() =>
-        window.__ts!.requireCoreByTestId('test-input').updateSettings({ prefix: '', postfix: '' })
+        window.__ts?.requireCoreByTestId('test-input').updateSettings({ prefix: '', postfix: '' })
       );
       // Either hidden or removed; assert not visible
       await expect(prefix).toBeHidden();

@@ -42,7 +42,8 @@
         "noUselessLoneBlockStatements": "error",
         "noUselessRename": "error",
         "noAdjacentSpacesInRegex": "error",
-        "noCommaOperator": "error"
+        "noCommaOperator": "error",
+        "noImportantStyles": "warn"
       },
       "correctness": {
         "noConstAssign": "error",
@@ -62,7 +63,8 @@
         "noUnsafeFinally": "error",
         "noUnsafeOptionalChaining": "error",
         "noUnusedLabels": "error",
-        "noUnusedVariables": "error",
+        "noUnusedVariables": "warn",
+        "noUnusedFunctionParameters": "off",
         "useIsNan": "error",
         "useValidForDirection": "error",
         "useYield": "error",
@@ -71,7 +73,10 @@
       },
       "style": {
         "useConst": "error",
-        "useTemplate": "warn"
+        "useTemplate": "warn",
+        "noDescendingSpecificity": "off",
+        "useNodejsImportProtocol": "off",
+        "noNonNullAssertion": "warn"
       },
       "suspicious": {
         "noAsyncPromiseExecutor": "error",
@@ -98,8 +103,14 @@
         "noShadowRestrictedNames": "error",
         "noUnsafeNegation": "error",
         "useGetterReturn": "error",
+        "useIterableCallbackReturn": "off",
         "noWith": "error",
-        "noVar": "error"
+        "noVar": "error",
+        "noImplicitAnyLet": "warn",
+        "noAssignInExpressions": "warn"
+      },
+      "security": {
+        "noGlobalEval": "warn"
       }
     }
   },

@@ -529,9 +529,9 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
 
       validationLibraries.forEach((lib) => {
         // Test value validation
-        const currentValue = parseInt(element.getAttribute('value') || '0');
-        const min = parseInt(element.getAttribute('min') || '0');
-        const max = parseInt(element.getAttribute('max') || '100');
+        const currentValue = parseInt(element.getAttribute('value') || '0', 10);
+        const min = parseInt(element.getAttribute('min') || '0', 10);
+        const max = parseInt(element.getAttribute('max') || '100', 10);
 
         const valueValidation = currentValue >= min && currentValue <= max;
 
@@ -804,10 +804,10 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
 
     expect(ssrTest.ssrScenarios).toEqual(['server_rendering', 'client_hydration']);
     expect(ssrTest.ssrCompatible).toBe(true);
-    expect(ssrTest.hydrationResults['server_rendering'].elementExists).toBe(true);
-    expect(ssrTest.hydrationResults['server_rendering'].attributesPreserved).toBe(true);
-    expect(ssrTest.hydrationResults['client_hydration'].customElementUpgraded).toBe(true);
-    expect(ssrTest.hydrationResults['client_hydration'].gracefulHydration).toBe(true);
+    expect(ssrTest.hydrationResults.server_rendering.elementExists).toBe(true);
+    expect(ssrTest.hydrationResults.server_rendering.attributesPreserved).toBe(true);
+    expect(ssrTest.hydrationResults.client_hydration.customElementUpgraded).toBe(true);
+    expect(ssrTest.hydrationResults.client_hydration.gracefulHydration).toBe(true);
   });
 
   /**
@@ -880,12 +880,12 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
 
     expect(memoryTest.spaScenarios).toEqual(['route_changes', 'dynamic_creation']);
     expect(memoryTest.memoryEfficient).toBe(true);
-    expect(memoryTest.memoryResults['route_changes'].elementsCreated).toBe(true);
-    expect(memoryTest.memoryResults['route_changes'].elementsRemoved).toBe(true);
-    expect(memoryTest.memoryResults['route_changes'].leakPrevention).toBe(true);
-    expect(memoryTest.memoryResults['dynamic_creation'].dynamicCreation).toBe(true);
-    expect(memoryTest.memoryResults['dynamic_creation'].immediateCleanup).toBe(true);
-    expect(memoryTest.memoryResults['dynamic_creation'].leakPrevention).toBe(true);
+    expect(memoryTest.memoryResults.route_changes.elementsCreated).toBe(true);
+    expect(memoryTest.memoryResults.route_changes.elementsRemoved).toBe(true);
+    expect(memoryTest.memoryResults.route_changes.leakPrevention).toBe(true);
+    expect(memoryTest.memoryResults.dynamic_creation.dynamicCreation).toBe(true);
+    expect(memoryTest.memoryResults.dynamic_creation.immediateCleanup).toBe(true);
+    expect(memoryTest.memoryResults.dynamic_creation.leakPrevention).toBe(true);
   });
 
   /**
@@ -1401,7 +1401,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
         },
         segment: {
           name: 'Segment',
-          track: (element: HTMLElement) => {
+          track: (_element: HTMLElement) => {
             // Simulate Segment tracking
             return {
               events: ['touchspin_loaded', 'touchspin_configured'],
@@ -1470,8 +1470,8 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
     // Test custom element polyfill support
     const polyfillTest = await page.evaluate(() => {
       // Simulate polyfill environment
-      const originalCustomElements = (window as any).customElements;
-      const originalHTMLElement = (window as any).HTMLElement;
+      const _originalCustomElements = (window as any).customElements;
+      const _originalHTMLElement = (window as any).HTMLElement;
 
       // Mock polyfilled environment
       const polyfillEnvironments = {
@@ -1843,7 +1843,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
       try {
         element.addEventListener('debug-event', () => (eventTracing = true));
         element.dispatchEvent(new CustomEvent('debug-event'));
-      } catch (e) {
+      } catch (_e) {
         // Expected if debugging is not fully implemented
       }
 
@@ -1886,7 +1886,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
         (window as any).errorEvents.push(e.detail || 'error');
       });
 
-      element.addEventListener('touchspin-error', (e) => {
+      element.addEventListener('touchspin-error', (_e) => {
         (window as any).errorEvents.push('touchspin-error');
       });
 
@@ -1911,7 +1911,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
       try {
         element.setAttribute('value', '-100'); // Below min
         element.setAttribute('value', 'NaN'); // Invalid
-      } catch (e) {
+      } catch (_e) {
         errorEvents.push('caught-error');
       }
 
@@ -1975,7 +1975,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
           if (!element.outerHTML.includes('<script>') && !element.value.includes('<script>')) {
             (window as any).securityTestResults.sanitizationPassed++;
           }
-        } catch (e) {
+        } catch (_e) {
           // Errors during malicious input handling indicate good security
           (window as any).securityTestResults.sanitizationPassed++;
         }
@@ -2040,9 +2040,9 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (mutation.type === 'attributes') {
-            const target = mutation.target as Element;
+            const _target = mutation.target as Element;
             const attrName = mutation.attributeName;
-            if (attrName && attrName.startsWith('on')) {
+            if (attrName?.startsWith('on')) {
               (window as any).cspViolations.push('inline-handler-violation');
             }
           }
@@ -2086,7 +2086,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
         // Test basic functionality - CSP should not prevent basic web component usage
         element.setAttribute('value', '75');
         functionalityTest = element.hasAttribute('value');
-      } catch (e) {
+      } catch (_e) {
         functionalityTest = false;
       }
 
@@ -2097,8 +2097,8 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
       };
 
       // Check for inline styles (should be minimal or use classes)
-      const hasInlineStyles = element.style.length > 0;
-      const usesClasses = element.className.length > 0 || element.hasAttribute('class');
+      const _hasInlineStyles = element.style.length > 0;
+      const _usesClasses = element.className.length > 0 || element.hasAttribute('class');
 
       // Clean up
       if ((window as any).cspObserver) {
@@ -2178,10 +2178,10 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
 
     expect(crossOriginTest.crossOriginScenarios).toEqual(['cdn_loading', 'iframe_contexts']);
     expect(crossOriginTest.crossOriginSafe).toBe(true);
-    expect(crossOriginTest.crossOriginResults['cdn_loading'].cdnLoading).toBe(true);
-    expect(crossOriginTest.crossOriginResults['cdn_loading'].corsCompliant).toBe(true);
-    expect(crossOriginTest.crossOriginResults['iframe_contexts'].iframeContexts).toBe(true);
-    expect(crossOriginTest.crossOriginResults['iframe_contexts'].crossOriginSafe).toBe(true);
+    expect(crossOriginTest.crossOriginResults.cdn_loading.cdnLoading).toBe(true);
+    expect(crossOriginTest.crossOriginResults.cdn_loading.corsCompliant).toBe(true);
+    expect(crossOriginTest.crossOriginResults.iframe_contexts.iframeContexts).toBe(true);
+    expect(crossOriginTest.crossOriginResults.iframe_contexts.crossOriginSafe).toBe(true);
   });
 
   /**
@@ -2251,12 +2251,12 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
 
     expect(microfrontendTest.microfrontendPatterns).toEqual(['module_federation', 'single_spa']);
     expect(microfrontendTest.microfrontendReady).toBe(true);
-    expect(microfrontendTest.microfrontendResults['module_federation'].moduleLoading).toBe(true);
-    expect(microfrontendTest.microfrontendResults['module_federation'].styleIsolation).toBe(true);
-    expect(microfrontendTest.microfrontendResults['module_federation'].federationReady).toBe(true);
-    expect(microfrontendTest.microfrontendResults['single_spa'].spaCompatibility).toBe(true);
-    expect(microfrontendTest.microfrontendResults['single_spa'].lifecycleManagement).toBe(true);
-    expect(microfrontendTest.microfrontendResults['single_spa'].spaReady).toBe(true);
+    expect(microfrontendTest.microfrontendResults.module_federation.moduleLoading).toBe(true);
+    expect(microfrontendTest.microfrontendResults.module_federation.styleIsolation).toBe(true);
+    expect(microfrontendTest.microfrontendResults.module_federation.federationReady).toBe(true);
+    expect(microfrontendTest.microfrontendResults.single_spa.spaCompatibility).toBe(true);
+    expect(microfrontendTest.microfrontendResults.single_spa.lifecycleManagement).toBe(true);
+    expect(microfrontendTest.microfrontendResults.single_spa.spaReady).toBe(true);
   });
 
   /**

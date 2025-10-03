@@ -4,9 +4,9 @@
  * Usage: node scripts/validate-framework-assets.mjs
  */
 
-import { dirname, join } from 'path';
-import { readFileSync, existsSync, statSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { dirname, join } from 'node:path';
+import { readFileSync, existsSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -64,7 +64,7 @@ function getExpectedVersion(rendererName) {
       packageJson.devDependencies?.[config.dependency] ||
       packageJson.dependencies?.[config.dependency]
     );
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }
@@ -93,7 +93,7 @@ function validateRenderer(rendererName) {
   let totalSize = 0;
 
   // Check each expected file
-  for (const [sourcePath, targetPath] of Object.entries(config.files)) {
+  for (const [_sourcePath, targetPath] of Object.entries(config.files)) {
     const targetFile = join(targetDir, targetPath);
 
     if (!existsSync(targetFile)) {

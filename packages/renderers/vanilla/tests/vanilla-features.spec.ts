@@ -35,7 +35,7 @@
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
-const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
+const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**
@@ -251,7 +251,7 @@ test('provides clean CSS class hierarchy', async ({ page }) => {
 
   // Verify no class conflicts (no duplicate classes)
   const allClasses = [wrapperClasses, upButtonClasses, downButtonClasses].join(' ').split(/\s+/);
-  const uniqueClasses = new Set(allClasses.filter((c) => c.length > 0));
+  const _uniqueClasses = new Set(allClasses.filter((c) => c.length > 0));
 
   // Each element should have unique, non-conflicting classes
   expect(upButtonClasses).not.toBe(downButtonClasses); // Buttons should have different classes

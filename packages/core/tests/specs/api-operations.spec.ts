@@ -34,7 +34,7 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { captureConsole, inputById, wrapperById } from '@touchspin/core/test-helpers';
+import { inputById, wrapperById } from '@touchspin/core/test-helpers';
 import {
   initializeTouchspin,
   getCoreNumericValue,

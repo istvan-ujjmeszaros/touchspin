@@ -46,7 +46,6 @@
 
 import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { captureConsole } from '@touchspin/core/test-helpers';
 import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
 
 test.describe('jQuery plugin methods', () => {
@@ -356,7 +355,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Should handle the last valid setValue
     const value = await apiHelpers.readInputValue(page, 'test-input');
-    expect(parseInt(value)).toBeGreaterThanOrEqual(25);
+    expect(parseInt(value, 10)).toBeGreaterThanOrEqual(25);
   });
 
   /**
@@ -591,7 +590,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Should have some consistent final value
     const finalValue = await apiHelpers.readInputValue(page, 'test-input');
-    expect(parseInt(finalValue)).toBeGreaterThanOrEqual(10);
+    expect(parseInt(finalValue, 10)).toBeGreaterThanOrEqual(10);
   });
 
   /**

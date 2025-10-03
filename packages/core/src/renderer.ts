@@ -6,9 +6,6 @@ export type {
   InferOptionsFromSchema,
 } from './AbstractRenderer.js';
 
-// Canonical Renderer interface and constructor type for TouchSpin
-// Exposed under the subpath '@touchspin/core/renderer'
-import type { TouchSpinCoreOptions } from './index.js';
 
 // Minimal instance surface used by core. Renderers may implement more.
 export interface Renderer {

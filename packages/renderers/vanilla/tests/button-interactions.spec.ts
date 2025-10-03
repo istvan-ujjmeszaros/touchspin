@@ -23,18 +23,15 @@
 import { test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { expectValueToBe } from '@touchspin/core/test-helpers';
-import { fillWithValueAndBlur, setValueSilentlyAndBlur } from '@touchspin/core/test-helpers';
 import { clickUpButton, clickDownButton } from '@touchspin/core/test-helpers';
-import { holdUpArrowKeyOnInput } from '@touchspin/core/test-helpers';
 import {
   clearEventLog,
   countEventInLog,
-  getEventsOfType,
   hasEventInLog,
 } from '@touchspin/core/test-helpers';
 import { createAdditionalInput } from '@touchspin/core/test-helpers';
 
-const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
+const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**

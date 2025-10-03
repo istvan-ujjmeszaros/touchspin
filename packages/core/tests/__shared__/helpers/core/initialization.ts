@@ -1,6 +1,5 @@
 import type { Page } from '@playwright/test';
-import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
-import { inputById } from './selectors';
+import type { TouchSpinCoreOptions, } from '../types';
 import { setupLogging } from '../events/setup';
 import { coreUrl as coreRuntimeUrl } from '../runtime/paths';
 import { installDomHelpers } from '../runtime/installDomHelpers';
@@ -40,7 +39,7 @@ export async function initializeTouchspin(
       if (options.initval !== undefined) input.value = String(options.initval);
 
       const core = new TouchSpinCore(input, options);
-      (input as unknown as Record<string, unknown>)['_touchSpinCore'] = core as unknown;
+      (input as unknown as Record<string, unknown>)._touchSpinCore = core as unknown;
 
       // No per-instance listeners here: core will dispatch DOM CustomEvents
       (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
@@ -147,7 +146,7 @@ export async function initializeTouchSpin(
 
         // Core automatically checks globalThis.TouchSpinDefaultRenderer and uses it if present
         const core = new TouchSpinCore(input, options);
-        (input as any)['_touchSpinCore'] = core;
+        (input as any)._touchSpinCore = core;
         (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
       } catch (err) {
         console.error('initializeTouchSpin failed:', err);
