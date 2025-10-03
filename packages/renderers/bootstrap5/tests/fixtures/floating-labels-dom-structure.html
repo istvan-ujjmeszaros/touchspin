@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 Floating Labels DOM Structure Test Fixture</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
+
+    <!-- Enhanced IIFE build - single script with Core + Renderer -->
+    <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
+
+    <style>
+        body {
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background: #f8f9fa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #212529;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 0.375rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Floating Labels DOM Structure Tests</h1>
+    <p>Minimal fixture for validating DOM structure of all floating label variations.</p>
+
+    <!-- Test 1: Basic Floating Label -->
+    <div class="test-section">
+        <h3>Test 1: Basic Floating Label</h3>
+        <p>Expected: .input-group wraps .form-floating, buttons outside .form-floating</p>
+        <div class="test-case">
+            <div class="form-floating">
+                <input type="number" class="form-control" id="basic-floating"
+                       placeholder="Enter amount" value="50"
+                       data-testid="basic-floating">
+                <label for="basic-floating">Amount</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 2: Advanced Floating Label (with Input Group) -->
+    <div class="test-section">
+        <h3>Test 2: Advanced Floating Label (Input Group)</h3>
+        <p>Expected: Existing .input-group enhanced, .form-floating between prefix/postfix</p>
+        <div class="test-case">
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="group-floating"
+                           placeholder="Enter price" value="125"
+                           data-testid="group-floating">
+                    <label for="group-floating">Price</label>
+                </div>
+                <span class="input-group-text">.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 3: Basic Floating Label with Vertical Buttons -->
+    <div class="test-section">
+        <h3>Test 3: Basic Floating Label + Vertical Buttons</h3>
+        <p>Expected: .form-floating first, then vertical wrapper</p>
+        <div class="test-case">
+            <div class="form-floating">
+                <input type="number" class="form-control" id="vertical-basic"
+                       placeholder="Enter quantity" value="8"
+                       data-testid="vertical-basic">
+                <label for="vertical-basic">Vertical (Basic)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 4: Advanced Floating Label with Vertical Buttons -->
+    <div class="test-section">
+        <h3>Test 4: Advanced Floating Label + Vertical Buttons</h3>
+        <p>Expected: prefix, .form-floating, vertical wrapper, postfix</p>
+        <div class="test-case">
+            <div class="input-group">
+                <span class="input-group-text">€</span>
+                <div class="form-floating">
+                    <input type="number" class="form-control" id="vertical-advanced"
+                           placeholder="Enter amount" value="120"
+                           data-testid="vertical-advanced">
+                    <label for="vertical-advanced">Vertical (Advanced)</label>
+                </div>
+                <span class="input-group-text">.00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-initialize all TouchSpin instances on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const TouchSpinCore = window.TouchSpinCore;
+            const Bootstrap5Renderer = globalThis.TouchSpinDefaultRenderer;
+
+            if (!TouchSpinCore || !Bootstrap5Renderer) {
+                console.error('❌ TouchSpinCore or Bootstrap5Renderer not available globally');
+                return;
+            }
+
+            // Test 1: Basic floating label (horizontal buttons - default)
+            new TouchSpinCore(document.getElementById('basic-floating'), {
+                renderer: Bootstrap5Renderer
+            });
+
+            // Test 2: Advanced floating label (horizontal buttons - default)
+            new TouchSpinCore(document.getElementById('group-floating'), {
+                renderer: Bootstrap5Renderer
+            });
+
+            // Test 3: Basic floating label with vertical buttons
+            new TouchSpinCore(document.getElementById('vertical-basic'), {
+                renderer: Bootstrap5Renderer,
+                verticalbuttons: true
+            });
+
+            // Test 4: Advanced floating label with vertical buttons
+            new TouchSpinCore(document.getElementById('vertical-advanced'), {
+                renderer: Bootstrap5Renderer,
+                verticalbuttons: true
+            });
+
+            console.log('✅ All floating label test cases initialized');
+        });
+    </script>
+</body>
+</html>

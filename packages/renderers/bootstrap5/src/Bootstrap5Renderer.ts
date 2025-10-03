@@ -1,5 +1,5 @@
-import { AbstractRenderer } from '@touchspin/core/renderer';
 import type { InferOptionsFromSchema, RendererOptionSchema } from '@touchspin/core/renderer';
+import { AbstractRenderer } from '@touchspin/core/renderer';
 
 // Schema definition
 const bootstrap5Schema = Object.freeze({
@@ -58,8 +58,48 @@ const INJECTED_TYPES = {
 
 type RendererOptions = Readonly<Partial<InferOptionsFromSchema<typeof bootstrap5Schema>>>;
 
+/**
+ * Bootstrap5Renderer - Renders TouchSpin with Bootstrap 5 markup
+ *
+ * ## Floating Label Support
+ *
+ * ### Basic Floating Label
+ * Wraps .form-floating in .input-group, with buttons/affixes outside:
+ * - .input-group.bootstrap-touchspin (wrapper)
+ *   - button (down)
+ *   - .form-floating
+ *     - input
+ *     - label
+ *   - button (up)
+ *
+ * ### Advanced Floating Label (existing input-group)
+ * Preserves existing .input-group structure, .form-floating stays between prefix/postfix:
+ * - .input-group.bootstrap-touchspin (existing wrapper)
+ *   - span.input-group-text (prefix, if present)
+ *   - button (down)
+ *   - .form-floating
+ *     - input
+ *     - label
+ *   - button (up)
+ *   - span.input-group-text (postfix, if present)
+ *
+ * ### Vertical Buttons
+ * For both basic and advanced cases, vertical wrapper comes after .form-floating:
+ * - .input-group.bootstrap-touchspin
+ *   - [prefix] (advanced only)
+ *   - .form-floating
+ *     - input
+ *     - label
+ *   - span.input-group-text.bootstrap-touchspin-vertical-button-wrapper
+ *     - span.input-group-btn-vertical
+ *       - button (up)
+ *       - button (down)
+ *   - [postfix] (advanced only)
+ */
 class Bootstrap5Renderer extends AbstractRenderer {
   private readonly initialInputGroup: HTMLElement | null;
+  private readonly floatingContainer: HTMLElement | null;
+  private readonly floatingLabel: HTMLLabelElement | null;
   private opts: RendererOptions = {};
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
@@ -69,6 +109,12 @@ class Bootstrap5Renderer extends AbstractRenderer {
   constructor(...args: ConstructorParameters<typeof AbstractRenderer>) {
     super(...args);
     const [input] = args;
+
+    // Detect floating label structure
+    this.floatingContainer = input.closest('.form-floating') as HTMLElement | null;
+    this.floatingLabel = this.floatingContainer?.querySelector('label') as HTMLLabelElement | null;
+
+    // Detect existing input-group
     this.initialInputGroup = input.closest(`.${CSS_CLASSES.INPUT_GROUP}`) as HTMLElement | null;
   }
 
@@ -81,6 +127,18 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   teardown(): void {
+    // Restore floating label structure if it was modified
+    if (this.floatingContainer && this.floatingLabel) {
+      // Ensure input is back in floating container
+      if (this.input.parentElement !== this.floatingContainer) {
+        this.floatingContainer.appendChild(this.input);
+      }
+      // Ensure label is back in floating container (after input)
+      if (this.floatingLabel.parentElement !== this.floatingContainer) {
+        this.floatingContainer.appendChild(this.floatingLabel);
+      }
+    }
+
     this.restoreFormControlClass();
     super.teardown();
   }
@@ -111,6 +169,18 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   // DOM building
   buildInputGroup(): HTMLElement {
+    // Handle floating labels first
+    if (this.floatingContainer && this.initialInputGroup) {
+      // Mode B: Floating label inside input-group
+      return this.buildFloatingLabelInInputGroup();
+    }
+
+    if (this.floatingContainer) {
+      // Mode A: Basic floating label
+      return this.buildBasicFloatingLabel();
+    }
+
+    // Regular (non-floating) logic
     const closestGroup = this.input.closest(`.${CSS_CLASSES.INPUT_GROUP}`) as HTMLElement | null;
     const existingInputGroup = closestGroup ?? this.initialInputGroup;
 
@@ -128,6 +198,162 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.positionInputWithinWrapper(wrapper);
 
     return wrapper;
+  }
+
+  /**
+   * Build basic floating label structure
+   *
+   * Expected DOM (horizontal buttons):
+   * <div class="input-group bootstrap-touchspin" data-touchspin-injected="wrapper">
+   *   <button data-touchspin-injected="down">−</button>
+   *   <div class="form-floating">
+   *     <input class="form-control">
+   *     <label>Label Text</label>
+   *   </div>
+   *   <button data-touchspin-injected="up">+</button>
+   * </div>
+   *
+   * Expected DOM (vertical buttons):
+   * <div class="input-group bootstrap-touchspin" data-touchspin-injected="wrapper">
+   *   <div class="form-floating">
+   *     <input class="form-control">
+   *     <label>Label Text</label>
+   *   </div>
+   *   <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper">
+   *     <span class="input-group-btn-vertical">
+   *       <button data-touchspin-injected="up">▲</button>
+   *       <button data-touchspin-injected="down">▼</button>
+   *     </span>
+   *   </span>
+   * </div>
+   */
+  buildBasicFloatingLabel(): HTMLElement {
+    // For basic floating labels, we wrap .form-floating in .input-group
+    // instead of putting .input-group inside .form-floating
+    const inputGroupSize = this.detectInputGroupSize();
+    const wrapper = this.createInputGroupWrapper(inputGroupSize);
+
+    // Wrap the entire .form-floating container
+    if (this.floatingContainer && this.floatingContainer.parentElement) {
+      this.floatingContainer.parentElement.insertBefore(wrapper, this.floatingContainer);
+    }
+
+    // Add buttons and affixes to the wrapper
+    if (!this.opts.verticalbuttons) {
+      wrapper.appendChild(this.createDownButton());
+    }
+
+    if (this.opts.prefix) {
+      wrapper.appendChild(this.createPrefixElement());
+    }
+
+    // Move the entire .form-floating into the wrapper
+    if (this.floatingContainer) {
+      wrapper.appendChild(this.floatingContainer);
+    }
+
+    if (this.opts.postfix) {
+      wrapper.appendChild(this.createPostfixElement());
+    }
+
+    if (this.opts.verticalbuttons) {
+      wrapper.appendChild(this.createVerticalButtonWrapper());
+    } else {
+      wrapper.appendChild(this.createUpButton());
+    }
+
+    // Ensure input and label are correctly positioned inside .form-floating
+    if (this.floatingContainer && this.floatingLabel) {
+      // Ensure input is first child
+      if (this.input.parentElement !== this.floatingContainer) {
+        this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
+      }
+      // Ensure label is after input
+      if (this.floatingLabel.parentElement !== this.floatingContainer) {
+        this.floatingContainer.appendChild(this.floatingLabel);
+      }
+    }
+
+    return wrapper;
+  }
+
+  /**
+   * Build advanced floating label structure (existing input-group)
+   *
+   * Expected DOM (horizontal buttons):
+   * <div class="input-group bootstrap-touchspin" data-touchspin-injected="wrapper-advanced">
+   *   <span class="input-group-text">$</span>
+   *   <button data-touchspin-injected="down">−</button>
+   *   <div class="form-floating">
+   *     <input class="form-control">
+   *     <label>Label Text</label>
+   *   </div>
+   *   <button data-touchspin-injected="up">+</button>
+   *   <span class="input-group-text">.00</span>
+   * </div>
+   *
+   * Expected DOM (vertical buttons):
+   * <div class="input-group bootstrap-touchspin" data-touchspin-injected="wrapper-advanced">
+   *   <span class="input-group-text">€</span>
+   *   <div class="form-floating">
+   *     <input class="form-control">
+   *     <label>Label Text</label>
+   *   </div>
+   *   <span class="input-group-text bootstrap-touchspin-vertical-button-wrapper">
+   *     <span class="input-group-btn-vertical">
+   *       <button data-touchspin-injected="up">▲</button>
+   *       <button data-touchspin-injected="down">▼</button>
+   *     </span>
+   *   </span>
+   *   <span class="input-group-text">.00</span>
+   * </div>
+   */
+  buildFloatingLabelInInputGroup(): HTMLElement {
+    const inputGroup = this.initialInputGroup as HTMLElement;
+    inputGroup.classList.add(CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
+    this.wrapperType = 'wrapper-advanced';
+
+    // Ensure .form-floating is positioned correctly in input-group
+    if (this.floatingContainer && this.floatingContainer.parentElement !== inputGroup) {
+      // Move floating container into input-group if needed
+      inputGroup.appendChild(this.floatingContainer);
+    }
+
+    // Ensure input and label are inside .form-floating
+    if (this.floatingContainer) {
+      if (this.input.parentElement !== this.floatingContainer) {
+        this.floatingContainer.appendChild(this.input);
+      }
+      if (this.floatingLabel && this.floatingLabel.parentElement !== this.floatingContainer) {
+        this.floatingContainer.appendChild(this.floatingLabel);
+      }
+    }
+
+    // Add buttons OUTSIDE .form-floating but INSIDE .input-group
+    if (!this.opts.verticalbuttons) {
+      inputGroup.insertBefore(this.createDownButton(), this.floatingContainer);
+    }
+
+    if (this.opts.prefix) {
+      inputGroup.insertBefore(this.createPrefixElement(), this.floatingContainer);
+    }
+
+    if (this.opts.postfix) {
+      const nextSibling = this.floatingContainer?.nextSibling ?? null;
+      inputGroup.insertBefore(this.createPostfixElement(), nextSibling);
+    }
+
+    if (this.opts.verticalbuttons) {
+      const nextSibling = this.floatingContainer?.nextSibling ?? null;
+      inputGroup.insertBefore(this.createVerticalButtonWrapper(), nextSibling);
+    } else {
+      const nextSibling = this.floatingContainer?.nextSibling ?? null;
+      inputGroup.insertBefore(this.createUpButton(), nextSibling);
+    }
+
+    this.storeElementReferences(inputGroup);
+
+    return inputGroup;
   }
 
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {

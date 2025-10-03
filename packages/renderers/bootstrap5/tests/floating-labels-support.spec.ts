@@ -5,7 +5,7 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] supports floating labels with TouchSpin initialization and all interaction methods
+ * [x] supports floating labels with TouchSpin initialization and all interaction methods
  */
 
 import { expect, test } from '@playwright/test';
@@ -28,7 +28,7 @@ const FLOATING_LABELS_FIXTURE =
  * And accessibility attributes are maintained
  * And visual positioning is correct
  */
-test.skip('supports floating labels with TouchSpin initialization and all interaction methods', async ({
+test('supports floating labels with TouchSpin initialization and all interaction methods', async ({
   page,
 }) => {
   await page.goto(FLOATING_LABELS_FIXTURE);

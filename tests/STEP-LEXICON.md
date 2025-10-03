@@ -3,6 +3,12 @@
 > This file is auto-generated from doc-comments in helper functions.
 > Run `yarn lexicon:gen` to regenerate.
 
+## assertions
+
+- **Then the "{eventName}" event is not fired**
+  - `expectNoEvent(page, eventName, timeout)`
+  - File: `packages/core/tests/__shared__/helpers/assertions/events.ts`
+
 ## core
 
 - **When I decrement "{testId}" via API**
@@ -15,10 +21,6 @@
 
 - **When I get the numeric value of "{testId}"**
   - `getNumericValue(page, testId)`
-  - File: `packages/core/tests/__shared__/helpers/core/api.ts`
-
-- **When I get the public API for "{testId}"**
-  - `getPublicAPI(page, testId)`
   - File: `packages/core/tests/__shared__/helpers/core/api.ts`
 
 - **When I increment "{testId}" via API**
@@ -97,31 +99,31 @@
 ## renderers
 
 - **Bootstrap Family Shared Test Suite**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
+  - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Bootstrap-specific patterns while remaining version-agnostic.**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
+  - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **different from other frameworks like Tailwind or Vanilla. These tests focus on**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
+  - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Tests behaviors that are common to ALL Bootstrap variants (3, 4, and 5) but**
-  - `bootstrapSharedSuite(name, rendererUrl, fixturePath)`
+  - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
 - **Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.**
-  - `universalRendererSuite(name, rendererUrl, fixturePath)`
+  - `universalRendererSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 - **These tests focus on functionality and data attributes, not framework-specific classes.**
-  - `universalRendererSuite(name, rendererUrl, fixturePath)`
+  - `universalRendererSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 - **Universal Renderer Test Suite**
-  - `universalRendererSuite(name, rendererUrl, fixturePath)`
+  - `universalRendererSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
 
 ## test-utilities
@@ -204,25 +206,10 @@
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
   - Note: For dynamic import-based renderer loading
 
-- **Given I need the jQuery plugin available**
-  - `loadTouchSpinJQueryPlugin(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads the IIFE build with Bootstrap5 renderer
-
 - **Given I need the TouchSpin web component registered**
   - `loadWebComponentEnvironment(page, debug)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
   - Note: Forces registration if conditional check fails
-
-- **Given I need the web component available**
-  - `loadTouchSpinWebComponent(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads from local dist and waits for custom element registration
-
-- **Given I need to check if required scripts are loaded**
-  - `verifyScriptAvailability(page, checks, string>)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Centralized verification for multiple script dependencies
 
 - **Given I need to clean up between tests**
   - `resetTestEnvironment(page)`
@@ -233,11 +220,6 @@
   - `diagnoseEnvironment(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
   - Note: Returns detailed diagnostics about loaded components
-
-- **Given I need to load a script from a URL**
-  - `loadScript(page, url, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Handles both absolute URLs and relative paths with proper error handling
 
 - **Given I need TouchSpin web component with all dependencies resolved**
   - `loadWebComponentWithDependencies(page, debug)`
@@ -303,11 +285,6 @@
   - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
   - Note: For dynamic import-based renderer loading
 
-- **When I load script from "{url}"**
-  - `loadScript(page, url, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Handles both absolute URLs and relative paths with proper error handling
-
 - **When I load the web component environment**
   - `loadWebComponentEnvironment(page, debug)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
@@ -318,25 +295,10 @@
   - File: `packages/core/tests/__shared__/helpers/test-utilities/web-component-loader.ts`
   - Note: Assumes fixture already has static import map configured
 
-- **When I load TouchSpin jQuery plugin**
-  - `loadTouchSpinJQueryPlugin(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads the IIFE build with Bootstrap5 renderer
-
-- **When I load TouchSpin web component**
-  - `loadTouchSpinWebComponent(page, options)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Loads from local dist and waits for custom element registration
-
 - **When I reset the test environment**
   - `resetTestEnvironment(page)`
   - File: `packages/core/tests/__shared__/helpers/test-utilities/test-environment.ts`
   - Note: Cleans up loaded components for test isolation
-
-- **When I verify script availability**
-  - `verifyScriptAvailability(page, checks, string>)`
-  - File: `packages/core/tests/__shared__/helpers/test-utilities/script-loader.ts`
-  - Note: Centralized verification for multiple script dependencies
 
 - **When I wait for value sanitization to complete**
   - `waitForSanitization(page, _testId)`

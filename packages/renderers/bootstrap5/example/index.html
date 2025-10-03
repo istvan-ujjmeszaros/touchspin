@@ -338,6 +338,50 @@
           <input type="number" id="minmax" min="0" max="10" value="5" step="1" class="form-control">
         </div>
       </div>
+
+      <!-- Floating Label Example (Basic) -->
+      <div class="example">
+        <h3>Floating Label (Basic)</h3>
+        <div class="form-floating">
+          <input type="number" id="floating-basic" min="0" max="100" value="42" step="1" placeholder="Enter amount" class="form-control">
+          <label for="floating-basic">Amount</label>
+        </div>
+      </div>
+
+      <!-- Floating Label with Input Group (Advanced) -->
+      <div class="example">
+        <h3>Floating Label with Input Group</h3>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <div class="form-floating">
+            <input type="number" id="floating-advanced" min="0" max="999.99" value="99.99" step="0.01" placeholder="Enter price" class="form-control">
+            <label for="floating-advanced">Price</label>
+          </div>
+          <span class="input-group-text">.00</span>
+        </div>
+      </div>
+
+      <!-- Floating Label with Vertical Buttons (Basic) -->
+      <div class="example">
+        <h3>Floating Label with Vertical Buttons (Basic)</h3>
+        <div class="form-floating">
+          <input type="number" id="floating-vertical-basic" min="0" max="100" value="50" step="5" placeholder="Enter quantity" class="form-control">
+          <label for="floating-vertical-basic">Quantity</label>
+        </div>
+      </div>
+
+      <!-- Floating Label with Input Group and Vertical Buttons (Advanced) -->
+      <div class="example">
+        <h3>Floating Label with Input Group and Vertical Buttons (Advanced)</h3>
+        <div class="input-group">
+          <span class="input-group-text">€</span>
+          <div class="form-floating">
+            <input type="number" id="floating-vertical-advanced" min="0" max="999.99" value="75.50" step="0.50" placeholder="Enter amount" class="form-control">
+            <label for="floating-vertical-advanced">Euro Amount</label>
+          </div>
+          <span class="input-group-text">.00</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -588,6 +632,27 @@
 
   TouchSpin(document.getElementById('minmax'), {
     renderer: Bootstrap5Renderer
+  });
+
+  // Floating Label Examples
+  TouchSpin(document.getElementById('floating-basic'), {
+    renderer: Bootstrap5Renderer
+  });
+
+  TouchSpin(document.getElementById('floating-advanced'), {
+    renderer: Bootstrap5Renderer,
+    decimals: 2
+  });
+
+  TouchSpin(document.getElementById('floating-vertical-basic'), {
+    renderer: Bootstrap5Renderer,
+    verticalbuttons: true
+  });
+
+  TouchSpin(document.getElementById('floating-vertical-advanced'), {
+    renderer: Bootstrap5Renderer,
+    verticalbuttons: true,
+    decimals: 2
   });
 
   const controls = {
