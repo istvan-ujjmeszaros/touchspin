@@ -17,9 +17,18 @@ type UndoEvent =
     };
 
 /**
- * Abstract renderer using LIFO (Last In First Out) undo stack strategy.
- * Tracks DOM operations as events and undoes them in reverse order during teardown.
- * Suitable for Bootstrap5 renderer (floating labels, input groups).
+ * Abstract renderer using operation tracking strategy.
+ *
+ * Tracks every DOM operation (create, move, addClass, etc.) in a LIFO undo stack
+ * and reverses them in exact reverse order during teardown. This provides surgical,
+ * predictable DOM restoration.
+ *
+ * Use cases:
+ * - Complex DOM structures (floating labels, nested input groups)
+ * - Cases where elements are moved between parents
+ * - Situations requiring precise restoration of original state
+ *
+ * Currently used by: Bootstrap5Renderer
  */
 abstract class AbstractRendererTracked extends AbstractRenderer {
   /** LIFO stack of operations to undo during teardown */
