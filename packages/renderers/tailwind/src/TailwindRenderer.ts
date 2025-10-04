@@ -2,9 +2,9 @@
  * Tailwind CSS Renderer - New Architecture
  * Using Tailwind utility classes only; no external CSS dependency.
  */
-import { AbstractRendererMetadata } from '@touchspin/core/renderer';
+import { AbstractRendererAttributeBased } from '@touchspin/core/renderer';
 
-class TailwindRenderer extends AbstractRendererMetadata {
+class TailwindRenderer extends AbstractRendererAttributeBased {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   declare wrapper: HTMLElement | null;

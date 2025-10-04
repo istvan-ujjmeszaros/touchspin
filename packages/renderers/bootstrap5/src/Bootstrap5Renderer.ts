@@ -1,5 +1,5 @@
 import type { InferOptionsFromSchema, RendererOptionSchema } from '@touchspin/core/renderer';
-import { AbstractRendererLIFO } from '@touchspin/core/renderer';
+import { AbstractRendererTracked } from '@touchspin/core/renderer';
 
 // Schema definition
 const bootstrap5Schema = Object.freeze({
@@ -96,7 +96,7 @@ type RendererOptions = Readonly<Partial<InferOptionsFromSchema<typeof bootstrap5
  *       - button (down)
  *   - [postfix] (advanced only)
  */
-class Bootstrap5Renderer extends AbstractRendererLIFO {
+class Bootstrap5Renderer extends AbstractRendererTracked {
   private readonly initialInputGroup: HTMLElement | null;
   private readonly floatingContainer: HTMLElement | null;
   private readonly floatingLabel: HTMLLabelElement | null;
@@ -106,7 +106,7 @@ class Bootstrap5Renderer extends AbstractRendererLIFO {
   private formControlAdded = false;
   declare wrapper: HTMLElement | null;
 
-  constructor(...args: ConstructorParameters<typeof AbstractRendererLIFO>) {
+  constructor(...args: ConstructorParameters<typeof AbstractRendererTracked>) {
     super(...args);
     const [input] = args;
 
