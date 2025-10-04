@@ -47,7 +47,7 @@ export const TOUCHSPIN_ATTRIBUTE = 'data-touchspin-injected';
  * Provides common interface and utilities for all renderer strategies.
  * Concrete implementations should extend AbstractRendererTracked or AbstractRendererAttributeBased.
  */
-abstract class AbstractRenderer implements Renderer {
+abstract class AbstractRendererBase implements Renderer {
   protected readonly input: HTMLInputElement;
   protected readonly settings: Readonly<TouchSpinCoreOptions>;
   protected readonly core: RendererCoreBridge;
@@ -132,4 +132,4 @@ abstract class AbstractRenderer implements Renderer {
   }
 }
 
-export default AbstractRenderer;
+export default AbstractRendererBase;

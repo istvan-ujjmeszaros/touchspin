@@ -1,4 +1,4 @@
-import AbstractRenderer from './AbstractRenderer.js';
+import AbstractRendererBase from './AbstractRendererBase.js';
 
 /**
  * Undo events for LIFO stack-based DOM restoration.
@@ -30,7 +30,7 @@ type UndoEvent =
  *
  * Currently used by: Bootstrap5Renderer
  */
-abstract class AbstractRendererTracked extends AbstractRenderer {
+abstract class AbstractRendererTracked extends AbstractRendererBase {
   /** LIFO stack of operations to undo during teardown */
   protected undoStack: UndoEvent[] = [];
 

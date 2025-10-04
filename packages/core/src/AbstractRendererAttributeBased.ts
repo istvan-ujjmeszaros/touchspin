@@ -1,4 +1,4 @@
-import AbstractRenderer, { TOUCHSPIN_ATTRIBUTE } from './AbstractRenderer.js';
+import AbstractRendererBase, { TOUCHSPIN_ATTRIBUTE } from './AbstractRendererBase.js';
 
 const WRAPPER_TYPE_DEFAULT = 'wrapper';
 const WRAPPER_TYPE_ADVANCED = 'wrapper-advanced';
@@ -17,7 +17,7 @@ const WRAPPER_READY_CLASS = 'bootstrap-touchspin';
  *
  * Currently used by: Bootstrap3, Bootstrap4, Vanilla, Tailwind renderers
  */
-abstract class AbstractRendererAttributeBased extends AbstractRenderer {
+abstract class AbstractRendererAttributeBased extends AbstractRendererBase {
   abstract init(): void;
 
   teardown(): void {
