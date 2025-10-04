@@ -1,5 +1,5 @@
 import type { InferOptionsFromSchema, RendererOptionSchema } from '@touchspin/core/renderer';
-import { AbstractRenderer } from '@touchspin/core/renderer';
+import { AbstractRendererLIFO } from '@touchspin/core/renderer';
 
 // Schema definition
 const bootstrap5Schema = Object.freeze({
@@ -96,7 +96,7 @@ type RendererOptions = Readonly<Partial<InferOptionsFromSchema<typeof bootstrap5
  *       - button (down)
  *   - [postfix] (advanced only)
  */
-class Bootstrap5Renderer extends AbstractRenderer {
+class Bootstrap5Renderer extends AbstractRendererLIFO {
   private readonly initialInputGroup: HTMLElement | null;
   private readonly floatingContainer: HTMLElement | null;
   private readonly floatingLabel: HTMLLabelElement | null;
@@ -106,7 +106,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   private formControlAdded = false;
   declare wrapper: HTMLElement | null;
 
-  constructor(...args: ConstructorParameters<typeof AbstractRenderer>) {
+  constructor(...args: ConstructorParameters<typeof AbstractRendererLIFO>) {
     super(...args);
     const [input] = args;
 
@@ -119,12 +119,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   init(): void {
-    // AUTO-DETECT: Enable metadata tracking FIRST (capture original structure)
-    if (this.floatingContainer || this.initialInputGroup) {
-      this.enableMetadataTracking();
+    // Register special elements for renderer logic
+    this.registerSpecialElement('input', this.input);
+
+    if (this.initialInputGroup) {
+      this.registerSpecialElement('inputGroup', this.initialInputGroup);
+    }
+    if (this.floatingContainer) {
+      this.registerSpecialElement('floatingContainer', this.floatingContainer);
+    }
+    if (this.floatingLabel) {
+      this.registerSpecialElement('floatingLabel', this.floatingLabel);
     }
 
-    // Then fix any malformed DOM (this modifies structure, so must be after snapshot)
+    // Determine the "input container" - what needs to be moved as a unit
+    // This is either the floating container (with input+label) or just the input itself
+    const inputContainer = this.floatingContainer || this.input;
+    this.registerSpecialElement('inputContainer', inputContainer);
+
+    // Fix any malformed DOM structure (not tracked - happens before we start tracking)
     this.ensureFloatingLabelStructure();
 
     this.initializeOptions();
@@ -137,19 +150,19 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   /**
    * Ensure input and label are correctly positioned in .form-floating
-   * This runs BEFORE metadata tracking to fix any malformed DOM structure
+   * This runs BEFORE tracking starts to fix any malformed DOM structure
    */
   private ensureFloatingLabelStructure(): void {
     if (!this.floatingContainer || !this.floatingLabel) return;
 
     // Ensure input is in floating container
     if (this.input.parentElement !== this.floatingContainer) {
-      this.floatingContainer.insertBefore(this.input, this.floatingContainer.firstChild);
+      this.trackMoveElement(this.input, this.floatingContainer, this.floatingContainer.firstChild);
     }
 
     // Ensure label is in floating container (after input)
     if (this.floatingLabel.parentElement !== this.floatingContainer) {
-      this.floatingContainer.appendChild(this.floatingLabel);
+      this.trackMoveElement(this.floatingLabel, this.floatingContainer);
     }
   }
 
@@ -170,16 +183,16 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
   private ensureFormControlClass(): void {
     if (!this.input.classList.contains(CSS_CLASSES.FORM_CONTROL)) {
-      this.addTrackedClass(this.input, CSS_CLASSES.FORM_CONTROL);
+      this.trackAddClass(this.input, CSS_CLASSES.FORM_CONTROL);
       this.formControlAdded = true;
     }
   }
 
   private restoreFormControlClass(): void {
     // Note: formControlAdded tracking is kept for backward compatibility,
-    // but metadata tracking will handle restoration automatically
+    // but undo stack will handle restoration automatically
     if (this.formControlAdded) {
-      this.removeTrackedClass(this.input, CSS_CLASSES.FORM_CONTROL);
+      this.trackRemoveClass(this.input, CSS_CLASSES.FORM_CONTROL);
       this.formControlAdded = false;
     }
   }
@@ -198,9 +211,9 @@ class Bootstrap5Renderer extends AbstractRenderer {
     );
 
     // Move margin classes from floating container to wrapper (will be created later)
-    // Track this so metadata system can restore them on destroy
+    // Track this so undo stack can restore them on destroy
     marginClasses.forEach((cls) => {
-      this.removeTrackedClass(this.floatingContainer!, cls);
+      this.trackRemoveClass(this.floatingContainer!, cls);
       // Note: We'll add to wrapper after it's created in buildAndAttachDOM
       // Store them temporarily for now
       if (!this.floatingContainer!.dataset.movedMargins) {
@@ -279,31 +292,31 @@ class Bootstrap5Renderer extends AbstractRenderer {
 
     // Wrap the entire .form-floating container
     if (this.floatingContainer && this.floatingContainer.parentElement) {
-      this.floatingContainer.parentElement.insertBefore(wrapper, this.floatingContainer);
+      this.trackMoveElement(wrapper, this.floatingContainer.parentElement, this.floatingContainer);
     }
 
     // Add buttons and affixes to the wrapper
     if (!this.opts.verticalbuttons) {
-      wrapper.appendChild(this.createDownButton());
+      this.trackMoveElement(this.createDownButton(), wrapper);
     }
 
     if (this.opts.prefix) {
-      wrapper.appendChild(this.createPrefixElement());
+      this.trackMoveElement(this.createPrefixElement(), wrapper);
     }
 
     // Move the entire .form-floating into the wrapper
     if (this.floatingContainer) {
-      wrapper.appendChild(this.floatingContainer);
+      this.trackMoveElement(this.floatingContainer, wrapper);
     }
 
     if (this.opts.postfix) {
-      wrapper.appendChild(this.createPostfixElement());
+      this.trackMoveElement(this.createPostfixElement(), wrapper);
     }
 
     if (this.opts.verticalbuttons) {
-      wrapper.appendChild(this.createVerticalButtonWrapper());
+      this.trackMoveElement(this.createVerticalButtonWrapper(), wrapper);
     } else {
-      wrapper.appendChild(this.createUpButton());
+      this.trackMoveElement(this.createUpButton(), wrapper);
     }
 
     // Note: Input and label should already be correctly positioned in .form-floating
@@ -346,33 +359,33 @@ class Bootstrap5Renderer extends AbstractRenderer {
    */
   buildFloatingLabelInInputGroup(): HTMLElement {
     const inputGroup = this.initialInputGroup as HTMLElement;
-    inputGroup.classList.add(CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
+    this.trackAddClass(inputGroup, CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
     this.wrapperType = 'wrapper-advanced';
 
     // Note: .form-floating, input, and label should already be correctly positioned
-    // from the fixture. The metadata tracking system will preserve their positions.
-    // DO NOT move them here as it breaks metadata tracking.
+    // from the fixture. The undo stack will restore their positions.
+    // DO NOT move them here unless absolutely necessary.
 
     // Add buttons OUTSIDE .form-floating but INSIDE .input-group
     if (!this.opts.verticalbuttons) {
-      inputGroup.insertBefore(this.createDownButton(), this.floatingContainer);
+      this.trackMoveElement(this.createDownButton(), inputGroup, this.floatingContainer);
     }
 
     if (this.opts.prefix) {
-      inputGroup.insertBefore(this.createPrefixElement(), this.floatingContainer);
+      this.trackMoveElement(this.createPrefixElement(), inputGroup, this.floatingContainer);
     }
 
     if (this.opts.postfix) {
       const nextSibling = this.floatingContainer?.nextSibling ?? null;
-      inputGroup.insertBefore(this.createPostfixElement(), nextSibling);
+      this.trackMoveElement(this.createPostfixElement(), inputGroup, nextSibling);
     }
 
     if (this.opts.verticalbuttons) {
       const nextSibling = this.floatingContainer?.nextSibling ?? null;
-      inputGroup.insertBefore(this.createVerticalButtonWrapper(), nextSibling);
+      this.trackMoveElement(this.createVerticalButtonWrapper(), inputGroup, nextSibling);
     } else {
       const nextSibling = this.floatingContainer?.nextSibling ?? null;
-      inputGroup.insertBefore(this.createUpButton(), nextSibling);
+      this.trackMoveElement(this.createUpButton(), inputGroup, nextSibling);
     }
 
     this.storeElementReferences(inputGroup);
@@ -381,7 +394,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
-    existingInputGroup.classList.add(CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
+    this.trackAddClass(existingInputGroup, CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
     this.wrapperType = 'wrapper-advanced';
 
     this.insertElementsIntoExistingGroup(existingInputGroup);
@@ -391,44 +404,47 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   private createInputGroupWrapper(sizeClass: string): HTMLElement {
-    const wrapper = document.createElement('div');
-    wrapper.className = this.buildClasses([
-      CSS_CLASSES.INPUT_GROUP,
-      sizeClass,
-      CSS_CLASSES.BOOTSTRAP_TOUCHSPIN,
-    ]);
+    const wrapper = this.createTrackedElement('div');
+
+    // Track each class individually for proper teardown
+    this.trackAddClass(wrapper, CSS_CLASSES.INPUT_GROUP);
+    if (sizeClass) {
+      this.trackAddClass(wrapper, sizeClass);
+    }
+    this.trackAddClass(wrapper, CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
+
     return wrapper;
   }
 
   private appendElementsToWrapper(wrapper: HTMLElement): void {
     if (!this.opts.verticalbuttons) {
-      wrapper.appendChild(this.createDownButton());
+      this.trackMoveElement(this.createDownButton(), wrapper);
     }
 
     if (this.opts.prefix) {
-      wrapper.appendChild(this.createPrefixElement());
+      this.trackMoveElement(this.createPrefixElement(), wrapper);
     }
 
     if (this.opts.postfix) {
-      wrapper.appendChild(this.createPostfixElement());
+      this.trackMoveElement(this.createPostfixElement(), wrapper);
     }
 
     if (this.opts.verticalbuttons) {
-      wrapper.appendChild(this.createVerticalButtonWrapper());
+      this.trackMoveElement(this.createVerticalButtonWrapper(), wrapper);
     } else {
-      wrapper.appendChild(this.createUpButton());
+      this.trackMoveElement(this.createUpButton(), wrapper);
     }
   }
 
   private insertWrapperAndInput(wrapper: HTMLElement): void {
     if (this.input.parentElement) {
-      this.input.parentElement.insertBefore(wrapper, this.input);
+      this.trackMoveElement(wrapper, this.input.parentElement, this.input);
     }
   }
 
   private positionInputWithinWrapper(wrapper: HTMLElement): void {
     const insertionPoint = this.findInputInsertionPoint(wrapper);
-    wrapper.insertBefore(this.input, insertionPoint);
+    this.trackMoveElement(this.input, wrapper, insertionPoint);
   }
 
   private findInputInsertionPoint(wrapper: HTMLElement): Node | null {
@@ -463,27 +479,31 @@ class Bootstrap5Renderer extends AbstractRenderer {
     this.ensureInputInGroup(existingInputGroup);
 
     if (!this.opts.verticalbuttons) {
-      existingInputGroup.insertBefore(this.createDownButton(), this.input);
+      this.trackMoveElement(this.createDownButton(), existingInputGroup, this.input);
     }
 
     if (this.opts.prefix) {
-      existingInputGroup.insertBefore(this.createPrefixElement(), this.input);
+      this.trackMoveElement(this.createPrefixElement(), existingInputGroup, this.input);
     }
 
     if (this.opts.postfix) {
-      existingInputGroup.insertBefore(this.createPostfixElement(), this.input.nextSibling);
+      this.trackMoveElement(
+        this.createPostfixElement(),
+        existingInputGroup,
+        this.input.nextSibling
+      );
     }
 
     if (this.opts.verticalbuttons) {
       const insertionPoint = this.opts.postfix
         ? (existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null)
         : this.input.nextSibling;
-      existingInputGroup.insertBefore(this.createVerticalButtonWrapper(), insertionPoint);
+      this.trackMoveElement(this.createVerticalButtonWrapper(), existingInputGroup, insertionPoint);
     } else {
       const insertionPoint = this.opts.postfix
         ? (existingInputGroup.querySelector(SELECTORS.POSTFIX)?.nextSibling ?? null)
         : this.input.nextSibling;
-      existingInputGroup.insertBefore(this.createUpButton(), insertionPoint);
+      this.trackMoveElement(this.createUpButton(), existingInputGroup, insertionPoint);
     }
   }
 
@@ -494,21 +514,25 @@ class Bootstrap5Renderer extends AbstractRenderer {
     }
 
     // If input is not in the group, append it (it may have been moved during DOM manipulations)
-    existingInputGroup.appendChild(this.input);
+    this.trackMoveElement(this.input, existingInputGroup);
   }
 
   // Element creation helpers
   private createButton(type: 'up' | 'down', isVertical = false): HTMLElement {
-    const button = document.createElement('button');
+    const button = this.createTrackedElement('button');
 
-    button.type = 'button';
+    this.trackAddAttribute(button, 'type', 'button');
     button.tabIndex = this.settings.focusablebuttons ? 0 : -1;
-    button.setAttribute('data-touchspin-injected', type);
-    button.setAttribute('aria-label', type === 'up' ? 'Increase value' : 'Decrease value');
+    this.trackAddAttribute(button, 'data-touchspin-injected', type);
+    this.trackAddAttribute(
+      button,
+      'aria-label',
+      type === 'up' ? 'Increase value' : 'Decrease value'
+    );
 
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) {
-      button.setAttribute('data-testid', `${inputTestId}-${type}`);
+      this.trackAddAttribute(button, 'data-testid', `${inputTestId}-${type}`);
     }
 
     button.className = this.getButtonClass(type, isVertical);
@@ -528,56 +552,56 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   private createPrefixElement(): HTMLElement {
-    const element = document.createElement('span');
+    const element = this.createTrackedElement('span');
     element.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
       'bootstrap-touchspin-prefix',
       this.opts.prefix_extraclass,
     ]);
-    element.setAttribute('data-touchspin-injected', INJECTED_TYPES.PREFIX);
+    this.trackAddAttribute(element, 'data-touchspin-injected', INJECTED_TYPES.PREFIX);
     element.textContent = this.opts.prefix || '';
 
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) {
-      element.setAttribute('data-testid', `${inputTestId}-prefix`);
+      this.trackAddAttribute(element, 'data-testid', `${inputTestId}-prefix`);
     }
 
     return element;
   }
 
   private createPostfixElement(): HTMLElement {
-    const element = document.createElement('span');
+    const element = this.createTrackedElement('span');
     element.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
       'bootstrap-touchspin-postfix',
       this.opts.postfix_extraclass,
     ]);
-    element.setAttribute('data-touchspin-injected', INJECTED_TYPES.POSTFIX);
+    this.trackAddAttribute(element, 'data-touchspin-injected', INJECTED_TYPES.POSTFIX);
     element.textContent = this.opts.postfix || '';
 
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) {
-      element.setAttribute('data-testid', `${inputTestId}-postfix`);
+      this.trackAddAttribute(element, 'data-testid', `${inputTestId}-postfix`);
     }
 
     return element;
   }
 
   private createVerticalButtonWrapper(): HTMLElement {
-    const wrapper = document.createElement('span');
+    const wrapper = this.createTrackedElement('span');
     wrapper.className = this.buildClasses([
       CSS_CLASSES.INPUT_GROUP_TEXT,
       'bootstrap-touchspin-vertical-button-wrapper',
     ]);
-    wrapper.setAttribute('data-touchspin-injected', INJECTED_TYPES.VERTICAL_WRAPPER);
+    this.trackAddAttribute(wrapper, 'data-touchspin-injected', INJECTED_TYPES.VERTICAL_WRAPPER);
 
-    const buttonContainer = document.createElement('span');
+    const buttonContainer = this.createTrackedElement('span');
     buttonContainer.className = CSS_CLASSES.BTN_VERTICAL;
 
-    buttonContainer.appendChild(this.createButton('up', true));
-    buttonContainer.appendChild(this.createButton('down', true));
+    this.trackMoveElement(this.createButton('up', true), buttonContainer);
+    this.trackMoveElement(this.createButton('down', true), buttonContainer);
 
-    wrapper.appendChild(buttonContainer);
+    this.trackMoveElement(buttonContainer, wrapper);
     return wrapper;
   }
 
@@ -645,7 +669,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
     const movedMargins = this.floatingContainer.dataset.movedMargins;
     if (movedMargins) {
       movedMargins.split(' ').forEach((cls) => {
-        this.addTrackedClass(this.wrapper!, cls);
+        this.trackAddClass(this.wrapper!, cls);
       });
       // Clean up temporary storage
       delete this.floatingContainer.dataset.movedMargins;
@@ -832,7 +856,7 @@ class Bootstrap5Renderer extends AbstractRenderer {
   }
 
   rebuildDOM(): void {
-    this.removeInjectedElements();
+    this.teardown();
     this.resetStateAfterRemoval();
     this.buildAndAttachDOM();
 

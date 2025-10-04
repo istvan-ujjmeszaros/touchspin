@@ -3,9 +3,9 @@
  * Builds Bootstrap 4 UI elements around TouchSpin input
  * Uses input-group-prepend and input-group-append for Bootstrap 4 compatibility
  */
-import { AbstractRenderer } from '@touchspin/core/renderer';
+import { AbstractRendererMetadata } from '@touchspin/core/renderer';
 
-class Bootstrap4Renderer extends AbstractRenderer {
+class Bootstrap4Renderer extends AbstractRendererMetadata {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   private _formControlAdded?: boolean;

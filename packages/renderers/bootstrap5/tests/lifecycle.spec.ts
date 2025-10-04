@@ -130,6 +130,7 @@ test.describe('Bootstrap 5 Lifecycle: Floating Labels', () => {
     // Prefix/postfix should STILL be visible (they're user elements from fixture)
     // The fixture has <span class="input-group-text">$</span> and <span class="input-group-text">.00</span>
     // TouchSpin duplicated them, destroy removed duplicates, originals remain
+    // eslint-disable-next-line playwright/no-page-locator
     const inputGroupWrapper = page.locator('.input-group').first();
     await expect(inputGroupWrapper.locator('.input-group-text').first()).toHaveText('$');
     await expect(inputGroupWrapper.locator('.input-group-text').last()).toHaveText('.00');
@@ -213,18 +214,18 @@ test.describe('Bootstrap 5 Lifecycle: Floating Labels', () => {
       window.__ts?.requireCoreByTestId(testId).destroy();
     }, 'basic-floating');
 
-    // Reinitialize with different settings
+    // Reinitialize with different settings (use valid values within constraints)
     await initializeTouchspinFromGlobals(page, 'basic-floating', {
       step: 10,
-      initval: 100,
+      initval: 70,
     });
 
     // Test functionality with new settings
     await apiHelpers.incrementViaAPI(page, 'basic-floating');
-    await apiHelpers.expectValueToBe(page, 'basic-floating', '110');
+    await apiHelpers.expectValueToBe(page, 'basic-floating', '80');
 
     await apiHelpers.clickUpButton(page, 'basic-floating');
-    await apiHelpers.expectValueToBe(page, 'basic-floating', '120');
+    await apiHelpers.expectValueToBe(page, 'basic-floating', '90');
 
     // Verify floating label still works
     // eslint-disable-next-line playwright/no-page-locator
