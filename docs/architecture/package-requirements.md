@@ -169,7 +169,9 @@ yarn build:test
 ```typescript
 // Test helpers read artifacts.json to find files
 const manifest = loadManifest('packages/renderers/bootstrap5');
-const rendererUrl = `/packages/renderers/bootstrap5/devdist/${manifest.classModule}`;
+import { rendererClassUrlFor } from '@touchspin/core/test-helpers/runtime/paths';
+
+const rendererUrl = rendererClassUrlFor('bootstrap5');
 ```
 
 ### 3. Dynamic Loading
