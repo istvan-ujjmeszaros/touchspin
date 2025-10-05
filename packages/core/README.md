@@ -175,14 +175,29 @@ The core attaches event listeners to elements with `data-touchspin-injected` att
 
 ## Renderer Integration
 
+### Renderer Strategies
+
+TouchSpin provides two base classes for building renderers:
+
+| Strategy | Use Case | Complexity | Currently Used By |
+|----------|----------|------------|-------------------|
+| **AbstractRendererSimple** | Standard wrappers, no element movement | ✅ Simple | Bootstrap 3, Bootstrap 4, Vanilla, Tailwind |
+| **AbstractRendererSurgical** | Complex DOM, element repositioning | 🔬 Advanced | Bootstrap 5 (floating labels) |
+
+**Quick Decision:**
+- Start with `AbstractRendererSimple` (easier, works for 80% of cases)
+- Switch to `AbstractRendererSurgical` only if you need element movement or precise DOM restoration
+
+See [Creating Custom Renderers Guide](../../docs/architecture/creating-custom-renderer.md) for detailed comparison and examples.
+
 ### For Renderer Developers
 
-Renderers extend `AbstractRenderer` and satisfy the `Renderer` interface (init, finalizeWrapperAttributes, optional teardown). Import from the subpath:
+Renderers extend either `AbstractRendererSimple` or `AbstractRendererSurgical` (both extend `AbstractRendererBase`) and satisfy the `Renderer` interface (init, finalizeWrapperAttributes, optional teardown). Import from the subpath:
 
 ```ts
-import { AbstractRenderer, type Renderer } from '@touchspin/core/renderer';
+import { AbstractRendererSimple, type Renderer } from '@touchspin/core/renderer';
 
-class CustomRenderer extends AbstractRenderer implements Renderer {
+class CustomRenderer extends AbstractRendererSimple implements Renderer {
   init(): void {
     // 1) Build DOM structure around this.input
     this.wrapper = this.buildUI();

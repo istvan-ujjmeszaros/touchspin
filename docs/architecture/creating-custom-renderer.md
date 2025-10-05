@@ -2,16 +2,52 @@
 
 TouchSpin's modular architecture allows you to create custom renderers for any CSS framework. This guide shows you how to extend TouchSpin beyond Bootstrap and Tailwind support.
 
-## AbstractRenderer Interface
+## Choosing a Renderer Strategy
 
-All renderers extend the `AbstractRenderer` base class, which provides the essential interface between the framework-agnostic core and your framework-specific DOM construction.
+TouchSpin provides two base classes for building renderers, each optimized for different use cases:
+
+### AbstractRendererSimple - Start Here! ✅
+
+**Best for most renderers.** Uses simple attribute-based cleanup.
+
+- ✅ **Easiest to implement** - Just mark elements, automatic cleanup
+- ✅ **Easier to debug** - Straightforward DOM manipulation
+- ✅ **Works for 80% of cases** - Standard input wrappers, frameworks like Bootstrap 3/4, Tailwind
+- ❌ **Can't move elements** - Elements must stay in original positions
+
+**Use when:** Creating standard input wrappers without element repositioning.
+
+### AbstractRendererSurgical - For Complex Cases 🔬
+
+**For advanced scenarios.** Uses LIFO operation tracking for precise DOM restoration.
+
+- ✅ **Element movement** - Track and reverse element repositioning
+- ✅ **Precise restoration** - Undo operations in exact reverse order
+- ✅ **Complex structures** - Floating labels, nested components (Bootstrap 5)
+- ❌ **More complex** - Requires using tracking methods
+
+**Use when:** You need to move elements between parents or modify existing DOM elements.
+
+### Quick Decision Guide
+
+```
+Do you need to move elements between different parent containers?
+├─ YES → Use AbstractRendererSurgical
+└─ NO  → Use AbstractRendererSimple (recommended starting point)
+```
+
+**Pro tip:** Start with `AbstractRendererSimple`. If you discover you need element movement, switching to `AbstractRendererSurgical` is straightforward.
+
+## AbstractRendererBase Interface
+
+Both strategies extend `AbstractRendererBase`, which provides the essential interface between the framework-agnostic core and your framework-specific DOM construction.
 
 ### Required Methods
 
 ```javascript
-import { AbstractRenderer } from '@touchspin/core';
+import { AbstractRendererSimple } from '@touchspin/core/renderer';
 
-class YourRenderer extends AbstractRenderer {
+class YourRenderer extends AbstractRendererSimple {
     init() {
         // REQUIRED: Build DOM structure and connect to core
         this.wrapper = this.buildYourFrameworkWrapper();
@@ -59,9 +95,9 @@ Your DOM structure must include these data attributes for core event targeting:
 Here's a simplified example of a custom renderer, focusing on the essential interactions with the core and DOM manipulation, without relying on a specific global UI library.
 
 ```javascript
-import { AbstractRenderer } from '@touchspin/core';
+import { AbstractRendererSimple } from '@touchspin/core/renderer';
 
-class CustomRenderer extends AbstractRenderer {
+class CustomRenderer extends AbstractRendererSimple {
     init() {
         // Initialize internal element references
         this.prefixEl = null;

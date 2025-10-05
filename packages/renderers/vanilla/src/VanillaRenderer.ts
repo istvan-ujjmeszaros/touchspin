@@ -2,9 +2,9 @@
  * VanillaRenderer - Vanilla CSS-based TouchSpin renderer
  * Framework-agnostic renderer using pure CSS without dependencies
  */
-import { AbstractRendererAttributeBased } from '@touchspin/core/renderer';
+import { AbstractRendererSimple } from '@touchspin/core/renderer';
 
-class VanillaRenderer extends AbstractRendererAttributeBased {
+class VanillaRenderer extends AbstractRendererSimple {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
 

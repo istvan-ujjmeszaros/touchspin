@@ -3,9 +3,9 @@
  * Builds Bootstrap 3 UI elements around TouchSpin input
  * Uses input-group-btn and input-group-addon for Bootstrap 3 compatibility
  */
-import { AbstractRendererAttributeBased } from '@touchspin/core/renderer';
+import { AbstractRendererSimple } from '@touchspin/core/renderer';
 
-class Bootstrap3Renderer extends AbstractRendererAttributeBased {
+class Bootstrap3Renderer extends AbstractRendererSimple {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   private _formControlAdded?: boolean;

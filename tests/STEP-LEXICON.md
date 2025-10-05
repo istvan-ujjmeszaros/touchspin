@@ -98,6 +98,22 @@
 
 ## renderers
 
+- **- Clean up injected DOM elements**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
+
+- **- Preserve user event listeners**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
+
+- **- Preserve user-added elements, classes, attributes**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
+
+- **- Support multiple destroy/reinit cycles**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
+
 - **Bootstrap Family Shared Test Suite**
   - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
@@ -110,6 +126,10 @@
   - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
 
+- **Shared lifecycle test suite for renderer destroy/reinit behavior**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
+
 - **Tests behaviors that are common to ALL Bootstrap variants (3, 4, and 5) but**
   - `bootstrapSharedSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/bootstrap-shared.suite.ts`
@@ -117,6 +137,10 @@
 - **Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.**
   - `universalRendererSuite(name, _rendererUrl, fixturePath)`
   - File: `packages/core/tests/__shared__/helpers/renderers/universal-renderer.suite.ts`
+
+- **Tests that all renderers properly:**
+  - `lifecycleRendererSuite(name, rendererUrl, fixturePath)`
+  - File: `packages/core/tests/__shared__/helpers/renderers/lifecycle.suite.ts`
 
 - **These tests focus on functionality and data attributes, not framework-specific classes.**
   - `universalRendererSuite(name, _rendererUrl, fixturePath)`

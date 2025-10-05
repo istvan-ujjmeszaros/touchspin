@@ -1,4 +1,3 @@
-export { default as AbstractRendererAttributeBased } from './AbstractRendererAttributeBased.js';
 export type {
   InferOptionsFromSchema,
   RendererOptionDef,
@@ -6,7 +5,8 @@ export type {
   RendererOptionSchema,
 } from './AbstractRendererBase.js';
 export { default as AbstractRendererBase } from './AbstractRendererBase.js';
-export { default as AbstractRendererTracked } from './AbstractRendererTracked.js';
+export { default as AbstractRendererSimple } from './AbstractRendererSimple.js';
+export { default as AbstractRendererSurgical } from './AbstractRendererSurgical.js';
 
 // Minimal instance surface used by core. Renderers may implement more.
 export interface Renderer {

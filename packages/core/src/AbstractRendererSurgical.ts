@@ -17,20 +17,70 @@ type UndoEvent =
     };
 
 /**
- * Abstract renderer using operation tracking strategy.
+ * Surgical renderer strategy using LIFO operation tracking.
  *
- * Tracks every DOM operation (create, move, addClass, etc.) in a LIFO undo stack
- * and reverses them in exact reverse order during teardown. This provides surgical,
- * predictable DOM restoration.
+ * This strategy provides precise, operation-by-operation DOM restoration by tracking
+ * every DOM modification in a Last-In-First-Out (LIFO) undo stack. During teardown,
+ * it reverses all operations in exact reverse order.
  *
- * Use cases:
- * - Complex DOM structures (floating labels, nested input groups)
- * - Cases where elements are moved between parents
- * - Situations requiring precise restoration of original state
+ * ## How it works
+ * - During `init()`: Use tracking methods (trackMoveElement, trackAddClass, etc.)
+ * - Operations are pushed onto an undo stack
+ * - During `teardown()`: Pop and reverse each operation in LIFO order
+ * - Provides surgical precision for complex DOM manipulation
  *
- * Currently used by: Bootstrap5Renderer
+ * ## When to use AbstractRendererSurgical
+ * ✅ When elements need to be moved between different parent containers
+ * ✅ Complex nested structures (e.g., Bootstrap 5 floating labels)
+ * ✅ When you need to modify existing DOM elements and restore them exactly
+ * ✅ When elements are repositioned or have their attributes changed
+ * ✅ When you need precise control over DOM restoration order
+ *
+ * ## When to use AbstractRendererSimple instead
+ * ❌ Standard input wrappers that don't move elements
+ * ❌ Simple DOM structures where you just add/remove elements
+ * ❌ When all your elements stay in their original positions
+ * ❌ When you want simpler, easier-to-understand code
+ *
+ * ## Getting Started
+ * Most developers should start with `AbstractRendererSimple` for easier implementation.
+ * Switch to `AbstractRendererSurgical` only when you discover you need:
+ * - Element movement between parents (trackMoveElement)
+ * - Modification of existing elements (trackSetAttribute, trackAddClass)
+ * - Precise restoration of original DOM state
+ *
+ * ## Available Tracking Methods
+ * - `createTrackedElement(tagName)` - Create and track new element
+ * - `trackMoveElement(el, newParent, before?)` - Move element and track original position
+ * - `trackAddClass(el, className)` - Add class and track for removal
+ * - `trackRemoveClass(el, className)` - Remove class and track for re-addition
+ * - `trackSetAttribute(el, name, value)` - Set attribute and track original value
+ * - `trackAddAttribute(el, name, value)` - Set attribute without tracking (for new elements)
+ *
+ * @example
+ * ```typescript
+ * import { AbstractRendererSurgical } from '@touchspin/core/renderer';
+ *
+ * class ComplexRenderer extends AbstractRendererSurgical {
+ *   init(): void {
+ *     // Track element movement (e.g., moving input into a floating label container)
+ *     const floatingContainer = this.input.parentElement;
+ *     this.trackMoveElement(this.input, newWrapper, insertionPoint);
+ *
+ *     // Track class modifications on existing elements
+ *     this.trackAddClass(existingElement, 'touchspin-active');
+ *
+ *     // Create new elements (tracked for removal)
+ *     const btn = this.createTrackedElement('button');
+ *
+ *     // teardown() will automatically undo all operations in reverse order
+ *   }
+ * }
+ * ```
+ *
+ * Currently used by: Bootstrap5Renderer (for floating label support)
  */
-abstract class AbstractRendererTracked extends AbstractRendererBase {
+abstract class AbstractRendererSurgical extends AbstractRendererBase {
   /** LIFO stack of operations to undo during teardown */
   protected undoStack: UndoEvent[] = [];
 
@@ -188,4 +238,4 @@ abstract class AbstractRendererTracked extends AbstractRendererBase {
   }
 }
 
-export default AbstractRendererTracked;
+export default AbstractRendererSurgical;
