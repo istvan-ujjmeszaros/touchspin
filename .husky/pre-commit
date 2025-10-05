@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
 # Exit on any error
 set -e
+
+# Ensure commands run from repository root
+cd -- "$(dirname -- "$0")/.."
 
 echo "🐶 Husky pre-commit: Running guards and formatting"
 
