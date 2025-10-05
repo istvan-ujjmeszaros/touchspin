@@ -10,27 +10,33 @@
  * [x] structures prefix and postfix within input-group-prepend/append
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
 import {
-  universalRendererSuite,
   bootstrapSharedSuite,
+  universalRendererSuite,
 } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { bootstrap4RendererUrl, ensureBootstrap4Globals } from './helpers/bootstrap4-globals';
 
 // Bootstrap 4 Renderer URL for tests
-const BOOTSTRAP4_RENDERER_URL = '/packages/renderers/bootstrap4/devdist/Bootstrap4Renderer.js';
+const BOOTSTRAP4_RENDERER_URL = bootstrap4RendererUrl;
 const BOOTSTRAP4_FIXTURE = '/packages/renderers/bootstrap4/tests/fixtures/bootstrap4-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Bootstrap 4', BOOTSTRAP4_RENDERER_URL, BOOTSTRAP4_FIXTURE);
+universalRendererSuite('Bootstrap 4', BOOTSTRAP4_RENDERER_URL, BOOTSTRAP4_FIXTURE, {
+  setupGlobals: ensureBootstrap4Globals,
+});
 
 // Run Bootstrap family shared tests
-bootstrapSharedSuite('Bootstrap 4', BOOTSTRAP4_RENDERER_URL, BOOTSTRAP4_FIXTURE);
+bootstrapSharedSuite('Bootstrap 4', BOOTSTRAP4_RENDERER_URL, BOOTSTRAP4_FIXTURE, {
+  setupGlobals: ensureBootstrap4Globals,
+});
 
 // Bootstrap 4-specific tests (not covered by shared suites)
 test.describe('Bootstrap 4 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(BOOTSTRAP4_FIXTURE);
+    await ensureBootstrap4Globals(page);
     await installDomHelpers(page);
   });
 

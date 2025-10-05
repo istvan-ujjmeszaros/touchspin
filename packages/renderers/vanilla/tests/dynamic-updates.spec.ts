@@ -32,8 +32,9 @@
  * [x] handles animation-friendly updates
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureVanillaGlobals } from './helpers/vanilla-globals';
 
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
@@ -47,6 +48,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
  */
 test('updates button text dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Update button text settings
@@ -76,6 +78,7 @@ test('updates button text dynamically', async ({ page }) => {
  */
 test('updates button classes dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Update button classes
@@ -105,6 +108,7 @@ test('updates button classes dynamically', async ({ page }) => {
  */
 test('updates prefix content dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
   });
@@ -136,6 +140,7 @@ test('updates prefix content dynamically', async ({ page }) => {
  */
 test('updates postfix content dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     postfix: 'USD',
   });
@@ -167,6 +172,7 @@ test('updates postfix content dynamically', async ({ page }) => {
  */
 test('handles prefix addition and removal', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add prefix
@@ -198,6 +204,7 @@ test('handles prefix addition and removal', async ({ page }) => {
  */
 test('handles postfix addition and removal', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add postfix
@@ -229,6 +236,7 @@ test('handles postfix addition and removal', async ({ page }) => {
  */
 test('rebuilds DOM when layout changes', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Change to vertical layout
@@ -259,6 +267,7 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
  */
 test('updates disabled state dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Disable the input element (TouchSpin watches this via MutationObserver)
@@ -303,6 +312,7 @@ test('updates disabled state dynamically', async ({ page }) => {
  */
 test('handles multiple simultaneous updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply multiple settings at once
@@ -335,6 +345,7 @@ test('handles multiple simultaneous updates', async ({ page }) => {
  */
 test('preserves input value during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Set a specific value
@@ -366,6 +377,7 @@ test('preserves input value during updates', async ({ page }) => {
  */
 test('maintains event listeners during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
   await apiHelpers.clearEventLog(page);
 
@@ -393,6 +405,7 @@ test('maintains event listeners during updates', async ({ page }) => {
  */
 test('handles empty to non-empty transitions', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add prefix
@@ -429,6 +442,7 @@ test('handles empty to non-empty transitions', async ({ page }) => {
  */
 test('handles non-empty to empty transitions', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
     postfix: 'kg',
@@ -459,6 +473,7 @@ test('handles non-empty to empty transitions', async ({ page }) => {
  */
 test('updates accessibility attributes dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply updates that affect accessibility
@@ -490,6 +505,7 @@ test('updates accessibility attributes dynamically', async ({ page }) => {
  */
 test('handles rapid successive updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply rapid successive updates
@@ -521,6 +537,7 @@ test('handles rapid successive updates', async ({ page }) => {
  */
 test('maintains DOM references during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply non-structural update
@@ -550,6 +567,7 @@ test('maintains DOM references during updates', async ({ page }) => {
  */
 test('handles conflicting setting combinations', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply conflicting settings (vertical layout with horizontal text settings)
@@ -587,6 +605,7 @@ test('handles conflicting setting combinations', async ({ page }) => {
  */
 test('preserves testid attributes during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply updates that trigger DOM changes
@@ -617,6 +636,7 @@ test('preserves testid attributes during updates', async ({ page }) => {
  */
 test('handles update error scenarios gracefully', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Try to apply potentially problematic settings (TouchSpin should handle gracefully)
@@ -647,6 +667,7 @@ test('handles update error scenarios gracefully', async ({ page }) => {
  */
 test('optimizes performance during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply multiple updates in quick succession
@@ -683,6 +704,7 @@ test('optimizes performance during updates', async ({ page }) => {
  */
 test('handles custom class updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     buttonup_class: 'initial-up-class',
   });
@@ -715,6 +737,7 @@ test('handles custom class updates', async ({ page }) => {
  */
 test('maintains browser compatibility during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply various updates that should work consistently
@@ -747,6 +770,7 @@ test('maintains browser compatibility during updates', async ({ page }) => {
  */
 test('handles CSS variable updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply updates that might affect CSS variables
@@ -777,6 +801,7 @@ test('handles CSS variable updates', async ({ page }) => {
  */
 test('preserves semantic structure during updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply structural updates
@@ -808,6 +833,7 @@ test('preserves semantic structure during updates', async ({ page }) => {
  */
 test('handles animation-friendly updates', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     buttonup_class: 'animated-btn',
   });

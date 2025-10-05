@@ -32,8 +32,9 @@
  * [x] handles display utilities for layout control
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureTailwindGlobals } from './helpers/tailwind-globals';
 
 /**
  * Scenario: creates horizontal layout with Tailwind flex utilities
@@ -45,6 +46,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('creates horizontal layout with Tailwind flex utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -69,6 +71,7 @@ test('creates horizontal layout with Tailwind flex utilities', async ({ page }) 
  */
 test('creates vertical layout with Tailwind flex-col utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -95,6 +98,7 @@ test('creates vertical layout with Tailwind flex-col utilities', async ({ page }
  */
 test('handles layout switching with utility class changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Start with horizontal layout
@@ -129,6 +133,7 @@ test('handles layout switching with utility class changes', async ({ page }) => 
  */
 test('applies responsive layout utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test at mobile viewport
@@ -157,6 +162,7 @@ test('applies responsive layout utilities', async ({ page }) => {
  */
 test('handles container queries with Tailwind utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'constrained-test');
 
   // Verify functionality works in constrained container
@@ -186,6 +192,7 @@ test('handles container queries with Tailwind utilities', async ({ page }) => {
  */
 test('manages spacing with Tailwind gap utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -214,6 +221,7 @@ test('manages spacing with Tailwind gap utilities', async ({ page }) => {
  */
 test('handles alignment with Tailwind alignment utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -242,6 +250,7 @@ test('handles alignment with Tailwind alignment utilities', async ({ page }) => 
  */
 test('creates responsive breakpoint layouts', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test at sm breakpoint (640px)
@@ -270,6 +279,7 @@ test('creates responsive breakpoint layouts', async ({ page }) => {
  */
 test('applies justify-content utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Test horizontal layout justification
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -308,6 +318,7 @@ test('applies justify-content utilities', async ({ page }) => {
  */
 test('handles flex-wrap utilities when needed', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
     postfix: 'USD',
@@ -336,6 +347,7 @@ test('handles flex-wrap utilities when needed', async ({ page }) => {
  */
 test('manages order utilities for element arrangement', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -376,6 +388,7 @@ test('manages order utilities for element arrangement', async ({ page }) => {
  */
 test('applies grow and shrink utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Test small size input in flex container
   await apiHelpers.initializeTouchspinFromGlobals(page, 'size-sm-test');
@@ -404,6 +417,7 @@ test('applies grow and shrink utilities', async ({ page }) => {
  */
 test('handles basis utilities for flex basis control', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'grid-test');
 
   // Test both horizontal and vertical layouts in grid context
@@ -429,6 +443,7 @@ test('handles basis utilities for flex basis control', async ({ page }) => {
  */
 test('creates grid layouts when appropriate', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'grid-test');
 
   // Verify functionality works in grid layout
@@ -458,6 +473,7 @@ test('creates grid layouts when appropriate', async ({ page }) => {
  */
 test('applies grid template utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'size-sm-test');
 
   // Test layout switch on sized inputs (this was the critical bug trigger)
@@ -483,6 +499,7 @@ test('applies grid template utilities', async ({ page }) => {
  */
 test('handles grid span utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Test the same cycle with large input
   await apiHelpers.initializeTouchspinFromGlobals(page, 'size-lg-test');
@@ -506,6 +523,7 @@ test('handles grid span utilities', async ({ page }) => {
  */
 test('manages grid auto utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'bg-green-500 text-white v-up',
@@ -533,6 +551,7 @@ test('manages grid auto utilities', async ({ page }) => {
  */
 test('applies grid placement utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalup: '▲',
@@ -560,6 +579,7 @@ test('applies grid placement utilities', async ({ page }) => {
  */
 test('handles aspect ratio utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
@@ -589,6 +609,7 @@ test('handles aspect ratio utilities', async ({ page }) => {
  */
 test('creates container utilities for width constraints', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Test horizontal layout accessibility
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -627,6 +648,7 @@ test('creates container utilities for width constraints', async ({ page }) => {
  */
 test('applies max-width utilities for responsive containers', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'bg-green-500 text-white custom-up',
@@ -659,6 +681,7 @@ test('applies max-width utilities for responsive containers', async ({ page }) =
  */
 test('handles overflow utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     initval: 75,
   });
@@ -701,6 +724,7 @@ test('handles overflow utilities', async ({ page }) => {
  */
 test('manages position utilities for layout', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/layout-options-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'nested-test');
 
   // Verify functionality works in nested layout
@@ -730,6 +754,7 @@ test('manages position utilities for layout', async ({ page }) => {
  */
 test('applies z-index utilities for layering', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test initial functionality
@@ -784,6 +809,7 @@ test('applies z-index utilities for layering', async ({ page }) => {
  */
 test('handles display utilities for layout control', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Test horizontal layout Tailwind structure
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');

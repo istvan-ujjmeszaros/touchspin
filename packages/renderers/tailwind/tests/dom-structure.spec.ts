@@ -11,22 +11,26 @@
  * [x] maintains utility class customization
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { ensureTailwindGlobals, tailwindRendererUrl } from './helpers/tailwind-globals';
 
 // Tailwind Renderer URL for tests
-const TAILWIND_RENDERER_URL = '/packages/renderers/tailwind/devdist/TailwindRenderer.js';
+const TAILWIND_RENDERER_URL = tailwindRendererUrl;
 const TAILWIND_FIXTURE = '/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Tailwind', TAILWIND_RENDERER_URL, TAILWIND_FIXTURE);
+universalRendererSuite('Tailwind', TAILWIND_RENDERER_URL, TAILWIND_FIXTURE, {
+  setupGlobals: ensureTailwindGlobals,
+});
 
 // Tailwind-specific tests (utility-first CSS framework behavior)
 test.describe('Tailwind specific behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(TAILWIND_FIXTURE);
+    await ensureTailwindGlobals(page);
     await apiHelpers.waitForPageReady(page);
     await installDomHelpers(page);
   });

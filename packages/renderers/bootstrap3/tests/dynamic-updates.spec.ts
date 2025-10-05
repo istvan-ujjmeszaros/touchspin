@@ -31,8 +31,9 @@
  * [x] handles conflicting setting combinations
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
 
 /**
  * Scenario: updates button text dynamically
@@ -44,6 +45,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('updates button text dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Update button text settings
@@ -73,6 +75,7 @@ test('updates button text dynamically', async ({ page }) => {
  */
 test('updates button classes dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Update button classes
@@ -102,6 +105,7 @@ test('updates button classes dynamically', async ({ page }) => {
  */
 test('updates prefix content and classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
   });
@@ -133,6 +137,7 @@ test('updates prefix content and classes', async ({ page }) => {
  */
 test('updates postfix content and classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     postfix: 'USD',
   });
@@ -164,6 +169,7 @@ test('updates postfix content and classes', async ({ page }) => {
  */
 test('handles prefix addition and removal', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add prefix
@@ -195,6 +201,7 @@ test('handles prefix addition and removal', async ({ page }) => {
  */
 test('handles postfix addition and removal', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add postfix
@@ -226,6 +233,7 @@ test('handles postfix addition and removal', async ({ page }) => {
  */
 test('rebuilds DOM when layout changes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Change to vertical layout
@@ -256,6 +264,7 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
  */
 test('updates button focusability settings', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Update focusable buttons setting
@@ -284,6 +293,7 @@ test('updates button focusability settings', async ({ page }) => {
  */
 test('handles vertical button class updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -315,6 +325,7 @@ test('handles vertical button class updates', async ({ page }) => {
  */
 test('handles vertical button text updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -346,6 +357,7 @@ test('handles vertical button text updates', async ({ page }) => {
  */
 test('preserves input value during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Set a specific value
@@ -377,6 +389,7 @@ test('preserves input value during updates', async ({ page }) => {
  */
 test('maintains event listeners during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
   await apiHelpers.clearEventLog(page);
 
@@ -404,6 +417,7 @@ test('maintains event listeners during updates', async ({ page }) => {
  */
 test('handles empty to non-empty prefix transitions', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Add prefix
@@ -431,6 +445,7 @@ test('handles empty to non-empty prefix transitions', async ({ page }) => {
  */
 test('handles non-empty to empty postfix transitions', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     postfix: 'kg',
   });
@@ -455,6 +470,7 @@ test('handles non-empty to empty postfix transitions', async ({ page }) => {
  */
 test('updates size class detection dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -485,6 +501,7 @@ test('updates size class detection dynamically', async ({ page }) => {
  */
 test('handles multiple simultaneous setting changes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply multiple settings at once
@@ -517,6 +534,7 @@ test('handles multiple simultaneous setting changes', async ({ page }) => {
  */
 test('maintains Bootstrap component integrity during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply various updates
@@ -548,6 +566,7 @@ test('maintains Bootstrap component integrity during updates', async ({ page }) 
  */
 test('handles setting updates that trigger rebuilds', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Get initial value
@@ -585,6 +604,7 @@ test('handles setting updates that trigger rebuilds', async ({ page }) => {
  */
 test('preserves testid attributes during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply updates that trigger DOM changes
@@ -615,6 +635,7 @@ test('preserves testid attributes during updates', async ({ page }) => {
  */
 test('handles update error scenarios gracefully', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Try to apply potentially problematic settings (TouchSpin should handle gracefully)
@@ -645,6 +666,7 @@ test('handles update error scenarios gracefully', async ({ page }) => {
  */
 test('maintains accessibility attributes during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply updates that affect DOM structure
@@ -676,6 +698,7 @@ test('maintains accessibility attributes during updates', async ({ page }) => {
  */
 test('handles rapid successive updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply rapid successive updates
@@ -708,6 +731,7 @@ test('handles rapid successive updates', async ({ page }) => {
  */
 test('preserves DOM references during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply non-structural update
@@ -737,6 +761,7 @@ test('preserves DOM references during updates', async ({ page }) => {
  */
 test('handles conflicting setting combinations', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Apply conflicting settings (vertical layout with horizontal text settings)

@@ -32,10 +32,10 @@
  * [x] handles nested layout scenarios
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureVanillaGlobals } from './helpers/vanilla-globals';
 
-const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**
@@ -48,6 +48,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
  */
 test('creates horizontal layout by default', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input');
@@ -100,10 +101,10 @@ test('creates horizontal layout by default', async ({ page }) => {
  */
 test('creates vertical layout when specified', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Load vanilla CSS for proper layout
-  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
@@ -166,6 +167,7 @@ test('creates vertical layout when specified', async ({ page }) => {
  */
 test('handles layout switching dynamically', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -230,10 +232,10 @@ test('handles layout switching dynamically', async ({ page }) => {
  */
 test('applies correct classes for horizontal layout', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Load vanilla CSS for proper layout
-  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: false, // Horizontal layout
@@ -301,10 +303,10 @@ test('applies correct classes for horizontal layout', async ({ page }) => {
  */
 test('applies correct classes for vertical layout', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Load vanilla CSS for proper layout
-  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true, // Vertical layout
@@ -370,6 +372,7 @@ test('applies correct classes for vertical layout', async ({ page }) => {
  */
 test('positions buttons correctly in horizontal mode', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
@@ -399,6 +402,7 @@ test('positions buttons correctly in horizontal mode', async ({ page }) => {
  */
 test('positions buttons correctly in vertical mode', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
@@ -430,6 +434,7 @@ test('positions buttons correctly in vertical mode', async ({ page }) => {
  */
 test('handles prefix/postfix with horizontal layout', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     prefix: '$',
@@ -459,6 +464,7 @@ test('handles prefix/postfix with horizontal layout', async ({ page }) => {
  */
 test('handles prefix/postfix with vertical layout', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
@@ -489,6 +495,7 @@ test('handles prefix/postfix with vertical layout', async ({ page }) => {
  */
 test('maintains proper spacing in layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
@@ -518,6 +525,7 @@ test('maintains proper spacing in layouts', async ({ page }) => {
  */
 test('handles container constraints gracefully', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add a constrained container
@@ -555,6 +563,7 @@ test('handles container constraints gracefully', async ({ page }) => {
  */
 test('supports custom layout modifications', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
@@ -589,6 +598,7 @@ test('supports custom layout modifications', async ({ page }) => {
  */
 test('handles responsive behavior', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
@@ -618,10 +628,10 @@ test('handles responsive behavior', async ({ page }) => {
  */
 test('maintains accessibility in both layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Load vanilla CSS for proper layout
-  await page.addStyleTag({ url: '/packages/renderers/vanilla/devdist/themes/vanilla.css' });
 
   // Test horizontal layout accessibility
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -719,6 +729,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
  */
 test('optimizes performance for layout changes', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
@@ -748,6 +759,7 @@ test('optimizes performance for layout changes', async ({ page }) => {
  */
 test('handles edge cases in layout switching', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     initval: 75,
@@ -787,6 +799,7 @@ test('handles edge cases in layout switching', async ({ page }) => {
  */
 test('supports CSS customization per layout', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Test horizontal layout with custom classes
@@ -833,6 +846,7 @@ test('supports CSS customization per layout', async ({ page }) => {
  */
 test('maintains proper tab order in layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Test horizontal layout tab order
@@ -873,6 +887,7 @@ test('maintains proper tab order in layouts', async ({ page }) => {
  */
 test('handles focus management across layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     focusablebuttons: true,
@@ -916,6 +931,7 @@ test('handles focus management across layouts', async ({ page }) => {
  */
 test('supports keyboard navigation in both modes', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     min: 0,
@@ -959,6 +975,7 @@ test('supports keyboard navigation in both modes', async ({ page }) => {
  */
 test('handles dynamic content in layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
@@ -1006,6 +1023,7 @@ test('handles dynamic content in layouts', async ({ page }) => {
  */
 test('maintains semantic structure across layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Test horizontal layout semantic structure
@@ -1047,6 +1065,7 @@ test('maintains semantic structure across layouts', async ({ page }) => {
  */
 test('handles browser compatibility for layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
@@ -1082,6 +1101,7 @@ test('handles browser compatibility for layouts', async ({ page }) => {
  */
 test('supports layout inheritance patterns', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add CSS inheritance context
@@ -1119,6 +1139,7 @@ test('supports layout inheritance patterns', async ({ page }) => {
  */
 test('handles nested layout scenarios', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Create nested layout context (flexbox)

@@ -27,8 +27,9 @@
  * [x] handles dynamic content changes in layouts
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
 
 /**
  * Scenario: creates horizontal layout by default
@@ -40,6 +41,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('creates horizontal layout by default', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -64,6 +66,7 @@ test('creates horizontal layout by default', async ({ page }) => {
  */
 test('creates vertical layout when specified', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -90,6 +93,7 @@ test('creates vertical layout when specified', async ({ page }) => {
  */
 test('applies vertical button classes correctly', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'btn btn-success v-up',
@@ -117,6 +121,7 @@ test('applies vertical button classes correctly', async ({ page }) => {
  */
 test('handles vertical button text overrides', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalup: '▲',
@@ -144,6 +149,7 @@ test('handles vertical button text overrides', async ({ page }) => {
  */
 test('switches between horizontal and vertical layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Start with horizontal layout
@@ -178,6 +184,7 @@ test('switches between horizontal and vertical layouts', async ({ page }) => {
  */
 test('maintains Bootstrap grid compatibility', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/layout-options-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'grid-test');
 
   // Test both horizontal and vertical layouts in grid context
@@ -203,6 +210,7 @@ test('maintains Bootstrap grid compatibility', async ({ page }) => {
  */
 test('supports responsive behavior', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test at mobile viewport
@@ -231,6 +239,7 @@ test('supports responsive behavior', async ({ page }) => {
  */
 test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/layout-options-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test actual pre-existing size variant inputs (should work with fix)
   // This will expose the bug if the renderer fix is not working properly
@@ -284,6 +293,7 @@ test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
  */
 test('applies proper spacing in vertical layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -312,6 +322,7 @@ test('applies proper spacing in vertical layout', async ({ page }) => {
  */
 test('manages button positioning in vertical mode', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -340,6 +351,7 @@ test('manages button positioning in vertical mode', async ({ page }) => {
  */
 test('handles prefix/postfix in vertical layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
@@ -369,6 +381,7 @@ test('handles prefix/postfix in vertical layout', async ({ page }) => {
  */
 test('maintains accessibility in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test horizontal layout accessibility
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -407,6 +420,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
  */
 test('supports custom vertical button classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'btn btn-success custom-up',
@@ -439,6 +453,7 @@ test('supports custom vertical button classes', async ({ page }) => {
  */
 test('handles layout changes after initialization', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
     initval: 75,
   });
@@ -481,6 +496,7 @@ test('handles layout changes after initialization', async ({ page }) => {
  */
 test('preserves Bootstrap 3 component structure in both modes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test horizontal layout Bootstrap structure
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -523,6 +539,7 @@ test('preserves Bootstrap 3 component structure in both modes', async ({ page })
  */
 test('applies proper flexbox classes for layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test horizontal layout flexbox classes
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -561,6 +578,7 @@ test('applies proper flexbox classes for layout', async ({ page }) => {
  */
 test('handles edge cases with container constraints', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/layout-options-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'constrained-test');
 
   // Verify functionality works in constrained container
@@ -590,6 +608,7 @@ test('handles edge cases with container constraints', async ({ page }) => {
  */
 test('maintains proper tab order in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test horizontal layout tab order
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
@@ -632,6 +651,7 @@ test('maintains proper tab order in both layouts', async ({ page }) => {
  */
 test('supports nested layout scenarios', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/layout-options-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'nested-test');
 
   // Verify functionality works in nested layout
@@ -661,6 +681,7 @@ test('supports nested layout scenarios', async ({ page }) => {
  */
 test('handles dynamic content changes in layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test initial functionality

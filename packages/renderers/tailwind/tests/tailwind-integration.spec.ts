@@ -32,8 +32,9 @@
  * [x] integrates with Tailwind CSS framework patterns
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureTailwindGlobals } from './helpers/tailwind-globals';
 
 /**
  * Scenario: integrates with Tailwind CSS configuration
@@ -46,6 +47,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 test('integrates with Tailwind CSS configuration', async ({ page }) => {
   // Load Tailwind CSS fixture with real Tailwind assets
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Initialize TouchSpin with Tailwind renderer on the advanced input (with flex input-group equivalent)
@@ -74,6 +76,7 @@ test('integrates with Tailwind CSS configuration', async ({ page }) => {
  */
 test('supports Tailwind CSS plugins', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -97,6 +100,7 @@ test('supports Tailwind CSS plugins', async ({ page }) => {
  */
 test('handles Tailwind CSS purging correctly', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -120,6 +124,7 @@ test('handles Tailwind CSS purging correctly', async ({ page }) => {
  */
 test('integrates with Tailwind CSS JIT mode', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // JIT mode allows arbitrary values and on-demand compilation
@@ -144,6 +149,7 @@ test('integrates with Tailwind CSS JIT mode', async ({ page }) => {
  */
 test('supports Tailwind CSS arbitrary values', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create input with arbitrary value utilities
   await page.evaluate(() => {
@@ -175,6 +181,7 @@ test('supports Tailwind CSS arbitrary values', async ({ page }) => {
  */
 test('handles Tailwind CSS custom variants', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create input with group hover variant
   await page.evaluate(() => {
@@ -207,6 +214,7 @@ test('handles Tailwind CSS custom variants', async ({ page }) => {
  */
 test('integrates with Tailwind CSS design tokens', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -231,6 +239,7 @@ test('integrates with Tailwind CSS design tokens', async ({ page }) => {
  */
 test('supports Tailwind CSS component patterns', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
   // Verify TouchSpin follows Tailwind component patterns (utility-first composition)
@@ -253,6 +262,7 @@ test('supports Tailwind CSS component patterns', async ({ page }) => {
  */
 test('handles Tailwind CSS responsive design', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test at mobile viewport (sm: 640px)
@@ -276,6 +286,7 @@ test('handles Tailwind CSS responsive design', async ({ page }) => {
  */
 test('integrates with Tailwind CSS dark mode', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Enable dark mode (Tailwind's dark mode strategy)
   await page.evaluate(() => {
@@ -306,6 +317,7 @@ test('integrates with Tailwind CSS dark mode', async ({ page }) => {
  */
 test('supports Tailwind CSS animations', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -330,6 +342,7 @@ test('supports Tailwind CSS animations', async ({ page }) => {
  */
 test('handles Tailwind CSS transforms', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -354,6 +367,7 @@ test('handles Tailwind CSS transforms', async ({ page }) => {
  */
 test('integrates with Tailwind CSS typography', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -378,6 +392,7 @@ test('integrates with Tailwind CSS typography', async ({ page }) => {
  */
 test('supports Tailwind CSS forms plugin', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create input with forms plugin styling
   await page.evaluate(() => {
@@ -405,6 +420,7 @@ test('supports Tailwind CSS forms plugin', async ({ page }) => {
  */
 test('handles Tailwind CSS aspect ratio plugin', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create container with aspect ratio
   await page.evaluate(() => {
@@ -433,6 +449,7 @@ test('handles Tailwind CSS aspect ratio plugin', async ({ page }) => {
  */
 test('integrates with Tailwind CSS container queries', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create container with container query support
   await page.evaluate(() => {
@@ -460,6 +477,7 @@ test('integrates with Tailwind CSS container queries', async ({ page }) => {
  */
 test('supports Tailwind CSS utility-first philosophy', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Verify TouchSpin uses utility classes rather than custom CSS
@@ -484,6 +502,7 @@ test('supports Tailwind CSS utility-first philosophy', async ({ page }) => {
  */
 test('handles Tailwind CSS class precedence', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -508,6 +527,7 @@ test('handles Tailwind CSS class precedence', async ({ page }) => {
  */
 test('integrates with Tailwind CSS build process', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Verify built CSS is loaded and functional
@@ -529,6 +549,7 @@ test('integrates with Tailwind CSS build process', async ({ page }) => {
  */
 test('supports Tailwind CSS development tools', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -552,6 +573,7 @@ test('supports Tailwind CSS development tools', async ({ page }) => {
  */
 test('handles Tailwind CSS performance optimization', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Initialize multiple TouchSpins to test performance
   await page.evaluate(() => {
@@ -583,6 +605,7 @@ test('handles Tailwind CSS performance optimization', async ({ page }) => {
  */
 test('integrates with Tailwind CSS ecosystem tools', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Verify compatibility with ecosystem tools (HeadlessUI, Alpine, etc.)
@@ -608,6 +631,7 @@ test('integrates with Tailwind CSS ecosystem tools', async ({ page }) => {
  */
 test('supports Tailwind CSS custom properties', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Set custom CSS properties
   await page.addStyleTag({
@@ -644,6 +668,7 @@ test('supports Tailwind CSS custom properties', async ({ page }) => {
  */
 test('handles Tailwind CSS browser compatibility', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -667,6 +692,7 @@ test('handles Tailwind CSS browser compatibility', async ({ page }) => {
  */
 test('integrates with Tailwind CSS framework patterns', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
 
   // Create input following framework patterns (React, Vue, etc.)
   await page.evaluate(() => {

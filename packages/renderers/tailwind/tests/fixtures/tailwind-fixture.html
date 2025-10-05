@@ -12,31 +12,7 @@
     <!-- jQuery -->
     <script src="../../../../jquery-plugin/devdist/external/js/jquery.min.js"></script>
 
-    <!-- Import map with relative paths - works universally -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../../core/devdist/events.js",
-        "@touchspin/renderer-tailwind": "../../devdist/TailwindRenderer.js",
-            "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-        }
-    }
-    </script>
-
-    <!-- Load TouchSpin Core and TailwindRenderer with simplified default renderer setup -->
-    <script type="module">
-        import { TouchSpin } from '@touchspin/core';
-        import TailwindRenderer from '@touchspin/renderer-tailwind';
-
-        // Set default renderer (README-recommended approach)
-        globalThis.TouchSpinDefaultRenderer = TailwindRenderer;
-
-        // Maintain legacy compatibility for test helpers
-        window.TouchSpinCore = TouchSpin;
-        window.testPageReady = true;
-    </script>
+    <!-- TouchSpin globals are loaded dynamically by test helpers -->
 </head>
 <body>
     <div class="container-fluid py-4">

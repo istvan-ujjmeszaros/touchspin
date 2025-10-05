@@ -31,8 +31,9 @@
  * [x] handles Bootstrap 3 dropdown integration
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
 
 /**
  * Scenario: integrates with Bootstrap 3 input-group component
@@ -45,6 +46,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 test('integrates with Bootstrap 3 input-group component', async ({ page }) => {
   // Load Bootstrap 3 fixture with real Bootstrap assets
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Initialize TouchSpin with Bootstrap 3 renderer on the advanced input (with input-group)
@@ -73,6 +75,7 @@ test('integrates with Bootstrap 3 input-group component', async ({ page }) => {
  */
 test('supports Bootstrap 3 button styling and states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -96,6 +99,7 @@ test('supports Bootstrap 3 button styling and states', async ({ page }) => {
  */
 test('handles Bootstrap 3 form validation states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -119,6 +123,7 @@ test('handles Bootstrap 3 form validation states', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 sizing utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test with small input
   await page.evaluate(() => {
@@ -147,6 +152,7 @@ test('integrates with Bootstrap 3 sizing utilities', async ({ page }) => {
  */
 test('supports Bootstrap 3 color scheme and themes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -170,6 +176,7 @@ test('supports Bootstrap 3 color scheme and themes', async ({ page }) => {
  */
 test('handles Bootstrap 3 responsive breakpoints', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   // Test at mobile viewport
@@ -193,6 +200,7 @@ test('handles Bootstrap 3 responsive breakpoints', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 flex utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create input in flex container
   await page.evaluate(() => {
@@ -223,6 +231,7 @@ test('integrates with Bootstrap 3 flex utilities', async ({ page }) => {
  */
 test('supports Bootstrap 3 spacing utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create input with spacing utilities
   await page.evaluate(() => {
@@ -250,6 +259,7 @@ test('supports Bootstrap 3 spacing utilities', async ({ page }) => {
  */
 test('handles Bootstrap 3 border utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create input with border utilities
   await page.evaluate(() => {
@@ -277,6 +287,7 @@ test('handles Bootstrap 3 border utilities', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 focus management', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -301,6 +312,7 @@ test('integrates with Bootstrap 3 focus management', async ({ page }) => {
  */
 test('supports Bootstrap 3 disabled states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create disabled input
   await page.evaluate(() => {
@@ -329,6 +341,7 @@ test('supports Bootstrap 3 disabled states', async ({ page }) => {
  */
 test('handles Bootstrap 3 form control variants', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create input with form-control-lg variant
   await page.evaluate(() => {
@@ -356,6 +369,7 @@ test('handles Bootstrap 3 form control variants', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 input group addons', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test with the existing advanced input that has addons
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
@@ -379,6 +393,7 @@ test('integrates with Bootstrap 3 input group addons', async ({ page }) => {
  */
 test('supports Bootstrap 3 button group behavior', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -406,6 +421,7 @@ test('supports Bootstrap 3 button group behavior', async ({ page }) => {
  */
 test('handles Bootstrap 3 accessibility features', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -432,6 +448,7 @@ test('handles Bootstrap 3 accessibility features', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 custom properties', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Set custom CSS properties
   await page.addStyleTag({
@@ -460,6 +477,7 @@ test('integrates with Bootstrap 3 custom properties', async ({ page }) => {
  */
 test('supports Bootstrap 3 dark mode compatibility', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Enable dark mode
   await page.evaluate(() => {
@@ -483,6 +501,7 @@ test('supports Bootstrap 3 dark mode compatibility', async ({ page }) => {
  */
 test('handles Bootstrap 3 RTL language support', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Set RTL direction
   await page.evaluate(() => {
@@ -507,6 +526,7 @@ test('handles Bootstrap 3 RTL language support', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 form layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create horizontal form layout
   await page.evaluate(() => {
@@ -548,6 +568,7 @@ test('integrates with Bootstrap 3 form layouts', async ({ page }) => {
  */
 test('supports Bootstrap 3 floating labels', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create floating label input
   await page.evaluate(() => {
@@ -591,6 +612,7 @@ test('supports Bootstrap 3 floating labels', async ({ page }) => {
  */
 test('handles Bootstrap 3 input group sizing', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Test different input group sizes
   await page.evaluate(() => {
@@ -632,6 +654,7 @@ test('handles Bootstrap 3 input group sizing', async ({ page }) => {
  */
 test('integrates with Bootstrap 3 validation feedback', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create input with validation feedback
   await page.evaluate(() => {
@@ -668,6 +691,7 @@ test('integrates with Bootstrap 3 validation feedback', async ({ page }) => {
  */
 test('supports Bootstrap 3 tooltip integration', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
@@ -698,6 +722,7 @@ test('supports Bootstrap 3 tooltip integration', async ({ page }) => {
  */
 test('handles Bootstrap 3 dropdown integration', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html');
+  await ensureBootstrap3Globals(page);
 
   // Create dropdown near TouchSpin
   await page.evaluate(() => {

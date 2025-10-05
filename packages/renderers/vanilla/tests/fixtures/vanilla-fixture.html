@@ -7,31 +7,7 @@
 
     <link rel="stylesheet" href="../../devdist/themes/vanilla.css">
 
-    <!-- Import map with relative paths - works universally -->
-    <script type="importmap">
-    {
-        "imports": {
-            "@touchspin/core": "../../../../core/devdist/index.js",
-            "@touchspin/core/renderer": "../../../../core/devdist/renderer.js",
-            "@touchspin/core/events": "../../../../core/devdist/events.js",
-            "@touchspin/renderer-vanilla": "../../devdist/VanillaRenderer.js",
-            "@touchspin/jquery-plugin": "../../../../jquery-plugin/devdist/index.js"
-        }
-    }
-    </script>
-
-    <!-- Load TouchSpin Core and VanillaRenderer with simplified default renderer setup -->
-    <script type="module">
-        import { TouchSpin } from '@touchspin/core';
-        import VanillaRenderer from '@touchspin/renderer-vanilla';
-
-        // Set default renderer (README-recommended approach)
-        globalThis.TouchSpinDefaultRenderer = VanillaRenderer;
-
-        // Maintain legacy compatibility for test helpers
-        window.TouchSpinCore = TouchSpin;
-        window.testPageReady = true;
-    </script>
+    <!-- TouchSpin globals are loaded dynamically by test helpers -->
 </head>
 <body>
     <div class="container">

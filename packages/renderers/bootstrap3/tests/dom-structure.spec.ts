@@ -10,33 +10,39 @@
  * [x] structures prefix and postfix as input-group-addon
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
-  universalRendererSuite,
-  bootstrapSharedSuite,
-} from '@touchspin/core/test-helpers/renderers';
-import {
-  installDomHelpers,
-  initializeTouchspinFromGlobals,
-  startCoverage,
   collectCoverage,
+  initializeTouchspinFromGlobals,
+  installDomHelpers,
+  startCoverage,
 } from '@touchspin/core/test-helpers';
+import {
+  bootstrapSharedSuite,
+  universalRendererSuite,
+} from '@touchspin/core/test-helpers/renderers';
+import { bootstrap3RendererUrl, ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
 
 // Bootstrap 3 Renderer URL for tests
-const BOOTSTRAP3_RENDERER_URL = '/packages/renderers/bootstrap3/devdist/Bootstrap3Renderer.js';
+const BOOTSTRAP3_RENDERER_URL = bootstrap3RendererUrl;
 const BOOTSTRAP3_FIXTURE = '/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE);
+universalRendererSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE, {
+  setupGlobals: ensureBootstrap3Globals,
+});
 
 // Run Bootstrap family shared tests
-bootstrapSharedSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE);
+bootstrapSharedSuite('Bootstrap 3', BOOTSTRAP3_RENDERER_URL, BOOTSTRAP3_FIXTURE, {
+  setupGlobals: ensureBootstrap3Globals,
+});
 
 // Bootstrap 3-specific tests (not covered by shared suites)
 test.describe('Bootstrap 3 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
     await startCoverage(page);
     await page.goto(BOOTSTRAP3_FIXTURE);
+    await ensureBootstrap3Globals(page);
     await installDomHelpers(page);
   });
 

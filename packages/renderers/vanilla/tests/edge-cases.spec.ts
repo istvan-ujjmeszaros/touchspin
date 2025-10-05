@@ -12,13 +12,17 @@
  */
 
 import { test } from '@playwright/test';
-import { expectValueToBe } from '@touchspin/core/test-helpers';
-import { clickUpButton, clickDownButton } from '@touchspin/core/test-helpers';
-import { fillWithValueAndBlur } from '@touchspin/core/test-helpers';
-import { clearEventLog, countEventInLog } from '@touchspin/core/test-helpers';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import {
+  clearEventLog,
+  clickDownButton,
+  clickUpButton,
+  countEventInLog,
+  expectValueToBe,
+  fillWithValueAndBlur,
+} from '@touchspin/core/test-helpers';
+import { ensureVanillaGlobals } from './helpers/vanilla-globals';
 
-const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**
@@ -26,6 +30,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
  */
 async function initializeTouchSpinOnCleanFixture(page, testId: string, settings = {}) {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await page.waitForFunction(() => window.testPageReady);
   await apiHelpers.initializeTouchSpin(page, testId, settings);
 }

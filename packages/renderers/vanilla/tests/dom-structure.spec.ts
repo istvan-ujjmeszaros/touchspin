@@ -11,20 +11,24 @@
  * [x] preserves custom classes without interference
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { initializeTouchSpin, installDomHelpers } from '@touchspin/core/test-helpers';
 import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchSpin } from '@touchspin/core/test-helpers';
+import { ensureVanillaGlobals, vanillaRendererUrl } from './helpers/vanilla-globals';
 
-const VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
+const VANILLA_RENDERER_URL = vanillaRendererUrl;
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Vanilla', VANILLA_RENDERER_URL, VANILLA_FIXTURE);
+universalRendererSuite('Vanilla', VANILLA_RENDERER_URL, VANILLA_FIXTURE, {
+  setupGlobals: ensureVanillaGlobals,
+});
 
 // Vanilla-specific tests (framework-independent behavior)
 test.describe('Vanilla specific behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VANILLA_FIXTURE);
+    await ensureVanillaGlobals(page);
     await installDomHelpers(page);
   });
 

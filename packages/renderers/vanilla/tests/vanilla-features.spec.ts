@@ -34,8 +34,8 @@
 
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureVanillaGlobals } from './helpers/vanilla-globals';
 
-const _VANILLA_RENDERER_URL = '/packages/renderers/vanilla/devdist/VanillaRenderer.js';
 const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixture.html';
 
 /**
@@ -48,6 +48,7 @@ const VANILLA_FIXTURE = '/packages/renderers/vanilla/tests/fixtures/vanilla-fixt
  */
 test('provides framework-independent implementation', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -84,6 +85,7 @@ test('provides framework-independent implementation', async ({ page }) => {
  */
 test('supports CSS variables for theming', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Define custom CSS variables
@@ -135,6 +137,7 @@ test('supports CSS variables for theming', async ({ page }) => {
  */
 test('handles minimal CSS dependencies', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -178,6 +181,7 @@ test('handles minimal CSS dependencies', async ({ page }) => {
  */
 test('supports custom styling without conflicts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add custom styles
@@ -228,6 +232,7 @@ test('supports custom styling without conflicts', async ({ page }) => {
  */
 test('provides clean CSS class hierarchy', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -282,6 +287,7 @@ test('provides clean CSS class hierarchy', async ({ page }) => {
  */
 test('handles browser-specific CSS gracefully', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add CSS with browser-specific features
@@ -342,6 +348,7 @@ test('handles browser-specific CSS gracefully', async ({ page }) => {
  */
 test('supports CSS Grid and Flexbox layouts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add Flexbox and Grid layout styles
@@ -436,6 +443,7 @@ test('supports CSS Grid and Flexbox layouts', async ({ page }) => {
  */
 test('provides performant CSS animations', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Add performant CSS animations
@@ -515,6 +523,7 @@ test('provides performant CSS animations', async ({ page }) => {
  */
 test('handles high contrast mode', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Simulate high contrast mode with strong colors
@@ -612,6 +621,7 @@ test('handles high contrast mode', async ({ page }) => {
  */
 test('supports RTL text direction', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Set RTL direction
@@ -685,6 +695,7 @@ test('supports RTL text direction', async ({ page }) => {
  */
 test('provides semantic HTML without framework bloat', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -728,6 +739,7 @@ test('provides semantic HTML without framework bloat', async ({ page }) => {
  */
 test('handles progressive enhancement', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Start with basic HTML input (baseline functionality)
@@ -784,6 +796,7 @@ test('handles progressive enhancement', async ({ page }) => {
  */
 test('supports accessibility without framework dependencies', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -833,6 +846,7 @@ test('supports accessibility without framework dependencies', async ({ page }) =
  */
 test('provides keyboard navigation patterns', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -881,6 +895,7 @@ test('provides keyboard navigation patterns', async ({ page }) => {
  */
 test('handles focus management independently', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input');
@@ -922,6 +937,7 @@ test('handles focus management independently', async ({ page }) => {
  */
 test('supports screen reader optimization', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -992,6 +1008,7 @@ test('supports screen reader optimization', async ({ page }) => {
  */
 test('provides ARIA patterns without conflicts', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
@@ -1042,6 +1059,7 @@ test('provides ARIA patterns without conflicts', async ({ page }) => {
  */
 test('handles mobile touch interactions', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { step: 2, initval: 10 });
@@ -1109,6 +1127,7 @@ test('handles mobile touch interactions', async ({ page }) => {
  */
 test('supports responsive design patterns', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Test different viewport sizes
@@ -1170,6 +1189,7 @@ test('supports responsive design patterns', async ({ page }) => {
  */
 test('provides cross-browser compatibility', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -1217,6 +1237,7 @@ test('provides cross-browser compatibility', async ({ page }) => {
  */
 test('handles legacy browser support', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -1293,6 +1314,7 @@ test('handles legacy browser support', async ({ page }) => {
  */
 test('supports modern web standards', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input', { initval: 0 });
@@ -1347,6 +1369,7 @@ test('supports modern web standards', async ({ page }) => {
  */
 test('provides lightweight DOM structure', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   await apiHelpers.initializeTouchSpin(page, 'test-input');
@@ -1387,6 +1410,7 @@ test('provides lightweight DOM structure', async ({ page }) => {
  */
 test('handles memory efficiency', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Create multiple inputs to test memory efficiency
@@ -1447,6 +1471,7 @@ test('handles memory efficiency', async ({ page }) => {
  */
 test('supports bundle size optimization', async ({ page }) => {
   await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Check that bundle is loadable and functional

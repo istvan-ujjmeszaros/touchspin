@@ -32,8 +32,9 @@
  * [x] handles utility class validation
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { ensureTailwindGlobals } from './helpers/tailwind-globals';
 
 /**
  * Scenario: updates button text with maintained utility classes
@@ -45,6 +46,7 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('updates button text with maintained utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update button text settings
@@ -74,6 +76,7 @@ test('updates button text with maintained utility classes', async ({ page }) => 
  */
 test('updates utility classes dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update button classes with Tailwind utilities
@@ -103,6 +106,7 @@ test('updates utility classes dynamically', async ({ page }) => {
  */
 test('handles responsive utility class changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with responsive utility classes
@@ -132,6 +136,7 @@ test('handles responsive utility class changes', async ({ page }) => {
  */
 test('updates color utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update color utilities
@@ -161,6 +166,7 @@ test('updates color utility classes', async ({ page }) => {
  */
 test('handles sizing utility updates', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update sizing utilities
@@ -190,6 +196,7 @@ test('handles sizing utility updates', async ({ page }) => {
  */
 test('updates spacing utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update spacing utilities
@@ -219,6 +226,7 @@ test('updates spacing utility classes', async ({ page }) => {
  */
 test('handles state utility class changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with state utilities
@@ -248,6 +256,7 @@ test('handles state utility class changes', async ({ page }) => {
  */
 test('updates layout utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update layout to vertical (flex-col behavior)
@@ -278,6 +287,7 @@ test('updates layout utility classes', async ({ page }) => {
  */
 test('handles typography utility changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update typography utilities
@@ -307,6 +317,7 @@ test('handles typography utility changes', async ({ page }) => {
  */
 test('updates border and shadow utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update border and shadow utilities
@@ -336,6 +347,7 @@ test('updates border and shadow utilities', async ({ page }) => {
  */
 test('handles background utility changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update background utilities
@@ -365,6 +377,7 @@ test('handles background utility changes', async ({ page }) => {
  */
 test('updates focus utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update focusability settings
@@ -393,6 +406,7 @@ test('updates focus utility classes', async ({ page }) => {
  */
 test('handles dark mode utility toggles', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with dark mode utilities
@@ -422,6 +436,7 @@ test('handles dark mode utility toggles', async ({ page }) => {
  */
 test('updates animation utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with animation utilities
@@ -451,6 +466,7 @@ test('updates animation utility classes', async ({ page }) => {
  */
 test('handles transform utility changes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with transform utilities
@@ -480,6 +496,7 @@ test('handles transform utility changes', async ({ page }) => {
  */
 test('updates opacity utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with opacity utilities
@@ -509,6 +526,7 @@ test('updates opacity utility classes', async ({ page }) => {
  */
 test('handles custom utility class integration', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with custom class names (testing extensibility)
@@ -538,6 +556,7 @@ test('handles custom utility class integration', async ({ page }) => {
  */
 test('updates arbitrary value utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with arbitrary value utilities (Tailwind JIT feature)
@@ -567,6 +586,7 @@ test('updates arbitrary value utilities', async ({ page }) => {
  */
 test('handles utility class conflicts resolution', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Apply conflicting settings (last one should win in class string)
@@ -603,6 +623,7 @@ test('handles utility class conflicts resolution', async ({ page }) => {
  */
 test('updates plugin-specific utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with standard utilities (plugins would work similarly)
@@ -632,6 +653,7 @@ test('updates plugin-specific utilities', async ({ page }) => {
  */
 test('handles JIT compilation updates', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Rapid updates to test JIT-like behavior
@@ -663,6 +685,7 @@ test('handles JIT compilation updates', async ({ page }) => {
  */
 test('updates purge-safe utility classes', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with utilities that should be purge-safe
@@ -692,6 +715,7 @@ test('updates purge-safe utility classes', async ({ page }) => {
  */
 test('handles performance optimized updates', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Set a specific value
@@ -723,6 +747,7 @@ test('handles performance optimized updates', async ({ page }) => {
  */
 test('updates responsive breakpoint utilities', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Update with responsive breakpoint utilities
@@ -752,6 +777,7 @@ test('updates responsive breakpoint utilities', async ({ page }) => {
  */
 test('handles utility class validation', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
   await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
 
   // Apply valid settings (TouchSpin handles class strings gracefully)
