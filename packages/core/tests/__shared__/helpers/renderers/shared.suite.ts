@@ -1,12 +1,21 @@
-import { test, expect } from '@playwright/test';
-import { installDomHelpers } from '../runtime/installDomHelpers';
+import { expect, test } from '@playwright/test';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
+import { installDomHelpers } from '../runtime/installDomHelpers';
 import { waitForPageReady } from '../test-utilities/wait';
+import type { RendererSuiteOptions } from './universal-renderer.suite';
 
-export function sharedRendererSuite(name: string, _rendererUrl: string, fixturePath: string) {
+export function sharedRendererSuite(
+  name: string,
+  _rendererUrl: string,
+  fixturePath: string,
+  options: RendererSuiteOptions = {}
+) {
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(fixturePath);
+      if (options.setupGlobals) {
+        await options.setupGlobals(page);
+      }
       await waitForPageReady(page);
       await installDomHelpers(page);
     });

@@ -7,8 +7,9 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { getNewestFileMtime } from './utils/file-mtime.mjs';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const projectRoot = join(__dirname, '..');
@@ -37,16 +38,19 @@ const REQUIRED_FILES = {
   'packages/renderers/bootstrap3': [
     'Bootstrap3Renderer.js',
     'iife/touchspin-bs3-complete.global.js',
+    'touchspin-bootstrap3.css',
     'artifacts.json',
   ],
   'packages/renderers/bootstrap4': [
     'Bootstrap4Renderer.js',
     'iife/touchspin-bs4-complete.global.js',
+    'touchspin-bootstrap4.css',
     'artifacts.json',
   ],
   'packages/renderers/bootstrap5': [
     'Bootstrap5Renderer.js',
     'iife/touchspin-bs5-complete.global.js',
+    'touchspin-bootstrap5.css',
     'artifacts.json',
   ],
   'packages/renderers/tailwind': [
@@ -82,41 +86,6 @@ function checkDevdistExists(packagePath) {
   }
 
   return { exists: true };
-}
-
-/**
- * Recursively get the newest file mtime in a directory tree
- */
-function getNewestFileMtime(dirPath) {
-  let newestMtime = 0;
-
-  function scanDir(dir) {
-    try {
-      const entries = readdirSync(dir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-          // Skip node_modules and hidden directories
-          if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
-            continue;
-          }
-          scanDir(fullPath);
-        } else if (entry.isFile()) {
-          const stat = statSync(fullPath);
-          if (stat.mtime.getTime() > newestMtime) {
-            newestMtime = stat.mtime.getTime();
-          }
-        }
-      }
-    } catch (_err) {
-      // Ignore errors (e.g., permission denied)
-    }
-  }
-
-  scanDir(dirPath);
-  return newestMtime;
 }
 
 /**

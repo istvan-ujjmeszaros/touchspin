@@ -3,6 +3,7 @@ import { initializeTouchspinFromGlobals } from '../core/initialization';
 import * as apiHelpers from '../index';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { waitForPageReady } from '../test-utilities/wait';
+import type { RendererSuiteOptions } from './universal-renderer.suite';
 
 /**
  * Shared lifecycle test suite for renderer destroy/reinit behavior
@@ -13,10 +14,18 @@ import { waitForPageReady } from '../test-utilities/wait';
  * - Preserve user event listeners
  * - Support multiple destroy/reinit cycles
  */
-export function lifecycleRendererSuite(name: string, rendererUrl: string, fixturePath: string) {
+export function lifecycleRendererSuite(
+  name: string,
+  rendererUrl: string,
+  fixturePath: string,
+  options: RendererSuiteOptions = {}
+) {
   test.describe(`Lifecycle: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(fixturePath);
+      if (options.setupGlobals) {
+        await options.setupGlobals(page);
+      }
       await waitForPageReady(page);
       await installDomHelpers(page);
     });

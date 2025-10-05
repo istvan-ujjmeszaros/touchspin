@@ -11,12 +11,13 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 // Alias for readability in renderer tests
 const initializeTouchSpin = initializeTouchspinFromGlobals;
 
 // Bootstrap 5 Renderer URL for tests
-const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
+const BOOTSTRAP5_RENDERER_URL = bootstrap5RendererUrl;
 const FLOATING_LABELS_FIXTURE =
   '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
 
@@ -32,6 +33,7 @@ test('supports floating labels with TouchSpin initialization and all interaction
   page,
 }) => {
   await page.goto(FLOATING_LABELS_FIXTURE);
+  await ensureBootstrap5Globals(page);
   await installDomHelpers(page);
 
   // Test 1: Basic floating label initialization

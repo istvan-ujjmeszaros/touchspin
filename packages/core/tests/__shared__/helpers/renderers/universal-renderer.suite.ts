@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { installDomHelpers } from '../runtime/installDomHelpers';
+import { expect, type Page, test } from '@playwright/test';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
+import { installDomHelpers } from '../runtime/installDomHelpers';
+import { collectCoverage, startCoverage } from '../test-utilities/coverage';
 import { waitForPageReady } from '../test-utilities/wait';
-import { startCoverage, collectCoverage } from '../test-utilities/coverage';
 
 /**
  * Universal Renderer Test Suite
@@ -10,11 +10,23 @@ import { startCoverage, collectCoverage } from '../test-utilities/coverage';
  * Tests behaviors that MUST be implemented by ALL renderers regardless of CSS framework.
  * These tests focus on functionality and data attributes, not framework-specific classes.
  */
-export function universalRendererSuite(name: string, _rendererUrl: string, fixturePath: string) {
+export interface RendererSuiteOptions {
+  setupGlobals?: (page: Page) => Promise<void>;
+}
+
+export function universalRendererSuite(
+  name: string,
+  _rendererUrl: string,
+  fixturePath: string,
+  options: RendererSuiteOptions = {}
+) {
   test.describe(`Universal renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await startCoverage(page);
       await page.goto(fixturePath);
+      if (options.setupGlobals) {
+        await options.setupGlobals(page);
+      }
       await waitForPageReady(page); // Wait for async module loading in self-contained fixtures
       await installDomHelpers(page);
 

@@ -27,8 +27,9 @@
  * [x] handles dynamic content changes in layouts
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 /**
  * Scenario: creates horizontal layout by default
@@ -40,11 +41,8 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('creates horizontal layout by default', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -68,6 +66,7 @@ test('creates horizontal layout by default', async ({ page }) => {
  */
 test('creates vertical layout when specified', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -94,6 +93,7 @@ test('creates vertical layout when specified', async ({ page }) => {
  */
 test('applies vertical button classes correctly', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'btn btn-success v-up',
@@ -121,6 +121,7 @@ test('applies vertical button classes correctly', async ({ page }) => {
  */
 test('handles vertical button text overrides', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     verticalup: '▲',
@@ -148,11 +149,8 @@ test('handles vertical button text overrides', async ({ page }) => {
  */
 test('switches between horizontal and vertical layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Start with horizontal layout
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -186,11 +184,8 @@ test('switches between horizontal and vertical layouts', async ({ page }) => {
  */
 test('maintains Bootstrap grid compatibility', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/layout-options-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'grid-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'grid-test', bootstrap5RendererUrl);
 
   // Test both horizontal and vertical layouts in grid context
   await apiHelpers.clickUpButton(page, 'grid-test');
@@ -215,11 +210,8 @@ test('maintains Bootstrap grid compatibility', async ({ page }) => {
  */
 test('supports responsive behavior', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test at mobile viewport
   await page.setViewportSize({ width: 375, height: 667 });
@@ -247,16 +239,13 @@ test('supports responsive behavior', async ({ page }) => {
  */
 test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/layout-options-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test actual pre-existing size variant inputs (should work with fix)
   // This will expose the bug if the renderer fix is not working properly
 
   // Test small size input in input-group-sm
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'size-sm-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'size-sm-test', bootstrap5RendererUrl);
 
   // Verify input is still accessible and functional
   await apiHelpers.expectValueToBe(page, 'size-sm-test', '50');
@@ -264,11 +253,7 @@ test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
   await apiHelpers.expectValueToBe(page, 'size-sm-test', '51');
 
   // Test large size input in input-group-lg
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'size-lg-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'size-lg-test', bootstrap5RendererUrl);
 
   // Verify input is still accessible and functional
   await apiHelpers.expectValueToBe(page, 'size-lg-test', '50');
@@ -308,6 +293,7 @@ test('handles size variants (sm, lg) in both layouts', async ({ page }) => {
  */
 test('applies proper spacing in vertical layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -336,6 +322,7 @@ test('applies proper spacing in vertical layout', async ({ page }) => {
  */
 test('manages button positioning in vertical mode', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -364,6 +351,7 @@ test('manages button positioning in vertical mode', async ({ page }) => {
  */
 test('handles prefix/postfix in vertical layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     prefix: '$',
@@ -393,13 +381,10 @@ test('handles prefix/postfix in vertical layout', async ({ page }) => {
  */
 test('maintains accessibility in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test horizontal layout accessibility
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -435,6 +420,7 @@ test('maintains accessibility in both layouts', async ({ page }) => {
  */
 test('supports custom vertical button classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
     verticalupclass: 'btn btn-success custom-up',
@@ -467,6 +453,7 @@ test('supports custom vertical button classes', async ({ page }) => {
  */
 test('handles layout changes after initialization', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     initval: 75,
   });
@@ -509,13 +496,10 @@ test('handles layout changes after initialization', async ({ page }) => {
  */
 test('preserves Bootstrap 5 component structure in both modes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test horizontal layout Bootstrap structure
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -555,13 +539,10 @@ test('preserves Bootstrap 5 component structure in both modes', async ({ page })
  */
 test('applies proper flexbox classes for layout', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test horizontal layout flexbox classes
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -597,11 +578,8 @@ test('applies proper flexbox classes for layout', async ({ page }) => {
  */
 test('handles edge cases with container constraints', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/layout-options-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'constrained-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'constrained-test', bootstrap5RendererUrl);
 
   // Verify functionality works in constrained container
   await apiHelpers.clickUpButton(page, 'constrained-test');
@@ -630,13 +608,10 @@ test('handles edge cases with container constraints', async ({ page }) => {
  */
 test('maintains proper tab order in both layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test horizontal layout tab order
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -676,11 +651,8 @@ test('maintains proper tab order in both layouts', async ({ page }) => {
  */
 test('supports nested layout scenarios', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/layout-options-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'nested-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'nested-test', bootstrap5RendererUrl);
 
   // Verify functionality works in nested layout
   await apiHelpers.clickUpButton(page, 'nested-test');
@@ -709,11 +681,8 @@ test('supports nested layout scenarios', async ({ page }) => {
  */
 test('handles dynamic content changes in layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test initial functionality
   await apiHelpers.clickUpButton(page, 'test-input');

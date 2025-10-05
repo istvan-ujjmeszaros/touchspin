@@ -37,7 +37,7 @@ Use `initializeTouchspinWithRenderer` for testing specific renderers.
 ```typescript
 import { initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
-const RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
+const RENDERER_URL = rendererClassUrlFor('bootstrap5');
 await initializeTouchspinWithRenderer(page, 'test-input', RENDERER_URL);
 ```
 

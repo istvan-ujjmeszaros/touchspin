@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { installDomHelpers } from '../runtime/installDomHelpers';
+import { expect, test } from '@playwright/test';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
-import { startCoverage, collectCoverage } from '../test-utilities/coverage';
+import { installDomHelpers } from '../runtime/installDomHelpers';
+import { collectCoverage, startCoverage } from '../test-utilities/coverage';
 import { waitForPageReady } from '../test-utilities/wait';
+import type { RendererSuiteOptions } from './universal-renderer.suite';
 
 /**
  * Bootstrap Family Shared Test Suite
@@ -11,11 +12,19 @@ import { waitForPageReady } from '../test-utilities/wait';
  * different from other frameworks like Tailwind or Vanilla. These tests focus on
  * Bootstrap-specific patterns while remaining version-agnostic.
  */
-export function bootstrapSharedSuite(name: string, _rendererUrl: string, fixturePath: string) {
+export function bootstrapSharedSuite(
+  name: string,
+  _rendererUrl: string,
+  fixturePath: string,
+  options: RendererSuiteOptions = {}
+) {
   test.describe(`Bootstrap shared behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await startCoverage(page);
       await page.goto(fixturePath);
+      if (options.setupGlobals) {
+        await options.setupGlobals(page);
+      }
       await waitForPageReady(page); // Wait for async module loading in self-contained fixtures
       await installDomHelpers(page);
 

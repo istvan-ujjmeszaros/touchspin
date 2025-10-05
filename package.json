@@ -77,6 +77,7 @@
     "build:test": "yarn workspace @touchspin/core build:types && yarn workspaces foreach -t -A run build:test && yarn validate-assets",
     "watch": "yarn workspaces foreach -pi -A run watch",
     "watch:test": "yarn workspaces foreach -pi -A run watch:test",
+    "devdist:refresh": "node scripts/guard-devdist-build.mjs",
     "update-external-deps": "node scripts/extract-framework-assets.mjs --all",
     "update-external-deps:bootstrap3": "node scripts/extract-framework-assets.mjs --renderer bootstrap3",
     "update-external-deps:bootstrap4": "node scripts/extract-framework-assets.mjs --renderer bootstrap4",

@@ -11,27 +11,33 @@
  * [x] maintains Bootstrap 5 validation state classes
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
 import {
-  universalRendererSuite,
   bootstrapSharedSuite,
+  universalRendererSuite,
 } from '@touchspin/core/test-helpers/renderers';
-import { installDomHelpers, initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 // Bootstrap 5 Renderer URL for tests
-const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
+const BOOTSTRAP5_RENDERER_URL = bootstrap5RendererUrl;
 const BOOTSTRAP5_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html';
 
 // Run universal tests that all renderers must pass
-universalRendererSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE);
+universalRendererSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE, {
+  setupGlobals: ensureBootstrap5Globals,
+});
 
 // Run Bootstrap family shared tests using the Bootstrap 5 fixture
-bootstrapSharedSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE);
+bootstrapSharedSuite('Bootstrap 5', BOOTSTRAP5_RENDERER_URL, BOOTSTRAP5_FIXTURE, {
+  setupGlobals: ensureBootstrap5Globals,
+});
 
 // Bootstrap 5-specific tests (not covered by shared suites)
 test.describe('Bootstrap 5 specific behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(BOOTSTRAP5_FIXTURE);
+    await ensureBootstrap5Globals(page);
     await installDomHelpers(page);
   });
 

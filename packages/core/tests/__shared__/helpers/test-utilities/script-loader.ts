@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { artifactUrlFor, rendererArtifactUrlFor } from '../runtime/paths';
 
 /**
  * Shared script loading utilities for consistent test initialization
@@ -11,6 +12,25 @@ export interface ScriptLoadOptions {
   crossOrigin?: string;
   /** Additional attributes to set on script element */
   attributes?: Record<string, string>;
+}
+
+export interface RendererGlobalsOptions extends ScriptLoadOptions {
+  /** Production or development artifacts (default devdist) */
+  target?: 'devdist' | 'dist';
+  /** Override package path for renderer */
+  rendererPackage?: string;
+  /** Load core IIFE before renderer (default true) */
+  loadCore?: boolean;
+  /** Load renderer CSS from manifest (default true) */
+  loadCss?: boolean;
+  /** Manifest key for CSS (default "css") */
+  cssKey?: string;
+  /** Additional scripts to load */
+  extraScripts?: string[];
+  /** Additional stylesheets to load */
+  extraStyles?: string[];
+  /** Set window.testPageReady after load (default true) */
+  markReady?: boolean;
 }
 
 /**
@@ -81,6 +101,28 @@ export async function loadScript(
   );
 }
 
+export async function loadStylesheet(page: Page, url: string): Promise<void> {
+  await page.evaluate(
+    ({ url }) =>
+      new Promise<void>((resolve, reject) => {
+        const existingLink = document.querySelector(`link[data-touchspin-style="${url}"]`);
+        if (existingLink) {
+          resolve();
+          return;
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        link.dataset.touchspinStyle = url;
+        link.onload = () => resolve();
+        link.onerror = () => reject(new Error(`Failed to load stylesheet: ${url}`));
+        document.head.appendChild(link);
+      }),
+    { url }
+  );
+}
+
 /**
  * When I load TouchSpin web component
  * Given I need the web component available
@@ -106,6 +148,90 @@ export async function loadTouchSpinWebComponent(
     },
     { timeout: 5000 }
   );
+}
+
+async function fetchManifest<T extends Record<string, string | undefined>>(
+  page: Page,
+  packageSubPath: string,
+  target: string
+): Promise<T> {
+  return page.evaluate(
+    async ({ packageSubPath, target }) => {
+      const url = `/${packageSubPath}/${target}/artifacts.json`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Manifest not found: ${url} (${response.status})`);
+      }
+      return (await response.json()) as T;
+    },
+    { packageSubPath, target }
+  );
+}
+
+export async function loadTouchSpinRendererGlobals(
+  page: Page,
+  rendererName: string,
+  options: RendererGlobalsOptions = {}
+): Promise<void> {
+  const {
+    target = 'devdist',
+    rendererPackage = `packages/renderers/${rendererName}`,
+    loadCore = true,
+    loadCss = true,
+    cssKey = 'css',
+    extraScripts = [],
+    extraStyles = [],
+    markReady = true,
+    ...scriptOptions
+  } = options;
+
+  if (loadCore) {
+    const coreManifest = await fetchManifest<{ iifeEntry?: string }>(page, 'packages/core', target);
+    if (coreManifest.iifeEntry) {
+      const coreUrl = artifactUrlFor('packages/core', 'iifeEntry');
+      if (coreUrl) {
+        await loadScript(page, coreUrl, scriptOptions);
+      }
+    }
+  }
+
+  const rendererManifest = await fetchManifest<Record<string, string | undefined>>(
+    page,
+    rendererPackage,
+    target
+  );
+  const rendererUrl =
+    rendererArtifactUrlFor(rendererName, 'iifeComplete') ??
+    rendererArtifactUrlFor(rendererName, 'iifeEntry');
+
+  if (!rendererUrl) {
+    throw new Error(`Renderer IIFE missing in manifest for ${rendererName}`);
+  }
+
+  if (loadCss) {
+    const cssEntry = rendererManifest[cssKey];
+    if (cssEntry) {
+      await loadStylesheet(page, `/${rendererPackage}/${target}/${cssEntry}`);
+    }
+  }
+
+  for (const style of extraStyles) {
+    await loadStylesheet(page, style);
+  }
+
+  for (const script of extraScripts) {
+    await loadScript(page, script, scriptOptions);
+  }
+
+  await loadScript(page, rendererUrl, scriptOptions);
+
+  if (markReady) {
+    await page.evaluate(() => {
+      if (!window.testPageReady) {
+        window.testPageReady = true;
+      }
+    });
+  }
 }
 
 /**

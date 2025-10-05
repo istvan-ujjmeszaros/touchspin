@@ -9,50 +9,12 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, statSync, readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { getNewestFileMtime } from './utils/file-mtime.mjs';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const projectRoot = join(__dirname, '..');
-
-/**
- * Recursively get the newest file mtime in a directory tree
- */
-function getNewestFileMtime(dirPath) {
-  let newestMtime = 0;
-
-  function scanDir(dir) {
-    try {
-      const entries = readdirSync(dir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        const fullPath = join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-          // Skip node_modules and hidden directories
-          if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
-            continue;
-          }
-          scanDir(fullPath);
-        } else if (entry.isFile()) {
-          // Skip .d.ts files - they're regenerated separately and don't indicate stale JS
-          if (entry.name.endsWith('.d.ts') || entry.name.endsWith('.d.ts.map')) {
-            continue;
-          }
-          const stat = statSync(fullPath);
-          if (stat.mtime.getTime() > newestMtime) {
-            newestMtime = stat.mtime.getTime();
-          }
-        }
-      }
-    } catch (_err) {
-      // Ignore errors (e.g., permission denied)
-    }
-  }
-
-  scanDir(dirPath);
-  return newestMtime;
-}
 
 /**
  * Check if production dist/ is stale by comparing file modification times
@@ -74,7 +36,9 @@ function isDistStale(packagePath) {
 
   try {
     const newestSrcMtime = getNewestFileMtime(srcPath);
-    const newestDistMtime = getNewestFileMtime(distPath);
+    const newestDistMtime = getNewestFileMtime(distPath, {
+      ignoreExtensions: ['.d.ts', '.d.ts.map'],
+    });
 
     // If any source file is newer than any dist file, it's stale
     return newestSrcMtime > newestDistMtime;

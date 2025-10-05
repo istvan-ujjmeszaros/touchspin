@@ -35,12 +35,26 @@ function loadManifest(packageSubPath: string): ArtifactManifest {
   }
 }
 
+function packageAssetUrl(packageSubPath: string, relativePath: string): string {
+  return `/${packageSubPath}/${TARGET}/${relativePath}`;
+}
+
+export function artifactUrlFor(packageSubPath: string, key: string): string | null {
+  const manifest = loadManifest(packageSubPath);
+  const relativePath = manifest[key];
+  return relativePath ? packageAssetUrl(packageSubPath, relativePath) : null;
+}
+
 const coreManifest = loadManifest('packages/core');
-export const coreUrl = `/packages/core/${TARGET}/${coreManifest.esmEntry ?? 'index.js'}`;
+export const coreUrl =
+  artifactUrlFor('packages/core', 'esmEntry') ?? `/packages/core/${TARGET}/index.js`;
 
 const vanillaManifest = loadManifest('packages/renderers/vanilla');
-export const vanillaRendererUrl = `/packages/renderers/vanilla/${TARGET}/${vanillaManifest.esmEntry ?? 'index.js'}`;
-export const vanillaRendererClassUrl = `/packages/renderers/vanilla/${TARGET}/${vanillaManifest.classModule ?? vanillaManifest.esmEntry ?? 'index.js'}`;
+export const vanillaRendererUrl =
+  artifactUrlFor('packages/renderers/vanilla', 'esmEntry') ??
+  `/packages/renderers/vanilla/${TARGET}/${vanillaManifest.esmEntry ?? 'index.js'}`;
+export const vanillaRendererClassUrl =
+  artifactUrlFor('packages/renderers/vanilla', 'classModule') ?? vanillaRendererUrl;
 
 function rendererManifest(name: string): ArtifactManifest {
   return loadManifest(`packages/renderers/${name}`);
@@ -48,14 +62,23 @@ function rendererManifest(name: string): ArtifactManifest {
 
 export const rendererUrlFor = (name: string) => {
   const manifest = rendererManifest(name);
-  return `/packages/renderers/${name}/${TARGET}/${manifest.esmEntry ?? 'index.js'}`;
+  return packageAssetUrl(`packages/renderers/${name}`, manifest.esmEntry ?? 'index.js');
 };
 
 export const rendererClassUrlFor = (name: string) => {
   const manifest = rendererManifest(name);
   const targetFile = manifest.classModule ?? manifest.esmEntry ?? 'index.js';
-  return `/packages/renderers/${name}/${TARGET}/${targetFile}`;
+  return packageAssetUrl(`packages/renderers/${name}`, targetFile);
 };
+
+export const rendererArtifactUrlFor = (name: string, key: string) =>
+  artifactUrlFor(`packages/renderers/${name}`, key);
+
+export const rendererExternalUrlFor = (name: string, relativePath: string) =>
+  packageAssetUrl(`packages/renderers/${name}`, `external/${relativePath}`);
+
+export const packageExternalUrlFor = (packageSubPath: string, relativePath: string) =>
+  packageAssetUrl(packageSubPath, `external/${relativePath}`);
 
 let jqueryPluginUrlResolved: string | null = null;
 try {

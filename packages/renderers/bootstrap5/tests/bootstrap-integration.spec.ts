@@ -31,8 +31,9 @@
  * [x] handles Bootstrap 5 dropdown integration
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 /**
  * Scenario: integrates with Bootstrap 5 input-group component
@@ -45,14 +46,11 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 test('integrates with Bootstrap 5 input-group component', async ({ page }) => {
   // Load Bootstrap 5 fixture with real Bootstrap assets
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.installDomHelpers(page);
 
   // Initialize TouchSpin with Bootstrap 5 renderer on the advanced input (with input-group)
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input-advanced',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input-advanced', bootstrap5RendererUrl);
 
   // Verify TouchSpin creates proper Bootstrap 5 input-group structure
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
@@ -77,11 +75,8 @@ test('integrates with Bootstrap 5 input-group component', async ({ page }) => {
  */
 test('supports Bootstrap 5 button styling and states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -104,11 +99,8 @@ test('supports Bootstrap 5 button styling and states', async ({ page }) => {
  */
 test('handles Bootstrap 5 form validation states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -131,6 +123,7 @@ test('handles Bootstrap 5 form validation states', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 sizing utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test with small input
   await page.evaluate(() => {
@@ -142,11 +135,7 @@ test('integrates with Bootstrap 5 sizing utilities', async ({ page }) => {
     input.closest('.input-group').classList.add('input-group-sm');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'size-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'size-test', bootstrap5RendererUrl);
 
   // Verify sizing works and functionality is preserved
   await apiHelpers.clickUpButton(page, 'size-test');
@@ -163,11 +152,8 @@ test('integrates with Bootstrap 5 sizing utilities', async ({ page }) => {
  */
 test('supports Bootstrap 5 color scheme and themes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -190,11 +176,8 @@ test('supports Bootstrap 5 color scheme and themes', async ({ page }) => {
  */
 test('handles Bootstrap 5 responsive breakpoints', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test at mobile viewport
   await page.setViewportSize({ width: 375, height: 667 });
@@ -217,6 +200,7 @@ test('handles Bootstrap 5 responsive breakpoints', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 flex utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create input in flex container
   await page.evaluate(() => {
@@ -227,11 +211,7 @@ test('integrates with Bootstrap 5 flex utilities', async ({ page }) => {
     input.closest('.mb-4').classList.add('d-flex', 'flex-column');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'flex-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'flex-test', bootstrap5RendererUrl);
 
   // Verify functionality in flex layout
   await apiHelpers.clickUpButton(page, 'flex-test');
@@ -248,6 +228,7 @@ test('integrates with Bootstrap 5 flex utilities', async ({ page }) => {
  */
 test('supports Bootstrap 5 spacing utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create input with spacing utilities
   await page.evaluate(() => {
@@ -258,11 +239,7 @@ test('supports Bootstrap 5 spacing utilities', async ({ page }) => {
     input.closest('.input-group').classList.add('m-3', 'p-2');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'spacing-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'spacing-test', bootstrap5RendererUrl);
 
   // Verify functionality with spacing
   await apiHelpers.clickUpButton(page, 'spacing-test');
@@ -279,6 +256,7 @@ test('supports Bootstrap 5 spacing utilities', async ({ page }) => {
  */
 test('handles Bootstrap 5 border utilities', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create input with border utilities
   await page.evaluate(() => {
@@ -289,11 +267,7 @@ test('handles Bootstrap 5 border utilities', async ({ page }) => {
     input.classList.add('border-primary', 'rounded');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'border-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'border-test', bootstrap5RendererUrl);
 
   // Verify functionality with borders
   await apiHelpers.clickUpButton(page, 'border-test');
@@ -310,11 +284,8 @@ test('handles Bootstrap 5 border utilities', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 focus management', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -338,6 +309,7 @@ test('integrates with Bootstrap 5 focus management', async ({ page }) => {
  */
 test('supports Bootstrap 5 disabled states', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create disabled input
   await page.evaluate(() => {
@@ -348,11 +320,7 @@ test('supports Bootstrap 5 disabled states', async ({ page }) => {
     });
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'disabled-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'disabled-test', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'disabled-test');
 
@@ -370,6 +338,7 @@ test('supports Bootstrap 5 disabled states', async ({ page }) => {
  */
 test('handles Bootstrap 5 form control variants', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create input with form-control-lg variant
   await page.evaluate(() => {
@@ -380,11 +349,7 @@ test('handles Bootstrap 5 form control variants', async ({ page }) => {
     input.classList.add('form-control-lg');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'variant-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'variant-test', bootstrap5RendererUrl);
 
   // Verify functionality with variant classes
   await apiHelpers.clickUpButton(page, 'variant-test');
@@ -401,13 +366,10 @@ test('handles Bootstrap 5 form control variants', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 input group addons', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test with the existing advanced input that has addons
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input-advanced',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input-advanced', bootstrap5RendererUrl);
 
   // Verify addon elements coexist with TouchSpin
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
@@ -428,11 +390,8 @@ test('integrates with Bootstrap 5 input group addons', async ({ page }) => {
  */
 test('supports Bootstrap 5 button group behavior', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -459,11 +418,8 @@ test('supports Bootstrap 5 button group behavior', async ({ page }) => {
  */
 test('handles Bootstrap 5 accessibility features', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -489,6 +445,7 @@ test('handles Bootstrap 5 accessibility features', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 custom properties', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Set custom CSS properties
   await page.addStyleTag({
@@ -500,11 +457,7 @@ test('integrates with Bootstrap 5 custom properties', async ({ page }) => {
     `,
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test functionality with custom properties
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -521,17 +474,14 @@ test('integrates with Bootstrap 5 custom properties', async ({ page }) => {
  */
 test('supports Bootstrap 5 dark mode compatibility', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Enable dark mode
   await page.evaluate(() => {
     document.documentElement.setAttribute('data-bs-theme', 'dark');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test functionality in dark mode
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -548,6 +498,7 @@ test('supports Bootstrap 5 dark mode compatibility', async ({ page }) => {
  */
 test('handles Bootstrap 5 RTL language support', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Set RTL direction
   await page.evaluate(() => {
@@ -555,11 +506,7 @@ test('handles Bootstrap 5 RTL language support', async ({ page }) => {
     document.documentElement.setAttribute('lang', 'ar');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Test functionality in RTL layout
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -576,6 +523,7 @@ test('handles Bootstrap 5 RTL language support', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 form layouts', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create horizontal form layout
   await page.evaluate(() => {
@@ -593,11 +541,7 @@ test('integrates with Bootstrap 5 form layouts', async ({ page }) => {
     colDiv.appendChild(inputGroup);
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'form-layout-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'form-layout-test', bootstrap5RendererUrl);
 
   // Test functionality in horizontal layout
   await apiHelpers.clickUpButton(page, 'form-layout-test');
@@ -614,6 +558,7 @@ test('integrates with Bootstrap 5 form layouts', async ({ page }) => {
  */
 test('supports Bootstrap 5 floating labels', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create floating label input
   await page.evaluate(() => {
@@ -640,11 +585,7 @@ test('supports Bootstrap 5 floating labels', async ({ page }) => {
     container.appendChild(floatingDiv);
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'floating-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'floating-test', bootstrap5RendererUrl);
 
   // Test functionality with floating labels
   await apiHelpers.clickUpButton(page, 'floating-test');
@@ -661,6 +602,7 @@ test('supports Bootstrap 5 floating labels', async ({ page }) => {
  */
 test('handles Bootstrap 5 input group sizing', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Test different input group sizes
   await page.evaluate(() => {
@@ -681,16 +623,8 @@ test('handles Bootstrap 5 input group sizing', async ({ page }) => {
     largeInput.closest('.input-group').classList.add('input-group-lg');
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'size-sm-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'size-lg-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'size-sm-test', bootstrap5RendererUrl);
+  await apiHelpers.initializeTouchSpin(page, 'size-lg-test', bootstrap5RendererUrl);
 
   // Test both sizes work
   await apiHelpers.clickUpButton(page, 'size-sm-test');
@@ -710,6 +644,7 @@ test('handles Bootstrap 5 input group sizing', async ({ page }) => {
  */
 test('integrates with Bootstrap 5 validation feedback', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create input with validation feedback
   await page.evaluate(() => {
@@ -726,11 +661,7 @@ test('integrates with Bootstrap 5 validation feedback', async ({ page }) => {
     input.closest('.input-group').after(feedbackDiv);
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'validation-feedback-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'validation-feedback-test', bootstrap5RendererUrl);
 
   // Verify feedback element exists and functionality works
   const feedback = page.getByTestId('validation-feedback');
@@ -750,11 +681,8 @@ test('integrates with Bootstrap 5 validation feedback', async ({ page }) => {
  */
 test('supports Bootstrap 5 tooltip integration', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -784,6 +712,7 @@ test('supports Bootstrap 5 tooltip integration', async ({ page }) => {
  */
 test('handles Bootstrap 5 dropdown integration', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
 
   // Create dropdown near TouchSpin
   await page.evaluate(() => {
@@ -807,11 +736,7 @@ test('handles Bootstrap 5 dropdown integration', async ({ page }) => {
     input.closest('.mb-4').appendChild(dropdown);
   });
 
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'dropdown-test',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await apiHelpers.initializeTouchSpin(page, 'dropdown-test', bootstrap5RendererUrl);
 
   // Test both components work independently
   await apiHelpers.clickUpButton(page, 'dropdown-test');

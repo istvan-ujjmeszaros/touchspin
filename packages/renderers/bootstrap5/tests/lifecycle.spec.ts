@@ -12,18 +12,22 @@ import {
   waitForPageReady,
 } from '@touchspin/core/test-helpers';
 import { lifecycleRendererSuite } from '@touchspin/core/test-helpers/renderers';
+import { ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 const BOOTSTRAP5_FIXTURE = '/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html';
 const FLOATING_LABELS_FIXTURE =
   '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
 
 // Run shared lifecycle suite
-lifecycleRendererSuite('bootstrap5', rendererClassUrlFor('bootstrap5'), BOOTSTRAP5_FIXTURE);
+lifecycleRendererSuite('bootstrap5', rendererClassUrlFor('bootstrap5'), BOOTSTRAP5_FIXTURE, {
+  setupGlobals: ensureBootstrap5Globals,
+});
 
 // Bootstrap5-specific lifecycle tests
 test.describe('Bootstrap 5 Lifecycle: Floating Labels', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(FLOATING_LABELS_FIXTURE);
+    await ensureBootstrap5Globals(page);
     await waitForPageReady(page);
     await installDomHelpers(page);
   });

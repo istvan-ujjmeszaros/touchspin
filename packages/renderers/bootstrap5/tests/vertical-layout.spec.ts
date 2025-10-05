@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
-  installDomHelpers,
-  startCoverage,
   collectCoverage,
   initializeTouchspinFromGlobals,
+  installDomHelpers,
+  startCoverage,
 } from '@touchspin/core/test-helpers';
+import { ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 test.describe('renderer-b5: vertical layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,6 +16,7 @@ test.describe('renderer-b5: vertical layout', () => {
   });
   test('vertical texts and classes applied', async ({ page }) => {
     await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+    await ensureBootstrap5Globals(page);
     await installDomHelpers(page);
 
     await initializeTouchspinFromGlobals(page, 'test-input', {

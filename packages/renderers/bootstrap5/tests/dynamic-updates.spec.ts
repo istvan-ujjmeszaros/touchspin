@@ -31,8 +31,9 @@
  * [x] handles conflicting setting combinations
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 /**
  * Scenario: updates button text dynamically
@@ -44,11 +45,8 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
  */
 test('updates button text dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Update button text settings
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -77,11 +75,8 @@ test('updates button text dynamically', async ({ page }) => {
  */
 test('updates button classes dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Update button classes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -110,6 +105,7 @@ test('updates button classes dynamically', async ({ page }) => {
  */
 test('updates prefix content and classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     prefix: '$',
   });
@@ -141,6 +137,7 @@ test('updates prefix content and classes', async ({ page }) => {
  */
 test('updates postfix content and classes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     postfix: 'USD',
   });
@@ -172,11 +169,8 @@ test('updates postfix content and classes', async ({ page }) => {
  */
 test('handles prefix addition and removal', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Add prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -207,11 +201,8 @@ test('handles prefix addition and removal', async ({ page }) => {
  */
 test('handles postfix addition and removal', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Add postfix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -242,11 +233,8 @@ test('handles postfix addition and removal', async ({ page }) => {
  */
 test('rebuilds DOM when layout changes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Change to vertical layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -276,11 +264,8 @@ test('rebuilds DOM when layout changes', async ({ page }) => {
  */
 test('updates button focusability settings', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Update focusable buttons setting
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -308,6 +293,7 @@ test('updates button focusability settings', async ({ page }) => {
  */
 test('handles vertical button class updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -339,6 +325,7 @@ test('handles vertical button class updates', async ({ page }) => {
  */
 test('handles vertical button text updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     verticalbuttons: true,
   });
@@ -370,11 +357,8 @@ test('handles vertical button text updates', async ({ page }) => {
  */
 test('preserves input value during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Set a specific value
   await apiHelpers.setValueViaAPI(page, 'test-input', '42');
@@ -405,11 +389,8 @@ test('preserves input value during updates', async ({ page }) => {
  */
 test('maintains event listeners during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
   await apiHelpers.clearEventLog(page);
 
   // Update settings that cause DOM changes
@@ -436,11 +417,8 @@ test('maintains event listeners during updates', async ({ page }) => {
  */
 test('handles empty to non-empty prefix transitions', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Add prefix
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -467,6 +445,7 @@ test('handles empty to non-empty prefix transitions', async ({ page }) => {
  */
 test('handles non-empty to empty postfix transitions', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
   await apiHelpers.initializeTouchSpin(page, 'test-input', {
     postfix: 'kg',
   });
@@ -491,11 +470,8 @@ test('handles non-empty to empty postfix transitions', async ({ page }) => {
  */
 test('updates size class detection dynamically', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
@@ -525,11 +501,8 @@ test('updates size class detection dynamically', async ({ page }) => {
  */
 test('handles multiple simultaneous setting changes', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply multiple settings at once
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -561,11 +534,8 @@ test('handles multiple simultaneous setting changes', async ({ page }) => {
  */
 test('maintains Bootstrap component integrity during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply various updates
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -596,11 +566,8 @@ test('maintains Bootstrap component integrity during updates', async ({ page }) 
  */
 test('handles setting updates that trigger rebuilds', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Get initial value
   await apiHelpers.setValueViaAPI(page, 'test-input', '42');
@@ -637,11 +604,8 @@ test('handles setting updates that trigger rebuilds', async ({ page }) => {
  */
 test('preserves testid attributes during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply updates that trigger DOM changes
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -671,11 +635,8 @@ test('preserves testid attributes during updates', async ({ page }) => {
  */
 test('handles update error scenarios gracefully', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Try to apply potentially problematic settings (TouchSpin should handle gracefully)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -705,11 +666,8 @@ test('handles update error scenarios gracefully', async ({ page }) => {
  */
 test('maintains accessibility attributes during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply updates that affect DOM structure
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -740,11 +698,8 @@ test('maintains accessibility attributes during updates', async ({ page }) => {
  */
 test('handles rapid successive updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply rapid successive updates
   for (let i = 0; i < 3; i++) {
@@ -776,11 +731,8 @@ test('handles rapid successive updates', async ({ page }) => {
  */
 test('preserves DOM references during updates', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply non-structural update
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
@@ -809,11 +761,8 @@ test('preserves DOM references during updates', async ({ page }) => {
  */
 test('handles conflicting setting combinations', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-  await apiHelpers.initializeTouchSpin(
-    page,
-    'test-input',
-    '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js'
-  );
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', bootstrap5RendererUrl);
 
   // Apply conflicting settings (vertical layout with horizontal text settings)
   await apiHelpers.updateSettingsViaAPI(page, 'test-input', {

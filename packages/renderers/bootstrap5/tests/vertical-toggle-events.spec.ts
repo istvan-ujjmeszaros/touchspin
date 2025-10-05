@@ -1,6 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
+import { ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
 /**
  * Test: Toggling verticalbuttons multiple times should not duplicate event listeners
@@ -14,6 +15,8 @@ import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
  */
 test('toggling verticalbuttons 5 times should not duplicate change events', async ({ page }) => {
   await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
+  await installDomHelpers(page);
 
   // Initialize TouchSpin
   await initializeTouchspinFromGlobals(page, 'test-input', {

@@ -105,7 +105,7 @@ import { test, expect } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { installDomHelpers, initializeTouchspinWithRenderer } from '@touchspin/core/test-helpers';
 
-const BOOTSTRAP5_RENDERER_URL = '/packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js';
+const BOOTSTRAP5_RENDERER_URL = rendererClassUrlFor('bootstrap5');
 
 test.describe('Bootstrap 5 specific behavior', () => {
   test.beforeEach(async ({ page }) => {

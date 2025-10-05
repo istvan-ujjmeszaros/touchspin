@@ -25,13 +25,13 @@
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
     "build": "rm -rf dist && yarn run build:types && yarn run build:css && yarn run build:js",
-    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-bootstrap3.css",
     "build:css": "yarn exec sass src/styles/touchspin-bootstrap3.scss dist/touchspin-bootstrap3.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core run build:test",
     "build:umd": "tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --outDir devdist/umd --external=none",
     "build:iife-complete": "tsup src/touchspin-bs3-complete.ts --format iife --global-name TouchSpinBS3Complete --no-dts --sourcemap --target es2020 --outDir devdist/iife --external=none",
-    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core && tsc -p tsconfig.testbuild.json && tsup src/Bootstrap3Renderer.ts --format iife --global-name Bootstrap3Renderer --sourcemap --target es2020 --outDir devdist/iife --external=none && yarn run build:iife-complete && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js iifeEntry=iife/Bootstrap3Renderer.global.js iifeComplete=iife/touchspin-bs3-complete.global.js && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap3",
+    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core && tsc -p tsconfig.testbuild.json && yarn exec sass src/styles/touchspin-bootstrap3.scss devdist/touchspin-bootstrap3.css --style=expanded --no-source-map && tsup src/Bootstrap3Renderer.ts --format iife --global-name Bootstrap3Renderer --sourcemap --target es2020 --outDir devdist/iife --external=none && yarn run build:iife-complete && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap3Renderer.js iifeEntry=iife/Bootstrap3Renderer.global.js iifeComplete=iife/touchspin-bs3-complete.global.js css=touchspin-bootstrap3.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap3",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
@@ -59,8 +59,7 @@
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+        "import": "./dist/index.js"
       },
       "./css": "./dist/touchspin-bootstrap3.css"
     }

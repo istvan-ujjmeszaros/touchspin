@@ -218,38 +218,15 @@ yarn inspect /packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.ht
 
 ### Fixture Development Patterns
 
-TouchSpin test fixtures use **IIFE builds with global variables** for maximum compatibility:
+TouchSpin test fixtures still use **IIFE builds with global variables** for maximum compatibility, but we now resolve the exact filenames from the per-package manifest:
 
-#### ✅ Correct Pattern (IIFE)
+```ts
+import { ensureBootstrap5Globals } from '../../helpers/bootstrap5-globals';
 
-```html
-<!-- Load IIFE builds -->
-<script src="../../../../core/devdist/iife/touchspin-core.js"></script>
-<script src="../../devdist/iife/Bootstrap5Renderer.global.js"></script>
-
-<script>
-    // Set up globals
-    globalThis.TouchSpinDefaultRenderer = window.Bootstrap5Renderer;
-    window.TouchSpinCore = window.TouchSpinCore;
-    window.testPageReady = true;
-</script>
+await ensureBootstrap5Globals(page); // Loads core + renderer IIFEs via artifacts.json
 ```
 
-#### ❌ Incorrect Pattern (ES6 Modules)
-
-```html
-<script type="module">
-    // This FAILS in browser context!
-    import { Bootstrap5Renderer } from '@touchspin/renderer-bootstrap5';
-</script>
-```
-
-**Why IIFE?**
-- ✅ Works in all browsers without module support
-- ✅ No import map configuration needed
-- ✅ Simple global variable access
-- ✅ Matches production IIFE build patterns
-- ✅ Reliable for test automation
+If you absolutely need to write a standalone HTML fixture, call the helper from a `<script type="module">` tag instead of hard-coding `/devdist/...` URLs. This keeps fixtures aligned with manifest changes and avoids stale paths.
 
 ## 🛠️ Development Commands Reference
 
@@ -266,6 +243,7 @@ yarn build                   # Full monorepo build
 # Watch modes (auto-compile on changes)
 yarn watch                   # Watch all packages (production mode)
 yarn watch:test              # Watch all packages (test mode)
+yarn devdist:refresh         # Rebuild stale devdist artifacts on demand
 ```
 
 ### Package-Specific Builds
