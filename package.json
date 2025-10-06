@@ -1,5 +1,6 @@
 {
   "name": "bootstrap-touchspin",
+  "private": true,
   "version": "5.0.0",
   "title": "Bootstrap Touchspin",
   "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5. jQuery plugin with IIFE/UMD builds for backward compatibility.",
@@ -32,7 +33,7 @@
   "homepage": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "demo": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "docs": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
-  "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/master.zip",
+  "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/main.zip",
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
     "@changesets/cli": "^2.27.7",
