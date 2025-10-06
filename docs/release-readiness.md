@@ -1,6 +1,9 @@
 # TouchSpin v5 Packaging & Publishing Audit
 
 _Last updated: 2025-10-06_
+_Superseded by: `tmp/RELEASE_AUDIT_2025.md` (comprehensive audit with fixes applied)_
+
+> **Note:** A fresh comprehensive audit was performed on 2025-10-06 with all identified gaps fixed. See `tmp/RELEASE_AUDIT_2025.md` for the complete report and `tmp/FIXES_APPLIED.md` for implementation details.
 
 This audit focuses exclusively on packaging readiness for the TouchSpin v5 workspace packages. Testing is intentionally out of scope. Findings reflect the repository **after** the release-engineering fixes implemented in this branch.
 

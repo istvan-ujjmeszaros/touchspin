@@ -33,8 +33,31 @@ This guide covers the packaging-only release flow for the TouchSpin v5 workspace
 
 5. **Dist-tag promotion**
    - `alpha`: default tag while packaging stabilizes.
-   - `beta`: set once documentation & metadata gaps resolve (`npm dist-tag add @touchspin/core@x.y.z beta`).
+   - `beta`: set once documentation & metadata gaps resolve.
    - `latest`: promote only after core + primary renderers + jquery wrapper share a green audit (score ≥9 in the release readiness rubric).
+
+   **Promotion commands:**
+   ```bash
+   # Promote all packages from next → beta
+   npm dist-tag add @touchspin/core@5.0.0 beta
+   npm dist-tag add @touchspin/jquery-plugin@5.0.0 beta
+   npm dist-tag add @touchspin/renderer-bootstrap3@5.0.0 beta
+   npm dist-tag add @touchspin/renderer-bootstrap4@5.0.0 beta
+   npm dist-tag add @touchspin/renderer-bootstrap5@5.0.0 beta
+   npm dist-tag add @touchspin/renderer-tailwind@5.0.0 beta
+   npm dist-tag add @touchspin/renderer-vanilla@5.0.0 beta
+   npm dist-tag add @touchspin/web-component@5.0.0 beta
+
+   # Promote all packages from beta → latest
+   npm dist-tag add @touchspin/core@5.0.0 latest
+   npm dist-tag add @touchspin/jquery-plugin@5.0.0 latest
+   npm dist-tag add @touchspin/renderer-bootstrap3@5.0.0 latest
+   npm dist-tag add @touchspin/renderer-bootstrap4@5.0.0 latest
+   npm dist-tag add @touchspin/renderer-bootstrap5@5.0.0 latest
+   npm dist-tag add @touchspin/renderer-tailwind@5.0.0 latest
+   npm dist-tag add @touchspin/renderer-vanilla@5.0.0 latest
+   npm dist-tag add @touchspin/web-component@5.0.0 latest
+   ```
 
 ## Manual Verification Checklist
 

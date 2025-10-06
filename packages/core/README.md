@@ -34,7 +34,7 @@ TouchSpin(document.querySelector('#quantity'), {
 ## Packaging Notes
 
 - `sideEffects: false` enables tree-shaking for bundlers.
-- Supported runtimes: Node 18.17+, evergreen browsers.
+- Supported runtimes: Node 18.17+ (LTS versions 18, 20, 22), evergreen browsers.
 - No UMD bundle is produced—load the core through native ESM or a bundler/import map.
 
 ## Related Packages
