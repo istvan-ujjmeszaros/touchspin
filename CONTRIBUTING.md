@@ -12,16 +12,18 @@ Thank you for your interest in contributing to TouchSpin! This guide covers how 
 - Mention which package(s) are affected (core, renderer-bootstrap5, jquery-plugin, etc.).
 
 ### Submitting Pull Requests
-- Fork the repo and create a topic branch from `master`:
-  - Example: `feat/renderer-<flavor>` or `fix/core-<short-desc>`
+- Fork the repo and create a topic branch from `main` (e.g. `feat/renderer-tailwind-halo`).
 - Keep PRs focused and small; one logical change per PR.
 - Follow commit best practices: concise subject, informative body.
-- Ensure everything builds and tests pass locally:
+- Required local checks before opening a PR:
   - `yarn install`
-  - `yarn build` (all packages must build cleanly)
-  - `yarn test` (comprehensive Gherkin-style tests)
-  - `yarn test:guard` (validate test/checklist consistency)
-- Do not commit built artifacts in `dist/`; CI/build will produce them.
+  - `yarn lint`
+  - `yarn typecheck`
+  - `yarn build`
+  - `yarn workspaces foreach -A exec npm pack --dry-run` (packaging smoke test)
+- Use `yarn changeset` to record version bumps for any package that changes behaviour or build outputs.
+- Tests are welcome but optional for release-engineering PRs (this audit focuses on packaging only).
+- Do not commit generated `dist/` artifacts; prepack scripts build them during publishing.
 - Use Yarn 4 (Berry) with PnP (already configured in the repo).
 
 ### Our Testing Philosophy

@@ -1,289 +1,136 @@
-# TouchSpin v5.0.0
-
-
+# TouchSpin v5
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa)](https://github.com/sponsors/istvan-ujjmeszaros)
-[![run-tests](https://github.com/istvan-ujjmeszaros/touchspin/actions/workflows/run-tests.yml/badge.svg)](https://github.com/istvan-ujjmeszaros/touchspin/actions/workflows/run-tests.yml)
-[![npm version](https://img.shields.io/npm/v/touchspin/next)](https://www.npmjs.com/package/touchspin)
-[![npm downloads](https://img.shields.io/npm/dm/touchspin)](https://www.npmjs.com/package/touchspin)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5.**
+TouchSpin is a modern rewrite of the original “Bootstrap TouchSpin” spinner. The v5 line ships as an ESM-first monorepo with framework-specific packages so you can pick the delivery mode that fits your stack—core logic, renderer bundles, a jQuery bridge, or a Web Component.
 
-TouchSpin is a mobile-first JavaScript library with a modern renderer-based architecture that transforms number inputs into spinner controls with increment/decrement buttons for touch interfaces and desktop environments. Available as both a framework-agnostic core, a jQuery plugin wrapper, and a standards-based Web Component.
+## Packages at a Glance
 
-**[Live Demo & Documentation](https://www.virtuosoft.eu/code/touchspin/)**
+| Package | Purpose | Primary Entry | Bundled Assets |
+|---------|---------|---------------|----------------|
+| `@touchspin/core` | Framework-agnostic logic + renderer contracts | `dist/index.js` (ESM) | Declarations only |
+| `@touchspin/jquery-plugin` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap{3,4,5}.umd.js`, legacy aliases |
+| `@touchspin/renderer-bootstrap3` | Bootstrap 3 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap3.umd.js`, `dist/touchspin-bootstrap3.css` |
+| `@touchspin/renderer-bootstrap4` | Bootstrap 4 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap4.umd.js`, `dist/touchspin-bootstrap4.css` |
+| `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap5.umd.js`, `dist/touchspin-bootstrap5.css` |
+| `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/umd/touchspin-tailwind.umd.js`, `dist/touchspin-tailwind.css` |
+| `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/umd/touchspin-vanilla.umd.js`, `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
+| `@touchspin/web-component` | `<touchspin-input>` custom element | `dist/index.js` (ESM) | Declarations only |
 
----
+All packages declare `"type": "module"`, target Node 18+, and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
-## Key Features
+## Quick Install
 
-- **Modern Renderer Architecture** - Modular, framework-agnostic core with pluggable renderers
-- **Web Component** - Standards-based `<touchspin-input>` custom element
-- **Mobile-First Design** - Designed for touch interfaces and mobile devices
-- **Bootstrap 3/4/5 Support** - Dedicated renderers for each Bootstrap version
-- **Framework Agnostic** - Works with or without jQuery, ready for React/Vue/Angular
-- **Standard HTML Controls** - Uses semantic button and input elements
-- **RTL Language Support** - Full right-to-left language compatibility
-- **Lightweight & Fast** - Minimal footprint with targeted builds
-- **Customizable** - Multiple configuration options and renderer flexibility
-- **Decimal Precision** - Support for floating-point numbers
-- **Booster Mode** - Accelerated value changes for large ranges
-- **Event System** - Programmatic event handling with blur-based sanitization
-- **Vertical Layout** - Alternative button arrangement
-- **ARIA Support** - Automatic accessibility attributes for screen readers
-
----
-
-## Quick Start
-
-### Package Manager Installation
-
-#### For jQuery Users (Backward Compatible)
+### Modern (ESM) projects
 
 ```bash
-# yarn
-yarn add bootstrap-touchspin
-
-# npm
-npm install bootstrap-touchspin
+npm install @touchspin/core @touchspin/renderer-bootstrap5
 ```
 
-#### For Modern JavaScript/TypeScript Projects
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+import '@touchspin/renderer-bootstrap5/css';
 
-```bash
-# Core package (framework-agnostic)
-npm install @touchspin/core
-
-# jQuery wrapper (ESM, if using jQuery)
-npm install @touchspin/jquery-plugin
-
-# Web Component
-npm install @touchspin/web-component
-
-# Specific renderers (as needed)
-npm install @touchspin/renderer-bootstrap5
-npm install @touchspin/renderer-tailwind
-```
-
-### UMD Builds (for jQuery)
-
-Choose the build that matches your Bootstrap version:
-
-```html
-<!-- Bootstrap 3 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
-<script src="dist/jquery.bootstrap-touchspin-bs3.js"></script>
-
-<!-- Bootstrap 4 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
-<script src="dist/jquery.bootstrap-touchspin-bs4.js"></script>
-
-<!-- Bootstrap 5 -->
-<link rel="stylesheet" href="dist/jquery.bootstrap-touchspin.css">
-<script src="dist/jquery.bootstrap-touchspin-bs5.js"></script>
-```
-
-### Basic Usage (jQuery)
-
-```html
-<input type="number" id="quantity" name="quantity" value="5">
-
-<script>
-  $('#quantity').TouchSpin({
-    min: 1,
-    max: 100,
-    step: 1,
-    boostat: 5,
-    maxboostedstep: 10,
-    postfix: '%'
-  });
-</script>
-```
-
-### Web Component Usage
-
-```html
-<script type="module" src="node_modules/@touchspin/web-component/dist/index.js"></script>
-<link rel="stylesheet" href="node_modules/@touchspin/vanilla-renderer/dist/touchspin-vanilla.css">
-
-<touchspin-input min="0" max="100" value="50"></touchspin-input>
-```
-
-### Initialization Options
-
-TouchSpin ships with multiple delivery formats so you can pick the one that matches your stack. Each option below renders the same spinner; only the loading mechanism differs.
-
-#### 1. Global (IIFE) build with embedded renderers
-
-```html
-<!-- Include the bundled CSS/JS pair from the CDN or your build output -->
-<link rel="stylesheet" href="https://unpkg.com/@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css">
-<script src="https://unpkg.com/touchspin/dist/touchspin-bootstrap5.umd.js"></script>
-
-<input id="quantity" type="number" value="5">
-
-<script>
-  const spinner = TouchSpin(document.getElementById('quantity'), {
-    renderer: 'bootstrap5',
-    min: 0,
-    max: 100,
-    step: 1
-  });
-</script>
-```
-
-#### 2. ES Modules (native browsers or Vite/Next/Rollup)
-
-```html
-<script type="module">
-  import { TouchSpin } from '@touchspin/core';
-  import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-  import '@touchspin/renderer-bootstrap5/dist/touchspin-bootstrap5.css';
-
-  const spinner = TouchSpin(document.querySelector('#quantity'), {
-    renderer: Bootstrap5Renderer,
-    step: 0.5
-  });
-</script>
-```
-
-#### 3. Classic jQuery plugin wrapper
-
-```html
-<link rel="stylesheet" href="https://unpkg.com/touchspin/dist/jquery.bootstrap-touchspin.css">
-<script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/touchspin/dist/jquery.bootstrap-touchspin-bs5.js"></script>
-
-<input id="quantity" type="number" value="5">
-
-<script>
-  $('#quantity').TouchSpin({
-    renderer: 'bootstrap5',
-    min: 0,
-    max: 100,
-    step: 1
-  });
-</script>
-```
-
----
-
-## Configuration
-
-### Data Attributes
-
-TouchSpin reads configuration from `data-bts-*` attributes using kebab-case naming:
-
-| Option | Data Attribute |
-|--------|---------------|
-| `min` | `data-bts-min` |
-| `max` | `data-bts-max` |
-| `step` | `data-bts-step` |
-| `decimals` | `data-bts-decimals` |
-| `initval` | `data-bts-init-val` |
-| `replacementval` | `data-bts-replacement-val` |
-| `mousewheel` | `data-bts-mouse-wheel` |
-| `verticalbuttons` | `data-bts-vertical-buttons` |
-| `forcestepdivisibility` | `data-bts-force-step-divisibility` |
-| `stepinterval` | `data-bts-step-interval` |
-| `maxboostedstep` | `data-bts-max-boosted-step` |
-| `prefix` | `data-bts-prefix` |
-| `postfix` | `data-bts-postfix` |
-
-Example:
-```html
-<input type="number"
-       data-bts-min="0"
-       data-bts-max="100"
-       data-bts-step="5"
-       data-bts-mouse-wheel="true"
-       data-bts-vertical-buttons="false"
-       data-bts-force-step-divisibility="round">
-```
-
-### Callback Functions
-
-TouchSpin provides two formatting callbacks that **must always be used together**:
-
-- `callback_before_calculation`: Parses formatted display values back to numeric (e.g., "$1,234" → "1234")
-- `callback_after_calculation`: Formats numeric values for display (e.g., "1234" → "$1,234")
-
-**⚠️ Important**: These callbacks work as a pair. Using only one will trigger a console warning and may cause unexpected behavior. The before callback removes formatting, the after callback adds it back.
-
-Example:
-```javascript
-$('#price').TouchSpin({
-  // Both callbacks must be defined together
-  callback_before_calculation: function(val) {
-    // Parse: Remove $ and commas
-    return String(val).replace(/[$,]/g, '');
-  },
-  callback_after_calculation: function(val) {
-    // Format: Add $ and commas
-    return '$' + Number(val).toLocaleString();
-  }
+const input = document.querySelector('#quantity');
+TouchSpin(input, {
+  renderer: Bootstrap5Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
 });
 ```
 
----
+### jQuery integration
 
-## Development
+```bash
+npm install @touchspin/jquery-plugin @touchspin/renderer-bootstrap5 jquery
+```
 
-For contributors and developers working on TouchSpin:
+```ts
+import { installWithRenderer } from '@touchspin/jquery-plugin';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+import '@touchspin/renderer-bootstrap5/css';
+import 'jquery';
 
-- **[DEVELOPER_QUICK_DOCS.md](DEVELOPER_QUICK_DOCS.md)** — Quick start guide with essential commands and workflow tips
-- Dual development servers: `yarn dev` (port 8866, stable) or `yarn dev:hot` (port 3000, hot-reload)
-- PHPStorm integration configured for port 8866 by default
+declare const jQuery: typeof import('jquery');
+installWithRenderer(Bootstrap5Renderer, { jQuery });
 
-## Monorepo Documentation
+jQuery('#quantity').TouchSpin({
+  min: 0,
+  max: 100,
+  step: 1,
+});
+```
 
-- [docs/index.md](docs/index.md) — architecture, migration, and extension guides
-- [ARCHITECTURE.md](ARCHITECTURE.md) — high-level summary of the modern modular build
-- [BUILDING.md](BUILDING.md) — running `yarn build`, `yarn build:test`, and workspace builds
-- [TESTING.md](TESTING.md) — Playwright, coverage, and guard scripts
-- [DEVELOPER_QUICK_DOCS.md](DEVELOPER_QUICK_DOCS.md) — quick workflow reference for contributors
+### Web Component
 
----
+```bash
+npm install @touchspin/web-component @touchspin/renderer-vanilla
+```
 
-## Renderer Architecture
+```ts
+import '@touchspin/web-component';
+import '@touchspin/renderer-vanilla/css';
+```
 
-TouchSpin now uses a modern renderer-based architecture that separates core functionality from UI presentation. This enables framework-agnostic usage and easy customization.
+```html
+<touchspin-input min="0" max="100" value="42"></touchspin-input>
+```
 
-### Available Renderers
+## CDN Builds
 
-| Renderer | Purpose | Import Path |
-|---|---|---|
-| **Bootstrap5Renderer** | Bootstrap 5 input groups | `@touchspin/renderer-bootstrap5` |
-| **Bootstrap4Renderer** | Bootstrap 4 input groups | `@touchspin/renderer-bootstrap4` |
-| **Bootstrap3Renderer** | Bootstrap 3 input groups | `@touchspin/renderer-bootstrap3` |
-| **TailwindRenderer** | Tailwind CSS styling | `@touchspin/renderer-tailwind` |
-| **VanillaRenderer** | Framework-agnostic styling | `@touchspin/renderer-vanilla` |
-| **RawRenderer** | No UI elements (keyboard/wheel only) | `@touchspin/core` |
+UMD bundles are emitted under `dist/umd/` with predictable names for each package.
 
+```html
+<!-- jsDelivr (pin) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin@5.0.0/dist/umd/touchspin-bootstrap5.umd.js"></script>
 
----
+<!-- unpkg (latest) -->
+<script src="https://unpkg.com/@touchspin/renderer-bootstrap5/dist/umd/touchspin-bootstrap5.umd.js"></script>
+```
 
-## Future Development
+For native ESM in the browser, supply an import map:
 
-This project is now stable with the v5.0.0 release. We are continuously working to improve TouchSpin. Here are some areas for future development:
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0/dist/index.js",
+      "@touchspin/renderer-bootstrap5": "https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/index.js"
+    }
+  }
+</script>
+```
 
--   **Framework Wrappers:** Create official wrappers for popular frameworks like React, Vue, and Angular to provide more idiomatic usage.
--   **Enhanced Documentation:** Continuously improve documentation with more examples, use cases, and detailed guides.
--   **Testing Expansion:** Expand test coverage, including more visual regression tests and cross-browser compatibility checks.
--   **Performance Optimizations:** Further profile and optimize the performance of the core and renderers for even faster and smoother operation.
--   **New Renderers:** Explore adding support for other CSS frameworks or design systems.
+## Renderer Selection
 
----
+- **Bootstrap projects**: pick the renderer matching your Bootstrap major and include Bootstrap + Popper according to Bootstrap’s own peer dependencies.
+- **Headless/vanilla apps**: use `@touchspin/renderer-vanilla` for a lightweight, framework-free theme.
+- **Utility-first CSS**: `@touchspin/renderer-tailwind` ships a Tailwind-flavoured stylesheet you can scope or customize.
 
-## AI-Assisted Development
+All renderers attach `data-touchspin-injected` attributes so the core can wire events without relying on framework-specific selectors.
 
-This project uses AI agents to assist in development, particularly in writing tests and documentation. For more information, see the `AGENTS.md` and `CLAUDE.md` files.
+## Release Channels & Dist-Tags
 
----
+| Tag | Intended audience | Notes |
+|-----|-------------------|-------|
+| `alpha` | packaging in flux | Current default while we stabilize exports and docs. |
+| `beta` | freeze candidate | Set once packaging + docs are finalized. |
+| `next` | rolling canary | Use for CI smoke tests and early adopters. |
+| `latest` | production | Published only after graduating from beta. |
 
-## Version History
+Publishing is orchestrated through Changesets and the GitHub Actions workflow in `.github/workflows/release.yml`. See [docs/releasing.md](docs/releasing.md) for the release playbook, dist-tag promotion policy, and provenance requirements.
 
-**Latest: v5.0.0**
+## Migration from v4
 
-See [CHANGELOG.md](CHANGELOG.md) for complete version history.
+Moving from the legacy `bootstrap-touchspin@4.x` package? Start with the concise [MIGRATION.md](MIGRATION.md) and consult deeper architectural notes in `docs/architecture/migration-guide.md` if you need step-by-step coverage of custom renderers or event differences.
+
+## Contributing & Support
+
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) for workspace guidelines, required build steps, and Changesets usage.
+- Packaging or security concerns? Follow the disclosure process in [SECURITY.md](SECURITY.md).
+- Dev server, scripts, and architecture references remain in the `/docs` tree for contributors—see [docs/index.md](docs/index.md) for a full sitemap.
+
+TouchSpin is MIT-licensed. Every published package carries its own `LICENSE` file generated from the project’s root license.
