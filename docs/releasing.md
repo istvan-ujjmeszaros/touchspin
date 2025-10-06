@@ -4,7 +4,7 @@ This guide covers the packaging-only release flow for the TouchSpin v5 workspace
 
 ## Prerequisites
 
-- Node 18/20/22 and Yarn 4 (Berry) with PnP enabled.
+- Node 22 (maintainer runtime) and Yarn 4 (Berry) with PnP enabled.
 - Valid npm token with 2FA enabled and provenance support (`npm config set provenance true`).
 - Maintainers must run `yarn install` before packaging to ensure the PnP virtual filesystem is up to date.
 
@@ -63,4 +63,3 @@ Document the canary version in the PR description and ping downstream integrator
 | `command not found: sass` during `build` | Ensure `yarn install` has run; renderer packages declare `sass` in `devDependencies` and rely on PnP-provided binaries. |
 | Bundled artifacts missing from npm tarball | Verify the package `files` array includes `dist/`, `dist/umd/`, CSS files, `LICENSE`, and `package.json`. |
 | `changesets/action` fails with missing token | Add `NPM_TOKEN` and `GITHUB_TOKEN` secrets in repository settings; the workflow requires `id-token: write` for provenance. |
-

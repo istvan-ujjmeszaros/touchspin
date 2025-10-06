@@ -13,7 +13,7 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 - **Types:** `dist/index.d.ts`, `dist/renderer.d.ts`.
 - **Files:** `dist/`, `README.md`, `LICENSE`, `package.json`.
 - **Peer deps:** none.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 - **Side effects:** `false`.
 
 ### @touchspin/jquery-plugin
@@ -23,7 +23,7 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 - **Types:** `dist/index.d.ts`.
 - **Files:** `dist/`, `README.md`, `LICENSE`, `package.json`.
 - **Peer deps:** `jquery >=1.7`.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 - **Side effects:** `./dist/**/*.js` to keep UMD bundles.
 - **Bundles:** `dist/umd/touchspin-bootstrap{3,4,5}.umd.js` plus legacy aliases `dist/jquery-touchspin-bs*.js` for backward compatibility.
 
@@ -36,7 +36,7 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
   - B3: `bootstrap >=3.4.0 <4`, optional `jquery >=1.9.0`.
   - B4: `bootstrap >=4.6.0 <5`, optional `jquery >=3.5.0`, optional `popper.js >=1.16.1`.
   - B5: `bootstrap >=5.3.0 <6`, optional `@popperjs/core >=2.11.8`.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 - **Side effects:** CSS/SCSS globs only.
 
 ### @touchspin/renderer-tailwind
@@ -44,13 +44,13 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 - **UMD:** `dist/umd/touchspin-tailwind.umd.js`.
 - **Files:** `dist/`, `dist/umd/`, `README.md`, `LICENSE`, `package.json`.
 - **Peer deps:** optional `tailwindcss >=3.0.0`.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 
 ### @touchspin/renderer-vanilla
 - **Entries:** `dist/index.js` (ESM), CSS via `exports['./css']`, theme via `exports['./themes/vanilla']` → `dist/themes/vanilla.css`.
 - **UMD:** `dist/umd/touchspin-vanilla.umd.js`.
 - **Files:** `dist/`, `dist/themes/`, `dist/umd/`, `README.md`, `LICENSE`, `package.json`.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 
 ### @touchspin/web-component
 - **Purpose:** `<touchspin-input>` custom element.
@@ -58,7 +58,7 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 - **Exports:** `.`, `./package.json`.
 - **Files:** `dist/`, `README.md`, `LICENSE`, `package.json`.
 - **Dependencies:** `@touchspin/core`, `@touchspin/renderer-vanilla`.
-- **Engines:** `node >=18.17.0`.
+- **Engines:** `node >=22.0.0`.
 
 ## Current Gaps
 
@@ -130,4 +130,3 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 1. Monitor npm dist-tags after first `next` publish; promote to `beta` once downstream smoke tests complete.
 2. Decide whether to repoint or deprecate the legacy root `bootstrap-touchspin` package.
 3. Capture SRI hash generation in release checklist (optional hardening).
-

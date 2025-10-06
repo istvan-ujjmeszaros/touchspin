@@ -1,12 +1,8 @@
-# Security Policy
+# Security
 
-- **Supported versions:** TouchSpin v5 packages target actively supported Node LTS releases (18.x, 20.x, 22.x) and modern evergreen browsers. Bootstrap renderer support follows the respective Bootstrap major version policy.
-- **Reporting vulnerabilities:** Email `security@virtuosoft.eu` with a detailed report or open a private advisory via GitHub Security Advisories. Please include reproduction steps and affected package names.
-- **Response targets:**
-  - Initial acknowledgement within 3 business days.
-  - Triage and remediation plan within 7 business days.
-  - Coordinated disclosure timing will be agreed on a case-by-case basis; we aim to publish fixes and advisories together.
-- **Provenance:** Official releases are published via GitHub Actions using `npm publish --provenance` with 2FA enforced. Verify tarballs by checking the provenance record in the npm UI.
+- **Supported runtime:** TouchSpin is developed and released on Node.js 22 with Yarn 4 (Berry). Earlier Node versions may work but are best-effort.
+- **How to report:** Use [GitHub Security Advisories](../../security/advisories/new) from this repository’s *Security* tab to open a private report. Provide reproduction steps, affected package names, and any mitigation ideas.
+- **Response expectations:** This project is maintained on a best-effort basis—there are no guaranteed timelines. You will receive replies through the advisory thread when the maintainer is available.
+- **Release provenance:** Official npm publishes run from GitHub Actions with `npm publish --provenance` so consumers can verify artifacts via npm’s attestation view.
 
-Do not disclose vulnerabilities publicly until we have confirmed a fix or agreed on a timeline.
-
+Please avoid posting potential vulnerabilities in public issues or discussions until we have had a chance to review them privately.

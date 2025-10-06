@@ -17,7 +17,7 @@ TouchSpin is a modern rewrite of the original “Bootstrap TouchSpin” spinner.
 | `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/umd/touchspin-vanilla.umd.js`, `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
 | `@touchspin/web-component` | `<touchspin-input>` custom element | `dist/index.js` (ESM) | Declarations only |
 
-All packages declare `"type": "module"`, target Node 18+, and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
+All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
 ## Quick Install
 
