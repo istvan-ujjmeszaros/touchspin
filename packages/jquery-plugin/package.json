@@ -7,11 +7,14 @@
   "sideEffects": [
     "./dist/**/*.js"
   ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -37,7 +40,7 @@
     "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5 && yarn run build:legacy-aliases",
     "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind run build",
     "build:deps:test": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind run build:test",
-    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2018 --tsconfig tsconfig.build.json",
+    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:umd-bs3": "tsup --entry.touchspin-bootstrap3=src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap3.js",
@@ -60,7 +63,7 @@
     "types": "./dist/index.d.ts"
   },
   "peerDependencies": {
-    "jquery": ">=1.7"
+    "jquery": ">=1.9.0"
   },
   "peerDependenciesMeta": {
     "jquery": {
@@ -68,7 +71,7 @@
     }
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=18.17.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

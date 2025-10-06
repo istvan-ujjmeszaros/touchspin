@@ -71,7 +71,7 @@
     "@touchspin/core": "workspace:*"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=18.17.0"
   },
   "repository": {
     "type": "git",
