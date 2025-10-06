@@ -12,11 +12,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "scripts": {
     "prepack": "yarn build",
@@ -32,13 +35,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "types": "./dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
+    "types": "./dist/index.d.ts"
   },
   "keywords": [
     "touchspin",
@@ -53,6 +50,9 @@
   "dependencies": {
     "@touchspin/core": "workspace:*",
     "@touchspin/renderer-vanilla": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

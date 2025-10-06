@@ -17,7 +17,7 @@ jobs:
           - "@touchspin/renderer-bootstrap4"
           - "@touchspin/renderer-bootstrap5"
           - "@touchspin/renderer-tailwind"
-          - "@touchspin/vanilla-renderer"
+          - "@touchspin/renderer-vanilla"
           - "@touchspin/web-component"
           - "@touchspin/jquery-plugin"
     steps:
@@ -61,4 +61,3 @@ jobs:
           echo "Validating package in directory: $PKG_DIR"
           cd "$PKG_DIR"
           npm pack --dry-run
-

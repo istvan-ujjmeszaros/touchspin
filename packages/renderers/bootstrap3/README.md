@@ -1,57 +1,47 @@
 # @touchspin/renderer-bootstrap3
 
+Bootstrap 3 renderer for TouchSpin. Ships compiled CSS and a UMD bundle for older environments alongside the ESM build.
 
-
-Bootstrap 3 renderer for TouchSpin.
-
-This package provides a renderer that creates a Bootstrap 3-compatible UI for the TouchSpin component. It uses `input-group-btn` and `input-group-addon` for the layout.
-
-📚 See [`docs/architecture/renderer-guide.md`](../../../docs/architecture/renderer-guide.md) for renderer contracts and extension tips.
-
-## Installation
-
-### Alpha Version from NPM
+## Install
 
 ```bash
-npm install @touchspin/renderer-bootstrap3
+npm install @touchspin/renderer-bootstrap3 bootstrap@^3.4 jquery @touchspin/core
 ```
 
-## Usage
+## Usage (ESM)
+
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap3Renderer from '@touchspin/renderer-bootstrap3';
+import '@touchspin/renderer-bootstrap3/css';
+
+TouchSpin(document.querySelector('#quantity'), {
+  renderer: Bootstrap3Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
+  buttonup_class: 'btn btn-default',
+  buttondown_class: 'btn btn-default'
+});
+```
+
+## CDN / UMD
 
 ```html
-<input id="my-spinner" type="number" value="50">
-
-<script type="module">
-  import { TouchSpin } from '@touchspin/core';
-  import Bootstrap3Renderer from '@touchspin/renderer-bootstrap3';
-
-  const input = document.getElementById('my-spinner');
-  TouchSpin(input, {
-    renderer: Bootstrap3Renderer,
-    min: 0,
-    max: 100,
-    step: 5,
-    buttonup_class: 'btn btn-primary',
-    buttondown_class: 'btn btn-primary'
-  });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap3@5.0.0/dist/touchspin-bootstrap3.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap3@5.0.0/dist/umd/touchspin-bootstrap3.umd.js"></script>
 ```
 
-## Features
+## Exports & Files
 
--   Uses `input-group-btn` and `input-group-addon` for Bootstrap 3 compatibility.
--   Supports all core TouchSpin features.
--   Can be used with the jQuery plugin or the core API.
+- ESM entry: `@touchspin/renderer-bootstrap3`
+- CSS shortcut: `@touchspin/renderer-bootstrap3/css`
+- UMD bundle: `dist/umd/touchspin-bootstrap3.umd.js`
+- Manifest: `@touchspin/renderer-bootstrap3/package.json`
 
-## CDN (UMD)
+## Metadata
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/5.0.0/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap3@5.0.0-alpha.1/dist/index.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap3@5.0.0-alpha.1/dist/touchspin-bootstrap3.css" />
-```
+- Peer dependencies: `bootstrap@>=3.4.0 <4`, optional `jquery@>=1.9.0`
+- Engines: Node 18.17+
+- npm tarballs include CSS, UMD, and `LICENSE`
 
-## Notes
-- CSS is emitted as `dist/touchspin-bootstrap3.css`.
-- DOM event wiring uses `data-touchspin-injected` attributes.
- - This renderer extends `AbstractRenderer` and implements the core `Renderer` contract.

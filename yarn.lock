@@ -1364,6 +1364,12 @@ __metadata:
     sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    bootstrap: ">=3.4.0 <4"
+    jquery: ">=1.9.0"
+  peerDependenciesMeta:
+    jquery:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -1378,6 +1384,15 @@ __metadata:
     sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    bootstrap: ">=4.6.0 <5"
+    jquery: ">=3.5.0"
+    popper.js: ">=1.16.1"
+  peerDependenciesMeta:
+    jquery:
+      optional: true
+    popper.js:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -1392,6 +1407,12 @@ __metadata:
     sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    "@popperjs/core": ">=2.11.8"
+    bootstrap: ">=5.3.0 <6"
+  peerDependenciesMeta:
+    "@popperjs/core":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -1402,9 +1423,15 @@ __metadata:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     "@types/node": "npm:^22.7.4"
+    sass: "npm:^1.77.8"
     tailwindcss: "npm:3.4.15"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    tailwindcss: ">=3.0.0"
+  peerDependenciesMeta:
+    tailwindcss:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -1415,6 +1442,7 @@ __metadata:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
     "@types/node": "npm:^22.7.4"
+    sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   languageName: unknown

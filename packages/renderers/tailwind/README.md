@@ -1,56 +1,48 @@
 # @touchspin/renderer-tailwind
 
+Tailwind-themed renderer for TouchSpin. Outputs an ESM build, CSS, and a UMD bundle for non-bundler environments.
 
-
-Tailwind CSS renderer for TouchSpin.
-
-This package provides a renderer that creates a Tailwind CSS-compatible UI for the TouchSpin component.
-
-📚 See [`docs/architecture/renderer-guide.md`](../../../docs/architecture/renderer-guide.md) for renderer contracts and extension tips.
-
-## Installation
-
-### Alpha Version from NPM
+## Install
 
 ```bash
-npm install @touchspin/renderer-tailwind
+npm install @touchspin/renderer-tailwind @touchspin/core
+# Optional: npm install tailwindcss
 ```
 
-## Usage
+## Usage (ESM)
+
+```ts
+import { TouchSpin } from '@touchspin/core';
+import TailwindRenderer from '@touchspin/renderer-tailwind';
+import '@touchspin/renderer-tailwind/css';
+
+TouchSpin(document.querySelector('#quantity'), {
+  renderer: TailwindRenderer,
+  min: 0,
+  max: 100,
+  step: 1,
+});
+```
+
+## CDN / UMD
 
 ```html
-<input id="my-spinner" type="number" value="50">
-
-<script type="module">
-  import { TouchSpin } from '@touchspin/core';
-  import TailwindRenderer from '@touchspin/renderer-tailwind';
-
-  const input = document.getElementById('my-spinner');
-  TouchSpin(input, {
-    renderer: TailwindRenderer,
-    min: 0,
-    max: 100,
-    step: 5
-  });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0/dist/touchspin-tailwind.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0/dist/umd/touchspin-tailwind.umd.js"></script>
 ```
 
-## Features
+The UMD build exposes `TouchSpinTailwind` on `window`.
 
--   Uses Tailwind CSS utility classes for styling.
--   Supports all core TouchSpin features.
--   Can be used with the jQuery plugin or the core API.
+## Exports & Files
 
-## CDN (UMD)
+- ESM entry: `@touchspin/renderer-tailwind`
+- CSS shortcut: `@touchspin/renderer-tailwind/css`
+- UMD bundle: `dist/umd/touchspin-tailwind.umd.js`
+- Package manifest: `@touchspin/renderer-tailwind/package.json`
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/5.0.0/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0-alpha.1/dist/index.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-tailwind@5.0.0-alpha.1/dist/touchspin-tailwind.css" />
-```
+## Metadata
 
-## Notes
-- CSS is emitted as `dist/touchspin-tailwind.css`.
-- DOM event wiring uses `data-touchspin-injected` attributes.
-- See example: `/packages/renderers/tailwind/example/index.html`.
- - This renderer extends `AbstractRenderer` and implements the core `Renderer` contract.
+- Optional peer: `tailwindcss@>=3.0.0` for design token alignment (not required at runtime)
+- Engines: Node 18.17+
+- npm tarballs include the CSS, UMD bundle, and license
+

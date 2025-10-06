@@ -1,13 +1,13 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import fs from 'node:fs';
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'node:url';
-import path from 'node:path';
-import { createHash } from 'node:crypto';
-import { EOL } from 'node:os';
-import esmModule, { createRequire, isBuiltin } from 'node:module';
-import assert from 'node:assert';
+import assert from 'assert';
+import { createHash } from 'crypto';
+import fs from 'fs';
+import esmModule, { createRequire, isBuiltin } from 'module';
+import { EOL } from 'os';
+import path from 'path';
+import { fileURLToPath, pathToFileURL, URL as URL$1 } from 'url';
 
 const SAFE_TIME = 456789e3;
 
@@ -273,8 +273,8 @@ async function copyFileViaIndex(
   );
   let AtomicBehavior;
   ((AtomicBehavior2) => {
-    AtomicBehavior2[(AtomicBehavior2.Lock = 0)] = 'Lock';
-    AtomicBehavior2[(AtomicBehavior2.Rename = 1)] = 'Rename';
+    AtomicBehavior2[(AtomicBehavior2['Lock'] = 0)] = 'Lock';
+    AtomicBehavior2[(AtomicBehavior2['Rename'] = 1)] = 'Rename';
   })(AtomicBehavior || (AtomicBehavior = {}));
   let atomicBehavior = 1 /* Rename */;
   let indexStat = await maybeLStat(destinationFs, indexPath);
@@ -346,13 +346,13 @@ async function copyFileViaIndex(
 }
 async function copyFileDirect(
   prelayout,
-  _postlayout,
+  postlayout,
   destinationFs,
   destination,
   destinationStat,
   sourceFs,
   source,
-  _sourceStat,
+  sourceStat,
   opts
 ) {
   if (destinationStat !== null) {
@@ -409,13 +409,13 @@ async function copyFile(
 }
 async function copySymlink(
   prelayout,
-  _postlayout,
+  postlayout,
   destinationFs,
   destination,
   destinationStat,
   sourceFs,
   source,
-  _sourceStat,
+  sourceStat,
   opts
 ) {
   if (destinationStat !== null) {
@@ -1774,8 +1774,7 @@ async function load$1(urlString, context, nextLoad) {
 const ArrayIsArray = Array.isArray;
 const JSONStringify = JSON.stringify;
 const ObjectGetOwnPropertyNames = Object.getOwnPropertyNames;
-const ObjectPrototypeHasOwnProperty = (obj, prop) =>
-  Object.hasOwn(obj, prop);
+const ObjectPrototypeHasOwnProperty = (obj, prop) => Object.hasOwn(obj, prop);
 const RegExpPrototypeExec = (obj, string) => RegExp.prototype.exec.call(obj, string);
 const RegExpPrototypeSymbolReplace = (obj, ...rest) =>
   RegExp.prototype[Symbol.replace].apply(obj, rest);
@@ -1984,7 +1983,7 @@ function resolvePackageTargetString(
   base,
   pattern,
   internal,
-  _conditions
+  conditions
 ) {
   if (subpath !== '' && !pattern && target[target.length - 1] !== '/')
     throwInvalidPackageTarget(match, target, packageJSONUrl, internal, base);

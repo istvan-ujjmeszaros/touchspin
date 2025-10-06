@@ -15,32 +15,29 @@
       "import": "./dist/index.js"
     },
     "./css": "./dist/touchspin-vanilla.css",
-    "./themes/vanilla": "./src/themes/vanilla.css"
+    "./themes/vanilla": "./dist/themes/vanilla.css",
+    "./package.json": "./package.json"
   },
   "files": [
-    "src/",
     "dist/",
+    "dist/themes/",
+    "dist/umd/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public",
-    "types": "./dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      },
-      "./css": "./dist/touchspin-vanilla.css",
-      "./themes/vanilla": "./src/themes/vanilla.css"
-    }
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
-    "build": "rm -rf dist && yarn run build:types && yarn run build:js",
-    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=index.css",
+    "build": "rm -rf dist && mkdir -p dist/themes dist/umd && yarn run build:types && yarn run build:css && yarn run build:js && yarn run build:umd",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-vanilla.css",
+    "build:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --no-source-map && cp dist/touchspin-vanilla.css dist/themes/vanilla.css",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:umd": "tsup --entry.touchspin-vanilla=src/touchspin-vanilla-complete.ts --format iife --global-name TouchSpinVanilla --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/touchspin-vanilla.global.js",
     "build:test": "cp src/index.test.ts src/index.ts.bak && mv src/index.ts src/index.ts.orig && mv src/index.test.ts src/index.ts && tsc -p tsconfig.testbuild.json && mv src/index.ts src/index.test.ts && mv src/index.ts.orig src/index.ts && rm -f src/index.ts.bak && mkdir -p ./devdist/themes && cp ./src/themes/vanilla.css ./devdist/themes/ && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=VanillaRenderer.js css=themes/vanilla.css",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
@@ -54,6 +51,7 @@
   "devDependencies": {
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
+    "sass": "^1.77.8",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"
   },
@@ -71,6 +69,9 @@
   "license": "MIT",
   "dependencies": {
     "@touchspin/core": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "repository": {
     "type": "git",

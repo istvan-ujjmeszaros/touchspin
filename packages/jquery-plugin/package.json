@@ -4,17 +4,22 @@
   "type": "module",
   "description": "jQuery wrapper for TouchSpin core (delegates to core, preserves API/events)",
   "license": "MIT",
-  "sideEffects": false,
-  "types": "./types/index.d.ts",
+  "sideEffects": [
+    "./dist/**/*.js"
+  ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "author": "TouchSpin Contributors",
   "repository": {
@@ -29,15 +34,16 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../scripts/static-server.mjs",
-    "build": "yarn run build:deps && rm -rf dist && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5",
+    "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:js && yarn run build:iife && yarn run build:umd-bs3 && yarn run build:umd-bs4 && yarn run build:umd-bs5 && yarn run build:legacy-aliases",
     "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind run build",
     "build:deps:test": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind run build:test",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:iife": "tsup src/index.ts --format iife --global-name TouchSpinJQ --sourcemap --target es2018 --tsconfig tsconfig.build.json",
-    "build:umd-bs3": "tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
-    "build:umd-bs4": "tsup src/jquery-touchspin-bs4.ts --format iife --global-name TouchSpinBS4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
-    "build:umd-bs5": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist --external=none",
+    "build:umd-bs3": "tsup --entry.touchspin-bootstrap3=src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap3.js",
+    "build:umd-bs4": "tsup --entry.touchspin-bootstrap4=src/jquery-touchspin-bs4.ts --format iife --global-name TouchSpinBS4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap4.js",
+    "build:umd-bs5": "tsup --entry.touchspin-bootstrap5=src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap5.js",
+    "build:legacy-aliases": "node ../../scripts/create-umd-alias.mjs --source dist/umd/touchspin-bootstrap3.umd.js --target dist/jquery-touchspin-bs3.js && node ../../scripts/create-umd-alias.mjs --source dist/umd/touchspin-bootstrap4.umd.js --target dist/jquery-touchspin-bs4.js && node ../../scripts/create-umd-alias.mjs --source dist/umd/touchspin-bootstrap5.umd.js --target dist/jquery-touchspin-bs5.js",
     "build:test": "yarn run build:deps:test && tsc -p tsconfig.testbuild.json && tsup src/jquery-touchspin-bs3.ts --format iife --global-name TouchSpinBS3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir devdist/umd --external=none && tsup src/jquery-touchspin-bs4.ts --format iife --global-name TouchSpinBS4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir devdist/umd --external=none && tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir devdist/umd --external=none && node ../../scripts/extract-framework-assets.mjs --renderer jquery && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js umdBs3Entry=umd/jquery-touchspin-bs3.js umdBs4Entry=umd/jquery-touchspin-bs4.js umdBs5Entry=umd/jquery-touchspin-bs5.js",
     "watch": "tsup src/index.ts --format esm --watch --sourcemap --target es2018 --tsconfig tsconfig.build.json",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
@@ -51,13 +57,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "types": "./dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
+    "types": "./dist/index.d.ts"
   },
   "peerDependencies": {
     "jquery": ">=1.7"
@@ -66,6 +66,9 @@
     "jquery": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

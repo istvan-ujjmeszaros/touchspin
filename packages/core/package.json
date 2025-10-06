@@ -15,22 +15,7 @@
       "types": "./dist/renderer.d.ts",
       "import": "./dist/renderer.js"
     },
-    "./test-helpers": {
-      "types": "./tests/__shared__/helpers/index.ts",
-      "import": "./tests/__shared__/helpers/index.ts"
-    },
-    "./test-helpers/*": {
-      "types": "./tests/__shared__/helpers/*",
-      "import": "./tests/__shared__/helpers/*"
-    },
-    "./test-helpers/renderers": {
-      "types": "./tests/__shared__/helpers/renderers/index.ts",
-      "import": "./tests/__shared__/helpers/renderers/index.ts"
-    },
-    "./tests/__shared__/fixtures": {
-      "types": "./tests/__shared__/fixtures/index.ts",
-      "import": "./tests/__shared__/fixtures/index.ts"
-    }
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -41,21 +26,13 @@
   },
   "files": [
     "dist/",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public",
-    "types": "./dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      },
-      "./renderer": {
-        "types": "./dist/renderer.d.ts",
-        "import": "./dist/renderer.js"
-      }
-    }
+    "types": "./dist/index.d.ts"
   },
   "scripts": {
     "prepack": "yarn build",
@@ -77,6 +54,9 @@
     "@types/node": "^22.7.4",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "author": "TouchSpin Contributors",
   "repository": {

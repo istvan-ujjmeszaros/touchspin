@@ -1,58 +1,53 @@
 # @touchspin/renderer-bootstrap5
 
+Bootstrap 5 renderer for TouchSpin. Ships ESM entry points, a CSS stylesheet, and a UMD bundle for CDN consumption.
 
-
-Bootstrap 5 renderer for TouchSpin.
-
-This package provides a renderer that creates a Bootstrap 5-compatible UI for the TouchSpin component.
-
-📚 See [`docs/architecture/renderer-guide.md`](../../../docs/architecture/renderer-guide.md) for renderer contracts and extension tips.
-
-## Installation
-
-### Alpha Version from NPM
+## Install
 
 ```bash
-npm install @touchspin/renderer-bootstrap5
+npm install @touchspin/renderer-bootstrap5 bootstrap @touchspin/core
 ```
 
-## Usage
+Bootstrap 5 requires `@popperjs/core` for dropdown positioning; install it if you use tooltips or dropdowns alongside TouchSpin.
+
+## Usage (ESM)
+
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
+import '@touchspin/renderer-bootstrap5/css';
+
+TouchSpin(document.querySelector('#quantity'), {
+  renderer: Bootstrap5Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
+  buttondown_class: 'btn btn-outline-secondary',
+  buttonup_class: 'btn btn-outline-secondary'
+});
+```
+
+## CDN / UMD
 
 ```html
-<input id="my-spinner" type="number" value="50">
-
-<script type="module">
-  import { TouchSpin } from '@touchspin/core';
-  import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-
-  const input = document.getElementById('my-spinner');
-  TouchSpin(input, {
-    renderer: Bootstrap5Renderer,
-    min: 0,
-    max: 100,
-    step: 5,
-    buttonup_class: 'btn btn-primary',
-    buttondown_class: 'btn btn-primary'
-  });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/umd/touchspin-bootstrap5.umd.js"></script>
 ```
 
-## Features
+The bundle exposes `globalThis.TouchSpinBootstrap5` and automatically installs itself as the default renderer for `TouchSpin` when used with the jQuery bridge.
 
--   Simplified structure for Bootstrap 5.
--   Supports all core TouchSpin features.
--   Can be used with the jQuery plugin or the core API.
+## Exports & Files
 
-## CDN (UMD)
+- `@touchspin/renderer-bootstrap5` → `dist/index.js` (ESM)
+- `@touchspin/renderer-bootstrap5/css` → `dist/touchspin-bootstrap5.css`
+- UMD bundle: `dist/umd/touchspin-bootstrap5.umd.js`
+- Package manifest: `@touchspin/renderer-bootstrap5/package.json`
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/5.0.0/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0-alpha.1/dist/index.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0-alpha.1/dist/touchspin-bootstrap5.css" />
-```
+## Metadata
 
-## Notes
-- CSS is emitted as `dist/touchspin-bootstrap5.css`.
-- DOM event wiring uses `data-touchspin-injected` attributes.
-- See example: `/packages/renderers/bootstrap5/example/index.html`.
- - This renderer extends `AbstractRenderer` and implements the core `Renderer` contract.
+- Peer dependencies: `bootstrap@>=5.3.0 <6`, optional `@popperjs/core@>=2.11.8`
+- Engines: Node 18.17+
+- `files` include `dist/`, `dist/umd/`, and `LICENSE` for npm consumers
+
+For migration tips and renderer architecture details, see `MIGRATION.md` and `docs/architecture/renderer-guide.md`.
+

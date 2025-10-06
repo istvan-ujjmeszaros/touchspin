@@ -1,58 +1,49 @@
 # @touchspin/renderer-bootstrap4
 
+Bootstrap 4 renderer for TouchSpin. Provides ESM and UMD builds plus compiled CSS for quick integration.
 
-
-Bootstrap 4 renderer for TouchSpin.
-
-This package provides a renderer that creates a Bootstrap 4-compatible UI for the TouchSpin component. It uses `input-group-prepend` and `input-group-append` for the layout.
-
-📚 See [`docs/architecture/renderer-guide.md`](../../../docs/architecture/renderer-guide.md) for renderer contracts and extension tips.
-
-## Installation
-
-### Alpha Version from NPM
+## Install
 
 ```bash
-npm install @touchspin/renderer-bootstrap4
+npm install @touchspin/renderer-bootstrap4 bootstrap@^4.6 jquery popper.js @touchspin/core
 ```
 
-## Usage
+jQuery and Popper are optional for TouchSpin itself but required by Bootstrap 4’s components; install them to avoid peer warnings.
+
+## Usage (ESM)
+
+```ts
+import { TouchSpin } from '@touchspin/core';
+import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
+import '@touchspin/renderer-bootstrap4/css';
+
+TouchSpin(document.querySelector('#quantity'), {
+  renderer: Bootstrap4Renderer,
+  min: 0,
+  max: 100,
+  step: 1,
+});
+```
+
+## CDN / UMD
 
 ```html
-<input id="my-spinner" type="number" value="50">
-
-<script type="module">
-  import { TouchSpin } from '@touchspin/core';
-  import Bootstrap4Renderer from '@touchspin/renderer-bootstrap4';
-
-  const input = document.getElementById('my-spinner');
-  TouchSpin(input, {
-    renderer: Bootstrap4Renderer,
-    min: 0,
-    max: 100,
-    step: 5,
-    buttonup_class: 'btn btn-primary',
-    buttondown_class: 'btn btn-primary'
-  });
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0/dist/touchspin-bootstrap4.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0/dist/umd/touchspin-bootstrap4.umd.js"></script>
 ```
 
-## Features
+The global bundle registers `TouchSpinBootstrap4` on `window` for legacy loaders.
 
--   Uses `input-group-prepend` and `input-group-append` for Bootstrap 4 compatibility.
--   Supports all core TouchSpin features.
--   Can be used with the jQuery plugin or the core API.
+## Exports & Files
 
-## CDN (UMD)
+- ESM: `@touchspin/renderer-bootstrap4`
+- CSS shortcut: `@touchspin/renderer-bootstrap4/css`
+- UMD bundle: `dist/umd/touchspin-bootstrap4.umd.js`
+- Package manifest: `@touchspin/renderer-bootstrap4/package.json`
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/5.0.0/dist/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0-alpha.1/dist/index.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap4@5.0.0-alpha.1/dist/touchspin-bootstrap4.css" />
-```
+## Metadata
 
-## Notes
-- CSS is emitted as `dist/touchspin-bootstrap4.css`.
-- DOM event wiring uses `data-touchspin-injected` attributes.
-- See example: `/packages/renderers/bootstrap4/example/index.html`.
- - This renderer extends `AbstractRenderer` and implements the core `Renderer` contract.
+- Peer dependencies: `bootstrap@>=4.6.0 <5`, optional `jquery@>=3.5.0`, optional `popper.js@>=1.16.1`
+- Engines: Node 18.17+
+- All npm tarballs include `LICENSE` and the CSS/UMD assets listed above.
+

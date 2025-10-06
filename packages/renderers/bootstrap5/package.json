@@ -15,23 +15,27 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./css": "./dist/touchspin-bootstrap5.css"
+    "./css": "./dist/touchspin-bootstrap5.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/",
-    "README.md"
+    "dist/umd/",
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
-    "build": "rm -rf dist && yarn run build:types && yarn run build:css && yarn run build:js",
+    "build": "rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:css && yarn run build:js && yarn run build:umd",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-bootstrap5.css",
-    "build:css": "yarn exec sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --no-source-map",
+    "build:css": "sass src/styles/touchspin-bootstrap5.scss dist/touchspin-bootstrap5.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core run build:test",
-    "build:umd": "tsup src/jquery-touchspin-bs5.ts --format iife --global-name TouchSpinBS5 --no-dts --sourcemap --target es2018 --outDir devdist/umd --external=none",
+    "build:umd": "tsup --entry.touchspin-bootstrap5=src/touchspin-bs5-complete.ts --format iife --global-name TouchSpinBootstrap5 --no-dts --sourcemap --target es2018 --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap5.global.js",
     "build:iife-complete": "tsup src/touchspin-bs5-complete.ts --format iife --global-name TouchSpinBS5Complete --no-dts --sourcemap --target es2020 --outDir devdist/iife --external=none",
-    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/bootstrap5 && tsc -p tsconfig.testbuild.json && yarn exec sass src/styles/touchspin-bootstrap5.scss devdist/touchspin-bootstrap5.css --style=expanded --no-source-map && tsup src/Bootstrap5Renderer.ts --format iife --global-name Bootstrap5Renderer --sourcemap --target es2020 --outDir devdist/iife --external=none && yarn run build:iife-complete && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap5Renderer.js iifeEntry=iife/Bootstrap5Renderer.global.js iifeComplete=iife/touchspin-bs5-complete.global.js css=touchspin-bootstrap5.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap5",
+    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/bootstrap5 && tsc -p tsconfig.testbuild.json && sass src/styles/touchspin-bootstrap5.scss devdist/touchspin-bootstrap5.css --style=expanded --no-source-map && tsup src/Bootstrap5Renderer.ts --format iife --global-name Bootstrap5Renderer --sourcemap --target es2020 --outDir devdist/iife --external=none && yarn run build:iife-complete && node ../../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js classModule=Bootstrap5Renderer.js iifeEntry=iife/Bootstrap5Renderer.global.js iifeComplete=iife/touchspin-bs5-complete.global.js css=touchspin-bootstrap5.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap5",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
@@ -42,6 +46,18 @@
   },
   "dependencies": {
     "@touchspin/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@popperjs/core": ">=2.11.8",
+    "bootstrap": ">=5.3.0 <6"
+  },
+  "peerDependenciesMeta": {
+    "@popperjs/core": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "author": "TouchSpin Contributors",
   "repository": {
@@ -55,14 +71,7 @@
   "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/bootstrap5#readme",
   "publishConfig": {
     "access": "public",
-    "types": "./dist/index.d.ts",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      },
-      "./css": "./dist/touchspin-bootstrap5.css"
-    }
+    "types": "./dist/index.d.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
