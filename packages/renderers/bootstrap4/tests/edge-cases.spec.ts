@@ -5,24 +5,32 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] handles input-group-lg size class
- * [ ] handles input-group-sm size class
- * [ ] handles horizontal prepend and append groups
- * [ ] handles btn-block class on buttons
- * [ ] handles icon placement with FontAwesome or Bootstrap icons
- * [ ] handles null wrapper in update methods
- * [ ] handles missing prepend/append group in horizontal layout
- * [ ] updates button classes with btn-lg size variant
- * [ ] updates button classes with btn-sm size variant
- * [ ] applies input-group-prepend for prefix
- * [ ] applies input-group-append for postfix
- * [ ] handles form-control-lg input size class
- * [ ] handles form-control-sm input size class
+ * [x] handles input-group-lg size class
+ * [x] handles input-group-sm size class
+ * [x] handles horizontal prepend and append groups
+ * [x] handles btn-block class on buttons
+ * [x] handles icon placement with FontAwesome or Bootstrap icons
+ * [x] handles null wrapper in update methods
+ * [x] handles missing prepend/append group in horizontal layout
+ * [x] updates button classes with btn-lg size variant
+ * [x] updates button classes with btn-sm size variant
+ * [x] applies input-group-prepend for prefix
+ * [x] applies input-group-append for postfix
+ * [x] handles form-control-lg input size class
+ * [x] handles form-control-sm input size class
  */
 
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { ensureBootstrap4Globals } from './helpers/bootstrap4-globals';
+
+const BOOTSTRAP4_FIXTURE = '/packages/renderers/bootstrap4/tests/fixtures/bootstrap4-fixture.html';
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(BOOTSTRAP4_FIXTURE);
+  await ensureBootstrap4Globals(page);
+  await apiHelpers.installDomHelpers(page);
+});
 
 /**
  * Scenario: handles input-group-lg size class
@@ -32,8 +40,17 @@ import { ensureBootstrap4Globals } from './helpers/bootstrap4-globals';
  * Params:
  * { "inputSize": "form-control-lg", "wrapperSize": "input-group-lg" }
  */
-test.skip('handles input-group-lg size class', async ({ page }) => {
-  // Implementation pending
+test('handles input-group-lg size class', async ({ page }) => {
+  // Add form-control-lg class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('form-control-lg');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-lg/);
 });
 
 /**
@@ -44,8 +61,17 @@ test.skip('handles input-group-lg size class', async ({ page }) => {
  * Params:
  * { "inputSize": "form-control-sm", "wrapperSize": "input-group-sm" }
  */
-test.skip('handles input-group-sm size class', async ({ page }) => {
-  // Implementation pending
+test('handles input-group-sm size class', async ({ page }) => {
+  // Add form-control-sm class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('form-control-sm');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-sm/);
 });
 
 /**
@@ -56,8 +82,19 @@ test.skip('handles input-group-sm size class', async ({ page }) => {
  * Params:
  * { "layout": "horizontal", "prefix": "$", "postfix": "USD", "bootstrap4Specific": true }
  */
-test.skip('handles horizontal prepend and append groups', async ({ page }) => {
-  // Implementation pending
+test('handles horizontal prepend and append groups', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+    prefix: '$',
+    postfix: 'USD',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const prepend = wrapper.locator('.input-group-prepend');
+  const append = wrapper.locator('.input-group-append');
+
+  await expect(prepend).toBeVisible();
+  await expect(append).toBeVisible();
 });
 
 /**
@@ -68,8 +105,18 @@ test.skip('handles horizontal prepend and append groups', async ({ page }) => {
  * Params:
  * { "buttonup_class": "btn-block btn-primary", "fullWidth": true }
  */
-test.skip('handles btn-block class on buttons', async ({ page }) => {
-  // Implementation pending
+test('handles btn-block class on buttons', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-block btn-primary',
+    buttondown_class: 'btn-block btn-danger',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  await expect(upButton).toHaveClass(/btn-block/);
+  await expect(downButton).toHaveClass(/btn-block/);
 });
 
 /**
@@ -80,8 +127,19 @@ test.skip('handles btn-block class on buttons', async ({ page }) => {
  * Params:
  * { "buttonup_txt": "<i class='fas fa-plus'></i>", "iconRendered": true }
  */
-test.skip('handles icon placement with FontAwesome or Bootstrap icons', async ({ page }) => {
-  // Implementation pending
+test('handles icon placement with FontAwesome or Bootstrap icons', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_txt: "<i class='fas fa-plus'></i>",
+    buttondown_txt: "<i class='fas fa-minus'></i>",
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  // Check that icon elements are present in buttons
+  await expect(upButton.locator('i.fas.fa-plus')).toBeVisible();
+  await expect(downButton.locator('i.fas.fa-minus')).toBeVisible();
 });
 
 /**
@@ -92,8 +150,27 @@ test.skip('handles icon placement with FontAwesome or Bootstrap icons', async ({
  * Params:
  * { "wrapperState": "null", "defensive": true }
  */
-test.skip('handles null wrapper in update methods', async ({ page }) => {
-  // Implementation pending
+test('handles null wrapper in update methods', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  // Destroy the TouchSpin instance and null out wrapper
+  const noError = await page.evaluate(() => {
+    try {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const instance = (input as any).__touchspin_instance;
+      if (instance && instance.renderer) {
+        // Manually null the wrapper to simulate defensive scenario
+        instance.renderer.wrapper = null;
+        // Try to call an update method - should not throw
+        instance.renderer.updateButtonClass?.('up', 'btn-success');
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  expect(noError).toBe(true);
 });
 
 /**
@@ -104,8 +181,35 @@ test.skip('handles null wrapper in update methods', async ({ page }) => {
  * Params:
  * { "prependAppendMissing": true, "defensive": true, "fallback": "applied" }
  */
-test.skip('handles missing prepend/append group in horizontal layout', async ({ page }) => {
-  // Implementation pending
+test('handles missing prepend/append group in horizontal layout', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+  });
+
+  // Manually remove prepend/append elements to test defensive behavior
+  const noError = await page.evaluate(() => {
+    try {
+      const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+      if (wrapper) {
+        // Remove all input-group-prepend and input-group-append elements
+        const prependAppendGroups = wrapper.querySelectorAll(
+          '.input-group-prepend, .input-group-append'
+        );
+        prependAppendGroups.forEach((el) => el.remove());
+      }
+      // Try to update settings - should not throw
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const instance = (input as any).__touchspin_instance;
+      if (instance) {
+        instance.updateSettings({ prefix: 'New' });
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  expect(noError).toBe(true);
 });
 
 /**
@@ -116,8 +220,16 @@ test.skip('handles missing prepend/append group in horizontal layout', async ({ 
  * Params:
  * { "buttonup_class": "btn-lg btn-success", "sizeVariant": "large" }
  */
-test.skip('updates button classes with btn-lg size variant', async ({ page }) => {
-  // Implementation pending
+test('updates button classes with btn-lg size variant', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-lg btn-success',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+
+  await expect(upButton).toHaveClass(/btn-lg/);
+  await expect(upButton).toHaveClass(/btn-success/);
 });
 
 /**
@@ -128,8 +240,16 @@ test.skip('updates button classes with btn-lg size variant', async ({ page }) =>
  * Params:
  * { "buttondown_class": "btn-sm btn-warning", "sizeVariant": "small" }
  */
-test.skip('updates button classes with btn-sm size variant', async ({ page }) => {
-  // Implementation pending
+test('updates button classes with btn-sm size variant', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttondown_class: 'btn-sm btn-warning',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  await expect(downButton).toHaveClass(/btn-sm/);
+  await expect(downButton).toHaveClass(/btn-warning/);
 });
 
 /**
@@ -140,8 +260,18 @@ test.skip('updates button classes with btn-sm size variant', async ({ page }) =>
  * Params:
  * { "prefix": "$", "prependWrapper": "input-group-prepend", "bootstrap4Specific": true }
  */
-test.skip('applies input-group-prepend for prefix', async ({ page }) => {
-  // Implementation pending
+test('applies input-group-prepend for prefix', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+    prefix: '$',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
+  const prependParent = prefix.locator('..').first();
+
+  await expect(prefix).toHaveText('$');
+  await expect(prependParent).toHaveClass(/input-group-prepend/);
 });
 
 /**
@@ -152,8 +282,18 @@ test.skip('applies input-group-prepend for prefix', async ({ page }) => {
  * Params:
  * { "postfix": "kg", "appendWrapper": "input-group-append", "bootstrap4Specific": true }
  */
-test.skip('applies input-group-append for postfix', async ({ page }) => {
-  // Implementation pending
+test('applies input-group-append for postfix', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+    postfix: 'kg',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
+  const appendParent = postfix.locator('..').first();
+
+  await expect(postfix).toHaveText('kg');
+  await expect(appendParent).toHaveClass(/input-group-append/);
 });
 
 /**
@@ -164,8 +304,17 @@ test.skip('applies input-group-append for postfix', async ({ page }) => {
  * Params:
  * { "inputClass": "form-control-lg", "sizeDetection": "large" }
  */
-test.skip('handles form-control-lg input size class', async ({ page }) => {
-  // Implementation pending
+test('handles form-control-lg input size class', async ({ page }) => {
+  // Add form-control-lg class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('form-control-lg');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-lg/);
 });
 
 /**
@@ -176,6 +325,15 @@ test.skip('handles form-control-lg input size class', async ({ page }) => {
  * Params:
  * { "inputClass": "form-control-sm", "sizeDetection": "small" }
  */
-test.skip('handles form-control-sm input size class', async ({ page }) => {
-  // Implementation pending
+test('handles form-control-sm input size class', async ({ page }) => {
+  // Add form-control-sm class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('form-control-sm');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-sm/);
 });

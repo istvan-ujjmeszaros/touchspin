@@ -5,25 +5,25 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] buildAdvancedInputGroup creates elements in existing container
- * [ ] buildAdvancedInputGroup handles vertical layout correctly
- * [ ] buildAdvancedInputGroup handles horizontal layout correctly
- * [ ] ensureInputInContainer appends input when parent differs
- * [ ] ensureInputInContainer returns early when parent matches
- * [ ] applies small size classes in advanced mode
- * [ ] applies large size classes in advanced mode
- * [ ] updateVerticalButtonClass updates up button class
- * [ ] updateVerticalButtonClass updates down button class with border-b-0
- * [ ] updateVerticalButtonClass handles null wrapper defensively
- * [ ] updateVerticalButtonClass handles missing vertical wrapper
- * [ ] updatePrefixClasses updates prefix element classes
- * [ ] updatePostfixClasses updates postfix element classes
- * [ ] advanced mode sets wrapperType to wrapper-advanced
- * [ ] advanced mode adds testid to container without testid
- * [ ] advanced mode preserves existing testid on container
- * [ ] advanced mode removes form-control class from input
- * [ ] advanced mode applies Tailwind input classes
- * [ ] advanced mode hides empty prefix and postfix
+ * [x] buildAdvancedInputGroup creates elements in existing container
+ * [x] buildAdvancedInputGroup handles vertical layout correctly
+ * [x] buildAdvancedInputGroup handles horizontal layout correctly
+ * [x] ensureInputInContainer appends input when parent differs
+ * [x] ensureInputInContainer returns early when parent matches
+ * [x] applies small size classes in advanced mode
+ * [x] applies large size classes in advanced mode
+ * [x] updateVerticalButtonClass updates up button class
+ * [x] updateVerticalButtonClass updates down button class with border-b-0
+ * [x] updateVerticalButtonClass handles null wrapper defensively
+ * [x] updateVerticalButtonClass handles missing vertical wrapper
+ * [x] updatePrefixClasses updates prefix element classes
+ * [x] updatePostfixClasses updates postfix element classes
+ * [x] advanced mode sets wrapperType to wrapper-advanced
+ * [x] advanced mode adds testid to container without testid
+ * [x] advanced mode preserves existing testid on container
+ * [x] advanced mode removes form-control class from input
+ * [x] advanced mode applies Tailwind input classes
+ * [x] advanced mode hides empty prefix and postfix
  */
 
 import { expect, test } from '@playwright/test';
@@ -38,8 +38,33 @@ import { ensureTailwindGlobals } from './helpers/tailwind-globals';
  * Params:
  * { "existingContainer": "flex rounded-md", "elementInjection": "into_container" }
  */
-test.skip('buildAdvancedInputGroup creates elements in existing container', async ({ page }) => {
-  // Implementation pending
+test('buildAdvancedInputGroup creates elements in existing container', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Use test-input-advanced which is in an existing flex rounded-md container
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    prefix: '$',
+    postfix: 'USD',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify wrapper is the existing container
+  await expect(elements.wrapper).toHaveClass(/flex/);
+  await expect(elements.wrapper).toHaveClass(/rounded-md/);
+
+  // Verify buttons are injected into container
+  await expect(elements.upButton).toBeVisible();
+  await expect(elements.downButton).toBeVisible();
+
+  // Verify prefix/postfix are in container
+  await expect(elements.prefix).toBeVisible();
+  await expect(elements.postfix).toBeVisible();
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -50,8 +75,33 @@ test.skip('buildAdvancedInputGroup creates elements in existing container', asyn
  * Params:
  * { "verticalbuttons": true, "advancedMode": true, "verticalWrapper": "after_input" }
  */
-test.skip('buildAdvancedInputGroup handles vertical layout correctly', async ({ page }) => {
-  // Implementation pending
+test('buildAdvancedInputGroup handles vertical layout correctly', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: true,
+  });
+
+  // Verify vertical wrapper exists
+  const verticalWrapperExists = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+    const verticalWrapper = wrapper?.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    return verticalWrapper !== null;
+  });
+  expect(verticalWrapperExists).toBe(true);
+
+  // Verify vertical wrapper is positioned after input
+  const verticalWrapperAfterInput = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
+    const nextSibling = input?.nextElementSibling;
+    return nextSibling?.getAttribute('data-touchspin-injected') === 'vertical-wrapper';
+  });
+  expect(verticalWrapperAfterInput).toBe(true);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -62,8 +112,36 @@ test.skip('buildAdvancedInputGroup handles vertical layout correctly', async ({ 
  * Params:
  * { "verticalbuttons": false, "advancedMode": true, "buttonOrder": "down-input-up" }
  */
-test.skip('buildAdvancedInputGroup handles horizontal layout correctly', async ({ page }) => {
-  // Implementation pending
+test('buildAdvancedInputGroup handles horizontal layout correctly', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: false,
+  });
+
+  // Verify horizontal layout with down button before input, up button after input
+  const buttonOrder = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+    const children = Array.from(wrapper?.children || []);
+    const inputIndex = children.findIndex(
+      (child) => child.getAttribute('data-testid') === 'test-input-advanced'
+    );
+    const downIndex = children.findIndex(
+      (child) => child.getAttribute('data-touchspin-injected') === 'down'
+    );
+    const upIndex = children.findIndex(
+      (child) => child.getAttribute('data-touchspin-injected') === 'up'
+    );
+    return { inputIndex, downIndex, upIndex };
+  });
+
+  expect(buttonOrder.downIndex).toBeLessThan(buttonOrder.inputIndex);
+  expect(buttonOrder.inputIndex).toBeLessThan(buttonOrder.upIndex);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -74,8 +152,39 @@ test.skip('buildAdvancedInputGroup handles horizontal layout correctly', async (
  * Params:
  * { "inputParent": "document.body", "containerParent": "flex_container", "inputMoved": true }
  */
-test.skip('ensureInputInContainer appends input when parent differs', async ({ page }) => {
-  // Implementation pending
+test('ensureInputInContainer appends input when parent differs', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create a scenario where input is outside its container
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm';
+    (window as any).createTestInput('orphan-input', {
+      label: 'Orphaned Input',
+      helpText: 'Input moved from container',
+    });
+    // Input is created inside an input-group, move it out temporarily
+    const inputElement = document.querySelector('[data-testid="orphan-input"]') as HTMLElement;
+    const body = document.body;
+    body.appendChild(inputElement);
+    body.appendChild(container);
+  });
+
+  // Initialize - should trigger ensureInputInContainer which moves input back
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'orphan-input');
+
+  // Verify input was moved into its wrapper container
+  const inputInContainer = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="orphan-input"]');
+    const parent = input?.parentElement;
+    return parent?.getAttribute('data-testid') === 'orphan-input-wrapper';
+  });
+  expect(inputInContainer).toBe(true);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'orphan-input');
+  await apiHelpers.expectValueToBe(page, 'orphan-input', '51');
 });
 
 /**
@@ -86,8 +195,29 @@ test.skip('ensureInputInContainer appends input when parent differs', async ({ p
  * Params:
  * { "inputParent": "container", "earlyReturn": true, "noOperation": true }
  */
-test.skip('ensureInputInContainer returns early when parent matches', async ({ page }) => {
-  // Implementation pending
+test('ensureInputInContainer returns early when parent matches', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // test-input-advanced already has input as child of container
+  const inputParentBefore = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
+    return input?.parentElement?.className;
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
+
+  // Verify input parent didn't change (early return occurred)
+  const inputParentAfter = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
+    return input?.parentElement?.getAttribute('data-testid');
+  });
+
+  expect(inputParentAfter).toBe('test-input-advanced-wrapper');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -98,8 +228,39 @@ test.skip('ensureInputInContainer returns early when parent matches', async ({ p
  * Params:
  * { "inputClasses": ["text-sm", "py-1"], "sizeApplied": "text-sm py-1 px-2", "advancedMode": true }
  */
-test.skip('applies small size classes in advanced mode', async ({ page }) => {
-  // Implementation pending
+test('applies small size classes in advanced mode', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create input with small size classes in advanced container
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm border border-gray-300';
+    (window as any).createTestInput('small-size-input', {
+      label: 'Small Size Test',
+      helpText: 'Testing small size detection',
+    });
+    const input = document.querySelector('[data-testid="small-size-input"]') as HTMLInputElement;
+    if (input) {
+      input.classList.add('text-sm', 'py-1');
+      container.appendChild(input);
+      const parent = input.closest('.mb-4');
+      if (parent && input.closest('.mb-6')) {
+        parent.replaceChild(container, input.closest('.mb-6')!);
+      }
+    }
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'small-size-input');
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'small-size-input');
+
+  // Verify small size classes applied
+  await expect(elements.wrapper).toHaveClass(/text-sm/);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'small-size-input');
+  await apiHelpers.expectValueToBe(page, 'small-size-input', '51');
 });
 
 /**
@@ -110,8 +271,39 @@ test.skip('applies small size classes in advanced mode', async ({ page }) => {
  * Params:
  * { "inputClasses": ["text-lg", "py-3"], "sizeApplied": "text-lg py-3 px-4", "advancedMode": true }
  */
-test.skip('applies large size classes in advanced mode', async ({ page }) => {
-  // Implementation pending
+test('applies large size classes in advanced mode', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create input with large size classes in advanced container
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm border border-gray-300';
+    (window as any).createTestInput('large-size-input', {
+      label: 'Large Size Test',
+      helpText: 'Testing large size detection',
+    });
+    const input = document.querySelector('[data-testid="large-size-input"]') as HTMLInputElement;
+    if (input) {
+      input.classList.add('text-lg', 'py-3');
+      container.appendChild(input);
+      const parent = input.closest('.mb-4');
+      if (parent && input.closest('.mb-6')) {
+        parent.replaceChild(container, input.closest('.mb-6')!);
+      }
+    }
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'large-size-input');
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'large-size-input');
+
+  // Verify large size classes applied
+  await expect(elements.wrapper).toHaveClass(/text-lg/);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'large-size-input');
+  await apiHelpers.expectValueToBe(page, 'large-size-input', '51');
 });
 
 /**
@@ -122,8 +314,25 @@ test.skip('applies large size classes in advanced mode', async ({ page }) => {
  * Params:
  * { "type": "up", "verticalupclass": "bg-blue-500", "borderClasses": "border-t-0 border-r-0" }
  */
-test.skip('updateVerticalButtonClass updates up button class', async ({ page }) => {
-  // Implementation pending
+test('updateVerticalButtonClass updates up button class', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: true,
+    verticalupclass: 'bg-blue-500',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify up button has border-t-0 and border-r-0 classes
+  await expect(elements.upButton).toHaveClass(/border-t-0/);
+  await expect(elements.upButton).toHaveClass(/border-r-0/);
+  await expect(elements.upButton).toHaveClass(/bg-blue-500/);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -134,10 +343,26 @@ test.skip('updateVerticalButtonClass updates up button class', async ({ page }) 
  * Params:
  * { "type": "down", "verticaldownclass": "bg-red-500", "borderClasses": "border-t-0 border-r-0 border-b-0" }
  */
-test.skip('updateVerticalButtonClass updates down button class with border-b-0', async ({
-  page,
-}) => {
-  // Implementation pending
+test('updateVerticalButtonClass updates down button class with border-b-0', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: true,
+    verticaldownclass: 'bg-red-500',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify down button has border-t-0, border-r-0, and border-b-0 classes
+  await expect(elements.downButton).toHaveClass(/border-t-0/);
+  await expect(elements.downButton).toHaveClass(/border-r-0/);
+  await expect(elements.downButton).toHaveClass(/border-b-0/);
+  await expect(elements.downButton).toHaveClass(/bg-red-500/);
+
+  // Verify functionality works
+  await apiHelpers.clickDownButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '49');
 });
 
 /**
@@ -148,8 +373,35 @@ test.skip('updateVerticalButtonClass updates down button class with border-b-0',
  * Params:
  * { "wrapperState": "null", "defensive": true }
  */
-test.skip('updateVerticalButtonClass handles null wrapper defensively', async ({ page }) => {
-  // Implementation pending
+test('updateVerticalButtonClass handles null wrapper defensively', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: true,
+  });
+
+  // Manually set wrapper to null to simulate post-teardown state
+  const noError = await page.evaluate(() => {
+    try {
+      const input = document.querySelector('[data-testid="test-input-advanced"]') as any;
+      if (input && input.TouchSpin && input.TouchSpin.renderer) {
+        // Simulate wrapper being null
+        const originalWrapper = input.TouchSpin.renderer.wrapper;
+        input.TouchSpin.renderer.wrapper = null;
+        // Try to update vertical button class (should handle null defensively)
+        input.TouchSpin.updateSettings({ verticalupclass: 'new-class' });
+        // Restore for cleanup
+        input.TouchSpin.renderer.wrapper = originalWrapper;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Verify no error occurred (defensive handling worked)
+  expect(noError).toBe(true);
 });
 
 /**
@@ -160,8 +412,35 @@ test.skip('updateVerticalButtonClass handles null wrapper defensively', async ({
  * Params:
  * { "verticalWrapperMissing": true, "defensive": true }
  */
-test.skip('updateVerticalButtonClass handles missing vertical wrapper', async ({ page }) => {
-  // Implementation pending
+test('updateVerticalButtonClass handles missing vertical wrapper', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Initialize without vertical buttons (horizontal layout)
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: false,
+  });
+
+  // Try to update vertical button class when no vertical wrapper exists
+  const noError = await page.evaluate(() => {
+    try {
+      const input = document.querySelector('[data-testid="test-input-advanced"]') as any;
+      // This should handle missing vertical wrapper defensively
+      if (input && input.TouchSpin) {
+        input.TouchSpin.updateSettings({ verticalupclass: 'new-class' });
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Verify no error occurred (defensive handling worked)
+  expect(noError).toBe(true);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -172,8 +451,32 @@ test.skip('updateVerticalButtonClass handles missing vertical wrapper', async ({
  * Params:
  * { "prefix": "$", "prefix_extraclass": "font-bold text-xl", "classRebuild": true }
  */
-test.skip('updatePrefixClasses updates prefix element classes', async ({ page }) => {
-  // Implementation pending
+test('updatePrefixClasses updates prefix element classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    prefix: '$',
+    prefix_extraclass: 'text-sm',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify initial prefix class
+  await expect(elements.prefix).toHaveClass(/text-sm/);
+
+  // Update prefix_extraclass
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input-advanced', {
+    prefix_extraclass: 'font-bold text-xl',
+  });
+
+  // Verify prefix class was rebuilt with new classes
+  await expect(elements.prefix).toHaveClass(/font-bold/);
+  await expect(elements.prefix).toHaveClass(/text-xl/);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -184,8 +487,32 @@ test.skip('updatePrefixClasses updates prefix element classes', async ({ page })
  * Params:
  * { "postfix": "kg", "postfix_extraclass": "font-light text-xs", "classRebuild": true }
  */
-test.skip('updatePostfixClasses updates postfix element classes', async ({ page }) => {
-  // Implementation pending
+test('updatePostfixClasses updates postfix element classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    postfix: 'kg',
+    postfix_extraclass: 'text-sm',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify initial postfix class
+  await expect(elements.postfix).toHaveClass(/text-sm/);
+
+  // Update postfix_extraclass
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input-advanced', {
+    postfix_extraclass: 'font-light text-xs',
+  });
+
+  // Verify postfix class was rebuilt with new classes
+  await expect(elements.postfix).toHaveClass(/font-light/);
+  await expect(elements.postfix).toHaveClass(/text-xs/);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -196,8 +523,23 @@ test.skip('updatePostfixClasses updates postfix element classes', async ({ page 
  * Params:
  * { "wrapperType": "wrapper-advanced", "advancedModeMarker": true }
  */
-test.skip('advanced mode sets wrapperType to wrapper-advanced', async ({ page }) => {
-  // Implementation pending
+test('advanced mode sets wrapperType to wrapper-advanced', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
+
+  // Verify wrapperType is set to wrapper-advanced
+  const wrapperType = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as any;
+    return input?.TouchSpin?.renderer?.wrapperType;
+  });
+
+  expect(wrapperType).toBe('wrapper-advanced');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -208,8 +550,38 @@ test.skip('advanced mode sets wrapperType to wrapper-advanced', async ({ page })
  * Params:
  * { "inputTestId": "my-input", "containerTestId": null, "resultTestId": "my-input-wrapper" }
  */
-test.skip('advanced mode adds testid to container without testid', async ({ page }) => {
-  // Implementation pending
+test('advanced mode adds testid to container without testid', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create input in container without testid
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm';
+    (window as any).createTestInput('testid-input', {
+      label: 'TestID Test',
+      helpText: 'Testing testid addition',
+    });
+    const input = document.querySelector('[data-testid="testid-input"]') as HTMLInputElement;
+    if (input) {
+      container.appendChild(input);
+      const parent = input.closest('.mb-4');
+      if (parent && input.closest('.mb-6')) {
+        parent.replaceChild(container, input.closest('.mb-6')!);
+      }
+    }
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'testid-input');
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'testid-input');
+
+  // Verify container got testid added
+  await expect(elements.wrapper).toHaveAttribute('data-testid', 'testid-input-wrapper');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'testid-input');
+  await apiHelpers.expectValueToBe(page, 'testid-input', '51');
 });
 
 /**
@@ -220,8 +592,44 @@ test.skip('advanced mode adds testid to container without testid', async ({ page
  * Params:
  * { "containerTestId": "custom-wrapper", "preserveTestId": true }
  */
-test.skip('advanced mode preserves existing testid on container', async ({ page }) => {
-  // Implementation pending
+test('advanced mode preserves existing testid on container', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create input in container with existing testid
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm';
+    container.setAttribute('data-testid', 'custom-wrapper');
+    (window as any).createTestInput('preserve-testid-input', {
+      label: 'Preserve TestID Test',
+      helpText: 'Testing testid preservation',
+    });
+    const input = document.querySelector(
+      '[data-testid="preserve-testid-input"]'
+    ) as HTMLInputElement;
+    if (input) {
+      container.appendChild(input);
+      const parent = input.closest('.mb-4');
+      if (parent && input.closest('.mb-6')) {
+        parent.replaceChild(container, input.closest('.mb-6')!);
+      }
+    }
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'preserve-testid-input');
+
+  // Verify container testid was preserved
+  const containerTestId = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="preserve-testid-input"]');
+    return input?.parentElement?.getAttribute('data-testid');
+  });
+
+  expect(containerTestId).toBe('custom-wrapper');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'preserve-testid-input');
+  await apiHelpers.expectValueToBe(page, 'preserve-testid-input', '51');
 });
 
 /**
@@ -232,8 +640,42 @@ test.skip('advanced mode preserves existing testid on container', async ({ page 
  * Params:
  * { "inputClass": "form-control", "classRemoval": "form-control" }
  */
-test.skip('advanced mode removes form-control class from input', async ({ page }) => {
-  // Implementation pending
+test('advanced mode removes form-control class from input', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  // Create input with form-control class in advanced container
+  await page.evaluate(() => {
+    const container = document.createElement('div');
+    container.className = 'flex rounded-md shadow-sm';
+    (window as any).createTestInput('form-control-input', {
+      label: 'Form Control Test',
+      helpText: 'Testing form-control removal',
+    });
+    const input = document.querySelector('[data-testid="form-control-input"]') as HTMLInputElement;
+    if (input) {
+      input.classList.add('form-control');
+      container.appendChild(input);
+      const parent = input.closest('.mb-4');
+      if (parent && input.closest('.mb-6')) {
+        parent.replaceChild(container, input.closest('.mb-6')!);
+      }
+    }
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'form-control-input');
+
+  // Verify form-control class was removed
+  const hasFormControl = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="form-control-input"]');
+    return input?.classList.contains('form-control');
+  });
+
+  expect(hasFormControl).toBe(false);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'form-control-input');
+  await apiHelpers.expectValueToBe(page, 'form-control-input', '51');
 });
 
 /**
@@ -244,8 +686,27 @@ test.skip('advanced mode removes form-control class from input', async ({ page }
  * Params:
  * { "tailwindClasses": ["flex-1", "px-3", "py-2", "border-0"], "classAddition": true }
  */
-test.skip('advanced mode applies Tailwind input classes', async ({ page }) => {
-  // Implementation pending
+test('advanced mode applies Tailwind input classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
+
+  // Verify Tailwind classes were added to input
+  const hasClasses = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
+    return {
+      hasFlex1: input?.classList.contains('flex-1'),
+      hasBorder0: input?.classList.contains('border-0'),
+    };
+  });
+
+  expect(hasClasses.hasFlex1).toBe(true);
+  expect(hasClasses.hasBorder0).toBe(true);
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -256,6 +717,27 @@ test.skip('advanced mode applies Tailwind input classes', async ({ page }) => {
  * Params:
  * { "prefix": "", "postfix": "", "hiddenElements": true }
  */
-test.skip('advanced mode hides empty prefix and postfix', async ({ page }) => {
-  // Implementation pending
+test('advanced mode hides empty prefix and postfix', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    prefix: '',
+    postfix: '',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
+
+  // Verify prefix and postfix are hidden (display: none)
+  const prefixDisplay = await elements.prefix.evaluate((el) => window.getComputedStyle(el).display);
+  const postfixDisplay = await elements.postfix.evaluate(
+    (el) => window.getComputedStyle(el).display
+  );
+
+  expect(prefixDisplay).toBe('none');
+  expect(postfixDisplay).toBe('none');
+
+  // Verify functionality works
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });

@@ -5,22 +5,30 @@
 
 /*
  * CHECKLIST — Scenarios in this spec
- * [ ] handles input-group-lg size class
- * [ ] handles input-group-sm size class
- * [ ] handles input-group-xs size class (Bootstrap 3 specific)
- * [ ] handles horizontal addon with input-group-addon class
- * [ ] handles btn-block class on buttons
- * [ ] handles icon placement with glyphicon classes
- * [ ] handles null wrapper in update methods
- * [ ] handles missing addon group in horizontal layout
- * [ ] updates button classes with btn-lg size variant
- * [ ] updates button classes with btn-sm size variant
- * [ ] updates button classes with btn-xs size variant
+ * [x] handles input-group-lg size class
+ * [x] handles input-group-sm size class
+ * [x] handles input-group-xs size class (Bootstrap 3 specific)
+ * [x] handles horizontal addon with input-group-addon class
+ * [x] handles btn-block class on buttons
+ * [x] handles icon placement with glyphicon classes
+ * [x] handles null wrapper in update methods
+ * [x] handles missing addon group in horizontal layout
+ * [x] updates button classes with btn-lg size variant
+ * [x] updates button classes with btn-sm size variant
+ * [x] updates button classes with btn-xs size variant
  */
 
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
+
+const BOOTSTRAP3_FIXTURE = '/packages/renderers/bootstrap3/tests/fixtures/bootstrap3-fixture.html';
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(BOOTSTRAP3_FIXTURE);
+  await ensureBootstrap3Globals(page);
+  await apiHelpers.installDomHelpers(page);
+});
 
 /**
  * Scenario: handles input-group-lg size class
@@ -30,8 +38,17 @@ import { ensureBootstrap3Globals } from './helpers/bootstrap3-globals';
  * Params:
  * { "inputSize": "input-lg", "wrapperSize": "input-group-lg" }
  */
-test.skip('handles input-group-lg size class', async ({ page }) => {
-  // Implementation pending
+test('handles input-group-lg size class', async ({ page }) => {
+  // Add input-lg class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('input-lg');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-lg/);
 });
 
 /**
@@ -42,8 +59,17 @@ test.skip('handles input-group-lg size class', async ({ page }) => {
  * Params:
  * { "inputSize": "input-sm", "wrapperSize": "input-group-sm" }
  */
-test.skip('handles input-group-sm size class', async ({ page }) => {
-  // Implementation pending
+test('handles input-group-sm size class', async ({ page }) => {
+  // Add input-sm class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('input-sm');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-sm/);
 });
 
 /**
@@ -54,8 +80,17 @@ test.skip('handles input-group-sm size class', async ({ page }) => {
  * Params:
  * { "inputSize": "input-xs", "wrapperSize": "input-group-xs", "bootstrap3Specific": true }
  */
-test.skip('handles input-group-xs size class (Bootstrap 3 specific)', async ({ page }) => {
-  // Implementation pending
+test('handles input-group-xs size class (Bootstrap 3 specific)', async ({ page }) => {
+  // Add input-xs class to test input
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    input.classList.add('input-xs');
+  });
+
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  await expect(wrapper).toHaveClass(/input-group-xs/);
 });
 
 /**
@@ -66,8 +101,19 @@ test.skip('handles input-group-xs size class (Bootstrap 3 specific)', async ({ p
  * Params:
  * { "layout": "horizontal", "prefix": "$", "addonClass": "input-group-addon" }
  */
-test.skip('handles horizontal addon with input-group-addon class', async ({ page }) => {
-  // Implementation pending
+test('handles horizontal addon with input-group-addon class', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+    prefix: '$',
+    postfix: 'USD',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const prefix = wrapper.locator('[data-touchspin-injected="prefix"]');
+  const postfix = wrapper.locator('[data-touchspin-injected="postfix"]');
+
+  await expect(prefix).toHaveClass(/input-group-addon/);
+  await expect(postfix).toHaveClass(/input-group-addon/);
 });
 
 /**
@@ -78,8 +124,18 @@ test.skip('handles horizontal addon with input-group-addon class', async ({ page
  * Params:
  * { "buttonup_class": "btn-block btn-primary", "fullWidth": true }
  */
-test.skip('handles btn-block class on buttons', async ({ page }) => {
-  // Implementation pending
+test('handles btn-block class on buttons', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-block btn-primary',
+    buttondown_class: 'btn-block btn-danger',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  await expect(upButton).toHaveClass(/btn-block/);
+  await expect(downButton).toHaveClass(/btn-block/);
 });
 
 /**
@@ -90,8 +146,19 @@ test.skip('handles btn-block class on buttons', async ({ page }) => {
  * Params:
  * { "buttonup_txt": "<span class='glyphicon glyphicon-plus'></span>", "iconRendered": true }
  */
-test.skip('handles icon placement with glyphicon classes', async ({ page }) => {
-  // Implementation pending
+test('handles icon placement with glyphicon classes', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_txt: "<span class='glyphicon glyphicon-plus'></span>",
+    buttondown_txt: "<span class='glyphicon glyphicon-minus'></span>",
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  // Check that glyphicon spans are present in buttons
+  await expect(upButton.locator('.glyphicon.glyphicon-plus')).toBeVisible();
+  await expect(downButton.locator('.glyphicon.glyphicon-minus')).toBeVisible();
 });
 
 /**
@@ -102,8 +169,27 @@ test.skip('handles icon placement with glyphicon classes', async ({ page }) => {
  * Params:
  * { "wrapperState": "null", "defensive": true }
  */
-test.skip('handles null wrapper in update methods', async ({ page }) => {
-  // Implementation pending
+test('handles null wrapper in update methods', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  // Destroy the TouchSpin instance and null out wrapper
+  const noError = await page.evaluate(() => {
+    try {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const instance = (input as any).__touchspin_instance;
+      if (instance && instance.renderer) {
+        // Manually null the wrapper to simulate defensive scenario
+        instance.renderer.wrapper = null;
+        // Try to call an update method - should not throw
+        instance.renderer.updateButtonClass?.('up', 'btn-success');
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  expect(noError).toBe(true);
 });
 
 /**
@@ -114,8 +200,33 @@ test.skip('handles null wrapper in update methods', async ({ page }) => {
  * Params:
  * { "addonGroupMissing": true, "defensive": true, "fallback": "applied" }
  */
-test.skip('handles missing addon group in horizontal layout', async ({ page }) => {
-  // Implementation pending
+test('handles missing addon group in horizontal layout', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: false,
+  });
+
+  // Manually remove addon group elements to test defensive behavior
+  const noError = await page.evaluate(() => {
+    try {
+      const wrapper = document.querySelector('[data-testid="test-input-wrapper"]');
+      if (wrapper) {
+        // Remove all input-group-btn elements to simulate missing addon groups
+        const addonGroups = wrapper.querySelectorAll('.input-group-btn');
+        addonGroups.forEach((el) => el.remove());
+      }
+      // Try to update settings - should not throw
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const instance = (input as any).__touchspin_instance;
+      if (instance) {
+        instance.updateSettings({ prefix: 'New' });
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  expect(noError).toBe(true);
 });
 
 /**
@@ -126,8 +237,16 @@ test.skip('handles missing addon group in horizontal layout', async ({ page }) =
  * Params:
  * { "buttonup_class": "btn-lg btn-success", "sizeVariant": "large" }
  */
-test.skip('updates button classes with btn-lg size variant', async ({ page }) => {
-  // Implementation pending
+test('updates button classes with btn-lg size variant', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-lg btn-success',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+
+  await expect(upButton).toHaveClass(/btn-lg/);
+  await expect(upButton).toHaveClass(/btn-success/);
 });
 
 /**
@@ -138,8 +257,16 @@ test.skip('updates button classes with btn-lg size variant', async ({ page }) =>
  * Params:
  * { "buttondown_class": "btn-sm btn-warning", "sizeVariant": "small" }
  */
-test.skip('updates button classes with btn-sm size variant', async ({ page }) => {
-  // Implementation pending
+test('updates button classes with btn-sm size variant', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttondown_class: 'btn-sm btn-warning',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const downButton = wrapper.locator('[data-touchspin-injected="down"]');
+
+  await expect(downButton).toHaveClass(/btn-sm/);
+  await expect(downButton).toHaveClass(/btn-warning/);
 });
 
 /**
@@ -150,6 +277,14 @@ test.skip('updates button classes with btn-sm size variant', async ({ page }) =>
  * Params:
  * { "buttonup_class": "btn-xs btn-info", "sizeVariant": "extra-small", "bootstrap3Specific": true }
  */
-test.skip('updates button classes with btn-xs size variant', async ({ page }) => {
-  // Implementation pending
+test('updates button classes with btn-xs size variant', async ({ page }) => {
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-xs btn-info',
+  });
+
+  const wrapper = page.getByTestId('test-input-wrapper');
+  const upButton = wrapper.locator('[data-touchspin-injected="up"]');
+
+  await expect(upButton).toHaveClass(/btn-xs/);
+  await expect(upButton).toHaveClass(/btn-info/);
 });

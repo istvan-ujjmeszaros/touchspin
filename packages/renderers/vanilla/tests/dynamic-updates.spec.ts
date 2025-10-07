@@ -30,12 +30,12 @@
  * [x] handles CSS variable updates
  * [x] preserves semantic structure during updates
  * [x] handles animation-friendly updates
- * [ ] updates vertical button class via setting change
- * [ ] updates prefix extra classes dynamically
- * [ ] updates postfix extra classes dynamically
- * [ ] applies theme via CSS custom properties
- * [ ] applies theme with prefixed CSS properties
- * [ ] handles null wrapper defensively in setTheme
+ * [x] updates vertical button class via setting change
+ * [x] updates prefix extra classes dynamically
+ * [x] updates postfix extra classes dynamically
+ * [x] applies theme via CSS custom properties
+ * [x] applies theme with prefixed CSS properties
+ * [x] handles null wrapper defensively in setTheme
  */
 
 import { expect, test } from '@playwright/test';
@@ -871,8 +871,28 @@ test('handles animation-friendly updates', async ({ page }) => {
  * Params:
  * { "verticalbuttons": true, "verticalupclass": "custom-v-up", "classUpdate": "applied" }
  */
-test.skip('updates vertical button class via setting change', async ({ page }) => {
-  // Implementation pending
+test('updates vertical button class via setting change', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    verticalbuttons: true,
+  });
+
+  // Update vertical button classes
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    verticalupclass: 'custom-v-up',
+    verticaldownclass: 'custom-v-down',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify vertical button classes updated
+  await expect(elements.upButton).toHaveClass(/custom-v-up/);
+  await expect(elements.downButton).toHaveClass(/custom-v-down/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -883,8 +903,27 @@ test.skip('updates vertical button class via setting change', async ({ page }) =
  * Params:
  * { "prefix": "$", "prefix_extraclass": "custom-prefix bold-text", "classRebuild": true }
  */
-test.skip('updates prefix extra classes dynamically', async ({ page }) => {
-  // Implementation pending
+test('updates prefix extra classes dynamically', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    prefix: '$',
+  });
+
+  // Update prefix extra classes
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    prefix_extraclass: 'custom-prefix bold-text',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify prefix extra classes applied
+  await expect(elements.prefix).toHaveClass(/custom-prefix/);
+  await expect(elements.prefix).toHaveClass(/bold-text/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -895,8 +934,27 @@ test.skip('updates prefix extra classes dynamically', async ({ page }) => {
  * Params:
  * { "postfix": "USD", "postfix_extraclass": "custom-postfix italic-text", "classRebuild": true }
  */
-test.skip('updates postfix extra classes dynamically', async ({ page }) => {
-  // Implementation pending
+test('updates postfix extra classes dynamically', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
+    postfix: 'USD',
+  });
+
+  // Update postfix extra classes
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    postfix_extraclass: 'custom-postfix italic-text',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify postfix extra classes applied
+  await expect(elements.postfix).toHaveClass(/custom-postfix/);
+  await expect(elements.postfix).toHaveClass(/italic-text/);
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -907,8 +965,34 @@ test.skip('updates postfix extra classes dynamically', async ({ page }) => {
  * Params:
  * { "theme": { "primary-color": "#ff0000", "border-radius": "8px" }, "themeApplication": "success" }
  */
-test.skip('applies theme via CSS custom properties', async ({ page }) => {
-  // Implementation pending
+test('applies theme via CSS custom properties', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  // Apply theme via API
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    const core = (window as any).touchspinInstances?.get(input);
+    if (core) {
+      core.setTheme({
+        'primary-color': '#ff0000',
+        'border-radius': '8px',
+      });
+    }
+  });
+
+  // Verify CSS custom properties applied
+  const wrapperStyleValue = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]') as HTMLElement;
+    return wrapper ? wrapper.style.getPropertyValue('--ts-primary-color') : '';
+  });
+
+  expect(wrapperStyleValue).toBe('#ff0000');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -919,8 +1003,33 @@ test.skip('applies theme via CSS custom properties', async ({ page }) => {
  * Params:
  * { "theme": { "--custom-prop": "#00ff00" }, "propertyPrefix": "none" }
  */
-test.skip('applies theme with prefixed CSS properties', async ({ page }) => {
-  // Implementation pending
+test('applies theme with prefixed CSS properties', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  // Apply theme with prefixed property via API
+  await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    const core = (window as any).touchspinInstances?.get(input);
+    if (core) {
+      core.setTheme({
+        '--custom-prop': '#00ff00',
+      });
+    }
+  });
+
+  // Verify CSS custom property applied without additional prefix
+  const wrapperStyleValue = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-wrapper"]') as HTMLElement;
+    return wrapper ? wrapper.style.getPropertyValue('--custom-prop') : '';
+  });
+
+  expect(wrapperStyleValue).toBe('#00ff00');
+
+  // Verify functionality still works
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -931,6 +1040,30 @@ test.skip('applies theme with prefixed CSS properties', async ({ page }) => {
  * Params:
  * { "wrapperState": "null", "defensive": true }
  */
-test.skip('handles null wrapper defensively in setTheme', async ({ page }) => {
-  // Implementation pending
+test('handles null wrapper defensively in setTheme', async ({ page }) => {
+  await page.goto(VANILLA_FIXTURE);
+  await ensureVanillaGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
+
+  // Manually null out the wrapper to simulate teardown scenario
+  const setThemeResult = await page.evaluate(() => {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    const core = (window as any).touchspinInstances?.get(input);
+    if (core && core.renderer) {
+      // Null out the wrapper
+      core.renderer.wrapper = null;
+
+      // Try to call setTheme - should not throw
+      try {
+        core.setTheme({ 'primary-color': '#ff0000' });
+        return 'success';
+      } catch (e) {
+        return 'error';
+      }
+    }
+    return 'no-core';
+  });
+
+  // Verify setTheme handled null wrapper gracefully
+  expect(setThemeResult).toBe('success');
 });
