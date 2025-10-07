@@ -199,6 +199,40 @@ test('updates prefix extra classes dynamically', async ({ page }) => {
 - The previous test that set `prefix_extraclass` during init didn't cover this code
 - This actually increases coverage by exercising a previously untested code path
 
+## 🛡️ Coverage Harness Rules (Do NOT Skip)
+
+Playwright coverage only records data when the CDP hooks are active. Forgetting this wipes out the report.
+
+### Always start/collect coverage in every spec file
+
+```ts
+test.describe('my suite', () => {
+  test.beforeEach(async ({ page }) => {
+    await apiHelpers.startCoverage(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title);
+  });
+});
+```
+
+> If you skip `startCoverage` / `collectCoverage`, V8 never emits data and `VanillaRenderer.ts` (or whatever you touched) will stay at 0% even though the test passed.
+
+You can also use the shared fixture in `test-fixtures.ts`, but one of these patterns **must** exist before adding new specs.
+
+### Never run `yarn coverage:report` without fresh coverage data
+
+`yarn coverage:report` rebuilds the HTML/LCOV output from `.nyc_output/coverage.json`. Running it after a failed or partial run empties the report (everything shows 0%).
+
+Correct sequence when iterating on a renderer:
+
+1. `PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev PW_COVERAGE=1 yarn exec playwright test packages/renderers/<renderer>/tests --config=playwright-coverage.config.ts --project=chromium-coverage --reporter=list`
+2. `yarn coverage:merge`
+3. `yarn coverage:report`
+
+Skipping step 1 or forgetting the coverage hooks means steps 2–3 will destroy the existing report. DON’T do that.
+
 ### Real Example: Bootstrap3Renderer Coverage
 
 **Uncovered lines: 413-418, 421-426, 372-387**
