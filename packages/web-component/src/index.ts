@@ -15,12 +15,12 @@ export { TouchSpinInput };
 
 // Export utilities for advanced usage
 export {
-  getSettingsFromAttributes,
   attributeToSetting,
-  parseAttributeValue,
+  getSettingsFromAttributes,
   OBSERVED_ATTRIBUTES,
+  parseAttributeValue,
 } from './attribute-mapping.js';
-export { bridgeEvents, EVENT_NAME_MAP, getAvailableEvents } from './event-bridge.js';
+export { bridgeEvents, EVENT_NAME_MAP } from './event-bridge.js';
 
 // Default export for convenience
 export default TouchSpinInput;

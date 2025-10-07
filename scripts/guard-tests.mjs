@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -19,6 +19,10 @@ const GUARDS = [
   {
     name: 'No page.locator in test specs',
     script: 'page-locator-guard.mjs',
+  },
+  {
+    name: 'Playwright specs use checklist and Scenario annotations',
+    script: 'guard-gherkin-annotations.mjs',
   },
   {
     name: 'No shared fixtures in framework renderers',

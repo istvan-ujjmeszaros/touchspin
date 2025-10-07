@@ -15,8 +15,8 @@
  */
 
 import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(__dirname);
@@ -35,6 +35,12 @@ const GUARDS = [
     name: 'No page.locator in test specs',
     script: 'page-locator-guard.mjs',
     description: 'Ensures tests use helper functions instead of direct page.locator()',
+    needsTestPath: true,
+  },
+  {
+    name: 'Playwright specs use checklist and Scenario annotations',
+    script: 'guard-gherkin-annotations.mjs',
+    description: 'Enforces checklist headers and Scenario docblocks in spec files',
     needsTestPath: true,
   },
   {

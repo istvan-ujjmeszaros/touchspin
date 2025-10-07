@@ -90,14 +90,3 @@ export function bridgeEvents(
 
   return cleanupFunctions;
 }
-
-/**
- * Get all available TouchSpin event names for documentation
- * @returns {string[]} - Array of custom event names
- */
-export function getAvailableEvents(): string[] {
-  return [
-    ...Object.values(EVENT_NAME_MAP),
-    'touchspin-change', // Input change event
-  ];
-}
