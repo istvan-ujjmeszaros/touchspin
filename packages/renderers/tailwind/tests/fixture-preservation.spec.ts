@@ -44,7 +44,6 @@ test('preserves fixture elements through lifecycle', async ({ page }) => {
 
   // STEP 1: Check fixture BEFORE initialization
   const beforeInit = await getContainerElements();
-  console.log('BEFORE INIT:', beforeInit);
   expect(beforeInit.fixture.length).toBeGreaterThan(0); // Should have fixture elements (# and units)
   expect(beforeInit.injected.length).toBe(0); // No TouchSpin elements yet
   expect(beforeInit.input).toBe(true); // Input exists
@@ -55,8 +54,7 @@ test('preserves fixture elements through lifecycle', async ({ page }) => {
   });
 
   const afterInit = await getContainerElements();
-  console.log('AFTER INIT:', afterInit);
-  expect(afterInit.fixture).toEqual(beforeInit.fixture); // ❌ FAILS - fixture elements destroyed!
+  expect(afterInit.fixture).toEqual(beforeInit.fixture); // ✅ Fixture elements preserved
   expect(afterInit.injected.length).toBeGreaterThan(0); // Should have TouchSpin buttons
   expect(afterInit.input).toBe(true);
 
@@ -66,8 +64,7 @@ test('preserves fixture elements through lifecycle', async ({ page }) => {
   });
 
   const afterVertical = await getContainerElements();
-  console.log('AFTER VERTICAL:', afterVertical);
-  expect(afterVertical.fixture).toEqual(beforeInit.fixture); // ❌ FAILS - fixture elements destroyed!
+  expect(afterVertical.fixture).toEqual(beforeInit.fixture); // ✅ Fixture elements preserved
   expect(afterVertical.input).toBe(true);
 
   // STEP 4: Switch back to horizontal
@@ -76,39 +73,18 @@ test('preserves fixture elements through lifecycle', async ({ page }) => {
   });
 
   const afterHorizontal = await getContainerElements();
-  console.log('AFTER HORIZONTAL:', afterHorizontal);
-  expect(afterHorizontal.fixture).toEqual(beforeInit.fixture); // ❌ FAILS - fixture elements destroyed!
+  expect(afterHorizontal.fixture).toEqual(beforeInit.fixture); // ✅ Fixture elements preserved
   expect(afterHorizontal.input).toBe(true);
 
   // STEP 5: Destroy TouchSpin
   await page.evaluate(() => {
     const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
-    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
-    console.log(
-      '[BEFORE DESTROY] wrapper has attribute:',
-      wrapper?.getAttribute('data-touchspin-injected')
-    );
-    console.log(
-      '[BEFORE DESTROY] injected elements count:',
-      wrapper?.querySelectorAll('[data-touchspin-injected]').length
-    );
-
-    if (input && (window as any).TouchSpin) {
-      (window as any).TouchSpin.getInstance(input)?.destroy();
+    if (input && (input as any)._touchSpinCore) {
+      (input as any)._touchSpinCore.destroy();
     }
-
-    console.log(
-      '[AFTER DESTROY] wrapper has attribute:',
-      wrapper?.getAttribute('data-touchspin-injected')
-    );
-    console.log(
-      '[AFTER DESTROY] injected elements count:',
-      wrapper?.querySelectorAll('[data-touchspin-injected]').length
-    );
   });
 
   const afterDestroy = await getContainerElements();
-  console.log('AFTER DESTROY:', afterDestroy);
   expect(afterDestroy.fixture).toEqual(beforeInit.fixture); // Fixture elements still there
   expect(afterDestroy.injected.length).toBe(0); // All TouchSpin elements removed
   expect(afterDestroy.input).toBe(true); // Input still there
