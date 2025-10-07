@@ -974,8 +974,8 @@ test('applies theme via CSS custom properties', async ({ page }) => {
   await page.evaluate(() => {
     const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
     const core = (window as any).touchspinInstances?.get(input);
-    if (core) {
-      core.setTheme({
+    if (core?.renderer) {
+      core.renderer.setTheme({
         'primary-color': '#ff0000',
         'border-radius': '8px',
       });
@@ -1012,8 +1012,8 @@ test('applies theme with prefixed CSS properties', async ({ page }) => {
   await page.evaluate(() => {
     const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
     const core = (window as any).touchspinInstances?.get(input);
-    if (core) {
-      core.setTheme({
+    if (core?.renderer) {
+      core.renderer.setTheme({
         '--custom-prop': '#00ff00',
       });
     }
@@ -1055,7 +1055,7 @@ test('handles null wrapper defensively in setTheme', async ({ page }) => {
 
       // Try to call setTheme - should not throw
       try {
-        core.setTheme({ 'primary-color': '#ff0000' });
+        core.renderer.setTheme({ 'primary-color': '#ff0000' });
         return 'success';
       } catch (e) {
         return 'error';

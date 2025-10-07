@@ -200,14 +200,14 @@ test('injects elements in correct order in advanced mode', async ({ page }) => {
   // Expected order for horizontal: prefix, down, input, up, postfix
   expect(elementOrder).toContain('prefix');
   expect(elementOrder).toContain('down');
-  expect(elementOrder).toContain('test-input-advanced');
+  expect(elementOrder).toContain('input');
   expect(elementOrder).toContain('up');
   expect(elementOrder).toContain('postfix');
 
   // Verify correct order
   const prefixIndex = elementOrder.indexOf('prefix');
   const downIndex = elementOrder.indexOf('down');
-  const inputIndex = elementOrder.indexOf('test-input-advanced');
+  const inputIndex = elementOrder.indexOf('input');
   const upIndex = elementOrder.indexOf('up');
   const postfixIndex = elementOrder.indexOf('postfix');
 
@@ -263,34 +263,24 @@ test('applies size classes to existing container', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input with size class
+  // Add size classes to existing test-input-advanced
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm border border-gray-300';
-
-    const input = window.createTestInput('size-test-advanced', {
-      label: 'Size Test Advanced',
-      helpText: 'Testing size detection in advanced mode',
-    });
-    input.classList.add('text-sm', 'py-1');
-
-    container.appendChild(input);
-    const parent = input.closest('.mb-4');
-    if (parent) {
-      parent.replaceChild(container, input.closest('.mb-6') || input);
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
+    if (input) {
+      input.classList.add('text-sm', 'py-1');
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'size-test-advanced');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
-  const elements = await apiHelpers.getTouchSpinElements(page, 'size-test-advanced');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
 
   // Verify size classes applied to container
   await expect(elements.wrapper).toHaveClass(/text-sm/);
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'size-test-advanced');
-  await apiHelpers.expectValueToBe(page, 'size-test-advanced', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -338,7 +328,9 @@ test('rebuilds DOM correctly when switching layouts in advanced mode', async ({ 
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced', {
+    verticalbuttons: false,
+  });
 
   // Verify initial horizontal layout works
   await apiHelpers.clickUpButton(page, 'test-input-advanced');

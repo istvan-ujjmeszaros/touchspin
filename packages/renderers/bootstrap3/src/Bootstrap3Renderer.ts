@@ -297,7 +297,9 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
 
   _detectInputGroupSize(): string {
     const classList = this.input.className;
-    if (classList.includes('input-sm')) {
+    if (classList.includes('input-xs')) {
+      return 'input-group-xs';
+    } else if (classList.includes('input-sm')) {
       return 'input-group-sm';
     } else if (classList.includes('input-lg')) {
       return 'input-group-lg';

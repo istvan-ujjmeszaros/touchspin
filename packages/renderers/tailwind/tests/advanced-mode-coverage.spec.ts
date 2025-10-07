@@ -232,35 +232,24 @@ test('applies small size classes in advanced mode', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input with small size classes in advanced container
+  // Use existing test-input-advanced and add small size classes
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm border border-gray-300';
-    (window as any).createTestInput('small-size-input', {
-      label: 'Small Size Test',
-      helpText: 'Testing small size detection',
-    });
-    const input = document.querySelector('[data-testid="small-size-input"]') as HTMLInputElement;
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
     if (input) {
       input.classList.add('text-sm', 'py-1');
-      container.appendChild(input);
-      const parent = input.closest('.mb-4');
-      if (parent && input.closest('.mb-6')) {
-        parent.replaceChild(container, input.closest('.mb-6')!);
-      }
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'small-size-input');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
-  const elements = await apiHelpers.getTouchSpinElements(page, 'small-size-input');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
 
   // Verify small size classes applied
   await expect(elements.wrapper).toHaveClass(/text-sm/);
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'small-size-input');
-  await apiHelpers.expectValueToBe(page, 'small-size-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -275,35 +264,24 @@ test('applies large size classes in advanced mode', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input with large size classes in advanced container
+  // Use existing test-input-advanced and add large size classes
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm border border-gray-300';
-    (window as any).createTestInput('large-size-input', {
-      label: 'Large Size Test',
-      helpText: 'Testing large size detection',
-    });
-    const input = document.querySelector('[data-testid="large-size-input"]') as HTMLInputElement;
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
     if (input) {
       input.classList.add('text-lg', 'py-3');
-      container.appendChild(input);
-      const parent = input.closest('.mb-4');
-      if (parent && input.closest('.mb-6')) {
-        parent.replaceChild(container, input.closest('.mb-6')!);
-      }
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'large-size-input');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
-  const elements = await apiHelpers.getTouchSpinElements(page, 'large-size-input');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
 
   // Verify large size classes applied
   await expect(elements.wrapper).toHaveClass(/text-lg/);
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'large-size-input');
-  await apiHelpers.expectValueToBe(page, 'large-size-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -531,8 +509,9 @@ test('advanced mode sets wrapperType to wrapper-advanced', async ({ page }) => {
 
   // Verify wrapperType is set to wrapper-advanced
   const wrapperType = await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="test-input-advanced"]') as any;
-    return input?.TouchSpin?.renderer?.wrapperType;
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
+    const core = (window as any).touchspinInstances?.get(input);
+    return core?.renderer?.wrapperType;
   });
 
   expect(wrapperType).toBe('wrapper-advanced');
@@ -554,34 +533,28 @@ test('advanced mode adds testid to container without testid', async ({ page }) =
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input in container without testid
+  // Wrap existing test-input in a container without testid
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm';
-    (window as any).createTestInput('testid-input', {
-      label: 'TestID Test',
-      helpText: 'Testing testid addition',
-    });
-    const input = document.querySelector('[data-testid="testid-input"]') as HTMLInputElement;
-    if (input) {
+    const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+    if (input && input.parentElement) {
+      const container = document.createElement('div');
+      container.className = 'flex rounded-md shadow-sm';
+      const parent = input.parentElement;
+      parent.insertBefore(container, input);
       container.appendChild(input);
-      const parent = input.closest('.mb-4');
-      if (parent && input.closest('.mb-6')) {
-        parent.replaceChild(container, input.closest('.mb-6')!);
-      }
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'testid-input');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input');
 
-  const elements = await apiHelpers.getTouchSpinElements(page, 'testid-input');
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
   // Verify container got testid added
-  await expect(elements.wrapper).toHaveAttribute('data-testid', 'testid-input-wrapper');
+  await expect(elements.wrapper).toHaveAttribute('data-testid', 'test-input-wrapper');
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'testid-input');
-  await apiHelpers.expectValueToBe(page, 'testid-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });
 
 /**
@@ -596,40 +569,28 @@ test('advanced mode preserves existing testid on container', async ({ page }) =>
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input in container with existing testid
+  // Add testid to existing test-input-advanced container
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm';
-    container.setAttribute('data-testid', 'custom-wrapper');
-    (window as any).createTestInput('preserve-testid-input', {
-      label: 'Preserve TestID Test',
-      helpText: 'Testing testid preservation',
-    });
-    const input = document.querySelector(
-      '[data-testid="preserve-testid-input"]'
-    ) as HTMLInputElement;
-    if (input) {
-      container.appendChild(input);
-      const parent = input.closest('.mb-4');
-      if (parent && input.closest('.mb-6')) {
-        parent.replaceChild(container, input.closest('.mb-6')!);
-      }
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
+    const container = input?.parentElement;
+    if (container) {
+      container.setAttribute('data-testid', 'custom-wrapper');
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'preserve-testid-input');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
   // Verify container testid was preserved
   const containerTestId = await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="preserve-testid-input"]');
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
     return input?.parentElement?.getAttribute('data-testid');
   });
 
   expect(containerTestId).toBe('custom-wrapper');
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'preserve-testid-input');
-  await apiHelpers.expectValueToBe(page, 'preserve-testid-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
@@ -644,38 +605,27 @@ test('advanced mode removes form-control class from input', async ({ page }) => 
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
   await ensureTailwindGlobals(page);
 
-  // Create input with form-control class in advanced container
+  // Add form-control class to existing test-input-advanced and ensure it's in a container
   await page.evaluate(() => {
-    const container = document.createElement('div');
-    container.className = 'flex rounded-md shadow-sm';
-    (window as any).createTestInput('form-control-input', {
-      label: 'Form Control Test',
-      helpText: 'Testing form-control removal',
-    });
-    const input = document.querySelector('[data-testid="form-control-input"]') as HTMLInputElement;
+    const input = document.querySelector('[data-testid="test-input-advanced"]') as HTMLInputElement;
     if (input) {
       input.classList.add('form-control');
-      container.appendChild(input);
-      const parent = input.closest('.mb-4');
-      if (parent && input.closest('.mb-6')) {
-        parent.replaceChild(container, input.closest('.mb-6')!);
-      }
     }
   });
 
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'form-control-input');
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input-advanced');
 
   // Verify form-control class was removed
   const hasFormControl = await page.evaluate(() => {
-    const input = document.querySelector('[data-testid="form-control-input"]');
+    const input = document.querySelector('[data-testid="test-input-advanced"]');
     return input?.classList.contains('form-control');
   });
 
   expect(hasFormControl).toBe(false);
 
   // Verify functionality works
-  await apiHelpers.clickUpButton(page, 'form-control-input');
-  await apiHelpers.expectValueToBe(page, 'form-control-input', '51');
+  await apiHelpers.clickUpButton(page, 'test-input-advanced');
+  await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
 });
 
 /**
