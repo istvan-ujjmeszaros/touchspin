@@ -101,6 +101,231 @@ Before implementing framework integration tests:
 
 **If you find yourself writing CSS in tests, STOP and add the real framework dependency instead.**
 
+## 📈 How to Actually Increase Coverage (CRITICAL)
+
+**⚠️ LESSON LEARNED:** Writing tests for "edge cases" that just use different CSS classes or config values does NOT increase coverage if those code paths are already tested.
+
+### The Right Process for Coverage Improvement
+
+**Step 1: Identify Uncovered Code**
+```bash
+# Run coverage for the specific package
+yarn coverage:all packages/renderers/bootstrap3
+
+# Open the HTML report
+# Look at the ACTUAL UNCOVERED LINES in the source file
+```
+
+**Step 2: Understand WHY Lines Are Uncovered**
+
+Common reasons code is uncovered:
+1. **Observer methods** - Only fire when settings are UPDATED dynamically, not during init
+2. **Conditional branches** - Certain if/else branches never execute
+3. **Error handlers** - Try/catch blocks that never trigger
+4. **Defensive null checks** - Early returns that may never execute
+
+**Step 3: Write Tests That Exercise THOSE SPECIFIC CODE PATHS**
+
+### Anti-Pattern: Testing Different Config Values
+
+❌ **WRONG - These tests don't increase coverage:**
+```typescript
+// All these tests execute THE SAME CODE PATH with different CSS classes
+test('handles btn-lg class', async ({ page }) => {
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-lg'  // ← Different value, same code path
+  });
+  await expect(upButton).toHaveClass(/btn-lg/);
+});
+
+test('handles btn-sm class', async ({ page }) => {
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-sm'  // ← Different value, same code path
+  });
+  await expect(upButton).toHaveClass(/btn-sm/);
+});
+
+test('handles btn-xs class', async ({ page }) => {
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    buttonup_class: 'btn-xs'  // ← Different value, same code path
+  });
+  await expect(upButton).toHaveClass(/btn-xs/);
+});
+```
+
+**Why these are useless:**
+- They all call the same initialization code
+- They just pass different string values to the same parameter
+- The code path for applying button classes is already covered
+- They're testing "does CSS class get applied" not "does uncovered code execute"
+
+### Correct Pattern: Testing Dynamic Updates
+
+✅ **CORRECT - This tests an uncovered observer method:**
+```typescript
+// This exercises updatePrefixClasses() which is only called on setting UPDATE
+test('updates prefix extra classes dynamically', async ({ page }) => {
+  // Initialize with original class
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    prefix: '$',
+    prefix_extraclass: 'original-class'
+  });
+
+  // Verify initial state
+  let className = await page.evaluate(() => {
+    const prefix = document.querySelector('[data-touchspin-injected="prefix"]');
+    return prefix?.className;
+  });
+  expect(className).toContain('original-class');
+
+  // UPDATE the setting (this triggers the uncovered observer)
+  await updateSettingsViaAPI(page, 'test-input', {
+    prefix_extraclass: 'updated-class'  // ← Triggers observer method
+  });
+
+  // Verify the update worked
+  className = await page.evaluate(() => {
+    const prefix = document.querySelector('[data-touchspin-injected="prefix"]');
+    return prefix?.className;
+  });
+  expect(className).toContain('updated-class');
+  expect(className).not.toContain('original-class');
+});
+```
+
+**Why this is correct:**
+- It exercises `updatePrefixClasses()` observer method
+- This method is ONLY called when the setting is updated dynamically
+- The previous test that set `prefix_extraclass` during init didn't cover this code
+- This actually increases coverage by exercising a previously untested code path
+
+### Real Example: Bootstrap3Renderer Coverage
+
+**Uncovered lines: 413-418, 421-426, 372-387**
+
+These are observer methods that only fire on setting updates:
+```typescript
+// Line 413-418
+updatePrefixClasses(): void {
+  const prefixEl = this.prefixEl;
+  if (prefixEl) {
+    prefixEl.className = `input-group-addon ${this.settings.prefix_extraclass}`.trim();
+  }
+}
+
+// Line 421-426
+updatePostfixClasses(): void {
+  const postfixEl = this.postfixEl;
+  if (postfixEl) {
+    postfixEl.className = `input-group-addon ${this.settings.postfix_extraclass}`.trim();
+  }
+}
+```
+
+**These observers are registered but never triggered:**
+```typescript
+this.core.observeSetting('prefix_extraclass', () => this.updatePrefixClasses());
+this.core.observeSetting('postfix_extraclass', () => this.updatePostfixClasses());
+```
+
+**Why they're uncovered:**
+- Tests SET these values during initialization
+- But no test UPDATES them after initialization
+- The observer only fires on updates, not on init
+
+**The fix:**
+```typescript
+test('updates prefix extra classes dynamically', async ({ page }) => {
+  await initializeTouchspinFromGlobals(page, 'test-input', {
+    prefix: '$',
+    prefix_extraclass: 'initial'
+  });
+
+  // This triggers the observer → covers updatePrefixClasses()
+  await updateSettingsViaAPI(page, 'test-input', {
+    prefix_extraclass: 'updated'
+  });
+
+  const className = await getElementClass('[data-touchspin-injected="prefix"]');
+  expect(className).toContain('updated');
+});
+```
+
+### Coverage Improvement Checklist
+
+Before writing "coverage improvement" tests:
+
+- [ ] Run coverage report for the specific package
+- [ ] Identify the EXACT LINE NUMBERS that are uncovered
+- [ ] Understand WHY those lines are uncovered:
+  - [ ] Is it an observer that only fires on updates?
+  - [ ] Is it a conditional branch that never executes?
+  - [ ] Is it an error handler that never triggers?
+  - [ ] Is it a defensive null check?
+- [ ] Write a test that specifically exercises THAT code path
+- [ ] Verify the test actually increases coverage by running coverage again
+- [ ] DON'T just write tests with different CSS classes/config values
+
+### Common Mistakes to Avoid
+
+❌ **Mistake 1: Testing CSS Classes**
+```typescript
+// This doesn't increase coverage - just tests different class names
+test('handles multiple size variants', async ({ page }) => {
+  // Testing btn-lg, btn-sm, btn-xs with the same code path
+});
+```
+
+❌ **Mistake 2: Testing Different Config Values**
+```typescript
+// These all execute the same code
+test('with prefix "$"', async ({ page }) => { ... });
+test('with prefix "€"', async ({ page }) => { ... });
+test('with prefix "£"', async ({ page }) => { ... });
+```
+
+❌ **Mistake 3: Testing Already-Covered Scenarios**
+```typescript
+// If init with prefix is already tested, these add nothing
+test('renders with prefix in vertical layout', async ({ page }) => { ... });
+test('renders with prefix in horizontal layout', async ({ page }) => { ... });
+```
+
+✅ **Correct Approach: Test Uncovered Code Paths**
+```typescript
+// Test dynamic updates (observers)
+test('updates setting dynamically', async ({ page }) => {
+  await init({ setting: 'initial' });
+  await updateSettings({ setting: 'updated' });  // ← Triggers observer
+});
+
+// Test error conditions
+test('handles null wrapper gracefully', async ({ page }) => {
+  await init();
+  // Manually null the wrapper to trigger defensive code
+  await page.evaluate(() => { renderer.wrapper = null; });
+  // Try to update - should not throw
+  await updateSettings({ prefix: 'test' });
+});
+
+// Test specific branches
+test('applies xs size when input-xs class present', async ({ page }) => {
+  await addClassToInput('input-xs');  // ← Trigger specific branch
+  await init();
+  expect(wrapper).toHaveClass('input-group-xs');
+});
+```
+
+### Summary: The Coverage Improvement Algorithm
+
+1. **Run coverage** → Find uncovered lines
+2. **Analyze why** → Understand the code path
+3. **Design test** → Target that specific path
+4. **Verify** → Run coverage again to confirm increase
+5. **Avoid** → Don't test different values on the same path
+
+**Remember:** 100 tests that exercise the same code path = same coverage as 1 test. Focus on UNIQUE code paths, not different parameter values.
+
 ### 🎯 Test Implementation Rules
 
 **CRITICAL**: Implement **EXISTING** test specifications only.
