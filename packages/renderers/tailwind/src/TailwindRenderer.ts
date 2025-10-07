@@ -7,12 +7,16 @@ import { AbstractRendererSimple } from '@touchspin/core/renderer';
 class TailwindRenderer extends AbstractRendererSimple {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
+  private initialFlexContainer: HTMLElement | null = null;
   declare wrapper: HTMLElement | null;
 
   init(): void {
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
+
+    // Store initial flex container for rebuild fallback (same pattern as Bootstrap5)
+    this.initialFlexContainer = this.input.closest('.flex.rounded-md') as HTMLElement | null;
 
     // 1. Build and inject DOM structure around input
     this.wrapper = this.buildInputGroup();
@@ -66,8 +70,9 @@ class TailwindRenderer extends AbstractRendererSimple {
   // teardown() uses inherited removeInjectedElements() - no override needed
 
   buildInputGroup(): HTMLElement {
-    // Check if input is already inside a flex container
-    const existingContainer = this.input.closest('.flex') as HTMLElement | null;
+    // Check if input is already inside a flex container (with fallback like Bootstrap5)
+    const closestContainer = this.input.closest('.flex') as HTMLElement | null;
+    const existingContainer = closestContainer ?? this.initialFlexContainer;
 
     if (existingContainer?.classList.contains('rounded-md')) {
       return this.buildAdvancedInputGroup(existingContainer);
