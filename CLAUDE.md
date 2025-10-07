@@ -1,1249 +1,167 @@
-# TouchSpin - Testing Strategy & Agent Reference
+# TouchSpin - Project Guide
 
-## 🎯 PRIMARY MISSION: Achieve 100% Test Coverage with Clean Behavioral Tests
+## 🎯 Project Overview
 
-**We are rewriting ALL tests from scratch** for maintainability and 100% coverage.
+TouchSpin is a modern numeric input spinner library with multiple framework renderers (Bootstrap 3/4/5, Tailwind, Vanilla).
 
-**📋 IMPORTANT:** See `TEST_IMPLEMENTATION_ROADMAP.md` for the current test implementation status and roadmap. When implementing tests, always update both the roadmap file and the test file checklists to keep progress tracking accurate.
+**Mission**: Achieve 100% test coverage with clean, behavioral tests.
 
-### Core Principles
-* **DIST-ONLY TESTS** - import built artifacts (`/dist/`), never `/src/`
-* **TESTID SELECTORS** - use `data-testid` selectors for reliability
-* **ONE behavior per test** - simple, focused tests
-* **Event log for everything** - single source of truth
-* **Fail fast** - no silent failures
+## 📁 Project Structure
 
-**Philosophy:** Every test should be so simple that any developer can read the test name, understand what it tests, and fix it when behavior changes.
-
-## 🚨 CRITICAL: Test Simplicity Rules
-
-**NEVER overcomplicate tests. Keep them SIMPLE and SHORT.**
-
-### Framework Integration Testing Rules
-
-1. **Use Real Framework Dependencies**:
-   - For Bootstrap tests, add `bootstrap` as devDependency
-   - Create dedicated fixture with real CSS/JS loaded from node_modules
-   - NEVER manually inject CSS to mimic frameworks
-
-2. **Keep Tests Short and Focused**:
-   - Each test should be 10-30 lines maximum
-   - Test ONE specific behavior per test
-   - Avoid massive CSS injection blocks (page.addStyleTag with 50+ lines)
-   - Focus on functionality, not style mimicking
-
-3. **Framework Test Fixture Pattern**:
-   ```
-   packages/core/tests/__shared__/fixtures/
-   ├── test-fixture.html (vanilla)
-   ├── bootstrap5-fixture.html (with Bootstrap 5)
-   ├── bootstrap4-fixture.html (with Bootstrap 4)
-   └── tailwind-fixture.html (with Tailwind)
-   ```
-
-4. **Relative Path Rules for Fixtures**:
-   - **ALWAYS use relative paths** from the fixture file location, never absolute paths from server root
-   - **Example**: From `packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html` use `../../devdist/external/css/bootstrap.min.css`
-   - **NEVER use server root paths** like `/packages/renderers/bootstrap5/devdist/external/...`
-   - **Benefits**: Fixtures work with any server configuration, file:// URLs, and different deployment setups
-
-5. **Simple Test Structure Example**:
-   ```typescript
-   test('simple bootstrap integration', async ({ page }) => {
-     await page.goto('/fixtures/bootstrap5-fixture.html');
-     await initializeTouchspinFromGlobals(page, 'test-input', {
-       buttonup_class: 'btn btn-primary',
-     });
-
-     // Test the actual behavior, not CSS
-     await clickUpButton(page, 'test-input');
-     await expectValueToBe(page, 'test-input', '1');
-   });
-   ```
-
-### What NOT to Do (Anti-Patterns)
-
-❌ **NEVER inject massive CSS blocks**:
-```typescript
-await page.addStyleTag({
-  content: `
-    .btn { /* 50+ lines of CSS */ }
-    .form-control { /* 50+ lines of CSS */ }
-    // ... hundreds more lines
-  `
-});
+```
+packages/
+  core/              # Core engine (renderer-agnostic)
+  jquery-plugin/     # jQuery wrapper
+  renderers/
+    bootstrap3/      # Bootstrap 3 renderer
+    bootstrap4/      # Bootstrap 4 renderer
+    bootstrap5/      # Bootstrap 5 renderer
+    vanilla/         # Vanilla CSS renderer
+    tailwind/        # Tailwind CSS renderer
+  web-component/     # Web component wrapper
 ```
 
-❌ **NEVER write 100+ line test functions**
-❌ **NEVER manually recreate framework CSS**
-❌ **NEVER test styling details in integration tests**
+## 🔧 Development Workflow
 
-✅ **DO write simple, focused tests**:
-```typescript
-test('works with bootstrap buttons', async ({ page }) => {
-  await page.goto('/fixtures/bootstrap5-fixture.html');
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'btn btn-primary',
-  });
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '1');
-});
-```
+### Quick Start
 
-### Code Review Checkpoints
-
-Before implementing framework integration tests:
-- [ ] Is there a real framework dependency added?
-- [ ] Is there a dedicated fixture with framework assets?
-- [ ] Are individual tests under 30 lines?
-- [ ] Are we testing behavior, not recreating CSS?
-- [ ] Could this test be simpler?
-
-**If you find yourself writing CSS in tests, STOP and add the real framework dependency instead.**
-
-## 📈 How to Actually Increase Coverage (CRITICAL)
-
-**⚠️ LESSON LEARNED:** Writing tests for "edge cases" that just use different CSS classes or config values does NOT increase coverage if those code paths are already tested.
-
-### The Right Process for Coverage Improvement
-
-**Step 1: Identify Uncovered Code**
 ```bash
-# Run coverage for the specific package
-yarn coverage:all packages/renderers/bootstrap3
-
-# Open the HTML report
-# Look at the ACTUAL UNCOVERED LINES in the source file
+yarn dev          # Watch mode + static server + test UI (recommended)
+yarn test         # Run all tests
+yarn build        # Build production artifacts
 ```
 
-**Step 2: Understand WHY Lines Are Uncovered**
+### Available Commands
 
-Common reasons code is uncovered:
-1. **Observer methods** - Only fire when settings are UPDATED dynamically, not during init
-2. **Conditional branches** - Certain if/else branches never execute
-3. **Error handlers** - Try/catch blocks that never trigger
-4. **Defensive null checks** - Early returns that may never execute
+**Development:**
+- `yarn dev` - Watch mode + static server
+- `yarn watch` - Watch all packages (production builds)
+- `yarn watch:test` - Watch all packages (test builds)
+- `yarn test:dev` - Watch + serve + test UI
 
-**Step 3: Write Tests That Exercise THOSE SPECIFIC CODE PATHS**
+**Testing:**
+- `yarn test` - Run all tests
+- `yarn exec playwright test packages/core/tests/` - Run specific package
+- `yarn exec playwright test --ui` - Debug mode with UI
 
-### Anti-Pattern: Testing Different Config Values
+**Coverage:**
+- `yarn coverage:build` - Build with coverage instrumentation
+- `yarn coverage:all <path>` - Run coverage for specific package
+- `yarn coverage:merge` - Merge coverage data
+- `yarn coverage:report` - Generate HTML report (view at `reports/coverage/index.html`)
 
-❌ **WRONG - These tests don't increase coverage:**
-```typescript
-// All these tests execute THE SAME CODE PATH with different CSS classes
-test('handles btn-lg class', async ({ page }) => {
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'btn-lg'  // ← Different value, same code path
-  });
-  await expect(upButton).toHaveClass(/btn-lg/);
-});
+**Build:**
+- `yarn build` - Build all packages
+- `yarn build:test` - Build test artifacts
+- `yarn clean` - Clean all build artifacts
 
-test('handles btn-sm class', async ({ page }) => {
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'btn-sm'  // ← Different value, same code path
-  });
-  await expect(upButton).toHaveClass(/btn-sm/);
-});
+**Utilities:**
+- `yarn test:guard` - Validate Gherkin test checklists
+- `yarn lexicon:gen` - Generate step lexicon from helper docs
+- `yarn inspect <url>` - Inspect page for errors/TouchSpin status
 
-test('handles btn-xs class', async ({ page }) => {
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    buttonup_class: 'btn-xs'  // ← Different value, same code path
-  });
-  await expect(upButton).toHaveClass(/btn-xs/);
-});
+## 🧪 Testing
+
+**For test-related work, use the specialized testing agent:**
+
+```bash
+# When I need to work on tests, I'll invoke the testing agent
+# Example: "Implement the remaining bootstrap5 renderer tests"
+# Example: "Improve coverage for the core package"
+# Example: "Debug failing test in step-calculations.spec.ts"
 ```
 
-**Why these are useless:**
-- They all call the same initialization code
-- They just pass different string values to the same parameter
-- The code path for applying button classes is already covered
-- They're testing "does CSS class get applied" not "does uncovered code execute"
-
-### Correct Pattern: Testing Dynamic Updates
-
-✅ **CORRECT - This tests an uncovered observer method:**
-```typescript
-// This exercises updatePrefixClasses() which is only called on setting UPDATE
-test('updates prefix extra classes dynamically', async ({ page }) => {
-  // Initialize with original class
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    prefix: '$',
-    prefix_extraclass: 'original-class'
-  });
-
-  // Verify initial state
-  let className = await page.evaluate(() => {
-    const prefix = document.querySelector('[data-touchspin-injected="prefix"]');
-    return prefix?.className;
-  });
-  expect(className).toContain('original-class');
-
-  // UPDATE the setting (this triggers the uncovered observer)
-  await updateSettingsViaAPI(page, 'test-input', {
-    prefix_extraclass: 'updated-class'  // ← Triggers observer method
-  });
-
-  // Verify the update worked
-  className = await page.evaluate(() => {
-    const prefix = document.querySelector('[data-touchspin-injected="prefix"]');
-    return prefix?.className;
-  });
-  expect(className).toContain('updated-class');
-  expect(className).not.toContain('original-class');
-});
-```
-
-**Why this is correct:**
-- It exercises `updatePrefixClasses()` observer method
-- This method is ONLY called when the setting is updated dynamically
-- The previous test that set `prefix_extraclass` during init didn't cover this code
-- This actually increases coverage by exercising a previously untested code path
-
-## 🛡️ Coverage Harness Rules (Do NOT Skip)
-
-Playwright coverage only records data when the CDP hooks are active. Forgetting this wipes out the report.
-
-### Always start/collect coverage in every spec file
-
-```ts
-test.describe('my suite', () => {
-  test.beforeEach(async ({ page }) => {
-    await apiHelpers.startCoverage(page);
-  });
-
-  test.afterEach(async ({ page }, testInfo) => {
-    await apiHelpers.collectCoverage(page, testInfo.title);
-  });
-});
-```
-
-> If you skip `startCoverage` / `collectCoverage`, V8 never emits data and `VanillaRenderer.ts` (or whatever you touched) will stay at 0% even though the test passed.
-
-You can also use the shared fixture in `test-fixtures.ts`, but one of these patterns **must** exist before adding new specs.
-
-### Never run `yarn coverage:report` without fresh coverage data
-
-`yarn coverage:report` rebuilds the HTML/LCOV output from `.nyc_output/coverage.json`. Running it after a failed or partial run empties the report (everything shows 0%).
-
-Correct sequence when iterating on a renderer:
-
-1. `PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev PW_COVERAGE=1 yarn exec playwright test packages/renderers/<renderer>/tests --config=playwright-coverage.config.ts --project=chromium-coverage --reporter=list`
-2. `yarn coverage:merge`
-3. `yarn coverage:report`
-
-Skipping step 1 or forgetting the coverage hooks means steps 2–3 will destroy the existing report. DON’T do that.
-
-### Real Example: Bootstrap3Renderer Coverage
-
-**Uncovered lines: 413-418, 421-426, 372-387**
-
-These are observer methods that only fire on setting updates:
-```typescript
-// Line 413-418
-updatePrefixClasses(): void {
-  const prefixEl = this.prefixEl;
-  if (prefixEl) {
-    prefixEl.className = `input-group-addon ${this.settings.prefix_extraclass}`.trim();
-  }
-}
-
-// Line 421-426
-updatePostfixClasses(): void {
-  const postfixEl = this.postfixEl;
-  if (postfixEl) {
-    postfixEl.className = `input-group-addon ${this.settings.postfix_extraclass}`.trim();
-  }
-}
-```
-
-**These observers are registered but never triggered:**
-```typescript
-this.core.observeSetting('prefix_extraclass', () => this.updatePrefixClasses());
-this.core.observeSetting('postfix_extraclass', () => this.updatePostfixClasses());
-```
-
-**Why they're uncovered:**
-- Tests SET these values during initialization
-- But no test UPDATES them after initialization
-- The observer only fires on updates, not on init
-
-**The fix:**
-```typescript
-test('updates prefix extra classes dynamically', async ({ page }) => {
-  await initializeTouchspinFromGlobals(page, 'test-input', {
-    prefix: '$',
-    prefix_extraclass: 'initial'
-  });
-
-  // This triggers the observer → covers updatePrefixClasses()
-  await updateSettingsViaAPI(page, 'test-input', {
-    prefix_extraclass: 'updated'
-  });
-
-  const className = await getElementClass('[data-touchspin-injected="prefix"]');
-  expect(className).toContain('updated');
-});
-```
-
-### Coverage Improvement Checklist
-
-Before writing "coverage improvement" tests:
-
-- [ ] Run coverage report for the specific package
-- [ ] Identify the EXACT LINE NUMBERS that are uncovered
-- [ ] Understand WHY those lines are uncovered:
-  - [ ] Is it an observer that only fires on updates?
-  - [ ] Is it a conditional branch that never executes?
-  - [ ] Is it an error handler that never triggers?
-  - [ ] Is it a defensive null check?
-- [ ] Write a test that specifically exercises THAT code path
-- [ ] Verify the test actually increases coverage by running coverage again
-- [ ] DON'T just write tests with different CSS classes/config values
-
-### Common Mistakes to Avoid
-
-❌ **Mistake 1: Testing CSS Classes**
-```typescript
-// This doesn't increase coverage - just tests different class names
-test('handles multiple size variants', async ({ page }) => {
-  // Testing btn-lg, btn-sm, btn-xs with the same code path
-});
-```
-
-❌ **Mistake 2: Testing Different Config Values**
-```typescript
-// These all execute the same code
-test('with prefix "$"', async ({ page }) => { ... });
-test('with prefix "€"', async ({ page }) => { ... });
-test('with prefix "£"', async ({ page }) => { ... });
-```
-
-❌ **Mistake 3: Testing Already-Covered Scenarios**
-```typescript
-// If init with prefix is already tested, these add nothing
-test('renders with prefix in vertical layout', async ({ page }) => { ... });
-test('renders with prefix in horizontal layout', async ({ page }) => { ... });
-```
-
-✅ **Correct Approach: Test Uncovered Code Paths**
-```typescript
-// Test dynamic updates (observers)
-test('updates setting dynamically', async ({ page }) => {
-  await init({ setting: 'initial' });
-  await updateSettings({ setting: 'updated' });  // ← Triggers observer
-});
-
-// Test error conditions
-test('handles null wrapper gracefully', async ({ page }) => {
-  await init();
-  // Manually null the wrapper to trigger defensive code
-  await page.evaluate(() => { renderer.wrapper = null; });
-  // Try to update - should not throw
-  await updateSettings({ prefix: 'test' });
-});
-
-// Test specific branches
-test('applies xs size when input-xs class present', async ({ page }) => {
-  await addClassToInput('input-xs');  // ← Trigger specific branch
-  await init();
-  expect(wrapper).toHaveClass('input-group-xs');
-});
-```
-
-### Summary: The Coverage Improvement Algorithm
-
-1. **Run coverage** → Find uncovered lines
-2. **Analyze why** → Understand the code path
-3. **Design test** → Target that specific path
-4. **Verify** → Run coverage again to confirm increase
-5. **Avoid** → Don't test different values on the same path
-
-**Remember:** 100 tests that exercise the same code path = same coverage as 1 test. Focus on UNIQUE code paths, not different parameter values.
-
-### 🎯 Test Implementation Rules
-
-**CRITICAL**: Implement **EXISTING** test specifications only.
-
-* **Follow Gherkin scenarios exactly** - Given/When/Then with provided params
-* **Use exact parameters** - never modify values in scenarios
-* **Complete `test.skip()` placeholders** systematically
-* **Document source bugs** with TODO comments, don't fix code during test implementation
-
-## 🔧 Testing Requirements
-
-* **Dist-Only**: Load built artifacts (`/dist/`) only, never `/src/`. Guard enforced.
-* **Selectors**: Use `data-testid` selectors only, never CSS classes
-* **Coverage**: `yarn coverage:build` → `yarn coverage:all <path>` → view `reports/coverage/index.html`
-* **Helpers**: Don't modify shared helpers in `__tests__/helpers/` - keep stable
-* **No Webfont Icons**: Never use icon webfonts (Bootstrap Icons, Font Awesome, Glyphicons) in test fixtures. Use Unicode symbols (⚙️, 📝, 🗑️) or plain text labels instead. This ensures fixtures render consistently without external font dependencies.
-
-## 📊 Coverage Roadmap
-
-**Phase 1: jQuery Plugin** ✅ - Reference patterns established (`packages/jquery-plugin/tests/`)
-**Phase 2: Core Package** 🚀 - Active development (`packages/core/tests/`) - shared infrastructure
-**Phase 3: Renderers** 📅 - Framework-specific testing (`packages/renderers/*/tests/`)
-**Phase 4: Integration** 🔄 - Cross-package workflows
-
-#### 🔍 Core Value Handling Behavior
-
-**IMPORTANT**: Core has different value handling than the original jQuery plugin:
-
-**Empty Values**:
-- **Internal**: `core.getValue()` returns `NaN` for empty inputs
-- **Display**: Input element shows empty string `""`
-- **Test Pattern**: Use `readInputValue()` to check display, not `getNumericValue()`
-
-**Non-Numeric Values**:
-- **Internal**: `core.getValue()` returns `NaN` for invalid input
-- **Display**: HTML5 `type="number"` inputs automatically clear invalid values to empty string
-- **Test Pattern**: Check display value, expect empty string for invalid input
-
-**Callback Effects**:
-- `callback_before_calculation` can return non-numeric strings
-- Core preserves display value even when callback returns invalid data
-- Internal `getValue()` may return `NaN` while display shows original
-
-```typescript
-// ✅ CORRECT - Test display behavior
-const displayValue = await readInputValue(page, 'test-input');
-expect(displayValue).toBe(''); // Empty string, not NaN
-
-// ❌ WRONG - Don't test internal NaN state
-const numericValue = await getNumericValue(page, 'test-input');
-expect(Number.isNaN(numericValue)).toBe(true); // This masks display behavior
-```
-
-#### Core Testing Strategy: Renderer-Free First
-
-**IMPORTANT**: Core specs should exercise the engine without mounting a renderer. Use `initializeTouchspin` with `/packages/core/tests/fixtures/core-api-fixture.html` to cover API behaviours, keyboard and wheel interactions, and value-change events.
-
-If you need to make assertions about DOM markup, button layout, prefix/postfix injection, or renderer-specific classes, move those cases into the appropriate renderer package and use its dedicated clean fixture.
-
-**Core Testing Approaches**:
-1. **Engine & API behaviour**: `initializeTouchspin` (no renderer) + `core-api-fixture.html`
-2. **Renderer behaviour**: test inside the renderer package with its clean fixture and `initializeTouchspinFromGlobals`
-3. **Callback-only stubs**: `core-adapter.ts` for synthetic callback validation when no DOM is needed
-
-**Core Test File Status** (All syntax errors fixed):
-- `boundary-enforcement.spec.ts` - Placeholder tests for min/max enforcement
-- `step-calculations.spec.ts` - ✅ Updated to use API methods (incrementViaAPI/decrementViaAPI)
-- `value-normalization.spec.ts` - Complete implementation, tests getValue/setValue methods
-- `value-operations.spec.ts` - Placeholder tests for core operations
-- All other test files - Clean placeholders awaiting implementation
-
-#### Core Package Testing Guidelines
-
-**⚠️ CRITICAL: Step Normalization Gotcha**
-
-> TouchSpin normalizes the initial value to the nearest multiple of `step` during initialization.
-
-```typescript
-// ❌ Pitfall: fixture value 50 with step 3 may become 51 during init
-await initializeTouchspin(page, 'test-input', { step: 3 });
-
-// ✅ Prefer supplying a divisible init value
-await initializeTouchspin(page, 'test-input', { step: 3, initval: 48 });
-```
-
-**Rule of thumb (from Handbook):**
-- `step: 1` → any integer
-- `step: 2` → even numbers
-- `step: 3` → multiples of 3
-- `step: 5` → multiples of 5
-- `step: 0.1` → one decimal steps, ensure string inputs use `.`
-
-**Test Separation Rule:**
-
-1. **Basic Operations**: Use step-divisible values to avoid normalization confusion
-   - Examples: `step: 5 → initval: 50`, `step: 3 → initval: 48`
-
-2. **Normalization Tests**: Test rounding behavior separately in dedicated tests
-   - Examples: "should normalize 50 to 51 when step=3", "should round to nearest step multiple"
-
-**Common Step-Divisible Values:**
-- `step: 1` → Any integer (1, 2, 3, 4, 5...)
-- `step: 2` → Even numbers (2, 4, 6, 8, 10...)
-- `step: 3` → Multiples of 3 (3, 6, 9, 12, 15, 18, 21...)
-- `step: 5` → Multiples of 5 (5, 10, 15, 20, 25, 30...)
-- `step: 0.1` → One decimal place (0.1, 0.2, 0.3...)
-- `step: 0.25` → Quarter values (0.25, 0.5, 0.75, 1.0...)
-
-**⚠️ IMPORTANT: Avoid Normalization Side Effects in Tests**
-
-When using `updateSettings` to change the `step` value during a test:
-- **Be aware** that the current value will be normalized to the nearest multiple of the new step
-- **Use step-divisible values** throughout the test to avoid unexpected normalization
-- **Example**: If value is 11 and you change step to 2, the value becomes 12 (normalized)
-- **Better approach**: Use values that are already divisible by all steps used in the test
-- **Reserve normalization testing** for dedicated tests that specifically verify this behavior
-
-#### Core vs jQuery Helper Functions
-
-**CRITICAL: Use the Right Helper for the Right Test Type**
-
-There are two distinct initialization functions for different test scenarios:
-
-**1. Core Tests (Renderer-Independent)**
-```typescript
-// packages/core/test-helpers/core-adapter.ts
-import { initializeTouchspin } from '../test-helpers/core-adapter';
-
-await initializeTouchspin(page, 'test-input', {
-  step: 3,
-  min: 0,
-  max: 100,
-  initval: 48  // Set initial value during initialization
-});
-```
-
-**2. jQuery Plugin Tests (With Renderer)**
-```typescript
-// Uses existing jQuery-based helpers
-import * as apiHelpers from '@touchspin/core/test-helpers';
-
-await apiHelpers.initializeTouchspinJQuery(page, 'test-input', {
-  step: 3,
-  min: 0,
-  max: 100
-});
-```
-
-**✅ CORRECT Core Test Pattern:**
-```typescript
-// Use initval option with renderer-free initialization
-await initializeTouchspin(page, 'test-input', {
-  step: 0.25,
-  decimals: 2,
-  initval: 10  // Sets value before Core initialization
-});
-await apiHelpers.incrementViaAPI(page, 'test-input');
-expect(await apiHelpers.getNumericValue(page, 'test-input')).toBe(10.25);
-```
-
-**Key Differences:**
-- **`initializeTouchspin`**: Mounts the core engine only—ideal for API, keyboard, mouse-wheel, and event tests
-- **`initializeTouchspinWithRenderer`**: Use inside renderer packages when you need framework-specific DOM assertions
-- **`initializeTouchspinJQuery`**: Uses jQuery wrapper with Bootstrap renderer
-- **`initval` option**: Sets input value BEFORE Core initialization to avoid normalization issues
-- **Full Core API via helpers**: All interaction methods (`incrementViaAPI`, `updateSettings`, etc.) remain available without the renderer
-
-### Phase 3: Renderer Packages 📅 (In Progress)
-
-* **Status**: Bootstrap5 renderer tests started
-* **Coverage Target**: 100% each
-* **Packages**:
-
-  * `packages/renderers/bootstrap5/tests/` - Bootstrap 5 markup ✅ Started
-  * `packages/renderers/bootstrap3/tests/` - Bootstrap 3 markup 📅 Planned
-  * `packages/renderers/bootstrap4/tests/` - Bootstrap 4 markup 📅 Planned
-  * `packages/renderers/vanilla/tests/` - Vanilla renderer 📅 Planned
-  * `packages/renderers/tailwind/tests/` - Tailwind CSS 📅 Planned
-* **What to test**:
-
-  * Framework-specific DOM structure
-  * CSS class application
-  * Custom button text/classes
-  * Vertical layout options
-  * Prefix/postfix rendering
-  * ARIA attributes
-  * Theme integration
-
-* **Testing Pattern**: Use `initializeTouchspinFromGlobals()` with IIFE bundles (see Renderer Testing Patterns section)
-
-### Phase 4: Integration & E2E 🔄 (Future)
-
-* **Status**: Planned after individual package completion
-* **Focus**: Cross-package integration
-* **Coverage Target**: Key user workflows
-
-## 🏗️ Shared Test Infrastructure Strategy
-
-### Why Core Package Houses Shared Resources
-
-Since `@touchspin/core` is a dependency for ALL other packages, it's the perfect location for shared test infrastructure.
-
-### Planned Shared Resources in Core
-
-```
-packages/core/
-  src/               # Core logic
-  tests/             # Core package tests
-  test-helpers/      # Shared helpers for ALL packages
-    fixtures/        # Reusable HTML fixtures
-      minimal.html   # Simplest possible fixture
-      multi.html     # Multiple inputs fixture
-    helpers/         # Shared helper functions
-      common.ts      # Cross-package helpers
-      events.ts      # Event log helpers
-      coverage.ts    # Coverage utilities
-      core-adapter.ts # Adapter functions for Core API
-```
-
-### Principles for Shared Resources
-
-1. **HTML fixtures must be minimal** - just enough DOM to test
-2. **Fixtures should be parameter-driven** - not hardcoded
-3. **Helpers should be composable** - small functions that combine
-4. **No package-specific logic** - keep it generic
-
-## 🔒 Helper Usage Policy
-
-1. **Canonical Helpers**: The single source of truth is `__tests__/helpers/touchspinApiHelpers.ts`.
-2. **Core Adapter Layer**: In `packages/core/test-helpers/core-adapter.ts`, only lightweight adapter functions may be added to bridge Core logic and the canonical helpers.
-3. **No Duplicate Helpers**: Never rewrite helpers under `packages/core/test-helpers/helpers/`. Always import from the canonical location.
-4. **Allowed Additions**: Only extend via adapter if Core requires access to API-level methods (`upOnce`, `downOnce`, etc.).
-5. **Import Pattern**:
-
-   ```typescript
-   import * as apiHelpers from '@touchspin/core/test-helpers';
-   import { initializeTouchspin } from '../test-helpers/core-adapter';
+The testing agent has complete knowledge of:
+- Test implementation rules and patterns
+- Coverage improvement strategies
+- Gherkin format and step lexicon
+- Helper usage and best practices
+- Debugging techniques
+- All testing-specific gotchas
+
+**Quick Testing Rules:**
+- Always use helpers from `@touchspin/core/test-helpers`
+- Never import from `/src/` in tests (use `/dist/`)
+- Use `data-testid` selectors only
+- Keep tests simple (10-30 lines, one behavior)
+- See `TEST_IMPLEMENTATION_ROADMAP.md` for current status
+
+## 📝 Git Workflow
+
+### Creating Commits
+
+When asked to commit changes:
+1. Run `git status` and `git diff` to see changes
+2. Review recent commits (`git log`) for message style
+3. Stage relevant files with `git add`
+4. Create commit with message ending in:
+   ```
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+   Co-Authored-By: Claude <noreply@anthropic.com>
    ```
 
-## 🚨 CRITICAL: Use Existing Helpers
+**Never:**
+- Update git config
+- Run destructive commands (force push, hard reset) without explicit request
+- Skip hooks (--no-verify)
+- Commit files with secrets (.env, credentials.json)
 
-**GOLDEN RULE**: Use helpers for ALL TouchSpin interactions. Never write raw selectors in tests.
+### Creating Pull Requests
 
-```typescript
-// ✅ CORRECT - Use the helpers
-import * as apiHelpers from '@touchspin/core/test-helpers';
-await apiHelpers.clickUpButton(page, testId);
-await apiHelpers.expectValueToBe(page, testId, '50');
+When asked to create a PR:
+1. Check current branch status and commits since main
+2. Review all changes that will be included
+3. Push to remote if needed
+4. Use `gh pr create` with summary and test plan:
+   ```bash
+   gh pr create --title "PR title" --body "$(cat <<'EOF'
+   ## Summary
+   - Key changes
 
-// ❌ WRONG - Don't write raw selectors
-page.locator('[data-testid="test-input"]').click(); // Use helpers instead!
-```
+   ## Test plan
+   - [ ] Test item 1
+   - [ ] Test item 2
 
-**Why**: Helpers handle edge cases, provide performance optimizations, ensure consistency, and prevent regressions.
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+   EOF
+   )"
+   ```
 
-### 🎯 Element Access Helper
+## 🏗️ Build System
 
-**Use `getTouchSpinElements()` for accessing multiple UI elements**:
+**Key Concepts:**
+- TypeScript compiles to `/dist/` (production) and `/devdist/` (development)
+- Tests use `/devdist/` artifacts (auto-updated by watch mode)
+- Renderer packages commit external framework assets to `/devdist/external/`
+- Build guards ensure proper package build order
 
-```typescript
-// ✅ CORRECT - Use the elements helper
-import * as apiHelpers from '@touchspin/core/test-helpers';
-const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-await elements.upButton.click();
-await elements.downButton.hover();
+**IIFE vs ESM:**
+- Renderer tests use IIFE bundles (globals like `window.Bootstrap5Renderer`)
+- IIFE bundles have all dependencies bundled (no bare imports)
+- ESM builds used for production distribution
 
-// ❌ WRONG - Don't use raw locators
-const upButton = page.locator('[data-testid="test-input-up"]');
-const downButton = page.locator('[data-testid="test-input-down"]');
-```
+## 📚 Documentation
 
-**Available Elements in TouchSpinElements**:
-- **wrapper**: Root wrapper around the TouchSpin input and controls
-- **input**: Underlying input element with the given data-testid
-- **upButton**: The "up" button (increment)
-- **downButton**: The "down" button (decrement)
-- **prefix**: Optional prefix element rendered before the input
-- **postfix**: Optional postfix element rendered after the input
+- `TEST_IMPLEMENTATION_ROADMAP.md` - Current test implementation status
+- `tests/STEP-LEXICON.md` - Auto-generated helper function reference
+- `.claude/agents/testing.yaml` - Complete testing knowledge base
 
-**Note**: HTML fixtures should use relative paths from the actual file location, never relative to the project root.
+## 🔍 Temporary Files
 
-## 🖼️ Renderer Usage in Core Tests
-
-### Problem
-
-* Core without a renderer creates **no buttons** (only supports keyboard/wheel events and API methods).
-* Button-based helpers (`clickUpButton`, `clickDownButton`) only work if a renderer is attached.
-
-
----
-
-## 📖 Testing Methodology Overview
-
-> **📚 Complete Testing Guide**: See "📚 AI Agent Testing Guides" section below for comprehensive initialization patterns, best practices, debugging guidance, and copy-paste examples.
-
-## 📚 Quick Reference
-
-**Test ID Pattern**: `data-testid="my-input"` creates `my-input-wrapper`, `my-input-up`, `my-input-down`, etc.
-
-**Check Initialization**: `expect(await apiHelpers.isTouchSpinInitialized(page, 'test-input')).toBe(true);`
-
-**Event Log Format**: `[native/touchspin] target:value eventName`
-
-**Key Helpers**: `clearEventLog`, `hasEventInLog`, `expectEventFired`, `expectValueToBe`
-
-**Running Tests:**
-```bash
-yarn exec playwright test packages/core/tests/
-yarn exec playwright test --ui  # Debug mode
-COVERAGE=1 yarn exec playwright test packages/  # With coverage
-```
-
-**Project Structure:**
-- Test Helpers: `packages/core/test-helpers/`
-- New Tests: `packages/*/tests/*.spec.ts`
-- Archived Tests: `__tests__/*.spec.deprecated.ts` (reference only)
-
-### Temporary Files and Documentation
-
-**Project tmp folder**: Use `/apps/touchspin-openai/tmp/` (not system `/tmp/`) for:
-- Temporary documentation files
-- Progress tracking files
+Use `/apps/bootstrap-touchspin-openai/tmp/` for:
+- Temporary documentation
+- Progress tracking
 - Work-in-progress notes
-- Any temporary files that should be accessible within the project context
 
-This folder is part of the project structure and should be used instead of system tmp directories.
+## 💡 Key Principles
 
----
-
-## 🎭 Gherkin-Style Test Format & Step Lexicon
-
-### Test Format: Comments-First Approach
-
-We use a **Gherkin-style comment approach** for test specification and organization. This provides clear documentation of test intent without requiring a full Gherkin parser.
-
-#### Spec File Structure
-
-```typescript
-/**
- * Feature: [Brief feature description]
- * Background: fixture = [path to test fixture]
- */
-
-/*
- * CHECKLIST — Scenarios in this spec
- * [x] implemented scenario one
- * [x] implemented scenario two
- * [ ] planned scenario three
- * [ ] planned scenario four
- */
-
-import { test } from '@playwright/test';
-// ... imports
-
-/**
- * Scenario: implemented scenario one
- * Given the fixture page is loaded
- * When I perform some action
- * Then some expected result occurs
- */
-test('implemented scenario one', async ({ page }) => {
-  // Test implementation
-});
-
-/**
- * Scenario: planned scenario three
- * Given some initial state
- * When some action is performed
- * Then some result is expected
- * Params:
- * { "setting": "value", "other": 123 }
- */
-test.skip('planned scenario three', async ({ page }) => {
-  // Implementation pending
-});
-```
-
-#### Format Rules
-
-1. **Feature Header**: Minimal `/** Feature: ... */` at top of file
-2. **Checklist**: `/* CHECKLIST — Scenarios in this spec */` block with `[x]`/`[ ]` items
-3. **Scenario Comments**: Immediately above each `test()` with Given/When/Then structure
-4. **Params**: Optional JSON block for complex test configurations
-5. **Implemented Tests**: Use `test()` with `[x]` in checklist
-6. **Planned Tests**: Use `test.skip()` with `[ ]` in checklist
-
-### Guard Script Validation
-
-The **gherkin-guard-dog** script enforces checklist consistency:
-
-```bash
-# Run the guard (validates all .spec.ts files)
-yarn test:guard
-
-# With environment variables
-REQUIRE_CHECKLIST=1 yarn test:guard  # Fail if no checklist found
-VERBOSE=1 yarn test:guard            # Show OK messages
-```
-
-#### Validation Rules
-
-- `[x]` items must have corresponding `test()` (not `test.skip()`)
-- `[ ]` items must have corresponding `test.skip()`
-- Every `test()` must be listed as `[x]` in checklist
-- Every `test.skip()` must be listed as `[ ]` in checklist
-- No duplicate test titles or checklist items
-- Test titles must exactly match checklist items
-
-### Step Lexicon Generation
-
-The **step lexicon** is auto-generated from doc-comments in helper functions and serves as the **single source of truth** for available test steps.
-
-#### Helper Function Annotation
-
-```typescript
-/**
- * When I click the up button on "{testId}"
- * @note Keeps focus; does not blur
- */
-export async function clickUpButton(page: Page, testId: string) { ... }
-
-/**
- * Then the value of "{testId}" is "{expected}"
- */
-export async function expectValueToBe(page: Page, testId: string, expected: string) { ... }
-
-/**
- * Given I mount TouchSpin core on "{testId}" with {settings}
- * Given TouchSpin is initialized on "{testId}" with {settings}
- * @note Renderer-agnostic initialization for core specs
- */
-export async function initializeTouchspin(page, testId, settings) { ... }
-```
-
-#### Doc-Comment Format
-
-- **First line**: Human-readable step description (becomes lexicon entry)
-- **Additional lines**: Alternative phrasings (each becomes separate entry)
-- **@note lines**: Optional implementation notes
-- **Placeholders**: Use `{testId}`, `{expected}`, `{settings}`, `{value}`, etc.
-
-#### Generate the Lexicon
-
-```bash
-# Generate tests/STEP-LEXICON.md from helper doc-comments
-yarn lexicon:gen
-
-# Override default scan paths
-yarn lexicon:gen packages/foo/helpers packages/bar/helpers
-```
-
-#### Generated Output Format
-
-```markdown
-# Step Lexicon (generated)
-
-## interactions
-
-- **When I click the up button on "{testId}"**
-  - `clickUpButton(page, testId)`
-  - File: `packages/core/tests/__shared__/helpers/interactions/buttons.ts`
-
-- **When I type "{text}" into "{testId}"**
-  - `typeInInput(page, testId, text)`
-  - File: `packages/core/tests/__shared__/helpers/interactions/input.ts`
-
-## assertions
-
-- **Then the value of "{testId}" is "{expected}"**
-  - `expectValueToBe(page, testId, expected, timeout?)`
-  - File: `packages/core/tests/__shared__/helpers/assertions/values.ts`
-```
-
-### Claude Scope Discipline
-
-When Claude generates tests from Gherkin comments, these rules **must** be followed:
-
-#### ✅ Claude May
-
-1. **Implement only `[ ]` scenarios**: Convert `test.skip()` to `test()` and flip checklist to `[x]`
-2. **Use only lexicon steps**: Every step phrase must exist in `tests/STEP-LEXICON.md`
-3. **Match titles exactly**: Test titles must equal scenario titles character-for-character
-4. **Handle malformed Params**: Use `test.skip()` with error comment for invalid JSON
-
-#### ❌ Claude Must NOT
-
-1. **Invent new steps**: Never create step phrases not in the lexicon
-2. **Modify existing helpers**: Don't change helper function signatures or behavior
-3. **Implement `[x]` scenarios**: These are already done
-4. **Change test names**: Keep exact scenario titles as test names
-
-#### Example Valid Implementation
-
-```typescript
-// Scenario comment (already exists)
-/**
- * Scenario: increases value on click on up button and triggers change event
- * Given the fixture page is loaded
- * When I click the up button
- * Then the value increases and change event is fired
- */
-
-// Claude converts from test.skip to test, updates checklist [x]
-test('increases value on click on up button and triggers change event', async ({ page }) => {
-  // Implementation using only lexicon steps
-  await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
-  await initializeTouchspin(page, 'test-input', { step: 1, initval: '0' });
-  await clickUpButton(page, 'test-input');
-  await expectValueToBe(page, 'test-input', '1');
-  // ... rest using lexicon steps
-});
-```
-
-### How to Implement a Planned Scenario
-
-When converting a planned scenario from `test.skip()` to `test()`:
-
-1. **Flip checklist status**: Change `[ ]` to `[x]` in the checklist
-2. **Change test method**: Convert `test.skip('Title', ...)` to `test('Title', ...)`
-3. **Use only lexicon steps**: Every action must exist in `tests/STEP-LEXICON.md`
-4. **Keep scenario title exactly**: Test title must match the scenario comment exactly
-5. **Implement using helpers**: Replace `// Implementation pending` with actual test code using documented helpers
-
-#### Quick Example
-
-```diff
-/*
- * CHECKLIST — Scenarios in this spec
-- * [ ] increases value on click on up button and triggers change event
-+ * [x] increases value on click on up button and triggers change event
- */
-
-- test.skip('increases value on click on up button and triggers change event', async ({ page }) => {
-+ test('increases value on click on up button and triggers change event', async ({ page }) => {
--   // Implementation pending
-+   await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
-+   await initializeTouchspin(page, 'test-input', { step: 1, initval: '0' });
-+   await clickUpButton(page, 'test-input');
-+   await expectValueToBe(page, 'test-input', '1');
-  });
-```
-
-### PR Checklist
-
-When contributing tests, ensure:
-
-- [ ] **Checklist updated**: `[ ]` → `[x]` for implemented scenarios
-- [ ] **Guard passes**: `yarn test:guard` runs clean
-- [ ] **Lexicon regenerated**: `yarn lexicon:gen` if helper docs changed
-- [ ] **Step compliance**: All steps exist in generated lexicon
-- [ ] **Test titles exact**: Match scenario comments precisely
+1. **Simplicity** - Keep code and tests simple and focused
+2. **Use existing tools** - Leverage helpers, utilities, and patterns
+3. **Test coverage** - Every line should be tested with meaningful tests
+4. **Clean commits** - Clear messages, proper attribution
+5. **Ask when unsure** - Better to clarify than assume
 
 ---
 
-## 🔧 Improved Development Workflow
-
-### 🎉 NEW: Watch Mode - No More Manual Rebuilds!
-
-**The DX nightmare is OVER!** You no longer need to manually rebuild after source changes.
-
-#### 🚀 Quick Start - Three Development Modes:
-
-**Option 1: Full Development Mode (Recommended)**
-```bash
-yarn dev  # Starts watch + server + test UI
-# Edit source → Auto-compiles → Tests auto-refresh! 🎉
-```
-
-**Option 2: Watch Mode Only**
-```bash
-yarn watch:test  # Watch all packages for changes
-# In another terminal:
-yarn test        # Run tests anytime - no build needed!
-```
-
-**Option 3: Test Development**
-```bash
-yarn test:dev    # Watch + server + test UI in one command
-# Perfect for test-driven development
-```
-
-#### 📋 Available Commands:
-
-- **`yarn dev`** - Watch mode + static server
-- **`yarn watch`** - Watch all packages (production builds)
-- **`yarn watch:test`** - Watch all packages (test builds)
-- **`yarn test:dev`** - Watch + serve + test UI
-- **`yarn test`** - Run tests (no build needed with watch!)
-- **`yarn build:test`** - Manual build (for CI/troubleshooting)
-
-#### 🔧 How It Works:
-
-- **TypeScript watch** compiles `.ts` → `.js` automatically
-- **Tests use `/devdist/`** - auto-updated by watch mode
-- **No manual rebuilds** required during development
-- **Coverage still works** - runs build when needed
-
-#### 💡 Pro Tips:
-
-- Start with `yarn dev` and keep it running
-- Edit source files and see changes instantly
-- Use `yarn test` in another terminal when needed
-- For CI/production, still use `yarn build` and `yarn build:test`
-
-### 🔙 Legacy Workflow (CI Only):
-
-```bash
-yarn build:test  # Only needed for CI or troubleshooting
-yarn test        # Traditional workflow
-```
-
----
-
-## 🎛️ Core Event Model
-
-### API vs User Input Events
-
-**IMPORTANT**: API spin methods do not emit `touchspin.on.startspin/stopspin` events. For these events, **use keyboard or wheel** in tests. API-based tests should assert **no start/stop** events.
-
-**Event Sources**:
-- **User Input** (keyboard, mousewheel): Emits `startspin`/`stopspin` events
-- **API Methods** (`startUpSpin()`, `stopSpin()`, etc.): Do NOT emit `startspin`/`stopspin` events
-
-**Testing Implications**:
-```typescript
-// ✅ CORRECT - Test keyboard events
-await page.keyboard.down('ArrowUp');
-expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(true);
-
-// ✅ CORRECT - Test API methods don't emit start/stop
-await apiHelpers.incrementViaAPI(page, 'test-input');
-expect(await apiHelpers.hasEventInLog(page, 'touchspin.on.startspin', 'touchspin')).toBe(false);
-```
-
----
-
-## 🔄 Callback Functions
-
-### Callback Behavior Specifications
-
-**`callback_before_calculation`**:
-- May return **numeric** (number or numeric string) → Core normalizes & clamps as usual
-- If it returns **non-numeric**, Core **rejects the callback return** and preserves the original value
-- Use `readInputValue()` for display assertions and `getNumericValue()` for internal state
-
-**`callback_after_calculation`**:
-- Takes the final computed value and may return a **string for display** (e.g., `"10 USD"`)
-- Core applies formatter to display but **maintains internal numeric value**
-- Display shows formatted string, but `getNumericValue()` returns the underlying number
-
-**Testing Implications**:
-```typescript
-// ✅ Test before_calculation with numeric string
-expect(await getNumericValue(page, 'test-input')).toBe(51);  // Normalized
-expect(await readInputValue(page, 'test-input')).toBe('51'); // Display
-
-// ✅ Test before_calculation with non-numeric (rejected)
-expect(await readInputValue(page, 'test-input')).toBe('50'); // Original preserved
-expect(await getNumericValue(page, 'test-input')).toBe(50);  // Original preserved
-
-// ✅ Test after_calculation formatting
-expect(await readInputValue(page, 'test-input')).toBe('10 USD'); // Formatted display
-expect(await getNumericValue(page, 'test-input')).toBe(10);      // Internal numeric preserved
-```
-
----
-
-## 📚 AI Agent Testing Guides
-
-### 🔧 Critical Initialization Patterns
-
-**Core Tests** - Use `initializeTouchspin` (renderer-free engine):
-```typescript
-import { initializeTouchspin } from '@touchspin/core/test-helpers';
-await initializeTouchspin(page, 'test-input', { step: 2, initval: 10 });
-```
-
-**jQuery Plugin Tests** - Use `initializeTouchspinJQuery`:
-```typescript
-import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
-await installJqueryPlugin(page);
-await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 10 });
-```
-
-**Renderer Tests** - Use `initializeTouchspinFromGlobals`:
-```typescript
-import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
-await initializeTouchspinFromGlobals(page, 'test-input', {
-  buttonup_txt: 'UP',
-  buttondown_txt: 'DOWN',
-  buttonup_class: 'btn btn-primary',
-});
-```
-
-### 🎯 Renderer Testing Patterns
-
-**CRITICAL: Understanding Browser Module Resolution**
-
-Renderer packages compile to ESM modules that contain bare imports like:
-```javascript
-import { AbstractRenderer } from '@touchspin/core/renderer';
-```
-
-**Browsers cannot resolve these bare module specifiers** without an import map. This breaks dynamic imports in tests.
-
-**Solution: Use IIFE Bundles with Global Variables**
-
-The `initializeTouchspinFromGlobals()` helper loads IIFE bundles that expose global variables and have all dependencies bundled:
-
-```typescript
-// ✅ CORRECT - Renderer tests with IIFE bundles
-import { initializeTouchspinFromGlobals } from '@touchspin/core/test-helpers';
-
-await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
-await initializeTouchspinFromGlobals(page, 'test-input', {
-  verticalbuttons: true,
-  buttonup_class: 'btn btn-success',
-});
-```
-
-**How it works:**
-1. Fixture loads IIFE bundle via `<script>` tag
-2. Bundle exposes `window.TouchSpinCore` and `window.Bootstrap5Renderer` globals
-3. Helper uses these globals to initialize without dynamic imports
-4. No module resolution issues in browser
-
-**When to use each pattern:**
-
-| Pattern | Use Case | Bundle Type |
-|---------|----------|-------------|
-| `initializeTouchspin()` | Core tests (no renderer) | N/A |
-| `initializeTouchspinFromGlobals()` | Framework renderer tests (Bootstrap, etc.) | IIFE with globals |
-| `initializeTouchspinWithRenderer()` | Vanilla renderer tests only | ESM (no bare imports) |
-| `initializeTouchspinJQuery()` | jQuery plugin tests | IIFE with globals |
-
-**External Framework Assets Strategy**
-
-Renderer packages commit external framework assets to `/devdist/external/` for offline CI:
-
-```
-packages/renderers/bootstrap5/
-  devdist/
-    external/          # ✅ Committed to git
-      css/
-        bootstrap.min.css
-      js/
-        bootstrap.bundle.min.js
-    *.js              # ❌ .gitignored (built artifacts)
-    *.d.ts            # ❌ .gitignored
-```
-
-**Why:**
-- CI runs in clean environment without node_modules
-- Tests need framework CSS/JS loaded in fixtures
-- Relative paths in fixtures require files to exist
-
-**Build Dependencies & Guards**
-
-The build system uses `build:deps` to ensure proper build order:
-
-```json
-// packages/jquery-plugin/package.json
-{
-  "scripts": {
-    "build:test": "yarn run build:deps && tsc -p tsconfig.testbuild.json && ..."
-  }
-}
-```
-
-**Purpose:**
-- Ensures renderer packages build before jquery-plugin
-- Provides `.d.ts` files for TypeScript compilation
-- Avoids "Cannot find module" errors in CI
-
-**Guards:**
-- `pre-dev` - Ensures packages built before `yarn dev`
-- `pre-test` - Ensures test builds before `yarn test`
-- Targeted builds avoid circular dependencies
-
-### 🎯 Essential Best Practices
-
-1. **No Manual Waits** - Use `expectValueToBe()` not `page.waitForTimeout()`
-2. **Use Helpers** - `clickUpButton()` not `page.locator().click()`
-3. **One Behavior per Test** - Simple, focused tests only
-
-```typescript
-// ✅ CORRECT Pattern (core test)
-await initializeTouchspin(page, 'test-input', { step: 5, initval: 10 });
-await apiHelpers.incrementViaAPI(page, 'test-input');
-await apiHelpers.expectValueToBe(page, 'test-input', '15');
-```
-
-### 🔄 Input Value Helper Distinctions
-
-**Critical**: Choose the right helper based on whether you expect input events:
-
-**Programmatic Value Setting (No Input Events):**
-```typescript
-await setValueSilentlyAndBlur(page, 'test-input', 'value');
-// - Uses el.value = value (programmatic)
-// - Does NOT fire input/change events
-// - Use for: Testing that programmatic changes don't trigger sanitization
-```
-
-**User Input Simulation (Fires Input Events):**
-```typescript
-await fillWithValueAndBlur(page, 'test-input', 'value');
-// - Uses keyboard input + blur
-// - DOES fire input/change events
-// - Use for: Testing user input that should trigger sanitization
-```
-
-**Rule of Thumb:**
-- Expect change events = use `fillWithValueAndBlur`
-- Expect NO change events = use `setValueSilentlyAndBlur`
-
-### 🍳 Quick Reference
-
-**Key Interactions:**
-```typescript
-await apiHelpers.clickUpButton(page, 'test-input');
-await apiHelpers.incrementViaAPI(page, 'test-input');  // API method
-await apiHelpers.typeInInput(page, 'test-input', '50');
-```
-
-**Essential Assertions:**
-```typescript
-await apiHelpers.expectValueToBe(page, 'test-input', '25');
-await apiHelpers.expectEventFired(page, 'change');
-await apiHelpers.expectButtonToBeDisabled(page, 'test-input', 'up');
-```
-
-**Event Debugging:**
-```typescript
-console.log(await apiHelpers.getEventLog(page)); // See what happened
-```
-
-### 🐛 Debugging Guide
-
-**Common Error Types:**
-- **Timeout errors**: Use polling assertions (`expectValueToBe`), not manual waits
-- **Locator errors**: Element not found - check initialization and testid
-- **Wrong initialization**: Use correct helper for test type (Core vs jQuery vs Renderer)
-
-**Debug Tools:**
-```typescript
-console.log(await apiHelpers.getEventLog(page)); // See events
-await page.pause(); // Interactive debugging
-```
-
-**Page Inspection Tool:**
-Use `yarn inspect` to analyze any page for console errors, network failures, and TouchSpin status:
-
-```bash
-# Inspect any page on the development server
-yarn inspect /packages/web-component/example/index.html
-yarn inspect /packages/core/tests/__shared__/fixtures/test-fixture.html
-
-# Returns JSON with:
-# - console errors/warnings
-# - network failures (404s, etc.)
-# - touchspinStatus (initialized/not initialized components)
-# - summary statistics
-```
-
-**Example output:**
-```json
-{
-  "summary": {
-    "totalConsoleErrors": 0,
-    "totalNetworkErrors": 0,
-    "touchspinInitialized": 3,
-    "touchspinNotInitialized": 0
-  }
-}
-```
-
-**IMPORTANT**: Always use `yarn inspect` instead of manually copying console messages, as it provides comprehensive and accurate debugging information.
-
-**Anti-Patterns:**
-- ❌ Never import from `/src/` in tests (use `/dist/`)
-- ❌ Never use `page.locator()` directly (use helpers)
-- ❌ Never use `page.waitForTimeout()` (use `expectValueToBe`)
-
----
-
-*End of Testing Strategy Document - Let's achieve 100% coverage with clean, maintainable tests!*
+**For detailed testing instructions, coverage strategies, and test implementation, consult the testing agent.**
