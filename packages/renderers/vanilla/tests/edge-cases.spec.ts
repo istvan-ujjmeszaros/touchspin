@@ -9,6 +9,9 @@
  * [x] forcestepdivisibility none, step=5, init 97: two ups => one change (100)
  * [x] at max: up => zero change; at min: down => zero change
  * [x] blur sanitization: raw 96 with step=5 => exactly one change to 95
+ * [ ] handles null wrapper after failed initialization
+ * [ ] handles non-HTMLElement button query results
+ * [ ] falls back to up button when postfix is missing
  */
 
 import { test } from '@playwright/test';
@@ -130,4 +133,40 @@ test('blur sanitization: raw 96 with step=5 => exactly one change to 95', async 
   await expectValueToBe(page, 'test-input', '95');
   const count = await countEventInLog(page, 'change');
   test.expect(count).toBe(1);
+});
+
+/**
+ * Scenario: handles null wrapper after failed initialization
+ * Given buildInputGroup returns null due to missing parent
+ * When init() processes the wrapper
+ * Then it returns early without attempting DOM operations
+ * Params:
+ * { "parentElement": null, "wrapperNull": true, "defensive": true }
+ */
+test.skip('handles null wrapper after failed initialization', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: handles non-HTMLElement button query results
+ * Given button query returns non-HTMLElement node
+ * When attachUpEvents is called
+ * Then null is passed to attachUpEvents instead of invalid element
+ * Params:
+ * { "queryResult": "TextNode", "elementCheck": "instanceof", "defensive": true }
+ */
+test.skip('handles non-HTMLElement button query results', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: falls back to up button when postfix is missing
+ * Given wrapper has no postfix element
+ * When input positioning logic runs
+ * Then input is inserted before up button instead
+ * Params:
+ * { "postfixMissing": true, "fallbackInsertion": "before_up_button" }
+ */
+test.skip('falls back to up button when postfix is missing', async ({ page }) => {
+  // Implementation pending
 });

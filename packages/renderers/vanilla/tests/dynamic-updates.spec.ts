@@ -30,6 +30,12 @@
  * [x] handles CSS variable updates
  * [x] preserves semantic structure during updates
  * [x] handles animation-friendly updates
+ * [ ] updates vertical button class via setting change
+ * [ ] updates prefix extra classes dynamically
+ * [ ] updates postfix extra classes dynamically
+ * [ ] applies theme via CSS custom properties
+ * [ ] applies theme with prefixed CSS properties
+ * [ ] handles null wrapper defensively in setTheme
  */
 
 import { expect, test } from '@playwright/test';
@@ -855,4 +861,76 @@ test('handles animation-friendly updates', async ({ page }) => {
   // Verify functionality works (animations don't block interaction)
   await apiHelpers.clickUpButton(page, 'test-input');
   await apiHelpers.expectValueToBe(page, 'test-input', '51');
+});
+
+/**
+ * Scenario: updates vertical button class via setting change
+ * Given TouchSpin is initialized with vertical buttons
+ * When verticalupclass or verticaldownclass setting is updated
+ * Then vertical button classes are updated correctly
+ * Params:
+ * { "verticalbuttons": true, "verticalupclass": "custom-v-up", "classUpdate": "applied" }
+ */
+test.skip('updates vertical button class via setting change', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: updates prefix extra classes dynamically
+ * Given TouchSpin is initialized with prefix
+ * When prefix_extraclass setting is updated
+ * Then prefix element classes are rebuilt with new extra classes
+ * Params:
+ * { "prefix": "$", "prefix_extraclass": "custom-prefix bold-text", "classRebuild": true }
+ */
+test.skip('updates prefix extra classes dynamically', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: updates postfix extra classes dynamically
+ * Given TouchSpin is initialized with postfix
+ * When postfix_extraclass setting is updated
+ * Then postfix element classes are rebuilt with new extra classes
+ * Params:
+ * { "postfix": "USD", "postfix_extraclass": "custom-postfix italic-text", "classRebuild": true }
+ */
+test.skip('updates postfix extra classes dynamically', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: applies theme via CSS custom properties
+ * Given TouchSpin is initialized
+ * When setTheme is called with theme object
+ * Then CSS custom properties are applied to wrapper element
+ * Params:
+ * { "theme": { "primary-color": "#ff0000", "border-radius": "8px" }, "themeApplication": "success" }
+ */
+test.skip('applies theme via CSS custom properties', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: applies theme with prefixed CSS properties
+ * Given TouchSpin is initialized
+ * When setTheme is called with CSS properties starting with --
+ * Then properties are applied as-is without ts- prefix
+ * Params:
+ * { "theme": { "--custom-prop": "#00ff00" }, "propertyPrefix": "none" }
+ */
+test.skip('applies theme with prefixed CSS properties', async ({ page }) => {
+  // Implementation pending
+});
+
+/**
+ * Scenario: handles null wrapper defensively in setTheme
+ * Given wrapper is null after teardown or failure
+ * When setTheme is called
+ * Then it returns early without throwing error
+ * Params:
+ * { "wrapperState": "null", "defensive": true }
+ */
+test.skip('handles null wrapper defensively in setTheme', async ({ page }) => {
+  // Implementation pending
 });
