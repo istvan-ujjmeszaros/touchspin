@@ -9,12 +9,16 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   private _formControlAdded?: boolean;
+  private initialInputGroup: HTMLElement | null = null;
   declare wrapper: HTMLElement | null;
 
   init() {
     // Initialize internal element references
     this.prefixEl = null;
     this.postfixEl = null;
+
+    // Store initial input group for rebuild fallback (same pattern as Bootstrap5)
+    this.initialInputGroup = this.input.closest('.input-group') as HTMLElement | null;
 
     // Add form-control class if not present (Bootstrap requirement)
     if (!this.input.classList.contains('form-control')) {
@@ -101,8 +105,9 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
   }
 
   buildInputGroup(): HTMLElement {
-    // Check if input is already inside an input-group
-    const existingInputGroup = this.input.closest('.input-group') as HTMLElement | null;
+    // Check if input is already inside an input-group (with fallback like Bootstrap5)
+    const closestGroup = this.input.closest('.input-group') as HTMLElement | null;
+    const existingInputGroup = closestGroup ?? this.initialInputGroup;
 
     if (existingInputGroup) {
       return this.buildAdvancedInputGroup(existingInputGroup);
@@ -203,6 +208,14 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
 
     // Mark this as an advanced wrapper
     this.wrapperType = 'wrapper-advanced';
+
+    // Clear all children except the input to rebuild from scratch
+    // This ensures no leftover fixture elements interfere with the proper order
+    Array.from(existingInputGroup.children).forEach((child) => {
+      if (child !== this.input) {
+        child.remove();
+      }
+    });
 
     // Create elements based on vertical or horizontal layout
     let elementsHtml;

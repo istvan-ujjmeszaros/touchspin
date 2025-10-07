@@ -397,6 +397,14 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     this.trackAddClass(existingInputGroup, CSS_CLASSES.BOOTSTRAP_TOUCHSPIN);
     this.wrapperType = 'wrapper-advanced';
 
+    // Clear all children except the input to rebuild from scratch
+    // This ensures no leftover fixture elements interfere with the proper order
+    Array.from(existingInputGroup.children).forEach((child) => {
+      if (child !== this.input) {
+        child.remove();
+      }
+    });
+
     this.insertElementsIntoExistingGroup(existingInputGroup);
     this.storeElementReferences(existingInputGroup);
 

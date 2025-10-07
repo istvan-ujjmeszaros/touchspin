@@ -332,9 +332,26 @@ test('rebuilds DOM correctly when switching layouts in advanced mode', async ({ 
     verticalbuttons: false,
   });
 
+  // Helper to get element order
+  const getElementOrder = () =>
+    page.evaluate(() => {
+      const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+      if (!wrapper) return [];
+      return Array.from(wrapper.children).map((el) => {
+        const injected = (el as HTMLElement).getAttribute('data-touchspin-injected');
+        if (injected) return injected;
+        if (el.tagName.toLowerCase() === 'input') return 'input';
+        return 'unknown';
+      });
+    });
+
   // Verify initial horizontal layout works
   await apiHelpers.clickUpButton(page, 'test-input-advanced');
   await apiHelpers.expectValueToBe(page, 'test-input-advanced', '51');
+
+  // Verify initial order: prefix -> down -> input -> up -> postfix
+  const initialOrder = await getElementOrder();
+  expect(initialOrder).toEqual(['prefix', 'down', 'input', 'up', 'postfix']);
 
   // Switch to vertical layout
   await apiHelpers.updateSettingsViaAPI(page, 'test-input-advanced', {
@@ -365,6 +382,10 @@ test('rebuilds DOM correctly when switching layouts in advanced mode', async ({ 
     return verticalWrapper !== null;
   });
   expect(verticalWrapperAfter).toBe(false);
+
+  // Verify element order is restored: prefix -> down -> input -> up -> postfix
+  const finalOrder = await getElementOrder();
+  expect(finalOrder).toEqual(['prefix', 'down', 'input', 'up', 'postfix']);
 
   // Verify functionality still works
   await apiHelpers.clickDownButton(page, 'test-input-advanced');
