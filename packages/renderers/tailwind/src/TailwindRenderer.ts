@@ -172,14 +172,6 @@ class TailwindRenderer extends AbstractRendererSimple {
       existingContainer.setAttribute('data-testid', `${inputTestId}-wrapper`);
     }
 
-    // Clear all children except the input to rebuild from scratch
-    // This ensures no leftover fixture elements interfere with the proper order
-    Array.from(existingContainer.children).forEach((child) => {
-      if (child !== this.input) {
-        child.remove();
-      }
-    });
-
     // Ensure input is in container before any insertBefore operations
     this.ensureInputInContainer(existingContainer);
 

@@ -209,14 +209,6 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
     // Mark this as an advanced wrapper
     this.wrapperType = 'wrapper-advanced';
 
-    // Clear all children except the input to rebuild from scratch
-    // This ensures no leftover fixture elements interfere with the proper order
-    Array.from(existingInputGroup.children).forEach((child) => {
-      if (child !== this.input) {
-        child.remove();
-      }
-    });
-
     // Create elements based on vertical or horizontal layout
     let elementsHtml;
     if (this.settings.verticalbuttons) {
