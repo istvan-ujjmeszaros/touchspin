@@ -11,13 +11,16 @@
  * [x] wheel events respect mousewheel setting and active element
  * [x] keyboard handlers ignore repeats and trigger spin once
  * [x] boosted step respects caps and NaN fallback uses first click value
+ * [x] AbstractRendererSimple handles wrapper permutations
  */
 
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { coreUrl } from '../__shared__/helpers/runtime/paths';
+import { artifactUrlFor, coreUrl } from '../__shared__/helpers/runtime/paths';
 
 const fixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
+const coreRendererUrl =
+  artifactUrlFor('packages/core', 'rendererEntry') ?? '/packages/core/devdist/renderer.js';
 
 async function importCore(page: import('@playwright/test').Page) {
   return page.evaluateHandle(
@@ -308,5 +311,144 @@ test.describe('Core edge-case coverage', () => {
 
     expect(results.boosted).toBe(6);
     expect(results.nextFromNaN).toBe(42);
+  });
+
+  /**
+   * Scenario: AbstractRendererSimple handles wrapper permutations
+   * Given wrapper references with different attribute and parent combinations
+   * When removeInjectedElements executes for each case
+   * Then simple wrappers unwrap the input, advanced wrappers clear metadata, and unrelated injected nodes remain untouched
+   */
+  test('AbstractRendererSimple handles wrapper permutations', async ({ page }) => {
+    const outcomes = await page.evaluate(
+      async ({ rendererUrl }) => {
+        const module = await import(new URL(rendererUrl, window.location.origin).href);
+        const { AbstractRendererSimple } = module as any;
+
+        class TestRenderer extends AbstractRendererSimple {
+          init(): void {}
+        }
+
+        const coreStub = {
+          attachUpEvents: () => {},
+          attachDownEvents: () => {},
+          observeSetting: () => () => {},
+        };
+
+        const makeHost = (id: string) => {
+          const container = document.createElement('div');
+          container.id = id;
+          document.body.appendChild(container);
+          const input = document.createElement('input');
+          input.setAttribute('data-testid', id);
+          container.appendChild(input);
+          return { container, input };
+        };
+
+        const results: Record<string, unknown> = {};
+
+        // No wrapper defined
+        {
+          const { container, input } = makeHost('no-wrapper');
+          const renderer = new TestRenderer(input, {} as any, coreStub);
+          renderer.removeInjectedElements();
+          results.noWrapperParent = input.parentElement === container;
+          container.remove();
+        }
+
+        // Wrapper without attribute should be left intact
+        {
+          const { container, input } = makeHost('no-attr');
+          const wrapper = document.createElement('div');
+          wrapper.appendChild(input);
+          container.appendChild(wrapper);
+          const renderer = new TestRenderer(input, {} as any, coreStub);
+          renderer.wrapper = wrapper;
+          renderer.removeInjectedElements();
+          results.noAttrWrapperRetained = container.contains(wrapper);
+          results.noAttrInputParent = input.parentElement === wrapper;
+          container.remove();
+        }
+
+        // Wrapper without parent should be ignored
+        {
+          const { container, input } = makeHost('orphan');
+          const orphanWrapper = document.createElement('div');
+          const renderer = new TestRenderer(input, {} as any, coreStub);
+          renderer.wrapper = orphanWrapper;
+          renderer.removeInjectedElements();
+          results.orphanStillDetached = orphanWrapper.parentElement === null;
+          container.remove();
+        }
+
+        // Default wrapper removes itself and only related injected nodes
+        {
+          const { container, input } = makeHost('simple-wrapper');
+          const wrapper = document.createElement('div');
+          wrapper.setAttribute('data-touchspin-injected', 'wrapper');
+          wrapper.appendChild(input);
+          container.appendChild(wrapper);
+
+          const related = document.createElement('span');
+          related.setAttribute('data-touchspin-injected', 'prefix');
+          wrapper.appendChild(related);
+
+          const strayHolder = document.createElement('aside');
+          const stray = document.createElement('div');
+          stray.setAttribute('data-touchspin-injected', 'stray');
+          strayHolder.appendChild(stray);
+          document.body.appendChild(strayHolder);
+
+          input.setAttribute('data-touchspin-injected', 'self');
+
+          const renderer = new TestRenderer(input, {} as any, coreStub);
+          renderer.wrapper = wrapper;
+          renderer.removeInjectedElements();
+
+          results.simpleWrapperRemoved = !container.contains(wrapper);
+          results.simpleInputReparented = input.parentElement === container;
+          results.relatedRemoved = !document.body.contains(related);
+          results.strayRetained = strayHolder.contains(stray);
+
+          strayHolder.remove();
+          container.remove();
+        }
+
+        // Advanced wrapper keeps node but clears metadata
+        {
+          const { container, input } = makeHost('advanced-wrapper');
+          const wrapper = document.createElement('div');
+          wrapper.classList.add('bootstrap-touchspin');
+          wrapper.setAttribute('data-touchspin-injected', 'wrapper-advanced');
+          wrapper.appendChild(input);
+          container.appendChild(wrapper);
+
+          const renderer = new TestRenderer(input, {} as any, coreStub);
+          renderer.wrapper = wrapper;
+          renderer.removeInjectedElements();
+
+          results.advancedWrapperPresent = container.contains(wrapper);
+          results.advancedAttributeCleared = !wrapper.hasAttribute('data-touchspin-injected');
+          results.advancedClassCleared = !wrapper.classList.contains('bootstrap-touchspin');
+
+          container.remove();
+        }
+
+        return results;
+      },
+      { rendererUrl: coreRendererUrl }
+    );
+
+    expect(outcomes.noWrapperParent).toBe(true);
+    expect(outcomes.noAttrWrapperRetained).toBe(true);
+    expect(outcomes.noAttrInputParent).toBe(true);
+    expect(outcomes.orphanStillDetached).toBe(true);
+    expect(outcomes.simpleWrapperRemoved).toBe(true);
+    expect(outcomes.simpleInputReparented).toBe(true);
+    expect(outcomes.relatedRemoved).toBe(true);
+    expect(outcomes.strayRetained).toBe(true);
+    expect(outcomes.advancedWrapperPresent).toBe(true);
+    expect(outcomes.advancedAttributeCleared).toBe(true);
+    expect(outcomes.advancedClassCleared).toBe(true);
   });
 });
