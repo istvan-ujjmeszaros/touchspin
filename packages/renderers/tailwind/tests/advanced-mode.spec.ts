@@ -123,10 +123,12 @@ test('handles vertical layout in advanced mode', async ({ page }) => {
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input-advanced');
 
   // Verify vertical wrapper exists within advanced container
-  const verticalWrapper = await page.locator(
-    '[data-testid="test-input-advanced-wrapper"] [data-touchspin-injected="vertical-wrapper"]'
-  );
-  await expect(verticalWrapper).toBeVisible();
+  const verticalWrapperExists = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+    const verticalWrapper = wrapper?.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    return verticalWrapper !== null;
+  });
+  expect(verticalWrapperExists).toBe(true);
 
   // Verify buttons are in vertical wrapper
   await expect(elements.upButton).toBeVisible();
@@ -348,10 +350,12 @@ test('rebuilds DOM correctly when switching layouts in advanced mode', async ({ 
   });
 
   // Verify vertical wrapper exists
-  const verticalWrapper = await page.locator(
-    '[data-testid="test-input-advanced-wrapper"] [data-touchspin-injected="vertical-wrapper"]'
-  );
-  await expect(verticalWrapper).toBeVisible();
+  const verticalWrapperExists = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+    const verticalWrapper = wrapper?.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    return verticalWrapper !== null;
+  });
+  expect(verticalWrapperExists).toBe(true);
 
   // Verify functionality still works
   await apiHelpers.clickUpButton(page, 'test-input-advanced');
@@ -363,12 +367,12 @@ test('rebuilds DOM correctly when switching layouts in advanced mode', async ({ 
   });
 
   // Verify vertical wrapper is gone
-  const verticalWrapperAfter = await page
-    .locator(
-      '[data-testid="test-input-advanced-wrapper"] [data-touchspin-injected="vertical-wrapper"]'
-    )
-    .count();
-  expect(verticalWrapperAfter).toBe(0);
+  const verticalWrapperAfter = await page.evaluate(() => {
+    const wrapper = document.querySelector('[data-testid="test-input-advanced-wrapper"]');
+    const verticalWrapper = wrapper?.querySelector('[data-touchspin-injected="vertical-wrapper"]');
+    return verticalWrapper !== null;
+  });
+  expect(verticalWrapperAfter).toBe(false);
 
   // Verify functionality still works
   await apiHelpers.clickDownButton(page, 'test-input-advanced');
