@@ -1346,7 +1346,7 @@ __metadata:
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
   peerDependencies:
-    jquery: ">=1.7"
+    jquery: ">=1.9.0"
   peerDependenciesMeta:
     jquery:
       optional: true
