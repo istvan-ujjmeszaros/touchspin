@@ -80,7 +80,6 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
     this.wrapper = this.buildInputGroup();
 
     // 2. Find created buttons and store prefix/postfix references
-    if (!this.wrapper) return;
     const upButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="down"]');
     this.prefixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
@@ -148,58 +147,50 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
     // Create wrapper and wrap the input
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html.trim();
-    const wrapper = tempDiv.firstChild as HTMLElement | null;
+    const wrapper = tempDiv.firstChild as HTMLElement;
 
     // Insert wrapper and move input into it
-    if (this.input.parentElement && wrapper) {
+    if (this.input.parentElement) {
       this.input.parentElement.insertBefore(wrapper, this.input);
     }
 
     // Find the position to insert input
     if (this.settings.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
-      const prefixEl = wrapper
-        ? wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]')
-        : null;
-      const postfixEl = wrapper
-        ? wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]')
-        : null;
+      const prefixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
+      const postfixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
 
-      if (prefixEl && wrapper) {
+      if (prefixEl) {
         // Insert after prefix
         wrapper.insertBefore(this.input, prefixEl.nextSibling);
-      } else if (postfixEl && wrapper) {
+      } else if (postfixEl) {
         // No prefix, insert before postfix
         wrapper.insertBefore(this.input, postfixEl);
       } else {
         // No prefix or postfix, insert before vertical wrapper
-        const verticalWrapper = wrapper?.querySelector<HTMLElement>(
+        const verticalWrapper = wrapper.querySelector<HTMLElement>(
           '[data-touchspin-injected="vertical-wrapper"]'
         );
-        if (wrapper && verticalWrapper) wrapper.insertBefore(this.input, verticalWrapper);
+        if (verticalWrapper) wrapper.insertBefore(this.input, verticalWrapper);
       }
     } else {
       // For horizontal buttons: down -> prefix -> input -> postfix -> up
-      const prefixEl = wrapper
-        ? wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]')
-        : null;
-      const _postfixEl = wrapper
-        ? wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]')
-        : null;
+      const prefixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
+      const _postfixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
 
       if (prefixEl) {
         // Insert after prefix
-        if (wrapper) wrapper.insertBefore(this.input, (prefixEl as HTMLElement).nextSibling);
+        wrapper.insertBefore(this.input, prefixEl.nextSibling);
       } else {
         // No prefix, insert after down button
-        const downButton = wrapper?.querySelector<HTMLElement>(
+        const downButton = wrapper.querySelector<HTMLElement>(
           '[data-touchspin-injected="down-wrapper"]'
         );
-        if (wrapper && downButton) wrapper.insertBefore(this.input, downButton.nextSibling);
+        if (downButton) wrapper.insertBefore(this.input, downButton.nextSibling);
       }
     }
 
-    return wrapper as HTMLElement;
+    return wrapper;
   }
 
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
@@ -443,10 +434,7 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
     this.wrapper = null;
 
     this.buildAndAttachDOM();
-
-    if (this.wrapper) {
-      this.finalizeWrapperAttributes();
-    }
+    this.finalizeWrapperAttributes();
   }
 
   updateButtonFocusability(newValue: boolean): void {

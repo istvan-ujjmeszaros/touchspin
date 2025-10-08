@@ -22,7 +22,6 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.wrapper = this.buildInputGroup();
 
     // 2. Find created buttons and store prefix/postfix references
-    if (!this.wrapper) return;
     const upButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="down"]');
     this.prefixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
@@ -108,24 +107,20 @@ class TailwindRenderer extends AbstractRendererSimple {
     // Create wrapper and wrap the input
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html.trim();
-    const wrapper = tempDiv.firstChild as HTMLElement | null;
+    const wrapper = tempDiv.firstChild as HTMLElement;
 
     // Insert wrapper and move input into it
-    if (this.input.parentElement && wrapper) {
+    if (this.input.parentElement) {
       this.input.parentElement.insertBefore(wrapper, this.input);
     }
 
     // Find the position to insert input (after prefix, before postfix)
-    const prefixEl = (wrapper as HTMLElement).querySelector<HTMLElement>(
-      '[data-touchspin-injected="prefix"]'
-    );
-    if (prefixEl && wrapper) {
-      wrapper.insertBefore(this.input, (prefixEl as HTMLElement).nextSibling);
+    const prefixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
+    if (prefixEl) {
+      wrapper.insertBefore(this.input, prefixEl.nextSibling);
     } else {
-      const postfixEl = (wrapper as HTMLElement).querySelector<HTMLElement>(
-        '[data-touchspin-injected="postfix"]'
-      );
-      if (postfixEl) (wrapper as HTMLElement).insertBefore(this.input, postfixEl);
+      const postfixEl = wrapper.querySelector<HTMLElement>('[data-touchspin-injected="postfix"]');
+      if (postfixEl) wrapper.insertBefore(this.input, postfixEl);
     }
 
     // Apply input styling
@@ -428,10 +423,7 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
-
-    if (this.wrapper) {
-      this.finalizeWrapperAttributes();
-    }
+    this.finalizeWrapperAttributes();
   }
 
   buildAndAttachDOM(): void {
@@ -439,7 +431,6 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.wrapper = this.buildInputGroup();
 
     // 2. Find created buttons and store prefix/postfix references
-    if (!this.wrapper) return;
     const upButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="down"]');
     this.prefixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');

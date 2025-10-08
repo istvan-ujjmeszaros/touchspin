@@ -85,14 +85,12 @@ abstract class AbstractRendererBase implements Renderer {
    * Tests rely on this attribute to detect when components are ready.
    */
   finalizeWrapperAttributes(): void {
-    if (!this.wrapper) return;
-
     const testId = this.input.getAttribute(TEST_ID_ATTRIBUTE);
-    if (testId && !this.wrapper.hasAttribute(TEST_ID_ATTRIBUTE)) {
-      this.wrapper.setAttribute(TEST_ID_ATTRIBUTE, `${testId}-wrapper`);
+    if (testId && !this.wrapper!.hasAttribute(TEST_ID_ATTRIBUTE)) {
+      this.wrapper!.setAttribute(TEST_ID_ATTRIBUTE, `${testId}-wrapper`);
     }
 
-    this.wrapper.setAttribute(TOUCHSPIN_ATTRIBUTE, this.wrapperType);
+    this.wrapper!.setAttribute(TOUCHSPIN_ATTRIBUTE, this.wrapperType);
   }
 
   getUpButtonTestId(): string {

@@ -173,14 +173,12 @@ abstract class AbstractRendererSurgical extends AbstractRendererBase {
    * Override to use tracking methods for wrapper attributes.
    */
   override finalizeWrapperAttributes(): void {
-    if (!this.wrapper) return;
-
     const testIdAttr = this.input.getAttribute('data-testid');
-    if (testIdAttr && !this.wrapper.hasAttribute('data-testid')) {
-      this.trackAddAttribute(this.wrapper, 'data-testid', `${testIdAttr}-wrapper`);
+    if (testIdAttr && !this.wrapper!.hasAttribute('data-testid')) {
+      this.trackAddAttribute(this.wrapper!, 'data-testid', `${testIdAttr}-wrapper`);
     }
 
-    this.trackSetAttribute(this.wrapper, 'data-touchspin-injected', this.wrapperType);
+    this.trackSetAttribute(this.wrapper!, 'data-touchspin-injected', this.wrapperType);
   }
 
   /**

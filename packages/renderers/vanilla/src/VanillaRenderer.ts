@@ -16,7 +16,6 @@ class VanillaRenderer extends AbstractRendererSimple {
     // Build and inject DOM structure
     this.wrapper = this.buildInputGroup();
     const wrapper = this.wrapper;
-    if (!wrapper) return;
 
     // Find created elements and store references
     const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');
@@ -259,17 +258,13 @@ class VanillaRenderer extends AbstractRendererSimple {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
-
-    if (this.wrapper) {
-      this.finalizeWrapperAttributes();
-    }
+    this.finalizeWrapperAttributes();
   }
 
   buildAndAttachDOM(): void {
     // Build and inject DOM structure
     this.wrapper = this.buildInputGroup();
     const wrapper = this.wrapper;
-    if (!wrapper) return;
 
     // Find created elements and store references
     const upButtonEl = wrapper.querySelector('[data-touchspin-injected="up"]');

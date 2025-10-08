@@ -664,7 +664,7 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
    * Apply margin classes that were moved from .form-floating to wrapper
    */
   private applyMovedMargins(): void {
-    if (!this.wrapper || !this.floatingContainer) return;
+    if (!this.floatingContainer) return;
 
     const movedMargins = this.floatingContainer.dataset.movedMargins;
     if (movedMargins) {
@@ -676,18 +676,14 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     }
   }
 
-  private storeElementReferences(wrapper: HTMLElement | null): void {
-    if (!wrapper) return;
-
+  private storeElementReferences(wrapper: HTMLElement): void {
     this.prefixEl = wrapper.querySelector(SELECTORS.PREFIX) as HTMLElement | null;
     this.postfixEl = wrapper.querySelector(SELECTORS.POSTFIX) as HTMLElement | null;
   }
 
   private attachEventsToButtons(): void {
-    if (!this.wrapper) return;
-
-    const upButton = this.wrapper.querySelector(SELECTORS.UP_BUTTON);
-    const downButton = this.wrapper.querySelector(SELECTORS.DOWN_BUTTON);
+    const upButton = this.wrapper!.querySelector(SELECTORS.UP_BUTTON);
+    const downButton = this.wrapper!.querySelector(SELECTORS.DOWN_BUTTON);
 
     this.core.attachUpEvents(upButton instanceof HTMLElement ? upButton : null);
     this.core.attachDownEvents(downButton instanceof HTMLElement ? downButton : null);
@@ -859,10 +855,7 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     this.teardown();
     this.resetStateAfterRemoval();
     this.buildAndAttachDOM();
-
-    if (this.wrapper) {
-      this.finalizeWrapperAttributes();
-    }
+    this.finalizeWrapperAttributes();
   }
 
   private resetStateAfterRemoval(): void {

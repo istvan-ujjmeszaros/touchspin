@@ -129,51 +129,45 @@ class Bootstrap4Renderer extends AbstractRendererSimple {
     // Create wrapper and wrap the input
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html.trim();
-    const wrapper = tempDiv.firstChild as HTMLElement | null;
+    const wrapper = tempDiv.firstChild as HTMLElement;
 
     // Insert wrapper and move input into it
-    if (this.input.parentElement && wrapper) {
+    if (this.input.parentElement) {
       this.input.parentElement.insertBefore(wrapper, this.input);
     }
 
     // Find the position to insert input
     if (this.settings.verticalbuttons) {
       // For vertical buttons: prefix -> input -> postfix -> vertical-buttons
-      const prefixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>(
+      const prefixWrapper = wrapper.querySelector<HTMLElement>(
         '[data-touchspin-injected="prefix"]'
       );
-      const postfixWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>(
+      const postfixWrapper = wrapper.querySelector<HTMLElement>(
         '[data-touchspin-injected="postfix"]'
       );
 
       if (prefixWrapper) {
         // Insert after prefix
-        if (wrapper)
-          (wrapper as HTMLElement).insertBefore(
-            this.input,
-            (prefixWrapper as HTMLElement).nextSibling
-          );
+        wrapper.insertBefore(this.input, prefixWrapper.nextSibling);
       } else if (postfixWrapper) {
         // No prefix, insert before postfix
-        if (wrapper) (wrapper as HTMLElement).insertBefore(this.input, postfixWrapper as Node);
+        wrapper.insertBefore(this.input, postfixWrapper);
       } else {
         // No prefix or postfix, insert before vertical wrapper
-        const verticalWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>(
+        const verticalWrapper = wrapper.querySelector<HTMLElement>(
           '[data-touchspin-injected="vertical-wrapper"]'
         );
-        if (wrapper && verticalWrapper)
-          (wrapper as HTMLElement).insertBefore(this.input, verticalWrapper);
+        if (verticalWrapper) wrapper.insertBefore(this.input, verticalWrapper);
       }
     } else {
       // For horizontal buttons: input goes between prepend and append wrappers
-      const appendWrapper = (wrapper as HTMLElement).querySelector<HTMLElement>(
+      const appendWrapper = wrapper.querySelector<HTMLElement>(
         '[data-touchspin-injected="append-wrapper"]'
       );
-      if (wrapper && appendWrapper)
-        (wrapper as HTMLElement).insertBefore(this.input, appendWrapper);
+      if (appendWrapper) wrapper.insertBefore(this.input, appendWrapper);
     }
 
-    return wrapper as HTMLElement;
+    return wrapper;
   }
 
   buildAdvancedInputGroup(existingInputGroup: HTMLElement): HTMLElement {
@@ -294,7 +288,6 @@ class Bootstrap4Renderer extends AbstractRendererSimple {
     this.wrapper = this.buildInputGroup();
 
     // 2. Find created buttons and store prefix/postfix references
-    if (!this.wrapper) return;
     const upButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="up"]');
     const downButton = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="down"]');
     this.prefixEl = this.wrapper.querySelector<HTMLElement>('[data-touchspin-injected="prefix"]');
@@ -456,10 +449,7 @@ class Bootstrap4Renderer extends AbstractRendererSimple {
     this.prefixEl = null;
     this.postfixEl = null;
     this.buildAndAttachDOM();
-
-    if (this.wrapper) {
-      this.finalizeWrapperAttributes();
-    }
+    this.finalizeWrapperAttributes();
   }
 
   updateButtonFocusability(newValue: boolean): void {
