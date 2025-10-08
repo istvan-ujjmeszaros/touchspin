@@ -47,7 +47,6 @@ test.describe('Bootstrap 3 renderer edge cases', () => {
    */
   test('advanced input group keeps input inside group when rebuilding', async ({ page }) => {
     await apiHelpers.initializeTouchSpin(page, 'test-input-advanced', {
-      renderer: bootstrap3RendererUrl,
       prefix: '#',
       postfix: 'units',
     });
@@ -96,9 +95,7 @@ test.describe('Bootstrap 3 renderer edge cases', () => {
    * Then the added class is removed and no residue remains on the original input
    */
   test('teardown only removes form-control when added by renderer', async ({ page }) => {
-    await apiHelpers.initializeTouchSpin(page, 'test-input', {
-      renderer: bootstrap3RendererUrl,
-    });
+    await apiHelpers.initializeTouchSpin(page, 'test-input', {});
 
     const hadFormControl = await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');

@@ -46,7 +46,6 @@ test.describe('Tailwind renderer edge cases', () => {
    */
   test('basic wrapper inserts input before postfix when no prefix exists', async ({ page }) => {
     await apiHelpers.initializeTouchSpin(page, 'test-input', {
-      renderer: tailwindRendererUrl,
       prefix: '',
       postfix: 'kg',
     });
@@ -75,7 +74,6 @@ test.describe('Tailwind renderer edge cases', () => {
    */
   test('advanced container reinstates input and supports vertical layout', async ({ page }) => {
     await apiHelpers.initializeTouchSpin(page, 'test-input-advanced', {
-      renderer: tailwindRendererUrl,
       prefix: 'TA',
       postfix: 'unit',
     });

@@ -53,7 +53,6 @@ test.describe('Bootstrap 5 renderer edge cases', () => {
     await apiHelpers.startCoverage(page);
 
     await apiHelpers.initializeTouchSpin(page, 'group-floating', {
-      renderer: bootstrap5RendererUrl,
       prefix: '$',
       postfix: '.00',
     });
@@ -102,7 +101,6 @@ test.describe('Bootstrap 5 renderer edge cases', () => {
    */
   test('advanced input group rebuild keeps prefix/postfix placement', async ({ page }) => {
     await apiHelpers.initializeTouchSpin(page, 'test-input-advanced', {
-      renderer: bootstrap5RendererUrl,
       prefix: '#',
       postfix: 'units',
     });
