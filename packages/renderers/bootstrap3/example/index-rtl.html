@@ -846,15 +846,20 @@
     options.replacementval = raw.replacementval;
     options.mousewheel = Boolean(raw.mousewheel);
     options.focusablebuttons = Boolean(raw.focusable);
-    options.buttonup_txt = raw.buttonupTxt || '+';
-    options.buttondown_txt = raw.buttondownTxt || '−';
     options.buttonup_class = raw.buttonupClass.trim() || null;
     options.buttondown_class = raw.buttondownClass.trim() || null;
     options.verticalbuttons = Boolean(raw.vertical);
-    options.verticalup = raw.verticalup || '▲';
-    options.verticaldown = raw.verticaldown || '▼';
-    options.verticalupclass = raw.verticalupclass.trim() || null;
-    options.verticaldownclass = raw.verticaldownclass.trim() || null;
+
+    // Only set text settings relevant to current mode
+    if (options.verticalbuttons) {
+      options.verticalup = raw.verticalup || '▲';
+      options.verticaldown = raw.verticaldown || '▼';
+      options.verticalupclass = raw.verticalupclass.trim() || null;
+      options.verticaldownclass = raw.verticaldownclass.trim() || null;
+    } else {
+      options.buttonup_txt = raw.buttonupTxt || '+';
+      options.buttondown_txt = raw.buttondownTxt || '−';
+    }
     options.booster = Boolean(raw.booster);
 
     const boostAtValue = raw.boostat === '' ? NaN : Number(raw.boostat);
