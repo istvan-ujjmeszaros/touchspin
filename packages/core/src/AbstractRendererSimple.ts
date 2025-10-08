@@ -102,14 +102,7 @@ abstract class AbstractRendererSimple extends AbstractRendererBase {
   }
 
   private isNodeRelatedToInput(node: Element): boolean {
-    const parent = node.parentElement;
-    const inputParent = this.input.parentElement;
-
-    const nodeContainsInput = node.contains(this.input);
-    const parentContainsInput = parent?.contains(this.input) ?? false;
-    const inputContainsNode = inputParent?.contains(node) ?? false;
-
-    return nodeContainsInput || parentContainsInput || inputContainsNode;
+    return node.contains(this.input) || (this.input.parentElement?.contains(node) ?? false);
   }
 }
 
