@@ -90,7 +90,7 @@ class VanillaRenderer extends AbstractRendererSimple {
             type="button" 
             aria-label="Decrease value"
             ${this.input.disabled ? 'disabled' : ''}
-          >${this.settings.buttondown_txt || '−'}</button>
+          >${this.settings.buttondown_txt}</button>
           <span class="ts-addon ts-prefix ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
           <span class="ts-addon ts-postfix ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
           <button 
@@ -100,7 +100,7 @@ class VanillaRenderer extends AbstractRendererSimple {
             type="button" 
             aria-label="Increase value"
             ${this.input.disabled ? 'disabled' : ''}
-          >${this.settings.buttonup_txt || '+'}</button>
+          >${this.settings.buttonup_txt}</button>
         </div>
       `;
     }
@@ -138,8 +138,8 @@ class VanillaRenderer extends AbstractRendererSimple {
   buildVerticalButtons(): string {
     return `
       <div class="ts-vertical-wrapper" data-touchspin-injected="vertical-wrapper">
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="ts-btn ts-btn--vertical ts-btn--vertical-up ${this.settings.verticalupclass || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="ts-btn ts-btn--vertical ts-btn--vertical-down ${this.settings.verticaldownclass || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="ts-btn ts-btn--vertical ts-btn--vertical-up ${this.settings.verticalupclass || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="ts-btn ts-btn--vertical ts-btn--vertical-down ${this.settings.verticaldownclass || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown}</button>
       </div>
     `;
   }
@@ -219,7 +219,7 @@ class VanillaRenderer extends AbstractRendererSimple {
 
     const button = verticalWrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
-      button.textContent = text || (type === 'up' ? '+' : '−');
+      button.textContent = text ?? '';
     }
   }
 
@@ -227,7 +227,7 @@ class VanillaRenderer extends AbstractRendererSimple {
     if (!this.wrapper) return;
     const button = this.wrapper.querySelector(`[data-touchspin-injected="${type}"]`);
     if (button) {
-      button.textContent = text || (type === 'up' ? '+' : '−');
+      button.textContent = text ?? '';
     }
   }
 

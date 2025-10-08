@@ -96,10 +96,10 @@ class TailwindRenderer extends AbstractRendererSimple {
     } else {
       html = `
         <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50 overflow-hidden">
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
           <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
         </div>
       `;
     }
@@ -183,8 +183,8 @@ class TailwindRenderer extends AbstractRendererSimple {
     } else {
       elementsHtml = `
         <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt || '−'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt || '+'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
         <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
       `;
     }
@@ -343,8 +343,8 @@ class TailwindRenderer extends AbstractRendererSimple {
   buildVerticalButtons(): string {
     return `
       <div class="flex flex-col" data-touchspin-injected="vertical-wrapper">
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup || '+'}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-b-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown || '−'}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-b-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown}</button>
       </div>
     `;
   }
@@ -381,7 +381,7 @@ class TailwindRenderer extends AbstractRendererSimple {
         `[data-touchspin-injected="${type}"]`
       );
       if (button) {
-        button.textContent = text || (type === 'up' ? '+' : '−');
+        button.textContent = text ?? '';
       }
     }
   }
@@ -390,7 +390,7 @@ class TailwindRenderer extends AbstractRendererSimple {
     if (!this.wrapper) return;
     const button = this.wrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
     if (button) {
-      button.textContent = text || (type === 'up' ? '+' : '−');
+      button.textContent = text ?? '';
     }
   }
 
