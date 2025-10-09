@@ -76,9 +76,9 @@ test('handles null/undefined class names in updateButtonClass', async ({ page })
  * Scenario: handles null/undefined text in updateButtonText
  * Given TouchSpin is initialized
  * When button text is set to null or undefined
- * Then default text (+ or −) is used
+ * Then button text becomes empty (no fallback)
  * Params:
- * { "buttonup_txt": null, "buttondown_txt": undefined, "defaultText": "applied" }
+ * { "buttonup_txt": null, "buttondown_txt": undefined, "emptyText": "allowed" }
  */
 test('handles null/undefined text in updateButtonText', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
@@ -97,9 +97,9 @@ test('handles null/undefined text in updateButtonText', async ({ page }) => {
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
-  // Verify default text is used
-  await expect(elements.upButton).toHaveText('+');
-  await expect(elements.downButton).toHaveText('−');
+  // Verify text is empty (no fallback)
+  await expect(elements.upButton).toHaveText('');
+  await expect(elements.downButton).toHaveText('');
 
   // Verify functionality still works
   await apiHelpers.clickUpButton(page, 'test-input');
@@ -148,9 +148,9 @@ test('handles null/undefined class in updateVerticalButtonClass', async ({ page 
  * Scenario: handles null/undefined text in updateVerticalButtonText
  * Given TouchSpin is initialized with vertical buttons
  * When verticalup or verticaldown text is set to null or undefined
- * Then default text (+ or −) is used
+ * Then button text becomes empty (no fallback)
  * Params:
- * { "verticalup": null, "verticaldown": undefined, "defaultText": "applied" }
+ * { "verticalup": null, "verticaldown": undefined, "emptyText": "allowed" }
  */
 test('handles null/undefined text in updateVerticalButtonText', async ({ page }) => {
   await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
@@ -170,9 +170,9 @@ test('handles null/undefined text in updateVerticalButtonText', async ({ page })
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
-  // Verify default text is used
-  await expect(elements.upButton).toHaveText('+');
-  await expect(elements.downButton).toHaveText('−');
+  // Verify text is empty (no fallback)
+  await expect(elements.upButton).toHaveText('');
+  await expect(elements.downButton).toHaveText('');
 
   // Verify functionality still works
   await apiHelpers.clickUpButton(page, 'test-input');
