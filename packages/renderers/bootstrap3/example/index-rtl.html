@@ -632,8 +632,8 @@
               <small class="text-muted">Called before value changes. Return modified value or false to prevent change.</small>
               <textarea id="control-callback-before" class="form-control" rows="4">(value) => {
   console.log('Before:', value);
-  // Example: prevent negative values
-  return value < 0 ? false : value;
+  // Strip " USD" suffix to get raw number
+  return value.replace(/ USD$/, '');
 }</textarea>
             </label>
             <label>
@@ -641,7 +641,7 @@
               <small class="text-muted">Called after value changes. Return display value (doesn't affect internal value).</small>
               <textarea id="control-callback-after" class="form-control" rows="4">(value) => {
   console.log('After:', value);
-  // Example: add currency suffix for display
+  // Add " USD" suffix for display
   return value + ' USD';
 }</textarea>
             </label>
@@ -698,12 +698,12 @@
   const DEFAULT_CALLBACKS = {
     before: `(value) => {
   console.log('Before:', value);
-  // Example: prevent negative values
-  return value < 0 ? false : value;
+  // Strip " USD" suffix to get raw number
+  return value.replace(/ USD$/, '');
 }`,
     after: `(value) => {
   console.log('After:', value);
-  // Example: add currency suffix for display
+  // Add " USD" suffix for display
   return value + ' USD';
 }`
   };

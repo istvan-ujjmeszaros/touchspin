@@ -498,16 +498,12 @@ export class TouchSpinCore {
   _restoreOriginalAttributes(): void {
     if (this._originalAttributes === null) return; // Nothing to restore
 
-    // Strip formatting from value if converting back to number
+    // Strip formatting from value using callback_before_calculation
+    // This uses the opposite callback to revert formatted values (e.g., "51 USD" -> "51")
     const currentValue = this.input.value;
-    if (
-      currentValue &&
-      this.settings.callback_before_calculation &&
-      this._originalAttributes.type === 'number' &&
-      this.input.getAttribute('type') === 'text'
-    ) {
-      const numericValue = this.settings.callback_before_calculation(currentValue);
-      this.input.value = numericValue;
+    if (currentValue && this.settings.callback_before_calculation) {
+      const rawValue = this.settings.callback_before_calculation(currentValue);
+      this.input.value = rawValue;
     }
 
     // Restore original type

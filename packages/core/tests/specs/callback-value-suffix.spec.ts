@@ -46,11 +46,16 @@ test.describe('Core callback value suffix and destroy lifecycle', () => {
       input.value = '50';
     });
 
-    // Initialize TouchSpin with callback that appends "USD"
+    // Initialize TouchSpin with paired callbacks for USD formatting
     await initializeTouchspin(page, 'test-input', {
       step: 1,
       initval: 50,
+      callback_before_calculation: (value) => {
+        // Strip "USD" suffix to get raw number
+        return value.replace(/USD$/, '');
+      },
       callback_after_calculation: (value) => {
+        // Add "USD" suffix for display
         return value + 'USD';
       },
     });
