@@ -86,6 +86,16 @@ The testing agent has complete knowledge of:
 - Keep tests simple (10-30 lines, one behavior)
 - See `TEST_IMPLEMENTATION_ROADMAP.md` for current status
 
+**Test-Driven Development (TDD) Workflow:**
+
+When asked to write a test for a bug/issue:
+1. **Write the test FIRST** - Use the playwright-test-writer agent to create the test
+2. **Verify it FAILS** - Run the test to confirm it catches the bug
+3. **Fix the issue** - Make the minimal code changes to fix the bug
+4. **Verify it PASSES** - Run the test again to confirm the fix works
+
+**IMPORTANT**: Never fix the bug before writing the test. The failing test proves the bug exists and that our fix actually works.
+
 ## 📝 Git Workflow
 
 ### Creating Commits
