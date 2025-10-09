@@ -626,15 +626,28 @@
         <div class="settings-body">
           <div class="control-group">
             <label>
-              <span>Before Calculation (remove USD suffix)</span>
-              <textarea id="control-callback-before" class="form-control" rows="3" placeholder="(value) => { return String(value).replace(' USD', ''); }"></textarea>
+              <span>Before Calculation</span>
+              <small class="text-muted">Called before value changes. Return modified value or false to prevent change.</small>
+              <textarea id="control-callback-before" class="form-control" rows="4">(value) => {
+  console.log('Before:', value);
+  // Example: prevent negative values
+  return value < 0 ? false : value;
+}</textarea>
             </label>
             <label>
-              <span>After Calculation (add USD suffix)</span>
-              <textarea id="control-callback-after" class="form-control" rows="3" placeholder="(value) => { return value + ' USD'; }"></textarea>
+              <span>After Calculation</span>
+              <small class="text-muted">Called after value changes. Return display value (doesn't affect internal value).</small>
+              <textarea id="control-callback-after" class="form-control" rows="4">(value) => {
+  console.log('After:', value);
+  // Example: add currency suffix for display
+  return value + ' USD';
+}</textarea>
             </label>
-            <button class="btn btn-primary btn-sm" id="apply-callbacks">Apply Callbacks</button>
-            <button class="btn btn-default btn-sm" id="clear-callbacks">Clear Callbacks</button>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-default btn-sm" id="reset-callbacks">Reset Examples</button>
+              <button class="btn btn-primary btn-sm" id="apply-callbacks">Apply Callbacks</button>
+              <button class="btn btn-default btn-sm" id="disable-callbacks">Disable Callbacks</button>
+            </div>
           </div>
         </div>
       </div>
@@ -717,9 +730,24 @@
     callbackAfter: document.getElementById('control-callback-after')
   };
 
+  // Default example callbacks
+  const DEFAULT_CALLBACKS = {
+    before: `(value) => {
+  console.log('Before:', value);
+  // Example: prevent negative values
+  return value < 0 ? false : value;
+}`,
+    after: `(value) => {
+  console.log('After:', value);
+  // Example: add currency suffix for display
+  return value + ' USD';
+}`
+  };
+
   const methodFeedback = document.getElementById('method-feedback');
   const eventLog = document.getElementById('event-log-content');
   let eventCount = 0;
+  let callbacksEnabled = false; // Track whether callbacks are currently active
 
   function logEvent(eventName, detail) {
     eventCount++;
@@ -739,12 +767,14 @@
 
   function loadSettings() {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return;
+    if (!saved) return false;
     try {
       const settings = JSON.parse(saved);
       applySettings(settings);
+      return true;
     } catch (error) {
       console.error('Failed to load settings:', error);
+      return false;
     }
   }
 
@@ -788,13 +818,15 @@
       maxboostedstep: controls.maxboostedstep.value,
       maxboostedstepFalse: controls.maxboostedstepFalse.checked,
       callbackBefore: controls.callbackBefore.value,
-      callbackAfter: controls.callbackAfter.value
+      callbackAfter: controls.callbackAfter.value,
+      callbacksEnabled: callbacksEnabled
     };
   }
 
   function postApplyControlState() {
     const input = document.getElementById('basic-spinner');
-    input.type = controls.inputType.value || 'number';
+    // Don't set input.type here - let TouchSpin manage it automatically
+    // TouchSpin will set it to 'text' when callbacks add non-numeric characters
     input.disabled = controls.disabled.checked;
     input.readOnly = controls.readonly.checked;
     // Don't reset input.value here - preserve current spinner value
@@ -1106,28 +1138,22 @@
     return {hasError: false, errors};
   }
 
-  function syncSpinnerWithControls({
-                                     applyCallbacks = true,
-                                     emitCallbackLog = false,
-                                     suppressCallbackErrors = false
-                                   } = {}) {
+  function syncSpinnerWithControls() {
     if (!basicSpinner) return;
 
     const raw = collectAllSettings();
-    const {options, value} = normalizeForSpinner(raw);
+    const {options} = normalizeForSpinner(raw);
 
     basicSpinner.updateSettings(options);
-    // Don't call setValue() here - preserve current spinner value
-    // Only the "Initial Value" control input handler should call setValue()
-    // basicSpinner.setValue(value);
     postApplyControlState();
-
-    if (applyCallbacks) {
-      applyCallbacksFromFields({emitLog: emitCallbackLog, suppressErrors: suppressCallbackErrors});
-    }
   }
 
   function applySettings(settings) {
+    // Restore callbacksEnabled state first
+    if (settings.callbacksEnabled !== undefined) {
+      callbacksEnabled = settings.callbacksEnabled;
+    }
+
     Object.entries(settings).forEach(([key, value]) => {
       const control = controls[key];
       if (!control) return;
@@ -1139,14 +1165,28 @@
     });
 
     postApplyControlState();
-    syncSpinnerWithControls({applyCallbacks: true, suppressCallbackErrors: true});
+    syncSpinnerWithControls();
+
+    // Apply callbacks only if they were enabled
+    if (callbacksEnabled) {
+      applyCallbacksFromFields({suppressErrors: true});
+    }
+
     generateCodeExample();
   }
 
   function handleControlChange(event) {
     const isCallbackField = event?.target?.id === 'control-callback-before' || event?.target?.id === 'control-callback-after';
+
+    // If typing in callback fields, just save to localStorage and return early
+    // Don't call postApplyControlState() or anything else to avoid interfering with active callbacks
+    if (isCallbackField) {
+      saveSettings();
+      return;
+    }
+
     postApplyControlState();
-    syncSpinnerWithControls({applyCallbacks: !isCallbackField, suppressCallbackErrors: true});
+    syncSpinnerWithControls();
     generateCodeExample();
   }
 
@@ -1158,10 +1198,20 @@
 
   document.getElementById('reset-settings').addEventListener('click', resetSettings);
 
+  // Reset callbacks to example defaults (just updates textareas, doesn't apply)
+  document.getElementById('reset-callbacks').addEventListener('click', () => {
+    controls.callbackBefore.value = DEFAULT_CALLBACKS.before;
+    controls.callbackAfter.value = DEFAULT_CALLBACKS.after;
+    logEvent('callbacks', {status: 'reset to examples'});
+  });
+
+  // Apply callbacks from textareas
   document.getElementById('apply-callbacks').addEventListener('click', () => {
     try {
       const result = applyCallbacksFromFields({emitLog: true});
       if (!result.hasError) {
+        callbacksEnabled = true;
+        saveSettings();
         generateCodeExample();
       }
     } catch (error) {
@@ -1169,11 +1219,15 @@
     }
   });
 
-  document.getElementById('clear-callbacks').addEventListener('click', () => {
-    controls.callbackBefore.value = '';
-    controls.callbackAfter.value = '';
-    applyCallbacksFromFields({suppressErrors: true});
-    logEvent('callbacks', {status: 'cleared'});
+  // Disable callbacks (remove from spinner but keep textarea code)
+  document.getElementById('disable-callbacks').addEventListener('click', () => {
+    basicSpinner.updateSettings({
+      callback_before_calculation: undefined,
+      callback_after_calculation: undefined
+    });
+    callbacksEnabled = false;
+    saveSettings();
+    logEvent('callbacks', {status: 'disabled'});
     generateCodeExample();
   });
 
@@ -1260,7 +1314,7 @@
       renderer: Bootstrap3Renderer
     });
     setupEventListeners();
-    syncSpinnerWithControls({applyCallbacks: true, suppressCallbackErrors: true});
+    syncSpinnerWithControls();
     logEvent('method-call', {method: 're-initialize()'});
     updateMethodFeedback('Spinner re-initialized.');
   });
@@ -1320,10 +1374,12 @@
   }
 
   setupEventListeners();
-  loadSettings();
-  postApplyControlState();
-  syncSpinnerWithControls({applyCallbacks: true, suppressCallbackErrors: true});
-  generateCodeExample();
+  if (!loadSettings()) {
+    // No saved settings - initialize with defaults (callbacks disabled by default)
+    postApplyControlState();
+    syncSpinnerWithControls();
+    generateCodeExample();
+  }
 
   console.log('✅ TouchSpin Bootstrap 3 Enhanced Demo initialized');
 </script>
