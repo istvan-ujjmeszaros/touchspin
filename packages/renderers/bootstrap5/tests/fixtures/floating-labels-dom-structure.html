@@ -9,8 +9,18 @@
     <link href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css" rel="stylesheet">
     <link href="/devdist/renderers/bootstrap5/touchspin-bootstrap5.css" rel="stylesheet">
 
-    <!-- Enhanced IIFE build - single script with Core + Renderer -->
-    <script src="/devdist/renderers/bootstrap5/iife/touchspin-bs5-complete.global.js"></script>
+    <!-- IIFE builds - Core + Renderer as separate modules -->
+    <script src="/devdist/core/iife/index.global.js"></script>
+    <script src="/devdist/renderers/bootstrap5/iife/Bootstrap5Renderer.global.js"></script>
+    <script>
+        // Extract classes from IIFE module exports
+        window.TouchSpinCore = window.TouchSpinCore.TouchSpinCore;
+        window.Bootstrap5Renderer = window.Bootstrap5Renderer.default || window.Bootstrap5Renderer.Bootstrap5Renderer;
+
+        // Set default renderer for simplified initialization
+        globalThis.TouchSpinDefaultRenderer = window.Bootstrap5Renderer;
+        window.testPageReady = true;
+    </script>
 
     <style>
         body {

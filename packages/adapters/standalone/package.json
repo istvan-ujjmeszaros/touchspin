@@ -4,7 +4,9 @@
   "type": "module",
   "description": "Standalone TouchSpin adapter (core + renderer bundles with mount API)",
   "license": "MIT",
-  "sideEffects": false,
+  "sideEffects": [
+    "dist/**/*.js"
+  ],
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {

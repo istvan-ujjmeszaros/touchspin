@@ -53,7 +53,8 @@
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
     "test": "node ../../../scripts/pre-test.mjs packages/adapters/webcomponent/tests && cd ../../.. && playwright test packages/adapters/webcomponent/tests/",
-    "test:ui": "cd ../../.. && playwright test packages/adapters/webcomponent/tests/ --ui"
+    "test:ui": "cd ../../.. && playwright test packages/adapters/webcomponent/tests/ --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/adapters/webcomponent/tests"
   },
   "publishConfig": {
     "access": "public",

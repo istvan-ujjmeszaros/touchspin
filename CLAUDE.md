@@ -51,9 +51,10 @@ yarn build        # Build production artifacts
 - `yarn coverage:report` - Generate HTML report (view at `reports/coverage/index.html`)
 
 **Build:**
-- `yarn build` - Build all packages
-- `yarn build:test` - Build test artifacts
-- `yarn clean` - Clean all build artifacts
+- `yarn build` - Build all packages (incremental, fast)
+- `yarn build:test` - Build test artifacts (incremental)
+- `yarn build:clean` - Clean build (removes stale artifacts, then builds)
+- `yarn clean:devdist` - Remove all devdist build artifacts (preserves external assets)
 
 **Utilities:**
 - `yarn test:guard` - Validate Gherkin test checklists
@@ -150,6 +151,49 @@ When asked to create a PR:
 - Renderer tests use IIFE bundles (globals like `window.Bootstrap5Renderer`)
 - IIFE bundles have all dependencies bundled (no bare imports)
 - ESM builds used for production distribution
+
+### Build Commands & When to Use Each
+
+**`yarn build:test` - Daily Development (Incremental)**
+- ✅ Fast incremental builds (only rebuilds changed files)
+- ✅ Preserves existing artifacts
+- ⚠️ May leave stale artifacts if source files were deleted
+- **Use for:** Daily development, when working on a single package
+
+**`yarn build:clean` - Clean Slate (Nuclear)**
+- ✅ Removes all stale artifacts before building
+- ✅ Guarantees clean state
+- ✅ Preserves external framework assets (Bootstrap, jQuery, etc.)
+- ⏱️ Slower (full rebuild)
+- **Use for:** After git pull, switching branches, when things seem broken, CI/CD
+
+**`yarn clean:devdist` - Manual Cleanup**
+- Removes all `.js`, `.d.ts`, `.map`, `.css` files from devdist
+- Preserves `external/` directories (committed framework assets)
+- **Use for:** Troubleshooting build issues, before clean build
+
+**`yarn watch:test` - Active Development**
+- Continuous incremental builds as you edit
+- Fast feedback loop
+- **Use for:** Development with `yarn dev`
+
+### Stale Artifact Problem
+
+**Problem:** When source files are deleted (e.g., removing `touchspin-bs5-complete.ts`), the compiled artifact (`touchspin-bs5-complete.global.js`) remains in devdist. Tests that reference this file will load stale, outdated code.
+
+**Solution:** Use `yarn build:clean` after structural changes (file deletions, renames, refactors) to ensure devdist is in sync with source.
+
+**Example:**
+```bash
+# After git pull or switching branches
+yarn build:clean
+
+# Normal development
+yarn dev  # Uses incremental watch
+
+# Troubleshooting "things work in main but not here"
+yarn build:clean && yarn test
+```
 
 ## 📚 Documentation
 

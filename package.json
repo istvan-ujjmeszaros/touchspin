@@ -76,6 +76,8 @@
     "build:js:all": "yarn workspaces foreach -t -A run build:js",
     "build:prod": "yarn build:types:all && yarn build:js:all",
     "build:test": "yarn workspace @touchspin/core build:types && yarn workspaces foreach -t -A run build:test && yarn validate-assets",
+    "build:clean": "yarn clean:devdist && yarn build:test",
+    "clean:devdist": "node scripts/clean-devdist.mjs",
     "watch": "yarn workspaces foreach -pi -A run watch",
     "watch:test": "yarn workspaces foreach -pi -A run watch:test",
     "devdist:refresh": "node scripts/guard-devdist-build.mjs",

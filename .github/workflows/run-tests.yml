@@ -67,8 +67,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Build test artifacts (devdist)
-        run: yarn build:test
+      - name: Build test artifacts (devdist) - clean build for CI
+        run: yarn build:clean
 
       - name: Guard ESM import extensions
         run: yarn guard:esm-extensions
