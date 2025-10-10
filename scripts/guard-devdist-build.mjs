@@ -35,8 +35,11 @@ const PACKAGES_WITH_DEVDIST = [
 const REQUIRED_FILES = {
   'packages/core': ['iife/index.global.js', 'artifacts.json'],
   'packages/adapters/jquery': [
-    'umd/jquery-touchspin-bs3.js',
-    'umd/jquery-touchspin-bs5.js',
+    'umd/bootstrap3.global.js',
+    'umd/bootstrap4.global.js',
+    'umd/bootstrap5.global.js',
+    'umd/tailwind.global.js',
+    'umd/vanilla.global.js',
     'artifacts.json',
   ],
   'packages/adapters/standalone': [
@@ -138,7 +141,7 @@ function buildDevdistTargeted(packagesToBuild) {
     // PR#4: Added standalone adapter mapping
     let packageName = packagePath.replace('packages/', '@touchspin/');
     packageName = packageName.replace('renderers/', 'renderer-');
-    packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/jquery', 'jquery');
     packageName = packageName.replace('adapters/standalone', 'standalone');
     packageName = packageName.replace('adapters/webcomponent', 'web-components');
     try {
@@ -186,7 +189,7 @@ function main() {
     // PR#4: Added standalone adapter mapping
     let packageName = packagePath.replace('packages/', '@touchspin/');
     packageName = packageName.replace('renderers/', 'renderer-');
-    packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/jquery', 'jquery');
     packageName = packageName.replace('adapters/standalone', 'standalone');
     packageName = packageName.replace('adapters/webcomponent', 'web-components');
 
@@ -225,7 +228,7 @@ function main() {
       // PR#2: Handle adapter directory structure
       let packageName = packagePath.replace('packages/', '@touchspin/');
       packageName = packageName.replace('renderers/', 'renderer-');
-      packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+      packageName = packageName.replace('adapters/jquery', 'jquery');
       packageName = packageName.replace('adapters/webcomponent', 'web-components');
       const existsCheck = checkDevdistExists(packagePath);
 

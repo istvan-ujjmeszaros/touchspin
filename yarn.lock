@@ -1366,6 +1366,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@touchspin/jquery@workspace:packages/adapters/jquery":
+  version: 0.0.0-use.local
+  resolution: "@touchspin/jquery@workspace:packages/adapters/jquery"
+  dependencies:
+    "@playwright/test": "npm:^1.54.2"
+    "@touchspin/core": "workspace:*"
+    "@touchspin/standalone": "workspace:*"
+    "@types/jquery": "npm:^3.5.30"
+    "@types/node": "npm:^22.7.4"
+    jquery: "npm:^3.7.1"
+    tsup: "npm:^8.1.0"
+    typescript: "npm:^5.7.2"
+  peerDependencies:
+    jquery: ">=1.9.0"
+  peerDependenciesMeta:
+    jquery:
+      optional: true
+  languageName: unknown
+  linkType: soft
+
 "@touchspin/react@workspace:packages/adapters/react":
   version: 0.0.0-use.local
   resolution: "@touchspin/react@workspace:packages/adapters/react"
@@ -1472,7 +1492,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/standalone@workspace:packages/adapters/standalone":
+"@touchspin/standalone@workspace:*, @touchspin/standalone@workspace:packages/adapters/standalone":
   version: 0.0.0-use.local
   resolution: "@touchspin/standalone@workspace:packages/adapters/standalone"
   dependencies:

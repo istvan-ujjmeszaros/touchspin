@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery Adapter - Bootstrap 5</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: system-ui, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>jQuery Adapter - Bootstrap 5</h1>
+        <p>Smoke test for jQuery adapter using standalone</p>
+
+        <!-- Test input -->
+        <input type="number"
+               id="test-input"
+               data-testid="jquery-test"
+               min="0"
+               max="100"
+               value="10"
+               step="5">
+    </div>
+
+    <!-- jQuery -->
+    <script src="/devdist/adapters/jquery/external/js/jquery.min.js"></script>
+
+    <!-- Bootstrap 5 Bundle (includes Popper) -->
+    <script src="/devdist/renderers/bootstrap5/external/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery Adapter Bootstrap5 UMD Bundle -->
+    <script src="/devdist/adapters/jquery/umd/bootstrap5.global.js"></script>
+
+    <!-- Initialize TouchSpin -->
+    <script>
+        try {
+            // Use jQuery plugin API
+            $('#test-input').touchspin({
+                min: 0,
+                max: 100,
+                step: 5
+            });
+
+            console.log('TouchSpin jQuery adapter initialized successfully');
+            window.pageReady = true;
+        } catch (error) {
+            console.error('Error initializing TouchSpin jQuery adapter:', error);
+            window.pageReady = false;
+            window.pageError = error.message;
+        }
+    </script>
+</body>
+</html>
