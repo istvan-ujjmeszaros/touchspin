@@ -17,6 +17,10 @@ export default defineConfig({
   testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/**/tests/**/*.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
 
+  /* Global setup/teardown for coverage processing */
+  globalSetup: './coverage.setup.ts',
+  globalTeardown: './coverage.teardown.ts',
+
   /* Control worker parallelization via PLAYWRIGHT_WORKERS env var */
   workers: workerCount,
 

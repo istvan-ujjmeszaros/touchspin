@@ -48,17 +48,22 @@ async function globalTeardown() {
   function toLocalPath(rawUrl: string): string | null {
     try {
       const u = new URL(rawUrl);
-      let p = decodeURIComponent(u.pathname); // e.g. /packages/jquery-plugin/src/index.js or /packages/jquery-plugin/dist/index.js
+      let p = decodeURIComponent(u.pathname); // e.g. /packages/jquery-plugin/src/index.js or /devdist/core/index.js
 
       // Ignore bundler/dev-server internals if present (none expected now)
 
-      const ix = p.indexOf('/packages/');
-      if (ix === -1) return null;
+      // Handle both /packages/ (source) and /devdist/ (single-root devdist from PR#2) paths
+      const packagesIx = p.indexOf('/packages/');
+      const devdistIx = p.indexOf('/devdist/');
 
-      p = p.slice(ix + 1); // drop leading slash before 'packages'
+      if (packagesIx === -1 && devdistIx === -1) return null;
+
+      // Use whichever index we found
+      const ix = packagesIx !== -1 ? packagesIx : devdistIx;
+      p = p.slice(ix + 1); // drop leading slash before 'packages' or 'devdist'
       p = p.replace(/\\/g, '/');
 
-      let abs = path.join(process.cwd(), p); // /repo/packages/…/index.js
+      let abs = path.join(process.cwd(), p); // /repo/packages/…/index.js or /repo/devdist/…/index.js
 
       // Handle /src/…, /dist/…, and /devdist/… paths
       if (p.includes('/dist/') || p.includes('/devdist/')) {
@@ -132,7 +137,7 @@ async function globalTeardown() {
         }
 
         // Skip external framework files (Bootstrap, jQuery, etc.) - we don't need coverage for third-party libs
-        if (localPath.includes('/devdist/external/')) {
+        if (localPath.includes('/external/')) {
           if (!loggedPaths.has(localPath)) {
             console.log(`⏭️  Skipping external file: ${localPath}`);
             loggedPaths.add(localPath);
