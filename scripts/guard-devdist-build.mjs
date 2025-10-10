@@ -16,9 +16,11 @@ const projectRoot = join(__dirname, '..');
 
 // Packages that need devdist artifacts for testing
 // PR#2: Updated paths for new directory structure
+// PR#4: Added standalone adapter
 const PACKAGES_WITH_DEVDIST = [
   'packages/core',
   'packages/adapters/jquery',
+  'packages/adapters/standalone',
   'packages/adapters/webcomponent',
   'packages/renderers/bootstrap3',
   'packages/renderers/bootstrap4',
@@ -29,11 +31,20 @@ const PACKAGES_WITH_DEVDIST = [
 
 // Required files that must exist in single-root devdist (PR#2)
 // PR#3: Removed complete bundles, only ESM + IIFE renderer builds
+// PR#4: Added standalone adapter UMD bundles
 const REQUIRED_FILES = {
   'packages/core': ['iife/index.global.js', 'artifacts.json'],
   'packages/adapters/jquery': [
     'umd/jquery-touchspin-bs3.js',
     'umd/jquery-touchspin-bs5.js',
+    'artifacts.json',
+  ],
+  'packages/adapters/standalone': [
+    'umd/bootstrap3.global.js',
+    'umd/bootstrap4.global.js',
+    'umd/bootstrap5.global.js',
+    'umd/tailwind.global.js',
+    'umd/vanilla.global.js',
     'artifacts.json',
   ],
   'packages/adapters/webcomponent': ['vanilla.js', 'artifacts.json'],
@@ -60,7 +71,7 @@ const REQUIRED_FILES = {
     'iife/TailwindRenderer.global.js',
     'artifacts.json',
   ],
-  'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json'],
+  'packages/renderers/vanilla': ['VanillaRenderer.js', 'themes/vanilla.css', 'artifacts.json'],
 };
 
 function checkDevdistExists(packagePath) {
@@ -124,9 +135,11 @@ function buildDevdistTargeted(packagesToBuild) {
   for (const packagePath of packagesToBuild) {
     console.log(`📦 Building ${packagePath}...`);
     // PR#2: Handle adapter directory structure
+    // PR#4: Added standalone adapter mapping
     let packageName = packagePath.replace('packages/', '@touchspin/');
     packageName = packageName.replace('renderers/', 'renderer-');
     packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/standalone', 'standalone');
     packageName = packageName.replace('adapters/webcomponent', 'web-components');
     try {
       execSync(`yarn workspace ${packageName} run build:test`, {
@@ -170,9 +183,11 @@ function main() {
   // Check each package
   for (const packagePath of PACKAGES_WITH_DEVDIST) {
     // PR#2: Handle adapter directory structure
+    // PR#4: Added standalone adapter mapping
     let packageName = packagePath.replace('packages/', '@touchspin/');
     packageName = packageName.replace('renderers/', 'renderer-');
     packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/standalone', 'standalone');
     packageName = packageName.replace('adapters/webcomponent', 'web-components');
 
     const existsCheck = checkDevdistExists(packagePath);

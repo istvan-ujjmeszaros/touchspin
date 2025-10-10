@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TouchSpin Standalone Bootstrap5 - Smoke Test</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: system-ui, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TouchSpin Standalone Bootstrap5</h1>
+        <p>Basic smoke test for standalone adapter</p>
+
+        <!-- Test input -->
+        <input type="number"
+               id="test-input"
+               data-testid="standalone-test"
+               min="0"
+               max="100"
+               value="10"
+               step="5">
+    </div>
+
+    <!-- Bootstrap 5 Bundle (includes Popper) -->
+    <script src="/devdist/renderers/bootstrap5/external/js/bootstrap.bundle.min.js"></script>
+
+    <!-- TouchSpin Standalone Bootstrap5 UMD Bundle -->
+    <script src="/devdist/adapters/standalone/umd/bootstrap5.global.js"></script>
+
+    <!-- Mount TouchSpin -->
+    <script>
+        try {
+            // Check if TouchSpinStandaloneBootstrap5 is available
+            if (typeof TouchSpinStandaloneBootstrap5 === 'undefined') {
+                console.error('TouchSpinStandaloneBootstrap5 is not defined');
+                window.pageReady = false;
+                throw new Error('TouchSpinStandaloneBootstrap5 is not defined');
+            }
+
+            console.log('TouchSpinStandaloneBootstrap5:', TouchSpinStandaloneBootstrap5);
+
+            // Mount TouchSpin on the test input using standalone adapter
+            window.touchspinInstance = TouchSpinStandaloneBootstrap5.mount('#test-input', {
+                min: 0,
+                max: 100,
+                step: 5
+            });
+
+            console.log('TouchSpin mounted successfully:', window.touchspinInstance);
+
+            // Signal that page is ready for testing
+            window.pageReady = true;
+        } catch (error) {
+            console.error('Error mounting TouchSpin:', error);
+            window.pageReady = false;
+            window.pageError = error.message;
+        }
+    </script>
+</body>
+</html>
