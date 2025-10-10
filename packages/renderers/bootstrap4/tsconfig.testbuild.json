@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./devdist",
+    "outDir": "../../../devdist/renderers/bootstrap4",
     "rootDir": "./src",
     "sourceMap": true,
     "inlineSources": true,
@@ -11,7 +11,7 @@
     "importsNotUsedAsValues": "remove",
     "skipLibCheck": true,
     "incremental": true,
-    "tsBuildInfoFile": "./devdist/.tsbuildinfo",
+    "tsBuildInfoFile": "../../../devdist/renderers/bootstrap4/.tsbuildinfo",
     "baseUrl": "./src",
     "paths": {
       "@touchspin/core": ["../../core/dist/index.d.ts"],

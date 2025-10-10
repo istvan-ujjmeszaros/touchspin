@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./devdist",
+    "outDir": "../../../devdist/renderers/vanilla",
     "rootDir": "./src",
     "sourceMap": true,
     "inlineSources": true,
@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "types": [],
     "incremental": true,
-    "tsBuildInfoFile": "./devdist/.tsbuildinfo",
+    "tsBuildInfoFile": "../../../devdist/renderers/vanilla/.tsbuildinfo",
     "baseUrl": "./src",
     "paths": {
       "@touchspin/core": ["../../core/dist/index.d.ts"],
