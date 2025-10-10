@@ -171,12 +171,13 @@ export class TouchSpinInput extends HTMLElement {
       this._input.setAttribute('name', name);
     }
 
-    // Copy data-testid from custom element to input for test compatibility
+    // Copy data-testid from custom element to input with -input suffix
+    // This allows: custom element = "testid", input = "testid-input"
+    // Renderer then derives: wrapper = "testid-input-wrapper", buttons = "testid-input-up/down"
     const testId = this.getAttribute('data-testid');
     if (testId !== null) {
-      this._input.setAttribute('data-testid', testId);
-      // Remove from custom element to avoid duplicate test IDs
-      this.removeAttribute('data-testid');
+      this._input.setAttribute('data-testid', `${testId}-input`);
+      // Keep original testid on custom element for method access
     }
 
     // Apply other native input attributes

@@ -15,19 +15,19 @@ test.describe('TouchSpin Web Component - Bootstrap 5', () => {
       return customElements.get('touchspin-input') !== undefined;
     });
 
-    // Wait for TouchSpin to initialize
-    await page.waitForSelector('[data-testid="wc-test-up"]');
+    // Wait for TouchSpin to initialize (buttons have testid with -input-up suffix)
+    await page.waitForSelector('[data-testid="wc-test-input-up"]');
   });
 
   test('1. Renders touchspin-input; inc/dec clicks update value & aria-valuenow', async ({
     page,
   }) => {
     // Given: Web component is rendered with initial value
-    const input = page.getByTestId('wc-test');
+    const input = page.getByTestId('wc-test-input');
     await expect(input).toHaveValue('10');
 
-    const upButton = page.getByTestId('wc-test-up');
-    const downButton = page.getByTestId('wc-test-down');
+    const upButton = page.getByTestId('wc-test-input-up');
+    const downButton = page.getByTestId('wc-test-input-down');
 
     // When: Click increment button
     await upButton.click();
@@ -48,13 +48,13 @@ test.describe('TouchSpin Web Component - Bootstrap 5', () => {
   test('2. Form submit includes the input name=value', async ({ page }) => {
     // Given: Web component with name="quantity"
     const form = page.getByTestId('test-form');
-    const input = page.getByTestId('wc-test');
+    const input = page.getByTestId('wc-test-input');
 
     // Verify input has correct name attribute
     await expect(input).toHaveAttribute('name', 'quantity');
 
     // When: Change value and submit form
-    const upButton = page.getByTestId('wc-test-up');
+    const upButton = page.getByTestId('wc-test-input-up');
     await upButton.click(); // 10 -> 11
 
     // Capture form data on submit
@@ -106,10 +106,10 @@ test.describe('TouchSpin Web Component - Bootstrap 5', () => {
     // but our auto-define logic checks first and skips
 
     // Verify element still works
-    const input = page.getByTestId('wc-test');
+    const input = page.getByTestId('wc-test-input');
     await expect(input).toHaveValue('10');
 
-    const upButton = page.getByTestId('wc-test-up');
+    const upButton = page.getByTestId('wc-test-input-up');
     await upButton.click();
     await expect(input).toHaveValue('11');
 
