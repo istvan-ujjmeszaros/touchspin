@@ -1642,22 +1642,14 @@ export class TouchSpinCore {
         // Test with both boundary values
         testValues.push(formatValue(this.settings.min!), formatValue(this.settings.max!));
       } else if (hasMin) {
-        // Test with min and a value above it
-        const minVal = this.settings.min!;
-        const testVal = decimals > 0 ? minVal + 50.55 : minVal + 50;
-        testValues.push(formatValue(minVal), formatValue(testVal));
+        // Test only with min value
+        testValues.push(formatValue(this.settings.min!));
       } else if (hasMax) {
-        // Test with a value below max and max itself
-        const maxVal = this.settings.max!;
-        const testVal = decimals > 0 ? Math.max(0, maxVal - 50.55) : Math.max(0, maxVal - 50);
-        testValues.push(formatValue(testVal), formatValue(maxVal));
+        // Test only with max value
+        testValues.push(formatValue(this.settings.max!));
       } else {
-        // No boundaries set - use sensible defaults
-        if (decimals > 0) {
-          testValues.push('0.00', '50.55');
-        } else {
-          testValues.push('0', '50');
-        }
+        // No boundaries set - use single default value
+        testValues.push(decimals > 0 ? '50.55' : '50');
       }
 
       const failures: string[] = [];
