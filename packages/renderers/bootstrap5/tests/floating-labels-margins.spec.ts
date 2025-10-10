@@ -38,7 +38,7 @@ test('moves margin classes from .form-floating to wrapper on init', async ({ pag
   await apiHelpers.startCoverage(page);
 
   // Before initialization - verify original structure
-  const floatingContainer = page.locator('[data-testid="margin-basic"]').locator('..');
+  const floatingContainer = page.getByTestId('margin-basic').locator('..');
   await expect(floatingContainer).toHaveClass(/form-floating/);
   await expect(floatingContainer).toHaveClass(/mb-3/);
   await expect(floatingContainer).toHaveClass(/mt-2/);
@@ -83,7 +83,7 @@ test('restores margin classes to .form-floating on destroy', async ({ page }) =>
   await expect(wrapper).not.toBeAttached();
 
   // Verify margins restored to .form-floating
-  const floatingContainer = page.locator('[data-testid="margin-destroy"]').locator('..');
+  const floatingContainer = page.getByTestId('margin-destroy').locator('..');
   await expect(floatingContainer).toHaveClass(/form-floating/);
   await expect(floatingContainer).toHaveClass(/mb-4/);
 
@@ -104,7 +104,7 @@ test('handles margin classes with vertical buttons', async ({ page }) => {
   await apiHelpers.startCoverage(page);
 
   // Verify initial margin classes
-  const floatingContainer = page.locator('[data-testid="margin-vertical"]').locator('..');
+  const floatingContainer = page.getByTestId('margin-vertical').locator('..');
   await expect(floatingContainer).toHaveClass(/mb-3/);
   await expect(floatingContainer).toHaveClass(/mx-2/);
 
