@@ -10,6 +10,7 @@
  */
 
 import { expect, test } from '@playwright/test';
+import * as apiHelpers from '@touchspin/core/test-helpers';
 import { installDomHelpers } from '@touchspin/core/test-helpers';
 
 const EDGE_CASES_FIXTURE =
@@ -26,6 +27,7 @@ test('handles floating container without label (falls back to regular rendering)
   page,
 }) => {
   await page.goto(EDGE_CASES_FIXTURE);
+  await apiHelpers.startCoverage(page);
   await installDomHelpers(page);
 
   // Verify wrapper uses REGULAR rendering (not floating label mode)
@@ -55,6 +57,8 @@ test('handles floating container without label (falls back to regular rendering)
   await expect(page.getByTestId('no-label')).toHaveValue('50');
   await page.getByTestId('no-label-up').click();
   await expect(page.getByTestId('no-label')).toHaveValue('51');
+
+  await apiHelpers.collectCoverage(page, 'floating-no-label');
 });
 
 /**
@@ -68,6 +72,7 @@ test('handles label outside floating container (falls back to regular rendering)
   page,
 }) => {
   await page.goto(EDGE_CASES_FIXTURE);
+  await apiHelpers.startCoverage(page);
   await installDomHelpers(page);
 
   // Verify wrapper uses REGULAR rendering (input extracted from .form-floating)
@@ -87,4 +92,6 @@ test('handles label outside floating container (falls back to regular rendering)
   await expect(page.getByTestId('label-outside')).toHaveValue('75');
   await page.getByTestId('label-outside-down').click();
   await expect(page.getByTestId('label-outside')).toHaveValue('74');
+
+  await apiHelpers.collectCoverage(page, 'floating-label-outside');
 });
