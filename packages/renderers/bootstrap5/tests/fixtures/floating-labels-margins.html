@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 Floating Labels Margin Handling Test Fixture</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
+
+    <!-- Enhanced IIFE build - single script with Core + Renderer -->
+    <script src="../../devdist/iife/touchspin-bs5-complete.global.js"></script>
+
+    <style>
+        body {
+            padding: 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background: #f8f9fa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #212529;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 0.375rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Floating Labels Margin Class Handling</h1>
+    <p>Tests for margin class movement from .form-floating to wrapper.</p>
+
+    <!-- Test 1: Basic floating label with margin classes -->
+    <div class="test-section">
+        <h3>Test 1: Basic Margins (mb-3, mt-2)</h3>
+        <p>Expected: Margins moved from .form-floating to wrapper on init</p>
+        <div class="test-case">
+            <div class="form-floating mb-3 mt-2">
+                <input type="number" class="form-control" id="margin-basic"
+                       placeholder="Margin test" value="50"
+                       data-testid="margin-basic">
+                <label for="margin-basic">Amount</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 2: Destroy test -->
+    <div class="test-section">
+        <h3>Test 2: Destroy Restores Margins</h3>
+        <p>Expected: Margins restored to .form-floating after destroy</p>
+        <div class="test-case">
+            <div class="form-floating mb-4">
+                <input type="number" class="form-control" id="margin-destroy"
+                       placeholder="Destroy test" value="100"
+                       data-testid="margin-destroy">
+                <label for="margin-destroy">Price</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 3: Vertical buttons with margins -->
+    <div class="test-section">
+        <h3>Test 3: Margins with Vertical Buttons</h3>
+        <p>Expected: Margins moved correctly with vertical button layout</p>
+        <div class="test-case">
+            <div class="form-floating mb-3 mx-2">
+                <input type="number" class="form-control" id="margin-vertical"
+                       placeholder="Vertical test" value="75"
+                       data-testid="margin-vertical"
+                       data-bts-vertical-buttons="true">
+                <label for="margin-vertical">Quantity</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test 4: Advanced mode (input-group) with margins -->
+    <div class="test-section">
+        <h3>Test 4: Advanced Mode (Input Group) with Margins</h3>
+        <p>Expected: Margins moved to existing input-group wrapper</p>
+        <div class="test-case">
+            <div class="input-group" data-testid="margin-advanced-wrapper">
+                <span class="input-group-text">$</span>
+                <div class="form-floating mb-3 mt-1">
+                    <input type="number" class="form-control" id="margin-advanced"
+                           placeholder="Advanced test" value="125"
+                           data-testid="margin-advanced">
+                    <label for="margin-advanced">Total</label>
+                </div>
+                <span class="input-group-text">.00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DO NOT auto-initialize - tests will initialize manually
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 Margin handling fixture ready - waiting for test initialization');
+        });
+    </script>
+</body>
+</html>

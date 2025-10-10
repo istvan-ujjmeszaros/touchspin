@@ -137,33 +137,12 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     const inputContainer = this.floatingContainer || this.input;
     this.registerSpecialElement('inputContainer', inputContainer);
 
-    // Fix any malformed DOM structure (not tracked - happens before we start tracking)
-    this.ensureFloatingLabelStructure();
-
     this.initializeOptions();
     this.resetElementReferences();
     this.handleFloatingMargins(); // Handle margin classes before building
     this.ensureFormControlClass();
     this.buildAndAttachDOM();
     this.registerSettingObservers();
-  }
-
-  /**
-   * Ensure input and label are correctly positioned in .form-floating
-   * This runs BEFORE tracking starts to fix any malformed DOM structure
-   */
-  private ensureFloatingLabelStructure(): void {
-    if (!this.floatingContainer || !this.floatingLabel) return;
-
-    // Ensure input is in floating container
-    if (this.input.parentElement !== this.floatingContainer) {
-      this.trackMoveElement(this.input, this.floatingContainer, this.floatingContainer.firstChild);
-    }
-
-    // Ensure label is in floating container (after input)
-    if (this.floatingLabel.parentElement !== this.floatingContainer) {
-      this.trackMoveElement(this.floatingLabel, this.floatingContainer);
-    }
   }
 
   teardown(): void {
@@ -226,15 +205,20 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
 
   // DOM building
   buildInputGroup(): HTMLElement {
-    // Handle floating labels first
-    if (this.floatingContainer && this.initialInputGroup) {
+    // Handle floating labels first (only if both container AND label exist)
+    if (this.floatingContainer && this.floatingLabel && this.initialInputGroup) {
       // Mode B: Floating label inside input-group
       return this.buildFloatingLabelInInputGroup();
     }
 
-    if (this.floatingContainer) {
+    if (this.floatingContainer && this.floatingLabel) {
       // Mode A: Basic floating label
       return this.buildBasicFloatingLabel();
+    }
+
+    // If floating container exists but no label, extract input from malformed structure
+    if (this.floatingContainer) {
+      this.extractInputFromFloatingContainer();
     }
 
     // Regular (non-floating) logic
@@ -244,6 +228,21 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     return existingInputGroup
       ? this.buildAdvancedInputGroup(existingInputGroup)
       : this.buildBasicInputGroup();
+  }
+
+  /**
+   * Extract input from .form-floating when falling back to regular rendering
+   * This handles malformed markup where .form-floating exists but label is missing
+   */
+  private extractInputFromFloatingContainer(): void {
+    if (!this.floatingContainer) return;
+    if (this.input.parentElement !== this.floatingContainer) return;
+
+    // Move input to the same level as .form-floating
+    const floatingParent = this.floatingContainer.parentElement;
+    if (floatingParent) {
+      this.trackMoveElement(this.input, floatingParent, this.floatingContainer.nextSibling);
+    }
   }
 
   buildBasicInputGroup(): HTMLElement {
