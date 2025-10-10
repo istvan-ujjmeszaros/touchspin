@@ -16,7 +16,7 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
     if (typeof window.jQuery === 'undefined') {
       throw new Error('jQuery is not loaded');
     }
-    if (typeof window.jQuery.fn.TouchSpin === 'undefined') {
+    if (typeof window.jQuery.fn.touchspin === 'undefined') {
       throw new Error('TouchSpin jQuery plugin is not loaded');
     }
   });
@@ -44,7 +44,7 @@ export async function initializeTouchspinJQuery(
         if (typeof window.jQuery === 'undefined') {
           throw new Error('jQuery is not available on window');
         }
-        if (typeof window.jQuery.fn.TouchSpin === 'undefined') {
+        if (typeof window.jQuery.fn.touchspin === 'undefined') {
           throw new Error('TouchSpin plugin is not available on jQuery');
         }
 
@@ -59,7 +59,7 @@ export async function initializeTouchspinJQuery(
           $input.val((opts as Record<string, unknown>).initval);
         }
 
-        $input.TouchSpin(opts);
+        $input.touchspin(opts);
       } catch (err) {
         console.error('initializeTouchspinJQuery failed:', err);
         throw err;

@@ -292,13 +292,13 @@ test.describe('jQuery plugin data attributes', () => {
         const jsonSettings = input.attr('data-bts-settings');
         if (jsonSettings) {
           const parsedSettings = JSON.parse(jsonSettings);
-          input.TouchSpin(parsedSettings);
+          input.touchspin(parsedSettings);
           return true;
         }
         return false;
       } catch {
         // Fallback to regular initialization if JSON not supported
-        $('[data-testid="json-input"]').TouchSpin({ min: 0, max: 100, step: 5 });
+        $('[data-testid="json-input"]').touchspin({ min: 0, max: 100, step: 5 });
         return false;
       }
     });
@@ -410,7 +410,7 @@ test.describe('jQuery plugin data attributes', () => {
       try {
         // Try to update settings based on new data attribute
         const newStep = $('[data-testid="test-input"]').attr('data-bts-step');
-        $('[data-testid="test-input"]').TouchSpin('updateSettings', {
+        $('[data-testid="test-input"]').touchspin('updateSettings', {
           step: parseInt(newStep, 10),
         });
         return true;
@@ -498,7 +498,7 @@ test.describe('jQuery plugin data attributes', () => {
         const step = $('[data-testid="test-input"]').attr('data-bts-step');
         const normalizedStep = parseFloat(step.replace(',', '.'));
 
-        $('[data-testid="test-input"]').TouchSpin({
+        $('[data-testid="test-input"]').touchspin({
           step: normalizedStep,
           decimals: 1,
           prefix: '€ ',
@@ -508,7 +508,7 @@ test.describe('jQuery plugin data attributes', () => {
         return true;
       } catch {
         // Fallback initialization
-        $('[data-testid="test-input"]').TouchSpin({ step: 0.5, decimals: 1, initval: 5 });
+        $('[data-testid="test-input"]').touchspin({ step: 0.5, decimals: 1, initval: 5 });
         return false;
       }
     });
@@ -598,11 +598,11 @@ test.describe('jQuery plugin data attributes', () => {
           ? parseInt(input.attr('data-bts-mobile-max') || '50', 10)
           : parseInt(input.attr('data-bts-desktop-max') || '100', 10);
 
-        input.TouchSpin({ step, max, initval: 10 });
+        input.touchspin({ step, max, initval: 10 });
         return { step, max, isMobile };
       } catch {
         // Fallback
-        $('[data-testid="test-input"]').TouchSpin({ step: 1, max: 50, initval: 10 });
+        $('[data-testid="test-input"]').touchspin({ step: 1, max: 50, initval: 10 });
         return { step: 1, max: 50, isMobile: true };
       }
     });
@@ -651,11 +651,11 @@ test.describe('jQuery plugin data attributes', () => {
         const max = parseInt(maxTemplate.replace('{{baseValue * 10}}', String(baseValue * 10)), 10);
         const step = parseInt(stepTemplate.replace('{{baseValue / 5}}', String(baseValue / 5)), 10);
 
-        input.TouchSpin({ min, max, step, initval: 25 });
+        input.touchspin({ min, max, step, initval: 25 });
         return { min, max, step, templateProcessed: true };
       } catch {
         // Fallback to static values
-        $('[data-testid="test-input"]').TouchSpin({ min: 5, max: 50, step: 1, initval: 25 });
+        $('[data-testid="test-input"]').touchspin({ min: 5, max: 50, step: 1, initval: 25 });
         return { min: 5, max: 50, step: 1, templateProcessed: false };
       }
     });
@@ -690,7 +690,7 @@ test.describe('jQuery plugin data attributes', () => {
       const $ = (window as any).$;
       try {
         // Test precedence: inline options > data-bts > data-touchspin > data-step
-        $('[data-testid="test-input"]').TouchSpin({
+        $('[data-testid="test-input"]').touchspin({
           step: 5, // Inline should win
           initval: 10,
         });
@@ -700,7 +700,7 @@ test.describe('jQuery plugin data attributes', () => {
           finalStep: 5, // inline option should take precedence
         };
       } catch {
-        $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 10 });
+        $('[data-testid="test-input"]').touchspin({ step: 1, initval: 10 });
         return { resolved: false, finalStep: 1 };
       }
     });
@@ -745,7 +745,7 @@ test.describe('jQuery plugin data attributes', () => {
         const legacyPrefix = input.attr('data-prefix');
 
         // Initialize with legacy data attributes
-        input.TouchSpin({
+        input.touchspin({
           step: parseInt(legacyStep || '1', 10),
           min: parseInt(legacyMin || '0', 10),
           max: parseInt(legacyMax || '10', 10),
@@ -759,7 +759,7 @@ test.describe('jQuery plugin data attributes', () => {
           prefix: legacyPrefix,
         };
       } catch {
-        $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 6 });
+        $('[data-testid="test-input"]').touchspin({ step: 1, initval: 6 });
         return { legacySupport: false };
       }
     });
@@ -803,7 +803,7 @@ test.describe('jQuery plugin data attributes', () => {
         const validationMode = input.attr('data-bts-validation-mode');
 
         // Initialize TouchSpin (custom attributes might not affect core functionality)
-        input.TouchSpin({
+        input.touchspin({
           step: 1,
           initval: 5,
         });
@@ -815,7 +815,7 @@ test.describe('jQuery plugin data attributes', () => {
           validation: validationMode,
         };
       } catch {
-        $('[data-testid="test-input"]').TouchSpin({ step: 1, initval: 5 });
+        $('[data-testid="test-input"]').touchspin({ step: 1, initval: 5 });
         return { customAttributesFound: false };
       }
     });

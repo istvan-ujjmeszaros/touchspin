@@ -70,7 +70,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Act - Initialize TouchSpin on single element via jQuery
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ min: 0, max: 10 });
+      $('[data-testid="test-input"]').touchspin({ min: 0, max: 10 });
     });
 
     // Assert - Verify TouchSpin is initialized
@@ -106,7 +106,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Act - Initialize TouchSpin on all elements with single jQuery call
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('.numeric-input').TouchSpin({ step: 1 });
+      $('.numeric-input').touchspin({ step: 1 });
     });
 
     // Assert - Verify all elements are initialized
@@ -148,7 +148,7 @@ test.describe('jQuery plugin initialization patterns', () => {
       const $ = (window as any).$;
       $('[data-testid="test-input"]')
         .addClass('initialized')
-        .TouchSpin({ min: 0, max: 100 })
+        .touchspin({ min: 0, max: 100 })
         .removeClass('pending');
     });
 
@@ -178,7 +178,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Arrange - Initialize TouchSpin with first settings
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ step: 1 });
+      $('[data-testid="test-input"]').touchspin({ step: 1 });
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
@@ -190,7 +190,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Act - Attempt second initialization with different settings
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ step: 5 });
+      $('[data-testid="test-input"]').touchspin({ step: 5 });
     });
 
     // Assert - Verify no duplicate initialization occurred
@@ -218,7 +218,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Arrange - Initialize TouchSpin
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ step: 2 });
+      $('[data-testid="test-input"]').touchspin({ step: 2 });
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
@@ -232,7 +232,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Re-initialize with different settings
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ step: 5, min: 0, max: 50 });
+      $('[data-testid="test-input"]').touchspin({ step: 5, min: 0, max: 50 });
     });
 
     // Assert - Verify successful re-initialization
@@ -266,7 +266,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Act - Initialize with options that conflict with data attributes
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({
+      $('[data-testid="test-input"]').touchspin({
         step: 3, // Conflicts with data-step="5"
         min: 0, // Conflicts with data-min="10"
         max: 50, // Conflicts with data-max="100"
@@ -298,7 +298,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Act - Initialize TouchSpin without any options
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin();
+      $('[data-testid="test-input"]').touchspin();
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
@@ -427,7 +427,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize without options object - should use data attributes
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="data-input"]').TouchSpin();
+      $('[data-testid="data-input"]').touchspin();
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'data-input');
@@ -452,7 +452,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     const resultLength = await page.evaluate(() => {
       const $ = (window as any).$;
       // Should handle gracefully without throwing errors
-      const result = $('#non-existent-element').TouchSpin({ min: 0, max: 10 });
+      const result = $('#non-existent-element').touchspin({ min: 0, max: 10 });
       return result.length;
     });
 
@@ -461,7 +461,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Original input should still be untouched and can be initialized
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="test-input"]').TouchSpin({ min: 0, max: 10 });
+      $('[data-testid="test-input"]').touchspin({ min: 0, max: 10 });
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'test-input');
@@ -480,7 +480,7 @@ test.describe('jQuery plugin initialization patterns', () => {
       const $ = (window as any).$;
       // TouchSpin should return jQuery object for chaining
       return $('[data-testid="test-input"]')
-        .TouchSpin({ min: 0, max: 10 })
+        .touchspin({ min: 0, max: 10 })
         .addClass('chained-class')
         .hasClass('chained-class');
     });
@@ -551,8 +551,8 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize TouchSpin on mixed element types
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="number-input"]').TouchSpin({ min: 5, max: 25 });
-      $('[data-testid="text-input"]').TouchSpin({ min: 15, max: 35 });
+      $('[data-testid="number-input"]').touchspin({ min: 5, max: 25 });
+      $('[data-testid="text-input"]').touchspin({ min: 15, max: 35 });
     });
 
     // Both should be initialized successfully
@@ -609,7 +609,7 @@ test.describe('jQuery plugin initialization patterns', () => {
       const $ = (window as any).$;
       let callbackCalled = false;
 
-      $('[data-testid="test-input"]').TouchSpin({
+      $('[data-testid="test-input"]').touchspin({
         min: 0,
         max: 20,
         callback_after_calculation: (value) => {
@@ -646,7 +646,7 @@ test.describe('jQuery plugin initialization patterns', () => {
       const $ = (window as any).$;
       try {
         // Should not throw error, should handle gracefully
-        $('[data-testid="test-input"]').TouchSpin({
+        $('[data-testid="test-input"]').touchspin({
           min: 'invalid',
           max: undefined,
           step: null,
@@ -707,7 +707,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize only elements that meet condition
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-touchspin="true"]').TouchSpin({ min: 5, max: 25 });
+      $('[data-touchspin="true"]').touchspin({ min: 5, max: 25 });
     });
 
     // Should be initialized
@@ -736,8 +736,8 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize in specific order
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="second-input"]').TouchSpin({ min: 0, max: 10 });
-      $('[data-testid="first-input"]').TouchSpin({ min: 0, max: 10 });
+      $('[data-testid="second-input"]').touchspin({ min: 0, max: 10 });
+      $('[data-testid="first-input"]').touchspin({ min: 0, max: 10 });
     });
 
     // Both should be initialized regardless of order
@@ -769,7 +769,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize multiple elements at once
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid^="batch"]').TouchSpin({ min: 0, max: 50, step: 5 });
+      $('[data-testid^="batch"]').touchspin({ min: 0, max: 50, step: 5 });
     });
 
     // All should be initialized
@@ -804,7 +804,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     // Initialize the dynamically added content
     await page.evaluate(() => {
       const $ = (window as any).$;
-      $('[data-testid="dynamic-input"]').TouchSpin({ min: 20, max: 40 });
+      $('[data-testid="dynamic-input"]').touchspin({ min: 20, max: 40 });
     });
 
     await apiHelpers.expectTouchSpinInitialized(page, 'dynamic-input');
@@ -825,7 +825,7 @@ test.describe('jQuery plugin initialization patterns', () => {
     await page.evaluate(() => {
       const $ = (window as any).$;
       try {
-        $('#non-existent-element').TouchSpin({ min: 0, max: 10 });
+        $('#non-existent-element').touchspin({ min: 0, max: 10 });
       } catch (error) {
         (window as any).cleanupError = error.message;
       }
