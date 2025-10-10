@@ -90,7 +90,11 @@ test.describe('TouchSpin callback pairing warnings', () => {
       callback_after_calculation: (val) => `$${val}`,
     });
 
-    expect(warnings).toHaveLength(0);
+    // Filter to only callback-related warnings (ignore renderer/type warnings from real core)
+    const callbackWarnings = warnings.filter(
+      (w) => w.includes('callback_before_calculation') || w.includes('callback_after_calculation')
+    );
+    expect(callbackWarnings).toHaveLength(0);
   });
 
   /**
@@ -104,7 +108,11 @@ test.describe('TouchSpin callback pairing warnings', () => {
 
     await initializeTouchspin(page, 'test-input', { step: 5 });
 
-    expect(warnings).toHaveLength(0);
+    // Filter to only callback-related warnings (ignore renderer warnings from real core)
+    const callbackWarnings = warnings.filter(
+      (w) => w.includes('callback_before_calculation') || w.includes('callback_after_calculation')
+    );
+    expect(callbackWarnings).toHaveLength(0);
   });
 
   /**

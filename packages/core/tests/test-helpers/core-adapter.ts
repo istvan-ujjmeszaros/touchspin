@@ -3,10 +3,7 @@ import { installDomHelpers } from '@touchspin/core/test-helpers';
 
 /**
  * Initialize TouchSpin Core directly (without renderer)
- * This is for Core package tests only
- *
- * For now, this creates a mock Core that implements the callback pairing check
- * since loading the actual Core module in isolation is complex
+ * Uses the real TouchSpin global from the IIFE bundle loaded in the fixture
  */
 export async function initializeTouchspin(
   page: Page,
@@ -57,95 +54,8 @@ export async function initializeTouchspin(
         )();
       }
 
-      // Create a mock Core that implements the callback pairing check
-      // This mirrors the actual implementation in the real Core
-      const core = {
-        settings: { ...options },
-        updateSettings: (newSettings: any) => {
-          Object.assign(core.settings, newSettings);
-          core._checkCallbackPairing();
-        },
-        _checkCallbackPairing: () => {
-          const settings = core.settings;
-          const defCb = (v: string) => v;
-
-          const hasBefore =
-            settings.callback_before_calculation &&
-            settings.callback_before_calculation.toString() !== defCb.toString();
-          const hasAfter =
-            settings.callback_after_calculation &&
-            settings.callback_after_calculation.toString() !== defCb.toString();
-
-          if (hasBefore && !hasAfter) {
-            console.warn(
-              'TouchSpin: callback_before_calculation is defined but callback_after_calculation is missing. ' +
-                'These callbacks should be used together - one removes formatting, the other adds it back.'
-            );
-          } else if (!hasBefore && hasAfter) {
-            console.warn(
-              'TouchSpin: callback_after_calculation is defined but callback_before_calculation is missing. ' +
-                'These callbacks should be used together - one removes formatting, the other adds it back.'
-            );
-          }
-
-          // If both callbacks are defined, validate that they properly reverse each other
-          if (hasBefore && hasAfter) {
-            // Build smart test values based on configuration
-            const testValues: string[] = [];
-            const decimals = settings.decimals || 0;
-            const formatValue = (n: number) => n.toFixed(decimals);
-
-            const hasMin = settings.min !== null && settings.min !== undefined;
-            const hasMax = settings.max !== null && settings.max !== undefined;
-
-            if (hasMin && hasMax) {
-              // Test with both boundary values
-              testValues.push(formatValue(settings.min!), formatValue(settings.max!));
-            } else if (hasMin) {
-              // Test only with min value
-              testValues.push(formatValue(settings.min!));
-            } else if (hasMax) {
-              // Test only with max value
-              testValues.push(formatValue(settings.max!));
-            } else {
-              // No boundaries set - use single default value
-              testValues.push(decimals > 0 ? '50.55' : '50');
-            }
-
-            const failures: string[] = [];
-
-            for (const testValue of testValues) {
-              const afterResult = settings.callback_after_calculation!(testValue);
-              const beforeResult = settings.callback_before_calculation!(afterResult);
-
-              if (beforeResult !== testValue) {
-                failures.push(
-                  `"${testValue}" → after → "${afterResult}" → before → "${beforeResult}" (expected "${testValue}")`
-                );
-              }
-            }
-
-            if (failures.length > 0) {
-              console.warn(
-                'TouchSpin: Callbacks are not properly paired - round-trip test failed:\n' +
-                  failures.join('\n') +
-                  '\n' +
-                  'callback_before_calculation must reverse what callback_after_calculation does. ' +
-                  'For example, if after adds " USD", before must strip " USD".'
-              );
-            }
-          }
-        },
-      };
-
-      // Check callbacks on initialization
-      core._checkCallbackPairing();
-
-      // Store reference for API access
-      (input as any)._touchSpinCore = core;
-
-      // Mark as initialized for helper compatibility
-      input.setAttribute('data-touchspin-injected', 'true');
+      // Use the REAL TouchSpin from the IIFE bundle (TouchSpinCore.TouchSpin)
+      (window as any).TouchSpinCore.TouchSpin(input, options);
     },
     { testId, options: serializedOptions }
   );
@@ -182,9 +92,11 @@ export async function updateSettingsViaAPI(
   await page.evaluate(
     ({ testId, newSettings }) => {
       const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-      const core = (input as any)._touchSpinCore;
-      if (!core) {
-        throw new Error(`TouchSpin Core not found for "${testId}"`);
+
+      // Get the real TouchSpin instance using getTouchSpin
+      const spinner = (window as any).TouchSpinCore.getTouchSpin(input);
+      if (!spinner) {
+        throw new Error(`TouchSpin instance not found for "${testId}"`);
       }
 
       // Reconstruct callback functions from strings
@@ -205,7 +117,7 @@ export async function updateSettingsViaAPI(
         )();
       }
 
-      core.updateSettings(newSettings);
+      spinner.updateSettings(newSettings);
     },
     { testId, newSettings: serializedSettings }
   );
