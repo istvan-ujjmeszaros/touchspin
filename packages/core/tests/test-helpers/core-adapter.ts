@@ -87,6 +87,33 @@ export async function initializeTouchspin(
                 'These callbacks should be used together - one removes formatting, the other adds it back.'
             );
           }
+
+          // If both callbacks are defined, validate that they properly reverse each other
+          if (hasBefore && hasAfter) {
+            const testValues = ['50', '100', '0', '-50'];
+            const failures: string[] = [];
+
+            for (const testValue of testValues) {
+              const afterResult = settings.callback_after_calculation!(testValue);
+              const beforeResult = settings.callback_before_calculation!(afterResult);
+
+              if (beforeResult !== testValue) {
+                failures.push(
+                  `"${testValue}" → after → "${afterResult}" → before → "${beforeResult}" (expected "${testValue}")`
+                );
+              }
+            }
+
+            if (failures.length > 0) {
+              console.warn(
+                'TouchSpin: Callbacks are not properly paired - round-trip test failed:\n' +
+                  failures.join('\n') +
+                  '\n' +
+                  'callback_before_calculation must reverse what callback_after_calculation does. ' +
+                  'For example, if after adds " USD", before must strip " USD".'
+              );
+            }
+          }
         },
       };
 

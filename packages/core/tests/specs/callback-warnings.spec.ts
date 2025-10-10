@@ -13,9 +13,10 @@
  * [x] warns when only callback_after_calculation is provided via updateSettings
  * [x] no warning when both callbacks are provided via updateSettings
  * [x] warns when removing one callback via updateSettings
+ * [x] warns when callbacks are improperly paired (round-trip test fails)
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { captureConsoleWarnings } from '@touchspin/core/test-helpers';
 import { initializeTouchspin, updateSettingsViaAPI } from '../test-helpers/core-adapter';
@@ -199,6 +200,36 @@ test.describe('TouchSpin callback pairing warnings', () => {
     expect(warnings).toContainEqual(
       expect.stringContaining(
         'callback_after_calculation is defined but callback_before_calculation is missing'
+      )
+    );
+  });
+
+  /**
+   * Scenario: warns when callbacks are improperly paired (round-trip test fails)
+   * Given the fixture page is loaded
+   * When TouchSpin initializes with callbacks that don't reverse each other
+   * Then a console warning about round-trip test failure is emitted
+   */
+  test('warns when callbacks are improperly paired (round-trip test fails)', async ({ page }) => {
+    const warnings = captureConsoleWarnings(page);
+
+    // These callbacks are improperly paired:
+    // - after adds " USD"
+    // - before returns the value unchanged (doesn't strip " USD")
+    await initializeTouchspin(page, 'test-input', {
+      callback_before_calculation: (val) => {
+        // This callback doesn't strip " USD" - it just returns the value
+        return String(val);
+      },
+      callback_after_calculation: (val) => val + ' USD', // Adds " USD"
+    });
+
+    expect(warnings).toContainEqual(
+      expect.stringContaining('Callbacks are not properly paired - round-trip test failed')
+    );
+    expect(warnings).toContainEqual(
+      expect.stringContaining(
+        'callback_before_calculation must reverse what callback_after_calculation does'
       )
     );
   });
