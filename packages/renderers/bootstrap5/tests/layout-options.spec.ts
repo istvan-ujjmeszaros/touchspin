@@ -16,6 +16,7 @@
  * [x] applies proper spacing in vertical layout
  * [x] manages button positioning in vertical mode
  * [x] handles prefix/postfix in vertical layout
+ * [x] handles vertical buttons with postfix only (no prefix)
  * [x] maintains accessibility in both layouts
  * [x] supports custom vertical button classes
  * [x] handles layout changes after initialization
@@ -367,6 +368,37 @@ test('handles prefix/postfix in vertical layout', async ({ page }) => {
   await expect(elements.postfix).toHaveText('USD');
 
   // Verify functionality works with prefix/postfix in vertical layout
+  await apiHelpers.clickUpButton(page, 'test-input');
+  await apiHelpers.expectValueToBe(page, 'test-input', '51');
+});
+
+/**
+ * Scenario: handles vertical buttons with postfix only (no prefix)
+ * Given the fixture page is loaded
+ * When TouchSpin initializes with vertical layout and postfix but no prefix
+ * Then input is positioned correctly before postfix, with vertical buttons after
+ * Params:
+ * { "verticalbuttons": true, "postfix": "USD", "expectedLayout": "input-postfix-vertical-buttons" }
+ */
+test('handles vertical buttons with postfix only (no prefix)', async ({ page }) => {
+  await page.goto('/packages/renderers/bootstrap5/tests/fixtures/bootstrap5-fixture.html');
+  await ensureBootstrap5Globals(page);
+  await apiHelpers.initializeTouchSpin(page, 'test-input', {
+    verticalbuttons: true,
+    postfix: 'USD',
+  });
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Verify postfix is present and positioned correctly
+  await expect(elements.postfix).toBeVisible();
+  await expect(elements.postfix).toHaveText('USD');
+
+  // Verify vertical buttons are visible
+  await expect(elements.upButton).toBeVisible();
+  await expect(elements.downButton).toBeVisible();
+
+  // Verify functionality works with postfix in vertical layout
   await apiHelpers.clickUpButton(page, 'test-input');
   await apiHelpers.expectValueToBe(page, 'test-input', '51');
 });

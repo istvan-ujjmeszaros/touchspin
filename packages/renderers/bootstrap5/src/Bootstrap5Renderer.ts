@@ -558,7 +558,7 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
       this.opts.prefix_extraclass,
     ]);
     this.trackAddAttribute(element, 'data-touchspin-injected', INJECTED_TYPES.PREFIX);
-    element.textContent = this.opts.prefix || '';
+    element.textContent = this.opts.prefix!;
 
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) {
@@ -576,7 +576,7 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
       this.opts.postfix_extraclass,
     ]);
     this.trackAddAttribute(element, 'data-touchspin-injected', INJECTED_TYPES.POSTFIX);
-    element.textContent = this.opts.postfix || '';
+    element.textContent = this.opts.postfix!;
 
     const inputTestId = this.input.getAttribute('data-testid');
     if (inputTestId) {
@@ -681,11 +681,11 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
   }
 
   private attachEventsToButtons(): void {
-    const upButton = this.wrapper!.querySelector(SELECTORS.UP_BUTTON);
-    const downButton = this.wrapper!.querySelector(SELECTORS.DOWN_BUTTON);
+    const upButton = this.wrapper!.querySelector(SELECTORS.UP_BUTTON) as HTMLElement | null;
+    const downButton = this.wrapper!.querySelector(SELECTORS.DOWN_BUTTON) as HTMLElement | null;
 
-    this.core.attachUpEvents(upButton instanceof HTMLElement ? upButton : null);
-    this.core.attachDownEvents(downButton instanceof HTMLElement ? downButton : null);
+    this.core.attachUpEvents(upButton);
+    this.core.attachDownEvents(downButton);
   }
 
   // Setting observers
