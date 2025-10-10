@@ -1,6 +1,6 @@
 /**
  * Feature: Web Component attribute and lifecycle edge cases
- * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
+ * Background: fixture = /packages/web-components/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -12,7 +12,7 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
-const fixtureUrl = '/packages/web-component/tests/fixtures/web-component-fixture.html';
+const fixtureUrl = '/packages/web-components/tests/fixtures/web-component-fixture.html';
 
 test.describe('TouchSpin web component edge cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('TouchSpin web component edge cases', () => {
 
   /**
    * Scenario: attributeChangedCallback handles value, disabled, readonly and renderer changes
-   * Given a connected touchspin-input element with initial attributes
+   * Given a connected touchspin-vanilla element with initial attributes
    * When value, disabled, readonly, and renderer attributes change dynamically
    * Then the backing core updates the value, the input reflects disabled/readonly states, and the instance persists after renderer fallback
    */
@@ -36,7 +36,7 @@ test.describe('TouchSpin web component edge cases', () => {
     page,
   }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'wc-coverage');
       element.setAttribute('value', '25');
       element.setAttribute('min', '0');
@@ -94,7 +94,7 @@ test.describe('TouchSpin web component edge cases', () => {
 
   /**
    * Scenario: component creates internal input when none provided and cleanup restores state
-   * Given a touchspin-input element without an inner input
+   * Given a touchspin-vanilla element without an inner input
    * When the component initializes itself
    * Then it creates the input with the provided attributes and cleanup removes the entire node on destroy
    */
@@ -102,7 +102,7 @@ test.describe('TouchSpin web component edge cases', () => {
     page,
   }) => {
     const details = await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'wc-generated');
       element.setAttribute('value', '12');
       element.setAttribute('placeholder', 'Enter amount');

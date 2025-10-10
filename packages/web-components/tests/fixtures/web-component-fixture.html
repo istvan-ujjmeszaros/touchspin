@@ -12,7 +12,7 @@
             "@touchspin/core": "../../../core/devdist/index.js",
             "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
             "@touchspin/core/events": "../../../core/devdist/events.js",
-            "@touchspin/web-component": "../../devdist/index.js",
+            "@touchspin/web-components/vanilla": "../../devdist/vanilla.js",
             "@touchspin/renderer-vanilla": "../../../renderers/vanilla/devdist/index.js"
         }
     }
@@ -229,7 +229,7 @@
         // Load web component module and expose everything tests need
         (async () => {
             try {
-                await import('@touchspin/web-component');
+                await import('@touchspin/web-components/vanilla');
                 // Web component registers itself on import
                 window.testPageReady = true;
             } catch (error) {

@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Web Components - Demo</title>
+
+  <!-- Bootstrap 5 CSS for Bootstrap 3/4/5 examples -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Tailwind CSS for Tailwind example -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Vanilla CSS -->
+  <link rel="stylesheet" href="../../renderers/vanilla/dist/touchspin-vanilla.css">
+
+  <!-- Import map for module resolution -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../core/devdist/index.js",
+      "@touchspin/core/renderer": "../../core/devdist/renderer.js",
+      "@touchspin/core/events": "../../core/devdist/events.js",
+      "@touchspin/web-components/vanilla": "../devdist/vanilla.js",
+      "@touchspin/web-components/bootstrap3": "../devdist/bootstrap3.js",
+      "@touchspin/web-components/bootstrap4": "../devdist/bootstrap4.js",
+      "@touchspin/web-components/bootstrap5": "../devdist/bootstrap5.js",
+      "@touchspin/web-components/tailwind": "../devdist/tailwind.js",
+      "@touchspin/renderer-vanilla": "../../renderers/vanilla/devdist/index.js",
+      "@touchspin/renderer-bootstrap3": "../../renderers/bootstrap3/devdist/index.js",
+      "@touchspin/renderer-bootstrap4": "../../renderers/bootstrap4/devdist/index.js",
+      "@touchspin/renderer-bootstrap5": "../../renderers/bootstrap5/devdist/index.js",
+      "@touchspin/renderer-tailwind": "../../renderers/tailwind/devdist/index.js"
+    }
+  }
+  </script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .example {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    .example h3 {
+      margin-top: 0;
+      color: #212529;
+    }
+    .spinner {
+      margin: 15px 0;
+    }
+    pre {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 15px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .note {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 12px 16px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 TouchSpin Web Components</h1>
+    <p class="lead">Standards-based custom elements with tree-shakable renderer support</p>
+
+    <div class="note">
+      <strong>🌳 Tree-Shakable:</strong> Import only the renderers you need. Each component bundles only its specific renderer, keeping your bundle size minimal.
+    </div>
+
+    <!-- Vanilla Example -->
+    <div class="example">
+      <h3>Vanilla CSS Renderer</h3>
+      <p>Pure CSS styling, no framework dependencies.</p>
+      <div class="spinner">
+        <touchspin-vanilla
+          min="0"
+          max="100"
+          value="50"
+          step="1"
+          data-testid="vanilla-spinner">
+        </touchspin-vanilla>
+      </div>
+      <pre><code>&lt;!-- Import the component --&gt;
+&lt;script type="module"&gt;
+  import '@touchspin/web-components/vanilla';
+&lt;/script&gt;
+
+&lt;!-- Use it in your HTML --&gt;
+&lt;touchspin-vanilla min="0" max="100" value="50"&gt;&lt;/touchspin-vanilla&gt;</code></pre>
+    </div>
+
+    <!-- Bootstrap 5 Example -->
+    <div class="example">
+      <h3>Bootstrap 5 Renderer</h3>
+      <p>Fully integrated with Bootstrap 5 components and utilities.</p>
+      <div class="spinner">
+        <touchspin-bootstrap5
+          min="0"
+          max="100"
+          value="25"
+          step="5"
+          prefix="$"
+          postfix=" USD"
+          data-testid="bootstrap5-spinner">
+        </touchspin-bootstrap5>
+      </div>
+      <pre><code>&lt;!-- Import Bootstrap 5 CSS --&gt;
+&lt;link rel="stylesheet" href="bootstrap.min.css"&gt;
+
+&lt;!-- Import the component --&gt;
+&lt;script type="module"&gt;
+  import '@touchspin/web-components/bootstrap5';
+&lt;/script&gt;
+
+&lt;!-- Use it in your HTML --&gt;
+&lt;touchspin-bootstrap5
+  min="0"
+  max="100"
+  value="25"
+  prefix="$"
+  postfix=" USD"&gt;
+&lt;/touchspin-bootstrap5&gt;</code></pre>
+    </div>
+
+    <!-- Bootstrap 4 Example -->
+    <div class="example">
+      <h3>Bootstrap 4 Renderer</h3>
+      <p>Compatible with Bootstrap 4 styling.</p>
+      <div class="spinner">
+        <touchspin-bootstrap4
+          min="0"
+          max="10"
+          value="5"
+          step="1"
+          vertical-buttons
+          data-testid="bootstrap4-spinner">
+        </touchspin-bootstrap4>
+      </div>
+      <pre><code>&lt;script type="module"&gt;
+  import '@touchspin/web-components/bootstrap4';
+&lt;/script&gt;
+
+&lt;touchspin-bootstrap4
+  min="0"
+  max="10"
+  value="5"
+  vertical-buttons&gt;
+&lt;/touchspin-bootstrap4&gt;</code></pre>
+    </div>
+
+    <!-- Bootstrap 3 Example -->
+    <div class="example">
+      <h3>Bootstrap 3 Renderer</h3>
+      <p>Legacy Bootstrap 3 support.</p>
+      <div class="spinner">
+        <touchspin-bootstrap3
+          min="0"
+          max="1000"
+          value="500"
+          step="10"
+          data-testid="bootstrap3-spinner">
+        </touchspin-bootstrap3>
+      </div>
+      <pre><code>&lt;script type="module"&gt;
+  import '@touchspin/web-components/bootstrap3';
+&lt;/script&gt;
+
+&lt;touchspin-bootstrap3 min="0" max="1000" value="500"&gt;&lt;/touchspin-bootstrap3&gt;</code></pre>
+    </div>
+
+    <!-- Tailwind Example -->
+    <div class="example">
+      <h3>Tailwind CSS Renderer</h3>
+      <p>Modern utility-first CSS framework styling.</p>
+      <div class="spinner">
+        <touchspin-tailwind
+          min="1"
+          max="99"
+          value="42"
+          step="1"
+          data-testid="tailwind-spinner">
+        </touchspin-tailwind>
+      </div>
+      <pre><code>&lt;!-- Import Tailwind CSS --&gt;
+&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+
+&lt;!-- Import the component --&gt;
+&lt;script type="module"&gt;
+  import '@touchspin/web-components/tailwind';
+&lt;/script&gt;
+
+&lt;touchspin-tailwind min="1" max="99" value="42"&gt;&lt;/touchspin-tailwind&gt;</code></pre>
+    </div>
+
+    <!-- Programmatic API Example -->
+    <div class="example">
+      <h3>📝 Programmatic API</h3>
+      <p>All components expose the same API for programmatic control.</p>
+      <div class="spinner">
+        <touchspin-vanilla
+          id="api-example"
+          min="0"
+          max="100"
+          value="50">
+        </touchspin-vanilla>
+      </div>
+      <div style="margin: 15px 0;">
+        <button class="btn btn-primary btn-sm" id="btn-up">Increment</button>
+        <button class="btn btn-primary btn-sm" id="btn-down">Decrement</button>
+        <button class="btn btn-success btn-sm" id="btn-set-random">Set Random</button>
+        <button class="btn btn-info btn-sm" id="btn-get-value">Get Value</button>
+      </div>
+      <div id="api-output" style="padding: 10px; background: #f8f9fa; border-radius: 4px; min-height: 30px;"></div>
+      <pre><code>const spinner = document.querySelector('#api-example');
+
+// Methods
+spinner.upOnce();          // Increment once
+spinner.downOnce();        // Decrement once
+spinner.setValue(75);      // Set value
+const value = spinner.value; // Get value
+
+// Properties
+spinner.min = 0;
+spinner.max = 100;
+spinner.step = 5;
+spinner.disabled = true;
+spinner.readonly = true;
+
+// Events (dispatched as CustomEvents)
+spinner.addEventListener('touchspin.on.min', (e) => {
+  console.log('Minimum reached:', e.detail);
+});
+spinner.addEventListener('touchspin.on.max', (e) => {
+  console.log('Maximum reached:', e.detail);
+});</code></pre>
+    </div>
+
+    <!-- Installation -->
+    <div class="example">
+      <h3>📦 Installation</h3>
+      <pre><code># Install the package
+npm install @touchspin/web-components
+
+# Install the renderer(s) you need (peer dependencies)
+npm install @touchspin/renderer-bootstrap5</code></pre>
+
+      <h4 style="margin-top: 20px;">Bundle Size Comparison</h4>
+      <ul>
+        <li><strong>Single renderer:</strong> ~30KB (base + one renderer)</li>
+        <li><strong>All renderers:</strong> Only if you import all 5 - ~120KB</li>
+        <li><strong>Tree-shaking:</strong> Automatically includes only what you import</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Register all components -->
+  <script type="module">
+    import '@touchspin/web-components/vanilla';
+    import '@touchspin/web-components/bootstrap3';
+    import '@touchspin/web-components/bootstrap4';
+    import '@touchspin/web-components/bootstrap5';
+    import '@touchspin/web-components/tailwind';
+
+    // Programmatic API demo
+    const spinner = document.getElementById('api-example');
+    const output = document.getElementById('api-output');
+
+    document.getElementById('btn-up').addEventListener('click', () => {
+      spinner.upOnce();
+      output.textContent = `Called upOnce() - Value: ${spinner.value}`;
+    });
+
+    document.getElementById('btn-down').addEventListener('click', () => {
+      spinner.downOnce();
+      output.textContent = `Called downOnce() - Value: ${spinner.value}`;
+    });
+
+    document.getElementById('btn-set-random').addEventListener('click', () => {
+      const random = Math.floor(Math.random() * 100);
+      spinner.value = random;
+      output.textContent = `Set value to ${random}`;
+    });
+
+    document.getElementById('btn-get-value').addEventListener('click', () => {
+      output.textContent = `Current value: ${spinner.value}`;
+    });
+
+    console.log('✅ All TouchSpin web components loaded');
+  </script>
+</body>
+</html>

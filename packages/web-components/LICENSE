@@ -1,12 +1,11 @@
-
 MIT License
 
-TouchSpin
+TouchSpin Web Components
 v5.0.0
 
-A mobile and touch friendly input spinner component for Bootstrap 3 & 4.
+Standards-based custom elements for TouchSpin with tree-shakable renderer support
 
-    https://github.com/istvan-ujjmeszaros/touchspin
+    https://github.com/istvan-ujjmeszaros/bootstrap-touchspin
     http://www.virtuosoft.eu/code/touchspin/
 
 Copyright (c) 2013-2025 István Ujj-Mészáros

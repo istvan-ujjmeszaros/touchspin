@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component API methods
- * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
+ * Background: fixture = /packages/web-components/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -30,7 +30,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await apiHelpers.startCoverage(page);
 
     // Load self-contained fixture with web component dependencies
-    await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
+    await page.goto('/packages/web-components/tests/fixtures/web-component-fixture.html');
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);
   });
@@ -41,7 +41,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls upOnce method to increment value
-   * Given a touchspin-input element with initial value 5
+   * Given a touchspin-vanilla element with initial value 5
    * When upOnce() method is called
    * Then value increases by step amount
    * Params:
@@ -50,7 +50,7 @@ test.describe('TouchSpin Web Component API methods', () => {
   test('calls upOnce method to increment value', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'uponce-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -80,7 +80,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls downOnce method to decrement value
-   * Given a touchspin-input element with initial value 10
+   * Given a touchspin-vanilla element with initial value 10
    * When downOnce() method is called
    * Then value decreases by step amount
    * Params:
@@ -88,7 +88,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls downOnce method to decrement value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'downonce-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -116,7 +116,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls startUpSpin method to begin spinning up
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When startUpSpin() method is called
    * Then continuous upward spinning begins
    * Params:
@@ -124,7 +124,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls startUpSpin method to begin spinning up', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'startupspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -155,7 +155,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls startDownSpin method to begin spinning down
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When startDownSpin() method is called
    * Then continuous downward spinning begins
    * Params:
@@ -163,7 +163,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls startDownSpin method to begin spinning down', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'startdownspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -191,7 +191,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls stopSpin method to halt spinning
-   * Given a touchspin-input element that is spinning
+   * Given a touchspin-vanilla element that is spinning
    * When stopSpin() method is called
    * Then spinning stops immediately
    * Params:
@@ -199,7 +199,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls stopSpin method to halt spinning', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'stopspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -230,7 +230,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls updateSettings method to modify configuration
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When updateSettings() is called with new settings
    * Then component configuration updates
    * Params:
@@ -238,7 +238,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls updateSettings method to modify configuration', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'updatesettings-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -263,7 +263,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls getTouchSpinInstance method to access core instance
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When getTouchSpinInstance() is called
    * Then the core TouchSpin instance is returned
    * Params:
@@ -271,7 +271,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls getTouchSpinInstance method to access core instance', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'getinstance-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -298,7 +298,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: calls destroy method to clean up component
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When destroy() is called
    * Then component resources are cleaned up
    * Params:
@@ -306,7 +306,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls destroy method to clean up component', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'destroy-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -332,7 +332,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses value property getter to retrieve current value
-   * Given a touchspin-input element with value 42
+   * Given a touchspin-vanilla element with value 42
    * When the value property is accessed
    * Then it returns the current value
    * Params:
@@ -340,7 +340,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses value property getter to retrieve current value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'value-getter-test');
       element.setAttribute('value', '42');
       document.body.appendChild(element);
@@ -364,7 +364,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses value property setter to update value
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When value property is set to 75
    * Then the element value updates
    * Params:
@@ -372,7 +372,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses value property setter to update value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'value-setter-test');
       element.setAttribute('value', '10');
       document.body.appendChild(element);
@@ -397,7 +397,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses min property getter and setter
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When min property is accessed and modified
    * Then min value is retrieved and updated correctly
    * Params:
@@ -405,7 +405,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses min property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'min-property-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -443,7 +443,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses max property getter and setter
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When max property is accessed and modified
    * Then max value is retrieved and updated correctly
    * Params:
@@ -451,7 +451,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses max property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'max-property-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -489,7 +489,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses step property getter and setter
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When step property is accessed and modified
    * Then step value is retrieved and updated correctly
    * Params:
@@ -497,7 +497,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses step property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'step-property-test');
       element.setAttribute('step', '1');
       document.body.appendChild(element);
@@ -534,7 +534,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses disabled property getter and setter
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When disabled property is accessed and modified
    * Then disabled state is retrieved and updated correctly
    * Params:
@@ -542,7 +542,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses disabled property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'disabled-property-test');
       document.body.appendChild(element);
     });
@@ -577,7 +577,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
   /**
    * Scenario: uses readonly property getter and setter
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When readonly property is accessed and modified
    * Then readonly state is retrieved and updated correctly
    * Params:
@@ -585,7 +585,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses readonly property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-vanilla') as any;
       element.setAttribute('data-testid', 'readonly-property-test');
       document.body.appendChild(element);
     });

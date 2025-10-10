@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component reactive attribute updates
- * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
+ * Background: fixture = /packages/web-components/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -37,7 +37,7 @@
  * [x] processes batch attribute updates
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('TouchSpin Web Component reactive attribute updates', () => {
@@ -45,7 +45,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
     await apiHelpers.startCoverage(page);
 
     // Load self-contained fixture with web component dependencies
-    await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
+    await page.goto('/packages/web-components/tests/fixtures/web-component-fixture.html');
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);
   });
@@ -65,7 +65,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('reacts to attribute changes during runtime', async ({ page }) => {
     // Create and connect element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'reactive-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -117,7 +117,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates core settings when attributes change', async ({ page }) => {
     // Create element with initial settings
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'core-sync-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -175,7 +175,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles adding new attributes dynamically', async ({ page }) => {
     // Create element without certain attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'dynamic-add-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -231,7 +231,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles removing attributes dynamically', async ({ page }) => {
     // Create element with configured attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'dynamic-remove-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -289,7 +289,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates renderer when layout attributes change', async ({ page }) => {
     // Create element with initial layout
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'layout-change-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -354,7 +354,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes boolean attribute toggles', async ({ page }) => {
     // Create element with boolean attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'boolean-toggle-test');
       element.setAttribute('mousewheel', 'true');
       element.setAttribute('verticalbuttons', 'false');
@@ -407,7 +407,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles numeric attribute changes with validation', async ({ page }) => {
     // Create element with numeric constraints
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'numeric-validation-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -462,7 +462,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates string attributes reactively', async ({ page }) => {
     // Create element with string attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'string-reactive-test');
       element.setAttribute('prefix', 'Initial:');
       element.setAttribute('postfix', 'start');
@@ -514,7 +514,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles multiple simultaneous attribute changes', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'simultaneous-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '50');
@@ -575,7 +575,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('maintains component state during updates', async ({ page }) => {
     // Create element with initial value
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'state-maintenance-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -628,7 +628,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('validates new attribute values before applying', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'validation-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -681,7 +681,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles conflicting attribute combinations', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'conflict-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -734,7 +734,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates accessibility attributes dynamically', async ({ page }) => {
     // Create element with accessibility attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'a11y-test');
       element.setAttribute('aria-label', 'Initial quantity');
       element.setAttribute('role', 'spinbutton');
@@ -792,7 +792,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes data- attribute changes', async ({ page }) => {
     // Create element with data- attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'data-attr-test');
       element.setAttribute('data-min', '0');
       element.setAttribute('data-max', '50');
@@ -849,7 +849,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles attribute inheritance changes', async ({ page }) => {
     // Create element with wrapped input
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'inheritance-test');
       element.innerHTML = '<input type="number" min="0" max="50" value="25" />';
       document.body.appendChild(element);
@@ -907,7 +907,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates renderer-specific attributes', async ({ page }) => {
     // Create element with renderer-specific attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'renderer-test');
       element.setAttribute('button-theme', 'primary');
       element.setAttribute('size-variant', 'medium');
@@ -964,7 +964,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles custom attribute extensions', async ({ page }) => {
     // Create element with custom attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'custom-extension-test');
       element.setAttribute('custom-behavior', 'auto-format');
       element.setAttribute('plugin-config', 'currency-formatter');
@@ -1021,7 +1021,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes nested attribute structures', async ({ page }) => {
     // Create element with nested attribute structures
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'nested-test');
       element.setAttribute('complex-config', JSON.stringify({ theme: 'dark', size: 'lg' }));
       element.setAttribute(
@@ -1098,7 +1098,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles attribute value type conversions', async ({ page }) => {
     // Create element with typed attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'type-conversion-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -1159,7 +1159,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates event configuration attributes', async ({ page }) => {
     // Create element with event configuration
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'event-config-test');
       element.setAttribute('event-handlers', 'change,input');
       element.setAttribute(
@@ -1225,7 +1225,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles internationalization attribute changes', async ({ page }) => {
     // Create element with i18n attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'i18n-test');
       element.setAttribute('locale', 'en-US');
       element.setAttribute(
@@ -1291,7 +1291,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes plugin-specific attribute updates', async ({ page }) => {
     // Create element with plugin attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'plugin-test');
       element.setAttribute('plugin-config', JSON.stringify({ name: 'validator', version: '1.0' }));
       element.setAttribute(
@@ -1365,7 +1365,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('maintains backward compatibility during updates', async ({ page }) => {
     // Create element with legacy attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'legacy-test');
       element.setAttribute(
         'deprecated-options',
@@ -1432,7 +1432,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles attribute precedence during updates', async ({ page }) => {
     // Create element with multiple attribute sources
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'precedence-test');
       // Element-level attributes (highest precedence)
       element.setAttribute('min', '10');
@@ -1505,7 +1505,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates framework-specific attributes', async ({ page }) => {
     // Create element with framework attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'framework-test');
       element.setAttribute('framework-config', JSON.stringify({ type: 'react', version: '18.2' }));
       element.setAttribute(
@@ -1579,7 +1579,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes conditional attribute updates', async ({ page }) => {
     // Create element with conditional attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'conditional-test');
       element.setAttribute(
         'feature-flags',
@@ -1655,7 +1655,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles attribute validation failures', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'validation-failure-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -1688,7 +1688,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
       const element = document.querySelector('[data-testid="validation-failure-test"]');
       return {
         elementExists: !!element,
-        elementStillFunctional: !!element && element.tagName === 'TOUCHSPIN-INPUT',
+        elementStillFunctional: !!element && element.tagName === 'TOUCHSPIN-VANILLA',
         invalidMin: element?.getAttribute('min'),
         invalidMax: element?.getAttribute('max'),
         invalidStep: element?.getAttribute('step'),
@@ -1724,7 +1724,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('updates component styling attributes', async ({ page }) => {
     // Create element with styling attributes
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'styling-test');
       element.setAttribute('theme', 'light');
       element.setAttribute(
@@ -1798,7 +1798,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('handles attribute change performance optimization', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'performance-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -1867,7 +1867,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
   test('processes batch attribute updates', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'batch-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');

@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component readonly attribute handling
- * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
+ * Background: fixture = /packages/web-components/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -21,7 +21,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
     await apiHelpers.startCoverage(page);
 
     // Load self-contained fixture with web component dependencies
-    await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
+    await page.goto('/packages/web-components/tests/fixtures/web-component-fixture.html');
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);
   });
@@ -32,7 +32,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: handles readonly attribute change to enable readonly mode
-   * Given a touchspin-input element without readonly attribute
+   * Given a touchspin-vanilla element without readonly attribute
    * When readonly attribute is added
    * Then the input element becomes readonly
    * Params:
@@ -41,7 +41,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
   test('handles readonly attribute change to enable readonly mode', async ({ page }) => {
     // Create element without readonly
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-enable-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -76,7 +76,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: handles readonly attribute change to disable readonly mode
-   * Given a touchspin-input element with readonly attribute
+   * Given a touchspin-vanilla element with readonly attribute
    * When readonly attribute is removed
    * Then the input element becomes editable
    * Params:
@@ -85,7 +85,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
   test('handles readonly attribute change to disable readonly mode', async ({ page }) => {
     // Create element with readonly
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-disable-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -121,7 +121,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: applies readonly to input element when attribute is set
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When readonly attribute is set during initialization
    * Then the input element has readonly property
    * Params:
@@ -129,7 +129,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
    */
   test('applies readonly to input element when attribute is set', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-init-test');
       element.setAttribute('readonly', '');
       element.setAttribute('min', '0');
@@ -157,7 +157,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: removes readonly from input element when attribute is removed
-   * Given a touchspin-input element with readonly
+   * Given a touchspin-vanilla element with readonly
    * When readonly attribute is removed programmatically
    * Then the input element readonly property is removed
    * Params:
@@ -165,7 +165,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
    */
   test('removes readonly from input element when attribute is removed', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-remove-test');
       element.setAttribute('readonly', 'true');
       document.body.appendChild(element);
@@ -206,7 +206,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: handles readonly attribute during initialization
-   * Given a touchspin-input element with readonly in markup
+   * Given a touchspin-vanilla element with readonly in markup
    * When the element is connected to DOM
    * Then readonly is applied during initialization
    * Params:
@@ -214,7 +214,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
    */
   test('handles readonly attribute during initialization', async ({ page }) => {
     const result = await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-markup-test');
       element.setAttribute('readonly', 'readonly');
       element.setAttribute('min', '0');
@@ -249,7 +249,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
 
   /**
    * Scenario: updates input readonly state reactively on attribute change
-   * Given a touchspin-input element
+   * Given a touchspin-vanilla element
    * When readonly attribute is toggled multiple times
    * Then input readonly state updates each time
    * Params:
@@ -257,7 +257,7 @@ test.describe('TouchSpin Web Component readonly attribute handling', () => {
    */
   test('updates input readonly state reactively on attribute change', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'readonly-reactive-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');

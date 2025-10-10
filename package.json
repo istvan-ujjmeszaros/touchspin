@@ -117,7 +117,7 @@
     "dev:bootstrap5": "yarn workspace @touchspin/renderer-bootstrap5 dev",
     "dev:tailwind": "yarn workspace @touchspin/renderer-tailwind dev",
     "dev:vanilla": "yarn workspace @touchspin/renderer-vanilla dev",
-    "dev:web-component": "yarn workspace @touchspin/web-component dev",
+    "dev:web-components": "yarn workspace @touchspin/web-components dev",
     "coverage:check": "nyc check-coverage --lines=80 --functions=80 --branches=80 --statements=80",
     "coverage:all": "node scripts/coverage-all.mjs",
     "coverage:all:ci": "node scripts/coverage-all.mjs --no-open",

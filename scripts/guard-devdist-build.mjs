@@ -18,7 +18,7 @@ const projectRoot = join(__dirname, '..');
 const PACKAGES_WITH_DEVDIST = [
   'packages/core',
   'packages/jquery-plugin',
-  'packages/web-component',
+  'packages/web-components',
   'packages/renderers/bootstrap3',
   'packages/renderers/bootstrap4',
   'packages/renderers/bootstrap5',
@@ -34,7 +34,7 @@ const REQUIRED_FILES = {
     'umd/jquery-touchspin-bs5.js',
     'artifacts.json',
   ],
-  'packages/web-component': ['index.js', 'artifacts.json'],
+  'packages/web-components': ['vanilla.js', 'artifacts.json'],
   'packages/renderers/bootstrap3': [
     'Bootstrap3Renderer.js',
     'iife/touchspin-bs3-complete.global.js',

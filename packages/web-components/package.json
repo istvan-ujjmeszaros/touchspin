@@ -1,0 +1,123 @@
+{
+  "name": "@touchspin/web-components",
+  "version": "5.0.0",
+  "description": "TouchSpin Web Components - Standards-based custom elements with tree-shakable renderer support",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "types": "./dist/vanilla.d.ts",
+  "exports": {
+    "./vanilla": {
+      "types": "./dist/vanilla.d.ts",
+      "import": "./dist/vanilla.js"
+    },
+    "./bootstrap3": {
+      "types": "./dist/bootstrap3.d.ts",
+      "import": "./dist/bootstrap3.js"
+    },
+    "./bootstrap4": {
+      "types": "./dist/bootstrap4.d.ts",
+      "import": "./dist/bootstrap4.js"
+    },
+    "./bootstrap5": {
+      "types": "./dist/bootstrap5.d.ts",
+      "import": "./dist/bootstrap5.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind.d.ts",
+      "import": "./dist/tailwind.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../scripts/static-server.mjs",
+    "build": "rm -rf dist && yarn run build:types && yarn run build:js",
+    "build:js": "tsup src/vanilla.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:test": "tsup src/vanilla.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json --out-dir devdist && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=vanilla.js",
+    "typecheck": "tsc --noEmit",
+    "test": "node ../../scripts/pre-test.mjs packages/web-components/tests && PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-components/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-components/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../playwright-coverage.config.ts --project=chromium-coverage packages/web-components/tests"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts"
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "number-input",
+    "web-components",
+    "custom-elements",
+    "framework-agnostic",
+    "bootstrap",
+    "bootstrap3",
+    "bootstrap4",
+    "bootstrap5",
+    "tailwind",
+    "vanilla",
+    "tree-shakable"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@touchspin/renderer-bootstrap3": ">=5.0.0",
+    "@touchspin/renderer-bootstrap4": ">=5.0.0",
+    "@touchspin/renderer-bootstrap5": ">=5.0.0",
+    "@touchspin/renderer-tailwind": ">=5.0.0",
+    "@touchspin/renderer-vanilla": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@touchspin/renderer-bootstrap3": {
+      "optional": true
+    },
+    "@touchspin/renderer-bootstrap4": {
+      "optional": true
+    },
+    "@touchspin/renderer-bootstrap5": {
+      "optional": true
+    },
+    "@touchspin/renderer-tailwind": {
+      "optional": true
+    },
+    "@touchspin/renderer-vanilla": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "@touchspin/renderer-vanilla": "workspace:*",
+    "@types/node": "^22.7.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "directory": "packages/web-components"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/web-components#readme"
+}

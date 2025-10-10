@@ -1,6 +1,6 @@
 /**
  * Feature: TouchSpin Web Component lifecycle management
- * Background: fixture = /packages/web-component/tests/fixtures/web-component-fixture.html
+ * Background: fixture = /packages/web-components/tests/fixtures/web-component-fixture.html
  */
 
 /*
@@ -39,7 +39,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     await apiHelpers.startCoverage(page);
 
     // Load self-contained fixture with web component dependencies
-    await page.goto('/packages/web-component/tests/fixtures/web-component-fixture.html');
+    await page.goto('/packages/web-components/tests/fixtures/web-component-fixture.html');
     await apiHelpers.waitForPageReady(page);
     await apiHelpers.clearEventLog(page);
   });
@@ -60,10 +60,10 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Test custom element registration
     const registrationTest = await page.evaluate(() => {
       // Check if TouchSpinInput is defined in customElements registry
-      const isDefined = customElements.get('touchspin-input') !== undefined;
+      const isDefined = customElements.get('touchspin-vanilla') !== undefined;
 
       // Try to create element to verify it works
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       const isInstanceOfHTMLElement = element instanceof HTMLElement;
 
       return {
@@ -75,7 +75,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     expect(registrationTest.isDefined).toBe(true);
     expect(registrationTest.isInstanceOfHTMLElement).toBe(true);
-    expect(registrationTest.tagName).toBe('touchspin-input');
+    expect(registrationTest.tagName).toBe('touchspin-vanilla');
   });
 
   /**
@@ -92,7 +92,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       try {
         // Try to register a conflicting element with same name
         class ConflictingElement extends HTMLElement {}
-        customElements.define('touchspin-input', ConflictingElement);
+        customElements.define('touchspin-vanilla', ConflictingElement);
         return { error: null, conflictHandled: false };
       } catch (error) {
         // Expected: should throw error because already registered
@@ -118,9 +118,9 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
    * { "connectionMethod": "appendChild", "expectedInitialization": "core_and_renderer", "readyState": "functional" }
    */
   test('initializes when connected to DOM', async ({ page }) => {
-    // Create and connect touchspin-input element
+    // Create and connect touchspin-vanilla element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
       element.setAttribute('value', '50');
@@ -150,7 +150,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     expect(initTest.elementExists).toBe(true);
     expect(initTest.isConnected).toBe(true);
-    expect(initTest.tagName).toBe('touchspin-input');
+    expect(initTest.tagName).toBe('touchspin-vanilla');
     // Core initialization creates input and wrapper elements
     expect(initTest.hasInput || initTest.hasWrapper).toBe(true);
   });
@@ -164,10 +164,10 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
    * { "instanceCount": 3, "expectedBehavior": "independent_initialization", "noInterference": true }
    */
   test('handles multiple instances on same page', async ({ page }) => {
-    // Create multiple touchspin-input elements
+    // Create multiple touchspin-vanilla elements
     await page.evaluate(() => {
       for (let i = 0; i < 3; i++) {
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('min', '0');
         element.setAttribute('max', '100');
         element.setAttribute('value', (i * 10).toString());
@@ -181,7 +181,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     // Test multiple instances
     const multiInstanceTest = await page.evaluate(() => {
-      const elements = document.querySelectorAll('touchspin-input');
+      const elements = document.querySelectorAll('touchspin-vanilla');
       const instances = [];
 
       for (let i = 0; i < elements.length; i++) {
@@ -219,7 +219,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('cleans up when disconnected from DOM', async ({ page }) => {
     // Create and connect element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'cleanup-test');
       element.setAttribute('value', '25');
       document.body.appendChild(element);
@@ -272,7 +272,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('handles reconnection after disconnection', async ({ page }) => {
     // Create element and store reference
     const _elementReference = await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'reconnect-test');
       element.setAttribute('value', '30');
       document.body.appendChild(element);
@@ -294,7 +294,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     // Reconnect same element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'reconnect-test');
       element.setAttribute('value', '30');
       document.body.appendChild(element);
@@ -315,7 +315,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     expect(reconnectTest.exists).toBe(true);
     expect(reconnectTest.isConnected).toBe(true);
-    expect(reconnectTest.tagName).toBe('touchspin-input');
+    expect(reconnectTest.tagName).toBe('touchspin-vanilla');
     expect(reconnectTest.value).toBe('30');
   });
 
@@ -330,7 +330,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('manages adopted callback for document moves', async ({ page }) => {
     // Create element in main document
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'adoption-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -360,7 +360,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
             adoptedElement.getAttribute('min') === '0' &&
             adoptedElement.getAttribute('max') === '100' &&
             adoptedElement.getAttribute('value') === '50',
-          tagNamePreserved: adoptedElement.tagName.toLowerCase() === 'touchspin-input',
+          tagNamePreserved: adoptedElement.tagName.toLowerCase() === 'touchspin-vanilla',
           testIdPreserved: adoptedElement.getAttribute('data-testid') === 'adoption-test',
           functionalityPreserved: true,
           documentTransfer: true,
@@ -396,7 +396,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('handles attribute changes during lifecycle', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'attr-change-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -449,7 +449,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Test constructor behavior
     const constructorTest = await page.evaluate(() => {
       // Create element without connecting to DOM
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('min', '5');
       element.setAttribute('max', '50');
       element.setAttribute('value', '25');
@@ -467,7 +467,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     });
 
     expect(constructorTest.created).toBe(true);
-    expect(constructorTest.tagName).toBe('touchspin-input');
+    expect(constructorTest.tagName).toBe('touchspin-vanilla');
     expect(constructorTest.isConnected).toBe(false); // Not connected yet
     expect(constructorTest.hasAttributes).toBe(true);
     expect(constructorTest.min).toBe('5');
@@ -486,7 +486,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('handles early attribute access', async ({ page }) => {
     // Test attribute access before DOM connection
     const earlyAccessTest = await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
 
       // Set attributes before connection
       element.setAttribute('step', '10');
@@ -526,19 +526,19 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
    */
   test('supports late binding scenarios', async ({ page }) => {
     // Navigate to a fresh page without the web component script loaded
-    await page.goto('/packages/web-component/tests/fixtures/web-component-empty.html');
+    await page.goto('/packages/web-components/tests/fixtures/web-component-empty.html');
     await apiHelpers.waitForPageReady(page);
 
     // Create touch-spin elements before script loading
     await page.evaluate(() => {
       // Create elements using custom tag names
-      const element1 = document.createElement('touchspin-input');
+      const element1 = document.createElement('touchspin-vanilla');
       element1.setAttribute('data-testid', 'late-binding-1');
       element1.setAttribute('min', '0');
       element1.setAttribute('max', '100');
       element1.setAttribute('value', '25');
 
-      const element2 = document.createElement('touchspin-input');
+      const element2 = document.createElement('touchspin-vanilla');
       element2.setAttribute('data-testid', 'late-binding-2');
       element2.setAttribute('min', '10');
       element2.setAttribute('max', '90');
@@ -550,10 +550,10 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     // Verify elements exist but are not yet upgraded
     const beforeUpgrade = await page.evaluate(() => {
-      const elements = document.querySelectorAll('touchspin-input');
+      const elements = document.querySelectorAll('touchspin-vanilla');
       return {
         elementCount: elements.length,
-        customElementDefined: customElements.get('touchspin-input') !== undefined,
+        customElementDefined: customElements.get('touchspin-vanilla') !== undefined,
         element1Exists: !!document.querySelector('[data-testid="late-binding-1"]'),
         element2Exists: !!document.querySelector('[data-testid="late-binding-2"]'),
       };
@@ -573,7 +573,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
             '@touchspin/core': '/packages/core/devdist/index.js',
             '@touchspin/core/renderer': '/packages/core/devdist/renderer.js',
             '@touchspin/core/events': '/packages/core/devdist/events.js',
-            '@touchspin/web-component': '/packages/web-component/devdist/index.js',
+            '@touchspin/web-components/vanilla': '/packages/web-components/devdist/vanilla.js',
             '@touchspin/renderer-vanilla': '/packages/renderers/vanilla/devdist/index.js',
           },
         };
@@ -587,22 +587,22 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     });
 
     await page.evaluate(async () => {
-      await import('@touchspin/web-component');
+      await import('@touchspin/web-components/vanilla');
     });
 
-    await page.waitForFunction(() => customElements.get('touchspin-input') !== undefined);
+    await page.waitForFunction(() => customElements.get('touchspin-vanilla') !== undefined);
 
     // Test that elements are upgraded properly
     const afterUpgrade = await page.evaluate(() => {
-      const elements = document.querySelectorAll('touchspin-input');
+      const elements = document.querySelectorAll('touchspin-vanilla');
       const element1 = document.querySelector('[data-testid="late-binding-1"]');
       const element2 = document.querySelector('[data-testid="late-binding-2"]');
 
       return {
         elementCount: elements.length,
-        customElementDefined: customElements.get('touchspin-input') !== undefined,
-        element1Upgraded: element1?.tagName.toLowerCase() === 'touchspin-input',
-        element2Upgraded: element2?.tagName.toLowerCase() === 'touchspin-input',
+        customElementDefined: customElements.get('touchspin-vanilla') !== undefined,
+        element1Upgraded: element1?.tagName.toLowerCase() === 'touchspin-vanilla',
+        element2Upgraded: element2?.tagName.toLowerCase() === 'touchspin-vanilla',
         attributesPreserved1:
           element1?.getAttribute('min') === '0' &&
           element1?.getAttribute('max') === '100' &&
@@ -639,7 +639,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     await page.evaluate(() => {
       // Create multiple elements
       for (let i = 0; i < 5; i++) {
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('data-testid', `memory-test-${i}`);
         element.setAttribute('value', i.toString());
         document.body.appendChild(element);
@@ -692,7 +692,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     const errorHandlingTest = await page.evaluate(() => {
       try {
         // Create element with potentially problematic attributes
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('min', 'invalid');
         element.setAttribute('max', 'also-invalid');
         element.setAttribute('step', '');
@@ -735,7 +735,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Test dynamic creation via JavaScript
     const dynamicCreationTest = await page.evaluate(() => {
       // Create element via JavaScript
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('min', '1');
       element.setAttribute('max', '10');
       element.setAttribute('value', '5');
@@ -756,7 +756,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     });
 
     expect(dynamicCreationTest.created).toBe(true);
-    expect(dynamicCreationTest.tagName).toBe('touchspin-input');
+    expect(dynamicCreationTest.tagName).toBe('touchspin-vanilla');
     expect(dynamicCreationTest.isConnected).toBe(true);
     expect(dynamicCreationTest.hasAttributes).toBe(true);
     expect(dynamicCreationTest.min).toBe('1');
@@ -783,13 +783,13 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
           const shadow = this.attachShadow({ mode: 'open' });
 
           // Create touch-spin elements within shadow DOM
-          const element1 = document.createElement('touchspin-input');
+          const element1 = document.createElement('touchspin-vanilla');
           element1.setAttribute('data-testid', 'shadow-test-1');
           element1.setAttribute('min', '0');
           element1.setAttribute('max', '50');
           element1.setAttribute('value', '25');
 
-          const element2 = document.createElement('touchspin-input');
+          const element2 = document.createElement('touchspin-vanilla');
           element2.setAttribute('data-testid', 'shadow-test-2');
           element2.setAttribute('min', '10');
           element2.setAttribute('max', '90');
@@ -813,7 +813,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
       // Test shadow DOM functionality
       const shadowRoot = shadowHost.shadowRoot;
-      const shadowElements = shadowRoot?.querySelectorAll('touchspin-input');
+      const shadowElements = shadowRoot?.querySelectorAll('touchspin-vanilla');
 
       return {
         shadowHostCreated: !!shadowHost,
@@ -867,7 +867,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       const _results = [];
 
       // Create element in current document state
-      const element1 = document.createElement('touchspin-input');
+      const element1 = document.createElement('touchspin-vanilla');
       element1.setAttribute('data-testid', 'timing-test-1');
       element1.setAttribute('value', '10');
 
@@ -914,7 +914,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       const currentReadyState = document.readyState;
 
       // Create element in current ready state
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'ready-state-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -935,7 +935,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Verify element handles document state appropriately
     expect(readyStateTest.elementCreated).toBe(true);
     expect(readyStateTest.isConnected).toBe(true);
-    expect(readyStateTest.tagName).toBe('touchspin-input');
+    expect(readyStateTest.tagName).toBe('touchspin-vanilla');
     expect(['loading', 'interactive', 'complete']).toContain(readyStateTest.readyState);
     expect(readyStateTest.adaptsToDOMState).toBe(true);
     expect(readyStateTest.functionalityConsistent).toBe(true);
@@ -963,7 +963,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       innerContainer.className = 'inner-container';
 
       // Create touchspin element
-      const touchspinElement = document.createElement('touchspin-input');
+      const touchspinElement = document.createElement('touchspin-vanilla');
       touchspinElement.setAttribute('data-testid', 'nested-touchspin');
       touchspinElement.setAttribute('min', '1');
       touchspinElement.setAttribute('max', '100');
@@ -1015,7 +1015,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
   test('manages event listener cleanup', async ({ page }) => {
     // Create element with potential event listeners
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'event-cleanup-test');
       element.setAttribute('value', '75');
       document.body.appendChild(element);
@@ -1068,7 +1068,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Test element upgrade scenarios
     const upgradeTest = await page.evaluate(() => {
       // Simulate elements that existed before script loading
-      const existingElement = document.createElement('touchspin-input');
+      const existingElement = document.createElement('touchspin-vanilla');
       existingElement.setAttribute('data-testid', 'upgrade-test');
       existingElement.setAttribute('min', '0');
       existingElement.setAttribute('max', '20');
@@ -1088,7 +1088,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     expect(upgradeTest.elementExists).toBe(true);
     expect(upgradeTest.isConnected).toBe(true);
-    expect(upgradeTest.tagName).toBe('touchspin-input');
+    expect(upgradeTest.tagName).toBe('touchspin-vanilla');
     expect(upgradeTest.hasAttributes).toBe(true);
     expect(upgradeTest.isCustomElement).toBe(true);
   });
@@ -1109,7 +1109,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
       // Perform concurrent operations
       for (let i = 0; i < 10; i++) {
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('data-testid', `concurrent-${i}`);
         element.setAttribute('value', i.toString());
 
@@ -1159,7 +1159,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     // Test dependency management
     const dependencyTest = await page.evaluate(() => {
       // Create element that might depend on external resources
-      const element = document.createElement('touchspin-input');
+      const element = document.createElement('touchspin-vanilla');
       element.setAttribute('data-testid', 'dependency-test');
       element.setAttribute('min', '1');
       element.setAttribute('max', '100');
@@ -1195,7 +1195,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
     const malformedTest = await page.evaluate(() => {
       try {
         // Create element with potentially malformed attributes
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('data-testid', 'malformed-test');
 
         // Set malformed or edge case attributes
@@ -1251,7 +1251,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       ];
 
       scenarios.forEach((scenario, index) => {
-        const element = document.createElement('touchspin-input');
+        const element = document.createElement('touchspin-vanilla');
         element.setAttribute('data-testid', `conditional-${index}`);
         element.setAttribute('data-condition', scenario.condition);
         element.setAttribute('value', (index * 10).toString());

@@ -1,25 +1,22 @@
 /**
- * TouchSpinElement - Web Component implementation
- * Standards-based custom element providing TouchSpin functionality
+ * TouchSpinBase - Abstract base class for TouchSpin Web Components
+ * Provides core functionality that all renderer-specific components inherit
  */
 
-import { TouchSpin, } from '@touchspin/core';
-import { VanillaRenderer } from '@touchspin/renderer-vanilla';
+import { TouchSpin } from '@touchspin/core';
 import {
+  attributeToSetting,
   getSettingsFromAttributes,
   OBSERVED_ATTRIBUTES,
-  attributeToSetting,
   parseAttributeValue,
-} from './attribute-mapping.js';
-import { bridgeEvents } from './event-bridge.js';
+} from '../attribute-mapping.js';
+import { bridgeEvents } from '../event-bridge.js';
 
 /**
- * TouchSpin Custom Element
- *
- * @example
- * <touchspin-input min="0" max="100" value="50"></touchspin-input>
+ * Abstract base class for TouchSpin web components
+ * Subclasses must implement getRenderer() to provide their specific renderer
  */
-export class TouchSpinInput extends HTMLElement {
+export abstract class TouchSpinBase extends HTMLElement {
   private _touchspin: ReturnType<typeof TouchSpin> | null;
   private _input: HTMLInputElement | null;
   private _eventUnsubscribers: Array<() => void>;
@@ -29,8 +26,14 @@ export class TouchSpinInput extends HTMLElement {
    * Observed attributes for reactive updates
    */
   static get observedAttributes() {
-    return OBSERVED_ATTRIBUTES;
+    return OBSERVED_ATTRIBUTES.filter((attr) => attr !== 'renderer');
   }
+
+  /**
+   * Get the renderer for this component
+   * Must be implemented by subclasses to return their specific renderer
+   */
+  protected abstract getRenderer(): any;
 
   constructor() {
     super();
@@ -87,12 +90,6 @@ export class TouchSpinInput extends HTMLElement {
       return;
     }
 
-    // Handle renderer changes
-    if (name === 'renderer') {
-      this._handleRendererChange(newValue ?? '');
-      return;
-    }
-
     // Handle other TouchSpin settings
     const settingName = attributeToSetting(name);
     const value = parseAttributeValue(newValue, settingName);
@@ -120,12 +117,8 @@ export class TouchSpinInput extends HTMLElement {
     // Get settings from attributes
     const settings = getSettingsFromAttributes(this);
 
-    // Set default renderer if not specified
-    if (!settings.renderer) {
-      settings.renderer = VanillaRenderer;
-    } else if (typeof settings.renderer === 'string') {
-      settings.renderer = this._resolveRenderer(settings.renderer);
-    }
+    // Set renderer from subclass
+    settings.renderer = this.getRenderer();
 
     // Apply initial input attributes
     this._applyInputAttributes();
@@ -173,44 +166,6 @@ export class TouchSpinInput extends HTMLElement {
         this._input.setAttribute(attr, String(value));
       }
     }
-  }
-
-  /**
-   * Handle renderer changes
-   * @param {string} rendererName - Name of renderer to switch to
-   * @private
-   */
-  _handleRendererChange(rendererName: string): void {
-    if (!rendererName || !this._touchspin) return;
-
-    const renderer = this._resolveRenderer(rendererName);
-    if (renderer) {
-      // Recreate TouchSpin with new renderer
-      this._cleanup();
-      this._initialize();
-    }
-  }
-
-  /**
-   * Resolve renderer from string name
-   * @param {string} name - Renderer name
-   * @returns {Function|null} - Renderer class
-   * @private
-   */
-  _resolveRenderer(name: string) {
-    // This would need to be extended to support dynamic renderer loading
-    // For now, return VanillaRenderer as fallback
-    if (name === 'VanillaRenderer' || name === 'vanilla') {
-      return VanillaRenderer;
-    }
-
-    // Could be extended to support:
-    // - 'bootstrap5' -> Bootstrap5Renderer
-    // - 'tailwind' -> TailwindRenderer
-    // - etc.
-
-    console.warn(`Unknown renderer: ${name}, falling back to VanillaRenderer`);
-    return VanillaRenderer;
   }
 
   /**

@@ -1448,16 +1448,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/web-component@workspace:packages/web-component":
+"@touchspin/web-components@workspace:packages/web-components":
   version: 0.0.0-use.local
-  resolution: "@touchspin/web-component@workspace:packages/web-component"
+  resolution: "@touchspin/web-components@workspace:packages/web-components"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
+    "@touchspin/renderer-bootstrap3": "workspace:*"
+    "@touchspin/renderer-bootstrap4": "workspace:*"
+    "@touchspin/renderer-bootstrap5": "workspace:*"
+    "@touchspin/renderer-tailwind": "workspace:*"
     "@touchspin/renderer-vanilla": "workspace:*"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
+  peerDependencies:
+    "@touchspin/renderer-bootstrap3": ">=5.0.0"
+    "@touchspin/renderer-bootstrap4": ">=5.0.0"
+    "@touchspin/renderer-bootstrap5": ">=5.0.0"
+    "@touchspin/renderer-tailwind": ">=5.0.0"
+    "@touchspin/renderer-vanilla": ">=5.0.0"
+  peerDependenciesMeta:
+    "@touchspin/renderer-bootstrap3":
+      optional: true
+    "@touchspin/renderer-bootstrap4":
+      optional: true
+    "@touchspin/renderer-bootstrap5":
+      optional: true
+    "@touchspin/renderer-tailwind":
+      optional: true
+    "@touchspin/renderer-vanilla":
+      optional: true
   languageName: unknown
   linkType: soft
 
