@@ -20,7 +20,14 @@ function loadManifest(packageSubPath: string): ArtifactManifest {
   const cached = manifestCache.get(cacheKey);
   if (cached) return cached;
 
-  const manifestPath = path.resolve(repoRoot, packageSubPath, TARGET, 'artifacts.json');
+  // For dev builds, use single-root devdist at repo root
+  // packages/core -> devdist/core
+  // packages/renderers/bootstrap5 -> devdist/renderers/bootstrap5
+  // packages/adapters/jquery -> devdist/adapters/jquery
+  const devdistPath = packageSubPath.replace(/^packages\//, '');
+  const manifestPath = isDevBuild
+    ? path.resolve(repoRoot, 'devdist', devdistPath, 'artifacts.json')
+    : path.resolve(repoRoot, packageSubPath, TARGET, 'artifacts.json');
 
   try {
     const raw = readFileSync(manifestPath, 'utf8');
@@ -36,6 +43,11 @@ function loadManifest(packageSubPath: string): ArtifactManifest {
 }
 
 function packageAssetUrl(packageSubPath: string, relativePath: string): string {
+  // For dev builds, use single-root devdist structure
+  if (isDevBuild) {
+    const devdistPath = packageSubPath.replace(/^packages\//, '');
+    return `/devdist/${devdistPath}/${relativePath}`;
+  }
   return `/${packageSubPath}/${TARGET}/${relativePath}`;
 }
 

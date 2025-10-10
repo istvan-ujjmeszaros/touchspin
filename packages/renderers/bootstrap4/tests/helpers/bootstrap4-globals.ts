@@ -4,7 +4,7 @@ import * as helpers from '@touchspin/core/test-helpers';
 const EXTRA_STYLES = [helpers.rendererExternalUrlFor('bootstrap4', 'css/bootstrap.min.css')];
 
 const EXTRA_SCRIPTS = [
-  helpers.packageExternalUrlFor('packages/jquery-plugin', 'js/jquery.min.js'),
+  helpers.packageExternalUrlFor('packages/adapters/jquery', 'js/jquery.min.js'),
   helpers.rendererExternalUrlFor('bootstrap4', 'js/bootstrap.bundle.min.js'),
 ];
 

@@ -7,7 +7,7 @@ const EXTRA_STYLES = [
 ];
 
 const EXTRA_SCRIPTS = [
-  helpers.packageExternalUrlFor('packages/jquery-plugin', 'js/jquery.min.js'),
+  helpers.packageExternalUrlFor('packages/adapters/jquery', 'js/jquery.min.js'),
   helpers.rendererExternalUrlFor('bootstrap3', 'js/bootstrap.min.js'),
 ];
 

@@ -1318,6 +1318,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@touchspin/angular@workspace:packages/adapters/angular":
+  version: 0.0.0-use.local
+  resolution: "@touchspin/angular@workspace:packages/adapters/angular"
+  dependencies:
+    "@touchspin/core": "workspace:*"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/common": ">=17.0.0"
+    "@angular/core": ">=17.0.0"
+    "@angular/forms": ">=17.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@touchspin/core@workspace:*, @touchspin/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@touchspin/core@workspace:packages/core"
@@ -1350,6 +1363,17 @@ __metadata:
   peerDependenciesMeta:
     jquery:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@touchspin/react@workspace:packages/adapters/react":
+  version: 0.0.0-use.local
+  resolution: "@touchspin/react@workspace:packages/adapters/react"
+  dependencies:
+    "@touchspin/core": "workspace:*"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
   languageName: unknown
   linkType: soft
 
@@ -7169,7 +7193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.1.0":
+"tslib@npm:^2.1.0, tslib@npm:^2.3.0":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62

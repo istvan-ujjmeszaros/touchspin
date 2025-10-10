@@ -570,11 +570,11 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
         // Inject import map for late binding scenario
         const importMap = {
           imports: {
-            '@touchspin/core': '/packages/core/devdist/index.js',
-            '@touchspin/core/renderer': '/packages/core/devdist/renderer.js',
-            '@touchspin/core/events': '/packages/core/devdist/events.js',
-            '@touchspin/web-components/vanilla': '/packages/web-components/devdist/vanilla.js',
-            '@touchspin/renderer-vanilla': '/packages/renderers/vanilla/devdist/index.js',
+            '@touchspin/core': '/devdist/core/index.js',
+            '@touchspin/core/renderer': '/devdist/core/renderer.js',
+            '@touchspin/core/events': '/devdist/core/events.js',
+            '@touchspin/web-components/vanilla': '/devdist/adapters/webcomponent/vanilla.js',
+            '@touchspin/renderer-vanilla': '/devdist/renderers/vanilla/index.js',
           },
         };
 

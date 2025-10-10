@@ -1,13 +1,14 @@
 #!/usr/bin/env node
+
 /**
  * Extract framework assets from Yarn PnP to devdist directories
  * Usage: node scripts/extract-framework-assets.mjs [--renderer bootstrap3|bootstrap4|bootstrap5] [--all]
  */
 
-import { fileURLToPath, } from 'node:url';
-import { dirname, join } from 'node:path';
-import { writeFileSync, mkdirSync, } from 'node:fs';
 import { execSync } from 'node:child_process';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,7 +50,7 @@ const frameworkConfigs = {
   },
   jquery: {
     dependency: 'jquery',
-    packagePath: 'packages/jquery-plugin',
+    packagePath: 'packages/adapters/jquery',
     files: {
       'https://code.jquery.com/jquery-3.7.1.min.js': 'js/jquery.min.js',
     },
@@ -105,8 +106,10 @@ async function extractAssets(rendererName) {
     return false;
   }
 
-  // Create target directory
-  const targetDir = join(projectRoot, config.packagePath, 'devdist', 'external');
+  // Create target directory (using single-root devdist structure)
+  // packages/renderers/bootstrap5 -> devdist/renderers/bootstrap5
+  const devdistPath = config.packagePath.replace(/^packages\//, '');
+  const targetDir = join(projectRoot, 'devdist', devdistPath, 'external');
   mkdirSync(join(targetDir, 'css'), { recursive: true });
   mkdirSync(join(targetDir, 'js'), { recursive: true });
 

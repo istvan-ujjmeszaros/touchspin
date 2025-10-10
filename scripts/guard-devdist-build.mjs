@@ -15,10 +15,11 @@ const __dirname = new URL('.', import.meta.url).pathname;
 const projectRoot = join(__dirname, '..');
 
 // Packages that need devdist artifacts for testing
+// PR#2: Updated paths for new directory structure
 const PACKAGES_WITH_DEVDIST = [
   'packages/core',
-  'packages/jquery-plugin',
-  'packages/web-components',
+  'packages/adapters/jquery',
+  'packages/adapters/webcomponent',
   'packages/renderers/bootstrap3',
   'packages/renderers/bootstrap4',
   'packages/renderers/bootstrap5',
@@ -26,43 +27,48 @@ const PACKAGES_WITH_DEVDIST = [
   'packages/renderers/vanilla',
 ];
 
-// Required files that must exist in devdist
+// Required files that must exist in single-root devdist (PR#2)
+// PR#3: Removed complete bundles, only ESM + IIFE renderer builds
 const REQUIRED_FILES = {
-  'packages/core': ['index.js', 'renderer.js', 'artifacts.json'],
-  'packages/jquery-plugin': [
+  'packages/core': ['iife/index.global.js', 'artifacts.json'],
+  'packages/adapters/jquery': [
     'umd/jquery-touchspin-bs3.js',
     'umd/jquery-touchspin-bs5.js',
     'artifacts.json',
   ],
-  'packages/web-components': ['vanilla.js', 'artifacts.json'],
+  'packages/adapters/webcomponent': ['vanilla.js', 'artifacts.json'],
   'packages/renderers/bootstrap3': [
     'Bootstrap3Renderer.js',
-    'iife/touchspin-bs3-complete.global.js',
+    'iife/Bootstrap3Renderer.global.js',
     'touchspin-bootstrap3.css',
     'artifacts.json',
   ],
   'packages/renderers/bootstrap4': [
     'Bootstrap4Renderer.js',
-    'iife/touchspin-bs4-complete.global.js',
+    'iife/Bootstrap4Renderer.global.js',
     'touchspin-bootstrap4.css',
     'artifacts.json',
   ],
   'packages/renderers/bootstrap5': [
     'Bootstrap5Renderer.js',
-    'iife/touchspin-bs5-complete.global.js',
+    'iife/Bootstrap5Renderer.global.js',
     'touchspin-bootstrap5.css',
     'artifacts.json',
   ],
   'packages/renderers/tailwind': [
     'TailwindRenderer.js',
-    'iife/touchspin-tailwind-complete.global.js',
+    'iife/TailwindRenderer.global.js',
     'artifacts.json',
   ],
   'packages/renderers/vanilla': ['VanillaRenderer.js', 'artifacts.json'],
 };
 
 function checkDevdistExists(packagePath) {
-  const devdistPath = join(projectRoot, packagePath, 'devdist');
+  // PR#2: Single-root devdist structure at /devdist/
+  // packages/core -> devdist/core
+  // packages/renderers/bootstrap5 -> devdist/renderers/bootstrap5
+  // packages/adapters/jquery -> devdist/adapters/jquery
+  const devdistPath = join(projectRoot, 'devdist', packagePath.replace(/^packages\//, ''));
 
   if (!existsSync(devdistPath)) {
     return { exists: false, reason: 'devdist folder missing' };
@@ -94,7 +100,8 @@ function checkDevdistExists(packagePath) {
  */
 function isDevdistStale(packagePath) {
   const srcPath = join(projectRoot, packagePath, 'src');
-  const devdistPath = join(projectRoot, packagePath, 'devdist');
+  // PR#2: Single-root devdist structure
+  const devdistPath = join(projectRoot, 'devdist', packagePath.replace(/^packages\//, ''));
 
   if (!existsSync(srcPath) || !existsSync(devdistPath)) {
     return false; // Can't determine staleness if paths don't exist
@@ -116,9 +123,11 @@ function buildDevdistTargeted(packagesToBuild) {
 
   for (const packagePath of packagesToBuild) {
     console.log(`📦 Building ${packagePath}...`);
-    const packageName = packagePath
-      .replace('packages/', '@touchspin/')
-      .replace('renderers/', 'renderer-');
+    // PR#2: Handle adapter directory structure
+    let packageName = packagePath.replace('packages/', '@touchspin/');
+    packageName = packageName.replace('renderers/', 'renderer-');
+    packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/webcomponent', 'web-components');
     try {
       execSync(`yarn workspace ${packageName} run build:test`, {
         cwd: projectRoot,
@@ -160,9 +169,11 @@ function main() {
 
   // Check each package
   for (const packagePath of PACKAGES_WITH_DEVDIST) {
-    const packageName = packagePath
-      .replace('packages/', '@touchspin/')
-      .replace('renderers/', 'renderer-');
+    // PR#2: Handle adapter directory structure
+    let packageName = packagePath.replace('packages/', '@touchspin/');
+    packageName = packageName.replace('renderers/', 'renderer-');
+    packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+    packageName = packageName.replace('adapters/webcomponent', 'web-components');
 
     const existsCheck = checkDevdistExists(packagePath);
     if (!existsCheck.exists) {
@@ -196,9 +207,11 @@ function main() {
     // Re-check after build
     console.log('\n🔍 Verifying build results...');
     for (const packagePath of packagesToBuild) {
-      const packageName = packagePath
-        .replace('packages/', '@touchspin/')
-        .replace('renderers/', 'renderer-');
+      // PR#2: Handle adapter directory structure
+      let packageName = packagePath.replace('packages/', '@touchspin/');
+      packageName = packageName.replace('renderers/', 'renderer-');
+      packageName = packageName.replace('adapters/jquery', 'jquery-plugin');
+      packageName = packageName.replace('adapters/webcomponent', 'web-components');
       const existsCheck = checkDevdistExists(packagePath);
 
       if (!existsCheck.exists) {

@@ -25,13 +25,9 @@ reports/
 # Build outputs
 dist/
 
-# Exclude all devdist build artifacts except external framework assets
-packages/*/devdist/
-packages/renderers/*/devdist/
-!packages/renderers/bootstrap*/devdist/external/
-!packages/renderers/bootstrap*/devdist/external/**
-!packages/renderers/tailwind/devdist/external/
-!packages/renderers/tailwind/devdist/external/**
+# Single-root devdist build artifacts (ignore all except external framework assets)
+devdist/
+!/devdist/**/external/**
 
 # Obsolete planning/agent docs (ignored for local dev)
 **/*AGENT*.md

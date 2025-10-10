@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
-import type { TouchSpinCoreOptions, } from '../types';
 import { setupLogging } from '../events/setup';
-import { coreUrl as coreRuntimeUrl } from '../runtime/paths';
 import { installDomHelpers } from '../runtime/installDomHelpers';
+import { coreUrl as coreRuntimeUrl } from '../runtime/paths';
 import { preFetchCheck } from '../test-utilities/network';
+import type { TouchSpinCoreOptions } from '../types';
 
 /* ──────────────────────────
  * Core (direct) API initialization
@@ -128,7 +128,9 @@ export async function initializeTouchSpin(
   await page.evaluate(
     ({ testId, options }) => {
       try {
-        const TouchSpinCore = (globalThis as any).TouchSpinCore;
+        // Handle both module object and direct constructor shapes (Option A compatibility)
+        const g = (globalThis as any).TouchSpinCore;
+        const TouchSpinCore = g && (g.default ?? g.TouchSpinCore ?? g.TouchSpin ?? g);
 
         if (!TouchSpinCore) {
           throw new Error(

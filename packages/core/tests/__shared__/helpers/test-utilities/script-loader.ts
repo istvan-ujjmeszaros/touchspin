@@ -157,7 +157,14 @@ async function fetchManifest<T extends Record<string, string | undefined>>(
 ): Promise<T> {
   return page.evaluate(
     async ({ packageSubPath, target }) => {
-      const url = `/${packageSubPath}/${target}/artifacts.json`;
+      // For dev builds, use single-root devdist structure
+      let url: string;
+      if (target === 'devdist') {
+        const devdistPath = packageSubPath.replace(/^packages\//, '');
+        url = `/devdist/${devdistPath}/artifacts.json`;
+      } else {
+        url = `/${packageSubPath}/${target}/artifacts.json`;
+      }
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Manifest not found: ${url} (${response.status})`);
@@ -200,9 +207,8 @@ export async function loadTouchSpinRendererGlobals(
     rendererPackage,
     target
   );
-  const rendererUrl =
-    rendererArtifactUrlFor(rendererName, 'iifeComplete') ??
-    rendererArtifactUrlFor(rendererName, 'iifeEntry');
+  // PR#3: Removed iifeComplete bundles, use iifeEntry only
+  const rendererUrl = rendererArtifactUrlFor(rendererName, 'iifeEntry');
 
   if (!rendererUrl) {
     throw new Error(`Renderer IIFE missing in manifest for ${rendererName}`);
@@ -211,7 +217,12 @@ export async function loadTouchSpinRendererGlobals(
   if (loadCss) {
     const cssEntry = rendererManifest[cssKey];
     if (cssEntry) {
-      await loadStylesheet(page, `/${rendererPackage}/${target}/${cssEntry}`);
+      // For dev builds, use single-root devdist structure
+      const cssUrl =
+        target === 'devdist'
+          ? `/devdist/${rendererPackage.replace(/^packages\//, '')}/${cssEntry}`
+          : `/${rendererPackage}/${target}/${cssEntry}`;
+      await loadStylesheet(page, cssUrl);
     }
   }
 
@@ -224,6 +235,24 @@ export async function loadTouchSpinRendererGlobals(
   }
 
   await loadScript(page, rendererUrl, scriptOptions);
+
+  // PR#3: After loading renderer IIFE, set it as the default renderer
+  // The renderer IIFE exposes window.Bootstrap5Renderer (or Bootstrap3Renderer, etc.)
+  // Core looks for globalThis.TouchSpinDefaultRenderer
+  // Handle module object shape (same as core Option A fix)
+  await page.evaluate((rendererName) => {
+    const capitalizedName = rendererName.charAt(0).toUpperCase() + rendererName.slice(1);
+    const rendererGlobalName = `${capitalizedName}Renderer`;
+    const rendererModule = (window as any)[rendererGlobalName];
+
+    if (rendererModule) {
+      // Unwrap module object: { default, Bootstrap5Renderer, ... } or direct constructor
+      const RendererCtor =
+        rendererModule.default ?? rendererModule[rendererGlobalName] ?? rendererModule;
+
+      (globalThis as any).TouchSpinDefaultRenderer = RendererCtor;
+    }
+  }, rendererName);
 
   if (markReady) {
     await page.evaluate(() => {

@@ -20,7 +20,6 @@
   },
   "files": [
     "dist/",
-    "dist/umd/",
     "README.md",
     "LICENSE",
     "package.json"
@@ -28,14 +27,12 @@
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",
-    "build": "rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:css && yarn run build:js && yarn run build:umd",
+    "build": "rm -rf dist && mkdir -p dist && yarn run build:types && yarn run build:css && yarn run build:js",
     "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-bootstrap4.css",
     "build:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --no-source-map",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core run build:test",
-    "build:umd": "tsup --entry.touchspin-bootstrap4=src/touchspin-bs4-complete.ts --format iife --global-name TouchSpinBootstrap4 --no-dts --sourcemap --target es2018 --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/touchspin-bootstrap4.global.js",
-    "build:iife-complete": "tsup src/touchspin-bs4-complete.ts --format iife --global-name TouchSpinBS4Complete --no-dts --sourcemap --target es2020 --outDir ../../../devdist/renderers/bootstrap4/iife --external=none",
-    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/bootstrap4 && tsc -p tsconfig.testbuild.json && sass src/styles/touchspin-bootstrap4.scss ../../../devdist/renderers/bootstrap4/touchspin-bootstrap4.css --style=expanded --no-source-map && tsup src/Bootstrap4Renderer.ts --format iife --global-name Bootstrap4Renderer --sourcemap --target es2020 --outDir ../../../devdist/renderers/bootstrap4/iife --external=none && yarn run build:iife-complete && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/renderers/bootstrap4 esmEntry=index.js classModule=Bootstrap4Renderer.js iifeEntry=iife/Bootstrap4Renderer.global.js iifeComplete=iife/touchspin-bs4-complete.global.js css=touchspin-bootstrap4.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap4",
+    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/bootstrap4 && tsc -p tsconfig.testbuild.json && sass src/styles/touchspin-bootstrap4.scss ../../../devdist/renderers/bootstrap4/touchspin-bootstrap4.css --style=expanded --no-source-map && tsup src/Bootstrap4Renderer.ts --format iife --global-name Bootstrap4Renderer --sourcemap --target es2020 --outDir ../../../devdist/renderers/bootstrap4/iife --external=none && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/renderers/bootstrap4 esmEntry=index.js classModule=Bootstrap4Renderer.js iifeEntry=iife/Bootstrap4Renderer.global.js css=touchspin-bootstrap4.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap4",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
