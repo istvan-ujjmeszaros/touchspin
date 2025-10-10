@@ -6,7 +6,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -114,9 +114,20 @@ async function extractAssets(rendererName) {
   mkdirSync(join(targetDir, 'js'), { recursive: true });
 
   // Copy each configured file using Yarn PnP compatible methods or HTTP fetch
+  // Note: npm packages often have fixed mtimes for reproducible builds, so we can't
+  // reliably detect staleness via mtime. To force re-extraction, delete the files.
   let copiedCount = 0;
+  let cachedCount = 0;
+
   for (const [sourcePath, targetPath] of Object.entries(config.files)) {
     const targetFile = join(targetDir, targetPath);
+
+    // Skip if file already exists (cache hit)
+    if (existsSync(targetFile)) {
+      console.log(`  ♻️  ${targetPath} (cached)`);
+      cachedCount++;
+      continue;
+    }
 
     try {
       let content;
@@ -141,10 +152,15 @@ async function extractAssets(rendererName) {
     }
   }
 
-  console.log(
-    `📦 ${rendererName}: Copied ${copiedCount}/${Object.keys(config.files).length} assets\n`
-  );
-  return copiedCount > 0;
+  const totalFiles = Object.keys(config.files).length;
+  if (copiedCount > 0) {
+    console.log(`📦 ${rendererName}: Copied ${copiedCount}/${totalFiles} assets`);
+  }
+  if (cachedCount > 0) {
+    console.log(`♻️  ${rendererName}: Used ${cachedCount}/${totalFiles} cached assets`);
+  }
+  console.log('');
+  return copiedCount > 0 || cachedCount > 0;
 }
 
 /**
