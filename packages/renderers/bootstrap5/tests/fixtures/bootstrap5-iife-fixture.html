@@ -6,18 +6,18 @@
     <title>Bootstrap 5 TouchSpin IIFE Test Fixture</title>
 
     <!-- Bootstrap 5 CSS -->
-    <link href="../../devdist/external/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../devdist/touchspin-bootstrap5.css" rel="stylesheet">
+    <link href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/devdist/renderers/bootstrap5/touchspin-bootstrap5.css" rel="stylesheet">
 
     <!-- jQuery -->
-    <script src="../../../../jquery-plugin/devdist/external/js/jquery.min.js"></script>
+    <script src="/devdist/adapters/jquery/external/js/jquery.min.js"></script>
 
     <!-- Bootstrap 5 JS -->
-    <script src="../../devdist/external/js/bootstrap.bundle.min.js"></script>
+    <script src="/devdist/renderers/bootstrap5/external/js/bootstrap.bundle.min.js"></script>
 
     <!-- IIFE builds for simplified testing -->
-    <script src="../../../../core/devdist/iife/touchspin-core.js"></script>
-    <script src="../../devdist/iife/Bootstrap5Renderer.global.js"></script>
+    <script src="/devdist/core/iife/index.global.js"></script>
+    <script src="/devdist/renderers/bootstrap5/iife/Bootstrap5Renderer.global.js"></script>
     <script>
         // Set default renderer (README-recommended approach)
         globalThis.TouchSpinDefaultRenderer = window.Bootstrap5Renderer;
