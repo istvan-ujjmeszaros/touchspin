@@ -80,27 +80,9 @@
     </div>
 
     <script>
-        // Auto-initialize all TouchSpin instances on page load
+        // Wait for test initialization (no auto-init to allow coverage tracking)
         document.addEventListener('DOMContentLoaded', function() {
-            const TouchSpinCore = window.TouchSpinCore;
-            const Bootstrap5Renderer = globalThis.TouchSpinDefaultRenderer;
-
-            if (!TouchSpinCore || !Bootstrap5Renderer) {
-                console.error('❌ TouchSpinCore or Bootstrap5Renderer not available globally');
-                return;
-            }
-
-            // Test 1: Floating container without label (should fall back to regular rendering)
-            new TouchSpinCore(document.getElementById('no-label'), {
-                renderer: Bootstrap5Renderer
-            });
-
-            // Test 2: Label outside floating container (should fall back to regular rendering)
-            new TouchSpinCore(document.getElementById('label-outside'), {
-                renderer: Bootstrap5Renderer
-            });
-
-            console.log('✅ Edge case test fixtures initialized');
+            console.log('📋 Edge case fixture ready - waiting for test initialization');
         });
     </script>
 </body>

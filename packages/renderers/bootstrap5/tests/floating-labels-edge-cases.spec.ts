@@ -11,8 +11,14 @@
 
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { installDomHelpers } from '@touchspin/core/test-helpers';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
+// Alias for readability in renderer tests
+const initializeTouchSpin = initializeTouchspinFromGlobals;
+
+// Bootstrap 5 Renderer URL for tests
+const BOOTSTRAP5_RENDERER_URL = bootstrap5RendererUrl;
 const EDGE_CASES_FIXTURE =
   '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-edge-cases.html';
 
@@ -27,8 +33,12 @@ test('handles floating container without label (falls back to regular rendering)
   page,
 }) => {
   await page.goto(EDGE_CASES_FIXTURE);
-  await apiHelpers.startCoverage(page);
+  await ensureBootstrap5Globals(page);
   await installDomHelpers(page);
+  await apiHelpers.startCoverage(page);
+
+  // Initialize TouchSpin AFTER starting coverage
+  await initializeTouchSpin(page, 'no-label', BOOTSTRAP5_RENDERER_URL);
 
   // Verify wrapper uses REGULAR rendering (not floating label mode)
   const wrapper = page.getByTestId('no-label-wrapper');
@@ -72,8 +82,12 @@ test('handles label outside floating container (falls back to regular rendering)
   page,
 }) => {
   await page.goto(EDGE_CASES_FIXTURE);
-  await apiHelpers.startCoverage(page);
+  await ensureBootstrap5Globals(page);
   await installDomHelpers(page);
+  await apiHelpers.startCoverage(page);
+
+  // Initialize TouchSpin AFTER starting coverage
+  await initializeTouchSpin(page, 'label-outside', BOOTSTRAP5_RENDERER_URL);
 
   // Verify wrapper uses REGULAR rendering (input extracted from .form-floating)
   const wrapper = page.getByTestId('label-outside-wrapper');
