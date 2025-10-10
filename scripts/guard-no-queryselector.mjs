@@ -54,7 +54,7 @@ const ALLOWED_EXCEPTIONS = [
 const TEST_HELPER_DIRS = [
   'packages/core/test-helpers',
   'packages/core/tests/__shared__/helpers',
-  'packages/jquery-plugin/test-helpers',
+  'packages/adapters/jquery/tests/helpers',
 ];
 
 // File extensions to check

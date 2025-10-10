@@ -9,7 +9,7 @@ TouchSpin is a modern rewrite of the original “Bootstrap TouchSpin” spinner.
 | Package | Purpose | Primary Entry | Bundled Assets |
 |---------|---------|---------------|----------------|
 | `@touchspin/core` | Framework-agnostic logic + renderer contracts | `dist/index.js` (ESM) | Declarations only |
-| `@touchspin/jquery-plugin` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap{3,4,5}.umd.js`, legacy aliases |
+| `@touchspin/jquery` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/jquery-touchspin-bs{3,4,5}.js`, legacy compatibility |
 | `@touchspin/renderer-bootstrap3` | Bootstrap 3 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap3.umd.js`, `dist/touchspin-bootstrap3.css` |
 | `@touchspin/renderer-bootstrap4` | Bootstrap 4 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap4.umd.js`, `dist/touchspin-bootstrap4.css` |
 | `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap5.umd.js`, `dist/touchspin-bootstrap5.css` |
@@ -44,11 +44,11 @@ TouchSpin(input, {
 ### jQuery integration
 
 ```bash
-npm install @touchspin/jquery-plugin @touchspin/renderer-bootstrap5 jquery
+npm install @touchspin/jquery @touchspin/renderer-bootstrap5 jquery
 ```
 
 ```ts
-import { installWithRenderer } from '@touchspin/jquery-plugin';
+import { installWithRenderer } from '@touchspin/jquery';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 import '@touchspin/renderer-bootstrap5/css';
 import 'jquery';
@@ -85,7 +85,7 @@ UMD bundles are emitted under `dist/umd/` with predictable names for each packag
 ```html
 <!-- jsDelivr (pin) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin@5.0.0/dist/umd/touchspin-bootstrap5.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery-touchspin-bs5.js"></script>
 
 <!-- unpkg (latest) -->
 <script src="https://unpkg.com/@touchspin/renderer-bootstrap5/dist/umd/touchspin-bootstrap5.umd.js"></script>

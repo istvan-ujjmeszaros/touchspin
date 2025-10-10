@@ -1,6 +1,6 @@
 /**
  * Feature: jQuery plugin DOM manipulation and structure
- * Background: fixture = /packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html
+ * Background: fixture = /packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html
  */
 
 /*
@@ -32,13 +32,13 @@
  * [x] handles input focus and tabbing behavior
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+import { initializeTouchspinJQuery, installJqueryPlugin } from '../helpers/jquery-initialization';
 
 test.describe('jQuery plugin DOM manipulation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html');
+    await page.goto('/packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
 

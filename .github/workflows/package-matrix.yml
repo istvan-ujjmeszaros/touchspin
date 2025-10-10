@@ -19,7 +19,9 @@ jobs:
           - "@touchspin/renderer-tailwind"
           - "@touchspin/renderer-vanilla"
           - "@touchspin/web-component"
-          - "@touchspin/jquery-plugin"
+          - "@touchspin/jquery"
+          - "@touchspin/standalone"
+          - "@touchspin/webcomponent"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,6 +54,15 @@ jobs:
           elif [[ "$PKG_NAME" == "@touchspin/vanilla-renderer" ]]; then
             # Special case for vanilla renderer
             PKG_DIR="packages/renderers/vanilla"
+          elif [[ "$PKG_NAME" == "@touchspin/jquery" ]]; then
+            # jQuery adapter
+            PKG_DIR="packages/adapters/jquery"
+          elif [[ "$PKG_NAME" == "@touchspin/standalone" ]]; then
+            # Standalone adapter
+            PKG_DIR="packages/adapters/standalone"
+          elif [[ "$PKG_NAME" == "@touchspin/webcomponent" ]]; then
+            # Web component adapter
+            PKG_DIR="packages/adapters/webcomponent"
           else
             # Handle regular packages: @touchspin/core -> packages/core
             PKG_NAME_ONLY=$(echo "$PKG_NAME" | sed 's/@touchspin\///')

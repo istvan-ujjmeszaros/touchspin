@@ -94,11 +94,15 @@ export const packageExternalUrlFor = (packageSubPath: string, relativePath: stri
 
 let jqueryPluginUrlResolved: string | null = null;
 try {
-  const jqueryManifest = loadManifest('packages/jquery-plugin');
-  jqueryPluginUrlResolved = `/packages/jquery-plugin/${TARGET}/${jqueryManifest.esmEntry ?? 'index.js'}`;
+  const jqueryManifest = loadManifest('packages/adapters/jquery');
+  jqueryPluginUrlResolved = isDevBuild
+    ? `/devdist/adapters/jquery/${jqueryManifest.esmEntry ?? 'index.js'}`
+    : `/packages/adapters/jquery/${TARGET}/${jqueryManifest.esmEntry ?? 'index.js'}`;
 } catch {
   // Fallback to the historical static path when manifests are unavailable (e.g., legacy builds)
-  jqueryPluginUrlResolved = `/packages/jquery-plugin/${TARGET}/index.js`;
+  jqueryPluginUrlResolved = isDevBuild
+    ? `/devdist/adapters/jquery/index.js`
+    : `/packages/adapters/jquery/${TARGET}/index.js`;
 }
 
 export const jqueryPluginUrl = jqueryPluginUrlResolved;

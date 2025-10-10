@@ -9,7 +9,7 @@ Thank you for your interest in contributing to TouchSpin! This guide covers how 
 - Include environment details: OS, browser(s)/version(s), Node/Yarn versions.
 - Provide reproduction steps and a minimal example (HTML/JS snippet or CodeSandbox link).
 - Attach console logs, screenshots, or videos if relevant.
-- Mention which package(s) are affected (core, renderer-bootstrap5, jquery-plugin, etc.).
+- Mention which package(s) are affected (core, renderer-bootstrap5, jquery adapter, etc.).
 
 ### Submitting Pull Requests
 - Fork the repo and create a topic branch from `main` (e.g. `feat/renderer-tailwind-halo`).

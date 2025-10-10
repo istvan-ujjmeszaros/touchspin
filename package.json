@@ -69,7 +69,7 @@
     "serve:root": "node scripts/static-server.mjs",
     "build": "yarn workspace @touchspin/core build && yarn workspaces foreach -pt -A --exclude @touchspin/core run build && yarn build:dist",
     "build:dist": "yarn build:copy-iife && yarn build:copy-css",
-    "build:copy-iife": "mkdir -p dist && cp packages/jquery-plugin/dist/jquery-touchspin-bs*.js* dist/ && node scripts/rename-iife.mjs",
+    "build:copy-iife": "mkdir -p dist && cp packages/adapters/jquery/dist/umd/jquery*.js* dist/ && node scripts/rename-iife.mjs",
     "build:copy-css": "mkdir -p dist && echo '/* TouchSpin v5.0.0 CSS */' > dist/jquery.bootstrap-touchspin.css",
     "prebuild": "rm -rf dist",
     "build:types:all": "yarn workspaces foreach -t -A run build:types",

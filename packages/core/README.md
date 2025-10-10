@@ -39,7 +39,7 @@ TouchSpin(document.querySelector('#quantity'), {
 
 ## Related Packages
 
-- jQuery bridge: [`@touchspin/jquery-plugin`](../jquery-plugin/README.md)
+- jQuery bridge: [`@touchspin/jquery`](../adapters/jquery/README.md)
 - Renderers: [`packages/renderers`](../renderers/README.md)
 - Web component: [`@touchspin/web-component`](../web-component/README.md)
 

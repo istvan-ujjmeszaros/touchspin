@@ -10,7 +10,7 @@ If you only need to keep the existing jQuery + Bootstrap setup running, replace 
 <!-- Legacy: bootstrap-touchspin.min.js + CSS -->
 <!-- New: drop-in replacement -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery-plugin@5.0.0/dist/jquery-touchspin-bs5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/jquery-touchspin-bs5.js"></script>
 ```
 
 The legacy filenames (`jquery-touchspin-bs*.js`) still exist and forward to the new `dist/umd/touchspin-*.umd.js` bundles, so any existing `<script>` tags pointing at `jquery.bootstrap-touchspin-bs*.js` continue to work after swapping the package name or file location.
@@ -22,7 +22,7 @@ Once the new files are in place the rest of the integration runs as before—no 
 | Legacy usage | Recommended v5 path |
 |--------------|---------------------|
 | Global `<script>` + jQuery + Bootstrap | Swap to the new UMD file (`dist/jquery-touchspin-bs*.js`) or import `dist/umd/touchspin-bootstrapX.umd.js` |
-| Bundler-based jQuery project | `@touchspin/jquery-plugin` (ESM) + renderer ESM + peer-installed Bootstrap |
+| Bundler-based jQuery project | `@touchspin/jquery` (ESM) + renderer ESM + peer-installed Bootstrap |
 | Modern framework / vanilla JS | `@touchspin/core` + renderer package (ESM) |
 | Need framework-free custom element | `@touchspin/web-component` + `@touchspin/renderer-vanilla` |
 
@@ -30,7 +30,7 @@ Once the new files are in place the rest of the integration runs as before—no 
 
 ```bash
 # Example: Bootstrap 5 + jQuery
-npm install @touchspin/jquery-plugin @touchspin/renderer-bootstrap5 jquery bootstrap
+npm install @touchspin/jquery @touchspin/renderer-bootstrap5 jquery bootstrap
 
 # Example: Framework-free ESM
 npm install @touchspin/core @touchspin/renderer-vanilla
@@ -50,7 +50,7 @@ Install peers explicitly in your app to satisfy package managers.
 ### jQuery wrapper
 
 ```ts
-import { installWithRenderer } from '@touchspin/jquery-plugin';
+import { installWithRenderer } from '@touchspin/jquery';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 import '@touchspin/renderer-bootstrap5/css';
 import 'jquery';
@@ -84,7 +84,7 @@ TouchSpin(document.querySelector('#quantity'), {
 
 ## 4. Replace legacy assets
 
-- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery-plugin/dist/umd/touchspin-bootstrap5.umd.js`.
+- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery/dist/umd/jquery-touchspin-bs5.js`.
 - Replace the single legacy stylesheet with the renderer stylesheet (`@touchspin/renderer-*/dist/touchspin-*.css`).
 - If you relied on CDN auto-updates, prefer jsDelivr or unpkg URLs documented in the package READMEs.
 

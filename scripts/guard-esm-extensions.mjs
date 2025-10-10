@@ -10,7 +10,9 @@ const roots = [
   'packages/renderers/bootstrap3/devdist',
   'packages/renderers/tailwind/devdist',
   'packages/web-component/devdist',
-  'packages/jquery-plugin/devdist',
+  'packages/adapters/jquery/devdist',
+  'packages/adapters/standalone/devdist',
+  'packages/adapters/webcomponent/devdist',
 ];
 
 const offenders = [];

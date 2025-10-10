@@ -273,7 +273,7 @@ export async function loadTouchSpinJQueryPlugin(
   options: ScriptLoadOptions = {}
 ): Promise<void> {
   const baseUrl = await page.evaluate(() => window.location.origin);
-  const url = `${baseUrl}/packages/jquery-plugin/dist/jquery-touchspin-bs5.js`;
+  const url = `${baseUrl}/packages/adapters/jquery/dist/umd/jquery-touchspin-bs5.js`;
 
   await loadScript(page, url, {
     timeout: 10000,

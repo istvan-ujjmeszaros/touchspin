@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
-import { setupLogging, installDomHelpers } from '@touchspin/core/test-helpers';
+import { installDomHelpers, setupLogging } from '@touchspin/core/test-helpers';
 
 /* ──────────────────────────
  * jQuery plugin bootstrap (for jQuery pages)

@@ -1,6 +1,6 @@
 /**
  * Feature: jQuery plugin data attribute handling
- * Background: fixture = /packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html
+ * Background: fixture = /packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html
  */
 
 /*
@@ -32,13 +32,13 @@
  * [x] supports custom data attribute extensions
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { installJqueryPlugin, initializeTouchspinJQuery } from '../helpers/jquery-initialization';
+import { initializeTouchspinJQuery, installJqueryPlugin } from '../helpers/jquery-initialization';
 
 test.describe('jQuery plugin data attributes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/packages/jquery-plugin/tests/fixtures/jquery-plugin-fixture.html');
+    await page.goto('/packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html');
     await apiHelpers.startCoverage(page);
     await apiHelpers.waitForPageReady(page);
     await installJqueryPlugin(page);
@@ -410,7 +410,9 @@ test.describe('jQuery plugin data attributes', () => {
       try {
         // Try to update settings based on new data attribute
         const newStep = $('[data-testid="test-input"]').attr('data-bts-step');
-        $('[data-testid="test-input"]').TouchSpin('updateSettings', { step: parseInt(newStep, 10) });
+        $('[data-testid="test-input"]').TouchSpin('updateSettings', {
+          step: parseInt(newStep, 10),
+        });
         return true;
       } catch {
         return false;

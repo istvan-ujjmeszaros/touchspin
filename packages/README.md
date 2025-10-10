@@ -24,7 +24,7 @@ The project is structured as a monorepo with a clear separation of concerns:
 
 ### Wrappers (`packages/wrappers/`)
 
-*   **[@touchspin/jquery-plugin](./jquery-plugin/README.md):** A backward-compatible jQuery wrapper that provides the familiar `$().TouchSpin()` API. It acts as a bridge between jQuery and the modern TouchSpin core.
+*   **[@touchspin/jquery](./adapters/jquery/README.md):** A backward-compatible jQuery wrapper that provides the familiar `$().TouchSpin()` API. It acts as a bridge between jQuery and the modern TouchSpin core.
 *   **[@touchspin/web-component](./web-component/README.md):** A standards-based Web Component (`<touchspin-input>`) that encapsulates the plugin's functionality. It can be used in any framework that supports web components.
 
 ### Renderers (`packages/renderers/`)
