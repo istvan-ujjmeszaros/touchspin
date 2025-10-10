@@ -1916,7 +1916,7 @@ test.describe('TouchSpin Web Component integration scenarios', () => {
       }
 
       return {
-        errorBoundaries: element.isConnected && element.tagName === 'TOUCHSPIN-VANILLA',
+        errorBoundaries: element.isConnected && element.tagName === 'TOUCHSPIN-INPUT',
         loggingLevels,
         errorReporting: errorEvents.length > 0 || loggingLevels.error,
         comprehensiveErrorHandling:

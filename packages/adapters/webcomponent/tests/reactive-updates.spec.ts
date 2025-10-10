@@ -1688,7 +1688,7 @@ test.describe('TouchSpin Web Component reactive attribute updates', () => {
       const element = document.querySelector('[data-testid="validation-failure-test"]');
       return {
         elementExists: !!element,
-        elementStillFunctional: !!element && element.tagName === 'TOUCHSPIN-VANILLA',
+        elementStillFunctional: !!element && element.tagName === 'TOUCHSPIN-INPUT',
         invalidMin: element?.getAttribute('min'),
         invalidMax: element?.getAttribute('max'),
         invalidStep: element?.getAttribute('step'),
