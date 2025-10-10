@@ -1,6 +1,10 @@
 {
   "all": true,
-  "include": ["packages/*/src/**/*.{js,ts}", "packages/renderers/*/src/**/*.{js,ts}"],
+  "include": [
+    "packages/*/src/**/*.{js,ts}",
+    "packages/renderers/*/src/**/*.{js,ts}",
+    "packages/adapters/*/src/**/*.{js,ts}"
+  ],
   "exclude": [
     "**/*.test.{js,ts}",
     "**/*.spec.{js,ts}",
