@@ -16,8 +16,8 @@ import * as apiHelpers from '@touchspin/core/test-helpers';
 
 test.describe('jQuery Adapter Smoke Test (Bootstrap5)', () => {
   test.beforeEach(async ({ page }) => {
-    await apiHelpers.startCoverage(page);
     await page.goto('/packages/adapters/jquery/tests/fixtures/jquery-bootstrap5.html');
+    await apiHelpers.startCoverage(page);
     // Wait for TouchSpin to be mounted (buttons appear)
     await page.waitForSelector('[data-testid="jquery-test-up"]', { timeout: 5000 });
   });
@@ -98,7 +98,7 @@ test.describe('jQuery Adapter Smoke Test (Bootstrap5)', () => {
     const value = await page.evaluate(() => {
       // biome-ignore lint/suspicious/noExplicitAny: jQuery not typed in browser context
       // biome-ignore lint/correctness/noUndeclaredVariables: $ is jQuery global
-      return ($('#test-input') as any).touchspin('getValue');
+      return ($('#test-input') as any).TouchSpin('getValue');
     });
 
     // Verify it matches the input value

@@ -115,39 +115,9 @@
     </div>
 
     <script>
-        // Auto-initialize all TouchSpin instances on page load
+        // Fixture ready - tests will initialize manually for proper coverage timing
         document.addEventListener('DOMContentLoaded', function() {
-            const TouchSpinCore = window.TouchSpinCore;
-            const Bootstrap5Renderer = globalThis.TouchSpinDefaultRenderer;
-
-            if (!TouchSpinCore || !Bootstrap5Renderer) {
-                console.error('❌ TouchSpinCore or Bootstrap5Renderer not available globally');
-                return;
-            }
-
-            // Test 1: Basic floating label (horizontal buttons - default)
-            new TouchSpinCore(document.getElementById('basic-floating'), {
-                renderer: Bootstrap5Renderer
-            });
-
-            // Test 2: Advanced floating label (horizontal buttons - default)
-            new TouchSpinCore(document.getElementById('group-floating'), {
-                renderer: Bootstrap5Renderer
-            });
-
-            // Test 3: Basic floating label with vertical buttons
-            new TouchSpinCore(document.getElementById('vertical-basic'), {
-                renderer: Bootstrap5Renderer,
-                verticalbuttons: true
-            });
-
-            // Test 4: Advanced floating label with vertical buttons
-            new TouchSpinCore(document.getElementById('vertical-advanced'), {
-                renderer: Bootstrap5Renderer,
-                verticalbuttons: true
-            });
-
-            console.log('✅ All floating label test cases initialized');
+            console.log('📋 Floating labels DOM structure fixture ready - waiting for test initialization');
         });
     </script>
 </body>

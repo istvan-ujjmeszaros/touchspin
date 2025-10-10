@@ -30,6 +30,11 @@ test.describe('Bootstrap 5 Lifecycle: Floating Labels', () => {
     await ensureBootstrap5Globals(page);
     await waitForPageReady(page);
     await installDomHelpers(page);
+    await apiHelpers.startCoverage(page);
+  });
+
+  test.afterEach(async ({ page }, testInfo) => {
+    await apiHelpers.collectCoverage(page, testInfo.title.replace(/\s+/g, '-'));
   });
 
   test('preserves floating label structure across destroy/reinit', async ({ page }) => {

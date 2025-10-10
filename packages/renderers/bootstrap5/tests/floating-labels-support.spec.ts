@@ -21,6 +21,11 @@ const BOOTSTRAP5_RENDERER_URL = bootstrap5RendererUrl;
 const FLOATING_LABELS_FIXTURE =
   '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-fixture.html';
 
+// Coverage hooks
+test.afterEach(async ({ page }, testInfo) => {
+  await apiHelpers.collectCoverage(page, testInfo.title.replace(/\s+/g, '-'));
+});
+
 /**
  * Scenario: supports floating labels with TouchSpin initialization and all interaction methods
  * Given the floating labels fixture page is loaded with DOM helpers
@@ -35,6 +40,7 @@ test('supports floating labels with TouchSpin initialization and all interaction
   await page.goto(FLOATING_LABELS_FIXTURE);
   await ensureBootstrap5Globals(page);
   await installDomHelpers(page);
+  await apiHelpers.startCoverage(page);
 
   // Test 1: Basic floating label initialization
   await initializeTouchSpin(page, 'basic-floating', BOOTSTRAP5_RENDERER_URL);

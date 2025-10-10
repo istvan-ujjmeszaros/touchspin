@@ -894,7 +894,7 @@ test.describe('jQuery plugin DOM manipulation', () => {
     // Destroy TouchSpin
     await page.evaluate(() => {
       const $ = window.jQuery;
-      $('[data-testid="test-input"]').touchspin('destroy');
+      $('[data-testid="test-input"]').TouchSpin('destroy');
     });
 
     // Verify cleanup - all TouchSpin elements should be removed

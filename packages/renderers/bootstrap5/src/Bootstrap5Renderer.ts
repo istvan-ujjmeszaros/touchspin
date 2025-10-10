@@ -205,12 +205,13 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
 
   // DOM building
   buildInputGroup(): HTMLElement {
-    // Handle floating labels first (only if both container AND label exist)
-    if (this.floatingContainer && this.floatingLabel && this.initialInputGroup) {
+    // Handle floating labels in existing input-group first
+    if (this.floatingContainer && this.initialInputGroup) {
       // Mode B: Floating label inside input-group
       return this.buildFloatingLabelInInputGroup();
     }
 
+    // Handle standalone floating labels (only if both container AND label exist)
     if (this.floatingContainer && this.floatingLabel) {
       // Mode A: Basic floating label
       return this.buildBasicFloatingLabel();

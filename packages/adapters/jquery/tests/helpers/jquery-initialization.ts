@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
+import { TouchSpinCallableEvent } from '@touchspin/core';
 import { installDomHelpers, setupLogging } from '@touchspin/core/test-helpers';
 
 /* ──────────────────────────
@@ -11,12 +12,17 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
   await installDomHelpers(page);
   await setupLogging(page);
 
+  // Expose TouchSpinCallableEvent on window for tests
+  await page.evaluate((callableEvents) => {
+    (window as any).TouchSpinCallableEvent = callableEvents;
+  }, TouchSpinCallableEvent);
+
   // Verify UMD build loaded correctly
   await page.evaluate(() => {
     if (typeof window.jQuery === 'undefined') {
       throw new Error('jQuery is not loaded');
     }
-    if (typeof window.jQuery.fn.touchspin === 'undefined') {
+    if (typeof window.jQuery.fn.TouchSpin === 'undefined') {
       throw new Error('TouchSpin jQuery plugin is not loaded');
     }
   });
@@ -44,7 +50,7 @@ export async function initializeTouchspinJQuery(
         if (typeof window.jQuery === 'undefined') {
           throw new Error('jQuery is not available on window');
         }
-        if (typeof window.jQuery.fn.touchspin === 'undefined') {
+        if (typeof window.jQuery.fn.TouchSpin === 'undefined') {
           throw new Error('TouchSpin plugin is not available on jQuery');
         }
 
@@ -59,7 +65,7 @@ export async function initializeTouchspinJQuery(
           $input.val((opts as Record<string, unknown>).initval);
         }
 
-        $input.touchspin(opts);
+        $input.TouchSpin(opts);
       } catch (err) {
         console.error('initializeTouchspinJQuery failed:', err);
         throw err;

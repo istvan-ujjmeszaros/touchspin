@@ -12,10 +12,29 @@
  */
 
 import { expect, test } from '@playwright/test';
-import { installDomHelpers } from '@touchspin/core/test-helpers';
+import * as apiHelpers from '@touchspin/core/test-helpers';
+import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
+import { bootstrap5RendererUrl, ensureBootstrap5Globals } from './helpers/bootstrap5-globals';
 
+// Alias for readability in renderer tests
+const initializeTouchSpin = initializeTouchspinFromGlobals;
+
+// Bootstrap 5 Renderer URL for tests
+const BOOTSTRAP5_RENDERER_URL = bootstrap5RendererUrl;
 const FLOATING_LABELS_DOM_FIXTURE =
   '/packages/renderers/bootstrap5/tests/fixtures/floating-labels-dom-structure.html';
+
+// Coverage hooks
+test.beforeEach(async ({ page }) => {
+  await page.goto(FLOATING_LABELS_DOM_FIXTURE);
+  await ensureBootstrap5Globals(page);
+  await installDomHelpers(page);
+  await apiHelpers.startCoverage(page);
+});
+
+test.afterEach(async ({ page }, testInfo) => {
+  await apiHelpers.collectCoverage(page, testInfo.title.replace(/\s+/g, '-'));
+});
 
 /**
  * Scenario: validates basic floating label DOM structure
@@ -31,8 +50,8 @@ const FLOATING_LABELS_DOM_FIXTURE =
  * </div>
  */
 test('validates basic floating label DOM structure', async ({ page }) => {
-  await page.goto(FLOATING_LABELS_DOM_FIXTURE);
-  await installDomHelpers(page);
+  // Initialize TouchSpin AFTER coverage started
+  await initializeTouchSpin(page, 'basic-floating', BOOTSTRAP5_RENDERER_URL);
 
   // Validate wrapper
   const wrapper = page.getByTestId('basic-floating-wrapper');
@@ -70,8 +89,8 @@ test('validates basic floating label DOM structure', async ({ page }) => {
  * </div>
  */
 test('validates advanced floating label with input group DOM structure', async ({ page }) => {
-  await page.goto(FLOATING_LABELS_DOM_FIXTURE);
-  await installDomHelpers(page);
+  // Initialize TouchSpin AFTER coverage started
+  await initializeTouchSpin(page, 'group-floating', BOOTSTRAP5_RENDERER_URL);
 
   const wrapper = page.getByTestId('group-floating-wrapper');
 
@@ -126,8 +145,10 @@ test('validates advanced floating label with input group DOM structure', async (
  * </div>
  */
 test('validates basic floating label with vertical buttons DOM structure', async ({ page }) => {
-  await page.goto(FLOATING_LABELS_DOM_FIXTURE);
-  await installDomHelpers(page);
+  // Initialize TouchSpin with vertical buttons AFTER coverage started
+  await initializeTouchSpin(page, 'vertical-basic', {
+    verticalbuttons: true,
+  });
 
   const wrapper = page.getByTestId('vertical-basic-wrapper');
 
@@ -179,8 +200,10 @@ test('validates basic floating label with vertical buttons DOM structure', async
  * </div>
  */
 test('validates advanced floating label with vertical buttons DOM structure', async ({ page }) => {
-  await page.goto(FLOATING_LABELS_DOM_FIXTURE);
-  await installDomHelpers(page);
+  // Initialize TouchSpin with vertical buttons AFTER coverage started
+  await initializeTouchSpin(page, 'vertical-advanced', {
+    verticalbuttons: true,
+  });
 
   const wrapper = page.getByTestId('vertical-advanced-wrapper');
 
