@@ -90,7 +90,36 @@ export async function initializeTouchspin(
 
           // If both callbacks are defined, validate that they properly reverse each other
           if (hasBefore && hasAfter) {
-            const testValues = ['50', '100', '0', '-50'];
+            // Build smart test values based on configuration
+            const testValues: string[] = [];
+            const decimals = settings.decimals || 0;
+            const formatValue = (n: number) => n.toFixed(decimals);
+
+            const hasMin = settings.min !== null && settings.min !== undefined;
+            const hasMax = settings.max !== null && settings.max !== undefined;
+
+            if (hasMin && hasMax) {
+              // Test with both boundary values
+              testValues.push(formatValue(settings.min!), formatValue(settings.max!));
+            } else if (hasMin) {
+              // Test with min and a value above it
+              const minVal = settings.min!;
+              const testVal = decimals > 0 ? minVal + 50.55 : minVal + 50;
+              testValues.push(formatValue(minVal), formatValue(testVal));
+            } else if (hasMax) {
+              // Test with a value below max and max itself
+              const maxVal = settings.max!;
+              const testVal = decimals > 0 ? Math.max(0, maxVal - 50.55) : Math.max(0, maxVal - 50);
+              testValues.push(formatValue(testVal), formatValue(maxVal));
+            } else {
+              // No boundaries set - use sensible defaults
+              if (decimals > 0) {
+                testValues.push('0.00', '50.55');
+              } else {
+                testValues.push('0', '50');
+              }
+            }
+
             const failures: string[] = [];
 
             for (const testValue of testValues) {

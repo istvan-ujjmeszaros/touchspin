@@ -1630,7 +1630,36 @@ export class TouchSpinCore {
 
     // If both callbacks are defined, validate that they properly reverse each other
     if (hasBefore && hasAfter) {
-      const testValues = ['50', '100', '0', '-50'];
+      // Build smart test values based on configuration
+      const testValues: string[] = [];
+      const decimals = this.settings.decimals || 0;
+      const formatValue = (n: number) => n.toFixed(decimals);
+
+      const hasMin = this.settings.min !== null && this.settings.min !== undefined;
+      const hasMax = this.settings.max !== null && this.settings.max !== undefined;
+
+      if (hasMin && hasMax) {
+        // Test with both boundary values
+        testValues.push(formatValue(this.settings.min!), formatValue(this.settings.max!));
+      } else if (hasMin) {
+        // Test with min and a value above it
+        const minVal = this.settings.min!;
+        const testVal = decimals > 0 ? minVal + 50.55 : minVal + 50;
+        testValues.push(formatValue(minVal), formatValue(testVal));
+      } else if (hasMax) {
+        // Test with a value below max and max itself
+        const maxVal = this.settings.max!;
+        const testVal = decimals > 0 ? Math.max(0, maxVal - 50.55) : Math.max(0, maxVal - 50);
+        testValues.push(formatValue(testVal), formatValue(maxVal));
+      } else {
+        // No boundaries set - use sensible defaults
+        if (decimals > 0) {
+          testValues.push('0.00', '50.55');
+        } else {
+          testValues.push('0', '50');
+        }
+      }
+
       const failures: string[] = [];
 
       for (const testValue of testValues) {
