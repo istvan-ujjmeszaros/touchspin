@@ -43,7 +43,7 @@
     "build": "rm -rf dist && yarn run build:types && yarn run build:js",
     "build:js": "tsup src/vanilla.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "tsup src/vanilla.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json --out-dir devdist && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=vanilla.js",
+    "build:test": "tsup src/vanilla.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json --out-dir ../../devdist/adapters/webcomponent && node ../../scripts/write-artifacts-manifest.mjs --dir ../../devdist/adapters/webcomponent esmEntry=vanilla.js",
     "typecheck": "tsc --noEmit",
     "test": "node ../../scripts/pre-test.mjs packages/web-components/tests && PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-components/tests --reporter=list",
     "test:ui": "PLAYWRIGHT_TSCONFIG=../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../playwright.config.ts packages/web-components/tests --ui",
