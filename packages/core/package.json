@@ -45,7 +45,7 @@
     "build": "rm -rf dist && yarn run build:types && yarn run build:js",
     "build:js": "tsup src/index.ts src/renderer.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js rendererEntry=renderer.js",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:test": "node ../../scripts/guard-prod-build.mjs packages/core && tsc -p tsconfig.testbuild.json && tsup src/index.ts --format iife --global-name TouchSpinCore --sourcemap --target es2020 --outDir devdist/iife --external=none && node ../../scripts/write-artifacts-manifest.mjs --dir devdist esmEntry=index.js rendererEntry=renderer.js iifeEntry=iife/index.global.js",
+    "build:test": "node ../../scripts/guard-prod-build.mjs packages/core && tsc -p tsconfig.testbuild.json && tsup src/index.ts --format iife --global-name TouchSpinCore --sourcemap --target es2020 --outDir ../../devdist/core/iife --external=none && node ../../scripts/write-artifacts-manifest.mjs --dir ../../devdist/core esmEntry=index.js rendererEntry=renderer.js iifeEntry=iife/index.global.js",
     "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts src/renderer.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\"",
     "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",

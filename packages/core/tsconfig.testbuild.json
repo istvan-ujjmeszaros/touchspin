@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./devdist",
+    "outDir": "../../devdist/core",
     "rootDir": "./src",
     "sourceMap": true,
     "inlineSources": true,
@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "types": [],
     "incremental": true,
-    "tsBuildInfoFile": "./devdist/.tsbuildinfo",
+    "tsBuildInfoFile": "../../devdist/core/.tsbuildinfo",
     "baseUrl": "./src",
     "paths": {}
   },
