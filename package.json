@@ -132,7 +132,8 @@
   },
   "workspaces": [
     "packages/*",
-    "packages/renderers/*"
+    "packages/renderers/*",
+    "packages/adapters/*"
   ],
   "dependencies": {
     "@touchspin/core": "workspace:*",
