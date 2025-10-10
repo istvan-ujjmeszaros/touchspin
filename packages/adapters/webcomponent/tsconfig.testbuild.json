@@ -1,0 +1,46 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../devdist/adapters/webcomponent",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "inlineSources": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "importsNotUsedAsValues": "remove",
+    "skipLibCheck": true,
+    "types": [],
+    "incremental": true,
+    "tsBuildInfoFile": "../../../devdist/adapters/webcomponent/.tsbuildinfo",
+    "baseUrl": "./src",
+    "paths": {
+      "@touchspin/core": ["../../../devdist/core/index.d.ts", "../../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": [
+        "../../../devdist/core/renderer.d.ts",
+        "../../core/dist/renderer.d.ts"
+      ],
+      "@touchspin/renderer-bootstrap3": [
+        "../../../devdist/renderers/bootstrap3/index.d.ts",
+        "../../renderers/bootstrap3/dist/index.d.ts"
+      ],
+      "@touchspin/renderer-bootstrap4": [
+        "../../../devdist/renderers/bootstrap4/index.d.ts",
+        "../../renderers/bootstrap4/dist/index.d.ts"
+      ],
+      "@touchspin/renderer-bootstrap5": [
+        "../../../devdist/renderers/bootstrap5/index.d.ts",
+        "../../renderers/bootstrap5/dist/index.d.ts"
+      ],
+      "@touchspin/renderer-tailwind": [
+        "../../../devdist/renderers/tailwind/index.d.ts",
+        "../../renderers/tailwind/dist/index.d.ts"
+      ],
+      "@touchspin/renderer-vanilla": [
+        "../../../devdist/renderers/vanilla/index.d.ts",
+        "../../renderers/vanilla/dist/index.d.ts"
+      ]
+    }
+  },
+  "include": ["src/**/*"]
+}

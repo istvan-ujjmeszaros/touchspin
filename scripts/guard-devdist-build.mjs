@@ -50,7 +50,14 @@ const REQUIRED_FILES = {
     'umd/vanilla.global.js',
     'artifacts.json',
   ],
-  'packages/adapters/webcomponent': ['vanilla.js', 'artifacts.json'],
+  'packages/adapters/webcomponent': [
+    'umd/bootstrap3.global.js',
+    'umd/bootstrap4.global.js',
+    'umd/bootstrap5.global.js',
+    'umd/tailwind.global.js',
+    'umd/vanilla.global.js',
+    'artifacts.json',
+  ],
   'packages/renderers/bootstrap3': [
     'Bootstrap3Renderer.js',
     'iife/Bootstrap3Renderer.global.js',
@@ -143,7 +150,7 @@ function buildDevdistTargeted(packagesToBuild) {
     packageName = packageName.replace('renderers/', 'renderer-');
     packageName = packageName.replace('adapters/jquery', 'jquery');
     packageName = packageName.replace('adapters/standalone', 'standalone');
-    packageName = packageName.replace('adapters/webcomponent', 'web-components');
+    packageName = packageName.replace('adapters/webcomponent', 'webcomponent');
     try {
       execSync(`yarn workspace ${packageName} run build:test`, {
         cwd: projectRoot,
@@ -191,7 +198,7 @@ function main() {
     packageName = packageName.replace('renderers/', 'renderer-');
     packageName = packageName.replace('adapters/jquery', 'jquery');
     packageName = packageName.replace('adapters/standalone', 'standalone');
-    packageName = packageName.replace('adapters/webcomponent', 'web-components');
+    packageName = packageName.replace('adapters/webcomponent', 'webcomponent');
 
     const existsCheck = checkDevdistExists(packagePath);
     if (!existsCheck.exists) {
@@ -229,7 +236,7 @@ function main() {
       let packageName = packagePath.replace('packages/', '@touchspin/');
       packageName = packageName.replace('renderers/', 'renderer-');
       packageName = packageName.replace('adapters/jquery', 'jquery');
-      packageName = packageName.replace('adapters/webcomponent', 'web-components');
+      packageName = packageName.replace('adapters/webcomponent', 'webcomponent');
       const existsCheck = checkDevdistExists(packagePath);
 
       if (!existsCheck.exists) {
