@@ -7,19 +7,10 @@ import { expect, test } from '@playwright/test';
 
 test.describe('TouchSpin Web Component - Bootstrap 5', () => {
   test.beforeEach(async ({ page }) => {
-    // Listen for console logs and errors
-    page.on('console', (msg) => {
-      console.log(`[Browser ${msg.type()}]:`, msg.text());
-    });
+    // Navigate to fixture HTML
+    await page.goto('/packages/adapters/webcomponent/tests/fixtures/smoke-test.html');
 
-    page.on('pageerror', (error) => {
-      console.error('[Browser error]:', error.message);
-    });
-
-    // Navigate to test HTML file
-    await page.goto('/devdist/adapters/webcomponent/test.html');
-
-    // Wait for web component to be defined and initialized
+    // Wait for web component to be defined
     await page.waitForFunction(() => {
       return customElements.get('touchspin-input') !== undefined;
     });

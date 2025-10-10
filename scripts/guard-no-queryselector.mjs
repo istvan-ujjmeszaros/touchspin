@@ -9,8 +9,8 @@
  * This enforces the use of proper Playwright locators and helper functions.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, extname, dirname } from 'node:path';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -55,7 +55,6 @@ const TEST_HELPER_DIRS = [
   'packages/core/test-helpers',
   'packages/core/tests/__shared__/helpers',
   'packages/jquery-plugin/test-helpers',
-  'packages/web-components/test-helpers',
 ];
 
 // File extensions to check
@@ -68,8 +67,7 @@ function findTestHelperFiles() {
     const fullDir = join(projectRoot, dir);
     try {
       scanDirectory(fullDir, files);
-    } catch (_error) {
-    }
+    } catch (_error) {}
   }
 
   return files;
