@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TouchSpin Web Component - Bootstrap 5 Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TouchSpin Web Component demo with Bootstrap 5">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+  <!-- TouchSpin CSS -->
+  <link href="../../../renderers/bootstrap5/devdist/touchspin-bootstrap5.css" rel="stylesheet">
+
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 0;
+      margin-bottom: 40px;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .demo-section {
+      margin: 30px 0;
+      padding: 30px;
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      background: #f8f9fa;
+    }
+
+    .example-row {
+      margin: 20px 0;
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 20px;
+      border-radius: 0.5rem;
+      margin-top: 15px;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      color: #f8f8f2;
+    }
+
+    touchspin-input {
+      display: block;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1 class="display-4 fw-bold">
+      <i class="bi bi-grid-3x3"></i>
+      TouchSpin Web Component
+    </h1>
+    <p class="lead mt-3">
+      Single <code>&lt;touchspin-input&gt;</code> element for all your numeric input needs
+    </p>
+    <p class="mt-4">
+      <span class="badge bg-light text-dark fs-6">No Shadow DOM</span>
+      <span class="badge bg-light text-dark fs-6 ms-2">Framework-Agnostic</span>
+      <span class="badge bg-light text-dark fs-6 ms-2">Easy to Use</span>
+    </p>
+  </div>
+
+  <!-- Basic Example -->
+  <div class="demo-section">
+    <h2><i class="bi bi-play-circle"></i> Basic Example</h2>
+    <p>Simple numeric input with min/max constraints:</p>
+
+    <touchspin-input
+      min="0"
+      max="100"
+      value="42"
+      step="1"
+      data-testid="basic-demo"
+    ></touchspin-input>
+
+    <div class="code-block">
+      <code>&lt;touchspin-input<br>
+  min="0"<br>
+  max="100"<br>
+  value="42"<br>
+  step="1"<br>
+  data-testid="basic-demo"<br>
+&gt;&lt;/touchspin-input&gt;</code>
+    </div>
+  </div>
+
+  <!-- With Prefix & Postfix -->
+  <div class="demo-section">
+    <h2><i class="bi bi-cash-coin"></i> With Prefix & Postfix</h2>
+    <p>Add labels before and after the input:</p>
+
+    <touchspin-input
+      min="0"
+      max="1000"
+      value="50"
+      step="1"
+      prefix="$"
+      postfix=".00"
+      data-testid="currency-demo"
+    ></touchspin-input>
+
+    <div class="code-block">
+      <code>&lt;touchspin-input<br>
+  min="0"<br>
+  max="1000"<br>
+  value="50"<br>
+  step="1"<br>
+  prefix="$"<br>
+  postfix=".00"<br>
+  data-testid="currency-demo"<br>
+&gt;&lt;/touchspin-input&gt;</code>
+    </div>
+  </div>
+
+  <!-- Decimal Values -->
+  <div class="demo-section">
+    <h2><i class="bi bi-calculator"></i> Decimal Values</h2>
+    <p>Support for decimal numbers with precision control:</p>
+
+    <touchspin-input
+      min="0"
+      max="10"
+      value="3.14"
+      step="0.01"
+      decimals="2"
+      data-testid="decimal-demo"
+    ></touchspin-input>
+
+    <div class="code-block">
+      <code>&lt;touchspin-input<br>
+  min="0"<br>
+  max="10"<br>
+  value="3.14"<br>
+  step="0.01"<br>
+  decimals="2"<br>
+  data-testid="decimal-demo"<br>
+&gt;&lt;/touchspin-input&gt;</code>
+    </div>
+  </div>
+
+  <!-- Vertical Buttons -->
+  <div class="demo-section">
+    <h2><i class="bi bi-arrow-up-down"></i> Vertical Buttons</h2>
+    <p>Stack buttons vertically for a compact layout:</p>
+
+    <touchspin-input
+      min="0"
+      max="100"
+      value="25"
+      step="5"
+      verticalbuttons
+      data-testid="vertical-demo"
+    ></touchspin-input>
+
+    <div class="code-block">
+      <code>&lt;touchspin-input<br>
+  min="0"<br>
+  max="100"<br>
+  value="25"<br>
+  step="5"<br>
+  verticalbuttons<br>
+  data-testid="vertical-demo"<br>
+&gt;&lt;/touchspin-input&gt;</code>
+    </div>
+  </div>
+
+  <!-- JavaScript API -->
+  <div class="demo-section">
+    <h2><i class="bi bi-code-square"></i> JavaScript API</h2>
+    <p>Access and control the component programmatically:</p>
+
+    <touchspin-input
+      min="0"
+      max="100"
+      value="50"
+      step="1"
+      data-testid="api-demo"
+      id="api-example"
+    ></touchspin-input>
+
+    <div class="mt-3">
+      <button class="btn btn-primary" onclick="incrementValue()">
+        <i class="bi bi-plus-circle"></i> Increment
+      </button>
+      <button class="btn btn-secondary" onclick="decrementValue()">
+        <i class="bi bi-dash-circle"></i> Decrement
+      </button>
+      <button class="btn btn-info" onclick="getValue()">
+        <i class="bi bi-info-circle"></i> Get Value
+      </button>
+      <button class="btn btn-warning" onclick="setValue()">
+        <i class="bi bi-pencil"></i> Set to 75
+      </button>
+    </div>
+
+    <div class="code-block mt-3">
+      <code>// Access the web component<br>
+const component = document.querySelector('#api-example');<br>
+const api = component.api;<br>
+<br>
+// Use API methods<br>
+api.upOnce();        // Increment<br>
+api.downOnce();      // Decrement<br>
+api.getValue();      // Get current value<br>
+api.setValue(75);    // Set value<br>
+<br>
+// Listen to events<br>
+api.on('change', (value) => {<br>
+  console.log('Value changed:', value);<br>
+});</code>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="text-center p-4">
+        <i class="bi bi-lightning-charge text-primary" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">Simple Integration</h4>
+        <p>Just one custom element - no complex setup required</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="text-center p-4">
+        <i class="bi bi-layout-sidebar-inset text-success" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">No Shadow DOM</h4>
+        <p>Works seamlessly with your existing CSS frameworks</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="text-center p-4">
+        <i class="bi bi-gear-wide-connected text-info" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">Full API Access</h4>
+        <p>Complete programmatic control via JavaScript</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted mt-5 mb-4">
+    <hr>
+    <p>
+      <i class="bi bi-github"></i>
+      <a href="https://github.com/istvan-ujjmeszaros/bootstrap-touchspin" target="_blank">View on GitHub</a>
+    </p>
+  </footer>
+</div>
+
+<!-- TouchSpin Web Component (Bootstrap 5) -->
+<script src="../../../../devdist/adapters/webcomponent/umd/bootstrap5.global.js"></script>
+
+<!-- Demo JavaScript -->
+<script>
+  const apiComponent = document.querySelector('#api-example');
+  const api = apiComponent.api;
+
+  function incrementValue() {
+    api.upOnce();
+    alert('Value: ' + api.getValue());
+  }
+
+  function decrementValue() {
+    api.downOnce();
+    alert('Value: ' + api.getValue());
+  }
+
+  function getValue() {
+    alert('Current value: ' + api.getValue());
+  }
+
+  function setValue() {
+    api.setValue(75);
+    alert('Value set to 75');
+  }
+
+  // Listen to all changes
+  document.querySelectorAll('touchspin-input').forEach(component => {
+    if (component.api) {
+      component.api.on('change', function(value) {
+        console.log('TouchSpin value changed:', value, 'TestID:', component.getAttribute('data-testid'));
+      });
+    }
+  });
+</script>
+</body>
+</html>

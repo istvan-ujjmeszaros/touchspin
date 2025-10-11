@@ -16,8 +16,8 @@
   <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "../../../core/devdist/index.js",
-      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
+      "@touchspin/core": "../../../../devdist/core/index.js",
+      "@touchspin/core/renderer": "../../../../devdist/core/renderer.js",
       "@touchspin/renderers/bootstrap3": "../devdist/Bootstrap3Renderer.js"
     }
   }
@@ -1138,7 +1138,10 @@
     return {hasError: false, errors};
   }
 
-  function syncSpinnerWithControls() {
+  function syncSpinnerWithControls({
+                                     applyCallbacks = false,
+                                     suppressCallbackErrors = false
+                                   } = {}) {
     if (!basicSpinner) return;
 
     const raw = collectAllSettings();
@@ -1146,6 +1149,10 @@
 
     basicSpinner.updateSettings(options);
     postApplyControlState();
+
+    if (applyCallbacks) {
+      applyCallbacksFromFields({emitLog: false, suppressErrors: suppressCallbackErrors});
+    }
   }
 
   function applySettings(settings) {
@@ -1165,13 +1172,7 @@
     });
 
     postApplyControlState();
-    syncSpinnerWithControls();
-
-    // Apply callbacks only if they were enabled
-    if (callbacksEnabled) {
-      applyCallbacksFromFields({suppressErrors: true});
-    }
-
+    syncSpinnerWithControls({applyCallbacks: callbacksEnabled, suppressCallbackErrors: true});
     generateCodeExample();
   }
 
@@ -1186,7 +1187,7 @@
     }
 
     postApplyControlState();
-    syncSpinnerWithControls();
+    syncSpinnerWithControls({applyCallbacks: false, suppressCallbackErrors: true});
     generateCodeExample();
   }
 
@@ -1314,7 +1315,7 @@
       renderer: Bootstrap3Renderer
     });
     setupEventListeners();
-    syncSpinnerWithControls();
+    syncSpinnerWithControls({applyCallbacks: true, suppressCallbackErrors: true});
     logEvent('method-call', {method: 're-initialize()'});
     updateMethodFeedback('Spinner re-initialized.');
   });
@@ -1377,7 +1378,7 @@
   if (!loadSettings()) {
     // No saved settings - initialize with defaults (callbacks disabled by default)
     postApplyControlState();
-    syncSpinnerWithControls();
+    syncSpinnerWithControls({applyCallbacks: false, suppressCallbackErrors: true});
     generateCodeExample();
   }
 
