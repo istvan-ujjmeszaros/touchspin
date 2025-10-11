@@ -3,7 +3,7 @@ name: Package Matrix
 on:
   pull_request:
   push:
-    branches: [ master, main ]
+    branches: [ main ]
 
 jobs:
   build-by-package:

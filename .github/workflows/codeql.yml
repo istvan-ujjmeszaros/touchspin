@@ -2,9 +2,9 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ master, 'refactor/**' ]  # Run on master and refactor branches
+    branches: [ main, 'refactor/**' ]  # Run on main and refactor branches
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:  # Allow manual trigger from GitHub Actions UI
   schedule:
     - cron: '0 0 * * 0' # Weekly

@@ -1,8 +1,10 @@
 # TouchSpin v5
 
+> **Formerly Bootstrap TouchSpin** — Now a modern ESM-first monorepo
+
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa)](https://github.com/sponsors/istvan-ujjmeszaros)
 
-TouchSpin is a modern rewrite of the original “Bootstrap TouchSpin” spinner. The v5 line ships as an ESM-first monorepo with framework-specific packages so you can pick the delivery mode that fits your stack—core logic, renderer bundles, a jQuery bridge, or a Web Component.
+TouchSpin (formerly **Bootstrap TouchSpin**) is a modern rewrite of the popular spinner component. The v5 line ships as an ESM-first monorepo with framework-specific packages so you can pick the delivery mode that fits your stack—core logic, renderer bundles, a jQuery bridge, or a Web Component.
 
 ## Packages at a Glance
 
