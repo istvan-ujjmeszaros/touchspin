@@ -55,4 +55,5 @@ C:/Users/*/AppData/*
 # Yarn PnP files (auto-generated)
 .pnp.cjs
 .yarn/install-state.gz
+**/.npm-cache/
 /_old_test_suit_temporary/

@@ -129,7 +129,7 @@
     "guard:tests": "node scripts/guard-tests.mjs all",
     "guard:esm-extensions": "node scripts/guard-esm-extensions.mjs",
     "lexicon:gen": "yarn node scripts/step-lexicon.mjs",
-    "prepare": "husky"
+    "prepare": "node scripts/setup-husky.mjs"
   },
   "workspaces": [
     "packages/*",
