@@ -80,5 +80,9 @@
     "jquery": "^3.7.1",
     "tsup": "^8.1.0",
     "typescript": "^5.7.2"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
   }
 }

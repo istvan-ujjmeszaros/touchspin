@@ -101,5 +101,9 @@
   "bugs": {
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
   },
-  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/adapters/webcomponent#readme"
+  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/adapters/webcomponent#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
 }

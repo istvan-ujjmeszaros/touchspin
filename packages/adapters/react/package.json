@@ -30,5 +30,9 @@
     "type": "git",
     "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
     "directory": "packages/adapters/react"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
   }
 }
