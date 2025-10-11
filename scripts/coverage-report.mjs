@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
-function run(command) {
-  console.log(`📊 ${command}`);
-  try {
-    execSync(command, { stdio: 'inherit' });
-  } catch (_error) {
-    console.error(`❌ Failed: ${command}`);
-    process.exit(1);
+function run(command, args) {
+  console.log(`📊 ${[command, ...args].join(' ')}`);
+  const result = spawnSync(command, args, {
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  });
+
+  if (result.status !== 0) {
+    console.error(`❌ Failed: ${[command, ...args].join(' ')}`);
+    process.exit(result.status ?? 1);
   }
 }
 
@@ -20,5 +23,5 @@ if (!existsSync('.nyc_output/coverage.json')) {
   process.exit(0);
 }
 
-run('npx nyc report');
+run('yarn', ['exec', '--', 'nyc', 'report']);
 console.log('✅ Coverage report generated in reports/coverage/');
