@@ -67,20 +67,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Build test artifacts (devdist) - clean build for CI
+      - name: Build test artifacts (devdist)
         run: yarn build:clean
 
-      - name: Guard ESM import extensions
-        run: yarn guard:esm-extensions
-
-      - name: Assert devdist presence
-        run: |
-          test -f packages/core/devdist/index.js
-          test -f packages/renderers/vanilla/devdist/VanillaRenderer.js
-          test -f packages/renderers/bootstrap5/devdist/Bootstrap5Renderer.js
-
-      - name: Guard - no src imports in tests
-        run: yarn guard:no-src-in-tests
+      - name: Run build guards
+        run: yarn guard:all
 
       - name: Run tests (Chromium)
         run: yarn test
