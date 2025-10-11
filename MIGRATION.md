@@ -10,10 +10,10 @@ If you only need to keep the existing jQuery + Bootstrap setup running, replace 
 <!-- Legacy: bootstrap-touchspin.min.js + CSS -->
 <!-- New: drop-in replacement -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/jquery-touchspin-bs5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
 ```
 
-The legacy filenames (`jquery-touchspin-bs*.js`) still exist and forward to the new `dist/umd/touchspin-*.umd.js` bundles, so any existing `<script>` tags pointing at `jquery.bootstrap-touchspin-bs*.js` continue to work after swapping the package name or file location.
+The new UMD bundles follow the pattern `jquery.touchspin-bootstrap{3,4,5,tailwind,vanilla}.js`—swap the package source and file path but retain the jQuery API patterns (`$('#input').touchspin({...})`). No code changes required.
 
 Once the new files are in place the rest of the integration runs as before—no code changes required.
 
@@ -21,19 +21,25 @@ Once the new files are in place the rest of the integration runs as before—no 
 
 | Legacy usage | Recommended v5 path |
 |--------------|---------------------|
-| Global `<script>` + jQuery + Bootstrap | Swap to the new UMD file (`dist/jquery-touchspin-bs*.js`) or import `dist/umd/touchspin-bootstrapX.umd.js` |
-| Bundler-based jQuery project | `@touchspin/jquery` (ESM) + renderer ESM + peer-installed Bootstrap |
-| Modern framework / vanilla JS | `@touchspin/core` + renderer package (ESM) |
-| Need framework-free custom element | `@touchspin/web-component` + `@touchspin/renderer-vanilla` |
+| Global `<script>` + jQuery + Bootstrap | Swap to the new UMD file (`@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.js`) |
+| Bundler-based jQuery project | `@touchspin/jquery` (ESM) + `@touchspin/standalone` + peer-installed Bootstrap |
+| Modern framework / vanilla JS | `@touchspin/standalone` + ESM mount API |
+| Need framework-free custom element | `@touchspin/webcomponent` + `@touchspin/renderer-vanilla` |
 
 ## 2. Install the right packages
 
 ```bash
 # Example: Bootstrap 5 + jQuery
-npm install @touchspin/jquery @touchspin/renderer-bootstrap5 jquery bootstrap
+npm install @touchspin/jquery @touchspin/standalone jquery bootstrap
+
+# Example: Bootstrap 5 + standalone (no jQuery)
+npm install @touchspin/standalone
 
 # Example: Framework-free ESM
-npm install @touchspin/core @touchspin/renderer-vanilla
+npm install @touchspin/standalone
+
+# Example: Web component
+npm install @touchspin/webcomponent
 ```
 
 Each renderer declares peer dependencies that mirror its framework requirements:
@@ -50,43 +56,51 @@ Install peers explicitly in your app to satisfy package managers.
 ### jQuery wrapper
 
 ```ts
-import { installWithRenderer } from '@touchspin/jquery';
-import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-import '@touchspin/renderer-bootstrap5/css';
-import 'jquery';
+import { autoInstall } from '@touchspin/jquery';
+import { mount } from '@touchspin/standalone/bootstrap5';
+import $ from 'jquery';
 
-declare const jQuery: typeof import('jquery');
-installWithRenderer(Bootstrap5Renderer, { jQuery });
+autoInstall(mount);
 
-jQuery('#quantity').TouchSpin({
-  renderer: 'bootstrap5',
+// Canonical (recommended)
+$('#quantity').touchspin({
   min: 0,
   max: 100,
   step: 1,
 });
-```
 
-The jQuery plugin continues to expose the legacy command API (`TouchSpin('get')`, `trigger('touchspin.uponce')`, etc.). Renderers now register via data attributes instead of class-based selectors.
-
-### Core + renderer (no jQuery)
-
-```ts
-import { TouchSpin } from '@touchspin/core';
-import VanillaRenderer from '@touchspin/renderer-vanilla';
-import '@touchspin/renderer-vanilla/css';
-
-TouchSpin(document.querySelector('#quantity'), {
-  renderer: VanillaRenderer,
+// Legacy alias (still supported)
+$('#quantity').TouchSpin({
   min: 0,
   max: 100,
 });
 ```
 
+The jQuery adapter continues to expose the legacy command API (`$('#input').touchspin('getValue')`, etc.) and events (`touchspin.on.change`, `touchspin.on.max`, etc.). Use `.touchspin()` (lowercase) as the canonical method name, with `.TouchSpin()` (CamelCase) supported as a legacy alias.
+
+### Standalone adapter (no jQuery)
+
+```ts
+import { mount } from '@touchspin/standalone/bootstrap5';
+
+const api = mount('#quantity', {
+  min: 0,
+  max: 100,
+  step: 1,
+});
+
+// Use the API
+api.setValue(50);
+console.log(api.getValue()); // 50
+```
+
+The standalone adapter provides a simple mount API that bundles core + renderer together. For advanced usage with direct core access, use `@touchspin/core` + individual renderer packages.
+
 ## 4. Replace legacy assets
 
-- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery/dist/umd/jquery-touchspin-bs5.js`.
+- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.js`.
 - Replace the single legacy stylesheet with the renderer stylesheet (`@touchspin/renderer-*/dist/touchspin-*.css`).
-- If you relied on CDN auto-updates, prefer jsDelivr or unpkg URLs documented in the package READMEs.
+- If you relied on CDN auto-updates, prefer jsDelivr or unpkg URLs documented in the package READMEs and `docs/migration-5.x.md`.
 
 ## 5. Revisit configuration differences
 
