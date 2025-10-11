@@ -6,6 +6,22 @@
 
 TouchSpin (formerly **Bootstrap TouchSpin**) is a modern rewrite of the popular spinner component. The v5 line ships as an ESM-first monorepo with framework-specific packages so you can pick the delivery mode that fits your stack—core logic, renderer bundles, a jQuery bridge, or a Web Component.
 
+## 💖 Support This Project
+
+**TouchSpin v5 represents nearly 1,000 hours of development work** — a complete ground-up rewrite to bring modern ESM architecture, tree-shaking, and multi-framework support to this popular component.
+
+**[⭐ Become a Sponsor](https://github.com/sponsors/istvan-ujjmeszaros)** to help sustain ongoing development, faster bug fixes, and new features.
+
+Your sponsorship keeps this project:
+- ✅ **Free and open-source** for everyone
+- 🚀 **Actively maintained** with regular updates
+- 🐛 **Well-tested** with comprehensive test coverage
+- 📚 **Well-documented** with migration guides
+
+*Every contribution, no matter the size, makes a real difference!*
+
+---
+
 ## Packages at a Glance
 
 | Package | Purpose | Primary Entry | Bundled Assets |
