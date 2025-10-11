@@ -9,19 +9,48 @@ TouchSpin is a modern rewrite of the original “Bootstrap TouchSpin” spinner.
 | Package | Purpose | Primary Entry | Bundled Assets |
 |---------|---------|---------------|----------------|
 | `@touchspin/core` | Framework-agnostic logic + renderer contracts | `dist/index.js` (ESM) | Declarations only |
-| `@touchspin/jquery` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/jquery-touchspin-bs{3,4,5}.js`, legacy compatibility |
-| `@touchspin/renderer-bootstrap3` | Bootstrap 3 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap3.umd.js`, `dist/touchspin-bootstrap3.css` |
-| `@touchspin/renderer-bootstrap4` | Bootstrap 4 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap4.umd.js`, `dist/touchspin-bootstrap4.css` |
-| `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/umd/touchspin-bootstrap5.umd.js`, `dist/touchspin-bootstrap5.css` |
-| `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/umd/touchspin-tailwind.umd.js`, `dist/touchspin-tailwind.css` |
-| `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/umd/touchspin-vanilla.umd.js`, `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
-| `@touchspin/web-component` | `<touchspin-input>` custom element | `dist/index.js` (ESM) | Declarations only |
+| `@touchspin/standalone` | Standalone mount API (core + renderer) | `dist/index.js` (ESM) | Per-renderer subpaths + UMD bundles |
+| `@touchspin/jquery` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/jquery.touchspin-*.js`, legacy compatibility |
+| `@touchspin/webcomponent` | `<touchspin-input>` custom element | Per-renderer subpaths | Per-renderer UMD bundles |
+| `@touchspin/renderer-bootstrap3` | Bootstrap 3 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap3.css` |
+| `@touchspin/renderer-bootstrap4` | Bootstrap 4 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap4.css` |
+| `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap5.css` |
+| `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/touchspin-tailwind.css` |
+| `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
 ## Quick Install
 
+### Standalone Adapter (Recommended)
+
+The simplest way to use TouchSpin with a mount API:
+
+```bash
+npm install @touchspin/standalone
+```
+
+```ts
+import { mount } from '@touchspin/standalone/bootstrap5';
+
+const api = mount('#quantity', {
+  min: 0,
+  max: 100,
+  step: 1
+});
+```
+
+**UMD/Global (Browser)**:
+```html
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js"></script>
+<script>
+  TouchSpinStandaloneBootstrap5.mount('#quantity', { min: 0, max: 100 });
+</script>
+```
+
 ### Modern (ESM) projects
+
+For advanced use with direct core access:
 
 ```bash
 npm install @touchspin/core @touchspin/renderer-bootstrap5
@@ -44,34 +73,40 @@ TouchSpin(input, {
 ### jQuery integration
 
 ```bash
-npm install @touchspin/jquery @touchspin/renderer-bootstrap5 jquery
+npm install @touchspin/jquery jquery
 ```
 
+**UMD (Browser)**:
+```html
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<script>
+  // Canonical (recommended)
+  $('#quantity').touchspin({ min: 0, max: 100 });
+
+  // Legacy alias (still supported)
+  $('#quantity').TouchSpin({ min: 0, max: 100 });
+</script>
+```
+
+**ESM**:
 ```ts
-import { installWithRenderer } from '@touchspin/jquery';
-import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
-import '@touchspin/renderer-bootstrap5/css';
-import 'jquery';
+import { autoInstall } from '@touchspin/jquery';
+import { mount } from '@touchspin/standalone/bootstrap5';
+import $ from 'jquery';
 
-declare const jQuery: typeof import('jquery');
-installWithRenderer(Bootstrap5Renderer, { jQuery });
-
-jQuery('#quantity').TouchSpin({
-  min: 0,
-  max: 100,
-  step: 1,
-});
+autoInstall(mount);
+$('#quantity').touchspin({ min: 0, max: 100 });
 ```
 
 ### Web Component
 
 ```bash
-npm install @touchspin/web-component @touchspin/renderer-vanilla
+npm install @touchspin/webcomponent
 ```
 
 ```ts
-import '@touchspin/web-component';
-import '@touchspin/renderer-vanilla/css';
+import '@touchspin/webcomponent/bootstrap5';
 ```
 
 ```html

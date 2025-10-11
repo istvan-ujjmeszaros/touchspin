@@ -40,23 +40,25 @@ This guide covers the packaging-only release flow for the TouchSpin v5 workspace
    ```bash
    # Promote all packages from next → beta
    npm dist-tag add @touchspin/core@5.0.0 beta
-   npm dist-tag add @touchspin/jquery-plugin@5.0.0 beta
+   npm dist-tag add @touchspin/standalone@5.0.0 beta
+   npm dist-tag add @touchspin/jquery@5.0.0 beta
+   npm dist-tag add @touchspin/webcomponent@5.0.0 beta
    npm dist-tag add @touchspin/renderer-bootstrap3@5.0.0 beta
    npm dist-tag add @touchspin/renderer-bootstrap4@5.0.0 beta
    npm dist-tag add @touchspin/renderer-bootstrap5@5.0.0 beta
    npm dist-tag add @touchspin/renderer-tailwind@5.0.0 beta
    npm dist-tag add @touchspin/renderer-vanilla@5.0.0 beta
-   npm dist-tag add @touchspin/web-component@5.0.0 beta
 
    # Promote all packages from beta → latest
    npm dist-tag add @touchspin/core@5.0.0 latest
-   npm dist-tag add @touchspin/jquery-plugin@5.0.0 latest
+   npm dist-tag add @touchspin/standalone@5.0.0 latest
+   npm dist-tag add @touchspin/jquery@5.0.0 latest
+   npm dist-tag add @touchspin/webcomponent@5.0.0 latest
    npm dist-tag add @touchspin/renderer-bootstrap3@5.0.0 latest
    npm dist-tag add @touchspin/renderer-bootstrap4@5.0.0 latest
    npm dist-tag add @touchspin/renderer-bootstrap5@5.0.0 latest
    npm dist-tag add @touchspin/renderer-tailwind@5.0.0 latest
    npm dist-tag add @touchspin/renderer-vanilla@5.0.0 latest
-   npm dist-tag add @touchspin/web-component@5.0.0 latest
    ```
 
 ## Manual Verification Checklist

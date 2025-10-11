@@ -266,7 +266,7 @@ buildPrefix() {
 
 1. **Install the modular packages:**
    ```bash
-   yarn add @touchspin/core @touchspin/jquery-plugin @touchspin/renderer-bootstrap5
+   yarn add @touchspin/core @touchspin/jquery @touchspin/renderer-bootstrap5
    ```
 
 2. **Wire up imports (choose modern or jQuery API):**
@@ -276,8 +276,9 @@ buildPrefix() {
    import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 
    // jQuery wrapper when you need backward compatibility
-   import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
-   installJqueryTouchSpin(window.jQuery);
+   import { autoInstall } from '@touchspin/jquery';
+   import { mount } from '@touchspin/standalone/bootstrap5';
+   autoInstall(mount);
    ```
 
 3. **Load the matching CSS bundle:**
@@ -509,10 +510,11 @@ If migration issues occur:
 
 1. **Keep the wrapper installed:**
    ```ts
-   import { installJqueryTouchSpin } from '@touchspin/jquery-plugin';
+   import { autoInstall } from '@touchspin/jquery';
+   import { mount } from '@touchspin/standalone/bootstrap5';
 
    if (featureFlags.useLegacyJqueryApi) {
-     installJqueryTouchSpin(window.jQuery);
+     autoInstall(mount);
    }
    ```
 
@@ -523,8 +525,10 @@ If migration issues occur:
    if (featureFlags.useModernTouchSpin) {
      TouchSpin(input, options);
    } else {
-     installJqueryTouchSpin(window.jQuery);
-     $(input).TouchSpin(options);
+     import { autoInstall } from '@touchspin/jquery';
+     import { mount } from '@touchspin/standalone/bootstrap5';
+     autoInstall(mount);
+     $(input).touchspin(options);
    }
    ```
 
@@ -535,8 +539,10 @@ If migration issues occur:
      TouchSpin(input, options);
    } catch (error) {
      console.warn('Falling back to jQuery TouchSpin', error);
-     installJqueryTouchSpin(window.jQuery);
-     $('#spinner').TouchSpin(options);
+     import { autoInstall } from '@touchspin/jquery';
+     import { mount } from '@touchspin/standalone/bootstrap5';
+     autoInstall(mount);
+     $('#spinner').touchspin(options);
    }
    ```
 
