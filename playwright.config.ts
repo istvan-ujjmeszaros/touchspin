@@ -3,8 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
-const DEV_BASE_URL = (process.env.DEV_BASE_URL || 'http://localhost:8866').replace(/\/$/, '');
-const DEFAULT_BASE = 'http://localhost:8866';
+const TEST_PORT = process.env.TEST_PORT ? parseInt(process.env.TEST_PORT, 10) : 8866;
+const DEV_BASE_URL = (process.env.DEV_BASE_URL || `http://localhost:${TEST_PORT}`).replace(/\/$/, '');
+const DEFAULT_BASE = `http://localhost:${TEST_PORT}`;
 const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 
 // Allow controlling worker count via environment variable
@@ -135,8 +136,8 @@ export default defineConfig({
         stderr: 'pipe',
       }
     : {
-        command: 'yarn serve:root',
-        port: 8866,
+        command: `PORT=${TEST_PORT} yarn serve:root`,
+        port: TEST_PORT,
         reuseExistingServer: true,
         timeout: 20000,
         stdout: 'pipe',
