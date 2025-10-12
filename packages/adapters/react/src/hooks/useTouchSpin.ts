@@ -47,17 +47,17 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
     // Set initial value
     input.value = String(currentValue);
 
-    // Initialize TouchSpin
-    instanceRef.current = TouchSpinCore(input, {
-      min,
-      max,
-      step,
-      decimals,
-      prefix,
-      postfix: suffix,
-      renderer,
-      ...coreOptions,
-    });
+    // Initialize TouchSpin - filter out undefined values for exactOptionalPropertyTypes
+    const initOptions: Record<string, unknown> = { renderer };
+    if (min !== undefined) initOptions.min = min;
+    if (max !== undefined) initOptions.max = max;
+    if (step !== undefined) initOptions.step = step;
+    if (decimals !== undefined) initOptions.decimals = decimals;
+    if (prefix !== undefined) initOptions.prefix = prefix;
+    if (suffix !== undefined) initOptions.postfix = suffix;
+    if (coreOptions) Object.assign(initOptions, coreOptions);
+
+    instanceRef.current = TouchSpinCore(input, initOptions);
 
     // Subscribe to changes via native DOM events
     const handleChange = () => {
@@ -106,14 +106,16 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
   useEffect(() => {
     if (!instanceRef.current) return;
 
-    instanceRef.current.updateSettings({
-      min,
-      max,
-      step,
-      decimals,
-      prefix,
-      postfix: suffix,
-    });
+    // Filter out undefined values for exactOptionalPropertyTypes
+    const updateOptions: Record<string, unknown> = {};
+    if (min !== undefined) updateOptions.min = min;
+    if (max !== undefined) updateOptions.max = max;
+    if (step !== undefined) updateOptions.step = step;
+    if (decimals !== undefined) updateOptions.decimals = decimals;
+    if (prefix !== undefined) updateOptions.prefix = prefix;
+    if (suffix !== undefined) updateOptions.postfix = suffix;
+
+    instanceRef.current.updateSettings(updateOptions);
   }, [min, max, step, decimals, prefix, suffix]);
 
   // Update disabled/readonly

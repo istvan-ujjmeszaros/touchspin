@@ -58,21 +58,22 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
       renderer,
     } = props;
 
-    const { inputRef, instanceRef, currentValue } = useTouchSpin({
-      value,
-      defaultValue,
-      onChange,
-      min,
-      max,
-      step,
-      decimals,
-      prefix,
-      suffix,
-      disabled,
-      readOnly,
-      coreOptions,
-      renderer,
-    });
+    // Filter out undefined values for exactOptionalPropertyTypes
+    const touchSpinOptions: Record<string, unknown> = { renderer };
+    if (value !== undefined) touchSpinOptions.value = value;
+    if (defaultValue !== undefined) touchSpinOptions.defaultValue = defaultValue;
+    if (onChange !== undefined) touchSpinOptions.onChange = onChange;
+    if (min !== undefined) touchSpinOptions.min = min;
+    if (max !== undefined) touchSpinOptions.max = max;
+    if (step !== undefined) touchSpinOptions.step = step;
+    if (decimals !== undefined) touchSpinOptions.decimals = decimals;
+    if (prefix !== undefined) touchSpinOptions.prefix = prefix;
+    if (suffix !== undefined) touchSpinOptions.suffix = suffix;
+    if (disabled !== undefined) touchSpinOptions.disabled = disabled;
+    if (readOnly !== undefined) touchSpinOptions.readOnly = readOnly;
+    if (coreOptions !== undefined) touchSpinOptions.coreOptions = coreOptions;
+
+    const { inputRef, instanceRef, currentValue } = useTouchSpin(touchSpinOptions as any);
 
     // Expose imperative handle
     useImperativeHandle(
