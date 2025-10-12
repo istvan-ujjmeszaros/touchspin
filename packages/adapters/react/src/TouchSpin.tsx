@@ -5,7 +5,7 @@
  * Use per-renderer exports instead of this directly.
  */
 
-import { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTouchSpin } from './hooks/useTouchSpin.js';
 import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 

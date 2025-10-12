@@ -3,7 +3,7 @@
  */
 
 import { VanillaRenderer } from '@touchspin/renderer-vanilla';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { TouchSpinComponent } from './TouchSpin.js';
 import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
