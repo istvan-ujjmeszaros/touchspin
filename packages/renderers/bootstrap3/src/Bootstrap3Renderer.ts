@@ -133,6 +133,8 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
 
     // Create wrapper and wrap the input
     const tempDiv = document.createElement('div');
+    // CodeQL [js/xss-through-dom] - Safe: HTML string is constructed from trusted configuration settings
+    // (prefix, postfix, button classes/text) provided by the developer, not from user-controlled DOM content.
     tempDiv.innerHTML = html.trim();
     const wrapper = tempDiv.firstChild as HTMLElement;
 
@@ -211,6 +213,8 @@ class Bootstrap3Renderer extends AbstractRendererSimple {
     }
 
     const tempDiv = document.createElement('div');
+    // CodeQL [js/xss-through-dom] - Safe: HTML string is constructed from trusted configuration settings
+    // (prefix, postfix, button classes/text) provided by the developer, not from user-controlled DOM content.
     tempDiv.innerHTML = elementsHtml;
 
     // Declare element references at function scope

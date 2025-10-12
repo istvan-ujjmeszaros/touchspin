@@ -107,6 +107,8 @@ class VanillaRenderer extends AbstractRendererSimple {
 
     // Create wrapper element
     const tempDiv = document.createElement('div');
+    // CodeQL [js/xss-through-dom] - Safe: HTML string is constructed from trusted configuration settings
+    // (prefix, postfix, button classes/text) provided by the developer, not from user-controlled DOM content.
     tempDiv.innerHTML = html.trim();
     const wrapper = tempDiv.firstChild as HTMLElement;
 
