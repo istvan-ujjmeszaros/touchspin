@@ -3,6 +3,7 @@ run-name: Run Bootstrap TouchSpin Tests
 
 on:
   push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
