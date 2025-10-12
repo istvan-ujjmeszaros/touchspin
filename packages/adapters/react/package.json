@@ -1,7 +1,6 @@
 {
   "name": "@touchspin/react",
   "version": "5.0.0",
-  "private": true,
   "description": "React adapter for TouchSpin with per-renderer subpaths",
   "type": "module",
   "sideEffects": false,
@@ -33,6 +32,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "build:test": "tsup",
