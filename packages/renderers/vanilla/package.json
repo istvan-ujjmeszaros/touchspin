@@ -75,13 +75,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
     "directory": "packages/renderers/vanilla"
   },
   "bugs": {
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
   },
-  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/vanilla#readme",
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/renderers/vanilla#readme",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/istvan-ujjmeszaros"

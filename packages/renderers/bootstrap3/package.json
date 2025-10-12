@@ -59,13 +59,13 @@
   "author": "TouchSpin Contributors",
   "repository": {
     "type": "git",
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
     "directory": "packages/renderers/bootstrap3"
   },
   "bugs": {
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
   },
-  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/renderers/bootstrap3#readme",
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/renderers/bootstrap3#readme",
   "publishConfig": {
     "access": "public",
     "types": "./dist/index.d.ts"

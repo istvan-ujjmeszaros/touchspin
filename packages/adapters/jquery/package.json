@@ -27,13 +27,13 @@
   "author": "TouchSpin Contributors",
   "repository": {
     "type": "git",
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
     "directory": "packages/adapters/jquery"
   },
   "bugs": {
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/issues"
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
   },
-  "homepage": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/tree/main/packages/adapters/jquery#readme",
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/adapters/jquery#readme",
   "scripts": {
     "prepack": "yarn build",
     "dev": "node ../../../scripts/static-server.mjs",

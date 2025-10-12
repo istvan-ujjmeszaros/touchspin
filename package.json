@@ -28,12 +28,12 @@
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin.git"
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git"
   },
   "homepage": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "demo": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
   "docs": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
-  "download": "https://github.com/istvan-ujjmeszaros/bootstrap-touchspin/archive/main.zip",
+  "download": "https://github.com/istvan-ujjmeszaros/touchspin/archive/main.zip",
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
     "@changesets/cli": "^2.27.7",
