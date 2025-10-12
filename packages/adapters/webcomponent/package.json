@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/webcomponent",
-  "version": "5.0.0",
+  "version": "5.0.1-alpha.0",
   "description": "TouchSpin Web Component - Single <touchspin-input> tag for all renderers",
   "type": "module",
   "sideEffects": [
