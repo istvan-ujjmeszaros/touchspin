@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../devdist/core",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "inlineSources": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "importsNotUsedAsValues": "remove",
+    "skipLibCheck": true,
+    "types": [],
+    "incremental": true,
+    "tsBuildInfoFile": "../../devdist/core/.tsbuildinfo",
+    "baseUrl": "./src",
+    "paths": {}
+  },
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,36 @@
+name: Release Dry-Run
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ release/* ]
+
+jobs:
+  validate-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Enable corepack (Yarn)
+        run: corepack enable
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - name: Build all packages
+        run: yarn build
+
+      - name: Publish dry-run (all workspaces)
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: |
+          set -e
+          echo "Running npm publish --dry-run for each workspace..."
+          yarn workspaces foreach -A -v exec npm publish --dry-run --access public
+

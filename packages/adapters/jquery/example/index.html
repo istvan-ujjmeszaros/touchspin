@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap TouchSpin - Multi-Version Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bootstrap TouchSpin plugin supporting Bootstrap 3, 4, and 5 with automatic version detection">
+
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+  <!-- Bootstrap 5 for this main page -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+
+  <!-- TouchSpin Bootstrap 5 -->
+  <link href="../../../renderers/bootstrap5/devdist/touchspin-bootstrap5.css" rel="stylesheet">
+  <script src="../../../../devdist/adapters/jquery/umd/bootstrap5.global.js"></script>
+
+  <!-- Demo CSS -->
+  <link href="demo.css" rel="stylesheet">
+
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 80px 0;
+      margin-bottom: 50px;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .version-card {
+      transition: all 0.3s ease;
+      height: 100%;
+      border: 2px solid transparent;
+    }
+
+    .version-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-color: #007bff;
+    }
+
+    .version-badge {
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .bs3-badge { background: #337ab7; color: white; }
+    .bs4-badge { background: #007bff; color: white; }
+    .bs5-badge { background: #6f42c1; color: white; }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .demo-preview {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .tech-badge {
+      margin: 3px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+
+    .footer-section {
+      background: #f8f9fa;
+      padding: 40px 0;
+      margin-top: 60px;
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1 class="display-2 fw-bold mb-3">
+      <i class="bi bi-ui-checks-grid me-3"></i>
+      Bootstrap TouchSpin
+    </h1>
+    <p class="lead fs-4 mb-4">
+      A mobile and touch-friendly input spinner component<br>
+      <strong>Now supporting Bootstrap 3, 4 & 5</strong>
+    </p>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <span class="tech-badge bg-success text-white">
+          <i class="bi bi-check-circle"></i> jQuery Compatible
+        </span>
+        <span class="tech-badge bg-info text-white">
+          <i class="bi bi-phone"></i> Mobile Friendly
+        </span>
+        <span class="tech-badge bg-warning text-dark">
+          <i class="bi bi-magic"></i> Auto-Detection
+        </span>
+        <span class="tech-badge bg-danger text-white">
+          <i class="bi bi-lightning"></i> Fast & Lightweight
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Demo Section -->
+  <div class="demo-preview text-center">
+    <h3 class="mb-3"><i class="bi bi-play-circle"></i> Quick Demo</h3>
+    <p>Try it right here! This demo uses the Bootstrap 5 specific build for optimal performance.</p>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <label for="quick-demo" class="form-label fw-bold">Sample TouchSpin:</label>
+        <input id="quick-demo" type="text" value="50" name="quick-demo" class="form-control text-center" style="width: 200px;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Version-Specific Demos -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-center mb-4">
+        <i class="bi bi-collection"></i>
+        Explore Version-Specific Demos
+      </h2>
+      <p class="text-center text-muted mb-5">
+        Each demo showcases TouchSpin's compatibility with different Bootstrap versions,
+        featuring version-specific components and styling.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <!-- Bootstrap 3 Demo Card -->
+    <div class="col-lg-4">
+      <div class="card version-card h-100 position-relative">
+        <div class="version-badge bs3-badge">Bootstrap 3</div>
+        <div class="card-body text-center">
+          <i class="bi bi-grid-3x3-gap feature-icon text-primary"></i>
+          <h4 class="card-title">Bootstrap 3.4.1</h4>
+          <p class="card-text">
+            Classic Bootstrap with <code>input-group-btn</code> and <code>input-group-addon</code> classes.
+            Perfect for legacy projects and stable environments.
+          </p>
+          <ul class="list-unstyled text-start mb-4">
+            <li><i class="bi bi-check text-success"></i> Traditional input groups</li>
+            <li><i class="bi bi-check text-success"></i> Classic button styling</li>
+            <li><i class="bi bi-check text-success"></i> Font Awesome icons</li>
+            <li><i class="bi bi-check text-success"></i> jQuery 1.11+ compatible</li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <a href="bootstrap3.html" class="btn btn-primary w-100">
+            <i class="bi bi-arrow-right"></i> Bootstrap 3 Demo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 4 Demo Card -->
+    <div class="col-lg-4">
+      <div class="card version-card h-100 position-relative">
+        <div class="version-badge bs4-badge">Bootstrap 4</div>
+        <div class="card-body text-center">
+          <i class="bi bi-grid-3x2-gap feature-icon text-info"></i>
+          <h4 class="card-title">Bootstrap 4.6.2</h4>
+          <p class="card-text">
+            Modern Bootstrap with <code>input-group-prepend</code>/<code>append</code> structure.
+            Flexbox-based design with enhanced components.
+          </p>
+          <ul class="list-unstyled text-start mb-4">
+            <li><i class="bi bi-check text-success"></i> Flexbox input groups</li>
+            <li><i class="bi bi-check text-success"></i> Enhanced button variants</li>
+            <li><i class="bi bi-check text-success"></i> Font Awesome 5 icons</li>
+            <li><i class="bi bi-check text-success"></i> Responsive design</li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <a href="bootstrap4.html" class="btn btn-info w-100">
+            <i class="bi bi-arrow-right"></i> Bootstrap 4 Demo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 Demo Card -->
+    <div class="col-lg-4">
+      <div class="card version-card h-100 position-relative">
+        <div class="version-badge bs5-badge">Bootstrap 5</div>
+        <div class="card-body text-center">
+          <i class="bi bi-grid feature-icon text-warning"></i>
+          <h4 class="card-title">Bootstrap 5.3.0</h4>
+          <p class="card-text">
+            Latest Bootstrap with simplified structure, CSS custom properties,
+            and no jQuery dependency requirement.
+          </p>
+          <ul class="list-unstyled text-start mb-4">
+            <li><i class="bi bi-check text-success"></i> Simplified input groups</li>
+            <li><i class="bi bi-check text-success"></i> CSS custom properties</li>
+            <li><i class="bi bi-check text-success"></i> Bootstrap Icons</li>
+            <li><i class="bi bi-check text-success"></i> Modern utilities</li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <a href="bootstrap5.html" class="btn btn-warning w-100 text-dark">
+            <i class="bi bi-arrow-right"></i> Bootstrap 5 Demo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="text-center mb-4">
+        <i class="bi bi-star-fill text-warning"></i>
+        Key Features
+      </h2>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+      <div class="text-center">
+        <i class="bi bi-magic feature-icon text-primary"></i>
+        <h5>Auto-Detection</h5>
+        <p class="text-muted">Automatically detects Bootstrap version and renders appropriate HTML structure.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="text-center">
+        <i class="bi bi-phone feature-icon text-success"></i>
+        <h5>Touch Friendly</h5>
+        <p class="text-muted">Optimized for mobile and touch devices with responsive button sizing.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="text-center">
+        <i class="bi bi-speedometer2 feature-icon text-info"></i>
+        <h5>Performance Boost</h5>
+        <p class="text-muted">Built-in booster functionality for rapid value changes with configurable acceleration.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="text-center">
+        <i class="bi bi-gear feature-icon text-warning"></i>
+        <h5>Highly Configurable</h5>
+        <p class="text-muted">Extensive options for customization including styling, behavior, and validation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technical Details -->
+  <div class="row">
+    <div class="col-12">
+      <h3 class="text-center mb-4">
+        <i class="bi bi-code-square"></i>
+        Technical Implementation
+      </h3>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5><i class="bi bi-diagram-3"></i> Architecture</h5>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>Renderer Pattern:</strong> Modular Bootstrap version-specific renderers</li>
+            <li><strong>Factory Pattern:</strong> Automatic renderer selection and instantiation</li>
+            <li><strong>UMD Support:</strong> Works with AMD, CommonJS, and global jQuery</li>
+            <li><strong>ES5 Compatible:</strong> Transpiled for broad browser support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5><i class="bi bi-tools"></i> Build System</h5>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><strong>Rollup:</strong> Library bundling with tree-shaking</li>
+            <li><strong>Babel:</strong> ES5 transpilation for compatibility</li>
+            <li><strong>Terser:</strong> Minification and optimization</li>
+            <li><strong>Source Maps:</strong> Full debugging support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-section text-center">
+    <h4><i class="bi bi-github"></i> Open Source</h4>
+    <p class="text-muted">
+      Bootstrap TouchSpin is open source and available on GitHub.
+      Contributions, issues, and feedback are always welcome!
+    </p>
+    <div class="mt-3">
+      <a href="https://github.com/istvan-ujjmeszaros/touchspin" target="_blank" class="btn btn-outline-primary me-2">
+        <i class="bi bi-github"></i> View on GitHub
+      </a>
+      <a href="#" class="btn btn-outline-success">
+        <i class="bi bi-download"></i> Download
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Initialize the quick demo
+  $("input[name='quick-demo']").TouchSpin({
+    min: 0,
+    max: 100,
+    step: 1,
+    prefix: "Value: ",
+    postfix: "%",
+    booster: true,
+    boostat: 5,
+    maxboostedstep: 10
+  });
+
+
+  // Add some interactivity to the cards
+  $('.version-card').on('mouseenter', function() {
+    $(this).find('.card-body').addClass('bg-light');
+  }).on('mouseleave', function() {
+    $(this).find('.card-body').removeClass('bg-light');
+  });
+});
+</script>
+</body>
+</html>

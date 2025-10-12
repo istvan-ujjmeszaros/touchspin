@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 TouchSpin Layout Options Test Fixture</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/devdist/renderers/bootstrap5/touchspin-bootstrap5.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="/devdist/adapters/jquery/external/js/jquery.min.js"></script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="/devdist/renderers/bootstrap5/external/js/bootstrap.bundle.min.js"></script>
+
+    <!-- TouchSpin globals are loaded dynamically by test helpers -->
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            ⚙️ Bootstrap 5 TouchSpin Layout Options Test
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Standard test input -->
+                        <div class="mb-4">
+                            <label for="test-input" class="form-label fw-semibold">Standard Input:</label>
+                            <input
+                                type="number"
+                                id="test-input"
+                                data-testid="test-input"
+                                class="form-control"
+                                value="50"
+                                name="test-input"
+                                placeholder="Enter value"
+                            />
+                            <div class="form-text">
+                                Standard input for basic TouchSpin functionality tests.
+                            </div>
+                        </div>
+
+                        <!-- Grid compatibility test input -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="grid-test" class="form-label fw-semibold">Grid Context Input:</label>
+                                    <input
+                                        type="number"
+                                        id="grid-test"
+                                        data-testid="grid-test"
+                                        class="form-control"
+                                        value="50"
+                                        name="grid-test"
+                                        placeholder="Enter value"
+                                    />
+                                    <div class="form-text">
+                                        Input within Bootstrap grid column (col-md-6).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Size variant test inputs -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="size-sm-test" class="form-label fw-semibold">Small Size Input:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input
+                                            type="number"
+                                            id="size-sm-test"
+                                            data-testid="size-sm-test"
+                                            class="form-control form-control-sm"
+                                            value="50"
+                                            name="size-sm-test"
+                                            placeholder="Enter value"
+                                        />
+                                    </div>
+                                    <div class="form-text">
+                                        Small size variant input (form-control-sm, input-group-sm).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="size-lg-test" class="form-label fw-semibold">Large Size Input:</label>
+                                    <div class="input-group input-group-lg">
+                                        <input
+                                            type="number"
+                                            id="size-lg-test"
+                                            data-testid="size-lg-test"
+                                            class="form-control form-control-lg"
+                                            value="50"
+                                            name="size-lg-test"
+                                            placeholder="Enter value"
+                                        />
+                                    </div>
+                                    <div class="form-text">
+                                        Large size variant input (form-control-lg, input-group-lg).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Constrained container test input -->
+                        <div class="mb-4" style="width: 200px; max-height: 80px; overflow: hidden; border: 1px dashed #dee2e6; padding: 10px;">
+                            <label for="constrained-test" class="form-label fw-semibold small">Constrained:</label>
+                            <input
+                                type="number"
+                                id="constrained-test"
+                                data-testid="constrained-test"
+                                class="form-control form-control-sm"
+                                value="50"
+                                name="constrained-test"
+                                placeholder="Value"
+                            />
+                            <div class="form-text small">
+                                Input within size-constrained container.
+                            </div>
+                        </div>
+
+                        <!-- Nested layout test input -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="nested-test" class="form-label fw-semibold">Nested Layout Input:</label>
+                                            <input
+                                                type="number"
+                                                id="nested-test"
+                                                data-testid="nested-test"
+                                                class="form-control"
+                                                value="50"
+                                                name="nested-test"
+                                                placeholder="Enter value"
+                                            />
+                                            <div class="form-text">
+                                                Input nested within multiple Bootstrap cards.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event log section -->
+                <div class="card mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">
+                            📝 Event Log
+                        </h6>
+                        <button id="clear-log" class="btn btn-sm btn-outline-secondary">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <textarea
+                            id="event-log"
+                            data-testid="event-log"
+                            class="form-control border-0 rounded-0 font-monospace small"
+                            rows="10"
+                            readonly
+                            placeholder="Event log will appear here..."
+                            style="resize: vertical; min-height: 200px;"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Hidden element for blur testing -->
+                <input type="hidden" id="blur-target" data-testid="blur-target" />
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Event logging setup (same as base fixture)
+        window.eventLog = [];
+
+        window.logEvent = function(event, detail = {}) {
+            const eventType = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+            const logEntry = { type: eventType, event, ...detail };
+            window.eventLog.push(logEntry);
+
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                const prefix = `[${eventType}]`;
+                let logText = '';
+                if (detail.target && detail.value !== undefined) {
+                    logText = `${prefix} ${detail.target}:${detail.value} ${event}\n`;
+                } else if (detail.target) {
+                    logText = `${prefix} ${detail.target} ${event}\n`;
+                } else {
+                    logText = `${prefix} ${event}\n`;
+                }
+                logElement.value += logText;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        };
+
+        window.clearEventLog = function() {
+            window.eventLog = [];
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                logElement.value = '';
+            }
+        };
+
+        // Clear log button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearButton = document.getElementById('clear-log');
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.clearEventLog();
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+{
+  "name": "@touchspin/renderer-vanilla",
+  "version": "5.0.1-alpha.0",
+  "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "types": "dist/index.d.ts",
+  "style": "dist/touchspin-vanilla.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": "./dist/touchspin-vanilla.css",
+    "./themes/vanilla": "./dist/themes/vanilla.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "dist/themes/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../../scripts/static-server.mjs",
+    "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/themes && yarn run build:types && yarn run build:css && yarn run build:js",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core run build",
+    "build:deps:test": "yarn workspaces foreach -pt -A --include @touchspin/core run build:test",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-vanilla.css",
+    "build:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --no-source-map && cp dist/touchspin-vanilla.css dist/themes/vanilla.css",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/vanilla && cp src/index.test.ts src/index.ts.bak && mv src/index.ts src/index.ts.orig && mv src/index.test.ts src/index.ts && tsc -p tsconfig.testbuild.json && mv src/index.ts src/index.test.ts && mv src/index.ts.orig src/index.ts && rm -f src/index.ts.bak && mkdir -p ../../../devdist/renderers/vanilla/themes && cp ./src/themes/vanilla.css ../../../devdist/renderers/vanilla/themes/ && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/renderers/vanilla esmEntry=index.js classModule=VanillaRenderer.js css=themes/vanilla.css",
+    "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
+    "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "watch:css": "sass src/themes/vanilla.css dist/touchspin-vanilla.css --style=expanded --source-map --watch",
+    "clean": "rm -rf dist",
+    "test": "node ../../../scripts/pre-test.mjs packages/renderers/vanilla/tests && PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/vanilla/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/vanilla/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/vanilla/tests"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "sass": "^1.77.8",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "input",
+    "renderer",
+    "css",
+    "vanilla",
+    "accessibility",
+    "framework-agnostic"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/renderers/vanilla"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/renderers/vanilla#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

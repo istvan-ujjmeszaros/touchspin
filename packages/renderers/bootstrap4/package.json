@@ -1,0 +1,89 @@
+{
+  "name": "@touchspin/renderer-bootstrap4",
+  "version": "5.0.1-alpha.0",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "description": "Bootstrap 4 renderer for TouchSpin",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "style": "dist/touchspin-bootstrap4.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": "./dist/touchspin-bootstrap4.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../../scripts/static-server.mjs",
+    "build": "rm -rf dist && mkdir -p dist && yarn run build:types && yarn run build:css && yarn run build:js",
+    "build:js": "tsup src/index.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json && node ../../../scripts/write-artifacts-manifest.mjs --dir dist esmEntry=index.js classModule=index.js css=touchspin-bootstrap4.css",
+    "build:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --no-source-map",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core run build:test",
+    "build:test": "yarn run build:deps && node ../../../scripts/guard-prod-build.mjs packages/core packages/renderers/bootstrap4 && tsc -p tsconfig.testbuild.json && sass src/styles/touchspin-bootstrap4.scss ../../../devdist/renderers/bootstrap4/touchspin-bootstrap4.css --style=expanded --no-source-map && tsup src/Bootstrap4Renderer.ts --format iife --global-name Bootstrap4Renderer --sourcemap --target es2020 --outDir ../../../devdist/renderers/bootstrap4/iife --external=none && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/renderers/bootstrap4 esmEntry=index.js classModule=Bootstrap4Renderer.js iifeEntry=iife/Bootstrap4Renderer.global.js css=touchspin-bootstrap4.css && node ../../../scripts/extract-framework-assets.mjs --renderer bootstrap4",
+    "watch": "concurrently \"tsc -p tsconfig.build.json --watch --emitDeclarationOnly\" \"tsup src/index.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json\" \"yarn watch:css\"",
+    "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "watch:css": "sass src/styles/touchspin-bootstrap4.scss dist/touchspin-bootstrap4.css --style=expanded --source-map --watch",
+    "test": "node ../../../scripts/pre-test.mjs packages/renderers/bootstrap4/tests && PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap4/tests --reporter=list",
+    "test:ui": "PLAYWRIGHT_TSCONFIG=../../../tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --config=../../../playwright.config.ts packages/renderers/bootstrap4/tests --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap4/tests"
+  },
+  "dependencies": {
+    "@touchspin/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "bootstrap": ">=4.6.0 <5",
+    "jquery": ">=3.5.0",
+    "popper.js": ">=1.16.1"
+  },
+  "peerDependenciesMeta": {
+    "jquery": {
+      "optional": true
+    },
+    "popper.js": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/renderers/bootstrap4"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/renderers/bootstrap4#readme",
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "bootstrap": "4.6.2",
+    "sass": "^1.77.8",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

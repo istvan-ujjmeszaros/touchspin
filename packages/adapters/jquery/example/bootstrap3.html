@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap TouchSpin - Bootstrap 3 Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bootstrap TouchSpin demo with Bootstrap 3.4.1">
+
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+  <!-- Bootstrap 3.4.1 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- TouchSpin Bootstrap 3 Build -->
+  <link href="../../../renderers/bootstrap3/devdist/touchspin-bootstrap3.css" rel="stylesheet">
+  <script src="../../../../devdist/adapters/jquery/umd/bootstrap3.global.js"></script>
+
+  <!-- Demo CSS -->
+  <link href="demo.css" rel="stylesheet">
+
+  <style>
+    .demo-version-badge {
+      background: #337ab7;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    .demo-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .demo-example {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border: 1px solid #e3e3e3;
+      border-radius: 4px;
+    }
+    .version-info {
+      background: #d9edf7;
+      border: 1px solid #bce8f1;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <div class="hero-unit text-center">
+    <h1>Bootstrap TouchSpin</h1>
+    <div class="demo-version-badge">Bootstrap 3.4.1 Demo</div>
+    <p class="lead">Demonstrating TouchSpin compatibility with Bootstrap 3</p>
+    <p>
+      <a href="index.html" class="btn btn-default">← Back to Main Demo</a>
+      <a href="bootstrap4.html" class="btn btn-primary">Bootstrap 4 Demo →</a>
+    </p>
+  </div>
+
+  <div class="version-info">
+    <h3>Bootstrap 3 Features</h3>
+    <p>This demo showcases Bootstrap TouchSpin working with Bootstrap 3.4.1, featuring:</p>
+    <ul>
+      <li><code>input-group-btn</code> and <code>input-group-addon</code> classes</li>
+      <li>Bootstrap 3 button styles and sizing classes</li>
+      <li>Classic Bootstrap 3 form controls and layouts</li>
+      <li>Automatic Bootstrap version detection</li>
+    </ul>
+  </div>
+
+  <div class="demo-section">
+    <h2>Basic Examples</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo1">Simple TouchSpin:</label>
+          <input id="demo1" type="text" value="42" name="demo1" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo1']").TouchSpin();</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo2">With Prefix & Postfix:</label>
+          <input id="demo2" type="text" value="50" name="demo2" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo2']").TouchSpin({
+  prefix: '$',
+  postfix: '.00',
+  min: 0,
+  max: 1000
+});</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo3">Decimal Values:</label>
+          <input id="demo3" type="text" value="3.14" name="demo3" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo3']").TouchSpin({
+  min: 0,
+  max: 10,
+  step: 0.01,
+  decimals: 2
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Sizing Examples</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo4">Small Size:</label>
+          <input id="demo4" type="text" value="25" name="demo4" class="form-control input-sm">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>&lt;input class="form-control input-sm" ...&gt;
+$("input[name='demo4']").TouchSpin();</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo5">Large Size:</label>
+          <input id="demo5" type="text" value="75" name="demo5" class="form-control input-lg">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>&lt;input class="form-control input-lg" ...&gt;
+$("input[name='demo5']").TouchSpin();</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Vertical Buttons</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo6">Vertical Layout:</label>
+          <input id="demo6" type="text" value="10" name="demo6" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo6']").TouchSpin({
+  verticalbuttons: true,
+  verticalup: '&lt;i class="fa fa-plus"&gt;&lt;/i&gt;',
+  verticaldown: '&lt;i class="fa fa-minus"&gt;&lt;/i&gt;'
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Bootstrap 3 Input Groups</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="demo7">Advanced Input Group:</label>
+          <div class="input-group">
+            <span class="input-group-addon">
+              <i class="fa fa-calculator"></i>
+            </span>
+            <input id="demo7" type="text" value="100" name="demo7" class="form-control">
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-success">Apply</button>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="#">Option 1</a></li>
+                <li><a href="#">Option 2</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Reset</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4>Code:</h4>
+          <pre><code>&lt;div class="input-group"&gt;
+  &lt;span class="input-group-addon"&gt;
+    &lt;i class="fa fa-calculator"&gt;&lt;/i&gt;
+  &lt;/span&gt;
+  &lt;input ... class="form-control"&gt;
+  &lt;div class="input-group-btn"&gt;
+    &lt;button class="btn btn-success"&gt;Apply&lt;/button&gt;
+    ...
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Custom Styling</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo8">Custom Button Classes:</label>
+          <input id="demo8" type="text" value="33" name="demo8" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo8']").TouchSpin({
+  buttondown_class: "btn btn-danger",
+  buttonup_class: "btn btn-success",
+  buttondown_txt: '&lt;i class="fa fa-minus"&gt;&lt;/i&gt;',
+  buttonup_txt: '&lt;i class="fa fa-plus"&gt;&lt;/i&gt;'
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Advanced Features</h2>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo9">With Booster & Limits:</label>
+          <input id="demo9" type="text" value="50" name="demo9" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo9']").TouchSpin({
+  min: 0,
+  max: 1000,
+  step: 5,
+  booster: true,
+  boostat: 5,
+  maxboostedstep: 100,
+  postfix: " items"
+});</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-example">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="demo10">Force Step Divisibility:</label>
+          <input id="demo10" type="text" value="15" name="demo10" class="form-control">
+        </div>
+        <div class="col-md-8">
+          <h4>Code:</h4>
+          <pre><code>$("input[name='demo10']").TouchSpin({
+  min: 0,
+  max: 100,
+  step: 5,
+  forcestepdivisibility: 'round'
+});</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Bootstrap 3 Specific Build</h2>
+    <div class="alert alert-info">
+      <strong>Version-Specific Build:</strong> This demo uses the Bootstrap 3 specific build (<code>jquery.bootstrap-touchspin-bs3.js</code>) for optimal performance and compatibility.
+    </div>
+  </div>
+
+  <hr>
+
+  <footer class="text-center" style="margin: 40px 0;">
+    <p>
+      <a href="bootstrap4.html" class="btn btn-primary">Bootstrap 4 Demo →</a>
+      <a href="bootstrap5.html" class="btn btn-primary">Bootstrap 5 Demo →</a>
+    </p>
+  </footer>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Initialize all TouchSpins
+  $("input[name='demo1']").TouchSpin();
+
+  $("input[name='demo2']").TouchSpin({
+    prefix: '$',
+    postfix: '.00',
+    min: 0,
+    max: 1000
+  });
+
+  $("input[name='demo3']").TouchSpin({
+    min: 0,
+    max: 10,
+    step: 0.01,
+    decimals: 2
+  });
+
+  $("input[name='demo4']").TouchSpin();
+
+  $("input[name='demo5']").TouchSpin();
+
+  $("input[name='demo6']").TouchSpin({
+    verticalbuttons: true,
+    verticalup: '<i class="fa fa-plus"></i>',
+    verticaldown: '<i class="fa fa-minus"></i>'
+  });
+
+  $("input[name='demo7']").TouchSpin({
+    prefix: "Value:",
+    postfix: "units"
+  });
+
+  $("input[name='demo8']").TouchSpin({
+    buttondown_class: "btn btn-danger",
+    buttonup_class: "btn btn-success",
+    buttondown_txt: '<i class="fa fa-minus"></i>',
+    buttonup_txt: '<i class="fa fa-plus"></i>'
+  });
+
+  $("input[name='demo9']").TouchSpin({
+    min: 0,
+    max: 1000,
+    step: 5,
+    booster: true,
+    boostat: 5,
+    maxboostedstep: 100,
+    postfix: " items"
+  });
+
+  $("input[name='demo10']").TouchSpin({
+    min: 0,
+    max: 100,
+    step: 5,
+    forcestepdivisibility: 'round'
+  });
+
+});
+</script>
+</body>
+</html>

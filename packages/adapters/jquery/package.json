@@ -1,0 +1,88 @@
+{
+  "name": "@touchspin/jquery",
+  "version": "5.0.1-alpha.0",
+  "type": "module",
+  "description": "jQuery adapter for TouchSpin using standalone adapter",
+  "license": "MIT",
+  "sideEffects": [
+    "./dist/**/*.js"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/adapters/jquery"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/adapters/jquery#readme",
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../../scripts/static-server.mjs",
+    "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:js && yarn run build:umd-bootstrap3 && yarn run build:umd-bootstrap4 && yarn run build:umd-bootstrap5 && yarn run build:umd-tailwind && yarn run build:umd-vanilla",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/standalone run build",
+    "build:deps:test": "yarn workspaces foreach -pt -A --include @touchspin/standalone run build:test",
+    "build:js": "tsup src/index.ts --format esm,cjs --sourcemap --target es2018 --tsconfig tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:umd-bootstrap3": "tsup src/bootstrap3.ts --format iife --global-name TouchSpinJQueryBootstrap3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap3.global.js dist/umd/jquery.touchspin-bootstrap3",
+    "build:umd-bootstrap4": "tsup src/bootstrap4.ts --format iife --global-name TouchSpinJQueryBootstrap4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap4.global.js dist/umd/jquery.touchspin-bootstrap4",
+    "build:umd-bootstrap5": "tsup src/bootstrap5.ts --format iife --global-name TouchSpinJQueryBootstrap5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap5.global.js dist/umd/jquery.touchspin-bootstrap5",
+    "build:umd-tailwind": "tsup src/tailwind.ts --format iife --global-name TouchSpinJQueryTailwind --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/tailwind.global.js dist/umd/jquery.touchspin-tailwind",
+    "build:umd-vanilla": "tsup src/vanilla.ts --format iife --global-name TouchSpinJQueryVanilla --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/vanilla.global.js dist/umd/jquery.touchspin-vanilla",
+    "build:test": "yarn run build:deps:test && node ../../../scripts/guard-prod-build.mjs packages/adapters/standalone && tsc -p tsconfig.testbuild.json && tsup src/bootstrap3.ts --format iife --global-name TouchSpinJQueryBootstrap3 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/jquery/umd --external=none && tsup src/bootstrap4.ts --format iife --global-name TouchSpinJQueryBootstrap4 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/jquery/umd --external=none && tsup src/bootstrap5.ts --format iife --global-name TouchSpinJQueryBootstrap5 --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/jquery/umd --external=none && tsup src/tailwind.ts --format iife --global-name TouchSpinJQueryTailwind --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/jquery/umd --external=none && tsup src/vanilla.ts --format iife --global-name TouchSpinJQueryVanilla --no-dts --sourcemap --target es2018 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/jquery/umd --external=none && node ../../../scripts/extract-framework-assets.mjs --renderer jquery --dest ../../../devdist/adapters/jquery && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/adapters/jquery umdBootstrap3Entry=umd/bootstrap3.global.js umdBootstrap4Entry=umd/bootstrap4.global.js umdBootstrap5Entry=umd/bootstrap5.global.js umdTailwindEntry=umd/tailwind.global.js umdVanillaEntry=umd/vanilla.global.js",
+    "watch": "tsup src/index.ts --format esm --watch --sourcemap --target es2018 --tsconfig tsconfig.build.json",
+    "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "node ../../../scripts/pre-test.mjs packages/adapters/jquery/tests && cd ../../.. && playwright test packages/adapters/jquery/tests/",
+    "test:ui": "cd ../../.. && playwright test packages/adapters/jquery/tests/ --ui"
+  },
+  "dependencies": {
+    "@touchspin/standalone": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts"
+  },
+  "peerDependencies": {
+    "jquery": ">=1.9.0"
+  },
+  "peerDependenciesMeta": {
+    "jquery": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@touchspin/core": "workspace:*",
+    "@types/jquery": "^3.5.30",
+    "@types/node": "^22.7.4",
+    "jquery": "^3.7.1",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

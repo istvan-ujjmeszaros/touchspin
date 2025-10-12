@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "types": ["@playwright/test", "node"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "playwright.config.ts",
+    "packages/core/test-helpers/types/global-playwright.d.ts",
+    "packages/**/tests/**/*.ts",
+    "packages/**/__tests__/**/*.ts"
+  ]
+}

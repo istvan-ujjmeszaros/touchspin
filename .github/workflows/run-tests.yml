@@ -1,33 +1,130 @@
-name: run-tests
-run-name: Run tests
+name: CI Tests
+run-name: Run Bootstrap TouchSpin Tests
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy
+      options: --ipc=host
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          node-version: '22.12.0'
+          # Don't use built-in cache - it doesn't work with Yarn 4/corepack
+
+      - name: Enable corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+          yarn --version
+
+      # Cache Yarn dependencies (.yarn/cache directory for PnP)
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            node_modules
+          key: ${{ runner.os }}-yarn-nm-${{ hashFiles('yarn.lock', 'package.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-yarn-nm-
+
+
+      - name: Yarn install and prepare environment
+        run: |
+          # Replace PnP with node-modules for CI to avoid Vite issues
+          cat > .yarnrc.yml << 'EOF'
+          nodeLinker: node-modules
+          EOF
+          yarn install
+
+      # Playwright browser and dependencies are pre-installed in the container
+
+      # Cache build artifacts
+      - name: Cache build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/renderers/*/dist
+          key: ${{ runner.os }}-build-${{ hashFiles('packages/**/src/**', 'tsconfig*.json') }}
+          restore-keys: |
             ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
-      - name: Install dependencies
-        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Build test artifacts (devdist)
+        run: yarn build:clean
 
-      - name: Run tests
-        run: npm test
+      - name: Run build guards
+        run: yarn guard:all
+
+      - name: Run tests (Chromium)
+        run: yarn test
+
+      - name: Validate tarballs (dry-run pack)
+        if: success()
+        run: |
+          yarn workspaces foreach -A -v exec npm pack --dry-run
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test]
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+
+      - name: Enable corepack (Yarn 4)
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            node_modules
+          key: ${{ runner.os }}-yarn-nm-${{ hashFiles('yarn.lock', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-nm-
+
+      - name: Yarn install
+        run: |
+          cat > .yarnrc.yml << 'EOF'
+          nodeLinker: node-modules
+          EOF
+          yarn install --immutable
+
+      - name: Build publish artifacts (dist)
+        run: yarn build

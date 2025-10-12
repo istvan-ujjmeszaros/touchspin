@@ -1,0 +1,109 @@
+{
+  "name": "@touchspin/webcomponent",
+  "version": "5.0.1-alpha.0",
+  "description": "TouchSpin Web Component - Single <touchspin-input> tag for all renderers",
+  "type": "module",
+  "sideEffects": [
+    "./dist/**/*.js"
+  ],
+  "types": "./dist/vanilla.d.ts",
+  "exports": {
+    "./bootstrap3": {
+      "types": "./dist/bootstrap3.d.ts",
+      "import": "./dist/bootstrap3.js"
+    },
+    "./bootstrap4": {
+      "types": "./dist/bootstrap4.d.ts",
+      "import": "./dist/bootstrap4.js"
+    },
+    "./bootstrap5": {
+      "types": "./dist/bootstrap5.d.ts",
+      "import": "./dist/bootstrap5.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind.d.ts",
+      "import": "./dist/tailwind.js"
+    },
+    "./vanilla": {
+      "types": "./dist/vanilla.d.ts",
+      "import": "./dist/vanilla.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../../scripts/static-server.mjs",
+    "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:js && yarn run build:umd-bootstrap3 && yarn run build:umd-bootstrap4 && yarn run build:umd-bootstrap5 && yarn run build:umd-tailwind && yarn run build:umd-vanilla",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind --include @touchspin/renderer-vanilla run build",
+    "build:js": "tsup src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts src/vanilla.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:umd-bootstrap3": "tsup src/bootstrap3.ts --format iife --global-name TouchSpinWCBootstrap3 --no-dts --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap3.global.js dist/umd/bootstrap3.touchspin",
+    "build:umd-bootstrap4": "tsup src/bootstrap4.ts --format iife --global-name TouchSpinWCBootstrap4 --no-dts --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap4.global.js dist/umd/bootstrap4.touchspin",
+    "build:umd-bootstrap5": "tsup src/bootstrap5.ts --format iife --global-name TouchSpinWCBootstrap5 --no-dts --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/bootstrap5.global.js dist/umd/bootstrap5.touchspin",
+    "build:umd-tailwind": "tsup src/tailwind.ts --format iife --global-name TouchSpinWCTailwind --no-dts --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/tailwind.global.js dist/umd/tailwind.touchspin",
+    "build:umd-vanilla": "tsup src/vanilla.ts --format iife --global-name TouchSpinWCVanilla --no-dts --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir dist/umd --external=none && node ../../../scripts/rename-umd.mjs dist/umd/vanilla.global.js dist/umd/vanilla.touchspin",
+    "build:test": "tsc -p tsconfig.testbuild.json && tsup src/bootstrap3.ts --format iife --global-name TouchSpinWCBootstrap3 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/webcomponent/umd --external=none && tsup src/bootstrap4.ts --format iife --global-name TouchSpinWCBootstrap4 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/webcomponent/umd --external=none && tsup src/bootstrap5.ts --format iife --global-name TouchSpinWCBootstrap5 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/webcomponent/umd --external=none && tsup src/tailwind.ts --format iife --global-name TouchSpinWCTailwind --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/webcomponent/umd --external=none && tsup src/vanilla.ts --format iife --global-name TouchSpinWCVanilla --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/webcomponent/umd --external=none && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/adapters/webcomponent umdBootstrap3Entry=umd/bootstrap3.global.js umdBootstrap4Entry=umd/bootstrap4.global.js umdBootstrap5Entry=umd/bootstrap5.global.js umdTailwindEntry=umd/tailwind.global.js umdVanillaEntry=umd/vanilla.global.js",
+    "watch": "tsup src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts src/vanilla.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "node ../../../scripts/pre-test.mjs packages/adapters/webcomponent/tests && cd ../../.. && playwright test packages/adapters/webcomponent/tests/",
+    "test:ui": "cd ../../.. && playwright test packages/adapters/webcomponent/tests/ --ui",
+    "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/adapters/webcomponent/tests"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/vanilla.d.ts"
+  },
+  "keywords": [
+    "touchspin",
+    "spinner",
+    "number-input",
+    "web-components",
+    "custom-elements",
+    "framework-agnostic",
+    "bootstrap",
+    "bootstrap3",
+    "bootstrap4",
+    "bootstrap5",
+    "tailwind",
+    "vanilla"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@touchspin/core": "workspace:*",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "@touchspin/renderer-vanilla": "workspace:*"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/adapters/webcomponent"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/adapters/webcomponent#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

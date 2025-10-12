@@ -1,0 +1,28 @@
+/**
+ * Feature: Core helpers installation (sample spec)
+ * Background: fixture = /packages/core/tests/fixtures/core-api-fixture.html
+ */
+
+/*
+ * CHECKLIST — Scenarios in this spec
+ * [x] installs DOM helpers
+ */
+
+import { test } from '@playwright/test';
+import { expectValueToBe } from '../__shared__/helpers/assertions/values';
+import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
+import { installDomHelpers } from '../__shared__/helpers/runtime/installDomHelpers';
+
+/**
+ * Scenario: installs DOM helpers
+ * Given the fixture page is loaded
+ * When DOM helpers are installed
+ * Then TouchSpin can be initialized without errors
+ */
+test('installs DOM helpers', async ({ page }) => {
+  const testFixtureUrl = '/packages/core/tests/fixtures/core-api-fixture.html';
+  await page.goto(testFixtureUrl);
+  await installDomHelpers(page);
+  await initializeTouchspin(page, 'test-input', { step: 1, initval: '0' });
+  await expectValueToBe(page, 'test-input', '0'); // sanity that helpers didn't break anything
+});

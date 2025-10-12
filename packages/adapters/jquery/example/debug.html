@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>jQuery Debug</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <script src="../../../../devdist/adapters/jquery/umd/bootstrap5.global.js"></script>
+</head>
+<body>
+  <h1>Debug Page</h1>
+  <input type="text" id="test" value="50">
+
+  <script>
+    console.log('jQuery available:', typeof jQuery !== 'undefined');
+    console.log('$ available:', typeof $ !== 'undefined');
+    console.log('$.fn.TouchSpin available:', typeof $.fn.TouchSpin !== 'undefined');
+
+    if (typeof $.fn.TouchSpin !== 'undefined') {
+      console.log('Attempting to initialize...');
+      $('#test').TouchSpin({ min: 0, max: 100 });
+      console.log('Initialization complete');
+    } else {
+      console.error('TouchSpin plugin not registered!');
+    }
+  </script>
+</body>
+</html>

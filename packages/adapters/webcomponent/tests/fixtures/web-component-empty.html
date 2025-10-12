@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TouchSpin Web Component Empty Fixture</title>
+
+    <!-- Bootstrap 5 CSS for renderer -->
+    <link rel="stylesheet" href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Load touchspin-input web component with Bootstrap5 renderer -->
+    <script src="/devdist/adapters/webcomponent/umd/bootstrap5.global.js"></script>
+
+    <script>
+        // Mark page as ready once web component is defined
+        if (customElements.get('touchspin-input')) {
+            window.testPageReady = true;
+        } else {
+            customElements.whenDefined('touchspin-input').then(() => {
+                window.testPageReady = true;
+            });
+        }
+    </script>
+</body>
+</html>

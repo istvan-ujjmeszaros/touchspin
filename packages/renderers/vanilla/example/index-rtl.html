@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TouchSpin Vanilla - Complete Demo (RTL)</title>
+
+  <!-- TouchSpin CSS -->
+  <link rel="stylesheet" href="../devdist/themes/vanilla.css" id="touchspin-css">
+
+  <!-- Import map with relative paths -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@touchspin/core": "../../../core/devdist/index.js",
+      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
+      "@touchspin/renderers/vanilla": "../devdist/VanillaRenderer.js"
+    }
+  }
+  </script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 400px 1fr 450px;
+      gap: 30px;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1600px) {
+      .main-container {
+        grid-template-columns: 350px 1fr 420px;
+        gap: 25px;
+      }
+    }
+
+    @media (max-width: 1400px) {
+      .main-container {
+        grid-template-columns: 320px 1fr 380px;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr 400px;
+        gap: 20px;
+      }
+
+      .left-sidebar {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .control-panel {
+        position: static;
+        width: 100%;
+        max-height: none;
+      }
+
+      .left-sidebar {
+        position: static;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .example {
+        padding: 20px;
+      }
+    }
+
+    .left-sidebar {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .center-section {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .example {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .example h3 {
+      margin-top: 0;
+      color: #212529;
+      font-weight: 600;
+    }
+
+    .spinner {
+      margin: 15px 0;
+    }
+
+    .control-panel {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .control-panel-header {
+      padding: 20px;
+      border-bottom: 1px solid #dee2e6;
+      position: sticky;
+      top: 0;
+      background: white;
+      border-radius: 8px 8px 0 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .control-panel-header h2 {
+      margin: 0 0 5px;
+      color: #212529;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .control-sections {
+      padding: 20px;
+    }
+
+    .settings-section {
+      margin-bottom: 15px;
+    }
+
+    .settings-header {
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: -1px;
+    }
+
+    .settings-body {
+      padding: 15px;
+      border: 1px solid #dee2e6;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .control-group label span {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
+
+    .control-group input[type="text"],
+    .control-group input[type="number"],
+    .control-group select {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+
+    .control-group input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    .event-log {
+      margin-top: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #f8f9fa;
+    }
+
+    .event-log-header {
+      padding: 10px 15px;
+      background: #e9ecef;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+    }
+
+    .event-entry {
+      padding: 8px 15px;
+      border-bottom: 1px solid #e9ecef;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+
+    .event-entry:last-child {
+      border-bottom: none;
+    }
+
+    .method-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .method-buttons button {
+      flex: 1 1 100px;
+      padding: 8px 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .method-buttons button:hover {
+      background: #0056b3;
+    }
+
+    .method-feedback {
+      margin-top: 10px;
+      min-height: 1.5rem;
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+
+    pre.code-block {
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 15px 0;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      background: #f8f9fa;
+      color: #495057;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .btn:hover {
+      background: #e2e6ea;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+    }
+
+    /* Color picker specific styles */
+    .color-var-group {
+      display: grid;
+      grid-template-columns: 180px 1fr 40px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .color-var-group label {
+      margin: 0;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .color-var-group input[type="text"] {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .color-picker-trigger {
+      width: 36px;
+      height: 28px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .var-group {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .var-group label {
+      margin: 0;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .var-group input {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .copy-feedback {
+      font-size: 12px;
+      color: #059669;
+      min-width: 60px;
+      display: none;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<div style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+  <a href="index.html" style="display: inline-block; padding: 0.375rem 0.75rem; background: #007bff; color: white; text-decoration: none; border-radius: 0.25rem; font-size: 0.875rem;">← Switch to LTR</a>
+</div>
+<div class="main-container">
+  <!-- Left Sidebar: Event Log & Method Testing -->
+  <div class="left-sidebar">
+    <!-- Method Testing -->
+    <div class="example">
+      <h3>🔧 API Method Testing</h3>
+      <div class="method-buttons">
+        <button id="test-up-once">upOnce()</button>
+        <button id="test-down-once">downOnce()</button>
+        <button style="background: #28a745" id="test-start-up">startUpSpin()</button>
+        <button style="background: #28a745" id="test-start-down">startDownSpin()</button>
+        <button style="background: #ffc107; color: #212529" id="test-stop-spin">stopSpin()</button>
+        <button style="background: #17a2b8" id="test-set-random">setValue(random)</button>
+        <button style="background: #17a2b8" id="test-get-value">getValue()</button>
+        <button style="background: #dc3545" id="test-destroy">destroy()</button>
+        <button style="background: #6c757d" id="test-reinit">Re-Initialize</button>
+      </div>
+      <div class="method-feedback" id="method-feedback" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="example">
+      <h3>📊 Event Monitor</h3>
+      <div class="event-log">
+        <div class="event-log-header">
+          <span style="font-weight: 500;">Event Log</span>
+          <button class="btn btn-sm" id="clear-log">Clear</button>
+        </div>
+        <div id="event-log-content">
+          <div class="event-entry">Waiting for events...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center Section: Interactive Demo & Static Examples -->
+  <div class="center-section">
+    <div class="example">
+      <h3>🎨 Interactive TouchSpin Demo</h3>
+      <p style="color: #6c757d; margin-bottom: 1rem;">Adjust the settings in the right panel to see changes in real-time.</p>
+      <div class="spinner">
+        <input type="number" id="demo-input" min="0" max="100" value="50" step="1">
+      </div>
+    </div>
+
+    <!-- Generated Code -->
+    <div class="example">
+      <h3>💻 Generated Code</h3>
+      <p style="color: #6c757d; font-size: 0.875rem; margin-bottom: 8px;">Non-default settings only:</p>
+      <pre class="code-block" id="generated-code">// Initializing...</pre>
+    </div>
+
+    <!-- Static Examples -->
+    <div class="example">
+      <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">📚 Static Examples</h3>
+      <p style="color: #6c757d; margin-bottom: 1rem;">Pre-configured examples showing different TouchSpin configurations.</p>
+
+      <!-- Currency Example -->
+      <div class="example">
+        <h3>💰 Currency Example</h3>
+        <div class="spinner">
+          <input type="number" id="currency-example" min="0" max="1000" value="25.50" step="0.50">
+        </div>
+      </div>
+
+      <!-- Vertical Example -->
+      <div class="example">
+        <h3>📊 Vertical Buttons</h3>
+        <div class="spinner">
+          <input type="number" id="vertical-example" min="0" max="100" value="75" step="5">
+        </div>
+      </div>
+
+      <!-- Min/Max Example -->
+      <div class="example">
+        <h3>🎯 Min/Max Boundary</h3>
+        <div class="spinner">
+          <input type="number" id="boundary-example" min="10" max="50" value="30" step="5">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar: Settings Panel & CSS Variables -->
+  <div class="control-panel">
+    <div class="control-panel-header">
+      <div>
+        <h2>⚙️ Settings & Theming</h2>
+        <p style="font-size: 0.875rem; color: #6c757d; margin: 0;">Configure demo + CSS variables</p>
+      </div>
+      <button class="btn btn-danger btn-sm" id="reset-settings">Reset</button>
+    </div>
+
+    <div class="control-sections">
+      <!-- Value & Range Settings -->
+      <div class="settings-section">
+        <div class="settings-header">📊 Value & Range</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Initial Value</span>
+              <input type="number" id="control-initval" value="50">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Minimum</span>
+              <input type="number" id="control-min" value="0">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Maximum</span>
+              <input type="number" id="control-max" value="100">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step</span>
+              <input type="number" id="control-step" value="1" step="0.1">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Decimal Places</span>
+              <input type="number" id="control-decimals" value="0" min="0" max="10" step="1">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>First Click Value (if empty)</span>
+              <input type="number" id="control-firstclickvalueifempty" placeholder="null (no change)">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Replacement Value (when invalid)</span>
+              <input type="text" id="control-replacementval" placeholder="e.g. 0">
+            </label>
+          </div>
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-booster" checked>
+              <span style="margin-bottom: 0; margin-left: 4px;">Enable Boost Acceleration</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Boostat (acceleration trigger)</span>
+              <input type="number" id="control-boostat" value="10" step="1" min="0">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Max Boosted Step</span>
+              <input type="number" id="control-maxboostedstep" value="10" step="1" min="1">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance Settings -->
+      <div class="settings-section">
+        <div class="settings-header">🎨 Appearance</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Prefix</span>
+              <input type="text" id="control-prefix" placeholder="e.g. $">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Postfix</span>
+              <input type="text" id="control-postfix" placeholder="e.g. kg">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Prefix Extra Class</span>
+              <input type="text" id="control-prefix-extraclass" placeholder="CSS class">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Postfix Extra Class</span>
+              <input type="text" id="control-postfix-extraclass" placeholder="CSS class">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button Settings -->
+      <div class="settings-section">
+        <div class="settings-header">🔘 Button Configuration</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label>
+              <span>Button Up Text</span>
+              <input type="text" id="control-buttonup-txt" value="+">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Down Text</span>
+              <input type="text" id="control-buttondown-txt" value="−">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Up Class</span>
+              <input type="text" id="control-buttonup-class" placeholder="CSS class">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Button Down Class</span>
+              <input type="text" id="control-buttondown-class" placeholder="CSS class">
+            </label>
+          </div>
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-verticalbuttons">
+              <span style="margin-bottom: 0; margin-left: 4px;">Vertical Buttons</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Up Text</span>
+              <input type="text" id="control-verticalup" value="▲">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Down Text</span>
+              <input type="text" id="control-verticaldown" value="▼">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Up Class</span>
+              <input type="text" id="control-verticalupclass" placeholder="CSS class">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Vertical Down Class</span>
+              <input type="text" id="control-verticaldownclass" placeholder="CSS class">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Behavior Settings -->
+      <div class="settings-section">
+        <div class="settings-header">⚡ Behavior</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-forcestepdivisibility" checked>
+              <span style="margin-bottom: 0; margin-left: 4px;">Force Step Divisibility</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step Interval (ms)</span>
+              <input type="number" id="control-stepinterval" value="100" min="10" step="10">
+            </label>
+          </div>
+          <div class="control-group">
+            <label>
+              <span>Step Interval Delay (ms)</span>
+              <input type="number" id="control-stepintervaldelay" value="500" min="0" step="50">
+            </label>
+          </div>
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-mousewheel" checked>
+              <span style="margin-bottom: 0; margin-left: 4px;">Mouse Wheel Support</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Behavior Settings -->
+      <div class="settings-section">
+        <div class="settings-header">⌨️ Input Behavior</div>
+        <div class="settings-body">
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-focusablebuttons">
+              <span style="margin-bottom: 0; margin-left: 4px;">Focusable Buttons</span>
+            </label>
+          </div>
+          <div class="control-group">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" id="control-disabled">
+              <span style="margin-bottom: 0; margin-left: 4px;">Disabled</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- CSS Variables with Color Pickers -->
+      <div class="settings-section">
+        <div class="settings-header">🎨 CSS Variables & Theming</div>
+        <div class="settings-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="font-size: 0.875rem; color: #6c757d;">Live theme editor</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="copy-feedback" id="copied-msg">Copied!</span>
+              <button class="btn btn-sm" id="btn-copy-vars">Copy :root Block</button>
+            </div>
+          </div>
+
+          <!-- Color Variables -->
+          <div class="color-var-group">
+            <label>--ts-wrapper-background-color</label>
+            <input type="text" data-var="--ts-wrapper-background-color" data-color-text="--ts-wrapper-background-color" value="#ffffff">
+            <input type="color" data-var-color="--ts-wrapper-background-color" value="#ffffff" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-wrapper-border-color</label>
+            <input type="text" data-var="--ts-wrapper-border-color" data-color-text="--ts-wrapper-border-color" value="#d1d5db">
+            <input type="color" data-var-color="--ts-wrapper-border-color" value="#d1d5db" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-wrapper-focus-border-color</label>
+            <input type="text" data-var="--ts-wrapper-focus-border-color" data-color-text="--ts-wrapper-focus-border-color" value="#3b82f6">
+            <input type="color" data-var-color="--ts-wrapper-focus-border-color" value="#3b82f6" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-input-text-color</label>
+            <input type="text" data-var="--ts-input-text-color" data-color-text="--ts-input-text-color" value="#111827">
+            <input type="color" data-var-color="--ts-input-text-color" value="#111827" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-input-placeholder-color</label>
+            <input type="text" data-var="--ts-input-placeholder-color" data-color-text="--ts-input-placeholder-color" value="#6b7280">
+            <input type="color" data-var-color="--ts-input-placeholder-color" value="#6b7280" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-button-background-color</label>
+            <input type="text" data-var="--ts-button-background-color" data-color-text="--ts-button-background-color" value="#f3f4f6">
+            <input type="color" data-var-color="--ts-button-background-color" value="#f3f4f6" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-button-background-color-hover</label>
+            <input type="text" data-var="--ts-button-background-color-hover" data-color-text="--ts-button-background-color-hover" value="#e5e7eb">
+            <input type="color" data-var-color="--ts-button-background-color-hover" value="#e5e7eb" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-button-background-color-active</label>
+            <input type="text" data-var="--ts-button-background-color-active" data-color-text="--ts-button-background-color-active" value="#d1d5db">
+            <input type="color" data-var-color="--ts-button-background-color-active" value="#d1d5db" class="color-picker-trigger">
+          </div>
+          <div class="color-var-group">
+            <label>--ts-button-text-color</label>
+            <input type="text" data-var="--ts-button-text-color" data-color-text="--ts-button-text-color" value="#374151">
+            <input type="color" data-var-color="--ts-button-text-color" value="#374151" class="color-picker-trigger">
+          </div>
+
+          <!-- Non-color Variables -->
+          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #dee2e6;">
+            <div class="var-group">
+              <label>--ts-wrapper-border-width</label>
+              <input type="text" data-var="--ts-wrapper-border-width" value="1px">
+            </div>
+            <div class="var-group">
+              <label>--ts-wrapper-border-radius</label>
+              <input type="text" data-var="--ts-wrapper-border-radius" value="0.375rem">
+            </div>
+            <div class="var-group">
+              <label>--ts-button-down-border-radius</label>
+              <input type="text" data-var="--ts-button-down-border-radius" value="0.375rem 0 0 0.375rem">
+            </div>
+            <div class="var-group">
+              <label>--ts-button-up-border-radius</label>
+              <input type="text" data-var="--ts-button-up-border-radius" value="0 0.375rem 0.375rem 0">
+            </div>
+            <div class="var-group">
+              <label>--ts-input-font-size</label>
+              <input type="text" data-var="--ts-input-font-size" value="1rem">
+            </div>
+            <div class="var-group">
+              <label>--ts-input-padding</label>
+              <input type="text" data-var="--ts-input-padding" value="0.5rem 0.75rem">
+            </div>
+            <div class="var-group">
+              <label>--ts-button-padding</label>
+              <input type="text" data-var="--ts-button-padding" value="0.5rem 0.75rem">
+            </div>
+            <div class="var-group">
+              <label>--ts-button-min-width</label>
+              <input type="text" data-var="--ts-button-min-width" value="2rem">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>

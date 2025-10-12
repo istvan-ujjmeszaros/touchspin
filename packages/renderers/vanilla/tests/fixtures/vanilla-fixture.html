@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla TouchSpin Test Fixture</title>
+
+    <link rel="stylesheet" href="/devdist/renderers/vanilla/themes/vanilla.css">
+
+    <!-- TouchSpin globals are loaded dynamically by test helpers -->
+</head>
+<body>
+    <div class="container">
+        <h1>Vanilla TouchSpin Test Fixture</h1>
+
+        <!-- Simple test input for basic TouchSpin functionality -->
+        <div class="form-group">
+            <label for="test-input">Simple Input:</label>
+            <input
+                type="number"
+                id="test-input"
+                data-testid="test-input"
+                class="form-control"
+                value="50"
+                name="test-input"
+                placeholder="Enter value"
+            />
+            <small class="help-text">
+                Standalone input for basic TouchSpin functionality tests.
+            </small>
+        </div>
+
+        <!-- Advanced test input -->
+        <div class="form-group">
+            <label for="test-input-advanced">Advanced Input:</label>
+            <input
+                type="number"
+                id="test-input-advanced"
+                data-testid="test-input-advanced"
+                class="form-control"
+                value="50"
+                name="test-input-advanced"
+                placeholder="Enter value"
+            />
+            <small class="help-text">
+                Advanced input for testing complex TouchSpin functionality.
+            </small>
+        </div>
+
+        <!-- Container for dynamically injected inputs -->
+        <div id="additional-inputs" class="additional-section" style="display: none;">
+            <h6>Additional Test Inputs</h6>
+        </div>
+
+        <!-- Event log section -->
+        <div class="event-log-section">
+            <div class="log-header">
+                <h6>📝 Event Log</h6>
+                <button id="clear-log" class="btn btn-clear">🗑️ Clear</button>
+            </div>
+            <textarea
+                id="event-log"
+                data-testid="event-log"
+                class="event-log"
+                rows="10"
+                readonly
+                placeholder="Event log will appear here..."
+            ></textarea>
+        </div>
+
+        <!-- Hidden element for blur testing -->
+        <input type="hidden" id="blur-target" data-testid="blur-target" />
+    </div>
+
+    <script type="module">
+        // Event logging setup
+        window.eventLog = [];
+
+        window.logEvent = function(event, detail = {}) {
+            const eventType = event.startsWith('touchspin.') ? 'touchspin' : 'native';
+            const logEntry = { type: eventType, event, ...detail };
+            window.eventLog.push(logEntry);
+
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                const prefix = `[${eventType}]`;
+                let logText = '';
+                if (detail.target && detail.value !== undefined) {
+                    logText = `${prefix} ${detail.target}:${detail.value} ${event}\n`;
+                } else if (detail.target) {
+                    logText = `${prefix} ${detail.target} ${event}\n`;
+                } else {
+                    logText = `${prefix} ${event}\n`;
+                }
+                logElement.value += logText;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        };
+
+        window.clearEventLog = function() {
+            window.eventLog = [];
+            const logElement = document.getElementById('event-log');
+            if (logElement) {
+                logElement.value = '';
+            }
+        };
+
+        // Clear log button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearButton = document.getElementById('clear-log');
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.clearEventLog();
+                });
+            }
+        });
+
+        // Helper to create additional inputs
+        window.createTestInput = function(id, options = {}) {
+            const container = document.getElementById('additional-inputs');
+            container.style.display = 'block';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.textContent = options.label || `Input ${id}:`;
+            label.setAttribute('for', id);
+
+            const input = document.createElement('input');
+            input.type = options.type || 'number';
+            input.id = id;
+            input.setAttribute('data-testid', id);
+            input.className = 'form-control';
+            input.value = options.value || '50';
+            input.name = id;
+            input.placeholder = options.placeholder || 'Enter value';
+
+            if (options.min !== undefined) input.min = options.min;
+            if (options.max !== undefined) input.max = options.max;
+            if (options.step !== undefined) input.step = options.step;
+            if (options.disabled) input.disabled = true;
+            if (options.readonly) input.readOnly = true;
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+
+            // Add help text if specified
+            if (options.helpText) {
+                const helpDiv = document.createElement('small');
+                helpDiv.className = 'help-text';
+                helpDiv.textContent = options.helpText;
+                wrapper.appendChild(helpDiv);
+            }
+
+            container.appendChild(wrapper);
+            return input;
+        };
+
+        window.clearAdditionalInputs = function() {
+            const container = document.getElementById('additional-inputs');
+            container.innerHTML = '';
+            container.style.display = 'none';
+        };
+    </script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.875em;
+        }
+
+        .additional-section {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        .event-log-section {
+            margin-top: 30px;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-clear {
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .event-log {
+            width: 100%;
+            min-height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            resize: vertical;
+        }
+    </style>
+</body>
+</html>

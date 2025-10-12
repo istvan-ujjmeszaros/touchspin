@@ -1,11 +1,33 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true
+    "types": ["node", "@playwright/test"],
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "paths": {
+      "@touchspin/core": ["packages/core/src/index.ts"],
+      "@touchspin/core/renderer": ["packages/core/src/renderer.ts"],
+      "@touchspin/core/test-helpers/*": ["packages/core/test-helpers/*"],
+      "@touchspin/jquery/test-helpers": ["packages/adapters/jquery/tests/helpers/index.ts"],
+      "@touchspin/jquery/test-helpers/*": ["packages/adapters/jquery/tests/helpers/*"]
+    }
   },
   "include": [
-    "./src/**/*.ts",
+    "packages/core/**/*.ts",
+    "packages/web-component/**/*.ts",
+    "packages/adapters/**/*.ts",
+    "packages/renderers/**/*.ts",
+    "__tests__/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "reports",
+    "tmp",
+
+    "**/playwright*.config.*",
+    "**/types/**",
+    "**/tests/**",
+    "**/__tests__/**"
   ]
 }

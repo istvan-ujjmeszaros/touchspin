@@ -1,0 +1,22 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../devdist/renderers/bootstrap4",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "inlineSources": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "importsNotUsedAsValues": "remove",
+    "skipLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../../../devdist/renderers/bootstrap4/.tsbuildinfo",
+    "baseUrl": "./src",
+    "paths": {
+      "@touchspin/core": ["../../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": ["../../core/dist/renderer.d.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}

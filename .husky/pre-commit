@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+# Exit on any error
+set -e
+
+# Ensure commands run from repository root
+cd -- "$(dirname -- "$0")/.."
+
+echo "🐶 Husky pre-commit: Running guards and formatting"
+
+# Run Gherkin guard first
+echo "🛡️ Running Gherkin guard..."
+yarn test:guard
+
+# Run lint-staged (Biome formatting/linting)
+echo "🎨 Running code formatting..."
+yarn lint-staged
+
+echo "✅ Pre-commit validation complete"

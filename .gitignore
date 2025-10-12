@@ -1,8 +1,60 @@
 .hg
 .hgignore
 .idea
+!.idea/runConfigurations/
 *.log
 nbproject
 index_demo_site.html
 node_modules
 bower_components
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Temporary files folder for debugging and development
+tmp/
+
+# Test results and reports - consolidated under reports/
+reports/
+
+# Test run metadata (Playwright test-results directories)
+**/test-results/
+
+# NYC coverage output
+.nyc_output/
+
+# Build outputs
+dist/
+
+# Single-root devdist build artifacts (ignore all except external framework assets)
+devdist/
+!/devdist/**/external/**
+
+# Obsolete planning/agent docs (ignored for local dev)
+**/*AGENT*.md
+**/*PLAN*.md
+**/TODO*.md
+
+# Allow package test plans to be tracked
+!packages/**/tests/TEST_PLAN.md
+
+# Playwright browsers (if locally installed)
+.playwright/
+
+# JetBrains/PhpStorm terminal history files
+*history*
+bootstrap-touchspin-history*
+
+# Playwright test reports generated in wrong directory
+off/
+
+# Prevent Windows AppData paths from being tracked (malformed filenames)
+**/AppData/**
+C:/Users/*/AppData/*
+*\\Users\\*\\AppData\\*
+
+# Yarn PnP files (auto-generated)
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/install-state.gz
+**/.npm-cache/
+/_old_test_suit_temporary/

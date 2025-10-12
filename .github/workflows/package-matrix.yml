@@ -1,0 +1,97 @@
+name: Package Matrix
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-by-package:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - "@touchspin/core"
+          - "@touchspin/renderer-bootstrap3"
+          - "@touchspin/renderer-bootstrap4"
+          - "@touchspin/renderer-bootstrap5"
+          - "@touchspin/renderer-tailwind"
+          - "@touchspin/renderer-vanilla"
+          - "@touchspin/jquery"
+          - "@touchspin/standalone"
+          - "@touchspin/webcomponent"
+          - "@touchspin/react"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Enable corepack (Yarn)
+        run: corepack enable
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - name: Build dependencies first
+        run: |
+          PKG="${{ matrix.pkg }}"
+
+          # Always build core for packages that depend on it
+          if [[ "$PKG" != "@touchspin/core" ]]; then
+            echo "Building @touchspin/core..."
+            yarn workspace @touchspin/core build
+          fi
+
+          # React adapter needs all renderers too
+          if [[ "$PKG" == "@touchspin/react" ]]; then
+            echo "Building renderer dependencies for React..."
+            yarn workspace @touchspin/renderer-bootstrap3 build
+            yarn workspace @touchspin/renderer-bootstrap4 build
+            yarn workspace @touchspin/renderer-bootstrap5 build
+            yarn workspace @touchspin/renderer-tailwind build
+            yarn workspace @touchspin/renderer-vanilla build
+          fi
+
+      - name: Build package
+        run: |
+          echo "Building ${{ matrix.pkg }}"
+          yarn workspace "${{ matrix.pkg }}" build
+
+      - name: Validate pack (dry-run)
+        run: |
+          # Determine the correct package directory
+          PKG_NAME="${{ matrix.pkg }}"
+
+          if [[ "$PKG_NAME" == *"renderer-"* ]]; then
+            # Handle renderer packages: @touchspin/renderer-bootstrap3 -> packages/renderers/bootstrap3
+            RENDERER_NAME=$(echo "$PKG_NAME" | sed 's/@touchspin\/renderer-//')
+            PKG_DIR="packages/renderers/$RENDERER_NAME"
+          elif [[ "$PKG_NAME" == "@touchspin/vanilla-renderer" ]]; then
+            # Special case for vanilla renderer
+            PKG_DIR="packages/renderers/vanilla"
+          elif [[ "$PKG_NAME" == "@touchspin/jquery" ]]; then
+            # jQuery adapter
+            PKG_DIR="packages/adapters/jquery"
+          elif [[ "$PKG_NAME" == "@touchspin/standalone" ]]; then
+            # Standalone adapter
+            PKG_DIR="packages/adapters/standalone"
+          elif [[ "$PKG_NAME" == "@touchspin/webcomponent" ]]; then
+            # Web component adapter
+            PKG_DIR="packages/adapters/webcomponent"
+          elif [[ "$PKG_NAME" == "@touchspin/react" ]]; then
+            # React adapter
+            PKG_DIR="packages/adapters/react"
+          else
+            # Handle regular packages: @touchspin/core -> packages/core
+            PKG_NAME_ONLY=$(echo "$PKG_NAME" | sed 's/@touchspin\///')
+            PKG_DIR="packages/$PKG_NAME_ONLY"
+          fi
+
+          echo "Validating package in directory: $PKG_DIR"
+          cd "$PKG_DIR"
+          npm pack --dry-run

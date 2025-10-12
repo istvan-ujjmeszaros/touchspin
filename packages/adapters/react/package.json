@@ -1,0 +1,84 @@
+{
+  "name": "@touchspin/react",
+  "version": "5.0.1-alpha.0",
+  "description": "React adapter for TouchSpin with per-renderer subpaths",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./bootstrap3": {
+      "types": "./dist/bootstrap3.d.ts",
+      "import": "./dist/bootstrap3.js"
+    },
+    "./bootstrap4": {
+      "types": "./dist/bootstrap4.d.ts",
+      "import": "./dist/bootstrap4.js"
+    },
+    "./bootstrap5": {
+      "types": "./dist/bootstrap5.d.ts",
+      "import": "./dist/bootstrap5.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind.d.ts",
+      "import": "./dist/tailwind.js"
+    },
+    "./vanilla": {
+      "types": "./dist/vanilla.d.ts",
+      "import": "./dist/vanilla.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:test": "tsup",
+    "build:watch": "tsup --watch",
+    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": ">=16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@touchspin/core": "workspace:*",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "@touchspin/renderer-vanilla": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.2.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "touchspin",
+    "react",
+    "spinner",
+    "number-input",
+    "bootstrap",
+    "tailwind"
+  ],
+  "author": "TouchSpin Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/adapters/react"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

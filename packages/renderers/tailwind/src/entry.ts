@@ -1,0 +1,41 @@
+// Standalone Tailwind build entry point
+import { TouchSpin as CoreTouchSpin, getTouchSpin, TouchSpinCore } from '@touchspin/core';
+import TailwindRenderer from './TailwindRenderer.js';
+
+// Create a wrapper that automatically sets the Tailwind renderer
+function TouchSpin(
+  element: HTMLInputElement,
+  options: Record<string, any> = {}
+): ReturnType<typeof CoreTouchSpin> {
+  if (!(element instanceof HTMLInputElement)) {
+    throw new TypeError('TouchSpin expects an HTMLElement');
+  }
+
+  // Set the baked-in renderer for this build
+  options.renderer = options.renderer || TailwindRenderer;
+
+  // Use the core TouchSpin function which properly handles initDOMEventHandling
+  return CoreTouchSpin(element, options);
+}
+
+// Expose additional API functions
+TouchSpin.get = getTouchSpin;
+TouchSpin.destroy = (element: HTMLInputElement) => {
+  const instance = getTouchSpin(element);
+  if (instance?.destroy) {
+    instance.destroy();
+    return true;
+  }
+  return false;
+};
+
+// For standalone builds, ensure globals are properly exposed
+if (typeof window !== 'undefined') {
+  window.TouchSpin = TouchSpin;
+  window.TouchSpinCore = TouchSpinCore;
+  window.getTouchSpin = getTouchSpin;
+  window.TailwindRenderer = TailwindRenderer;
+}
+
+// Export for module systems only (no default export)
+export { TouchSpin, TouchSpinCore, getTouchSpin, TailwindRenderer };

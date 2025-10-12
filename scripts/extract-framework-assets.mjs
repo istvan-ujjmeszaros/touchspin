@@ -1,0 +1,228 @@
+#!/usr/bin/env node
+
+/**
+ * Extract framework assets from Yarn PnP to devdist directories
+ * Usage: node scripts/extract-framework-assets.mjs [--renderer bootstrap3|bootstrap4|bootstrap5] [--all]
+ */
+
+import { execSync } from 'node:child_process';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = join(__dirname, '..');
+
+// Framework configuration for asset extraction
+const frameworkConfigs = {
+  bootstrap3: {
+    dependency: 'bootstrap',
+    packagePath: 'packages/renderers/bootstrap3',
+    files: {
+      'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
+      'dist/css/bootstrap-theme.min.css': 'css/bootstrap-theme.min.css',
+      'dist/js/bootstrap.min.js': 'js/bootstrap.min.js',
+    },
+  },
+  bootstrap4: {
+    dependency: 'bootstrap',
+    packagePath: 'packages/renderers/bootstrap4',
+    files: {
+      'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
+  },
+  bootstrap5: {
+    dependency: 'bootstrap',
+    packagePath: 'packages/renderers/bootstrap5',
+    files: {
+      'dist/css/bootstrap.min.css': 'css/bootstrap.min.css',
+      'dist/js/bootstrap.bundle.min.js': 'js/bootstrap.bundle.min.js',
+    },
+  },
+  tailwind: {
+    dependency: 'tailwindcss',
+    packagePath: 'packages/renderers/tailwind',
+    files: {
+      'https://cdn.tailwindcss.com': 'js/tailwind.js',
+    },
+  },
+  jquery: {
+    dependency: 'jquery',
+    packagePath: 'packages/adapters/jquery',
+    files: {
+      'https://code.jquery.com/jquery-3.7.1.min.js': 'js/jquery.min.js',
+    },
+  },
+};
+
+/**
+ * Fetch content from HTTP URL using curl
+ */
+function fetchFromUrl(url) {
+  try {
+    console.log(`  📥 Downloading ${url}...`);
+    return execSync(`curl -L -s "${url}"`, { encoding: 'buffer', timeout: 30000 });
+  } catch (error) {
+    throw new Error(`Failed to download ${url}: ${error.message}`);
+  }
+}
+
+/**
+ * Find the framework package location using yarn exec
+ * Works with Yarn PnP and multiple versions of the same package
+ */
+async function findFrameworkPath(rendererName, frameworkName) {
+  try {
+    const rendererPath = join(projectRoot, frameworkConfigs[rendererName].packagePath);
+
+    // Use yarn exec to find the package location
+    const command = `yarn exec node -p "require.resolve('${frameworkName}/package.json')"`;
+    const packageJsonPath = execSync(command, { encoding: 'utf8', cwd: rendererPath }).trim();
+
+    return dirname(packageJsonPath);
+  } catch (error) {
+    console.error(`❌ Could not resolve ${frameworkName} for ${rendererName}:`, error.message);
+    return null;
+  }
+}
+
+/**
+ * Extract assets for a single renderer
+ */
+async function extractAssets(rendererName) {
+  console.log(`🔧 Extracting assets for ${rendererName}...`);
+
+  const config = frameworkConfigs[rendererName];
+  if (!config) {
+    console.error(`❌ Unknown renderer: ${rendererName}`);
+    return false;
+  }
+
+  // Find framework package location
+  const frameworkPath = await findFrameworkPath(rendererName, config.dependency);
+  if (!frameworkPath) {
+    return false;
+  }
+
+  // Create target directory (using single-root devdist structure)
+  // packages/renderers/bootstrap5 -> devdist/renderers/bootstrap5
+  const devdistPath = config.packagePath.replace(/^packages\//, '');
+  const targetDir = join(projectRoot, 'devdist', devdistPath, 'external');
+  mkdirSync(join(targetDir, 'css'), { recursive: true });
+  mkdirSync(join(targetDir, 'js'), { recursive: true });
+
+  // Copy each configured file using Yarn PnP compatible methods or HTTP fetch
+  // Note: npm packages often have fixed mtimes for reproducible builds, so we can't
+  // reliably detect staleness via mtime. To force re-extraction, delete the files.
+  let copiedCount = 0;
+  let cachedCount = 0;
+
+  for (const [sourcePath, targetPath] of Object.entries(config.files)) {
+    const targetFile = join(targetDir, targetPath);
+
+    // Skip if file already exists (cache hit)
+    if (existsSync(targetFile)) {
+      console.log(`  ♻️  ${targetPath} (cached)`);
+      cachedCount++;
+      continue;
+    }
+
+    try {
+      let content;
+
+      if (sourcePath.startsWith('http://') || sourcePath.startsWith('https://')) {
+        // Fetch from HTTP URL
+        content = fetchFromUrl(sourcePath);
+      } else {
+        // Use Yarn exec to read the file through PnP
+        const command = `yarn exec node -e "const fs = require('fs'); const path = require('path'); const framework = path.dirname(require.resolve('${config.dependency}/package.json')); const content = fs.readFileSync(path.join(framework, '${sourcePath}')); process.stdout.write(content);"`;
+        content = execSync(command, {
+          encoding: 'buffer',
+          cwd: join(projectRoot, config.packagePath),
+        });
+      }
+
+      // Write file atomically using a temp file to avoid race conditions
+      const tempFile = `${targetFile}.tmp`;
+      writeFileSync(tempFile, content);
+
+      // Rename is atomic on most systems
+      const { renameSync } = await import('node:fs');
+      renameSync(tempFile, targetFile);
+
+      console.log(`  ✅ ${sourcePath} → ${targetPath}`);
+      copiedCount++;
+    } catch (error) {
+      console.error(`  ❌ Failed to copy ${sourcePath}: ${error.message}`);
+    }
+  }
+
+  const totalFiles = Object.keys(config.files).length;
+  if (copiedCount > 0) {
+    console.log(`📦 ${rendererName}: Copied ${copiedCount}/${totalFiles} assets`);
+  }
+  if (cachedCount > 0) {
+    console.log(`♻️  ${rendererName}: Used ${cachedCount}/${totalFiles} cached assets`);
+  }
+  console.log('');
+  return copiedCount > 0 || cachedCount > 0;
+}
+
+/**
+ * Main execution
+ */
+async function main() {
+  const args = process.argv.slice(2);
+
+  console.log('🎨 Framework Asset Extractor\n');
+
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log('Usage:');
+    console.log('  node scripts/extract-framework-assets.mjs --all');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer bootstrap5');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer bootstrap4');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer bootstrap3');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer tailwind');
+    console.log('  node scripts/extract-framework-assets.mjs --renderer jquery');
+    return;
+  }
+
+  const rendererIndex = args.indexOf('--renderer');
+  const specificRenderer = rendererIndex >= 0 ? args[rendererIndex + 1] : null;
+  const extractAll = args.includes('--all');
+
+  if (specificRenderer) {
+    // Extract for specific renderer
+    if (frameworkConfigs[specificRenderer]) {
+      await extractAssets(specificRenderer);
+    } else {
+      console.error(`❌ Unknown renderer: ${specificRenderer}`);
+      console.log('Available renderers:', Object.keys(frameworkConfigs).join(', '));
+      process.exit(1);
+    }
+  } else if (extractAll) {
+    // Extract for all renderers
+    let successCount = 0;
+    for (const rendererName of Object.keys(frameworkConfigs)) {
+      if (await extractAssets(rendererName)) {
+        successCount++;
+      }
+    }
+    console.log(
+      `🎯 Completed: ${successCount}/${Object.keys(frameworkConfigs).length} renderers processed successfully`
+    );
+  } else {
+    console.log('Usage: --renderer <name> or --all');
+    console.log('Available renderers:', Object.keys(frameworkConfigs).join(', '));
+    process.exit(1);
+  }
+}
+
+// Run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}
+
+export { extractAssets, frameworkConfigs };

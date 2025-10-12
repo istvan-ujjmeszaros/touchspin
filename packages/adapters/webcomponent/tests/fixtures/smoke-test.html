@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TouchSpin Web Component Smoke Test</title>
+    <link rel="stylesheet" href="/devdist/renderers/bootstrap5/external/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <form data-testid="test-form">
+      <touchspin-input
+        data-testid="wc-test"
+        name="quantity"
+        min="0"
+        max="100"
+        step="1"
+        value="10"
+      ></touchspin-input>
+    </form>
+
+    <script src="/devdist/adapters/webcomponent/umd/bootstrap5.global.js"></script>
+  </body>
+</html>

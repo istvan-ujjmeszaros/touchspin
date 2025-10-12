@@ -1,0 +1,94 @@
+{
+  "name": "@touchspin/standalone",
+  "version": "5.0.1-alpha.0",
+  "type": "module",
+  "description": "Standalone TouchSpin adapter (core + renderer bundles with mount API)",
+  "license": "MIT",
+  "sideEffects": [
+    "dist/**/*.js"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./bootstrap3": {
+      "types": "./dist/bootstrap3.d.ts",
+      "import": "./dist/bootstrap3.js"
+    },
+    "./bootstrap4": {
+      "types": "./dist/bootstrap4.d.ts",
+      "import": "./dist/bootstrap4.js"
+    },
+    "./bootstrap5": {
+      "types": "./dist/bootstrap5.d.ts",
+      "import": "./dist/bootstrap5.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind.d.ts",
+      "import": "./dist/tailwind.js"
+    },
+    "./vanilla": {
+      "types": "./dist/vanilla.d.ts",
+      "import": "./dist/vanilla.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "dev": "node ../../../scripts/static-server.mjs",
+    "build": "yarn run build:deps && rm -rf dist && mkdir -p dist/umd && yarn run build:types && yarn run build:js",
+    "build:deps": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind --include @touchspin/renderer-vanilla run build",
+    "build:deps:test": "yarn workspaces foreach -pt -A --include @touchspin/core --include @touchspin/renderer-bootstrap3 --include @touchspin/renderer-bootstrap4 --include @touchspin/renderer-bootstrap5 --include @touchspin/renderer-tailwind --include @touchspin/renderer-vanilla run build:test",
+    "build:js": "tsup src/index.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts src/vanilla.ts --format esm --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build:test": "yarn run build:deps:test && tsc -p tsconfig.testbuild.json && tsup src/bootstrap3.ts --format iife --global-name TouchSpinStandaloneBootstrap3 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/standalone/umd --external=none && tsup src/bootstrap4.ts --format iife --global-name TouchSpinStandaloneBootstrap4 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/standalone/umd --external=none && tsup src/bootstrap5.ts --format iife --global-name TouchSpinStandaloneBootstrap5 --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/standalone/umd --external=none && tsup src/tailwind.ts --format iife --global-name TouchSpinStandaloneTailwind --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/standalone/umd --external=none && tsup src/vanilla.ts --format iife --global-name TouchSpinStandaloneVanilla --sourcemap --target es2020 --tsconfig tsconfig.build.json --outDir ../../../devdist/adapters/standalone/umd --external=none && node ../../../scripts/write-artifacts-manifest.mjs --dir ../../../devdist/adapters/standalone esmEntry=index.js umdBs3Entry=umd/bootstrap3.global.js umdBs4Entry=umd/bootstrap4.global.js umdBs5Entry=umd/bootstrap5.global.js umdTailwindEntry=umd/tailwind.global.js umdVanillaEntry=umd/vanilla.global.js",
+    "watch": "tsup src/index.ts src/bootstrap3.ts src/bootstrap4.ts src/bootstrap5.ts src/tailwind.ts src/vanilla.ts --format esm --watch --sourcemap --target es2020 --tsconfig tsconfig.build.json",
+    "watch:test": "tsc -p tsconfig.testbuild.json --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "node ../../../scripts/pre-test.mjs packages/adapters/standalone/tests && cd ../../.. && playwright test packages/adapters/standalone/tests/",
+    "test:ui": "cd ../../.. && playwright test packages/adapters/standalone/tests/ --ui"
+  },
+  "dependencies": {
+    "@touchspin/core": "workspace:*",
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "@touchspin/renderer-vanilla": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "types": "./dist/index.d.ts"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.2"
+  },
+  "author": "TouchSpin Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
+    "directory": "packages/adapters/standalone"
+  },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/adapters/standalone#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/istvan-ujjmeszaros"
+  }
+}

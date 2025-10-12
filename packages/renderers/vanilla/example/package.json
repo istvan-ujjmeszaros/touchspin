@@ -1,0 +1,15 @@
+{
+  "name": "touchspin-vanilla-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../../../scripts/static-server.mjs",
+    "build": "echo 'Static example - no build needed'",
+    "preview": "node ../../../../scripts/static-server.mjs"
+  },
+  "dependencies": {
+    "@touchspin/core": "file:../../../core",
+    "@touchspin/renderer-vanilla": "file:.."
+  },
+  "devDependencies": {}
+}

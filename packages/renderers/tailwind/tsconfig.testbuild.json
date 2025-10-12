@@ -1,0 +1,23 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../devdist/renderers/tailwind",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "inlineSources": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+    "importsNotUsedAsValues": "remove",
+    "skipLibCheck": true,
+    "types": [],
+    "incremental": true,
+    "tsBuildInfoFile": "../../../devdist/renderers/tailwind/.tsbuildinfo",
+    "baseUrl": "./src",
+    "paths": {
+      "@touchspin/core": ["../../core/dist/index.d.ts"],
+      "@touchspin/core/renderer": ["../../core/dist/renderer.d.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}
