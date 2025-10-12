@@ -5,10 +5,37 @@ import path from 'node:path';
 const root = process.cwd();
 const port = process.env.PORT ? Number(process.env.PORT) : 8866;
 
+/**
+ * HTML escape utility to prevent XSS
+ */
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Validate that the resolved path is within the root directory (prevents path traversal)
+ */
+function isPathSafe(resolvedPath, rootPath) {
+  return resolvedPath.startsWith(rootPath);
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
-    const fsPath = path.join(root, url);
+    // Resolve the path and validate it's within root (prevents path traversal attacks)
+    const fsPath = path.resolve(root, url.slice(1)); // Remove leading slash
+
+    if (!isPathSafe(fsPath, root)) {
+      res.statusCode = 403;
+      res.end('Forbidden: Path traversal detected');
+      return;
+    }
+
     const st = await stat(fsPath).catch(() => null);
     if (!st) {
       res.statusCode = 404;
@@ -19,7 +46,10 @@ const server = http.createServer(async (req, res) => {
       // Minimal index for directories
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-store');
-      res.end(`<!doctype html><meta charset="utf-8"><title>Index</title><h1>Index of ${url}</h1>`);
+      // Escape URL to prevent XSS attacks
+      res.end(
+        `<!doctype html><meta charset="utf-8"><title>Index</title><h1>Index of ${escapeHtml(url)}</h1>`
+      );
       return;
     }
     // Basic content-type guessing

@@ -144,7 +144,14 @@ async function extractAssets(rendererName) {
         });
       }
 
-      writeFileSync(targetFile, content);
+      // Write file atomically using a temp file to avoid race conditions
+      const tempFile = `${targetFile}.tmp`;
+      writeFileSync(tempFile, content);
+
+      // Rename is atomic on most systems
+      const { renameSync } = await import('node:fs');
+      renameSync(tempFile, targetFile);
+
       console.log(`  ✅ ${sourcePath} → ${targetPath}`);
       copiedCount++;
     } catch (error) {
