@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises';
+import { open } from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 
@@ -25,6 +25,7 @@ function isPathSafe(resolvedPath, rootPath) {
 }
 
 const server = http.createServer(async (req, res) => {
+  let fileHandle;
   try {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
     // Resolve the path and validate it's within root (prevents path traversal attacks)
@@ -36,12 +37,17 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    const st = await stat(fsPath).catch(() => null);
-    if (!st) {
+    // Use file handle to prevent TOCTOU race conditions
+    // Open the file first, then use the handle for both stat and read
+    fileHandle = await open(fsPath, 'r').catch(() => null);
+    if (!fileHandle) {
       res.statusCode = 404;
       res.end('Not found');
       return;
     }
+
+    // Use the file handle to get stats (prevents race condition)
+    const st = await fileHandle.stat();
     if (st.isDirectory()) {
       // Minimal index for directories
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -62,11 +68,18 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
     res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-    const buf = await readFile(fsPath);
+
+    // Read using the file handle (prevents race condition)
+    const buf = await fileHandle.readFile();
     res.end(buf);
   } catch (err) {
     res.statusCode = 500;
     res.end(String(err));
+  } finally {
+    // Always close the file handle
+    if (fileHandle) {
+      await fileHandle.close().catch(() => {});
+    }
   }
 });
 
