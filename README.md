@@ -35,6 +35,7 @@ Your sponsorship keeps this project:
 | `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap5.css` |
 | `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/touchspin-tailwind.css` |
 | `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
+| `@touchspin/react` | React adapter (controlled/uncontrolled) | Per-renderer subpaths | ESM only (no UMD) |
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
@@ -130,6 +131,47 @@ import '@touchspin/webcomponent/bootstrap5';
 ```html
 <touchspin-input min="0" max="100" value="42"></touchspin-input>
 ```
+
+### React
+
+```bash
+npm install @touchspin/react react react-dom
+```
+
+**Controlled:**
+```tsx
+import { useState } from 'react';
+import TouchSpin from '@touchspin/react/bootstrap5';
+
+function App() {
+  const [value, setValue] = useState(50);
+  return <TouchSpin value={value} onChange={setValue} min={0} max={100} />;
+}
+```
+
+**Uncontrolled:**
+```tsx
+import TouchSpin from '@touchspin/react/vanilla';
+
+<TouchSpin defaultValue={25} onChange={(val) => console.log(val)} />
+```
+
+**Imperative API:**
+```tsx
+import { useRef } from 'react';
+import TouchSpin from '@touchspin/react/tailwind';
+import type { TouchSpinHandle } from '@touchspin/react/tailwind';
+
+const ref = useRef<TouchSpinHandle>(null);
+<TouchSpin ref={ref} defaultValue={10} />
+ref.current?.increment();
+```
+
+**Per-renderer imports:** `bootstrap3`, `bootstrap4`, `bootstrap5`, `tailwind`, `vanilla`
+**SSR-safe:** Works with Next.js, Remix, and other React frameworks
+**Example app:** [touchspin-react-example](https://github.com/istvan-ujjmeszaros/touchspin-react-example)
+
+See [`packages/adapters/react/README.md`](packages/adapters/react/README.md) for complete API.
 
 ## CDN Builds
 
