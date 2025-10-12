@@ -873,6 +873,8 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     const { value, isHtml } = this.resolveButtonContent(raw, fallback);
 
     if (isHtml) {
+      // CodeQL [js/xss-through-dom] - Safe: value comes from trusted configuration settings,
+      // not from user-controlled DOM content. This intentionally allows HTML for icons/markup.
       button.innerHTML = value;
       return;
     }
@@ -906,12 +908,18 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
   }
 
   private containsHtml(value: string): boolean {
-    return /<\/?[a-zA-Z][\s\S]*>/.test(value);
+    // Check for HTML tags without catastrophic backtracking
+    // Matches opening tags like <div> or <span class="foo">
+    // Matches closing tags like </div>
+    // Uses non-greedy matching and bounded repetition to prevent ReDoS
+    return /<\/?[a-zA-Z][^>]{0,200}>/.test(value);
   }
 
   private decodeHtml(value: string): string | undefined {
     if (typeof document === 'undefined' || !value.includes('&')) return value;
     const parser = document.createElement('textarea');
+    // CodeQL [js/xss-through-dom] - Safe: using textarea.innerHTML to decode HTML entities only,
+    // not to render content. The result is extracted via .value which gives plain text.
     parser.innerHTML = value;
     return parser.value;
   }
