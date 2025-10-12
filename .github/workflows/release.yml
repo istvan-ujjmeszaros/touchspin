@@ -74,9 +74,6 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Changeset version (idempotent)
-        run: yarn changeset version
-
       - name: Publish with Changesets
         uses: changesets/action@v1
         with:
