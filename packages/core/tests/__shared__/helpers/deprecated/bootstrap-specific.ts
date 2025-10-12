@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test';
-import { wrapperById } from '../core/selectors';
 import { getTouchSpinWrapper } from '../core/elements';
-import { prefixIn, postfixIn } from '../core/selectors';
+import { postfixIn, prefixIn, wrapperById } from '../core/selectors';
 
 /* ──────────────────────────
  * Bootstrap-specific helpers (deprecated)

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
 import { readInputValue } from '../interactions/input';
+import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '../types';
 
 /* ──────────────────────────
  * Core API operations

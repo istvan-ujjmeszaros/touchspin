@@ -229,7 +229,7 @@ test.describe('TouchSpin callback pairing warnings', () => {
         // This callback doesn't strip " USD" - it just returns the value
         return String(val);
       },
-      callback_after_calculation: (val) => val + ' USD', // Adds " USD"
+      callback_after_calculation: (val) => `${val} USD`, // Adds " USD"
     });
 
     expect(warnings).toContainEqual(

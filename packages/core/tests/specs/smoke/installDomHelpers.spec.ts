@@ -8,8 +8,8 @@
  * [x] installs __ts namespace with required methods
  */
 
-import { test, expect } from '@playwright/test';
-import { installDomHelpers, startCoverage, collectCoverage } from '../../__shared__/helpers';
+import { expect, test } from '@playwright/test';
+import { collectCoverage, installDomHelpers, startCoverage } from '../../__shared__/helpers';
 
 test.beforeEach(async ({ page }) => {
   await startCoverage(page);

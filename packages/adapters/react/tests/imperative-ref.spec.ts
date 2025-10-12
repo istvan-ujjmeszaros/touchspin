@@ -33,7 +33,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.increment() increases value by step', async ({ page }) => {
     // Given: Controlled component at value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Call ref.increment()
@@ -56,7 +59,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.decrement() decreases value by step', async ({ page }) => {
     // Given: Controlled component at value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Call ref.decrement()
@@ -78,7 +84,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.getValue() returns current value', async ({ page }) => {
     // Given: Controlled component at value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Call ref.getValue()
@@ -99,7 +108,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.setValue() updates value programmatically', async ({ page }) => {
     // Given: Controlled component at value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Call ref.setValue(80)
@@ -121,7 +133,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.focus() focuses the input element', async ({ page }) => {
     // Given: Controlled component
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
 
     // Ensure input is not focused initially
     await reactHelpers.blurActiveElement(page);
@@ -145,7 +160,10 @@ test.describe('TouchSpin React - Imperative Ref Methods', () => {
    */
   test('ref.blur() blurs the input element', async ({ page }) => {
     // Given: Controlled component that is focused
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await controlledInput.focus();
     await expect(controlledInput).toBeFocused();
 

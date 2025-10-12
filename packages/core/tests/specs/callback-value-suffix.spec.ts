@@ -56,7 +56,7 @@ test.describe('Core callback value suffix and destroy lifecycle', () => {
       },
       callback_after_calculation: (value) => {
         // Add "USD" suffix for display
-        return value + 'USD';
+        return `${value}USD`;
       },
     });
 

@@ -1,6 +1,6 @@
+import path from 'node:path';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
-import path from 'node:path';
 
 export default [
   {

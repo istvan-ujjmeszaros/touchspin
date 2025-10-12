@@ -191,14 +191,15 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
 
     // Move margin classes from floating container to wrapper (will be created later)
     // Track this so undo stack can restore them on destroy
+    const container = this.floatingContainer; // Capture for type narrowing
     marginClasses.forEach((cls) => {
-      this.trackRemoveClass(this.floatingContainer!, cls);
+      this.trackRemoveClass(container!, cls);
       // Note: We'll add to wrapper after it's created in buildAndAttachDOM
       // Store them temporarily for now
-      if (!this.floatingContainer!.dataset.movedMargins) {
-        this.floatingContainer!.dataset.movedMargins = cls;
+      if (!container.dataset.movedMargins) {
+        container.dataset.movedMargins = cls;
       } else {
-        this.floatingContainer!.dataset.movedMargins += ` ${cls}`;
+        container.dataset.movedMargins += ` ${cls}`;
       }
     });
   }
@@ -291,7 +292,7 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
     const wrapper = this.createInputGroupWrapper(inputGroupSize);
 
     // Wrap the entire .form-floating container
-    if (this.floatingContainer && this.floatingContainer.parentElement) {
+    if (this.floatingContainer?.parentElement) {
       this.trackMoveElement(wrapper, this.floatingContainer.parentElement, this.floatingContainer);
     }
 
@@ -682,8 +683,8 @@ class Bootstrap5Renderer extends AbstractRendererSurgical {
   }
 
   private attachEventsToButtons(): void {
-    const upButton = this.wrapper!.querySelector(SELECTORS.UP_BUTTON) as HTMLElement | null;
-    const downButton = this.wrapper!.querySelector(SELECTORS.DOWN_BUTTON) as HTMLElement | null;
+    const upButton = this.wrapper?.querySelector(SELECTORS.UP_BUTTON) as HTMLElement | null;
+    const downButton = this.wrapper?.querySelector(SELECTORS.DOWN_BUTTON) as HTMLElement | null;
 
     this.core.attachUpEvents(upButton);
     this.core.attachDownEvents(downButton);

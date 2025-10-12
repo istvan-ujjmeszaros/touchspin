@@ -1,6 +1,6 @@
-import type { Page, Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import type { TouchSpinElements } from '../types';
-import { inputById, wrapperById, upButtonIn, downButtonIn, prefixIn, postfixIn } from './selectors';
+import { downButtonIn, inputById, postfixIn, prefixIn, upButtonIn, wrapperById } from './selectors';
 
 /* ──────────────────────────
  * Element access and readiness checks

@@ -1,6 +1,6 @@
-import { spawnSync, execSync } from 'node:child_process';
-import { resolve } from 'node:path';
+import { execSync, spawnSync } from 'node:child_process';
 import { release } from 'node:os';
+import { resolve } from 'node:path';
 
 let open = true;
 const passThrough = [];

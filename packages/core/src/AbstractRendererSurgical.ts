@@ -174,7 +174,7 @@ abstract class AbstractRendererSurgical extends AbstractRendererBase {
    */
   override finalizeWrapperAttributes(): void {
     const testIdAttr = this.input.getAttribute('data-testid');
-    if (testIdAttr && !this.wrapper!.hasAttribute('data-testid')) {
+    if (testIdAttr && !this.wrapper?.hasAttribute('data-testid')) {
       this.trackAddAttribute(this.wrapper!, 'data-testid', `${testIdAttr}-wrapper`);
     }
 
@@ -222,7 +222,7 @@ abstract class AbstractRendererSurgical extends AbstractRendererBase {
 
         case 'MOVE_ELEMENT':
           // Move element back to original position
-          if (event.originalNextSibling && event.originalNextSibling.parentElement) {
+          if (event.originalNextSibling?.parentElement) {
             event.originalParent.insertBefore(event.element, event.originalNextSibling);
           } else {
             event.originalParent.appendChild(event.element);

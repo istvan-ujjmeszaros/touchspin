@@ -1,5 +1,5 @@
 // Standalone Tailwind build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
+import { TouchSpin as CoreTouchSpin, getTouchSpin, TouchSpinCore } from '@touchspin/core';
 import TailwindRenderer from './TailwindRenderer.js';
 
 // Create a wrapper that automatically sets the Tailwind renderer

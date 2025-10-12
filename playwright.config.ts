@@ -4,7 +4,10 @@ import { defineConfig, devices } from '@playwright/test';
  * @see https://playwright.dev/docs/test-configuration
  */
 const TEST_PORT = process.env.TEST_PORT ? parseInt(process.env.TEST_PORT, 10) : 8866;
-const DEV_BASE_URL = (process.env.DEV_BASE_URL || `http://localhost:${TEST_PORT}`).replace(/\/$/, '');
+const DEV_BASE_URL = (process.env.DEV_BASE_URL || `http://localhost:${TEST_PORT}`).replace(
+  /\/$/,
+  ''
+);
 const DEFAULT_BASE = `http://localhost:${TEST_PORT}`;
 const useExternalServer = DEV_BASE_URL !== DEFAULT_BASE;
 

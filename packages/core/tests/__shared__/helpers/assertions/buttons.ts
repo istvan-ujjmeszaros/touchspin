@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { getTouchSpinWrapper } from '../core/elements';
-import { upButtonIn, downButtonIn } from '../core/selectors';
+import { downButtonIn, upButtonIn } from '../core/selectors';
 
 /* ──────────────────────────
  * Button state expectations

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { installDomHelpers } from '../runtime/installDomHelpers';
 import { setupLogging } from '../events/setup';
+import { installDomHelpers } from '../runtime/installDomHelpers';
 import { loadScript } from './script-loader';
 
 export interface TestEnvironmentOptions {
@@ -172,10 +172,7 @@ export async function diagnoseEnvironment(page: Page): Promise<{
     return {
       hasJQuery: typeof window.jQuery !== 'undefined',
       has$: typeof window.$ !== 'undefined',
-      hasTouchSpinPlugin: !!(
-        (window.jQuery?.fn?.TouchSpin) ||
-        (window.$?.fn?.TouchSpin)
-      ),
+      hasTouchSpinPlugin: !!(window.jQuery?.fn?.TouchSpin || window.$?.fn?.TouchSpin),
       customElements: [], // Note: customElements doesn't have enumeration API
       scripts: Array.from(document.scripts)
         .map((s) => s.src)

@@ -57,7 +57,7 @@ export function artifactUrlFor(packageSubPath: string, key: string): string | nu
   return relativePath ? packageAssetUrl(packageSubPath, relativePath) : null;
 }
 
-const coreManifest = loadManifest('packages/core');
+const _coreManifest = loadManifest('packages/core');
 export const coreUrl =
   artifactUrlFor('packages/core', 'esmEntry') ?? `/packages/core/${TARGET}/index.js`;
 

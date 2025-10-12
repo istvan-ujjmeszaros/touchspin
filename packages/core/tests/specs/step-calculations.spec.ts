@@ -32,9 +32,9 @@
  * [x] manages step precision in different locales
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspin, } from '../../test-helpers/core-adapter';
+import { initializeTouchspin } from '../../test-helpers/core-adapter';
 
 test.describe('Core step calculations and increments', () => {
   test.beforeEach(async ({ page }) => {

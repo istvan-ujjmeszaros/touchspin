@@ -42,9 +42,9 @@
  * [x] handles event emission errors gracefully
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
-import { initializeTouchspin, getCoreNumericValue } from '../../test-helpers/core-adapter';
+import { getCoreNumericValue, initializeTouchspin } from '../../test-helpers/core-adapter';
 
 test.describe('Core event system and emission', () => {
   test.beforeEach(async ({ page }) => {

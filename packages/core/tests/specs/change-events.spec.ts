@@ -20,18 +20,18 @@
 
 import { test } from '@playwright/test';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
-import {
-  fillWithValueAndBlur,
-  setValueSilentlyAndBlur,
-} from '../__shared__/helpers/interactions/input';
-import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
+import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
 import {
   clearEventLog,
   countEventInLog,
   getEventsOfType,
   hasEventInLog,
 } from '../__shared__/helpers/events/log';
-import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
+import {
+  fillWithValueAndBlur,
+  setValueSilentlyAndBlur,
+} from '../__shared__/helpers/interactions/input';
+import { holdUpArrowKeyOnInput } from '../__shared__/helpers/interactions/keyboard';
 
 /**
  * Scenario: triggers change event on blur when value changed

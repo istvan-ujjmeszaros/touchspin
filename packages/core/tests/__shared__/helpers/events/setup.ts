@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import type { EventLogEntry, EventLogType, } from '../types';
+import type { EventLogEntry, EventLogType } from '../types';
 
 /* ──────────────────────────
  * Centralized logging (idempotent)

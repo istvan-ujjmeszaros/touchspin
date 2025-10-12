@@ -40,7 +40,7 @@ async function initializeWithCallbackTracking(page: any, testId: string) {
     },
     callback_after_calculation: (value: string) => {
       (window as any).callbackTracker.afterCalls.push(value);
-      return value + ' USD'; // Append for visibility
+      return `${value} USD`; // Append for visibility
     },
   });
 }
@@ -210,7 +210,7 @@ test.describe('Callback execution frequency and ordering', () => {
       },
       callback_after_calculation: (value: string) => {
         (window as any).callbackTracker.afterCalls.push(value);
-        return value + ' USD';
+        return `${value} USD`;
       },
     });
 

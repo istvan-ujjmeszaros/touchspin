@@ -1,5 +1,5 @@
-import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import http from 'node:http';
 import path from 'node:path';
 
 const root = process.cwd();
@@ -19,9 +19,7 @@ const server = http.createServer(async (req, res) => {
       // Minimal index for directories
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-store');
-      res.end(
-        `<!doctype html><meta charset="utf-8"><title>Index</title><h1>Index of ${url}</h1>`
-      );
+      res.end(`<!doctype html><meta charset="utf-8"><title>Index</title><h1>Index of ${url}</h1>`);
       return;
     }
     // Basic content-type guessing

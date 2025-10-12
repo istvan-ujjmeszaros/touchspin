@@ -3,7 +3,7 @@
  * Extends core helpers with React component testing utilities
  */
 
-import type { Page, Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 /**
  * Get React-specific elements for TouchSpin component

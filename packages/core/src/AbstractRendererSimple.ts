@@ -1,6 +1,6 @@
 import AbstractRendererBase, { TOUCHSPIN_ATTRIBUTE } from './AbstractRendererBase.js';
 
-const WRAPPER_TYPE_DEFAULT = 'wrapper';
+const _WRAPPER_TYPE_DEFAULT = 'wrapper';
 const WRAPPER_TYPE_ADVANCED = 'wrapper-advanced';
 const WRAPPER_READY_CLASS = 'bootstrap-touchspin';
 

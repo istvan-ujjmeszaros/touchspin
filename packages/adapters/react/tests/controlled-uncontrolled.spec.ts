@@ -32,7 +32,10 @@ test.describe('TouchSpin React - Controlled vs Uncontrolled', () => {
    */
   test('controlled component updates when prop changes', async ({ page }) => {
     // Given: Controlled component with initial value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Update value prop via test interface
@@ -52,7 +55,10 @@ test.describe('TouchSpin React - Controlled vs Uncontrolled', () => {
    */
   test('uncontrolled component maintains internal state', async ({ page }) => {
     // Given: Uncontrolled component with defaultValue 25
-    const { input: uncontrolledInput } = await apiHelpers.getTouchSpinElements(page, 'uncontrolled-input');
+    const { input: uncontrolledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'uncontrolled-input'
+    );
     await expect(uncontrolledInput).toHaveValue('25');
 
     // When: Click increment button (step=5)
@@ -88,7 +94,10 @@ test.describe('TouchSpin React - Controlled vs Uncontrolled', () => {
    */
   test('uncontrolled component onChange fires on user interaction', async ({ page }) => {
     // Given: Uncontrolled component at value 25
-    const { input: uncontrolledInput } = await apiHelpers.getTouchSpinElements(page, 'uncontrolled-input');
+    const { input: uncontrolledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'uncontrolled-input'
+    );
     await expect(uncontrolledInput).toHaveValue('25');
 
     // Track onChange calls
@@ -111,7 +120,10 @@ test.describe('TouchSpin React - Controlled vs Uncontrolled', () => {
    */
   test('controlled component reflects external state changes', async ({ page }) => {
     // Given: Controlled component at value 50
-    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(page, 'controlled-input');
+    const { input: controlledInput } = await apiHelpers.getTouchSpinElements(
+      page,
+      'controlled-input'
+    );
     await expect(controlledInput).toHaveValue('50');
 
     // When: Rapidly change value prop

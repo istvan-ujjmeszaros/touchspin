@@ -111,8 +111,8 @@ export class TouchSpinCore {
     attributes: Map<string, string | null>;
   } | null = null;
   private _downButton: (HTMLElement & { disabled?: boolean }) | null = null;
-  private _wrapper: HTMLElement | null = null;
   private _mutationObserver: MutationObserver | null = null;
+  private _wrapper: HTMLElement | null = null;
   renderer?: Renderer;
   /**
    * Sanitize a partial settings object BEFORE applying it.
@@ -1655,8 +1655,11 @@ export class TouchSpinCore {
       const failures: string[] = [];
 
       for (const testValue of testValues) {
-        const afterResult = this.settings.callback_after_calculation!(testValue);
-        const beforeResult = this.settings.callback_before_calculation!(afterResult);
+        const afterResult = this.settings.callback_after_calculation?.(testValue);
+        if (afterResult === undefined) continue;
+
+        const beforeResult = this.settings.callback_before_calculation?.(afterResult);
+        if (beforeResult === undefined) continue;
 
         if (beforeResult !== testValue) {
           failures.push(

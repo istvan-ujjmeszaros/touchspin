@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { inputById } from '../core/selectors';
 import { waitForTouchspinInitialized } from '../core/elements';
+import { inputById } from '../core/selectors';
 
 /* ──────────────────────────
  * Input interactions

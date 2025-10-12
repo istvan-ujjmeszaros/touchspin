@@ -2,10 +2,10 @@
  * useTouchSpin - Core hook for mounting and managing TouchSpin instance
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { TouchSpin as TouchSpinCore } from '@touchspin/core';
 import type { TouchSpinCorePublicAPI } from '@touchspin/core';
-import type { TouchSpinProps, TouchSpinChangeMeta } from '../types.js';
+import { TouchSpin as TouchSpinCore } from '@touchspin/core';
+import { useEffect, useRef, useState } from 'react';
+import type { TouchSpinProps } from '../types.js';
 
 export interface UseTouchSpinOptions extends TouchSpinProps {
   renderer: any;
@@ -54,7 +54,7 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
       step,
       decimals,
       prefix,
-      suffix,
+      postfix: suffix,
       renderer,
       ...coreOptions,
     });
@@ -78,7 +78,19 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
       instanceRef.current?.destroy();
       instanceRef.current = null;
     };
-  }, [renderer]); // Only re-mount if renderer changes
+  }, [
+    renderer,
+    coreOptions,
+    currentValue,
+    decimals,
+    isControlled,
+    max,
+    min,
+    onChange,
+    prefix,
+    step,
+    suffix,
+  ]); // Only re-mount if renderer changes
 
   // Update value when controlled value changes
   useEffect(() => {
@@ -100,7 +112,7 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
       step,
       decimals,
       prefix,
-      suffix,
+      postfix: suffix,
     });
   }, [min, max, step, decimals, prefix, suffix]);
 

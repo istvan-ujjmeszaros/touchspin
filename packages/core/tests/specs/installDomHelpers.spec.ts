@@ -9,9 +9,9 @@
  */
 
 import { test } from '@playwright/test';
-import { installDomHelpers } from '../__shared__/helpers/runtime/installDomHelpers';
-import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
 import { expectValueToBe } from '../__shared__/helpers/assertions/values';
+import { initializeTouchspin } from '../__shared__/helpers/core/initialization';
+import { installDomHelpers } from '../__shared__/helpers/runtime/installDomHelpers';
 
 /**
  * Scenario: installs DOM helpers

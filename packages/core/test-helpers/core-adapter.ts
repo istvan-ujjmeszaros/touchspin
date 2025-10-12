@@ -1,10 +1,10 @@
 import type { Page } from '@playwright/test';
-import type { TouchSpinCoreOptions } from '../tests/__shared__/helpers/types';
 import { inputById } from '../tests/__shared__/helpers/core/selectors';
 import { setupLogging } from '../tests/__shared__/helpers/events/setup';
-import { coreUrl as coreRuntimeUrl } from '../tests/__shared__/helpers/runtime/paths';
 import { installDomHelpers } from '../tests/__shared__/helpers/runtime/installDomHelpers';
+import { coreUrl as coreRuntimeUrl } from '../tests/__shared__/helpers/runtime/paths';
 import { preFetchCheck } from '../tests/__shared__/helpers/test-utilities/network';
+import type { TouchSpinCoreOptions } from '../tests/__shared__/helpers/types';
 
 /**
  * Core Package Test Adapter

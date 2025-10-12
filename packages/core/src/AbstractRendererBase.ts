@@ -86,11 +86,11 @@ abstract class AbstractRendererBase implements Renderer {
    */
   finalizeWrapperAttributes(): void {
     const testId = this.input.getAttribute(TEST_ID_ATTRIBUTE);
-    if (testId && !this.wrapper!.hasAttribute(TEST_ID_ATTRIBUTE)) {
-      this.wrapper!.setAttribute(TEST_ID_ATTRIBUTE, `${testId}-wrapper`);
+    if (testId && !this.wrapper?.hasAttribute(TEST_ID_ATTRIBUTE)) {
+      this.wrapper?.setAttribute(TEST_ID_ATTRIBUTE, `${testId}-wrapper`);
     }
 
-    this.wrapper!.setAttribute(TOUCHSPIN_ATTRIBUTE, this.wrapperType);
+    this.wrapper?.setAttribute(TOUCHSPIN_ATTRIBUTE, this.wrapperType);
   }
 
   getUpButtonTestId(): string {

@@ -145,7 +145,10 @@ test.describe('TouchSpin React - Keyboard & ARIA', () => {
    */
   test('disabled state prevents button clicks', async ({ page }) => {
     // Given: Disabled component at value 30
-    const { input: disabledInput, upButton } = await apiHelpers.getTouchSpinElements(page, 'disabled-input');
+    const { input: disabledInput, upButton } = await apiHelpers.getTouchSpinElements(
+      page,
+      'disabled-input'
+    );
     await expect(disabledInput).toHaveValue('30');
 
     // When: Try to click up button

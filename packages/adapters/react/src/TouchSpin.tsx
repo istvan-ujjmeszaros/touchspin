@@ -5,9 +5,9 @@
  * Use per-renderer exports instead of this directly.
  */
 
-import React, { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { useTouchSpin } from './hooks/useTouchSpin.js';
-import type { TouchSpinProps, TouchSpinHandle } from './types.js';
+import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
 export interface TouchSpinComponentProps extends TouchSpinProps {
   renderer: any;
@@ -97,7 +97,15 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
           instanceRef.current?.setValue(val);
         },
       }),
-      [currentValue]
+      [
+        currentValue,
+        inputRef.current?.blur,
+        inputRef.current?.focus,
+        instanceRef.current?.downOnce,
+        instanceRef.current?.getValue,
+        instanceRef.current?.setValue,
+        instanceRef.current?.upOnce,
+      ]
     );
 
     // Compute input test-id (component-testid becomes component-testid-input)
@@ -119,9 +127,7 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
           {...inputProps}
         />
         {/* Hidden input for form submission when using name */}
-        {name && (
-          <input type="hidden" name={`${name}_display`} value={currentValue} />
-        )}
+        {name && <input type="hidden" name={`${name}_display`} value={currentValue} />}
       </div>
     );
   }

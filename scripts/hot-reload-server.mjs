@@ -1,5 +1,5 @@
-import { create as createBrowserSync } from 'browser-sync';
 import path from 'node:path';
+import { create as createBrowserSync } from 'browser-sync';
 
 const bs = createBrowserSync();
 

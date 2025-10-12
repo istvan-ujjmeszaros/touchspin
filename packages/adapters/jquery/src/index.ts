@@ -6,7 +6,7 @@
  */
 
 import type { TouchSpinCorePublicAPI } from '@touchspin/core';
-import { TouchSpinCallableEvent, TouchSpinEmittedEvent } from '@touchspin/core';
+import { TouchSpinCallableEvent } from '@touchspin/core';
 import type { MountOptions } from '@touchspin/standalone';
 
 export type { TouchSpinUpdateSettingsData } from '@touchspin/core';
@@ -100,7 +100,7 @@ export function installJQueryAdapter(
       let inst: TouchSpinCorePublicAPI | null = null;
       try {
         inst = mountFn(inputEl, (options as MountOptions) || {});
-      } catch (error) {
+      } catch (_error) {
         // Silently skip mount failures (e.g., non-input elements)
         // This matches legacy jQuery plugin behavior
         return;

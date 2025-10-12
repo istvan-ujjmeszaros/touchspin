@@ -83,7 +83,7 @@ test('preserves existing container classes and attributes', async ({ page }) => 
   await ensureTailwindGlobals(page);
 
   // Get classes before initialization
-  const classesBefore = await page.evaluate(() => {
+  const _classesBefore = await page.evaluate(() => {
     const input = document.querySelector('[data-testid="test-input-advanced"]');
     const container = input?.closest('.flex.rounded-md');
     return container?.className;

@@ -1,7 +1,7 @@
 import { test as base } from '@playwright/test';
 import {
-  startCoverage,
   collectCoverage,
+  startCoverage,
 } from './packages/core/tests/__shared__/helpers/test-utilities/coverage';
 
 /**

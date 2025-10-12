@@ -1,5 +1,5 @@
 // Standalone Bootstrap 3 build entry point
-import { TouchSpin as CoreTouchSpin, TouchSpinCore, getTouchSpin } from '@touchspin/core';
+import { TouchSpin as CoreTouchSpin, getTouchSpin, TouchSpinCore } from '@touchspin/core';
 import Bootstrap3Renderer from './Bootstrap3Renderer.js';
 
 // Create a wrapper that automatically sets the Bootstrap 3 renderer

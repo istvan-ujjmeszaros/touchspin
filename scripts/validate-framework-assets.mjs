@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+
 /**
  * Validate framework assets in devdist directories
  * Usage: node scripts/validate-framework-assets.mjs
  */
 
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { readFileSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);

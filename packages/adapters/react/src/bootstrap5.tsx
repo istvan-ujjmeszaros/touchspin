@@ -2,10 +2,10 @@
  * TouchSpin React - Bootstrap 5 Renderer
  */
 
-import React, { forwardRef } from 'react';
 import { Bootstrap5Renderer } from '@touchspin/renderer-bootstrap5';
+import { forwardRef } from 'react';
 import { TouchSpinComponent } from './TouchSpin.js';
-import type { TouchSpinProps, TouchSpinHandle } from './types.js';
+import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
 /**
  * TouchSpin component with Bootstrap 5 renderer
