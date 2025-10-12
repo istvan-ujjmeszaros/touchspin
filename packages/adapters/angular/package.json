@@ -1,16 +1,49 @@
 {
   "name": "@touchspin/angular",
   "version": "5.0.1-alpha.0",
-  "private": true,
-  "description": "Angular adapter for TouchSpin (Placeholder - Phase 2)",
+  "description": "Angular adapter for TouchSpin with per-renderer subpaths",
   "type": "module",
-  "main": "./src/index.ts",
+  "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts"
+    "./bootstrap3": {
+      "types": "./dist/bootstrap3/index.d.ts",
+      "import": "./dist/bootstrap3.js"
+    },
+    "./bootstrap4": {
+      "types": "./dist/bootstrap4/index.d.ts",
+      "import": "./dist/bootstrap4.js"
+    },
+    "./bootstrap5": {
+      "types": "./dist/bootstrap5/index.d.ts",
+      "import": "./dist/bootstrap5.js"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind/index.d.ts",
+      "import": "./dist/tailwind.js"
+    },
+    "./vanilla": {
+      "types": "./dist/vanilla/index.d.ts",
+      "import": "./dist/vanilla.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
-    "build": "echo 'Placeholder - no build yet'",
-    "build:test": "echo 'Placeholder - no build yet'"
+    "prepack": "yarn build",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && tsup",
+    "build:test": "rm -rf dist && tsc -p tsconfig.build.json && tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
@@ -19,13 +52,34 @@
   },
   "dependencies": {
     "@touchspin/core": "workspace:*",
-    "tslib": "^2.3.0"
+    "@touchspin/renderer-bootstrap3": "workspace:*",
+    "@touchspin/renderer-bootstrap4": "workspace:*",
+    "@touchspin/renderer-bootstrap5": "workspace:*",
+    "@touchspin/renderer-tailwind": "workspace:*",
+    "@touchspin/renderer-vanilla": "workspace:*",
+    "tslib": "^2.7.0"
+  },
+  "devDependencies": {
+    "@angular/animations": "^18.2.0",
+    "@angular/common": "^18.2.0",
+    "@angular/compiler": "^18.2.0",
+    "@angular/compiler-cli": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "@angular/forms": "^18.2.0",
+    "@angular/platform-browser": "^18.2.0",
+    "@angular/platform-browser-dynamic": "^18.2.0",
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^22.7.4",
+    "tsup": "^8.1.0",
+    "typescript": "~5.5.4"
   },
   "keywords": [
     "touchspin",
     "angular",
     "spinner",
-    "number-input"
+    "number-input",
+    "bootstrap",
+    "tailwind"
   ],
   "author": "TouchSpin Contributors",
   "license": "MIT",
@@ -34,6 +88,10 @@
     "url": "https://github.com/istvan-ujjmeszaros/touchspin.git",
     "directory": "packages/adapters/angular"
   },
+  "bugs": {
+    "url": "https://github.com/istvan-ujjmeszaros/touchspin/issues"
+  },
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/adapters/angular#readme",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/istvan-ujjmeszaros"
