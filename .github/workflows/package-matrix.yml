@@ -18,10 +18,10 @@ jobs:
           - "@touchspin/renderer-bootstrap5"
           - "@touchspin/renderer-tailwind"
           - "@touchspin/renderer-vanilla"
-          - "@touchspin/web-component"
           - "@touchspin/jquery"
           - "@touchspin/standalone"
           - "@touchspin/webcomponent"
+          - "@touchspin/react"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,6 +36,14 @@ jobs:
 
       - name: Yarn install
         run: yarn install --immutable
+
+      - name: Build dependencies first
+        run: |
+          # Build @touchspin/core first if this package depends on it
+          if [[ "${{ matrix.pkg }}" != "@touchspin/core" ]]; then
+            echo "Building @touchspin/core dependency first..."
+            yarn workspace @touchspin/core build
+          fi
 
       - name: Build package
         run: |
@@ -63,6 +71,9 @@ jobs:
           elif [[ "$PKG_NAME" == "@touchspin/webcomponent" ]]; then
             # Web component adapter
             PKG_DIR="packages/adapters/webcomponent"
+          elif [[ "$PKG_NAME" == "@touchspin/react" ]]; then
+            # React adapter
+            PKG_DIR="packages/adapters/react"
           else
             # Handle regular packages: @touchspin/core -> packages/core
             PKG_NAME_ONLY=$(echo "$PKG_NAME" | sed 's/@touchspin\///')
