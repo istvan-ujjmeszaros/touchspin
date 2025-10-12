@@ -67,6 +67,7 @@
   "homepage": "https://github.com/istvan-ujjmeszaros/touchspin/tree/main/packages/renderers/tailwind#readme",
   "publishConfig": {
     "access": "public",
+    "provenance": true,
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {

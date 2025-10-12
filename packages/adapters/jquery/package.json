@@ -59,6 +59,7 @@
   },
   "publishConfig": {
     "access": "public",
+    "provenance": true,
     "types": "./dist/index.d.ts"
   },
   "peerDependencies": {

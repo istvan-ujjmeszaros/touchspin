@@ -58,6 +58,7 @@
   },
   "publishConfig": {
     "access": "public",
+    "provenance": true,
     "types": "./dist/vanilla.d.ts"
   },
   "keywords": [
