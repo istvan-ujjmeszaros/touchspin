@@ -67,13 +67,6 @@ jobs:
       - name: Dry-run pack
         run: yarn workspaces foreach -A -v exec npm pack --dry-run
 
-      - name: Configure npm authentication
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Publish with Changesets
         uses: changesets/action@v1
         with:
