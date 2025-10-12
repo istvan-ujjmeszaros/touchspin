@@ -37,18 +37,11 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
-      - name: Build dependencies first
+      - name: Build package with dependencies
         run: |
-          # Build @touchspin/core first if this package depends on it
-          if [[ "${{ matrix.pkg }}" != "@touchspin/core" ]]; then
-            echo "Building @touchspin/core dependency first..."
-            yarn workspace @touchspin/core build
-          fi
-
-      - name: Build package
-        run: |
-          echo "Building ${{ matrix.pkg }}"
-          yarn workspace "${{ matrix.pkg }}" build
+          echo "Building ${{ matrix.pkg }} and its dependencies..."
+          # Use topological build to ensure dependencies are built first
+          yarn workspaces foreach -pt --from "${{ matrix.pkg }}" run build
 
       - name: Validate pack (dry-run)
         run: |
