@@ -37,11 +37,30 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
 
-      - name: Build package with dependencies
+      - name: Build dependencies first
         run: |
-          echo "Building ${{ matrix.pkg }} and its dependencies..."
-          # Use topological build to ensure dependencies are built first
-          yarn workspaces foreach -pt --from "${{ matrix.pkg }}" run build
+          PKG="${{ matrix.pkg }}"
+
+          # Always build core for packages that depend on it
+          if [[ "$PKG" != "@touchspin/core" ]]; then
+            echo "Building @touchspin/core..."
+            yarn workspace @touchspin/core build
+          fi
+
+          # React adapter needs all renderers too
+          if [[ "$PKG" == "@touchspin/react" ]]; then
+            echo "Building renderer dependencies for React..."
+            yarn workspace @touchspin/renderer-bootstrap3 build
+            yarn workspace @touchspin/renderer-bootstrap4 build
+            yarn workspace @touchspin/renderer-bootstrap5 build
+            yarn workspace @touchspin/renderer-tailwind build
+            yarn workspace @touchspin/renderer-vanilla build
+          fi
+
+      - name: Build package
+        run: |
+          echo "Building ${{ matrix.pkg }}"
+          yarn workspace "${{ matrix.pkg }}" build
 
       - name: Validate pack (dry-run)
         run: |
