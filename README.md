@@ -36,6 +36,7 @@ Your sponsorship keeps this project:
 | `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/touchspin-tailwind.css` |
 | `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
 | `@touchspin/react` | React adapter (controlled/uncontrolled) | Per-renderer subpaths | ESM only (no UMD) |
+| `@touchspin/angular` | Angular adapter (ControlValueAccessor) | Per-renderer subpaths | ESM only (no UMD) |
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
@@ -172,6 +173,81 @@ ref.current?.increment();
 **Example app:** [touchspin-react-example](https://github.com/istvan-ujjmeszaros/touchspin-react-example)
 
 See [`packages/adapters/react/README.md`](packages/adapters/react/README.md) for complete API.
+
+### Angular
+
+```bash
+npm install @touchspin/angular @angular/core @angular/common @angular/forms
+```
+
+**Template-driven forms:**
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TouchSpinBootstrap5Component } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [FormsModule, TouchSpinBootstrap5Component],
+  template: `
+    <touch-spin
+      [(ngModel)]="quantity"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+    ></touch-spin>
+  `
+})
+export class ExampleComponent {
+  quantity = 50;
+}
+```
+
+**Reactive forms:**
+```typescript
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { TouchSpinBootstrap5Component } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [ReactiveFormsModule, TouchSpinBootstrap5Component],
+  template: `<touch-spin [formControl]="amountControl"></touch-spin>`
+})
+export class ExampleComponent {
+  amountControl = new FormControl(50);
+}
+```
+
+**Imperative API:**
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import { TouchSpinBootstrap5Component, TouchSpinHandle } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [TouchSpinBootstrap5Component],
+  template: `<touch-spin #spinner [(ngModel)]="value"></touch-spin>`
+})
+export class ExampleComponent {
+  @ViewChild('spinner') spinner?: TouchSpinHandle;
+  value = 0;
+
+  increment() {
+    this.spinner?.increment();
+  }
+}
+```
+
+**Per-renderer imports:** `bootstrap3`, `bootstrap4`, `bootstrap5`, `tailwind`, `vanilla`
+**ControlValueAccessor:** Full integration with Angular forms
+**SSR-safe:** Compatible with Angular Universal
+**Example app:** Located at `/apps/angular-example/` (separate repo)
+
+See [`packages/adapters/angular/README.md`](packages/adapters/angular/README.md) for complete API.
 
 ## CDN Builds
 
