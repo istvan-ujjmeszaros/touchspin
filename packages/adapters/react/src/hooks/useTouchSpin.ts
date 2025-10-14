@@ -4,11 +4,12 @@
 
 import type { TouchSpinCorePublicAPI } from '@touchspin/core';
 import { TouchSpin as TouchSpinCore } from '@touchspin/core';
+import type { RendererConstructor } from '@touchspin/core/renderer';
 import { useEffect, useRef, useState } from 'react';
 import type { TouchSpinProps } from '../types.js';
 
 export interface UseTouchSpinOptions extends TouchSpinProps {
-  renderer: any;
+  renderer: RendererConstructor | null | undefined;
 }
 
 export function useTouchSpin(options: UseTouchSpinOptions) {
@@ -62,6 +63,11 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
     // Subscribe to changes via native DOM events
     const handleChange = () => {
       const numValue = Number(input.value);
+
+      // Validate: skip NaN values to prevent state corruption
+      if (Number.isNaN(numValue)) {
+        return;
+      }
 
       if (!isControlled) {
         setInternalValue(numValue);

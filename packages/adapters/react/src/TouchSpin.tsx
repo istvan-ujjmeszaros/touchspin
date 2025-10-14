@@ -5,12 +5,13 @@
  * Use per-renderer exports instead of this directly.
  */
 
-import React, { forwardRef, useImperativeHandle } from 'react';
+import type { RendererConstructor } from '@touchspin/core/renderer';
+import { forwardRef, useImperativeHandle } from 'react';
 import { useTouchSpin } from './hooks/useTouchSpin.js';
 import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
 export interface TouchSpinComponentProps extends TouchSpinProps {
-  renderer: any;
+  renderer: RendererConstructor | null | undefined;
 }
 
 export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponentProps>(
@@ -73,7 +74,7 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
     if (readOnly !== undefined) touchSpinOptions.readOnly = readOnly;
     if (coreOptions !== undefined) touchSpinOptions.coreOptions = coreOptions;
 
-    const { inputRef, instanceRef, currentValue } = useTouchSpin(touchSpinOptions as any);
+    const { inputRef, instanceRef, currentValue } = useTouchSpin(touchSpinOptions);
 
     // Expose imperative handle
     useImperativeHandle(

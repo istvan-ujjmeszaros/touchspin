@@ -3,7 +3,7 @@
  */
 
 import { Bootstrap3Renderer } from '@touchspin/renderer-bootstrap3';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { TouchSpinComponent } from './TouchSpin.js';
 import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
