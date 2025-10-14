@@ -57,12 +57,12 @@
     "test:ui": "cd ../../.. && playwright test packages/adapters/standalone/tests/ --ui"
   },
   "dependencies": {
-    "@touchspin/core": "workspace:*",
-    "@touchspin/renderer-bootstrap3": "workspace:*",
-    "@touchspin/renderer-bootstrap4": "workspace:*",
-    "@touchspin/renderer-bootstrap5": "workspace:*",
-    "@touchspin/renderer-tailwind": "workspace:*",
-    "@touchspin/renderer-vanilla": "workspace:*"
+    "@touchspin/core": "5.0.1-alpha.0",
+    "@touchspin/renderer-bootstrap3": "5.0.1-alpha.1",
+    "@touchspin/renderer-bootstrap4": "5.0.1-alpha.1",
+    "@touchspin/renderer-bootstrap5": "5.0.1-alpha.1",
+    "@touchspin/renderer-tailwind": "5.0.1-alpha.1",
+    "@touchspin/renderer-vanilla": "5.0.1-alpha.1"
   },
   "publishConfig": {
     "access": "public",
