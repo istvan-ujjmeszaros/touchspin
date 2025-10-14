@@ -60,7 +60,7 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
 
     instanceRef.current = TouchSpinCore(input, initOptions);
 
-    // Subscribe to changes via native DOM events
+    // Subscribe to changes via native DOM events (both 'input' and 'change')
     const handleChange = () => {
       const numValue = Number(input.value);
 
@@ -76,10 +76,12 @@ export function useTouchSpin(options: UseTouchSpinOptions) {
       onChange?.(numValue, { source: 'user', action: 'input' });
     };
 
+    input.addEventListener('input', handleChange);
     input.addEventListener('change', handleChange);
 
     // Cleanup
     return () => {
+      input.removeEventListener('input', handleChange);
       input.removeEventListener('change', handleChange);
       instanceRef.current?.destroy();
       instanceRef.current = null;

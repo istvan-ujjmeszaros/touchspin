@@ -206,7 +206,7 @@ describe('TouchSpin React Component', () => {
       expect(input).toBeInTheDocument();
     });
 
-    it('should expose getValue method', () => {
+    it('should expose getValue method', async () => {
       function TestComponent() {
         const ref = useRef<TouchSpinHandle>(null);
         const [displayValue, setDisplayValue] = useState<number | null>(null);
@@ -230,10 +230,12 @@ describe('TouchSpin React Component', () => {
       render(<TestComponent />);
 
       const button = screen.getByRole('button', { name: 'Get Value' });
-      userEvent.click(button);
+      await userEvent.click(button);
 
       const display = screen.getByTestId('display-value');
-      expect(display).toHaveTextContent('42');
+      await waitFor(() => {
+        expect(display).toHaveTextContent('42');
+      });
     });
 
     it('should expose setValue method', async () => {
