@@ -21,8 +21,6 @@ jobs:
           - "@touchspin/jquery"
           - "@touchspin/standalone"
           - "@touchspin/webcomponent"
-          - "@touchspin/react"
-          - "@touchspin/angular"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,26 +44,6 @@ jobs:
           if [[ "$PKG" != "@touchspin/core" ]]; then
             echo "Building @touchspin/core..."
             yarn workspace @touchspin/core build
-          fi
-
-          # React adapter needs all renderers too
-          if [[ "$PKG" == "@touchspin/react" ]]; then
-            echo "Building renderer dependencies for React..."
-            yarn workspace @touchspin/renderer-bootstrap3 build
-            yarn workspace @touchspin/renderer-bootstrap4 build
-            yarn workspace @touchspin/renderer-bootstrap5 build
-            yarn workspace @touchspin/renderer-tailwind build
-            yarn workspace @touchspin/renderer-vanilla build
-          fi
-
-          # Angular adapter needs all renderers too
-          if [[ "$PKG" == "@touchspin/angular" ]]; then
-            echo "Building renderer dependencies for Angular..."
-            yarn workspace @touchspin/renderer-bootstrap3 build
-            yarn workspace @touchspin/renderer-bootstrap4 build
-            yarn workspace @touchspin/renderer-bootstrap5 build
-            yarn workspace @touchspin/renderer-tailwind build
-            yarn workspace @touchspin/renderer-vanilla build
           fi
 
       - name: Build package
@@ -94,12 +72,6 @@ jobs:
           elif [[ "$PKG_NAME" == "@touchspin/webcomponent" ]]; then
             # Web component adapter
             PKG_DIR="packages/adapters/webcomponent"
-          elif [[ "$PKG_NAME" == "@touchspin/react" ]]; then
-            # React adapter
-            PKG_DIR="packages/adapters/react"
-          elif [[ "$PKG_NAME" == "@touchspin/angular" ]]; then
-            # Angular adapter
-            PKG_DIR="packages/adapters/angular"
           else
             # Handle regular packages: @touchspin/core -> packages/core
             PKG_NAME_ONLY=$(echo "$PKG_NAME" | sed 's/@touchspin\///')
