@@ -15,6 +15,9 @@ function walk(dir, isTestDir = false) {
       continue;
     const p = path.join(dir, entry.name);
 
+    // Skip Angular unit tests (they import from /src/ by design)
+    if (p.includes('packages/adapters/angular/tests')) continue;
+
     // Check if we're in a test directory or entering one
     const currentIsTest = isTestDir || entry.name === '__tests__' || entry.name === 'tests';
 
