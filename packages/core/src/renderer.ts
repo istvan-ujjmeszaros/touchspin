@@ -1,5 +1,8 @@
+import type { RendererCoreBridge } from './AbstractRendererBase.js';
+
 export type {
   InferOptionsFromSchema,
+  RendererCoreBridge,
   RendererOptionDef,
   RendererOptionKind,
   RendererOptionSchema,
@@ -15,17 +18,13 @@ export interface Renderer {
   teardown?(): void;
 }
 
-// Constructor signature for renderer classes
-export type CoreFacade = {
-  attachUpEvents: (el: HTMLElement | null) => void;
-  attachDownEvents: (el: HTMLElement | null) => void;
-  observeSetting: (key: string, cb: (value: unknown) => void) => () => void;
-};
+// Type alias for backward compatibility - same as RendererCoreBridge
+export type { RendererCoreBridge as CoreFacade } from './AbstractRendererBase.js';
 
 export type RendererConstructor = new (
   inputEl: HTMLInputElement,
   settings: Readonly<Record<string, unknown>>,
-  core: CoreFacade
+  core: RendererCoreBridge
 ) => Renderer;
 
 // Optionally exposed element bag type for renderer implementations

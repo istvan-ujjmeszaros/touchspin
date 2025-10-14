@@ -28,7 +28,7 @@ export type InferOptionsFromSchema<Schema extends RendererOptionSchema> = {
   [Key in keyof Schema]: RendererOptionValue<Schema[Key]>;
 };
 
-type RendererCoreBridge = {
+export type RendererCoreBridge = {
   attachUpEvents: (element: HTMLElement | null) => void;
   attachDownEvents: (element: HTMLElement | null) => void;
   observeSetting: <Key extends keyof TouchSpinCoreOptions>(
