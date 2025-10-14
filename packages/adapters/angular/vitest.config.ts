@@ -2,10 +2,10 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    globals: true,
+    globals: false, // Disable globals to avoid conflicts with Playwright
     environment: 'happy-dom',
     setupFiles: ['./tests/setup.ts'],
-    include: ['tests/**/*.spec.ts'],
+    include: ['tests/**/*.test.ts'],
     restoreMocks: true,
     coverage: {
       provider: 'v8',

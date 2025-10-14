@@ -13,5 +13,6 @@
     "packages/core/test-helpers/types/global-playwright.d.ts",
     "packages/**/tests/**/*.ts",
     "packages/**/__tests__/**/*.ts"
-  ]
+  ],
+  "exclude": ["packages/adapters/angular/tests/**/*"]
 }
