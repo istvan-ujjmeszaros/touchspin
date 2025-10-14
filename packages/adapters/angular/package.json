@@ -47,7 +47,7 @@
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --coverage --config vitest.config.ts",
-    "test:coverage:open": "yarn test:coverage && open coverage/index.html || xdg-open coverage/index.html"
+    "test:coverage:open": "yarn test:coverage && node ../../../scripts/coverage-open.mjs coverage/index.html"
   },
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
