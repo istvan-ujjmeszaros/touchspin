@@ -16,11 +16,11 @@ export interface TouchSpinChangeMeta {
  * Inputs accepted by TouchSpin component
  */
 export interface TouchSpinInputs {
-  /** Current value (controlled mode) */
-  value?: number;
+  /** Current value (controlled mode – pair with valueChange) */
+  value?: number | null;
 
-  /** Initial value (uncontrolled mode) */
-  defaultValue?: number;
+  /** Initial value (uncontrolled mode, applied once until overridden) */
+  defaultValue?: number | null;
 
   /** Minimum value */
   min?: number;

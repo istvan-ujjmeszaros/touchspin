@@ -153,14 +153,20 @@ export class ExampleComponent {
 }
 ```
 
+For uncontrolled usage (internal state only) provide `defaultValue`:
+
+```html
+<touch-spin defaultValue="5" />
+```
+
 ## API Reference
 
 ### Inputs
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
-| `value` | `number` | - | Current value (controlled mode) |
-| `defaultValue` | `number` | `0` | Initial value (uncontrolled mode) |
+| `value` | `number \| null` | - | Current value (controlled mode); pair with `(valueChange)` |
+| `defaultValue` | `number \| null` | `0` | Initial value (applied once until `value`/forms override) |
 | `min` | `number` | - | Minimum allowed value |
 | `max` | `number` | - | Maximum allowed value |
 | `step` | `number` | `1` | Increment/decrement step |
@@ -174,6 +180,8 @@ export class ExampleComponent {
 | `class` | `string` | - | CSS class for wrapper |
 | `inputClass` | `string` | - | CSS class for input element |
 | `coreOptions` | `Partial<TouchSpinCoreOptions>` | - | Advanced core options |
+
+Controlled precedence: reactive forms (`formControl`/`ngModel`) take priority over `[value]`, and `[value]` overrides `defaultValue`. Setting `[value]` to `null` or omitting it returns the component to uncontrolled mode so user edits update internal state.
 
 ### Outputs
 

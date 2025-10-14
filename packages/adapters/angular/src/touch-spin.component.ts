@@ -72,6 +72,62 @@ export class TouchSpinComponent
   @Input() prefix?: string;
   @Input() suffix?: string;
 
+  // Controlled/default value
+  private _value: number | null = null;
+  private _defaultValue: number | null = null;
+  private hasAppliedDefault = false;
+  private pendingExternalValue: number | null = null;
+  private controlledMode: 'none' | 'forms' | 'input' = 'none';
+
+  @Input()
+  set value(value: number | null | undefined) {
+    if (value === undefined || value === null) {
+      this._value = null;
+      if (this.controlledMode === 'input') {
+        this.controlledMode = 'none';
+      }
+      return;
+    }
+
+    if (this._value === value && this.controlledMode === 'input') {
+      return;
+    }
+
+    this._value = value;
+    this.controlledMode = 'input';
+    this.hasAppliedDefault = true;
+    this.applyExternalValue(value);
+  }
+
+  get value(): number | null | undefined {
+    return this._value ?? undefined;
+  }
+
+  @Input()
+  set defaultValue(value: number | null | undefined) {
+    if (value === undefined || value === null) {
+      this._defaultValue = null;
+      return;
+    }
+
+    this._defaultValue = value;
+
+    if (this.controlledMode !== 'none') {
+      return;
+    }
+
+    if (this.hasAppliedDefault && this.internalValue === value) {
+      return;
+    }
+
+    this.hasAppliedDefault = true;
+    this.applyExternalValue(value);
+  }
+
+  get defaultValue(): number | null | undefined {
+    return this._defaultValue ?? undefined;
+  }
+
   // State
   @Input() disabled = false;
   @Input() readOnly = false;
@@ -99,7 +155,6 @@ export class TouchSpinComponent
   // Internal state
   private instance: TouchSpinCorePublicAPI | null = null;
   private internalValue = 0;
-  private isControlled = false;
   private changeListener: (() => void) | null = null;
 
   // ControlValueAccessor callbacks
@@ -125,39 +180,39 @@ export class TouchSpinComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.instance) return;
+    if (this.instance) {
+      // Update settings when inputs change (but not on first change)
+      const settingsChanges: Record<string, any> = {};
+      let hasSettingsChanges = false;
 
-    // Update settings when inputs change (but not on first change)
-    const settingsChanges: Record<string, any> = {};
-    let hasSettingsChanges = false;
+      if (changes['min'] && !changes['min'].firstChange && this.min !== undefined) {
+        settingsChanges.min = this.min;
+        hasSettingsChanges = true;
+      }
+      if (changes['max'] && !changes['max'].firstChange && this.max !== undefined) {
+        settingsChanges.max = this.max;
+        hasSettingsChanges = true;
+      }
+      if (changes['step'] && !changes['step'].firstChange && this.step !== undefined) {
+        settingsChanges.step = this.step;
+        hasSettingsChanges = true;
+      }
+      if (changes['decimals'] && !changes['decimals'].firstChange && this.decimals !== undefined) {
+        settingsChanges.decimals = this.decimals;
+        hasSettingsChanges = true;
+      }
+      if (changes['prefix'] && !changes['prefix'].firstChange && this.prefix !== undefined) {
+        settingsChanges.prefix = this.prefix;
+        hasSettingsChanges = true;
+      }
+      if (changes['suffix'] && !changes['suffix'].firstChange && this.suffix !== undefined) {
+        settingsChanges.postfix = this.suffix;
+        hasSettingsChanges = true;
+      }
 
-    if (changes['min'] && !changes['min'].firstChange && this.min !== undefined) {
-      settingsChanges.min = this.min;
-      hasSettingsChanges = true;
-    }
-    if (changes['max'] && !changes['max'].firstChange && this.max !== undefined) {
-      settingsChanges.max = this.max;
-      hasSettingsChanges = true;
-    }
-    if (changes['step'] && !changes['step'].firstChange && this.step !== undefined) {
-      settingsChanges.step = this.step;
-      hasSettingsChanges = true;
-    }
-    if (changes['decimals'] && !changes['decimals'].firstChange && this.decimals !== undefined) {
-      settingsChanges.decimals = this.decimals;
-      hasSettingsChanges = true;
-    }
-    if (changes['prefix'] && !changes['prefix'].firstChange && this.prefix !== undefined) {
-      settingsChanges.prefix = this.prefix;
-      hasSettingsChanges = true;
-    }
-    if (changes['suffix'] && !changes['suffix'].firstChange && this.suffix !== undefined) {
-      settingsChanges.postfix = this.suffix;
-      hasSettingsChanges = true;
-    }
-
-    if (hasSettingsChanges) {
-      this.instance.updateSettings(settingsChanges);
+      if (hasSettingsChanges) {
+        this.instance.updateSettings(settingsChanges);
+      }
     }
 
     // Update disabled/readonly state
@@ -175,20 +230,10 @@ export class TouchSpinComponent
 
   // ControlValueAccessor implementation
   writeValue(value: number | null | undefined): void {
-    this.isControlled = true;
     const numValue = value ?? 0;
-
-    if (this.instance) {
-      const currentValue = this.instance.getValue();
-      if (currentValue !== numValue) {
-        this.instance.setValue(numValue);
-      }
-    } else {
-      this.internalValue = numValue;
-      if (this.inputRef?.nativeElement) {
-        this.inputRef.nativeElement.value = String(numValue);
-      }
-    }
+    this.controlledMode = 'forms';
+    this.hasAppliedDefault = true;
+    this.applyExternalValue(numValue);
   }
 
   registerOnChange(fn: (value: number) => void): void {
@@ -236,6 +281,55 @@ export class TouchSpinComponent
   }
 
   // Internal helpers
+  private applyExternalValue(rawValue: number): void {
+    const normalized = Number(rawValue);
+    if (Number.isNaN(normalized)) {
+      return;
+    }
+
+    this.internalValue = normalized;
+
+    if (this.instance) {
+      const currentValue = this.instance.getValue();
+      if (currentValue === normalized) {
+        this.pendingExternalValue = null;
+        return;
+      }
+
+      this.pendingExternalValue = normalized;
+      this.instance.setValue(normalized);
+
+      queueMicrotask(() => {
+        if (this.pendingExternalValue === normalized) {
+          this.pendingExternalValue = null;
+        }
+      });
+
+      return;
+    }
+
+    if (this.inputRef?.nativeElement) {
+      const input = this.inputRef.nativeElement;
+      if (Number(input.value) === normalized) {
+        this.pendingExternalValue = null;
+        return;
+      }
+
+      this.pendingExternalValue = normalized;
+      input.value = String(normalized);
+
+      queueMicrotask(() => {
+        if (this.pendingExternalValue === normalized) {
+          this.pendingExternalValue = null;
+        }
+      });
+
+      return;
+    }
+
+    this.pendingExternalValue = null;
+  }
+
   private initializeTouchSpin(): void {
     const input = this.inputRef.nativeElement;
 
@@ -262,9 +356,14 @@ export class TouchSpinComponent
     this.changeListener = () => {
       const numValue = Number(input.value);
 
-      if (!this.isControlled) {
-        this.internalValue = numValue;
+      this.internalValue = numValue;
+
+      if (this.pendingExternalValue !== null && numValue === this.pendingExternalValue) {
+        this.pendingExternalValue = null;
+        return;
       }
+
+      this.pendingExternalValue = null;
 
       // Notify Angular forms
       this.onChange(numValue);
