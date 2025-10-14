@@ -234,10 +234,12 @@ When creating a new testable package:
 ## Future Packages
 
 This requirement applies to **ALL** future packages with tests, including:
-- Angular component wrapper (`@touchspin/angular-component`)
-- React component wrapper (`@touchspin/react-component`)
 - Vue component wrapper (`@touchspin/vue-component`)
 - New renderer packages for other CSS frameworks
 - Plugin packages for other libraries
 
 Each must follow these exact same requirements to work with the test infrastructure.
+
+**Note:** React and Angular adapters are now published from separate repositories:
+- [@touchspin/react](https://github.com/istvan-ujjmeszaros/touchspin-react)
+- [@touchspin/angular](https://github.com/istvan-ujjmeszaros/touchspin-angular)

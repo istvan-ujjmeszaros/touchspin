@@ -2,7 +2,6 @@
 "@touchspin/core": patch
 "@touchspin/standalone": patch
 "@touchspin/jquery": patch
-"@touchspin/react": patch
 "@touchspin/webcomponent": patch
 "@touchspin/renderer-bootstrap3": patch
 "@touchspin/renderer-bootstrap4": patch
@@ -17,7 +16,6 @@ This is the first alpha release of TouchSpin v5, featuring a completely rewritte
 
 **New Features:**
 - Modular renderer system (Bootstrap 3/4/5, Tailwind, Vanilla CSS)
-- React adapter with per-renderer subpath exports
 - Standalone, jQuery, and Web Component adapters
 - Full TypeScript support with complete type definitions
 - Comprehensive test coverage (1000+ tests)

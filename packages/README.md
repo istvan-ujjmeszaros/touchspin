@@ -37,10 +37,11 @@ Renderers are responsible for creating the visual representation of the spinner 
 *   **[@touchspin/renderer-tailwind](./renderers/tailwind/README.md):** Renderer for Tailwind CSS.
 *   **[@touchspin/renderer-vanilla](./renderers/vanilla/README.md):** A framework-agnostic renderer with no CSS dependencies.
 
-## Future Development
+## Framework Adapters (Separate Repositories)
 
-We are continuously working to expand TouchSpin's ecosystem. Here are some areas for future development:
+React and Angular adapters are maintained in separate repositories:
 
--   `@touchspin/react`: An official React wrapper.
--   `@touchspin/angular`: An official Angular wrapper.
--   Other framework wrappers and renderers as community needs arise.
+-   **[@touchspin/react](https://github.com/istvan-ujjmeszaros/touchspin-react)**: Official React adapter with controlled/uncontrolled patterns and per-renderer subpaths.
+-   **[@touchspin/angular](https://github.com/istvan-ujjmeszaros/touchspin-angular)**: Official Angular adapter with ControlValueAccessor integration and per-renderer subpaths.
+
+Both adapters are independently versioned and published to npm.

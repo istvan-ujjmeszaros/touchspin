@@ -2,9 +2,7 @@
   "mode": "pre",
   "tag": "alpha",
   "initialVersions": {
-    "@touchspin/angular": "5.0.0",
     "@touchspin/jquery": "5.0.0",
-    "@touchspin/react": "5.0.0",
     "@touchspin/standalone": "5.0.0",
     "@touchspin/webcomponent": "5.0.0",
     "@touchspin/core": "5.0.0",
@@ -14,5 +12,5 @@
     "@touchspin/renderer-tailwind": "5.0.0",
     "@touchspin/renderer-vanilla": "5.0.0"
   },
-  "changesets": ["angular-adapter", "fix-renderer-workspace-deps", "v5-alpha-release"]
+  "changesets": ["fix-renderer-workspace-deps", "v5-alpha-release"]
 }

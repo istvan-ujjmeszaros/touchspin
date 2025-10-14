@@ -35,8 +35,6 @@ Your sponsorship keeps this project:
 | `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap5.css` |
 | `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/touchspin-tailwind.css` |
 | `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
-| `@touchspin/react` | React adapter (controlled/uncontrolled) | Per-renderer subpaths | ESM only (no UMD) |
-| `@touchspin/angular` | Angular adapter (ControlValueAccessor) | Per-renderer subpaths | ESM only (no UMD) |
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
@@ -188,7 +186,7 @@ ref.current?.increment();
 **SSR-safe:** Works with Next.js, Remix, and other React frameworks
 **Example app:** [touchspin-react-example](https://github.com/istvan-ujjmeszaros/touchspin-react-example)
 
-See [`packages/adapters/react/README.md`](packages/adapters/react/README.md) for complete API.
+See the [@touchspin/react repository](https://github.com/istvan-ujjmeszaros/touchspin-react) for complete API documentation.
 
 ### Angular
 
@@ -261,9 +259,8 @@ export class ExampleComponent {
 **Per-renderer imports:** `bootstrap3`, `bootstrap4`, `bootstrap5`, `tailwind`, `vanilla`
 **ControlValueAccessor:** Full integration with Angular forms
 **SSR-safe:** Compatible with Angular Universal
-**Example app:** Located at `/apps/angular-example/` (separate repo)
 
-See [`packages/adapters/angular/README.md`](packages/adapters/angular/README.md) for complete API.
+See the [@touchspin/angular repository](https://github.com/istvan-ujjmeszaros/touchspin-angular) for complete API documentation.
 
 ## CDN Builds
 
