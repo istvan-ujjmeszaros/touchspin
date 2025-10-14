@@ -125,7 +125,8 @@
       "bracketSameLine": false,
       "quoteStyle": "single",
       "attributePosition": "auto"
-    }
+    },
+    "globals": ["jest", "describe", "it", "expect", "beforeEach", "afterEach"]
   },
   "overrides": [
     {
