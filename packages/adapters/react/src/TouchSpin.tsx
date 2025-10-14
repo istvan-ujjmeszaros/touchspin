@@ -7,7 +7,7 @@
 
 import type { RendererConstructor } from '@touchspin/core/renderer';
 import { forwardRef, useImperativeHandle } from 'react';
-import { useTouchSpin } from './hooks/useTouchSpin.js';
+import { type UseTouchSpinOptions, useTouchSpin } from './hooks/useTouchSpin.js';
 import type { TouchSpinHandle, TouchSpinProps } from './types.js';
 
 export interface TouchSpinComponentProps extends TouchSpinProps {
@@ -60,7 +60,7 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
     } = props;
 
     // Filter out undefined values for exactOptionalPropertyTypes
-    const touchSpinOptions: Record<string, unknown> = { renderer };
+    const touchSpinOptions: Partial<UseTouchSpinOptions> = { renderer };
     if (value !== undefined) touchSpinOptions.value = value;
     if (defaultValue !== undefined) touchSpinOptions.defaultValue = defaultValue;
     if (onChange !== undefined) touchSpinOptions.onChange = onChange;
@@ -74,7 +74,9 @@ export const TouchSpinComponent = forwardRef<TouchSpinHandle, TouchSpinComponent
     if (readOnly !== undefined) touchSpinOptions.readOnly = readOnly;
     if (coreOptions !== undefined) touchSpinOptions.coreOptions = coreOptions;
 
-    const { inputRef, instanceRef, currentValue } = useTouchSpin(touchSpinOptions);
+    const { inputRef, instanceRef, currentValue } = useTouchSpin(
+      touchSpinOptions as UseTouchSpinOptions
+    );
 
     // Expose imperative handle
     useImperativeHandle(
