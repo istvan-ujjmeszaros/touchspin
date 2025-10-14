@@ -667,4 +667,55 @@ describe('TouchSpinComponent', () => {
       newFixture.destroy();
     });
   });
+
+  describe('coverage edge cases', () => {
+    it('should handle NaN input gracefully in writeValue', async () => {
+      // TypeScript won't allow NaN directly, so we cast
+      component.writeValue(NaN as any);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Should maintain last valid state (0 from initialization)
+      expect(component.getValue()).toBe(0);
+      expect(inputElement.value).toBe('0');
+    });
+
+    it('should return undefined from value getter when never set', () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+
+      // Access value getter before setting any value
+      const valueResult = newComponent.value;
+
+      expect(valueResult).toBeUndefined();
+
+      newFixture.destroy();
+    });
+
+    it('should return undefined from defaultValue getter when never set', () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+
+      // Access defaultValue getter before setting any defaultValue
+      const defaultValueResult = newComponent.defaultValue;
+
+      expect(defaultValueResult).toBeUndefined();
+
+      newFixture.destroy();
+    });
+
+    it('should allow calling default onTouched before registerOnTouched', () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+
+      // Call onTouched before registering a custom handler
+      // Should not throw error (default is noop function)
+      expect(() => newComponent.onTouched()).not.toThrow();
+
+      newFixture.destroy();
+    });
+  });
 });
