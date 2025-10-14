@@ -1,11 +1,11 @@
 /**
- * TouchSpin Angular - Bootstrap 3 Renderer
+ * TouchSpin Angular - Bootstrap 5 Renderer
  */
 
 import { Component, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Bootstrap3Renderer } from '@touchspin/renderer-bootstrap3';
-import { TouchSpinComponent } from '../touch-spin.component';
+import { TouchSpinComponent } from '@touchspin/angular';
+import { Bootstrap5Renderer } from '@touchspin/renderer-bootstrap5';
 
 @Component({
   selector: 'touch-spin',
@@ -32,13 +32,13 @@ import { TouchSpinComponent } from '../touch-spin.component';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => TouchSpinBootstrap3Component),
+      useExisting: forwardRef(() => TouchSpinBootstrap5Component),
       multi: true,
     },
   ],
 })
-export class TouchSpinBootstrap3Component extends TouchSpinComponent {
-  override renderer = Bootstrap3Renderer;
+export class TouchSpinBootstrap5Component extends TouchSpinComponent {
+  override renderer = Bootstrap5Renderer;
 }
 
 // Export types
@@ -47,4 +47,4 @@ export type {
   TouchSpinHandle,
   TouchSpinInputs,
   TouchSpinOutputs,
-} from '../types';
+} from '@touchspin/angular';

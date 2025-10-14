@@ -4,8 +4,8 @@
 
 import { Component, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TouchSpinComponent } from '@touchspin/angular';
 import { VanillaRenderer } from '@touchspin/renderer-vanilla';
-import { TouchSpinComponent } from '../touch-spin.component';
 
 @Component({
   selector: 'touch-spin',
@@ -47,4 +47,4 @@ export type {
   TouchSpinHandle,
   TouchSpinInputs,
   TouchSpinOutputs,
-} from '../types';
+} from '@touchspin/angular';

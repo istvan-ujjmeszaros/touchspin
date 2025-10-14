@@ -24,8 +24,7 @@
     "./vanilla": {
       "types": "./dist/vanilla/index.d.ts",
       "import": "./dist/vanilla.js"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "files": [
     "dist/",
@@ -39,9 +38,9 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && tsup",
-    "build:test": "rm -rf dist && tsc -p tsconfig.build.json && tsup",
-    "build:watch": "tsup --watch",
+    "build": "ng-packagr -p ng-package.json",
+    "build:test": "ng-packagr -p ng-package.json",
+    "build:watch": "ng-packagr -p ng-package.json --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
@@ -74,9 +73,22 @@
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@playwright/test": "^1.54.2",
+    "@types/jasmine": "^5.1.9",
+    "@types/karma": "^6",
+    "@types/karma-chrome-launcher": "^3",
+    "@types/karma-coverage": "^2",
     "@types/node": "^22.7.4",
     "@vitest/coverage-v8": "^3.2.4",
     "happy-dom": "^20.0.0",
+    "jasmine-core": "^5.12.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "karma-typescript": "^5.5.4",
+    "karma-typescript-es6-transform": "^5.5.4",
+    "ng-packagr": "^18.0.0",
     "tsup": "^8.1.0",
     "typescript": "~5.5.4",
     "vitest": "^3.2.4",

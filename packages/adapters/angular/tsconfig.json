@@ -11,7 +11,12 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@touchspin/angular": ["./src/public-api.ts"],
+      "@touchspin/angular/*": ["./src/*"]
+    },
+    "baseUrl": "."
   },
   "exclude": ["tests/**/*.ts", "**/*.spec.ts", "node_modules"]
 }
