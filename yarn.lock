@@ -2586,7 +2586,7 @@ __metadata:
     tslib: "npm:^2.7.0"
     tsup: "npm:^8.1.0"
     typescript: "npm:~5.5.4"
-    zone.js: "npm:0.14.10"
+    zone.js: "npm:^0.14.0"
   peerDependencies:
     "@angular/common": ">=17.0.0"
     "@angular/core": ">=17.0.0"
@@ -11588,7 +11588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zone.js@npm:0.14.10, zone.js@npm:^0.14.0":
+"zone.js@npm:^0.14.0":
   version: 0.14.10
   resolution: "zone.js@npm:0.14.10"
   checksum: 10c0/61283d152cb1eff899bae61621dccd572aa9f47e0c60c04b249bf86b43e3e4ba627bf6dba371b725023a4f302f39e554d7bf2d25bbf40c869c6c52f774b17e8b
