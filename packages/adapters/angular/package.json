@@ -45,7 +45,9 @@
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
-    "test:watch": "vitest --config vitest.config.ts"
+    "test:watch": "vitest --config vitest.config.ts",
+    "test:coverage": "vitest run --coverage --config vitest.config.ts",
+    "test:coverage:open": "yarn test:coverage && open coverage/index.html || xdg-open coverage/index.html"
   },
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
@@ -73,6 +75,7 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
+    "@vitest/coverage-v8": "^3.2.4",
     "happy-dom": "^20.0.0",
     "tsup": "^8.1.0",
     "typescript": "~5.5.4",
