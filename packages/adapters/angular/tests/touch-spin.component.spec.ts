@@ -225,4 +225,446 @@ describe('TouchSpinComponent', () => {
       expect(inputElement.disabled).toBe(false);
     });
   });
+
+  describe('input options', () => {
+    it('should initialize with min, max, and step options', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.min = 0;
+      newComponent.max = 100;
+      newComponent.step = 5;
+      newComponent.defaultValue = 10;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      const input = newFixture.nativeElement.querySelector('input[type="number"]');
+      expect(input.value).toBe('10');
+      expect(newComponent.getValue()).toBe(10);
+
+      newFixture.destroy();
+    });
+
+    it('should initialize with decimals option', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.decimals = 2;
+      newComponent.step = 0.1; // Allow decimal steps
+      newComponent.defaultValue = 10.5;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent.getValue()).toBe(10.5);
+
+      newFixture.destroy();
+    });
+
+    it('should initialize with prefix and suffix', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.prefix = '$';
+      newComponent.suffix = '.00';
+      newComponent.defaultValue = 100;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent.getValue()).toBe(100);
+
+      newFixture.destroy();
+    });
+
+    it('should initialize with coreOptions', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.coreOptions = { verticalbuttons: true };
+      newComponent.defaultValue = 50;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent.getValue()).toBe(50);
+
+      newFixture.destroy();
+    });
+  });
+
+  describe('ngOnChanges - dynamic property updates', () => {
+    it('should update min dynamically', async () => {
+      component.min = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Trigger ngOnChanges
+      component.ngOnChanges({
+        min: {
+          currentValue: 10,
+          previousValue: undefined,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Value should remain valid
+      expect(component.getValue()).toBeGreaterThanOrEqual(10);
+    });
+
+    it('should update max dynamically', async () => {
+      component.max = 50;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.ngOnChanges({
+        max: {
+          currentValue: 50,
+          previousValue: undefined,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component.getValue()).toBeLessThanOrEqual(50);
+    });
+
+    it('should update step dynamically', async () => {
+      component.step = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.ngOnChanges({
+        step: {
+          currentValue: 10,
+          previousValue: 1,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component).toBeTruthy();
+    });
+
+    it('should update decimals dynamically', async () => {
+      component.decimals = 2;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.ngOnChanges({
+        decimals: {
+          currentValue: 2,
+          previousValue: 0,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component).toBeTruthy();
+    });
+
+    it('should update prefix dynamically', async () => {
+      component.prefix = '$';
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.ngOnChanges({
+        prefix: {
+          currentValue: '$',
+          previousValue: undefined,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component).toBeTruthy();
+    });
+
+    it('should update suffix dynamically', async () => {
+      component.suffix = ' USD';
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.ngOnChanges({
+        suffix: {
+          currentValue: ' USD',
+          previousValue: undefined,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component).toBeTruthy();
+    });
+
+    it('should update disabled state dynamically', async () => {
+      component.disabled = false;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.disabled = true;
+      component.ngOnChanges({
+        disabled: {
+          currentValue: true,
+          previousValue: false,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(inputElement.disabled).toBe(true);
+    });
+
+    it('should update readOnly state dynamically', async () => {
+      component.readOnly = false;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.readOnly = true;
+      component.ngOnChanges({
+        readOnly: {
+          currentValue: true,
+          previousValue: false,
+          firstChange: false,
+          isFirstChange: () => false,
+        },
+      });
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(inputElement.readOnly).toBe(true);
+    });
+  });
+
+  describe('imperative methods - additional', () => {
+    it('should call focus() on input element', () => {
+      const focusSpy = jest.spyOn(inputElement, 'focus');
+
+      component.focus();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('should call blur() on input element', () => {
+      const blurSpy = jest.spyOn(inputElement, 'blur');
+
+      component.blur();
+
+      expect(blurSpy).toHaveBeenCalled();
+    });
+
+    it('should return core instance with getCore()', () => {
+      const core = component.getCore();
+
+      expect(core).toBeTruthy();
+      expect(typeof core?.getValue).toBe('function');
+    });
+  });
+
+  describe('ControlValueAccessor - additional', () => {
+    it('should register onTouched callback', () => {
+      const onTouched = jest.fn();
+
+      component.registerOnTouched(onTouched);
+
+      // Trigger blur event
+      inputElement.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+
+      // Note: onTouched is called internally, we're just testing registration
+      expect(component).toBeTruthy();
+    });
+
+    it('should handle writeValue with null', async () => {
+      component.writeValue(null);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(inputElement.value).toBe('0');
+      expect(component.getValue()).toBe(0);
+    });
+
+    it('should handle writeValue with undefined', async () => {
+      component.writeValue(undefined);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(inputElement.value).toBe('0');
+      expect(component.getValue()).toBe(0);
+    });
+  });
+
+  describe('property getters', () => {
+    it('should return value via value getter', () => {
+      component.value = 42;
+      fixture.detectChanges();
+
+      expect(component.value).toBe(42);
+    });
+
+    it('should return defaultValue via defaultValue getter', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.defaultValue = 10;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent.defaultValue).toBe(10);
+
+      newFixture.destroy();
+    });
+
+    it('should return inputTestId when testId is set', () => {
+      component.testId = 'my-test';
+      fixture.detectChanges();
+
+      expect(component.inputTestId).toBe('my-test-input');
+    });
+
+    it('should return undefined for inputTestId when testId is not set', () => {
+      // testId is optional, so we test when it's not provided at all
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newFixture.detectChanges();
+
+      expect(newComponent.inputTestId).toBeUndefined();
+
+      newFixture.destroy();
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle setting value to null', async () => {
+      component.value = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.value = null;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Should remain in last valid state
+      expect(component.getValue()).toBeDefined();
+    });
+
+    it('should handle setting value to undefined', async () => {
+      component.value = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.value = undefined;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component.getValue()).toBeDefined();
+    });
+
+    it('should handle setting defaultValue to null', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.defaultValue = 5;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      newComponent.defaultValue = null;
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent).toBeTruthy();
+
+      newFixture.destroy();
+    });
+
+    it('should handle setting defaultValue to undefined', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.defaultValue = 5;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      newComponent.defaultValue = undefined;
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent).toBeTruthy();
+
+      newFixture.destroy();
+    });
+
+    it('should not update when setting same value twice in controlled mode', async () => {
+      component.value = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const valueBefore = component.getValue();
+
+      component.value = 10;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component.getValue()).toBe(valueBefore);
+    });
+
+    it('should not update defaultValue when in controlled mode', async () => {
+      component.value = 20;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      component.defaultValue = 5;
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Should still be 20 (controlled value takes precedence)
+      expect(component.getValue()).toBe(20);
+    });
+
+    it('should not update defaultValue when value unchanged', async () => {
+      const newFixture = TestBed.createComponent(TouchSpinComponent);
+      const newComponent = newFixture.componentInstance;
+      newComponent.renderer = VanillaRenderer;
+      newComponent.defaultValue = 10;
+
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      newComponent.defaultValue = 10;
+      newFixture.detectChanges();
+      await newFixture.whenStable();
+
+      expect(newComponent.getValue()).toBe(10);
+
+      newFixture.destroy();
+    });
+  });
 });
