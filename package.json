@@ -96,7 +96,7 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "inspect": "node scripts/inspect.mjs",
-    "test": "node scripts/pre-test.mjs && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
+    "test": "node scripts/pre-test.mjs && yarn workspace @touchspin/angular test && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
     "test:ci": "yarn build:test && yarn guard:all && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",
     "typecheck:tests": "tsc -p tsconfig.playwright.json",
     "test:watch": "playwright test --project=chromium --ui",

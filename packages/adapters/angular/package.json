@@ -43,7 +43,9 @@
     "build:test": "rm -rf dist && tsc -p tsconfig.build.json && tsup",
     "build:watch": "tsup --watch",
     "clean": "rm -rf dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts"
   },
   "peerDependencies": {
     "@angular/common": ">=17.0.0",
@@ -57,6 +59,7 @@
     "@touchspin/renderer-bootstrap5": "workspace:*",
     "@touchspin/renderer-tailwind": "workspace:*",
     "@touchspin/renderer-vanilla": "workspace:*",
+    "rxjs": "^7.8.1",
     "tslib": "^2.7.0"
   },
   "devDependencies": {
@@ -70,8 +73,11 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@playwright/test": "^1.54.2",
     "@types/node": "^22.7.4",
+    "happy-dom": "^20.0.0",
     "tsup": "^8.1.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "vitest": "^3.2.4",
+    "zone.js": "0.14.10"
   },
   "keywords": [
     "touchspin",
