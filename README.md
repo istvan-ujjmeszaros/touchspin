@@ -40,6 +40,22 @@ Your sponsorship keeps this project:
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
 
+## Framework Adapters (Separate Repositories)
+
+**React** and **Angular** adapters are now maintained in separate repositories with native framework tooling:
+
+- **[@touchspin/react](https://github.com/istvan-ujjmeszaros/touchspin-react)** (v5.0.1-alpha.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-react
+  - Installation: `npm install @touchspin/react@alpha @touchspin/core@alpha`
+  - Per-renderer subpath imports with controlled/uncontrolled patterns
+
+- **[@touchspin/angular](https://github.com/istvan-ujjmeszaros/touchspin-angular)** (v5.0.1-alpha.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-angular
+  - Installation: `npm install @touchspin/angular@alpha @touchspin/core@alpha`
+  - ControlValueAccessor integration with Angular forms
+
+These adapters are independently versioned starting at v5.0.1-alpha.0 to match core compatibility.
+
 ## Quick Install
 
 ### Standalone Adapter (Recommended)
