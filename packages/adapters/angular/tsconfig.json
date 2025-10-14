@@ -12,6 +12,8 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@touchspin/angular": ["./src/public-api.ts"],
       "@touchspin/angular/*": ["./src/*"]
