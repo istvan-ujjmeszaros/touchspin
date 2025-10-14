@@ -14,10 +14,6 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "paths": {
-      "@touchspin/angular": ["./src/public-api.ts"],
-      "@touchspin/angular/*": ["./src/*"]
-    },
     "baseUrl": "."
   },
   "exclude": ["tests/**/*.ts", "**/*.spec.ts", "node_modules"]

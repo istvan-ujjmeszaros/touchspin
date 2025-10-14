@@ -1,5 +1,13 @@
 # @touchspin/renderer-bootstrap5
 
+## 5.0.1-alpha.1
+
+### Patch Changes
+
+- fix: replace workspace:\* with 5.0.1-alpha.0 in renderer dependencies
+
+  Published renderer packages contained invalid workspace:\* references for @touchspin/core dependency, preventing external consumers from installing them. This fixes the dependency to reference the published version 5.0.1-alpha.0 instead.
+
 ## 5.0.1-alpha.0
 
 ### Patch Changes

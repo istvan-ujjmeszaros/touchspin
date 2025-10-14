@@ -14,5 +14,5 @@
     "@touchspin/renderer-tailwind": "5.0.0",
     "@touchspin/renderer-vanilla": "5.0.0"
   },
-  "changesets": ["v5-alpha-release"]
+  "changesets": ["angular-adapter", "fix-renderer-workspace-deps", "v5-alpha-release"]
 }

@@ -1,29 +1,35 @@
 {
   "name": "@touchspin/angular",
-  "version": "5.0.1-alpha.0",
+  "version": "5.1.0-alpha.1",
+  "private": true,
   "description": "Angular adapter for TouchSpin with per-renderer subpaths",
   "type": "module",
   "sideEffects": false,
   "exports": {
     "./bootstrap3": {
       "types": "./dist/bootstrap3/index.d.ts",
-      "import": "./dist/bootstrap3.js"
+      "import": "./dist/esm2022/bootstrap3/touchspin-angular-bootstrap3.mjs",
+      "default": "./dist/esm2022/bootstrap3/touchspin-angular-bootstrap3.mjs"
     },
     "./bootstrap4": {
       "types": "./dist/bootstrap4/index.d.ts",
-      "import": "./dist/bootstrap4.js"
+      "import": "./dist/esm2022/bootstrap4/touchspin-angular-bootstrap4.mjs",
+      "default": "./dist/esm2022/bootstrap4/touchspin-angular-bootstrap4.mjs"
     },
     "./bootstrap5": {
       "types": "./dist/bootstrap5/index.d.ts",
-      "import": "./dist/bootstrap5.js"
+      "import": "./dist/esm2022/bootstrap5/touchspin-angular-bootstrap5.mjs",
+      "default": "./dist/esm2022/bootstrap5/touchspin-angular-bootstrap5.mjs"
     },
     "./tailwind": {
       "types": "./dist/tailwind/index.d.ts",
-      "import": "./dist/tailwind.js"
+      "import": "./dist/esm2022/tailwind/touchspin-angular-tailwind.mjs",
+      "default": "./dist/esm2022/tailwind/touchspin-angular-tailwind.mjs"
     },
     "./vanilla": {
       "types": "./dist/vanilla/index.d.ts",
-      "import": "./dist/vanilla.js"
+      "import": "./dist/esm2022/vanilla/touchspin-angular-vanilla.mjs",
+      "default": "./dist/esm2022/vanilla/touchspin-angular-vanilla.mjs"
     }
   },
   "files": [

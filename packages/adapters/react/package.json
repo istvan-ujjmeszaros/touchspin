@@ -1,6 +1,7 @@
 {
   "name": "@touchspin/react",
-  "version": "5.0.1-alpha.0",
+  "version": "5.0.1-alpha.1",
+  "private": true,
   "description": "React adapter for TouchSpin with per-renderer subpaths",
   "type": "module",
   "sideEffects": false,

@@ -14,5 +14,5 @@
     "packages/**/tests/**/*.ts",
     "packages/**/__tests__/**/*.ts"
   ],
-  "exclude": ["packages/adapters/angular/tests/**/*"]
+  "exclude": ["packages/adapters/angular/**/*"]
 }

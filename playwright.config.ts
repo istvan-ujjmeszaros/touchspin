@@ -23,7 +23,7 @@ export default defineConfig({
     '**/node_modules/**',
     '**/dist/**',
     '**/build/**',
-    '**/packages/adapters/angular/tests/**', // Angular unit tests (Vitest, not Playwright)
+    '**/packages/adapters/angular/**', // Exclude entire Angular adapter (Jest unit tests, not Playwright)
   ],
 
   /* Control worker parallelization via PLAYWRIGHT_WORKERS env var */
