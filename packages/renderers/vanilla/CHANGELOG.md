@@ -1,5 +1,12 @@
 # @touchspin/renderer-vanilla
 
+## 5.0.1-alpha.2
+
+### Patch Changes
+
+- Updated dependencies [2103452]
+  - @touchspin/core@5.0.1-alpha.1
+
 ## 5.0.1-alpha.1
 
 ### Patch Changes

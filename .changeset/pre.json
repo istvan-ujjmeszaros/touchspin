@@ -12,5 +12,5 @@
     "@touchspin/renderer-tailwind": "5.0.0",
     "@touchspin/renderer-vanilla": "5.0.0"
   },
-  "changesets": ["fix-renderer-workspace-deps", "v5-alpha-release"]
+  "changesets": ["cruel-impalas-report", "fix-renderer-workspace-deps", "v5-alpha-release"]
 }
