@@ -6,7 +6,52 @@ set -e
 # Ensure commands run from repository root
 cd -- "$(dirname -- "$0")/.."
 
-echo "🐶 Husky pre-push: Comprehensive Gherkin validation"
+echo "🐶 Husky pre-push: Validating lockfile and running guards"
+
+# Check if package.json files changed without corresponding yarn.lock update
+echo "🔒 Checking lockfile sync..."
+
+# Get list of files being pushed (compare against remote)
+REMOTE_REF="origin/$(git rev-parse --abbrev-ref HEAD)"
+if git rev-parse --verify "$REMOTE_REF" >/dev/null 2>&1; then
+  # Check if any package.json files changed in commits being pushed
+  CHANGED_PACKAGES=$(git diff --name-only "$REMOTE_REF"..HEAD | grep -E 'package\.json$' || true)
+
+  if [ -n "$CHANGED_PACKAGES" ]; then
+    echo "📦 Detected package.json changes, validating lockfile..."
+
+    # Run yarn install in lockfile-only mode to check if it's in sync
+    if ! yarn install --mode update-lockfile --immutable 2>/dev/null; then
+      echo ""
+      echo "❌ Lockfile is out of sync with package.json changes!"
+      echo ""
+      echo "   Changed package.json files:"
+      echo "$CHANGED_PACKAGES" | sed 's/^/     - /'
+      echo ""
+      echo "   Please run: yarn install"
+      echo "   Then commit the updated yarn.lock file."
+      echo ""
+      exit 1
+    fi
+
+    # Check if yarn.lock was modified in the commits being pushed
+    CHANGED_LOCKFILE=$(git diff --name-only "$REMOTE_REF"..HEAD | grep -E '^yarn\.lock$' || true)
+    if [ -z "$CHANGED_LOCKFILE" ]; then
+      echo ""
+      echo "❌ package.json changed but yarn.lock was not updated!"
+      echo ""
+      echo "   Changed package.json files:"
+      echo "$CHANGED_PACKAGES" | sed 's/^/     - /'
+      echo ""
+      echo "   Please run: yarn install"
+      echo "   Then commit the updated yarn.lock file."
+      echo ""
+      exit 1
+    fi
+
+    echo "✅ Lockfile is in sync"
+  fi
+fi
 
 # Run comprehensive Gherkin guard on all spec files
 echo "🛡️ Running comprehensive Gherkin guard..."

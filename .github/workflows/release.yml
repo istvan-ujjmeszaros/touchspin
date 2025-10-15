@@ -70,11 +70,11 @@ jobs:
       - name: Publish with Changesets
         uses: changesets/action@v1
         with:
-          version: yarn changeset version
+          version: yarn changeset version && yarn install
           publish: yarn changeset publish
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
 
