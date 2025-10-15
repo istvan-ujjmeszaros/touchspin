@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-tailwind",
-  "version": "5.0.1-alpha.1",
+  "version": "5.0.1-alpha.2",
   "type": "module",
   "sideEffects": [
     "**/*.css",
@@ -42,7 +42,7 @@
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/tailwind/tests"
   },
   "dependencies": {
-    "@touchspin/core": "5.0.1-alpha.0"
+    "@touchspin/core": "5.0.1-alpha.1"
   },
   "peerDependencies": {
     "tailwindcss": ">=3.0.0"

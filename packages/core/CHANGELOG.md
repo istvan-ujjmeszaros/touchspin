@@ -1,5 +1,11 @@
 # @touchspin/core
 
+## 5.0.1-alpha.1
+
+### Patch Changes
+
+- 2103452: Align core version with other packages
+
 ## 5.0.1-alpha.0
 
 ### Patch Changes
