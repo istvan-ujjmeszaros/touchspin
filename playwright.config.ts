@@ -19,11 +19,12 @@ const workerCount = process.env.PLAYWRIGHT_WORKERS
 export default defineConfig({
   testDir: './',
   testMatch: ['**/__tests__/**/*.spec.ts', '**/packages/**/tests/**/*.spec.ts'],
-  testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
-
-  /* Global setup/teardown for coverage processing */
-  globalSetup: './coverage.setup.ts',
-  globalTeardown: './coverage.teardown.ts',
+  testIgnore: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/packages/adapters/angular/**', // Exclude entire Angular adapter (Jest unit tests, not Playwright)
+  ],
 
   /* Control worker parallelization via PLAYWRIGHT_WORKERS env var */
   workers: workerCount,

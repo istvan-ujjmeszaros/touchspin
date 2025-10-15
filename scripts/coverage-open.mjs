@@ -7,14 +7,17 @@ import { resolve } from 'node:path';
 
 console.log('🌐 Opening coverage report...');
 
-const reportPath = 'reports/coverage/index.html';
-if (!existsSync(reportPath)) {
+// Accept optional path argument, default to Playwright coverage location
+const reportPath = process.argv[2] || 'reports/coverage/index.html';
+const resolvedPath = resolve(reportPath);
+
+if (!existsSync(resolvedPath)) {
   console.log(`⚠️  Coverage report not found at ${reportPath}`);
-  console.log('Run yarn coverage:report first to generate the report');
+  console.log('Run the coverage generation command first to create the report');
   process.exit(1);
 }
 
-await openBestEffort(resolve(reportPath));
+await openBestEffort(resolvedPath);
 
 async function openBestEffort(fileAbsPath) {
   // Build candidate commands per platform; try one-by-one, hide errors.

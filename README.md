@@ -35,9 +35,24 @@ Your sponsorship keeps this project:
 | `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap5.css` |
 | `@touchspin/renderer-tailwind` | Tailwind-friendly renderer | `dist/index.js` (ESM) | `dist/touchspin-tailwind.css` |
 | `@touchspin/renderer-vanilla` | Framework-free renderer + theme | `dist/index.js` (ESM) | `dist/touchspin-vanilla.css`, `dist/themes/vanilla.css` |
-| `@touchspin/react` | React adapter (controlled/uncontrolled) | Per-renderer subpaths | ESM only (no UMD) |
 
 All packages declare `"type": "module"`, target Node 22 (the configuration used for builds), and include licenses in the published tarballs. Renderer packages list their CSS under `files` and expose the stylesheet via `exports."./css"`.
+
+## Framework Adapters (Separate Repositories)
+
+**React** and **Angular** adapters are now maintained in separate repositories with native framework tooling:
+
+- **[@touchspin/react](https://github.com/istvan-ujjmeszaros/touchspin-react)** (v5.0.1-alpha.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-react
+  - Installation: `npm install @touchspin/react@alpha @touchspin/core@alpha`
+  - Per-renderer subpath imports with controlled/uncontrolled patterns
+
+- **[@touchspin/angular](https://github.com/istvan-ujjmeszaros/touchspin-angular)** (v5.0.1-alpha.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-angular
+  - Installation: `npm install @touchspin/angular@alpha @touchspin/core@alpha`
+  - ControlValueAccessor integration with Angular forms
+
+These adapters are independently versioned starting at v5.0.1-alpha.0 to match core compatibility.
 
 ## Quick Install
 
@@ -171,7 +186,81 @@ ref.current?.increment();
 **SSR-safe:** Works with Next.js, Remix, and other React frameworks
 **Example app:** [touchspin-react-example](https://github.com/istvan-ujjmeszaros/touchspin-react-example)
 
-See [`packages/adapters/react/README.md`](packages/adapters/react/README.md) for complete API.
+See the [@touchspin/react repository](https://github.com/istvan-ujjmeszaros/touchspin-react) for complete API documentation.
+
+### Angular
+
+```bash
+npm install @touchspin/angular @angular/core @angular/common @angular/forms
+```
+
+**Template-driven forms:**
+```typescript
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TouchSpinBootstrap5Component } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [FormsModule, TouchSpinBootstrap5Component],
+  template: `
+    <touch-spin
+      [(ngModel)]="quantity"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+    ></touch-spin>
+  `
+})
+export class ExampleComponent {
+  quantity = 50;
+}
+```
+
+**Reactive forms:**
+```typescript
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { TouchSpinBootstrap5Component } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [ReactiveFormsModule, TouchSpinBootstrap5Component],
+  template: `<touch-spin [formControl]="amountControl"></touch-spin>`
+})
+export class ExampleComponent {
+  amountControl = new FormControl(50);
+}
+```
+
+**Imperative API:**
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import { TouchSpinBootstrap5Component, TouchSpinHandle } from '@touchspin/angular/bootstrap5';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [TouchSpinBootstrap5Component],
+  template: `<touch-spin #spinner [(ngModel)]="value"></touch-spin>`
+})
+export class ExampleComponent {
+  @ViewChild('spinner') spinner?: TouchSpinHandle;
+  value = 0;
+
+  increment() {
+    this.spinner?.increment();
+  }
+}
+```
+
+**Per-renderer imports:** `bootstrap3`, `bootstrap4`, `bootstrap5`, `tailwind`, `vanilla`
+**ControlValueAccessor:** Full integration with Angular forms
+**SSR-safe:** Compatible with Angular Universal
+
+See the [@touchspin/angular repository](https://github.com/istvan-ujjmeszaros/touchspin-angular) for complete API documentation.
 
 ## CDN Builds
 

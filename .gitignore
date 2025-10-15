@@ -22,6 +22,9 @@ reports/
 # NYC coverage output
 .nyc_output/
 
+# Vitest coverage output
+**/coverage/
+
 # Build outputs
 dist/
 
