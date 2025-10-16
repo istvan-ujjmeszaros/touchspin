@@ -149,11 +149,15 @@
 .ts-btn--down {
   border-radius: var(--ts-button-down-border-radius);
   border-left: 0; /* Remove border touching input */
+  border-top: 0;
+  border-bottom: 0;
 }
 
 .ts-btn--up {
   border-radius: var(--ts-button-up-border-radius);
   border-right: 0; /* Remove border touching down button or input */
+  border-top: 0;
+  border-bottom: 0;
 }
 
 /* RTL support - flip button border radius and borders for right-to-left languages */
@@ -161,12 +165,16 @@
   border-radius: var(--ts-button-up-border-radius);
   border-left: var(--ts-button-border-width) solid var(--ts-button-border-color);
   border-right: 0;
+  border-top: 0;
+  border-bottom: 0;
 }
 
 :dir(rtl) .ts-btn--up {
   border-radius: var(--ts-button-down-border-radius);
   border-right: var(--ts-button-border-width) solid var(--ts-button-border-color);
   border-left: 0;
+  border-top: 0;
+  border-bottom: 0;
 }
 
 /* Addon styling */
