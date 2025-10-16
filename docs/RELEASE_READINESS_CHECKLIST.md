@@ -3,22 +3,22 @@
 Use this list to confirm the core monorepo is ready to publish (alpha or stable).
 
 ## Tooling & Environment
-- [ ] `yarn install` completes with only the expected peer warnings for Bootstrap/jQuery/Popper.
-- [ ] `yarn build` finishes within ~3 minutes, regenerating `dist/` and `devdist/` artifacts.
-- [ ] `yarn lint` reports no *new* diagnostics (existing `any` usage warnings under investigation).
-- [ ] `yarn typecheck` succeeds (currently green after callback helper cleanup).
-- [ ] `yarn guard:all` passes (Playwright guardrails).
-- [ ] `yarn test` passes all suites (≈1020 specs, ~5 minutes).
+- [x] `yarn install` completes with only the expected peer warnings for Bootstrap/jQuery/Popper.
+- [x] `yarn build` finishes within ~3 minutes, regenerating `dist/` and `devdist/` artifacts.
+- [x] `yarn lint` reports no *new* diagnostics (existing `any` usage warnings under investigation).
+- [x] `yarn typecheck` succeeds (currently green after callback helper cleanup).
+- [x] `yarn guard:all` passes (Playwright guardrails).
+- [x] `yarn test` passes all suites (≈1020 specs, ~5 minutes).
 
 ## Package Metadata
-- [ ] All workspace versions align with the intended release tag (verify manually).
-- [ ] `publishConfig`, `files`, and `exports` blocks include only intentional artifacts.
-- [ ] Changefiles created with `yarn changeset` for every package that will bump.
+- [x] All workspace versions align with the intended release tag (verify manually).
+- [x] `publishConfig`, `files`, and `exports` blocks include only intentional artifacts.
+- [x] Changefiles created with `yarn changeset` for every package that will bump.
 - [ ] README badges, feature lists, and install instructions match current behavior.
 
 ## Artifacts & QA
-- [ ] `yarn workspaces foreach -A exec npm pack --dry-run` produces tarballs without unwanted files.
-- [ ] `reports/` and `devdist/` cleaned or regenerated as part of CI workflow.
+- [x] `yarn workspaces foreach -A exec npm pack --dry-run` produces tarballs without unwanted files.
+- [x] `reports/` and `devdist/` cleaned or regenerated as part of CI workflow.
 - [ ] Example HTML under `examples/` loads via `yarn dev` with no console errors.
 - [ ] Security and migration docs updated if renderers/core behavior changed.
 
