@@ -9,15 +9,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
   <!-- TouchSpin CSS -->
-  <link rel="stylesheet" href="../dist/touchspin-bootstrap4.css" id="touchspin-css">
+  <link rel="stylesheet" href="/devdist/renderers/bootstrap4/touchspin-bootstrap4.css" id="touchspin-css">
 
-  <!-- Import map with relative paths -->
+  <!-- Import map pointing at the central devdist output -->
   <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "../../../../devdist/core/index.js",
-      "@touchspin/core/renderer": "../../../../devdist/core/renderer.js",
-      "@touchspin/renderers/bootstrap4": "../devdist/Bootstrap4Renderer.js"
+      "@touchspin/core": "/devdist/core/index.js",
+      "@touchspin/core/renderer": "/devdist/core/renderer.js",
+      "@touchspin/renderers/bootstrap4": "/devdist/renderers/bootstrap4/index.js"
     }
   }
   </script>

@@ -6,15 +6,15 @@
   <title>TouchSpin Vanilla - Complete Demo (RTL)</title>
 
   <!-- TouchSpin CSS -->
-  <link rel="stylesheet" href="../devdist/themes/vanilla.css" id="touchspin-css">
+  <link rel="stylesheet" href="/devdist/renderers/vanilla/themes/vanilla.css" id="touchspin-css">
 
-  <!-- Import map with relative paths -->
+  <!-- Import map pointing at the central devdist output -->
   <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "../../../core/devdist/index.js",
-      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
-      "@touchspin/renderers/vanilla": "../devdist/VanillaRenderer.js"
+      "@touchspin/core": "/devdist/core/index.js",
+      "@touchspin/core/renderer": "/devdist/core/renderer.js",
+      "@touchspin/renderers/vanilla": "/devdist/renderers/vanilla/index.js"
     }
   }
   </script>

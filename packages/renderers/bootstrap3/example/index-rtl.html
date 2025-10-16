@@ -12,15 +12,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.min.css">
 
   <!-- TouchSpin CSS -->
-  <link rel="stylesheet" href="../dist/touchspin-bootstrap3.css" id="touchspin-css">
+  <link rel="stylesheet" href="/devdist/renderers/bootstrap3/touchspin-bootstrap3.css" id="touchspin-css">
 
-  <!-- Import map with relative paths -->
+  <!-- Import map pointing at the central devdist output -->
   <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "../../../core/devdist/index.js",
-      "@touchspin/core/renderer": "../../../core/devdist/renderer.js",
-      "@touchspin/renderers/bootstrap3": "../devdist/Bootstrap3Renderer.js"
+      "@touchspin/core": "/devdist/core/index.js",
+      "@touchspin/core/renderer": "/devdist/core/renderer.js",
+      "@touchspin/renderers/bootstrap3": "/devdist/renderers/bootstrap3/index.js"
     }
   }
   </script>
