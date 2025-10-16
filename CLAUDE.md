@@ -120,10 +120,43 @@ When asked to commit changes:
 
 ### Creating Releases / Changesets
 
-- Use the Changesets CLI to record version bumps. Run `yarn changeset` (no arguments) and follow the prompt rather than editing files in `.changeset/` manually.
-- After adding a changeset, commit the generated Markdown file. Do **not** modify release workflows or package.json versions by hand—the GitHub `changesets/action` workflow will run `yarn changeset version` and commit the package.json changes for you when a release PR is created.
-- When the repo is in prerelease mode (see `.changeset/pre.json`), leave the configuration intact unless explicitly asked to exit prerelease with `yarn changeset pre exit`.
-- Never delete or rename existing changeset files without confirmation; they are required for the automated release job to succeed.
+**IMPORTANT: Never manually create changeset files.** Always use the Changesets CLI.
+
+**Collaborative Changeset Workflow:**
+
+When changes need a changeset:
+
+1. **Ask the user to run the CLI:**
+   ```
+   Please run `yarn changeset` from your command line.
+   ```
+
+2. **Provide the summary beforehand:**
+   ```
+   When prompted for the summary, please use:
+   "Fix horizontal button borders to be flush with input height"
+   ```
+
+3. **Let the user interact with the CLI:**
+   - User selects the affected package(s) (e.g., `@touchspin/renderer-vanilla`)
+   - User selects bump type (patch, minor, major)
+   - User enters the summary you provided
+   - CLI generates the changeset file (e.g., `.changeset/random-name.md`)
+
+4. **Commit the generated changeset:**
+   - After CLI completes, commit the generated `.changeset/*.md` file
+   - Include it with the code changes in the same commit
+
+**Never:**
+- Manually create or edit `.changeset/*.md` files
+- Modify package.json versions by hand
+- Delete changeset files without confirmation
+- Run `yarn changeset version` manually (GitHub Actions does this)
+
+**Additional Notes:**
+- The GitHub `changesets/action` workflow will run `yarn changeset version` and create a version bump PR automatically
+- When the repo is in prerelease mode (see `.changeset/pre.json`), leave the configuration intact unless explicitly asked to exit prerelease with `yarn changeset pre exit`
+- Changeset files are required for the automated release job to succeed
 
 ### Creating Pull Requests
 
