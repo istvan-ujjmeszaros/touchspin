@@ -146,15 +146,17 @@ When changes need a changeset:
 4. **Commit the generated changeset:**
    - After CLI completes, commit the generated `.changeset/*.md` file
    - Include it with the code changes in the same commit
+   - Do **not** run versioning commands; leave that to the release workflow unless explicitly instructed otherwise
 
 **Never:**
 - Manually create or edit `.changeset/*.md` files
 - Modify package.json versions by hand
 - Delete changeset files without confirmation
-- Run `yarn changeset version` manually (GitHub Actions does this)
+- Run `yarn version-packages` unless the user explicitly asks you to prepare a release (the GitHub Actions workflow handles this automatically)
 
 **Additional Notes:**
-- The GitHub `changesets/action` workflow will run `yarn changeset version` and create a version bump PR automatically
+- The GitHub `changesets/action` workflow runs `yarn version-packages`, which bumps versions and updates `yarn.lock`, then opens the release PR automatically
+- If you ever need to simulate that workflow locally (e.g., to verify a release), run `yarn version-packages` and commit all generated changes, including the lockfile
 - When the repo is in prerelease mode (see `.changeset/pre.json`), leave the configuration intact unless explicitly asked to exit prerelease with `yarn changeset pre exit`
 - Changeset files are required for the automated release job to succeed
 

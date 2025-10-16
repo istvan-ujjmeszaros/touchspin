@@ -93,7 +93,7 @@
     "format": "biome format --write .",
     "format:check": "biome check .",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && yarn install --mode=update-lockfile",
     "release": "changeset publish",
     "inspect": "node scripts/inspect.mjs",
     "test": "node scripts/pre-test.mjs && PLAYWRIGHT_TSCONFIG=tsconfig.playwright.json TS_BUILD_TARGET=dev playwright test --project=chromium --reporter=list",

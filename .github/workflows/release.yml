@@ -70,7 +70,7 @@ jobs:
       - name: Publish with Changesets
         uses: changesets/action@v1
         with:
-          version: yarn changeset version
+          version: yarn version-packages
           publish: yarn changeset publish
           createGithubReleases: true
         env:
