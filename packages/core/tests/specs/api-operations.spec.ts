@@ -497,9 +497,9 @@ test.describe('Core API operations and programmatic control', () => {
     await apiHelpers.clearEventLog(page);
     await apiHelpers.setValueViaAPI(page, 'test-input', '15');
 
-    // API methods do NOT emit change events (expected behavior)
+    // API methods now emit change events (expected behavior)
     const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
-    expect(hasChangeEvent).toBe(false);
+    expect(hasChangeEvent).toBe(true);
   });
 
   /**

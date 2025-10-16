@@ -1,5 +1,11 @@
 # @touchspin/core
 
+## 5.0.1-alpha.2
+
+### Patch Changes
+
+- Fix: Programmatic `setValue` now triggers a `change` event to ensure framework compatibility. This aligns the behavior with the original jQuery plugin and user expectations, fixing integrations with frameworks like Angular, React, and Vue.
+
 ## 5.0.1-alpha.1
 
 ### Patch Changes

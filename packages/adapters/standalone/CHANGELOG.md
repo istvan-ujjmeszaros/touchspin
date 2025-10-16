@@ -1,5 +1,17 @@
 # @touchspin/standalone
 
+## 5.0.1-alpha.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @touchspin/core@5.0.1-alpha.2
+  - @touchspin/renderer-bootstrap3@5.0.1-alpha.3
+  - @touchspin/renderer-bootstrap4@5.0.1-alpha.3
+  - @touchspin/renderer-bootstrap5@5.0.1-alpha.3
+  - @touchspin/renderer-tailwind@5.0.1-alpha.3
+  - @touchspin/renderer-vanilla@5.0.1-alpha.4
+
 ## 5.0.1-alpha.3
 
 ### Patch Changes

@@ -795,7 +795,7 @@ export class TouchSpinCore {
     if (!Number.isFinite(parsed)) return;
     const adjusted = this._applyConstraints(parsed);
     const wasSanitized = parsed !== adjusted;
-    this._setDisplay(adjusted, true, wasSanitized, true);
+    this._setDisplay(adjusted, true, wasSanitized, false);
   }
 
   /**

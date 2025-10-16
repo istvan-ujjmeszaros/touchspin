@@ -1,5 +1,12 @@
 # @touchspin/renderer-bootstrap3
 
+## 5.0.1-alpha.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @touchspin/core@5.0.1-alpha.2
+
 ## 5.0.1-alpha.2
 
 ### Patch Changes
