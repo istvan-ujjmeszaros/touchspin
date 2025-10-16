@@ -1343,7 +1343,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/standalone": "npm:5.0.1-alpha.2"
+    "@touchspin/standalone": "npm:5.0.1-alpha.3"
     "@types/jquery": "npm:^3.5.30"
     "@types/node": "npm:^22.7.4"
     jquery: "npm:^3.7.1"
@@ -1439,7 +1439,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-vanilla@npm:5.0.1-alpha.2, @touchspin/renderer-vanilla@workspace:*, @touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
+"@touchspin/renderer-vanilla@npm:5.0.1-alpha.3, @touchspin/renderer-vanilla@workspace:*, @touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla"
   dependencies:
@@ -1452,7 +1452,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/standalone@npm:5.0.1-alpha.2, @touchspin/standalone@workspace:packages/adapters/standalone":
+"@touchspin/standalone@npm:5.0.1-alpha.3, @touchspin/standalone@workspace:packages/adapters/standalone":
   version: 0.0.0-use.local
   resolution: "@touchspin/standalone@workspace:packages/adapters/standalone"
   dependencies:
@@ -1462,7 +1462,7 @@ __metadata:
     "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.2"
     "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.2"
     "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.2"
-    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.2"
+    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.3"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
@@ -1479,7 +1479,7 @@ __metadata:
     "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.2"
     "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.2"
     "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.2"
-    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.2"
+    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.3"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
