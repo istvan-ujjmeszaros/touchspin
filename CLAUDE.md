@@ -118,6 +118,13 @@ When asked to commit changes:
 - Skip hooks (--no-verify)
 - Commit files with secrets (.env, credentials.json)
 
+### Creating Releases / Changesets
+
+- Use the Changesets CLI to record version bumps. Run `yarn changeset` (no arguments) and follow the prompt rather than editing files in `.changeset/` manually.
+- After adding a changeset, commit the generated Markdown file. Do **not** modify release workflows or package.json versions by hand—the GitHub `changesets/action` workflow will run `yarn changeset version` and commit the package.json changes for you when a release PR is created.
+- When the repo is in prerelease mode (see `.changeset/pre.json`), leave the configuration intact unless explicitly asked to exit prerelease with `yarn changeset pre exit`.
+- Never delete or rename existing changeset files without confirmation; they are required for the automated release job to succeed.
+
 ### Creating Pull Requests
 
 When asked to create a PR:
