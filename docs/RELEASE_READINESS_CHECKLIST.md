@@ -11,7 +11,7 @@ Use this list to confirm the core monorepo is ready to publish (alpha or stable)
 - [ ] `yarn test` passes all suites (≈1020 specs, ~5 minutes).
 
 ## Package Metadata
-- [ ] All workspace versions align (currently `5.0.1-alpha.1`).
+- [ ] All workspace versions align with the intended release tag (verify manually).
 - [ ] `publishConfig`, `files`, and `exports` blocks include only intentional artifacts.
 - [ ] Changefiles created with `yarn changeset` for every package that will bump.
 - [ ] README badges, feature lists, and install instructions match current behavior.
