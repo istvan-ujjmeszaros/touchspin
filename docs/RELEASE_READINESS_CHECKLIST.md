@@ -6,7 +6,7 @@ Use this list to confirm the core monorepo is ready to publish (alpha or stable)
 - [ ] `yarn install` completes with only the expected peer warnings for Bootstrap/jQuery/Popper.
 - [ ] `yarn build` finishes within ~3 minutes, regenerating `dist/` and `devdist/` artifacts.
 - [ ] `yarn lint` reports no *new* diagnostics (existing `any` usage warnings under investigation).
-- [ ] `yarn typecheck` succeeds or has a tracked follow-up to address `test-helpers` re-export collisions.
+- [ ] `yarn typecheck` succeeds (currently green after callback helper cleanup).
 - [ ] `yarn guard:all` passes (Playwright guardrails).
 - [ ] `yarn test` passes all suites (≈1020 specs, ~5 minutes).
 
@@ -27,4 +27,4 @@ Use this list to confirm the core monorepo is ready to publish (alpha or stable)
 - [ ] Coordinate with Angular/React repositories for dependency bumps (`@touchspin/core@5.0.1-alpha.1`).
 - [ ] Verify sponsor acknowledgements and external links remain valid.
 
-> **Note:** As of 2025-10-15, `yarn typecheck` fails due to duplicate exports in `packages/core/test-helpers/index.ts` and missing DOM globals in Playwright helpers. Track this before GA release or suppress via explicit type-only barrel modules.
+> **Note:** Keep an eye on the recent callback helper changes from `fix(core-tests): rehydrate callbacks after init`; rerun `yarn typecheck` before publishing if the helper contract shifts again.
