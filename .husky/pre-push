@@ -21,7 +21,7 @@ if git rev-parse --verify "$REMOTE_REF" >/dev/null 2>&1; then
     echo "📦 Detected package.json changes, validating lockfile..."
 
     # Run yarn install in lockfile-only mode to check if it's in sync
-    if ! yarn install --mode update-lockfile --immutable 2>/dev/null; then
+    if ! yarn install --immutable 2>/dev/null; then
       echo ""
       echo "❌ Lockfile is out of sync with package.json changes!"
       echo ""
