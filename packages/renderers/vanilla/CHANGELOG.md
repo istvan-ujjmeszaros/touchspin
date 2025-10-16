@@ -1,5 +1,12 @@
 # @touchspin/renderer-vanilla
 
+## 5.0.1-alpha.3
+
+### Patch Changes
+
+- 4d5cebf: Fix horizontal button borders to be flush with input height
+- d0313c5: Remove inappropriate version number from source comment
+
 ## 5.0.1-alpha.2
 
 ### Patch Changes
