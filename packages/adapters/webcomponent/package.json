@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/webcomponent",
-  "version": "5.0.1-alpha.2",
+  "version": "5.0.1-alpha.3",
   "description": "TouchSpin Web Component - Single <touchspin-input> tag for all renderers",
   "type": "module",
   "sideEffects": [
@@ -83,7 +83,7 @@
     "@touchspin/renderer-bootstrap4": "5.0.1-alpha.2",
     "@touchspin/renderer-bootstrap5": "5.0.1-alpha.2",
     "@touchspin/renderer-tailwind": "5.0.1-alpha.2",
-    "@touchspin/renderer-vanilla": "5.0.1-alpha.2"
+    "@touchspin/renderer-vanilla": "5.0.1-alpha.3"
   },
   "engines": {
     "node": ">=18.17.0"

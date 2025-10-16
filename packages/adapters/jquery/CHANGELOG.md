@@ -1,5 +1,11 @@
 # @touchspin/jquery
 
+## 5.0.1-alpha.3
+
+### Patch Changes
+
+- @touchspin/standalone@5.0.1-alpha.3
+
 ## 5.0.1-alpha.2
 
 ### Patch Changes

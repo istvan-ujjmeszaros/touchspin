@@ -12,5 +12,11 @@
     "@touchspin/renderer-tailwind": "5.0.0",
     "@touchspin/renderer-vanilla": "5.0.0"
   },
-  "changesets": ["cruel-impalas-report", "fix-renderer-workspace-deps", "v5-alpha-release"]
+  "changesets": [
+    "all-chairs-kiss",
+    "cruel-impalas-report",
+    "fix-renderer-workspace-deps",
+    "puny-lies-push",
+    "v5-alpha-release"
+  ]
 }

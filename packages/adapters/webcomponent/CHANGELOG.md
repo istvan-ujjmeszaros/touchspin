@@ -1,5 +1,13 @@
 # @touchspin/webcomponent
 
+## 5.0.1-alpha.3
+
+### Patch Changes
+
+- Updated dependencies [4d5cebf]
+- Updated dependencies [d0313c5]
+  - @touchspin/renderer-vanilla@5.0.1-alpha.3
+
 ## 5.0.1-alpha.2
 
 ### Patch Changes
