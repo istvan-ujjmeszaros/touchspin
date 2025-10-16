@@ -38,7 +38,17 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
   // Install DOM helpers
   await page.evaluate(() => {
     if (!window.__ts) {
+      const requireInputByTestId = (id: string) => {
+        const el = document.querySelector(`[data-testid="${id}"]`);
+        if (!el) throw new Error(`Element not found: ${id}`);
+        if (!(el instanceof HTMLInputElement)) {
+          throw new Error(`Element "${id}" is not an input element`);
+        }
+        return el;
+      };
+
       window.__ts = {
+        requireInputByTestId,
         byId: (id: string) => document.querySelector(`[data-testid="${id}"]`),
         require: (id: string) => {
           const el = document.querySelector(`[data-testid="${id}"]`);
@@ -46,7 +56,7 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
           return el;
         },
         requireCoreByTestId: (id: string) => {
-          const input = document.querySelector(`[data-testid="${id}"]`) as any;
+          const input = requireInputByTestId(id) as any;
           if (!input?._touchSpinCore) throw new Error(`TouchSpin not initialized on: ${id}`);
           return input._touchSpinCore;
         },
@@ -61,15 +71,18 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
   await page.evaluate(() => {
     if (!window.__eventLog) {
       window.__eventLog = [];
+      const eventLog = window.__eventLog;
 
       // Capture TouchSpin events
       document.addEventListener(
         'touchspin-change',
         (e) => {
-          window.__eventLog.push({
+          eventLog.push({
             type: 'touchspin',
             event: 'change',
-            target: (e.target as any)?.dataset?.testid,
+            ...(typeof (e.target as HTMLElement | null)?.dataset?.testid === 'string'
+              ? { target: (e.target as HTMLElement | null)?.dataset?.testid as string }
+              : {}),
             value: (e as CustomEvent).detail?.value,
           });
         },
@@ -82,10 +95,12 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
         (e) => {
           const target = e.target as HTMLInputElement;
           if (target.tagName === 'INPUT') {
-            window.__eventLog.push({
+            eventLog.push({
               type: 'native',
               event: 'change',
-              target: target.dataset?.testid,
+              ...(typeof target.dataset?.testid === 'string'
+                ? { target: target.dataset.testid }
+                : {}),
               value: target.value,
             });
           }

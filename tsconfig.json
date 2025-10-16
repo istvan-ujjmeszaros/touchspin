@@ -9,7 +9,9 @@
       "@touchspin/core/renderer": ["packages/core/src/renderer.ts"],
       "@touchspin/core/test-helpers/*": ["packages/core/test-helpers/*"],
       "@touchspin/jquery/test-helpers": ["packages/adapters/jquery/tests/helpers/index.ts"],
-      "@touchspin/jquery/test-helpers/*": ["packages/adapters/jquery/tests/helpers/*"]
+      "@touchspin/jquery/test-helpers/*": ["packages/adapters/jquery/tests/helpers/*"],
+      "@touchspin/web-component": ["types/stubs/touchspin-web-component.d.ts"],
+      "/packages/web-component/dist/index.js": ["types/stubs/touchspin-web-component.d.ts"]
     }
   },
   "include": [
@@ -17,7 +19,8 @@
     "packages/web-component/**/*.ts",
     "packages/adapters/**/*.ts",
     "packages/renderers/**/*.ts",
-    "__tests__/**/*.ts"
+    "__tests__/**/*.ts",
+    "types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

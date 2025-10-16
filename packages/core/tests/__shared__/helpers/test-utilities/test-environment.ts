@@ -169,10 +169,16 @@ export async function diagnoseEnvironment(page: Page): Promise<{
       errors.push(...(window as any).__loadingErrors);
     }
 
+    const jQueryGlobal = window.jQuery as { fn?: { TouchSpin?: unknown } } | undefined | null;
+    const dollarGlobal = window.$ as { fn?: { TouchSpin?: unknown } } | undefined | null;
+    const hasTouchSpinPlugin =
+      typeof jQueryGlobal?.fn?.TouchSpin === 'function' ||
+      typeof dollarGlobal?.fn?.TouchSpin === 'function';
+
     return {
-      hasJQuery: typeof window.jQuery !== 'undefined',
-      has$: typeof window.$ !== 'undefined',
-      hasTouchSpinPlugin: !!(window.jQuery?.fn?.TouchSpin || window.$?.fn?.TouchSpin),
+      hasJQuery: typeof jQueryGlobal !== 'undefined' && jQueryGlobal !== null,
+      has$: typeof dollarGlobal !== 'undefined' && dollarGlobal !== null,
+      hasTouchSpinPlugin,
       customElements: [], // Note: customElements doesn't have enumeration API
       scripts: Array.from(document.scripts)
         .map((s) => s.src)

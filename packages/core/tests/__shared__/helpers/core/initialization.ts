@@ -14,6 +14,12 @@ export async function initializeTouchspin(
   testId: string,
   options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
+  const {
+    callback_before_calculation: beforeCallback,
+    callback_after_calculation: afterCallback,
+    ...serializableOptions
+  } = options;
+
   await installDomHelpers(page);
   // Early DX check: ensure namespace exists
   await page.evaluate(() => {
@@ -44,8 +50,36 @@ export async function initializeTouchspin(
       // No per-instance listeners here: core will dispatch DOM CustomEvents
       (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
     },
-    { testId, options, coreUrl: coreRuntimeUrl }
+    { testId, options: serializableOptions, coreUrl: coreRuntimeUrl }
   );
+
+  if (beforeCallback || afterCallback) {
+    await page.evaluate(
+      ({ testId, beforeSource, afterSource }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+        const core = (input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null)
+          ?._touchSpinCore;
+        if (!core?.updateSettings) {
+          return;
+        }
+        const updates: Partial<Record<'callback_before_calculation' | 'callback_after_calculation', unknown>> = {};
+        if (beforeSource) {
+          // eslint-disable-next-line no-new-func
+          updates.callback_before_calculation = new Function('return (' + beforeSource + ');')();
+        }
+        if (afterSource) {
+          // eslint-disable-next-line no-new-func
+          updates.callback_after_calculation = new Function('return (' + afterSource + ');')();
+        }
+        core.updateSettings(updates);
+      },
+      {
+        testId,
+        beforeSource: beforeCallback ? beforeCallback.toString() : null,
+        afterSource: afterCallback ? afterCallback.toString() : null,
+      }
+    );
+  }
 
   const sel = [
     `[data-testid="${testId}-wrapper"][data-touchspin-injected]`,
@@ -122,6 +156,12 @@ export async function initializeTouchSpin(
   testId: string,
   options: Record<string, unknown> = {}
 ): Promise<void> {
+  const {
+    callback_before_calculation: beforeCallback,
+    callback_after_calculation: afterCallback,
+    ...serializableOptions
+  } = options as Partial<TouchSpinCoreOptions> & Record<string, unknown>;
+
   await setupLogging(page);
   await installDomHelpers(page);
 
@@ -155,8 +195,36 @@ export async function initializeTouchSpin(
         throw err;
       }
     },
-    { testId, options }
+    { testId, options: serializableOptions }
   );
+
+  if (beforeCallback || afterCallback) {
+    await page.evaluate(
+      ({ testId, beforeSource, afterSource }) => {
+        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
+        const core = (input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null)
+          ?._touchSpinCore;
+        if (!core?.updateSettings) {
+          return;
+        }
+        const updates: Partial<Record<'callback_before_calculation' | 'callback_after_calculation', unknown>> = {};
+        if (beforeSource) {
+          // eslint-disable-next-line no-new-func
+          updates.callback_before_calculation = new Function('return (' + beforeSource + ');')();
+        }
+        if (afterSource) {
+          // eslint-disable-next-line no-new-func
+          updates.callback_after_calculation = new Function('return (' + afterSource + ');')();
+        }
+        core.updateSettings(updates);
+      },
+      {
+        testId,
+        beforeSource: beforeCallback ? beforeCallback.toString() : null,
+        afterSource: afterCallback ? afterCallback.toString() : null,
+      }
+    );
+  }
 
   // Wait for initialization: try wrapper (with renderer) first, fallback to core registration (no renderer)
   const wrapperSel = [

@@ -69,12 +69,14 @@ export async function loadScript(
           script.setAttribute(key, value);
         });
 
-        script.onload = () => {
+        script.onload = (event) => {
+          clearTimeout(timeoutId);
           console.log(`Script loaded successfully: ${url}`);
           resolve();
         };
 
         script.onerror = (err) => {
+          clearTimeout(timeoutId);
           console.error(`Script load error: ${url}`, err);
           reject(new Error(`Failed to load script: ${url}`));
         };
@@ -83,16 +85,6 @@ export async function loadScript(
         const timeoutId = setTimeout(() => {
           reject(new Error(`Script load timeout: ${url} (${timeout}ms)`));
         }, timeout);
-
-        script.onload = ((originalOnload) => () => {
-          clearTimeout(timeoutId);
-          if (originalOnload) originalOnload();
-        })(script.onload);
-
-        script.onerror = ((originalOnerror) => (err) => {
-          clearTimeout(timeoutId);
-          if (originalOnerror) originalOnerror(err);
-        })(script.onerror);
 
         document.head.appendChild(script);
       });
@@ -283,11 +275,12 @@ export async function loadTouchSpinJQueryPlugin(
   // Verify jQuery plugin is registered
   await page.waitForFunction(
     () => {
-      return (
-        typeof window.jQuery !== 'undefined' &&
-        window.jQuery.fn &&
-        typeof window.jQuery.fn.TouchSpin === 'function'
-      );
+      const jQueryGlobal = window.jQuery as
+        | { fn?: { TouchSpin?: unknown } }
+        | undefined
+        | null;
+      const plugin = jQueryGlobal?.fn as { TouchSpin?: unknown } | undefined;
+      return typeof plugin?.TouchSpin === 'function';
     },
     { timeout: 5000 }
   );

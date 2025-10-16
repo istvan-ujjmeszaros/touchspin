@@ -1,6 +1,6 @@
 # Contributing to TouchSpin
 
-Thank you for your interest in contributing to TouchSpin! This guide covers how to propose changes, coding standards, our testing approach, and how to author new renderers.
+Thank you for your interest in contributing to TouchSpin! This guide covers how to propose changes, coding standards, our testing approach, and how to author new renderers. For a workspace-wide overview (including sibling repositories), start with `../AGENTS.md` at the root of this workspace.
 
 ## How to Contribute
 

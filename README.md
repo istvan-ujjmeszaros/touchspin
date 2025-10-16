@@ -313,6 +313,7 @@ Moving from the legacy `bootstrap-touchspin@4.x` package? Start with the concise
 
 ## Contributing & Support
 
+- Start with the workspace overview in [`../AGENTS.md`](../AGENTS.md) for cross-repo structure and expectations.
 - Read [CONTRIBUTING.md](CONTRIBUTING.md) for workspace guidelines, required build steps, and Changesets usage.
 - Packaging or security concerns? Follow the disclosure process in [SECURITY.md](SECURITY.md).
 - Dev server, scripts, and architecture references remain in the `/docs` tree for contributors—see [docs/index.md](docs/index.md) for a full sitemap.

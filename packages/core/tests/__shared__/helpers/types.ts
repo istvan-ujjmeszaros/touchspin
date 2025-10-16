@@ -30,16 +30,20 @@ export interface TouchSpinElements {
 // Re-export Core types for test helpers to use
 export type { TouchSpinCoreOptions, TouchSpinCorePublicAPI };
 
+export interface TouchSpinTestNamespace {
+  requireInputByTestId(id: string): HTMLInputElement;
+  requireCoreByTestId(id: string): TouchSpinCorePublicAPI;
+  byId?(id: string): Element | null;
+  require?(id: string): Element;
+}
+
 /** Injected element roles for renderer-agnostic selectors */
 export type InjectedRole = 'up' | 'down' | 'prefix' | 'postfix';
 
 /** Window interface augmentation for TouchSpin test environment */
 declare global {
   interface Window {
-    __ts?: {
-      requireInputByTestId(id: string): HTMLInputElement;
-      requireCoreByTestId(id: string): TouchSpinCorePublicAPI;
-    };
+    __ts?: TouchSpinTestNamespace;
     __tsLoggingSetup?: boolean;
     eventLog?: EventLogEntry[];
     logEvent?: (name: string, detail?: Partial<EventLogEntry>) => void;
@@ -49,5 +53,8 @@ declare global {
     clearEventLog?: () => void;
     /** Optional readiness flag used by wait helpers */
     testPageReady?: boolean;
+    __eventLog?: EventLogEntry[];
+    jQuery?: unknown;
+    $?: unknown;
   }
 }

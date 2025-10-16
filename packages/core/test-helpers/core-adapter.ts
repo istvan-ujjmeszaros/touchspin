@@ -1,124 +1,21 @@
 import type { Page } from '@playwright/test';
 import { inputById } from '../tests/__shared__/helpers/core/selectors';
-import { setupLogging } from '../tests/__shared__/helpers/events/setup';
-import { installDomHelpers } from '../tests/__shared__/helpers/runtime/installDomHelpers';
-import { coreUrl as coreRuntimeUrl } from '../tests/__shared__/helpers/runtime/paths';
-import { preFetchCheck } from '../tests/__shared__/helpers/test-utilities/network';
-import type { TouchSpinCoreOptions } from '../tests/__shared__/helpers/types';
+import {
+  initializeTouchSpin,
+  initializeTouchspin,
+  initializeTouchspinFromGlobals,
+  isCoreInitialized,
+} from '../tests/__shared__/helpers/core/initialization';
 
-/**
- * Core Package Test Adapter
- *
- * Provides Core-specific testing functionality for pure Core tests (without renderer).
- * These tests focus on core logic, state management, and validation.
- */
+export {
+  initializeTouchspin,
+  initializeTouchSpin,
+  initializeTouchspinFromGlobals,
+  isCoreInitialized,
+};
 
-/**
- * Initialize TouchSpin Core instance directly (without renderer)
- *
- * IMPORTANT: This creates a Core instance without any renderer, so no buttons
- * will be created. Only keyboard/wheel events and API methods will work.
- */
-export async function initializeTouchspin(
-  page: Page,
-  testId: string,
-  options: Partial<TouchSpinCoreOptions> = {}
-): Promise<void> {
-  await installDomHelpers(page);
-  await page.evaluate(() => {
-    if (!window.__ts) throw new Error('__ts not installed');
-  });
-  await setupLogging(page);
-
-  // Pre-check that core module is fetchable
-  await preFetchCheck(page, coreRuntimeUrl);
-
-  // Separate callback functions from serializable options
-  const { callback_before_calculation, callback_after_calculation, ...serializableOptions } =
-    options;
-  const hasCallbacks = !!(callback_before_calculation || callback_after_calculation);
-
-  await page.evaluate(
-    async ({ testId, options, coreUrl }) => {
-      const origin = (globalThis as any).location?.origin ?? '';
-      const url = new URL(coreUrl, origin).href;
-      const { TouchSpinCore } = (await import(url)) as unknown as {
-        TouchSpinCore: new (
-          input: HTMLInputElement,
-          opts: Partial<TouchSpinCoreOptions>
-        ) => unknown;
-      };
-      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-      if (!input) throw new Error(`Input with testId "${testId}" not found`);
-
-      // Set initial value if provided
-      if (options.initval !== undefined) input.value = String(options.initval);
-
-      const core = new TouchSpinCore(input, options);
-      (input as unknown as Record<string, unknown>)._touchSpinCore = core as unknown;
-
-      // Initialize DOM event handling
-      (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
-
-      // Core now dispatches DOM CustomEvents directly, no manual bridging needed
-    },
-    { testId, options: serializableOptions, coreUrl: coreRuntimeUrl }
-  );
-
-  // Set up callbacks after initialization if they exist
-  if (hasCallbacks) {
-    await page.evaluate(
-      ({ testId, beforeCalc, afterCalc }) => {
-        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-        const core = (input as any)._touchSpinCore;
-        if (core?.updateSettings) {
-          const callbackOptions: any = {};
-          if (beforeCalc) {
-            // Recreate the callback function in the browser context
-            callbackOptions.callback_before_calculation = new Function('value', beforeCalc) as (
-              value: string
-            ) => string;
-          }
-          if (afterCalc) {
-            // Recreate the callback function in the browser context
-            callbackOptions.callback_after_calculation = new Function('value', afterCalc) as (
-              value: string
-            ) => string;
-          }
-          core.updateSettings(callbackOptions);
-        }
-      },
-      {
-        testId,
-        beforeCalc: callback_before_calculation
-          ? callback_before_calculation
-              .toString()
-              .replace(/^[^{]*{/, '')
-              .replace(/}[^}]*$/, '')
-          : null,
-        afterCalc: callback_after_calculation
-          ? callback_after_calculation
-              .toString()
-              .replace(/^[^{]*{/, '')
-              .replace(/}[^}]*$/, '')
-          : null,
-      }
-    );
-  }
-
-  // Wait for initialization to complete
-  // Core sets data-touchspin-injected on the input element when ready
-  const input = inputById(page, testId);
-  await input.waitFor({ timeout: 5000 });
-  await page.waitForFunction(
-    ({ testId }) => {
-      const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-      return input?.hasAttribute('data-touchspin-injected');
-    },
-    { testId },
-    { timeout: 5000 }
-  );
-}
+// TODO: Once all tests import directly from the shared helpers, fold this shim back into
+// packages/core/tests/__shared__/helpers and delete core-adapter.ts entirely.
 
 /**
  * Get numeric value from Core internal state (different from display value)
@@ -136,9 +33,3 @@ export async function getCoreNumericValue(page: Page, testId: string): Promise<n
 /**
  * Check if Core is initialized
  */
-export async function isCoreInitialized(page: Page, testId: string): Promise<boolean> {
-  const input = inputById(page, testId);
-  return await input.evaluate((inputEl: HTMLInputElement) => {
-    return !!(inputEl as any)._touchSpinCore;
-  });
-}
