@@ -31,7 +31,7 @@ import '@touchspin/webcomponent/bootstrap5';
 ### UMD (Browser)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5.0.0/dist/umd/bootstrap5.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5/dist/umd/bootstrap5.touchspin.umd.js"></script>
 
 <touchspin-input min="0" max="100" value="50"></touchspin-input>
 ```
@@ -40,11 +40,11 @@ import '@touchspin/webcomponent/bootstrap5';
 
 | Import Path | UMD Global | UMD Filename |
 |-------------|------------|--------------|
-| `/bootstrap3` | `TouchSpinWCBootstrap3` | `umd/bootstrap3.global.js` |
-| `/bootstrap4` | `TouchSpinWCBootstrap4` | `umd/bootstrap4.global.js` |
-| `/bootstrap5` | `TouchSpinWCBootstrap5` | `umd/bootstrap5.global.js` |
-| `/tailwind` | `TouchSpinWCTailwind` | `umd/tailwind.global.js` |
-| `/vanilla` | `TouchSpinWCVanilla` | `umd/vanilla.global.js` |
+| `/bootstrap3` | `TouchSpinWCBootstrap3` | `dist/umd/bootstrap3.touchspin.umd.js` |
+| `/bootstrap4` | `TouchSpinWCBootstrap4` | `dist/umd/bootstrap4.touchspin.umd.js` |
+| `/bootstrap5` | `TouchSpinWCBootstrap5` | `dist/umd/bootstrap5.touchspin.umd.js` |
+| `/tailwind` | `TouchSpinWCTailwind` | `dist/umd/tailwind.touchspin.umd.js` |
+| `/vanilla` | `TouchSpinWCVanilla` | `dist/umd/vanilla.touchspin.umd.js` |
 
 ## Attributes
 
@@ -135,7 +135,7 @@ document.querySelector('form > touchspin-input[data-testid="quantity"]');
     ></touchspin-input>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5.0.0/dist/umd/bootstrap5.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5/dist/umd/bootstrap5.touchspin.umd.js"></script>
 
   <script>
     // Access the component

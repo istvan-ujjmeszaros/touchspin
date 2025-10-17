@@ -9,11 +9,11 @@ If you only need to keep the existing jQuery + Bootstrap setup running, replace 
 ```html
 <!-- Legacy: bootstrap-touchspin.min.js + CSS -->
 <!-- New: drop-in replacement -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 ```
 
-The new UMD bundles follow the pattern `jquery.touchspin-bootstrap{3,4,5,tailwind,vanilla}.js`—swap the package source and file path but retain the jQuery API patterns (`$('#input').touchspin({...})`). No code changes required.
+The new UMD bundles follow the pattern `jquery.touchspin-{bootstrap3|bootstrap4|bootstrap5|tailwind|vanilla}.umd.js`—swap the package source and file path but retain the jQuery API patterns (`$('#input').touchspin({...})`). No code changes required.
 
 Once the new files are in place the rest of the integration runs as before—no code changes required.
 
@@ -21,7 +21,7 @@ Once the new files are in place the rest of the integration runs as before—no 
 
 | Legacy usage | Recommended v5 path |
 |--------------|---------------------|
-| Global `<script>` + jQuery + Bootstrap | Swap to the new UMD file (`@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.js`) |
+| Global `<script>` + jQuery + Bootstrap | Swap to the new UMD file (`@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.umd.js`) |
 | Bundler-based jQuery project | `@touchspin/jquery` (ESM) + `@touchspin/standalone` + peer-installed Bootstrap |
 | Modern framework / vanilla JS | `@touchspin/standalone` + ESM mount API |
 | Need framework-free custom element | `@touchspin/webcomponent` + `@touchspin/renderer-vanilla` |
@@ -98,7 +98,7 @@ The standalone adapter provides a simple mount API that bundles core + renderer 
 
 ## 4. Replace legacy assets
 
-- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.js`.
+- Swap `<script src="bootstrap-touchspin.min.js">` for the package-specific UMD bundle, e.g. `@touchspin/jquery/dist/umd/jquery.touchspin-bootstrap5.umd.js`.
 - Replace the single legacy stylesheet with the renderer stylesheet (`@touchspin/renderer-*/dist/touchspin-*.css`).
 - If you relied on CDN auto-updates, prefer jsDelivr or unpkg URLs documented in the package READMEs and `docs/migration-5.x.md`.
 

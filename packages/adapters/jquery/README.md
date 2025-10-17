@@ -22,7 +22,7 @@ The simplest way to use TouchSpin with jQuery:
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- TouchSpin jQuery adapter (Bootstrap 5) -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 
 <script>
   // Canonical usage (recommended)
@@ -68,11 +68,11 @@ Each file bundles the adapter + standalone + specific renderer:
 
 | Framework | UMD Filename | Global Name |
 |-----------|--------------|-------------|
-| Bootstrap 3 | `umd/jquery.touchspin-bootstrap3.js` | `TouchSpinJQueryBootstrap3` |
-| Bootstrap 4 | `umd/jquery.touchspin-bootstrap4.js` | `TouchSpinJQueryBootstrap4` |
-| Bootstrap 5 | `umd/jquery.touchspin-bootstrap5.js` | `TouchSpinJQueryBootstrap5` |
-| Tailwind | `umd/jquery.touchspin-tailwind.js` | `TouchSpinJQueryTailwind` |
-| Vanilla | `umd/jquery.touchspin-vanilla.js` | `TouchSpinJQueryVanilla` |
+| Bootstrap 3 | `dist/umd/jquery.touchspin-bootstrap3.umd.js` | `TouchSpinJQueryBootstrap3` |
+| Bootstrap 4 | `dist/umd/jquery.touchspin-bootstrap4.umd.js` | `TouchSpinJQueryBootstrap4` |
+| Bootstrap 5 | `dist/umd/jquery.touchspin-bootstrap5.umd.js` | `TouchSpinJQueryBootstrap5` |
+| Tailwind | `dist/umd/jquery.touchspin-tailwind.umd.js` | `TouchSpinJQueryTailwind` |
+| Vanilla | `dist/umd/jquery.touchspin-vanilla.umd.js` | `TouchSpinJQueryVanilla` |
 
 **Note**: The UMD files automatically install the jQuery plugin on `window.jQuery` when loaded.
 
@@ -160,7 +160,7 @@ $('#input').trigger('touchspin.updatesettings', { max: 200 });
   </div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 
   <script>
     $(document).ready(function() {

@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/standalone",
-  "version": "5.0.1-alpha.4",
+  "version": "5.0.1-alpha.5",
   "type": "module",
   "description": "Standalone TouchSpin adapter (core + renderer bundles with mount API)",
   "license": "MIT",
@@ -58,11 +58,11 @@
   },
   "dependencies": {
     "@touchspin/core": "5.0.1-alpha.2",
-    "@touchspin/renderer-bootstrap3": "5.0.1-alpha.3",
-    "@touchspin/renderer-bootstrap4": "5.0.1-alpha.3",
-    "@touchspin/renderer-bootstrap5": "5.0.1-alpha.3",
-    "@touchspin/renderer-tailwind": "5.0.1-alpha.3",
-    "@touchspin/renderer-vanilla": "5.0.1-alpha.4"
+    "@touchspin/renderer-bootstrap3": "5.0.1-alpha.4",
+    "@touchspin/renderer-bootstrap4": "5.0.1-alpha.4",
+    "@touchspin/renderer-bootstrap5": "5.0.1-alpha.4",
+    "@touchspin/renderer-tailwind": "5.0.1-alpha.4",
+    "@touchspin/renderer-vanilla": "5.0.1-alpha.5"
   },
   "publishConfig": {
     "access": "public",

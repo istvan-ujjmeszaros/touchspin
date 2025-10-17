@@ -27,9 +27,9 @@ Your sponsorship keeps this project:
 | Package | Purpose | Primary Entry | Bundled Assets |
 |---------|---------|---------------|----------------|
 | `@touchspin/core` | Framework-agnostic logic + renderer contracts | `dist/index.js` (ESM) | Declarations only |
-| `@touchspin/standalone` | Standalone mount API (core + renderer) | `dist/index.js` (ESM) | Per-renderer subpaths + UMD bundles |
-| `@touchspin/jquery` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/jquery.touchspin-*.js`, legacy compatibility |
-| `@touchspin/webcomponent` | `<touchspin-input>` custom element | Per-renderer subpaths | Per-renderer UMD bundles |
+| `@touchspin/standalone` | Standalone mount API (core + renderer) | `dist/index.js` (ESM) | Per-renderer subpaths (`dist/bootstrapX.js`) |
+| `@touchspin/jquery` | Drop-in jQuery wrapper | `dist/index.js` (ESM) | `dist/umd/jquery.touchspin-*.umd.js` globals |
+| `@touchspin/webcomponent` | `<touchspin-input>` custom element | Per-renderer subpaths | `dist/umd/*.touchspin.umd.js` globals |
 | `@touchspin/renderer-bootstrap3` | Bootstrap 3 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap3.css` |
 | `@touchspin/renderer-bootstrap4` | Bootstrap 4 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap4.css` |
 | `@touchspin/renderer-bootstrap5` | Bootstrap 5 renderer + CSS | `dist/index.js` (ESM) | `dist/touchspin-bootstrap5.css` |
@@ -74,11 +74,13 @@ const api = mount('#quantity', {
 });
 ```
 
-**UMD/Global (Browser)**:
+**Browser via CDN (ESM)**:
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js"></script>
-<script>
-  TouchSpinStandaloneBootstrap5.mount('#quantity', { min: 0, max: 100 });
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
+<script type="module">
+  import { mount } from 'https://cdn.jsdelivr.net/npm/@touchspin/standalone@5/dist/bootstrap5.js';
+
+  mount('#quantity', { min: 0, max: 100 });
 </script>
 ```
 
@@ -113,7 +115,7 @@ npm install @touchspin/jquery jquery
 **UMD (Browser)**:
 ```html
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 <script>
   // Canonical (recommended)
   $('#quantity').touchspin({ min: 0, max: 100 });
@@ -264,16 +266,7 @@ See the [@touchspin/angular repository](https://github.com/istvan-ujjmeszaros/to
 
 ## CDN Builds
 
-UMD bundles are emitted under `dist/umd/` with predictable names for each package.
-
-```html
-<!-- jsDelivr (pin) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery-touchspin-bs5.js"></script>
-
-<!-- unpkg (latest) -->
-<script src="https://unpkg.com/@touchspin/renderer-bootstrap5/dist/umd/touchspin-bootstrap5.umd.js"></script>
-```
+All CDN-facing entry points are catalogued in [`docs/cdn-assets.md`](./docs/cdn-assets.md). Remember that most packages are ESM-only; only the jQuery and Web Component adapters surface UMD globals.
 
 For native ESM in the browser, supply an import map:
 
@@ -281,8 +274,8 @@ For native ESM in the browser, supply an import map:
 <script type="importmap">
   {
     "imports": {
-      "@touchspin/core": "https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0/dist/index.js",
-      "@touchspin/renderer-bootstrap5": "https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/index.js"
+      "@touchspin/core": "https://cdn.jsdelivr.net/npm/@touchspin/core@5/dist/index.js",
+      "@touchspin/renderer-bootstrap5": "https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/index.js"
     }
   }
 </script>

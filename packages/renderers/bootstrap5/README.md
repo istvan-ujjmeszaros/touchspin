@@ -1,6 +1,6 @@
 # @touchspin/renderer-bootstrap5
 
-Bootstrap 5 renderer for TouchSpin. Ships ESM entry points, a CSS stylesheet, and a UMD bundle for CDN consumption.
+Bootstrap 5 renderer for TouchSpin. Ships ESM entry points and a CSS stylesheet.
 
 ## Install
 
@@ -27,27 +27,33 @@ TouchSpin(document.querySelector('#quantity'), {
 });
 ```
 
-## CDN / UMD
+## CDN (ESM)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/touchspin-bootstrap5.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/umd/touchspin-bootstrap5.umd.js"></script>
-```
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
+<script type="module">
+  import { TouchSpin } from 'https://cdn.jsdelivr.net/npm/@touchspin/core@5/dist/index.js';
+  import Bootstrap5Renderer from 'https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/index.js';
 
-The bundle exposes `globalThis.TouchSpinBootstrap5` and automatically installs itself as the default renderer for `TouchSpin` when used with the jQuery bridge.
+  TouchSpin(document.querySelector('#quantity'), {
+    renderer: Bootstrap5Renderer,
+    min: 0,
+    max: 100,
+    step: 1,
+  });
+</script>
+```
 
 ## Exports & Files
 
 - `@touchspin/renderer-bootstrap5` → `dist/index.js` (ESM)
 - `@touchspin/renderer-bootstrap5/css` → `dist/touchspin-bootstrap5.css`
-- UMD bundle: `dist/umd/touchspin-bootstrap5.umd.js`
 - Package manifest: `@touchspin/renderer-bootstrap5/package.json`
 
 ## Metadata
 
 - Peer dependencies: `bootstrap@>=5.3.0 <6`, optional `@popperjs/core@>=2.11.8`
 - Engines: Node 18.17+
-- `files` include `dist/`, `dist/umd/`, and `LICENSE` for npm consumers
+- `files` include `dist/` and `LICENSE` for npm consumers
 
 For migration tips and renderer architecture details, see `MIGRATION.md` and `docs/architecture/renderer-guide.md`.
-

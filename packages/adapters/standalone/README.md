@@ -24,31 +24,22 @@ const api = mount('#my-input', {
 });
 ```
 
-### UMD/Global (Browser)
+### Browser via CDN (ESM)
 
-For CDN or traditional `<script>` tag usage:
+Use a `type="module"` script to import the renderer-specific entry:
 
 ```html
-<!-- Bootstrap 5 -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
+<script type="module">
+  import { mount } from 'https://cdn.jsdelivr.net/npm/@touchspin/standalone@5/dist/bootstrap5.js';
 
-<script>
-  const api = window.TouchSpinStandaloneBootstrap5.mount('#my-input', {
+  mount('#my-input', {
     min: 0,
-    max: 100
+    max: 100,
+    step: 1
   });
 </script>
 ```
-
-## Available Renderers
-
-| Import Path | UMD Global | UMD Filename |
-|-------------|------------|--------------|
-| `/bootstrap3` | `TouchSpinStandaloneBootstrap3` | `umd/bootstrap3.global.js` |
-| `/bootstrap4` | `TouchSpinStandaloneBootstrap4` | `umd/bootstrap4.global.js` |
-| `/bootstrap5` | `TouchSpinStandaloneBootstrap5` | `umd/bootstrap5.global.js` |
-| `/tailwind` | `TouchSpinStandaloneTailwind` | `umd/tailwind.global.js` |
-| `/vanilla` | `TouchSpinStandaloneVanilla` | `umd/vanilla.global.js` |
 
 ## API
 
@@ -84,11 +75,12 @@ api.on('min', () => console.log('Minimum reached'));
 <body>
   <input id="quantity" type="number" value="0" />
 
-  <!-- Load standalone adapter -->
-  <script src="https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
 
-  <script>
-    const api = TouchSpinStandaloneBootstrap5.mount('#quantity', {
+  <script type="module">
+    import { mount } from 'https://cdn.jsdelivr.net/npm/@touchspin/standalone@5/dist/bootstrap5.js';
+
+    const api = mount('#quantity', {
       min: 0,
       max: 100,
       step: 1,

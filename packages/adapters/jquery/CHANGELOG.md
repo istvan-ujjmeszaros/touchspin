@@ -1,5 +1,13 @@
 # @touchspin/jquery
 
+## 5.0.1-alpha.5
+
+### Patch Changes
+
+- docs: refresh CDN guidance and browser ESM examples
+- Updated dependencies
+  - @touchspin/standalone@5.0.1-alpha.5
+
 ## 5.0.1-alpha.4
 
 ### Patch Changes

@@ -23,21 +23,28 @@ TouchSpin(document.querySelector('#quantity'), {
 });
 ```
 
-## CDN / UMD
+## CDN (ESM)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0/dist/touchspin-vanilla.css">
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5.0.0/dist/umd/touchspin-vanilla.umd.js"></script>
-```
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5/dist/touchspin-vanilla.css">
+<script type="module">
+  import { TouchSpin } from 'https://cdn.jsdelivr.net/npm/@touchspin/core@5/dist/index.js';
+  import VanillaRenderer from 'https://cdn.jsdelivr.net/npm/@touchspin/renderer-vanilla@5/dist/index.js';
 
-The bundle exposes `TouchSpinVanilla` on `window` and sets the vanilla renderer as the default for legacy loaders.
+  TouchSpin(document.querySelector('#quantity'), {
+    renderer: VanillaRenderer,
+    min: 0,
+    max: 100,
+    step: 1,
+  });
+</script>
+```
 
 ## Exports & Files
 
 - ESM entry: `@touchspin/renderer-vanilla`
 - CSS shortcut: `@touchspin/renderer-vanilla/css`
 - Theme asset: `@touchspin/renderer-vanilla/themes/vanilla` → `dist/themes/vanilla.css`
-- UMD bundle: `dist/umd/touchspin-vanilla.umd.js`
 - Manifest: `@touchspin/renderer-vanilla/package.json`
 
 ## Metadata
@@ -45,4 +52,3 @@ The bundle exposes `TouchSpinVanilla` on `window` and sets the vanilla renderer 
 - No additional peer dependencies beyond `@touchspin/core`
 - Engines: Node 18.17+
 - `dist/themes/vanilla.css` is included for projects that want to import the stylesheet manually
-

@@ -1,5 +1,11 @@
 # @touchspin/renderer-bootstrap4
 
+## 5.0.1-alpha.4
+
+### Patch Changes
+
+- docs: refresh CDN guidance and browser ESM examples
+
 ## 5.0.1-alpha.3
 
 ### Patch Changes

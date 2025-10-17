@@ -1,5 +1,17 @@
 # @touchspin/standalone
 
+## 5.0.1-alpha.5
+
+### Patch Changes
+
+- docs: refresh CDN guidance and browser ESM examples
+- Updated dependencies
+  - @touchspin/renderer-bootstrap3@5.0.1-alpha.4
+  - @touchspin/renderer-bootstrap4@5.0.1-alpha.4
+  - @touchspin/renderer-bootstrap5@5.0.1-alpha.4
+  - @touchspin/renderer-tailwind@5.0.1-alpha.4
+  - @touchspin/renderer-vanilla@5.0.1-alpha.5
+
 ## 5.0.1-alpha.4
 
 ### Patch Changes

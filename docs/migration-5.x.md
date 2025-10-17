@@ -44,7 +44,7 @@ If you only need to keep existing jQuery + Bootstrap working, swap the CDN/local
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Load jQuery adapter for Bootstrap 5 -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 
 <script>
   // Canonical (recommended)
@@ -82,16 +82,20 @@ If you only need to keep existing jQuery + Bootstrap working, swap the CDN/local
 
 **New (v5):**
 ```html
-<!-- Standalone adapter -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js"></script>
-<!-- Global: window.TouchSpinStandaloneBootstrap5 -->
+<!-- Standalone adapter (ESM) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/touchspin-bootstrap5.css">
+<script type="module">
+  import { mount } from 'https://cdn.jsdelivr.net/npm/@touchspin/standalone@5/dist/bootstrap5.js';
+
+  mount('#quantity', { min: 0, max: 100 });
+</script>
 
 <!-- jQuery adapter -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js"></script>
 <!-- Auto-installs $.fn.touchspin -->
 
 <!-- Web Component -->
-<script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5.0.0/dist/umd/bootstrap5.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@touchspin/webcomponent@5/dist/umd/bootstrap5.touchspin.umd.js"></script>
 <!-- Registers <touchspin-input> custom element -->
 ```
 
@@ -187,33 +191,27 @@ import '@touchspin/webcomponent/bootstrap5';
 
 ### Standalone Adapter
 
-| Renderer | UMD File | Global Name |
-|----------|----------|-------------|
-| Bootstrap 3 | `umd/bootstrap3.global.js` | `TouchSpinStandaloneBootstrap3` |
-| Bootstrap 4 | `umd/bootstrap4.global.js` | `TouchSpinStandaloneBootstrap4` |
-| Bootstrap 5 | `umd/bootstrap5.global.js` | `TouchSpinStandaloneBootstrap5` |
-| Tailwind | `umd/tailwind.global.js` | `TouchSpinStandaloneTailwind` |
-| Vanilla | `umd/vanilla.global.js` | `TouchSpinStandaloneVanilla` |
+The standalone adapter is ESM-only in v5. Use the per-renderer subpaths (e.g. `@touchspin/standalone/bootstrap5`) or the CDN module entries listed in [`cdn-assets.md`](./cdn-assets.md). No UMD globals are published.
 
 ### jQuery Adapter
 
 | Renderer | UMD File | Notes |
 |----------|----------|-------|
-| Bootstrap 3 | `umd/jquery.touchspin-bootstrap3.js` | Auto-installs `$.fn.touchspin` |
-| Bootstrap 4 | `umd/jquery.touchspin-bootstrap4.js` | Auto-installs `$.fn.touchspin` |
-| Bootstrap 5 | `umd/jquery.touchspin-bootstrap5.js` | Auto-installs `$.fn.touchspin` |
-| Tailwind | `umd/jquery.touchspin-tailwind.js` | Auto-installs `$.fn.touchspin` |
-| Vanilla | `umd/jquery.touchspin-vanilla.js` | Auto-installs `$.fn.touchspin` |
+| Bootstrap 3 | `dist/umd/jquery.touchspin-bootstrap3.umd.js` | Auto-installs `$.fn.touchspin` |
+| Bootstrap 4 | `dist/umd/jquery.touchspin-bootstrap4.umd.js` | Auto-installs `$.fn.touchspin` |
+| Bootstrap 5 | `dist/umd/jquery.touchspin-bootstrap5.umd.js` | Auto-installs `$.fn.touchspin` |
+| Tailwind | `dist/umd/jquery.touchspin-tailwind.umd.js` | Auto-installs `$.fn.touchspin` |
+| Vanilla | `dist/umd/jquery.touchspin-vanilla.umd.js` | Auto-installs `$.fn.touchspin` |
 
 ### Web Component
 
 | Renderer | UMD File | Registers |
 |----------|----------|-----------|
-| Bootstrap 3 | `umd/bootstrap3.global.js` | `<touchspin-input>` |
-| Bootstrap 4 | `umd/bootstrap4.global.js` | `<touchspin-input>` |
-| Bootstrap 5 | `umd/bootstrap5.global.js` | `<touchspin-input>` |
-| Tailwind | `umd/tailwind.global.js` | `<touchspin-input>` |
-| Vanilla | `umd/vanilla.global.js` | `<touchspin-input>` |
+| Bootstrap 3 | `dist/umd/bootstrap3.touchspin.umd.js` | `<touchspin-input>` |
+| Bootstrap 4 | `dist/umd/bootstrap4.touchspin.umd.js` | `<touchspin-input>` |
+| Bootstrap 5 | `dist/umd/bootstrap5.touchspin.umd.js` | `<touchspin-input>` |
+| Tailwind | `dist/umd/tailwind.touchspin.umd.js` | `<touchspin-input>` |
+| Vanilla | `dist/umd/vanilla.touchspin.umd.js` | `<touchspin-input>` |
 
 ---
 

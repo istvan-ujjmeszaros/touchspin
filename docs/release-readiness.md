@@ -103,18 +103,18 @@ This audit focuses exclusively on packaging readiness for the TouchSpin v5 works
 
 ## CDN Notes
 
-- UMD assets reside in `dist/umd/` with deterministic names.
+- Only the **jQuery** and **Web Component** adapters ship browser globals under `dist/umd/`.
 - Example URLs:
-  - jsDelivr: `https://cdn.jsdelivr.net/npm/@touchspin/standalone@5.0.0/dist/umd/bootstrap5.global.js`
-  - unpkg: `https://unpkg.com/@touchspin/jquery@5.0.0/dist/umd/jquery.touchspin-bootstrap5.js`
+  - jsDelivr: `https://cdn.jsdelivr.net/npm/@touchspin/jquery@5/dist/umd/jquery.touchspin-bootstrap5.umd.js`
+  - unpkg: `https://unpkg.com/@touchspin/webcomponent@5/dist/umd/bootstrap5.touchspin.umd.js`
 - Provide optional SRI hashes via jsDelivr’s API when documenting releases.
 - Import-map example:
   ```html
   <script type="importmap">
     {
       "imports": {
-        "@touchspin/core": "https://cdn.jsdelivr.net/npm/@touchspin/core@5.0.0/dist/index.js",
-        "@touchspin/renderer-bootstrap5": "https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5.0.0/dist/index.js"
+        "@touchspin/core": "https://cdn.jsdelivr.net/npm/@touchspin/core@5/dist/index.js",
+        "@touchspin/renderer-bootstrap5": "https://cdn.jsdelivr.net/npm/@touchspin/renderer-bootstrap5@5/dist/index.js"
       }
     }
   </script>
