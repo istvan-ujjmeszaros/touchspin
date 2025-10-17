@@ -68,15 +68,46 @@ jobs:
         run: yarn workspaces foreach -A -v exec npm pack --dry-run
 
       - name: Publish with Changesets
+        id: changesets
         uses: changesets/action@v1
         with:
           version: yarn version-packages
           publish: yarn changeset publish
-          createGithubReleases: true
+          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Prepare release assets
+        id: prepare_release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+        run: node scripts/create-release-assets.mjs
+
+      - name: Create GitHub release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          gh release create "${{ steps.prepare_release.outputs.release_tag }}" \
+            --target "${GITHUB_SHA}" \
+            --title "${{ steps.prepare_release.outputs.release_name }}" \
+            --notes-file "${{ steps.prepare_release.outputs.notes_file }}"
+
+      - name: Upload release assets
+        if: steps.changesets.outputs.published == 'true' && steps.prepare_release.outputs.artifact_paths != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          RELEASE_TAG: ${{ steps.prepare_release.outputs.release_tag }}
+          ARTIFACT_PATHS: ${{ steps.prepare_release.outputs.artifact_paths }}
+        run: |
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              gh release upload "$RELEASE_TAG" "$file" --clobber
+            fi
+          done <<<"$ARTIFACT_PATHS"
 
       - name: Upload npm debug logs
         if: failure()
