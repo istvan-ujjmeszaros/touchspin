@@ -3,7 +3,7 @@
  * Single custom element that works with any renderer
  */
 
-import type { TouchSpinCoreOptions } from '@touchspin/core';
+import type { RendererConstructor, TouchSpinCoreOptions } from '@touchspin/core';
 import { TouchSpin } from '@touchspin/core';
 import {
   attributeToSetting,
@@ -25,7 +25,7 @@ export class TouchSpinInput extends HTMLElement {
   private _input: HTMLInputElement | null;
   private _eventUnsubscribers: Array<() => void>;
   private _isConnected: boolean;
-  private _renderer: any;
+  private _renderer: RendererConstructor | undefined;
 
   /**
    * Observed attributes for reactive updates
@@ -34,7 +34,7 @@ export class TouchSpinInput extends HTMLElement {
     return OBSERVED_ATTRIBUTES.filter((attr) => attr !== 'renderer');
   }
 
-  constructor(renderer?: any) {
+  constructor(renderer?: RendererConstructor) {
     super();
     this._touchspin = null;
     this._input = null;
@@ -47,7 +47,7 @@ export class TouchSpinInput extends HTMLElement {
    * Set the renderer for this instance
    * Should be called before connectedCallback
    */
-  setRenderer(renderer: any): void {
+  setRenderer(renderer: RendererConstructor): void {
     this._renderer = renderer;
   }
 

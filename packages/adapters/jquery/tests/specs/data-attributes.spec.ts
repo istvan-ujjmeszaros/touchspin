@@ -36,6 +36,15 @@ import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspinJQuery, installJqueryPlugin } from '../helpers/jquery-initialization';
 
+// Extend window interface for jQuery test environment
+declare global {
+  interface Window {
+    jQuery?: Record<string, unknown>;
+    $?: Record<string, unknown>;
+    TouchSpinCallableEvent?: typeof import('@touchspin/core').TouchSpinCallableEvent;
+  }
+}
+
 test.describe('jQuery plugin data attributes', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html');
@@ -286,7 +295,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Try to initialize with JSON data attribute
     const hasJsonSupport = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const input = $('[data-testid="json-input"]');
         const jsonSettings = input.attr('data-bts-settings');
@@ -406,7 +415,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Test if dynamic update is supported (may require manual refresh)
     const supportsLiveUpdate = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Try to update settings based on new data attribute
         const newStep = $('[data-testid="test-input"]').attr('data-bts-step');
@@ -492,7 +501,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Initialize with localized settings
     const hasLocalizationSupport = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Try to handle localized decimal separator
         const step = $('[data-testid="test-input"]').attr('data-bts-step');
@@ -585,7 +594,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Simulate conditional processing based on viewport
     const conditionResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const input = $('[data-testid="test-input"]');
         const isMobile = window.innerWidth < 768; // Simple mobile detection
@@ -636,7 +645,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Simulate template processing
     const templateResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const input = $('[data-testid="test-input"]');
         const baseValue = 5; // Template variable
@@ -687,7 +696,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Initialize with inline options that should take precedence
     const conflictResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Test precedence: inline options > data-bts > data-touchspin > data-step
         $('[data-testid="test-input"]').TouchSpin({
@@ -734,7 +743,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Test that legacy attributes still work
     const backwardCompatResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const input = $('[data-testid="test-input"]');
 
@@ -793,7 +802,7 @@ test.describe('jQuery plugin data attributes', () => {
 
     // Test that custom attributes can be read and processed
     const customExtensionResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const input = $('[data-testid="test-input"]');
 

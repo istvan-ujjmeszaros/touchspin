@@ -10,7 +10,16 @@
  */
 
 import { expect, test } from '@playwright/test';
+import type { TouchSpinCorePublicAPI } from '@touchspin/core';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+
+// Extend HTMLElement interface for TouchSpin web component
+declare global {
+  interface HTMLElement {
+    getTouchSpinInstance?(): TouchSpinCorePublicAPI | null;
+    destroy?(): void;
+  }
+}
 
 const fixtureUrl = '/packages/adapters/webcomponent/tests/fixtures/web-component-fixture.html';
 
@@ -45,12 +54,12 @@ test.describe('TouchSpin web component edge cases', () => {
     });
 
     await page.waitForFunction(() => {
-      const element = document.querySelector('[data-testid="wc-coverage"]') as any;
+      const element = document.querySelector('[data-testid="wc-coverage"]') as HTMLElement;
       return !!element && !!element.getTouchSpinInstance?.();
     });
 
     const afterInit = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="wc-coverage"]') as any;
+      const element = document.querySelector('[data-testid="wc-coverage"]') as HTMLElement;
       const input = document.querySelector('[data-testid="wc-coverage-input"]') as HTMLInputElement;
       const core = element?.getTouchSpinInstance();
       return {
@@ -75,7 +84,7 @@ test.describe('TouchSpin web component edge cases', () => {
     });
 
     const afterChanges = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="wc-coverage"]') as any;
+      const element = document.querySelector('[data-testid="wc-coverage"]') as HTMLElement;
       const input = document.querySelector('[data-testid="wc-coverage-input"]') as HTMLInputElement;
       const core = element?.getTouchSpinInstance();
       return {
@@ -112,7 +121,7 @@ test.describe('TouchSpin web component edge cases', () => {
     void details;
 
     await page.waitForFunction(() => {
-      const element = document.querySelector('[data-testid="wc-generated"]') as any;
+      const element = document.querySelector('[data-testid="wc-generated"]') as HTMLElement;
       return !!element && !!element.getTouchSpinInstance?.();
     });
 
@@ -132,7 +141,7 @@ test.describe('TouchSpin web component edge cases', () => {
     expect(beforeDestroy.placeholder).toBe('Enter amount');
 
     await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="wc-generated"]') as any;
+      const element = document.querySelector('[data-testid="wc-generated"]') as HTMLElement;
       element?.destroy();
       element?.remove();
     });

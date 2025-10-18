@@ -23,7 +23,25 @@
  */
 
 import { expect, test } from '@playwright/test';
+import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '@touchspin/core';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+
+// Extend HTMLElement interface for TouchSpin web component
+declare global {
+  interface HTMLElement {
+    getTouchSpinInstance?(): TouchSpinCorePublicAPI | null;
+    destroy?(): void;
+    upOnce?(): void;
+    downOnce?(): void;
+    startUpSpin?(): void;
+    startDownSpin?(): void;
+    stopSpin?(): void;
+    updateSettings?(options: Partial<TouchSpinCoreOptions>): void;
+    step?: number;
+    disabled?: boolean;
+    readonly?: boolean;
+  }
+}
 
 test.describe('TouchSpin Web Component API methods', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,7 +68,7 @@ test.describe('TouchSpin Web Component API methods', () => {
   test('calls upOnce method to increment value', async ({ page }) => {
     // Create element
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'uponce-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -63,7 +81,7 @@ test.describe('TouchSpin Web Component API methods', () => {
 
     // Call upOnce method
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="uponce-test"]') as any;
+      const element = document.querySelector('[data-testid="uponce-test"]') as HTMLElement;
       const initialValue = element?.value;
       element?.upOnce();
       return {
@@ -88,7 +106,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls downOnce method to decrement value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'downonce-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -100,7 +118,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="downonce-test"]') as any;
+      const element = document.querySelector('[data-testid="downonce-test"]') as HTMLElement;
       const initialValue = element?.value;
       element?.downOnce();
       return {
@@ -124,7 +142,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls startUpSpin method to begin spinning up', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'startupspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -136,7 +154,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="startupspin-test"]') as any;
+      const element = document.querySelector('[data-testid="startupspin-test"]') as HTMLElement;
       const initialValue = element?.value;
 
       // Call startUpSpin and immediately stop to test the method
@@ -163,7 +181,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls startDownSpin method to begin spinning down', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'startdownspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -175,7 +193,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="startdownspin-test"]') as any;
+      const element = document.querySelector('[data-testid="startdownspin-test"]') as HTMLElement;
 
       // Call startDownSpin and immediately stop
       element?.startDownSpin();
@@ -199,7 +217,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls stopSpin method to halt spinning', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'stopspin-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -211,7 +229,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="stopspin-test"]') as any;
+      const element = document.querySelector('[data-testid="stopspin-test"]') as HTMLElement;
 
       element?.startUpSpin();
       const valueWhileSpinning = element?.value;
@@ -238,7 +256,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls updateSettings method to modify configuration', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'updatesettings-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -249,7 +267,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="updatesettings-test"]') as any;
+      const element = document.querySelector('[data-testid="updatesettings-test"]') as HTMLElement;
 
       element.updateSettings({ step: 10, max: 200 });
 
@@ -271,7 +289,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls getTouchSpinInstance method to access core instance', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'getinstance-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -281,7 +299,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="getinstance-test"]') as any;
+      const element = document.querySelector('[data-testid="getinstance-test"]') as HTMLElement;
       const instance = element?.getTouchSpinInstance();
 
       return {
@@ -306,7 +324,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('calls destroy method to clean up component', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'destroy-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -316,7 +334,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="destroy-test"]') as any;
+      const element = document.querySelector('[data-testid="destroy-test"]') as HTMLElement;
 
       element?.destroy();
 
@@ -340,7 +358,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses value property getter to retrieve current value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'value-getter-test');
       element.setAttribute('value', '42');
       document.body.appendChild(element);
@@ -349,7 +367,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="value-getter-test"]') as any;
+      const element = document.querySelector('[data-testid="value-getter-test"]') as HTMLElement;
       const retrievedValue = element?.value;
 
       return {
@@ -372,7 +390,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses value property setter to update value', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'value-setter-test');
       element.setAttribute('value', '10');
       document.body.appendChild(element);
@@ -381,7 +399,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="value-setter-test"]') as any;
+      const element = document.querySelector('[data-testid="value-setter-test"]') as HTMLElement;
 
       element.value = 75;
 
@@ -405,7 +423,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses min property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'min-property-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -415,7 +433,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="min-property-test"]') as any;
+      const element = document.querySelector('[data-testid="min-property-test"]') as HTMLElement;
 
       const initialMin = element?.min;
       element.min = 10;
@@ -451,7 +469,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses max property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'max-property-test');
       element.setAttribute('min', '0');
       element.setAttribute('max', '100');
@@ -461,7 +479,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="max-property-test"]') as any;
+      const element = document.querySelector('[data-testid="max-property-test"]') as HTMLElement;
 
       const initialMax = element?.max;
       element.max = 200;
@@ -497,7 +515,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses step property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'step-property-test');
       element.setAttribute('step', '1');
       document.body.appendChild(element);
@@ -506,7 +524,7 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="step-property-test"]') as any;
+      const element = document.querySelector('[data-testid="step-property-test"]') as HTMLElement;
 
       const initialStep = element?.step;
       element.step = 5;
@@ -542,7 +560,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses disabled property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'disabled-property-test');
       document.body.appendChild(element);
     });
@@ -550,7 +568,9 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="disabled-property-test"]') as any;
+      const element = document.querySelector(
+        '[data-testid="disabled-property-test"]'
+      ) as HTMLElement;
 
       const initialDisabled = element?.disabled;
       element.disabled = true;
@@ -585,7 +605,7 @@ test.describe('TouchSpin Web Component API methods', () => {
    */
   test('uses readonly property getter and setter', async ({ page }) => {
     await page.evaluate(() => {
-      const element = document.createElement('touchspin-input') as any;
+      const element = document.createElement('touchspin-input') as HTMLElement;
       element.setAttribute('data-testid', 'readonly-property-test');
       document.body.appendChild(element);
     });
@@ -593,7 +613,9 @@ test.describe('TouchSpin Web Component API methods', () => {
     await page.waitForTimeout(100);
 
     const result = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="readonly-property-test"]') as any;
+      const element = document.querySelector(
+        '[data-testid="readonly-property-test"]'
+      ) as HTMLElement;
 
       const initialReadonly = element?.readonly;
       element.readonly = true;

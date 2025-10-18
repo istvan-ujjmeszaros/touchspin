@@ -2,6 +2,7 @@
  * Auto-define utilities for idempotent custom element registration
  */
 
+import type { RendererConstructor } from '@touchspin/core';
 import { TouchSpinInput } from './TouchSpinInput.js';
 
 // Track which renderer was used to define the element (dev-only)
@@ -12,7 +13,7 @@ let definedRenderer: string | null = null;
  * @param renderer - Renderer class to use
  * @param rendererName - Name of the renderer (for dev warnings)
  */
-export function autoDefine(renderer: any, rendererName: string): void {
+export function autoDefine(renderer: RendererConstructor, rendererName: string): void {
   const tagName = 'touchspin-input';
 
   // Check if already defined

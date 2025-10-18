@@ -5,6 +5,12 @@ import { coreUrl as coreRuntimeUrl } from '../runtime/paths';
 import { preFetchCheck } from '../test-utilities/network';
 import type { TouchSpinCoreOptions } from '../types';
 
+// Extend globalThis interface for test environment
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  var TouchSpinCore: any;
+}
+
 /* ──────────────────────────
  * Core (direct) API initialization
  * ────────────────────────── */
@@ -32,7 +38,7 @@ export async function initializeTouchspin(
 
   await page.evaluate(
     async ({ testId, options, coreUrl }) => {
-      const origin = (globalThis as any).location?.origin ?? '';
+      const origin = globalThis.location?.origin ?? '';
       const url = new URL(coreUrl, origin).href;
       const { TouchSpinCore } = (await import(url)) as unknown as {
         TouchSpinCore: new (
@@ -56,13 +62,18 @@ export async function initializeTouchspin(
   if (beforeCallback || afterCallback) {
     await page.evaluate(
       ({ testId, beforeSource, afterSource }) => {
-        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-        const core = (input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null)
-          ?._touchSpinCore;
+        const input = document.querySelector(
+          `[data-testid="${testId}"]`
+        ) as HTMLInputElement | null;
+        const core = (
+          input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null
+        )?._touchSpinCore;
         if (!core?.updateSettings) {
           return;
         }
-        const updates: Partial<Record<'callback_before_calculation' | 'callback_after_calculation', unknown>> = {};
+        const updates: Partial<
+          Record<'callback_before_calculation' | 'callback_after_calculation', unknown>
+        > = {};
         if (beforeSource) {
           // eslint-disable-next-line no-new-func
           updates.callback_before_calculation = new Function('return (' + beforeSource + ');')();
@@ -169,7 +180,7 @@ export async function initializeTouchSpin(
     ({ testId, options }) => {
       try {
         // Handle both module object and direct constructor shapes (Option A compatibility)
-        const g = (globalThis as any).TouchSpinCore;
+        const g = globalThis.TouchSpinCore;
         const TouchSpinCore = g && (g.default ?? g.TouchSpinCore ?? g.TouchSpin ?? g);
 
         if (!TouchSpinCore) {
@@ -201,13 +212,18 @@ export async function initializeTouchSpin(
   if (beforeCallback || afterCallback) {
     await page.evaluate(
       ({ testId, beforeSource, afterSource }) => {
-        const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement | null;
-        const core = (input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null)
-          ?._touchSpinCore;
+        const input = document.querySelector(
+          `[data-testid="${testId}"]`
+        ) as HTMLInputElement | null;
+        const core = (
+          input as { _touchSpinCore?: { updateSettings?: (opts: unknown) => void } } | null
+        )?._touchSpinCore;
         if (!core?.updateSettings) {
           return;
         }
-        const updates: Partial<Record<'callback_before_calculation' | 'callback_after_calculation', unknown>> = {};
+        const updates: Partial<
+          Record<'callback_before_calculation' | 'callback_after_calculation', unknown>
+        > = {};
         if (beforeSource) {
           // eslint-disable-next-line no-new-func
           updates.callback_before_calculation = new Function('return (' + beforeSource + ');')();

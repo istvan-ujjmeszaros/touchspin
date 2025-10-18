@@ -1,5 +1,14 @@
 import type { Page } from '@playwright/test';
+import type { TouchSpinCorePublicAPI } from '../src';
 import { inputById } from '../tests/__shared__/helpers/core/selectors';
+
+// Extend HTMLInputElement for test access to private core instance
+declare global {
+  interface HTMLInputElement {
+    _touchSpinCore?: TouchSpinCorePublicAPI;
+  }
+}
+
 import {
   initializeTouchSpin,
   initializeTouchspin,
@@ -24,7 +33,7 @@ export {
 export async function getCoreNumericValue(page: Page, testId: string): Promise<number> {
   const input = inputById(page, testId);
   return await input.evaluate((inputEl: HTMLInputElement) => {
-    const core = (inputEl as any)._touchSpinCore;
+    const core = inputEl._touchSpinCore;
     if (!core) throw new Error(`Core not found for input`);
     return core.getValue();
   });

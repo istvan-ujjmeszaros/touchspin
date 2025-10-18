@@ -48,6 +48,15 @@ import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspinJQuery, installJqueryPlugin } from '../helpers/jquery-initialization';
 
+// Extend window interface for jQuery test environment
+declare global {
+  interface Window {
+    jQuery?: Record<string, unknown>;
+    $?: Record<string, unknown>;
+    TouchSpinCallableEvent?: typeof import('@touchspin/core').TouchSpinCallableEvent;
+  }
+}
+
 test.describe('jQuery plugin methods', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/packages/adapters/jquery/tests/fixtures/jquery-adapter-fixture.html');
@@ -82,7 +91,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call upOnce method via jQuery interface
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('upOnce');
     });
 
@@ -103,7 +112,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call downOnce method via jQuery interface
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('downOnce');
     });
 
@@ -124,7 +133,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call setValue method via jQuery interface
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('setValue', 25);
     });
 
@@ -145,7 +154,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call getValue method via jQuery interface
     const value = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       return $('[data-testid="test-input"]').TouchSpin('getValue');
     });
 
@@ -167,7 +176,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call destroy method via jQuery interface
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('destroy');
     });
 
@@ -189,7 +198,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test method chaining
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       const result = $('[data-testid="test-input"]')
         .TouchSpin('setValue', 10)
         .TouchSpin('upOnce')
@@ -219,7 +228,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call invalid method - should handle gracefully
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         return $('[data-testid="test-input"]').TouchSpin('invalidMethod');
       } catch (error) {
@@ -245,7 +254,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test method with multiple parameters
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('setValue', 42);
     });
 
@@ -253,7 +262,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test another method with parameters
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('updateSettings', { step: 5 });
     });
 
@@ -277,7 +286,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test getValue method
     const value = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       return $('[data-testid="test-input"]').TouchSpin('getValue');
     });
 
@@ -285,7 +294,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test getSettings method if available
     const hasGetSettings = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         const settings = $('[data-testid="test-input"]').TouchSpin('getSettings');
         return settings !== undefined;
@@ -312,13 +321,13 @@ test.describe('jQuery plugin methods', () => {
 
     // Initialize TouchSpin on multiple elements
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="input1"], [data-testid="input2"]').TouchSpin({ min: 0, max: 50 });
     });
 
     // Call method on multiple elements
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="input1"], [data-testid="input2"]').TouchSpin('upOnce');
     });
 
@@ -341,7 +350,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test method with different argument types
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
 
       // String parameter
       $('[data-testid="test-input"]').TouchSpin('setValue', '25');
@@ -372,7 +381,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test that methods return jQuery object
     const isJqueryObject = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       const result = $('[data-testid="test-input"]').TouchSpin('setValue', 10);
       return result && result.jquery !== undefined;
     });
@@ -393,13 +402,13 @@ test.describe('jQuery plugin methods', () => {
     await initializeTouchspinJQuery(page, 'test-input', { min: 0, max: 20 });
 
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('destroy');
     });
 
     // Try to call method on destroyed instance
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         return $('[data-testid="test-input"]').TouchSpin('getValue');
       } catch (error) {
@@ -425,7 +434,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test fluent API chaining
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]')
         .TouchSpin('setValue', 10)
         .TouchSpin('upOnce')
@@ -458,7 +467,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test parameter validation
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Invalid parameter
         $('[data-testid="test-input"]').TouchSpin('setValue', 'invalid');
@@ -483,7 +492,7 @@ test.describe('jQuery plugin methods', () => {
   test('handles method calls before initialization', async ({ page }) => {
     // Try to call method before initialization
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         return $('[data-testid="test-input"]').TouchSpin('getValue');
       } catch (error) {
@@ -511,13 +520,13 @@ test.describe('jQuery plugin methods', () => {
 
     // Batch initialize
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid^="batch"]').TouchSpin({ min: 0, max: 50 });
     });
 
     // Batch operations
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid^="batch"]').TouchSpin('upOnce');
     });
 
@@ -542,7 +551,7 @@ test.describe('jQuery plugin methods', () => {
     // Test performance of multiple method calls
     const startTime = Date.now();
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       for (let i = 0; i < 10; i++) {
         $('[data-testid="test-input"]').TouchSpin('setValue', i * 10);
       }
@@ -568,7 +577,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test concurrent method calls
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       const input = $('[data-testid="test-input"]');
 
       // Simulate concurrent calls
@@ -607,7 +616,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test method namespacing if supported
     const hasNamespacing = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Check if namespaced methods work
         $('[data-testid="test-input"]').TouchSpin('touchspin.setValue', 25);
@@ -639,7 +648,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test various error scenarios
     const errors = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       const results = [];
 
       try {
@@ -678,7 +687,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test if there are any method aliases
     const hasAliases = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Test common aliases
         $('[data-testid="test-input"]').TouchSpin('set', 15); // Alias for setValue
@@ -708,7 +717,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test legacy method names if they exist
     const legacyWorks = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       try {
         // Test potential legacy methods
         $('[data-testid="test-input"]').TouchSpin('val', 20); // Legacy alias for setValue
@@ -740,7 +749,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test method with callback if supported
     const callbackResult = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       let callbackCalled = false;
 
       try {
@@ -773,7 +782,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Test async-like pattern with Promise wrapper
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       return new Promise((resolve) => {
         // Simulate async operation
         setTimeout(() => {
@@ -802,7 +811,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call startUpSpin method
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('startUpSpin');
     });
 
@@ -811,7 +820,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Stop spinning
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('stopSpin');
     });
 
@@ -831,7 +840,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call startDownSpin method
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('startDownSpin');
     });
 
@@ -840,7 +849,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Stop spinning
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('stopSpin');
     });
 
@@ -860,13 +869,13 @@ test.describe('jQuery plugin methods', () => {
 
     // Start spinning
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('startUpSpin');
     });
 
     // Immediately stop
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('stopSpin');
     });
 
@@ -892,8 +901,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger UP_ONCE event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.UP_ONCE);
     });
 
@@ -911,8 +920,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger DOWN_ONCE event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.DOWN_ONCE);
     });
 
@@ -930,8 +939,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger START_UP_SPIN event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_UP_SPIN);
     });
 
@@ -940,8 +949,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Stop spinning
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
     });
 
@@ -961,8 +970,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger START_DOWN_SPIN event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_DOWN_SPIN);
     });
 
@@ -971,8 +980,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Stop spinning
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
     });
 
@@ -992,15 +1001,15 @@ test.describe('jQuery plugin methods', () => {
 
     // Start spinning via event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.START_UP_SPIN);
     });
 
     // Immediately stop via event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.STOP_SPIN);
     });
 
@@ -1026,8 +1035,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger UPDATE_SETTINGS event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.UPDATE_SETTINGS, [
         { step: 10 },
       ]);
@@ -1052,8 +1061,8 @@ test.describe('jQuery plugin methods', () => {
 
     // Trigger DESTROY event
     await page.evaluate(() => {
-      const $ = (window as any).$;
-      const TouchSpinCallableEvent = (window as any).TouchSpinCallableEvent;
+      const $ = window.$;
+      const TouchSpinCallableEvent = window.TouchSpinCallableEvent;
       $('[data-testid="test-input"]').trigger(TouchSpinCallableEvent.DESTROY);
     });
 
@@ -1072,7 +1081,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Call updateSettings without argument (tests the || {} fallback)
     await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
       $('[data-testid="test-input"]').TouchSpin('updateSettings');
     });
 
@@ -1092,7 +1101,7 @@ test.describe('jQuery plugin methods', () => {
 
     // Create a div element (non-input)
     const result = await page.evaluate(() => {
-      const $ = (window as any).$;
+      const $ = window.$;
 
       // Create a div and try to initialize TouchSpin on it
       const div = $('<div id="not-an-input" data-testid="not-an-input"></div>');

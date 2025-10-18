@@ -3,6 +3,15 @@ import type { TouchSpinCoreOptions } from '@touchspin/core';
 import { TouchSpinCallableEvent } from '@touchspin/core';
 import { installDomHelpers, setupLogging } from '@touchspin/core/test-helpers';
 
+// Extend window interface for jQuery test environment
+declare global {
+  interface Window {
+    jQuery?: Record<string, unknown>;
+    $?: Record<string, unknown>;
+    TouchSpinCallableEvent?: typeof TouchSpinCallableEvent;
+  }
+}
+
 /* ──────────────────────────
  * jQuery plugin bootstrap (for jQuery pages)
  * ────────────────────────── */
@@ -14,7 +23,7 @@ export async function installJqueryPlugin(page: Page): Promise<void> {
 
   // Expose TouchSpinCallableEvent on window for tests
   await page.evaluate((callableEvents) => {
-    (window as any).TouchSpinCallableEvent = callableEvents;
+    window.TouchSpinCallableEvent = callableEvents;
   }, TouchSpinCallableEvent);
 
   // Verify UMD build loaded correctly

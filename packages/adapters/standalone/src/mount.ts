@@ -2,7 +2,11 @@
  * Shared mount/mountAll implementation for standalone adapters
  */
 
-import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '@touchspin/core';
+import type {
+  RendererConstructor,
+  TouchSpinCoreOptions,
+  TouchSpinCorePublicAPI,
+} from '@touchspin/core';
 import { TouchSpin } from '@touchspin/core';
 
 export type MountOptions = Partial<TouchSpinCoreOptions>;
@@ -17,8 +21,7 @@ export type MountOptions = Partial<TouchSpinCoreOptions>;
 export function mount(
   host: Element | string,
   opts: MountOptions | undefined,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  renderer: any
+  renderer: RendererConstructor
 ): TouchSpinCorePublicAPI | null {
   const element = typeof host === 'string' ? document.querySelector<HTMLInputElement>(host) : host;
 
@@ -48,8 +51,7 @@ export function mount(
 export function mountAll(
   selector: string,
   opts: MountOptions | undefined,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  renderer: any
+  renderer: RendererConstructor
 ): Array<TouchSpinCorePublicAPI | null> {
   const elements = document.querySelectorAll<HTMLInputElement>(selector);
 
