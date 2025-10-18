@@ -702,11 +702,19 @@ export class TouchSpinCore {
 
   /** Start increasing repeatedly; no immediate step here. */
   startUpSpin(): void {
+    // Emit cancelable event - allows users to prevent spinning
+    if (this.emit('startupspin', undefined, true)) {
+      return; // Event was prevented, don't start spinning
+    }
     this._startSpin('up');
   }
 
   /** Start decreasing repeatedly; no immediate step here. */
   startDownSpin(): void {
+    // Emit cancelable event - allows users to prevent spinning
+    if (this.emit('startdownspin', undefined, true)) {
+      return; // Event was prevented, don't start spinning
+    }
     this._startSpin('down');
   }
 
@@ -985,18 +993,24 @@ export class TouchSpinCore {
 
   /**
    * Emit a core event as DOM CustomEvent (matching original jQuery plugin behavior)
-   * TODO: Consider making some events cancelable (e.g., startspin) for user control
-   * @param {string} event
-   * @param {any=} detail - Currently unused, kept for future extensibility
+   * @param event - Event name
+   * @param detail - Event detail data
+   * @param cancelable - Whether the event can be canceled (default: false)
+   * @returns Whether the event was prevented (only meaningful for cancelable events)
+   *
+   * Cancelable events include:
+   * - 'startupspin': emitted before starting upward spinning, can be prevented
+   * - 'startdownspin': emitted before starting downward spinning, can be prevented
    */
-  emit(event: CoreEventName, detail?: unknown): void {
+  emit(event: CoreEventName, detail?: unknown, cancelable = false): boolean {
     const domEventName = `touchspin.on.${event}`;
     const customEvent = new CustomEvent(domEventName, {
       detail,
       bubbles: true,
-      // cancelable: false (default) - no cancellation logic implemented yet
+      cancelable,
     });
-    this.input.dispatchEvent(customEvent);
+    const wasPrevented = !this.input.dispatchEvent(customEvent);
+    return wasPrevented;
   }
 
   /**
