@@ -72,34 +72,21 @@ for (const pkg of publishedPackages) {
 
   const slug = pkg.name.replace(/^@/, '').replace(/[\\/]/g, '-');
 
-  // For adapters, upload specific UMD files instead of entire dist directory
-  if (
-    pkg.name.includes('/jquery') ||
-    pkg.name.includes('/standalone') ||
-    pkg.name.includes('/webcomponent')
-  ) {
+  // Only process jQuery adapter for user-friendly UMD downloads
+  if (pkg.name === '@touchspin/jquery') {
     const umdFiles = await findUmdFiles(distDir);
+    console.log(`Found ${umdFiles.length} UMD files for ${pkg.name}`);
+
     for (const umdFile of umdFiles) {
       const fileName = path.basename(umdFile);
-      const destFile = path.join(artifactsDir, `${slug}-${fileName}`);
+      // Copy directly with clean filename (jquery.touchspin-bootstrap5.umd.js)
+      const destFile = path.join(artifactsDir, fileName);
       await fs.copyFile(umdFile, destFile);
       artifactPaths.push(destFile);
+      console.log(`  → ${fileName}`);
     }
-  } else {
-    // For renderers, upload the entire dist directory as before
-    const tarFile = path.join(artifactsDir, `${slug}-v${pkg.version}-dist.tar.gz`);
-    await new Promise((resolve, reject) => {
-      const tar = spawn('tar', ['-czf', tarFile, '-C', pkgDir, 'dist'], { stdio: 'inherit' });
-      tar.on('close', (code) => {
-        if (code === 0) {
-          artifactPaths.push(tarFile);
-          resolve();
-        } else {
-          reject(new Error(`tar exited with code ${code} while processing ${pkg.name}`));
-        }
-      });
-    });
   }
+  // Skip other packages - users don't need renderer dist directories
 }
 
 const releaseNotesLines = [
