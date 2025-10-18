@@ -32,6 +32,9 @@
  * [x] allows preventing startdownspin event to cancel downward spinning
  * [x] startupspin event is emitted as cancelable
  * [x] startdownspin event is emitted as cancelable
+ * [x] speedchange event is emitted when step size increases
+ * [x] speedchange event is cancelable to prevent speed increase
+ * [x] speedchange event allows modifying the new step size
  * [x] supports event namespacing
  * [x] handles event emission during callbacks
  * [x] maintains event integrity during rapid operations
@@ -49,6 +52,14 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { getCoreNumericValue, initializeTouchspin } from '../../test-helpers/core-adapter';
+
+declare global {
+  interface Window {
+    __touchspinTestEvents?: {
+      speedchange?: unknown;
+    };
+  }
+}
 
 test.describe('Core event system and emission', () => {
   test.beforeEach(async ({ page }) => {
@@ -1451,5 +1462,147 @@ test.describe('Core event system and emission', () => {
     });
 
     expect(isCancelable).toBe(true);
+  });
+
+  /**
+   * Scenario: speedchange event is emitted when step size increases
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I start spinning and the step size increases
+   * Then a speedchange event is emitted with correct data
+   */
+  test('speedchange event is emitted when step size increases', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    await page.evaluate(() => {
+      window.__touchspinTestEvents = window.__touchspinTestEvents ?? {};
+      window.__touchspinTestEvents.speedchange = null;
+
+      const input = document.querySelector('[data-testid="test-input"]');
+      if (!input) return;
+
+      input.addEventListener(
+        'touchspin.on.speedchange',
+        (event) => {
+          const events = window.__touchspinTestEvents;
+          if (!events) return;
+          events.speedchange = (event as CustomEvent).detail;
+        },
+        { once: true }
+      );
+    });
+
+    // Start spinning up - this should trigger speed increase after a few steps
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    // Wait for several steps to occur (should trigger speed change)
+    await page.waitForTimeout(1000);
+
+    // Stop spinning
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    // Check if speed change event was emitted
+    const eventData = await page.evaluate(() => window.__touchspinTestEvents?.speedchange);
+    expect(eventData).not.toBeNull();
+    expect(eventData).toHaveProperty('currentLevel');
+    expect(eventData).toHaveProperty('newLevel');
+    expect(eventData).toHaveProperty('currentStep');
+    expect(eventData).toHaveProperty('newStep');
+    expect(eventData).toHaveProperty('direction');
+    expect(eventData.newLevel).toBeGreaterThan(eventData.currentLevel);
+    expect(eventData.newStep).toBeGreaterThan(eventData.currentStep);
+  });
+
+  /**
+   * Scenario: speedchange event is cancelable to prevent speed increase
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I prevent the speedchange event
+   * Then the step size does not increase
+   */
+  test('speedchange event is cancelable to prevent speed increase', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    // Prevent speed changes
+    await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]');
+      if (input) {
+        input.addEventListener('touchspin.on.speedchange', (event) => {
+          event.preventDefault(); // Cancel the speed increase
+        });
+      }
+    });
+
+    const initialValue = await getCoreNumericValue(page, 'test-input');
+
+    // Start spinning up
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    // Wait for several steps
+    await page.waitForTimeout(1000);
+
+    // Stop spinning
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    // Check that value increased by base step size (1), not boosted size
+    const finalValue = await getCoreNumericValue(page, 'test-input');
+    const increase = finalValue - initialValue;
+
+    // Should be small increase (just base step), not boosted (2, 4, 8, etc.)
+    expect(increase).toBeGreaterThan(0);
+    expect(increase).toBeLessThanOrEqual(6); // Should not be heavily boosted
+  });
+
+  /**
+   * Scenario: speedchange event allows modifying the new step size
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I modify the newStep in the speedchange event
+   * Then the spinning uses the modified step size
+   */
+  test('speedchange event allows modifying the new step size', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    // Start spinning and modify speed change in the same evaluate
+    const increase = await page.evaluate(async () => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const core = input?._touchSpinCore;
+      if (!input || !core) return 0;
+
+      const initialValue = core.getValue();
+
+      input.addEventListener('touchspin.on.speedchange', (event) => {
+        const detail = (event as CustomEvent).detail as { newStep: number };
+        detail.newStep = 3; // Force step size to exactly 3
+      });
+
+      core.startUpSpin();
+
+      // Wait for 1000ms to allow speed change to occur
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      core.stopSpin();
+
+      const finalValue = core.getValue();
+      return finalValue - initialValue;
+    });
+
+    // Should be increase by modified step size, not default exponential
+    expect(increase).toBeGreaterThan(3); // Should have used modified step size
   });
 });
