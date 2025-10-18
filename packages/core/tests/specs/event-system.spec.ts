@@ -28,6 +28,10 @@
  * [x] emits events synchronously vs asynchronously as appropriate
  * [x] handles multiple event listeners for same event
  * [x] manages event context correctly
+ * [x] allows preventing startupspin event to cancel upward spinning
+ * [x] allows preventing startdownspin event to cancel downward spinning
+ * [x] startupspin event is emitted as cancelable
+ * [x] startdownspin event is emitted as cancelable
  * [x] supports event namespacing
  * [x] handles event emission during callbacks
  * [x] maintains event integrity during rapid operations
@@ -1299,5 +1303,153 @@ test.describe('Core event system and emission', () => {
     // Verify change event is still in log
     const hasChangeEvent = await apiHelpers.hasEventInLog(page, 'change', 'native');
     expect(hasChangeEvent).toBe(true);
+  });
+
+  /**
+   * Scenario: allows preventing startupspin event to cancel upward spinning
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I add an event listener that prevents the startupspin event
+   * Then startUpSpin() does not initiate spinning
+   */
+  test('allows preventing startupspin event to cancel upward spinning', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    // Add event listener that prevents startupspin
+    await page.evaluate(() => {
+      document
+        .getElementById('test-input')
+        ?.addEventListener('touchspin.on.startupspin', (event) => {
+          event.preventDefault(); // Cancel the spinning
+        });
+    });
+
+    const initialValue = await getCoreNumericValue(page, 'test-input');
+    expect(initialValue).toBe(50);
+
+    // Try to start upward spinning - should be prevented
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    // Wait a bit to ensure no spinning occurred
+    await page.waitForTimeout(200);
+
+    // Value should remain unchanged
+    const finalValue = await getCoreNumericValue(page, 'test-input');
+    expect(finalValue).toBe(50); // No change - spinning was prevented
+  });
+
+  /**
+   * Scenario: allows preventing startdownspin event to cancel downward spinning
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I add an event listener that prevents the startdownspin event
+   * Then startDownSpin() does not initiate spinning
+   */
+  test('allows preventing startdownspin event to cancel downward spinning', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    // Add event listener that prevents startdownspin
+    await page.evaluate(() => {
+      document
+        .getElementById('test-input')
+        ?.addEventListener('touchspin.on.startdownspin', (event) => {
+          event.preventDefault(); // Cancel the spinning
+        });
+    });
+
+    const initialValue = await getCoreNumericValue(page, 'test-input');
+    expect(initialValue).toBe(50);
+
+    // Try to start downward spinning - should be prevented
+    await apiHelpers.startDownSpinViaAPI(page, 'test-input');
+
+    // Wait a bit to ensure no spinning occurred
+    await page.waitForTimeout(200);
+
+    // Value should remain unchanged
+    const finalValue = await getCoreNumericValue(page, 'test-input');
+    expect(finalValue).toBe(50); // No change - spinning was prevented
+  });
+
+  /**
+   * Scenario: startupspin event is emitted as cancelable
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I listen for the startupspin event
+   * Then the event should be cancelable
+   */
+  test('startupspin event is emitted as cancelable', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    // Listen for the event and check if it's cancelable
+    const isCancelable = await page.evaluate(() => {
+      return new Promise<boolean>((resolve) => {
+        document.getElementById('test-input')?.addEventListener(
+          'touchspin.on.startupspin',
+          (event) => {
+            resolve(event.cancelable);
+          },
+          { once: true }
+        );
+
+        // Trigger the event
+        const input = document.getElementById('test-input') as HTMLInputElement;
+        const touchspin = (input as any)._touchSpinCore;
+        if (touchspin) {
+          touchspin.startUpSpin();
+        }
+      });
+    });
+
+    expect(isCancelable).toBe(true);
+  });
+
+  /**
+   * Scenario: startdownspin event is emitted as cancelable
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I listen for the startdownspin event
+   * Then the event should be cancelable
+   */
+  test('startdownspin event is emitted as cancelable', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    // Listen for the event and check if it's cancelable
+    const isCancelable = await page.evaluate(() => {
+      return new Promise<boolean>((resolve) => {
+        document.getElementById('test-input')?.addEventListener(
+          'touchspin.on.startdownspin',
+          (event) => {
+            resolve(event.cancelable);
+          },
+          { once: true }
+        );
+
+        // Trigger the event
+        const input = document.getElementById('test-input') as HTMLInputElement;
+        const touchspin = (input as any)._touchSpinCore;
+        if (touchspin) {
+          touchspin.startDownSpin();
+        }
+      });
+    });
+
+    expect(isCancelable).toBe(true);
   });
 });
