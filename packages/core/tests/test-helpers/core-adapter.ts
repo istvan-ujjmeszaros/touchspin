@@ -1,5 +1,15 @@
 import type { Page } from '@playwright/test';
+import type { TouchSpinCoreOptions } from '@touchspin/core';
 import { installDomHelpers } from '@touchspin/core/test-helpers';
+
+// Extend window interface for TouchSpin global
+declare global {
+  interface Window {
+    TouchSpinCore?: {
+      TouchSpin: (input: HTMLInputElement, options?: Partial<TouchSpinCoreOptions>) => void;
+    };
+  }
+}
 
 /**
  * Initialize TouchSpin Core directly (without renderer)
@@ -8,7 +18,7 @@ import { installDomHelpers } from '@touchspin/core/test-helpers';
 export async function initializeTouchspin(
   page: Page,
   testId: string,
-  options: any = {}
+  options: Partial<TouchSpinCoreOptions> = {}
 ): Promise<void> {
   await installDomHelpers(page);
 
@@ -55,7 +65,7 @@ export async function initializeTouchspin(
       }
 
       // Use the REAL TouchSpin from the IIFE bundle (TouchSpinCore.TouchSpin)
-      (window as any).TouchSpinCore.TouchSpin(input, options);
+      window.TouchSpinCore!.TouchSpin(input, options);
     },
     { testId, options: serializedOptions }
   );
@@ -70,7 +80,7 @@ export async function initializeTouchspin(
 export async function updateSettingsViaAPI(
   page: Page,
   testId: string,
-  newSettings: any
+  newSettings: Partial<TouchSpinCoreOptions>
 ): Promise<void> {
   // Serialize callback functions as strings
   const serializedSettings = { ...newSettings };

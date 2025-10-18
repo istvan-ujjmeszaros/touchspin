@@ -32,7 +32,25 @@
  */
 
 import { expect, test } from '@playwright/test';
+import type { TouchSpinCoreOptions, TouchSpinCorePublicAPI } from '@touchspin/core';
 import * as apiHelpers from '@touchspin/core/test-helpers';
+
+// Extend HTMLElement interface for TouchSpin web component
+declare global {
+  interface HTMLElement {
+    getTouchSpinInstance?(): TouchSpinCorePublicAPI | null;
+    destroy?(): void;
+    upOnce?(): void;
+    downOnce?(): void;
+    startUpSpin?(): void;
+    startDownSpin?(): void;
+    stopSpin?(): void;
+    updateSettings?(options: Partial<TouchSpinCoreOptions>): void;
+    step?: number;
+    disabled?: boolean;
+    readonly?: boolean;
+  }
+}
 
 test.describe('TouchSpin Web Component lifecycle management', () => {
   test.beforeEach(async ({ page }) => {
@@ -138,7 +156,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
 
     // Test initialization
     const initTest = await page.evaluate(() => {
-      const element = document.querySelector('[data-testid="web-component-test"]') as any;
+      const element = document.querySelector('[data-testid="web-component-test"]') as HTMLElement;
 
       // Check if TouchSpin core was initialized
       const hasInput = element?.querySelector('input') !== null;
@@ -190,7 +208,7 @@ test.describe('TouchSpin Web Component lifecycle management', () => {
       const instances = [];
 
       for (let i = 0; i < elements.length; i++) {
-        const element = elements[i] as any;
+        const element = elements[i] as HTMLElement;
         instances.push({
           exists: !!element,
           isConnected: element.isConnected,

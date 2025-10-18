@@ -27,6 +27,7 @@ declare global {
       beforeCalls: string[];
       afterCalls: string[];
     };
+    callbackOrder?: string[];
   }
 }
 
@@ -57,7 +58,7 @@ async function initializeWithCallbackTracking(page: Page, testId: string) {
 }
 
 // Helper to get callback counts
-async function getCallbackCounts(page: any) {
+async function getCallbackCounts(page: Page) {
   return await page.evaluate(() => {
     const tracker = window.callbackTracker;
     return {
@@ -70,7 +71,7 @@ async function getCallbackCounts(page: any) {
 }
 
 // Helper to reset callback tracking
-async function resetCallbackTracking(page: any) {
+async function resetCallbackTracking(page: Page) {
   await page.evaluate(() => {
     const tracker = window.callbackTracker;
     tracker.beforeCalls = [];
@@ -241,7 +242,7 @@ test.describe('Callback execution frequency and ordering', () => {
   }) => {
     // Set up ordering tracker
     await page.evaluate(() => {
-      (window as any).callbackOrder = [] as string[];
+      window.callbackOrder = [] as string[];
     });
 
     await initializeTouchspin(page, 'test-input', {
@@ -250,18 +251,18 @@ test.describe('Callback execution frequency and ordering', () => {
       max: 100,
       initval: 50,
       callback_before_calculation: (value: string) => {
-        (window as any).callbackOrder.push('before');
+        window.callbackOrder!.push('before');
         return value;
       },
       callback_after_calculation: (value: string) => {
-        (window as any).callbackOrder.push('after');
+        window.callbackOrder!.push('after');
         return value;
       },
     });
 
     await apiHelpers.incrementViaAPI(page, 'test-input');
 
-    const order = await page.evaluate(() => (window as any).callbackOrder);
+    const order = await page.evaluate(() => window.callbackOrder);
     expect(order).toEqual(['before', 'after']);
   });
 });

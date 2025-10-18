@@ -34,6 +34,13 @@ import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspin } from '../../test-helpers/core-adapter';
 
+// Extend HTMLInputElement interface for test access
+declare global {
+  interface HTMLInputElement {
+    _touchSpinCore?: import('@touchspin/core').TouchSpinCorePublicAPI;
+  }
+}
+
 test.describe('Core boundary enforcement and validation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/packages/core/tests/fixtures/core-api-fixture.html');
@@ -614,7 +621,7 @@ test.describe('Core boundary enforcement and validation', () => {
     await page.evaluate(
       ({ testId }) => {
         const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
-        const core = (input as any)._touchSpinCore;
+        const core = input._touchSpinCore;
         if (core) {
           core.updateSettings({
             callback_before_calculation: () => '15', // Return value outside boundaries
