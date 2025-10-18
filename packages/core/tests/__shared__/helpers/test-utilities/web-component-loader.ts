@@ -1,4 +1,12 @@
 import type { Page } from '@playwright/test';
+import type { TouchSpinCorePublicAPI } from '../../src';
+
+// Extend HTMLInputElement interface for test access
+declare global {
+  interface HTMLInputElement {
+    _touchSpinCore?: TouchSpinCorePublicAPI;
+  }
+}
 
 /**
  * When I load the web component with bundled dependencies
@@ -56,7 +64,7 @@ export async function initializeWebComponentTest(page: Page, debug = false): Pro
           return el;
         },
         requireCoreByTestId: (id: string) => {
-          const input = requireInputByTestId(id) as any;
+          const input = requireInputByTestId(id);
           if (!input?._touchSpinCore) throw new Error(`TouchSpin not initialized on: ${id}`);
           return input._touchSpinCore;
         },

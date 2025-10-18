@@ -5,6 +5,13 @@ import { installDomHelpers } from '../runtime/installDomHelpers';
 import { waitForPageReady } from '../test-utilities/wait';
 import type { RendererSuiteOptions } from './universal-renderer.suite';
 
+// Extend window interface for test event logging
+declare global {
+  interface Window {
+    userEventLog?: string[];
+  }
+}
+
 /**
  * Shared lifecycle test suite for renderer destroy/reinit behavior
  *
@@ -138,14 +145,14 @@ export function lifecycleRendererSuite(
     test('preserves user event listeners across destroy/reinit', async ({ page }) => {
       // Add event log to window for tracking
       await page.evaluate(() => {
-        (window as any).userEventLog = [];
+        window.userEventLog = [];
       });
 
       // Add user event listener to input
       await page.evaluate(() => {
         const input = document.getElementById('test-input') as HTMLInputElement;
         input.addEventListener('change', () => {
-          (window as any).userEventLog.push('USER_CHANGE_FIRED');
+          window.userEventLog.push('USER_CHANGE_FIRED');
         });
       });
 
@@ -160,12 +167,12 @@ export function lifecycleRendererSuite(
       });
 
       // Verify user handler fired
-      let logs = await page.evaluate(() => (window as any).userEventLog);
+      let logs = await page.evaluate(() => window.userEventLog);
       expect(logs).toContain('USER_CHANGE_FIRED');
 
       // Clear log
       await page.evaluate(() => {
-        (window as any).userEventLog = [];
+        window.userEventLog = [];
       });
 
       // Destroy
@@ -181,12 +188,12 @@ export function lifecycleRendererSuite(
       });
 
       // User handler should STILL fire (listener preserved)
-      logs = await page.evaluate(() => (window as any).userEventLog);
+      logs = await page.evaluate(() => window.userEventLog);
       expect(logs).toContain('USER_CHANGE_FIRED');
 
       // Clear log
       await page.evaluate(() => {
-        (window as any).userEventLog = [];
+        window.userEventLog = [];
       });
 
       // Reinitialize
@@ -200,7 +207,7 @@ export function lifecycleRendererSuite(
       });
 
       // User handler should STILL fire after reinit
-      logs = await page.evaluate(() => (window as any).userEventLog);
+      logs = await page.evaluate(() => window.userEventLog);
       expect(logs).toContain('USER_CHANGE_FIRED');
     });
 

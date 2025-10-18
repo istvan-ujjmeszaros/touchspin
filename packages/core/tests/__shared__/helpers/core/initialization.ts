@@ -9,7 +9,14 @@ import type { TouchSpinCoreOptions } from '../types';
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   var TouchSpinCore: any;
+
+  interface HTMLInputElement {
+    _touchSpinCore?: TouchSpinCorePublicAPI;
+  }
 }
+
+// Import for type reference
+import type { TouchSpinCorePublicAPI } from '../../src';
 
 /* ──────────────────────────
  * Core (direct) API initialization
@@ -199,7 +206,7 @@ export async function initializeTouchSpin(
 
         // Core automatically checks globalThis.TouchSpinDefaultRenderer and uses it if present
         const core = new TouchSpinCore(input, options);
-        (input as any)._touchSpinCore = core;
+        input._touchSpinCore = core;
         (core as { initDOMEventHandling: () => void }).initDOMEventHandling();
       } catch (err) {
         console.error('initializeTouchSpin failed:', err);

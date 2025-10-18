@@ -15,15 +15,26 @@
  * [ ] callback_before_calculation is called before callback_after_calculation
  */
 
+import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspin } from '../test-helpers/core-adapter';
 
+// Extend window interface for callback tracking
+declare global {
+  interface Window {
+    callbackTracker?: {
+      beforeCalls: string[];
+      afterCalls: string[];
+    };
+  }
+}
+
 // Helper to initialize with callback tracking
-async function initializeWithCallbackTracking(page: any, testId: string) {
+async function initializeWithCallbackTracking(page: Page, testId: string) {
   await page.evaluate(() => {
     // Initialize tracker BEFORE TouchSpin initialization
-    (window as any).callbackTracker = {
+    window.callbackTracker = {
       beforeCalls: [] as string[],
       afterCalls: [] as string[],
     };
@@ -35,11 +46,11 @@ async function initializeWithCallbackTracking(page: any, testId: string) {
     max: 100,
     initval: 50,
     callback_before_calculation: (value: string) => {
-      (window as any).callbackTracker.beforeCalls.push(value);
+      window.callbackTracker.beforeCalls.push(value);
       return value; // Return unmodified
     },
     callback_after_calculation: (value: string) => {
-      (window as any).callbackTracker.afterCalls.push(value);
+      window.callbackTracker.afterCalls.push(value);
       return `${value} USD`; // Append for visibility
     },
   });
@@ -48,7 +59,7 @@ async function initializeWithCallbackTracking(page: any, testId: string) {
 // Helper to get callback counts
 async function getCallbackCounts(page: any) {
   return await page.evaluate(() => {
-    const tracker = (window as any).callbackTracker;
+    const tracker = window.callbackTracker;
     return {
       beforeCount: tracker.beforeCalls.length,
       afterCount: tracker.afterCalls.length,
@@ -61,7 +72,7 @@ async function getCallbackCounts(page: any) {
 // Helper to reset callback tracking
 async function resetCallbackTracking(page: any) {
   await page.evaluate(() => {
-    const tracker = (window as any).callbackTracker;
+    const tracker = window.callbackTracker;
     tracker.beforeCalls = [];
     tracker.afterCalls = [];
   });
@@ -193,7 +204,7 @@ test.describe('Callback execution frequency and ordering', () => {
   test.skip('initialization does not trigger callbacks', async ({ page }) => {
     // Pre-initialize the tracking before initialization
     await page.evaluate(() => {
-      (window as any).callbackTracker = {
+      window.callbackTracker = {
         beforeCalls: [] as string[],
         afterCalls: [] as string[],
       };
@@ -205,11 +216,11 @@ test.describe('Callback execution frequency and ordering', () => {
       max: 100,
       initval: 50,
       callback_before_calculation: (value: string) => {
-        (window as any).callbackTracker.beforeCalls.push(value);
+        window.callbackTracker.beforeCalls.push(value);
         return value;
       },
       callback_after_calculation: (value: string) => {
-        (window as any).callbackTracker.afterCalls.push(value);
+        window.callbackTracker.afterCalls.push(value);
         return `${value} USD`;
       },
     });

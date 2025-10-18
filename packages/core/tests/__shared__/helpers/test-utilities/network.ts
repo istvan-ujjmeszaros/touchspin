@@ -22,10 +22,11 @@ export async function preFetchCheck(page: Page, url: string): Promise<void> {
           server: res.headers.get('server'),
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch';
       return {
         ok: false,
-        error: error.message || 'Failed to fetch',
+        error: errorMessage,
         url: fetchUrl,
       };
     }

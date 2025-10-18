@@ -1,9 +1,20 @@
 import { expect, test } from '@playwright/test';
+import type { TouchSpinCorePublicAPI } from '../../src';
 import { initializeTouchspinFromGlobals } from '../core/initialization';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { collectCoverage, startCoverage } from '../test-utilities/coverage';
 import { waitForPageReady } from '../test-utilities/wait';
 import type { RendererSuiteOptions } from './universal-renderer.suite';
+
+// Extend window interface for test helpers
+declare global {
+  interface Window {
+    __ts?: {
+      requireInputByTestId: (id: string) => HTMLInputElement;
+      requireCoreByTestId: (id: string) => TouchSpinCorePublicAPI;
+    };
+  }
+}
 
 /**
  * Bootstrap Family Shared Test Suite
@@ -231,7 +242,7 @@ export function bootstrapSharedSuite(
       // Destroy the instance
       await page.evaluate(() => {
         const _input = document.getElementById('test-input') as HTMLInputElement;
-        const touchspinInstance = (window as any).__ts?.requireCoreByTestId('test-input');
+        const touchspinInstance = window.__ts?.requireCoreByTestId('test-input');
         if (touchspinInstance) {
           touchspinInstance.destroy();
         }

@@ -235,14 +235,16 @@ export async function loadTouchSpinRendererGlobals(
   await page.evaluate((rendererName) => {
     const capitalizedName = rendererName.charAt(0).toUpperCase() + rendererName.slice(1);
     const rendererGlobalName = `${capitalizedName}Renderer`;
-    const rendererModule = (window as any)[rendererGlobalName];
+    const rendererModule = (window as Record<string, unknown>)[rendererGlobalName];
 
     if (rendererModule) {
       // Unwrap module object: { default, Bootstrap5Renderer, ... } or direct constructor
       const RendererCtor =
-        rendererModule.default ?? rendererModule[rendererGlobalName] ?? rendererModule;
+        (rendererModule as Record<string, unknown>).default ??
+        (rendererModule as Record<string, unknown>)[rendererGlobalName] ??
+        rendererModule;
 
-      (globalThis as any).TouchSpinDefaultRenderer = RendererCtor;
+      globalThis.TouchSpinDefaultRenderer = RendererCtor;
     }
   }, rendererName);
 
@@ -275,10 +277,7 @@ export async function loadTouchSpinJQueryPlugin(
   // Verify jQuery plugin is registered
   await page.waitForFunction(
     () => {
-      const jQueryGlobal = window.jQuery as
-        | { fn?: { TouchSpin?: unknown } }
-        | undefined
-        | null;
+      const jQueryGlobal = window.jQuery as { fn?: { TouchSpin?: unknown } } | undefined | null;
       const plugin = jQueryGlobal?.fn as { TouchSpin?: unknown } | undefined;
       return typeof plugin?.TouchSpin === 'function';
     },

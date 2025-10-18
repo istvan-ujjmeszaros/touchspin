@@ -1111,8 +1111,8 @@ test.describe('jQuery plugin methods', () => {
       const returnValue = div.TouchSpin({ min: 0, max: 100 });
 
       // Check if TouchSpin was actually initialized (it shouldn't be)
-      const inputEl = document.getElementById('not-an-input') as any;
-      const hasInstance = inputEl && inputEl._touchSpinCore !== undefined;
+      const inputEl = document.getElementById('not-an-input') as HTMLElement | null;
+      const hasInstance = inputEl && (inputEl as HTMLInputElement)._touchSpinCore !== undefined;
 
       return {
         returnedJQuery: returnValue && returnValue.jquery !== undefined,

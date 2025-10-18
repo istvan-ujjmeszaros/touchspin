@@ -3,6 +3,14 @@ import { setupLogging } from '../events/setup';
 import { installDomHelpers } from '../runtime/installDomHelpers';
 import { loadScript } from './script-loader';
 
+// Extend window interface for test environment diagnostics
+declare global {
+  interface Window {
+    __loadedRenderer?: unknown;
+    __loadingErrors?: string[];
+  }
+}
+
 export interface TestEnvironmentOptions {
   webComponent?: boolean;
   renderer?: string;
@@ -136,7 +144,7 @@ export async function loadRendererEnvironment(
         }
 
         // Store reference for later use
-        (window as any).__loadedRenderer = module.default || module;
+        window.__loadedRenderer = module.default || module;
 
         if (debug) console.log('Renderer loaded successfully');
       } catch (err) {
@@ -165,8 +173,8 @@ export async function diagnoseEnvironment(page: Page): Promise<{
     const errors: string[] = [];
 
     // Capture any errors that occurred
-    if ((window as any).__loadingErrors) {
-      errors.push(...(window as any).__loadingErrors);
+    if (window.__loadingErrors) {
+      errors.push(...window.__loadingErrors);
     }
 
     const jQueryGlobal = window.jQuery as { fn?: { TouchSpin?: unknown } } | undefined | null;
@@ -183,7 +191,7 @@ export async function diagnoseEnvironment(page: Page): Promise<{
       scripts: Array.from(document.scripts)
         .map((s) => s.src)
         .filter((src) => src && !src.includes('playwright')),
-      hasLoadedRenderer: !!(window as any).__loadedRenderer,
+      hasLoadedRenderer: !!window.__loadedRenderer,
       errors,
     };
   });
@@ -202,13 +210,13 @@ export async function resetTestEnvironment(page: Page): Promise<void> {
     }
 
     // Clear loaded renderer
-    if ((window as any).__loadedRenderer) {
-      delete (window as any).__loadedRenderer;
+    if (window.__loadedRenderer) {
+      delete window.__loadedRenderer;
     }
 
     // Clear any error tracking
-    if ((window as any).__loadingErrors) {
-      delete (window as any).__loadingErrors;
+    if (window.__loadingErrors) {
+      delete window.__loadingErrors;
     }
 
     // Note: We don't unregister custom elements as they cannot be removed
