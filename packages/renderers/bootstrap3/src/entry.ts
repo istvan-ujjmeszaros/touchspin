@@ -1,9 +1,14 @@
 // Standalone Bootstrap 3 build entry point
-import { TouchSpin as CoreTouchSpin, getTouchSpin, TouchSpinCore } from '@touchspin/core';
+import {
+  TouchSpin as CoreTouchSpin,
+  getTouchSpin,
+  TouchSpinCore,
+  type TouchSpinCoreOptions,
+} from '@touchspin/core';
 import Bootstrap3Renderer from './Bootstrap3Renderer.js';
 
 // Create a wrapper that automatically sets the Bootstrap 3 renderer
-function TouchSpin(element: HTMLInputElement, options: Record<string, any> = {}) {
+function TouchSpin(element: HTMLInputElement, options: Partial<TouchSpinCoreOptions> = {}) {
   if (!(element instanceof HTMLInputElement)) {
     throw new TypeError('TouchSpin expects an HTMLElement');
   }

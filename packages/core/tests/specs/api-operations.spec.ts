@@ -35,6 +35,14 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { inputById, wrapperById } from '@touchspin/core/test-helpers';
+
+// Extend HTMLInputElement interface for test access
+declare global {
+  interface HTMLInputElement {
+    _touchSpinCore?: import('@touchspin/core').TouchSpinCorePublicAPI;
+  }
+}
+
 import {
   getCoreNumericValue,
   initializeTouchspin,
@@ -152,7 +160,7 @@ test.describe('Core API operations and programmatic control', () => {
     await page.waitForFunction(
       () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        const core = (input as any)._touchSpinCore;
+        const core = input._touchSpinCore;
         const currentValue = core ? core.getValue() : null;
         return currentValue > 5; // Wait for value to increase from initial 5
       },
@@ -186,7 +194,7 @@ test.describe('Core API operations and programmatic control', () => {
     await page.waitForFunction(
       () => {
         const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-        const core = (input as any)._touchSpinCore;
+        const core = input._touchSpinCore;
         const currentValue = core ? core.getValue() : null;
         return currentValue < 10; // Wait for value to decrease from initial 10
       },

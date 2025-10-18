@@ -7,6 +7,9 @@ declare global {
   interface Window {
     TouchSpinCore?: {
       TouchSpin: (input: HTMLInputElement, options?: Partial<TouchSpinCoreOptions>) => void;
+      getTouchSpin: (
+        input: HTMLInputElement
+      ) => import('@touchspin/core').TouchSpinCorePublicAPI | null;
     };
   }
 }
@@ -104,7 +107,7 @@ export async function updateSettingsViaAPI(
       const input = document.querySelector(`[data-testid="${testId}"]`) as HTMLInputElement;
 
       // Get the real TouchSpin instance using getTouchSpin
-      const spinner = (window as any).TouchSpinCore.getTouchSpin(input);
+      const spinner = window.TouchSpinCore!.getTouchSpin(input);
       if (!spinner) {
         throw new Error(`TouchSpin instance not found for "${testId}"`);
       }
