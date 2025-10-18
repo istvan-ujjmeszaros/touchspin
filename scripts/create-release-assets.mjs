@@ -4,6 +4,26 @@ import { spawn } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+// Helper function to find UMD files in dist directory
+async function findUmdFiles(distDir) {
+  const files = [];
+  try {
+    const entries = await fs.readdir(distDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile()) {
+        const fileName = entry.name;
+        // Look for UMD files (they typically have .umd.js extension or contain 'umd' in path)
+        if (fileName.endsWith('.umd.js') || fileName.includes('umd')) {
+          files.push(path.join(distDir, fileName));
+        }
+      }
+    }
+  } catch (error) {
+    console.warn(`Error reading dist directory ${distDir}:`, error.message);
+  }
+  return files;
+}
+
 const packagesJson = process.env.PUBLISHED_PACKAGES;
 
 if (!packagesJson || packagesJson === '[]') {
@@ -51,19 +71,35 @@ for (const pkg of publishedPackages) {
   }
 
   const slug = pkg.name.replace(/^@/, '').replace(/[\\/]/g, '-');
-  const tarFile = path.join(artifactsDir, `${slug}-v${pkg.version}-dist.tar.gz`);
 
-  await new Promise((resolve, reject) => {
-    const tar = spawn('tar', ['-czf', tarFile, '-C', pkgDir, 'dist'], { stdio: 'inherit' });
-    tar.on('close', (code) => {
-      if (code === 0) {
-        artifactPaths.push(tarFile);
-        resolve();
-      } else {
-        reject(new Error(`tar exited with code ${code} while processing ${pkg.name}`));
-      }
+  // For adapters, upload specific UMD files instead of entire dist directory
+  if (
+    pkg.name.includes('/jquery') ||
+    pkg.name.includes('/standalone') ||
+    pkg.name.includes('/webcomponent')
+  ) {
+    const umdFiles = await findUmdFiles(distDir);
+    for (const umdFile of umdFiles) {
+      const fileName = path.basename(umdFile);
+      const destFile = path.join(artifactsDir, `${slug}-${fileName}`);
+      await fs.copyFile(umdFile, destFile);
+      artifactPaths.push(destFile);
+    }
+  } else {
+    // For renderers, upload the entire dist directory as before
+    const tarFile = path.join(artifactsDir, `${slug}-v${pkg.version}-dist.tar.gz`);
+    await new Promise((resolve, reject) => {
+      const tar = spawn('tar', ['-czf', tarFile, '-C', pkgDir, 'dist'], { stdio: 'inherit' });
+      tar.on('close', (code) => {
+        if (code === 0) {
+          artifactPaths.push(tarFile);
+          resolve();
+        } else {
+          reject(new Error(`tar exited with code ${code} while processing ${pkg.name}`));
+        }
+      });
     });
-  });
+  }
 }
 
 const releaseNotesLines = [
