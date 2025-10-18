@@ -1,5 +1,20 @@
 # @touchspin/core
 
+## 5.0.1-alpha.3
+
+### Patch Changes
+
+- 5148aa4: **Improvements:**
+  - Enhanced type safety with proper TypeScript interfaces
+  - Fixed biome linting warnings (reduced from 396 to 217)
+  - Improved developer experience with better error handling
+  - Enhanced code maintainability
+
+  **Infrastructure:**
+  - Updated release workflow to enable GitHub releases for alpha versions
+  - Improved artifact generation to upload specific UMD builds instead of entire dist directories
+  - Enhanced release process for better user experience
+
 ## 5.0.1-alpha.2
 
 ### Patch Changes
