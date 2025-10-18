@@ -702,6 +702,13 @@ export class TouchSpinCore {
 
   /** Start increasing repeatedly; no immediate step here. */
   startUpSpin(): void {
+    // Check boundary BEFORE emitting event - don't emit if already at max
+    const currentValue = this.getValue();
+    if (this.settings.max !== null && currentValue === this.settings.max) {
+      this.emit('max'); // Emit boundary event as feedback
+      return;
+    }
+
     // Emit cancelable event - allows users to prevent spinning
     if (this.emit('startupspin', undefined, true)) {
       return; // Event was prevented, don't start spinning
@@ -711,6 +718,13 @@ export class TouchSpinCore {
 
   /** Start decreasing repeatedly; no immediate step here. */
   startDownSpin(): void {
+    // Check boundary BEFORE emitting event - don't emit if already at min
+    const currentValue = this.getValue();
+    if (this.settings.min !== null && currentValue === this.settings.min) {
+      this.emit('min'); // Emit boundary event as feedback
+      return;
+    }
+
     // Emit cancelable event - allows users to prevent spinning
     if (this.emit('startdownspin', undefined, true)) {
       return; // Event was prevented, don't start spinning
@@ -1019,18 +1033,6 @@ export class TouchSpinCore {
    */
   _startSpin(dir: 'up' | 'down'): void {
     if (this.input.disabled || this.input.hasAttribute('readonly')) return;
-
-    // Check if ALREADY at boundary before starting spin
-    // Emit min/max event as feedback, but don't start spinning
-    const currentValue = this.getValue();
-    if (dir === 'up' && this.settings.max !== null && currentValue === this.settings.max) {
-      this.emit('max');
-      return;
-    }
-    if (dir === 'down' && this.settings.min !== null && currentValue === this.settings.min) {
-      this.emit('min');
-      return;
-    }
 
     // If already spinning in the same direction, do nothing (idempotent)
     if (this.spinning && this.direction === dir) {
