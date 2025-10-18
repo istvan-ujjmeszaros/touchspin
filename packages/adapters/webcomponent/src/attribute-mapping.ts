@@ -2,6 +2,13 @@
  * Utility functions for mapping HTML attributes to TouchSpin settings
  */
 
+import type { TouchSpinCoreOptions } from '@touchspin/core';
+
+/**
+ * Parsed attribute value type - primitive values that can be set via HTML attributes
+ */
+export type ParsedAttributeValue = string | number | boolean | null;
+
 /**
  * Convert kebab-case attribute names to camelCase setting names
  * @param {string} attrName - HTML attribute name (e.g. 'vertical-buttons')
@@ -36,12 +43,14 @@ export function attributeToSetting(attrName: string): string {
 
 /**
  * Parse attribute value to appropriate JavaScript type
- * @param {string} value - Raw attribute value
- * @param {string} settingName - TouchSpin setting name
- * @returns {any} - Parsed value
+ * @param value - Raw attribute value
+ * @param settingName - TouchSpin setting name
+ * @returns Parsed value as appropriate primitive type
  */
-// TODO: refine type
-export function parseAttributeValue(value: string | null, settingName: string): unknown {
+export function parseAttributeValue(
+  value: string | null,
+  settingName: string
+): ParsedAttributeValue {
   if (value === null) return null;
   if (value === '') return true; // Boolean attributes present without value
 
@@ -76,11 +85,15 @@ export function parseAttributeValue(value: string | null, settingName: string): 
 
 /**
  * Get all TouchSpin settings from element attributes
- * @param {HTMLElement} element - Custom element instance
- * @returns {Object} - TouchSpin settings object
+ * @param element - Custom element instance
+ * @returns TouchSpin settings object with parsed attribute values
  */
-export function getSettingsFromAttributes(element: HTMLElement): Record<string, unknown> {
-  const settings: Record<string, unknown> = {};
+export function getSettingsFromAttributes(
+  element: HTMLElement
+): Record<string, ParsedAttributeValue> & {
+  renderer?: import('@touchspin/core').RendererConstructor;
+} {
+  const settings: Record<string, ParsedAttributeValue> = {};
 
   // Get all attributes (ensure iterable in TS)
   for (const attr of Array.from(element.attributes)) {

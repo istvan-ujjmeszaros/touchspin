@@ -12,6 +12,9 @@ export { TouchSpinCallableEvent, TouchSpinEmittedEvent } from './events.js';
 
 import type { Renderer, RendererConstructor } from './renderer.js';
 
+// Export renderer types
+export type { Renderer, RendererConstructor } from './renderer.js';
+
 type WithCoreElement = HTMLInputElement & { [INSTANCE_KEY]?: TouchSpinCore };
 
 export interface TouchSpinCoreOptions {
