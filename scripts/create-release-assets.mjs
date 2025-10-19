@@ -38,6 +38,47 @@ if (!packagesJson || packagesJson === '[]') {
   process.exit(0);
 }
 
+// Build release assets first - minified versions without source maps
+async function buildReleaseAssets() {
+  console.log('Building minified release assets...');
+
+  // Build jQuery release assets
+  console.log('Building jQuery release assets...');
+  await runCommand('yarn workspace @touchspin/jquery run build:umd-release-bootstrap3');
+  await runCommand('yarn workspace @touchspin/jquery run build:umd-release-bootstrap4');
+  await runCommand('yarn workspace @touchspin/jquery run build:umd-release-bootstrap5');
+  await runCommand('yarn workspace @touchspin/jquery run build:umd-release-tailwind');
+  await runCommand('yarn workspace @touchspin/jquery run build:umd-release-vanilla');
+
+  // Build webcomponent release assets
+  console.log('Building webcomponent release assets...');
+  await runCommand('yarn workspace @touchspin/webcomponent run build:umd-release-bootstrap3');
+  await runCommand('yarn workspace @touchspin/webcomponent run build:umd-release-bootstrap4');
+  await runCommand('yarn workspace @touchspin/webcomponent run build:umd-release-bootstrap5');
+  await runCommand('yarn workspace @touchspin/webcomponent run build:umd-release-tailwind');
+  await runCommand('yarn workspace @touchspin/webcomponent run build:umd-release-vanilla');
+
+  console.log('Release assets built successfully');
+}
+
+async function runCommand(cmd) {
+  return new Promise((resolve, reject) => {
+    const { spawn } = require('node:child_process');
+    const [command, ...args] = cmd.split(' ');
+    const child = spawn(command, args, { stdio: 'inherit', shell: true });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Command failed: ${cmd}`));
+      }
+    });
+
+    child.on('error', reject);
+  });
+}
+
 const publishedPackages = JSON.parse(packagesJson);
 
 if (!Array.isArray(publishedPackages) || publishedPackages.length === 0) {
@@ -56,10 +97,6 @@ const packageConfigMap = new Map([
           pattern: 'dist/umd/jquery.touchspin-*.umd.js',
           rename: (filename) => filename.replace(/^jquery\.touchspin-/, 'touchspin-jquery-'),
         },
-        {
-          pattern: 'dist/umd/jquery.touchspin-*.umd.js.map',
-          rename: (filename) => filename.replace(/^jquery\.touchspin-/, 'touchspin-jquery-'),
-        },
       ],
     },
   ],
@@ -73,26 +110,6 @@ const packageConfigMap = new Map([
         { pattern: 'dist/bootstrap5.js', rename: (filename) => `touchspin-standalone-${filename}` },
         { pattern: 'dist/tailwind.js', rename: (filename) => `touchspin-standalone-${filename}` },
         { pattern: 'dist/vanilla.js', rename: (filename) => `touchspin-standalone-${filename}` },
-        {
-          pattern: 'dist/bootstrap3.js.map',
-          rename: (filename) => `touchspin-standalone-${filename}`,
-        },
-        {
-          pattern: 'dist/bootstrap4.js.map',
-          rename: (filename) => `touchspin-standalone-${filename}`,
-        },
-        {
-          pattern: 'dist/bootstrap5.js.map',
-          rename: (filename) => `touchspin-standalone-${filename}`,
-        },
-        {
-          pattern: 'dist/tailwind.js.map',
-          rename: (filename) => `touchspin-standalone-${filename}`,
-        },
-        {
-          pattern: 'dist/vanilla.js.map',
-          rename: (filename) => `touchspin-standalone-${filename}`,
-        },
       ],
     },
   ],
@@ -103,10 +120,6 @@ const packageConfigMap = new Map([
       assets: [
         {
           pattern: 'dist/umd/*.touchspin.umd.js',
-          rename: (filename) => `touchspin-webcomponent-${filename.replace('.touchspin', '')}`,
-        },
-        {
-          pattern: 'dist/umd/*.touchspin.umd.js.map',
           rename: (filename) => `touchspin-webcomponent-${filename.replace('.touchspin', '')}`,
         },
       ],
@@ -174,6 +187,9 @@ const packageConfigMap = new Map([
   ],
 ]);
 
+// Build minified release assets first
+await buildReleaseAssets();
+
 const artifactsDir = path.resolve('release-artifacts');
 await fs.mkdir(artifactsDir, { recursive: true });
 
@@ -206,10 +222,11 @@ for (const pkg of publishedPackages) {
 const releaseNotesLines = [
   '# TouchSpin Release Assets',
   '',
-  'This release includes downloadable assets for various integration methods.',
+  'This release includes minified, production-ready assets for various integration methods.',
+  'All JavaScript assets are minified and do not include source maps.',
   '',
   '## jQuery Adapter (@touchspin/jquery)',
-  'UMD bundles for script-tag integration with jQuery:',
+  'Minified UMD bundles for script-tag integration with jQuery:',
   '- `touchspin-jquery-bootstrap3.umd.js` - Bootstrap 3 theme',
   '- `touchspin-jquery-bootstrap4.umd.js` - Bootstrap 4 theme',
   '- `touchspin-jquery-bootstrap5.umd.js` - Bootstrap 5 theme',
@@ -225,7 +242,7 @@ const releaseNotesLines = [
   '- `touchspin-standalone-vanilla.js` - Vanilla CSS theme',
   '',
   '## Web Component (@touchspin/webcomponent)',
-  'UMD bundles exposing <touchspin-input> custom element:',
+  'Minified UMD bundles exposing <touchspin-input> custom element:',
   '- `touchspin-webcomponent-bootstrap3.umd.js` - Bootstrap 3 theme',
   '- `touchspin-webcomponent-bootstrap4.umd.js` - Bootstrap 4 theme',
   '- `touchspin-webcomponent-bootstrap5.umd.js` - Bootstrap 5 theme',
