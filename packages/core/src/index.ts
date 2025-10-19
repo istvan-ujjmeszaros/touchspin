@@ -804,6 +804,9 @@ export class TouchSpinCore {
     this._syncNativeAttributes();
     this._checkValue(true); // Emit change events when updateSettings clamps values
 
+    // Reset current step size to reflect sanitized settings
+    this._currentStepSize = this.settings.step || 1;
+
     // Check for callback pairing and warn if needed
     this._checkCallbackPairing();
   }
