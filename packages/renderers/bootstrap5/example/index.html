@@ -1378,6 +1378,10 @@
       logEvent('touchspin.on.stopdownspin', e.detail);
     });
 
+    input.addEventListener('touchspin.on.speedchange', (e) => {
+      logEvent('touchspin.on.speedchange', e.detail);
+    });
+
     input.addEventListener('change', (e) => {
       logEvent('change', {value: e.target.value});
     });

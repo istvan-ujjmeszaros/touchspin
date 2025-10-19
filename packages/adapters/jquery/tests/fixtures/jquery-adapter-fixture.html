@@ -138,12 +138,14 @@
             window.eventLog.push(entry);
 
             const prefix = `[${type}]`;
+            const detailText =
+                detail.eventDetail !== undefined ? ` ${JSON.stringify(detail.eventDetail)}` : '';
             if (detail.target && detail.value !== undefined) {
-                appendLogLine(`${prefix} ${detail.target}:${detail.value} ${event}`);
+                appendLogLine(`${prefix} ${detail.target}:${detail.value} ${event}${detailText}`);
             } else if (detail.target) {
-                appendLogLine(`${prefix} ${detail.target} ${event}`);
+                appendLogLine(`${prefix} ${detail.target} ${event}${detailText}`);
             } else {
-                appendLogLine(`${prefix} ${event}`);
+                appendLogLine(`${prefix} ${event}${detailText}`);
             }
         };
 
