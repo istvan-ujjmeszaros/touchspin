@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { spawn } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -18,7 +17,7 @@ async function findFiles(baseDir, pattern) {
       if (entry.isFile()) {
         const fileName = entry.name;
         // Simple wildcard matching with end anchor
-        const regexPattern = filePattern.replace(/\*/g, '.*') + '$';
+        const regexPattern = `${filePattern.replace(/\*/g, '.*')}$`;
         const regex = new RegExp(regexPattern);
         if (regex.test(fileName)) {
           files.push(path.join(searchDir, fileName));
@@ -42,6 +41,10 @@ if (!packagesJson || packagesJson === '[]') {
 async function buildReleaseAssets() {
   console.log('Building minified release assets...');
 
+  // Build all dependencies first
+  console.log('Building dependencies...');
+  await runCommand('yarn workspaces foreach -pt -A run build');
+
   // Build jQuery release assets
   console.log('Building jQuery release assets...');
   await runCommand('yarn workspace @touchspin/jquery run build:umd-release-bootstrap3');
@@ -62,9 +65,10 @@ async function buildReleaseAssets() {
 }
 
 async function runCommand(cmd) {
+  const { spawn } = await import('node:child_process');
+  const [command, ...args] = cmd.split(' ');
+
   return new Promise((resolve, reject) => {
-    const { spawn } = require('node:child_process');
-    const [command, ...args] = cmd.split(' ');
     const child = spawn(command, args, { stdio: 'inherit', shell: true });
 
     child.on('close', (code) => {
