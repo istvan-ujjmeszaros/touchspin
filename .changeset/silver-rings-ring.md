@@ -13,9 +13,14 @@
 Add cancelable events and speed change events, fix release assets
 
 ### Features
-- Add cancelable change events that can be prevented by calling `event.preventDefault()`
-- Add speed change events that fire when the spin speed changes (normal/fast)
+- Add cancelable change events (`change:start`, `change:end`) that can be prevented by calling `event.preventDefault()`
+- Add speed change events (`speedchange`) that fire when the spin speed changes between normal/fast modes
 - Add `cancelable` option to enable/disable cancelable events (default: false)
+
+### Documentation
+- Update event matrix documentation with comprehensive event reference
+- Add examples of new cancelable and speed change events in README and package docs
+- Document event payloads, timing, and cancelable event usage patterns
 
 ### Bug Fixes
 - Fix release assets script to include all packages and provide proper naming
