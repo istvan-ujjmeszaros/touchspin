@@ -1533,32 +1533,52 @@ test.describe('Core event system and emission', () => {
       initval: 50,
     });
 
-    // Prevent speed changes
+    // Track speedchange events and prevent them
     await page.evaluate(() => {
+      window.__touchspinTestEvents = window.__touchspinTestEvents ?? {};
+      window.__touchspinTestEvents.speedchangeEvents = [];
+
       const input = document.querySelector('[data-testid="test-input"]');
-      input!.addEventListener('touchspin.on.speedchange', (event) => {
-        event.preventDefault(); // Cancel the speed increase
-      });
+      if (input) {
+        input.addEventListener('touchspin.on.speedchange', (event) => {
+          const events = window.__touchspinTestEvents?.speedchangeEvents || [];
+          events.push((event as CustomEvent).detail);
+          event.preventDefault(); // Cancel the speed increase
+        });
+      }
     });
 
-    const initialValue = await getCoreNumericValue(page, 'test-input');
-
-    // Start spinning up
+    // Start spinning up to trigger speed change
     await apiHelpers.startUpSpinViaAPI(page, 'test-input');
 
-    // Wait for several steps
+    // Wait for speedchange event to be captured and prevented
     await page.waitForTimeout(1000);
 
     // Stop spinning
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
-    // Check that value increased by base step size (1), not boosted size
-    const finalValue = await getCoreNumericValue(page, 'test-input');
-    const increase = finalValue - initialValue;
+    // Verify that speedchange event was emitted with expected data
+    const speedChangeEvents = await page.evaluate(
+      () => window.__touchspinTestEvents?.speedchangeEvents || []
+    );
+    expect(speedChangeEvents.length).toBeGreaterThan(0);
+    const event = speedChangeEvents[0];
+    expect(event).toHaveProperty('currentLevel');
+    expect(event).toHaveProperty('newLevel');
+    expect(event).toHaveProperty('currentStep');
+    expect(event).toHaveProperty('newStep');
+    expect(event).toHaveProperty('direction');
+    expect(event.newLevel).toBeGreaterThan(event.currentLevel);
+    expect(event.newStep).toBeGreaterThan(event.currentStep);
+    expect(event.currentStep).toBe(1); // Should remain at base step since prevented
 
-    // Should be small increase (just base step), not boosted (2, 4, 8, etc.)
-    expect(increase).toBeGreaterThan(0);
-    expect(increase).toBeLessThanOrEqual(7); // Should not be heavily boosted
+    // Verify prevention worked by checking current step size
+    const currentStep = await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
+      const core = (input as any)._touchSpinCore;
+      return core ? core._currentStepSize : 0;
+    });
+    expect(currentStep).toBe(1); // Step should remain at base value
   });
 
   /**
