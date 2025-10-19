@@ -32,6 +32,10 @@
  * [x] allows preventing startdownspin event to cancel downward spinning
  * [x] startupspin event is emitted as cancelable
  * [x] startdownspin event is emitted as cancelable
+ * [x] startupspin event is emitted only once during keyboard hold
+ * [x] speedchange event is emitted when step size increases
+ * [x] speedchange event is cancelable to prevent speed increase
+ * [x] speedchange event allows modifying the new step size
  * [x] supports event namespacing
  * [x] handles event emission during callbacks
  * [x] maintains event integrity during rapid operations
@@ -49,6 +53,7 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { getCoreNumericValue, initializeTouchspin } from '../../test-helpers/core-adapter';
+import { waitForSpeedchangeSequence } from '../__shared__/helpers/events/log';
 
 test.describe('Core event system and emission', () => {
   test.beforeEach(async ({ page }) => {
@@ -1451,5 +1456,177 @@ test.describe('Core event system and emission', () => {
     });
 
     expect(isCancelable).toBe(true);
+  });
+
+  /**
+   * Scenario: speedchange event is emitted when step size increases
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I start spinning and the step size increases
+   * Then a speedchange event is emitted with correct data
+   */
+  test('speedchange event is emitted when step size increases', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    // Start spinning up - this should trigger speed increase after a few steps
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 2 });
+
+    // Stop spinning
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    const detail = sequence.detail as { currentStep?: number; newStep?: number };
+    expect(detail.currentStep).toBe(1);
+    expect(detail.newStep).toBeGreaterThan(1);
+
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
+    );
+    expect(deltas.length).toBeGreaterThan(0);
+    expect(deltas[0]).toBeCloseTo(detail.newStep ?? deltas[0], 6);
+    expect(deltas.some((delta) => delta > (detail.currentStep ?? 1))).toBe(true);
+  });
+
+  /**
+   * Scenario: speedchange event is cancelable to prevent speed increase
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I prevent the speedchange event
+   * Then the step size does not increase
+   */
+  test('speedchange event is cancelable to prevent speed increase', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    // Prevent speed changes
+    await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]');
+      if (input) {
+        input.addEventListener('touchspin.on.speedchange', (event) => {
+          event.preventDefault(); // Cancel the speed increase
+        });
+      }
+    });
+
+    // Start spinning up to trigger speed change
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 3 });
+
+    // Stop spinning
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    const detail = sequence.detail as { currentStep?: number; newStep?: number };
+    expect(detail.currentStep).toBe(1);
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
+    );
+    expect(deltas.length).toBeGreaterThan(0);
+    deltas.forEach((delta) => expect(delta).toBeCloseTo(detail.currentStep ?? 1, 6));
+    expect(deltas.every((delta) => Math.abs(delta - 1) < 1e-6)).toBe(true);
+  });
+
+  /**
+   * Scenario: startupspin event is emitted only once during keyboard hold
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I hold the ArrowUp key to start spinning
+   * Then startupspin event is emitted exactly once, after startspin
+   */
+  test('startupspin event is emitted only once during keyboard hold', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Hold up arrow key to start spinning
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1000);
+
+    // Get the event log
+    const log = await apiHelpers.getEventLog(page);
+
+    // Count occurrences of each event
+    const startSpinCount = log.filter((entry) => entry.event === 'touchspin.on.startspin').length;
+    const startUpSpinCount = log.filter(
+      (entry) => entry.event === 'touchspin.on.startupspin'
+    ).length;
+    const stopUpSpinCount = log.filter((entry) => entry.event === 'touchspin.on.stopupspin').length;
+    const stopSpinCount = log.filter((entry) => entry.event === 'touchspin.on.stopspin').length;
+
+    // Each event should occur exactly once
+    expect(startSpinCount).toBe(1);
+    expect(startUpSpinCount).toBe(1);
+    expect(stopUpSpinCount).toBe(1);
+    expect(stopSpinCount).toBe(1);
+
+    // Check the order: startspin should come before startupspin
+    const startSpinIndex = log.findIndex((entry) => entry.event === 'touchspin.on.startspin');
+    const startUpSpinIndex = log.findIndex((entry) => entry.event === 'touchspin.on.startupspin');
+    expect(startSpinIndex).toBeLessThan(startUpSpinIndex);
+  });
+
+  /**
+   * Scenario: speedchange event allows modifying the new step size
+   * Given the fixture page is loaded with TouchSpin initialized with boosting
+   * When I modify the newStep in the speedchange event
+   * Then the spinning uses the modified step size
+   */
+  test('speedchange event allows modifying the new step size', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      boostat: 3, // Speed up every 3 spins
+      initval: 50,
+    });
+
+    await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]');
+      if (input) {
+        input.addEventListener('touchspin.on.speedchange', (event) => {
+          const detail = (event as CustomEvent).detail as { newStep: number };
+          detail.newStep = 3; // Force step size to exactly 3
+        });
+      }
+    });
+
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 2 });
+
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    const detail = sequence.detail as { newStep?: number; currentStep?: number };
+    expect(detail.currentStep).toBe(1);
+    expect(detail.newStep).toBe(3);
+
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
+    );
+    expect(deltas.length).toBeGreaterThan(0);
+    deltas.forEach((delta) => expect(delta).toBeCloseTo(detail.newStep ?? 3, 6));
+
+    const log = await apiHelpers.getEventLog(page);
+    const speedIndex = log.findIndex(
+      (entry) => entry.event === 'touchspin.on.speedchange' && entry.target === 'test-input'
+    );
+    expect(speedIndex).toBeGreaterThan(0);
+    const hasStartSpinBefore = log
+      .slice(0, speedIndex)
+      .some((entry) => entry.event === 'touchspin.on.startspin');
+    expect(hasStartSpinBefore).toBe(true);
   });
 });

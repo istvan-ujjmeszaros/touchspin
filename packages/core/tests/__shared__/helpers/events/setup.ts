@@ -42,12 +42,17 @@ export async function setupLogging(page: Page): Promise<void> {
         } as EventLogEntry;
         if (detail?.target !== undefined) (entry as { target?: string }).target = detail.target;
         if (detail?.value !== undefined) (entry as { value?: string }).value = detail.value;
+        if ((detail as any)?.eventDetail !== undefined)
+          (entry as any).eventDetail = (detail as any).eventDetail;
         window.eventLog.push(entry);
         const box = document.getElementById('event-log') as HTMLTextAreaElement | null;
         if (box) {
           const t = entry.target ?? '';
           const v = entry.value ?? '';
-          box.value += `${name}${t ? ` [${t}]` : ''}${v ? ` = ${v}` : ''}\n`;
+          const ed = (entry as any).eventDetail
+            ? ` ${JSON.stringify((entry as any).eventDetail)}`
+            : '';
+          box.value += `${name}${t ? ` [${t}]` : ''}${v ? ` = ${v}` : ''}${ed}\n`;
         }
       });
 
@@ -63,6 +68,7 @@ export async function setupLogging(page: Page): Promise<void> {
       'touchspin.on.stopspin',
       'touchspin.on.stopupspin',
       'touchspin.on.stopdownspin',
+      'touchspin.on.speedchange',
     ] as const;
 
     console.log(`[setupLogging] Registering ${tsEvents.length} TouchSpin event listeners`);
@@ -94,6 +100,10 @@ export async function setupLogging(page: Page): Promise<void> {
           const value = (input as HTMLInputElement | null)?.value;
           const detail: Partial<EventLogEntry> = { type: 'touchspin', target: testId };
           if (value !== undefined) (detail as { value?: string }).value = value;
+          // For speedchange events, include the event detail data
+          if (ev === 'touchspin.on.speedchange' && (e as CustomEvent).detail) {
+            (detail as any).eventDetail = (e as CustomEvent).detail;
+          }
           logEvent(e.type, detail);
         },
         true

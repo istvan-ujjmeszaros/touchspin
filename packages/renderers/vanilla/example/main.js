@@ -583,6 +583,9 @@ demoInput.addEventListener('touchspin.on.stopupspin', (e) =>
 demoInput.addEventListener('touchspin.on.stopdownspin', (e) =>
   logEvent('touchspin.on.stopdownspin', e.detail)
 );
+demoInput.addEventListener('touchspin.on.speedchange', (e) =>
+  logEvent('touchspin.on.speedchange', e.detail)
+);
 demoInput.addEventListener('change', (e) => logEvent('change', { value: e.target.value }));
 
 logEvent('TouchSpin Vanilla demo initialized with color pickers');

@@ -96,7 +96,8 @@ type CoreEventName =
   | 'startdownspin'
   | 'stopspin'
   | 'stopupspin'
-  | 'stopdownspin';
+  | 'stopdownspin'
+  | 'speedchange';
 
 export class TouchSpinCore {
   input: HTMLInputElement;
@@ -104,6 +105,7 @@ export class TouchSpinCore {
   spinning: boolean;
   spincount: number;
   direction: false | 'up' | 'down';
+  private _currentStepSize: number;
   private _teardownCallbacks: Array<() => void> = [];
   private _settingObservers: Map<string, Set<(value: unknown, prev?: unknown) => void>> = new Map();
   private _spinDelayTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -223,6 +225,9 @@ export class TouchSpinCore {
     this.settings = Object.assign({}, DEFAULTS, globalDefaults, dataAttrs, opts);
     // Sanitize settings to ensure safe, predictable behavior
     this._sanitizeSettings();
+
+    // Initialize current step size after settings are finalized
+    this._currentStepSize = this.settings.step || 1;
 
     // Check for renderer: explicit option > global default > none
     if (!this.settings.renderer) {
@@ -709,10 +714,6 @@ export class TouchSpinCore {
       return;
     }
 
-    // Emit cancelable event - allows users to prevent spinning
-    if (this.emit('startupspin', undefined, true)) {
-      return; // Event was prevented, don't start spinning
-    }
     this._startSpin('up');
   }
 
@@ -725,10 +726,6 @@ export class TouchSpinCore {
       return;
     }
 
-    // Emit cancelable event - allows users to prevent spinning
-    if (this.emit('startdownspin', undefined, true)) {
-      return; // Event was prevented, don't start spinning
-    }
     this._startSpin('down');
   }
 
@@ -747,6 +744,7 @@ export class TouchSpinCore {
     this.spinning = false;
     this.direction = false;
     this.spincount = 0;
+    this._currentStepSize = this.settings.step || 1; // Reset step size when stopping
   }
 
   updateSettings(opts: Partial<TouchSpinCoreOptions>): void {
@@ -797,6 +795,9 @@ export class TouchSpinCore {
     this._updateAriaAttributes();
     this._syncNativeAttributes();
     this._checkValue(true); // Emit change events when updateSettings clamps values
+
+    // Reset current step size to reflect sanitized settings
+    this._currentStepSize = this.settings.step || 1;
 
     // Check for callback pairing and warn if needed
     this._checkCallbackPairing();
@@ -1008,13 +1009,14 @@ export class TouchSpinCore {
   /**
    * Emit a core event as DOM CustomEvent (matching original jQuery plugin behavior)
    * @param event - Event name
-   * @param detail - Event detail data
+   * @param detail - Event detail data (can be modified for speedchange events)
    * @param cancelable - Whether the event can be canceled (default: false)
    * @returns Whether the event was prevented (only meaningful for cancelable events)
    *
    * Cancelable events include:
    * - 'startupspin': emitted before starting upward spinning, can be prevented
    * - 'startdownspin': emitted before starting downward spinning, can be prevented
+   * - 'speedchange': emitted before step size increases, can be prevented or modified
    */
   emit(event: CoreEventName, detail?: unknown, cancelable = false): boolean {
     const domEventName = `touchspin.on.${event}`;
@@ -1050,10 +1052,24 @@ export class TouchSpinCore {
       this.spinning = true;
       this.direction = dir;
       this.spincount = 0;
-      // Match jQuery plugin event order: startspin then direction-specific
+      this._currentStepSize = this.settings.step || 1; // Reset step size when restarting spin
+      // Match jQuery plugin event order: startspin then direction-specific (cancelable)
       this.emit('startspin');
-      if (dir === 'up') this.emit('startupspin');
-      else this.emit('startdownspin');
+      if (dir === 'up') {
+        if (this.emit('startupspin', undefined, true)) {
+          // Prevented, abort spinning
+          this.spinning = false;
+          this.direction = false;
+          return;
+        }
+      } else {
+        if (this.emit('startdownspin', undefined, true)) {
+          // Prevented, abort spinning
+          this.spinning = false;
+          this.direction = false;
+          return;
+        }
+      }
     }
 
     // Perform an immediate single step after emitting start events (parity with jQuery plugin UX)
@@ -1127,6 +1143,45 @@ export class TouchSpinCore {
         v = Math.round(v / step) * step;
       }
       step = Math.max(base, step);
+      const currentSize = this._currentStepSize ?? base;
+      if (step < currentSize) {
+        step = currentSize;
+      }
+
+      // Check for speed change and emit event if step size increased
+      if (step > this._currentStepSize) {
+        const currentLevel = Math.floor(Math.log2(this._currentStepSize / base));
+        const newLevel = Math.floor(Math.log2(step / base));
+
+        // Create modifiable event data
+        const eventData = {
+          currentLevel,
+          newLevel,
+          currentStep: this._currentStepSize,
+          newStep: step,
+          direction: dir,
+        };
+
+        // Emit cancelable speed change event
+        if (this.emit('speedchange', eventData, true)) {
+          // Event was prevented, keep current step size
+          step = this._currentStepSize;
+        } else {
+          // Event was not prevented, use potentially modified step size
+          // Validate the modified step size to ensure it's safe
+          const modifiedStep = Number(eventData.newStep);
+          if (Number.isFinite(modifiedStep) && modifiedStep >= this.settings.step!) {
+            step = Math.min(modifiedStep, this.settings.maxboostedstep || Number.MAX_SAFE_INTEGER);
+          } else {
+            // Invalid modification, revert to the already-clamped step
+            step = this._currentStepSize;
+          }
+        }
+      }
+
+      // Update current step size
+      this._currentStepSize = step;
+
       v = dir === 'up' ? v + step : v - step;
     }
     return this._applyConstraints(v);

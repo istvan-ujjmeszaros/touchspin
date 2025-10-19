@@ -58,6 +58,9 @@ export enum TouchSpinEmittedEvent {
 
   /** Fired when downward spinning stops */
   ON_STOP_DOWN_SPIN = 'touchspin.on.stopdownspin',
+
+  /** Fired when step size increases during spinning */
+  ON_SPEED_CHANGE = 'touchspin.on.speedchange',
 }
 
 /**

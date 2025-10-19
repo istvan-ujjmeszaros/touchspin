@@ -181,13 +181,15 @@
             const logElement = document.getElementById('event-log');
             if (logElement) {
                 const prefix = `[${eventType}]`;
+                const detailText =
+                    detail.eventDetail !== undefined ? ` ${JSON.stringify(detail.eventDetail)}` : '';
                 let logText = '';
                 if (detail.target && detail.value !== undefined) {
-                    logText = `${prefix} ${detail.target}:${detail.value} ${event}\n`;
+                    logText = `${prefix} ${detail.target}:${detail.value} ${event}${detailText}\n`;
                 } else if (detail.target) {
-                    logText = `${prefix} ${detail.target} ${event}\n`;
+                    logText = `${prefix} ${detail.target} ${event}${detailText}\n`;
                 } else {
-                    logText = `${prefix} ${event}\n`;
+                    logText = `${prefix} ${event}${detailText}\n`;
                 }
                 logElement.value += logText;
                 logElement.scrollTop = logElement.scrollHeight;
