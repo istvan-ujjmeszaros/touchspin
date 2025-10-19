@@ -41,9 +41,15 @@ if (!packagesJson || packagesJson === '[]') {
 async function buildReleaseAssets() {
   console.log('Building minified release assets...');
 
-  // Build all dependencies first
-  console.log('Building dependencies...');
-  await runCommand('yarn workspaces foreach -pt -A run build');
+  // Build dependencies in correct order to avoid circular dependencies
+  console.log('Building core dependencies...');
+  await runCommand('yarn workspace @touchspin/core run build');
+
+  console.log('Building renderer dependencies...');
+  await runCommand('yarn workspaces foreach -pt -A --include "@touchspin/renderer-*" run build');
+
+  console.log('Building adapter dependencies...');
+  await runCommand('yarn workspaces foreach -pt -A --include "@touchspin/standalone" run build');
 
   // Build jQuery release assets
   console.log('Building jQuery release assets...');
