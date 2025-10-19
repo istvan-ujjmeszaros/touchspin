@@ -52,14 +52,7 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { getCoreNumericValue, initializeTouchspin } from '../../test-helpers/core-adapter';
-
-declare global {
-  interface Window {
-    __touchspinTestEvents?: {
-      speedchange?: unknown;
-    };
-  }
-}
+import { waitForSpeedchangeSequence } from '../__shared__/helpers/events/log';
 
 test.describe('Core event system and emission', () => {
   test.beforeEach(async ({ page }) => {
@@ -1479,43 +1472,24 @@ test.describe('Core event system and emission', () => {
       initval: 50,
     });
 
-    await page.evaluate(() => {
-      window.__touchspinTestEvents = window.__touchspinTestEvents ?? {};
-      window.__touchspinTestEvents.speedchange = null;
-
-      const input = document.querySelector('[data-testid="test-input"]');
-      if (!input) return;
-
-      input.addEventListener(
-        'touchspin.on.speedchange',
-        (event) => {
-          const events = window.__touchspinTestEvents;
-          if (!events) return;
-          events.speedchange = (event as CustomEvent).detail;
-        },
-        { once: true }
-      );
-    });
-
     // Start spinning up - this should trigger speed increase after a few steps
     await apiHelpers.startUpSpinViaAPI(page, 'test-input');
 
-    // Wait for several steps to occur (should trigger speed change)
-    await page.waitForTimeout(1000);
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 2 });
 
     // Stop spinning
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
-    // Check if speed change event was emitted
-    const eventData = await page.evaluate(() => window.__touchspinTestEvents?.speedchange);
-    expect(eventData).not.toBeNull();
-    expect(eventData).toHaveProperty('currentLevel');
-    expect(eventData).toHaveProperty('newLevel');
-    expect(eventData).toHaveProperty('currentStep');
-    expect(eventData).toHaveProperty('newStep');
-    expect(eventData).toHaveProperty('direction');
-    expect(eventData.newLevel).toBeGreaterThan(eventData.currentLevel);
-    expect(eventData.newStep).toBeGreaterThan(eventData.currentStep);
+    const detail = sequence.detail as { currentStep?: number; newStep?: number };
+    expect(detail.currentStep).toBe(1);
+    expect(detail.newStep).toBeGreaterThan(1);
+
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
+    );
+    expect(deltas.length).toBeGreaterThan(0);
+    expect(deltas[0]).toBeCloseTo(detail.newStep ?? deltas[0], 6);
+    expect(deltas.some((delta) => delta > (detail.currentStep ?? 1))).toBe(true);
   });
 
   /**
@@ -1533,16 +1507,11 @@ test.describe('Core event system and emission', () => {
       initval: 50,
     });
 
-    // Track speedchange events and prevent them
+    // Prevent speed changes
     await page.evaluate(() => {
-      window.__touchspinTestEvents = window.__touchspinTestEvents ?? {};
-      window.__touchspinTestEvents.speedchangeEvents = [];
-
       const input = document.querySelector('[data-testid="test-input"]');
       if (input) {
         input.addEventListener('touchspin.on.speedchange', (event) => {
-          const events = window.__touchspinTestEvents?.speedchangeEvents || [];
-          events.push((event as CustomEvent).detail);
           event.preventDefault(); // Cancel the speed increase
         });
       }
@@ -1551,43 +1520,19 @@ test.describe('Core event system and emission', () => {
     // Start spinning up to trigger speed change
     await apiHelpers.startUpSpinViaAPI(page, 'test-input');
 
-    // Wait for speedchange event to be captured and prevented
-    await page.waitForTimeout(1000);
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 3 });
 
     // Stop spinning
     await apiHelpers.stopSpinViaAPI(page, 'test-input');
 
-    // Verify that speedchange event was emitted with expected data
-    const speedChangeEvents = await page.evaluate(
-      () => window.__touchspinTestEvents?.speedchangeEvents || []
+    const detail = sequence.detail as { currentStep?: number; newStep?: number };
+    expect(detail.currentStep).toBe(1);
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
     );
-    expect(speedChangeEvents.length).toBeGreaterThan(0);
-    // Check that speedchange events are also logged in the central event log
-    const speedChangeCount = await apiHelpers.countEventInLog(
-      page,
-      'touchspin.on.speedchange',
-      'touchspin'
-    );
-    expect(speedChangeCount).toBe(speedChangeEvents.length);
-
-    speedChangeEvents.forEach((event) => {
-      expect(event).toHaveProperty('currentLevel');
-      expect(event).toHaveProperty('newLevel');
-      expect(event).toHaveProperty('currentStep');
-      expect(event).toHaveProperty('newStep');
-      expect(event).toHaveProperty('direction');
-      expect(event.newLevel).toBeGreaterThan(event.currentLevel);
-      expect(event.newStep).toBeGreaterThan(event.currentStep);
-      expect(event.currentStep).toBe(1); // Should remain at base step since prevented
-    });
-
-    // Verify prevention worked by checking current step size
-    const currentStep = await page.evaluate(() => {
-      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-      const core = (input as any)._touchSpinCore;
-      return core ? core._currentStepSize : 0;
-    });
-    expect(currentStep).toBe(1); // Step should remain at base value
+    expect(deltas.length).toBeGreaterThan(0);
+    deltas.forEach((delta) => expect(delta).toBeCloseTo(detail.currentStep ?? 1, 6));
+    expect(deltas.every((delta) => Math.abs(delta - 1) < 1e-6)).toBe(true);
   });
 
   /**
@@ -1605,31 +1550,40 @@ test.describe('Core event system and emission', () => {
       initval: 50,
     });
 
-    // Start spinning and modify speed change in the same evaluate
-    const increase = await page.evaluate(async () => {
-      const input = document.querySelector('[data-testid="test-input"]') as HTMLInputElement;
-      const core = input?._touchSpinCore;
-      if (!input || !core) return 0;
-
-      const initialValue = core.getValue();
-
-      input.addEventListener('touchspin.on.speedchange', (event) => {
-        const detail = (event as CustomEvent).detail as { newStep: number };
-        detail.newStep = 3; // Force step size to exactly 3
-      });
-
-      core.startUpSpin();
-
-      // Wait for 1000ms to allow speed change to occur
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      core.stopSpin();
-
-      const finalValue = core.getValue();
-      return finalValue - initialValue;
+    await page.evaluate(() => {
+      const input = document.querySelector('[data-testid="test-input"]');
+      if (input) {
+        input.addEventListener('touchspin.on.speedchange', (event) => {
+          const detail = (event as CustomEvent).detail as { newStep: number };
+          detail.newStep = 3; // Force step size to exactly 3
+        });
+      }
     });
 
-    // Should be increase by modified step size, not default exponential
-    expect(increase).toBeGreaterThan(3); // Should have used modified step size
+    await apiHelpers.startUpSpinViaAPI(page, 'test-input');
+
+    const sequence = await waitForSpeedchangeSequence(page, 'test-input', { changeCount: 2 });
+
+    await apiHelpers.stopSpinViaAPI(page, 'test-input');
+
+    const detail = sequence.detail as { newStep?: number; currentStep?: number };
+    expect(detail.currentStep).toBe(1);
+    expect(detail.newStep).toBe(3);
+
+    const deltas = sequence.afterValues.map((value, index) =>
+      index === 0 ? value - sequence.before : value - sequence.afterValues[index - 1]
+    );
+    expect(deltas.length).toBeGreaterThan(0);
+    deltas.forEach((delta) => expect(delta).toBeCloseTo(detail.newStep ?? 3, 6));
+
+    const log = await apiHelpers.getEventLog(page);
+    const speedIndex = log.findIndex(
+      (entry) => entry.event === 'touchspin.on.speedchange' && entry.target === 'test-input'
+    );
+    expect(speedIndex).toBeGreaterThan(0);
+    const hasStartSpinBefore = log
+      .slice(0, speedIndex)
+      .some((entry) => entry.event === 'touchspin.on.startspin');
+    expect(hasStartSpinBefore).toBe(true);
   });
 });

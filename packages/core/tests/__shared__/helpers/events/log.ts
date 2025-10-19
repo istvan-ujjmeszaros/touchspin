@@ -75,3 +75,72 @@ export async function getEventLogText(page: Page): Promise<string> {
     return el?.value ?? '';
   });
 }
+
+interface SpeedchangeSequenceResult {
+  before: number;
+  afterValues: number[];
+  detail: Record<string, unknown>;
+}
+
+function extractSpeedchangeSequence(
+  log: EventLogEntry[],
+  target: string,
+  changeCount: number
+): SpeedchangeSequenceResult | null {
+  let lastChange: number | null = null;
+  let beforeValue: number | null = null;
+  let detail: Record<string, unknown> | null = null;
+  const afterValues: number[] = [];
+
+  for (const entry of log) {
+    if (entry.target !== target) continue;
+
+    if (entry.event === 'touchspin.on.speedchange' && detail === null) {
+      detail = (entry.eventDetail ?? {}) as Record<string, unknown>;
+      beforeValue = lastChange;
+      continue;
+    }
+
+    if (entry.event === 'change') {
+      const value = Number(entry.value);
+      if (!Number.isFinite(value)) continue;
+      if (detail) {
+        afterValues.push(value);
+        if (afterValues.length >= changeCount) {
+          return {
+            before: beforeValue ?? value,
+            afterValues,
+            detail,
+          };
+        }
+      }
+      lastChange = value;
+    }
+  }
+
+  if (detail && beforeValue !== null && afterValues.length >= changeCount) {
+    return {
+      before: beforeValue,
+      afterValues,
+      detail,
+    };
+  }
+
+  return null;
+}
+
+export async function waitForSpeedchangeSequence(
+  page: Page,
+  target: string,
+  options: { changeCount: number; timeout?: number }
+): Promise<SpeedchangeSequenceResult> {
+  const timeout = options.timeout ?? 5000;
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const log = await getEventLog(page);
+    const result = extractSpeedchangeSequence(log, target, options.changeCount);
+    if (result) return result;
+    await page.waitForTimeout(50);
+  }
+  throw new Error(`Timed out waiting for speedchange sequence for ${target}`);
+}

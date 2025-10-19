@@ -1135,6 +1135,10 @@ export class TouchSpinCore {
         v = Math.round(v / step) * step;
       }
       step = Math.max(base, step);
+      const currentSize = this._currentStepSize ?? base;
+      if (step < currentSize) {
+        step = currentSize;
+      }
 
       // Check for speed change and emit event if step size increased
       if (step > this._currentStepSize) {
