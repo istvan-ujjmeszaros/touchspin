@@ -1325,7 +1325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@touchspin/core@npm:5.0.1-alpha.3, @touchspin/core@workspace:*, @touchspin/core@workspace:packages/core":
+"@touchspin/core@npm:5.0.1-alpha.4, @touchspin/core@workspace:*, @touchspin/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@touchspin/core@workspace:packages/core"
   dependencies:
@@ -1343,7 +1343,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "workspace:*"
-    "@touchspin/standalone": "npm:5.0.1-alpha.6"
+    "@touchspin/standalone": "npm:5.0.1-alpha.7"
     "@types/jquery": "npm:^3.5.30"
     "@types/node": "npm:^22.7.4"
     jquery: "npm:^3.7.1"
@@ -1357,12 +1357,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap3@npm:5.0.1-alpha.5, @touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3":
+"@touchspin/renderer-bootstrap3@npm:5.0.1-alpha.6, @touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap3@workspace:packages/renderers/bootstrap3"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:3.4.1"
     sass: "npm:^1.77.8"
@@ -1377,12 +1377,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap4@npm:5.0.1-alpha.5, @touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4":
+"@touchspin/renderer-bootstrap4@npm:5.0.1-alpha.6, @touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap4@workspace:packages/renderers/bootstrap4"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:4.6.2"
     sass: "npm:^1.77.8"
@@ -1400,12 +1400,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-bootstrap5@npm:5.0.1-alpha.5, @touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5":
+"@touchspin/renderer-bootstrap5@npm:5.0.1-alpha.6, @touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-bootstrap5@workspace:packages/renderers/bootstrap5"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
     "@types/node": "npm:^22.7.4"
     bootstrap: "npm:5.3.8"
     sass: "npm:^1.77.8"
@@ -1420,12 +1420,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-tailwind@npm:5.0.1-alpha.5, @touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
+"@touchspin/renderer-tailwind@npm:5.0.1-alpha.6, @touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
     "@types/node": "npm:^22.7.4"
     sass: "npm:^1.77.8"
     tailwindcss: "npm:3.4.15"
@@ -1439,12 +1439,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-vanilla@npm:5.0.1-alpha.6, @touchspin/renderer-vanilla@workspace:*, @touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
+"@touchspin/renderer-vanilla@npm:5.0.1-alpha.7, @touchspin/renderer-vanilla@workspace:*, @touchspin/renderer-vanilla@workspace:packages/renderers/vanilla":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-vanilla@workspace:packages/renderers/vanilla"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
     "@types/node": "npm:^22.7.4"
     sass: "npm:^1.77.8"
     tsup: "npm:^8.1.0"
@@ -1452,17 +1452,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/standalone@npm:5.0.1-alpha.6, @touchspin/standalone@workspace:packages/adapters/standalone":
+"@touchspin/standalone@npm:5.0.1-alpha.7, @touchspin/standalone@workspace:packages/adapters/standalone":
   version: 0.0.0-use.local
   resolution: "@touchspin/standalone@workspace:packages/adapters/standalone"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
-    "@touchspin/renderer-bootstrap3": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.6"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
+    "@touchspin/renderer-bootstrap3": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.7"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"
@@ -1474,12 +1474,12 @@ __metadata:
   resolution: "@touchspin/webcomponent@workspace:packages/adapters/webcomponent"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "npm:5.0.1-alpha.3"
-    "@touchspin/renderer-bootstrap3": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.5"
-    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.6"
+    "@touchspin/core": "npm:5.0.1-alpha.4"
+    "@touchspin/renderer-bootstrap3": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-bootstrap4": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-bootstrap5": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-tailwind": "npm:5.0.1-alpha.6"
+    "@touchspin/renderer-vanilla": "npm:5.0.1-alpha.7"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.7.2"

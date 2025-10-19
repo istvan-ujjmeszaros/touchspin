@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/webcomponent",
-  "version": "5.0.1-alpha.6",
+  "version": "5.0.1-alpha.7",
   "description": "TouchSpin Web Component - Single <touchspin-input> tag for all renderers",
   "type": "module",
   "sideEffects": [
@@ -78,12 +78,12 @@
   "author": "TouchSpin Contributors",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "5.0.1-alpha.3",
-    "@touchspin/renderer-bootstrap3": "5.0.1-alpha.5",
-    "@touchspin/renderer-bootstrap4": "5.0.1-alpha.5",
-    "@touchspin/renderer-bootstrap5": "5.0.1-alpha.5",
-    "@touchspin/renderer-tailwind": "5.0.1-alpha.5",
-    "@touchspin/renderer-vanilla": "5.0.1-alpha.6"
+    "@touchspin/core": "5.0.1-alpha.4",
+    "@touchspin/renderer-bootstrap3": "5.0.1-alpha.6",
+    "@touchspin/renderer-bootstrap4": "5.0.1-alpha.6",
+    "@touchspin/renderer-bootstrap5": "5.0.1-alpha.6",
+    "@touchspin/renderer-tailwind": "5.0.1-alpha.6",
+    "@touchspin/renderer-vanilla": "5.0.1-alpha.7"
   },
   "engines": {
     "node": ">=18.17.0"

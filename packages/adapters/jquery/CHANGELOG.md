@@ -1,5 +1,18 @@
 # @touchspin/jquery
 
+## 5.0.1-alpha.7
+
+### Patch Changes
+
+- Fix release assets script to include all packages and provide proper naming
+  - Previously only jQuery adapter assets were included in releases
+  - Now includes standalone ESM bundles, web component UMD bundles, and CSS stylesheets
+  - Renamed assets with consistent, unique naming scheme for better CDN compatibility
+  - Added comprehensive release notes explaining each asset type
+
+- Updated dependencies
+  - @touchspin/standalone@5.0.1-alpha.7
+
 ## 5.0.1-alpha.6
 
 ### Patch Changes
