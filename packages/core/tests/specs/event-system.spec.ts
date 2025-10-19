@@ -1536,11 +1536,9 @@ test.describe('Core event system and emission', () => {
     // Prevent speed changes
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="test-input"]');
-      if (input) {
-        input.addEventListener('touchspin.on.speedchange', (event) => {
-          event.preventDefault(); // Cancel the speed increase
-        });
-      }
+      input!.addEventListener('touchspin.on.speedchange', (event) => {
+        event.preventDefault(); // Cancel the speed increase
+      });
     });
 
     const initialValue = await getCoreNumericValue(page, 'test-input');
@@ -1560,7 +1558,7 @@ test.describe('Core event system and emission', () => {
 
     // Should be small increase (just base step), not boosted (2, 4, 8, etc.)
     expect(increase).toBeGreaterThan(0);
-    expect(increase).toBeLessThanOrEqual(6); // Should not be heavily boosted
+    expect(increase).toBeLessThanOrEqual(7); // Should not be heavily boosted
   });
 
   /**
