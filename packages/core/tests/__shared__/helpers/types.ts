@@ -9,6 +9,7 @@ export interface EventLogEntry {
   event: string;
   target?: string;
   value?: string;
+  eventDetail?: unknown;
 }
 
 /** Structured locators for a single TouchSpin instance identified by a testId. */
