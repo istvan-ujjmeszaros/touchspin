@@ -1562,15 +1562,24 @@ test.describe('Core event system and emission', () => {
       () => window.__touchspinTestEvents?.speedchangeEvents || []
     );
     expect(speedChangeEvents.length).toBeGreaterThan(0);
-    const event = speedChangeEvents[0];
-    expect(event).toHaveProperty('currentLevel');
-    expect(event).toHaveProperty('newLevel');
-    expect(event).toHaveProperty('currentStep');
-    expect(event).toHaveProperty('newStep');
-    expect(event).toHaveProperty('direction');
-    expect(event.newLevel).toBeGreaterThan(event.currentLevel);
-    expect(event.newStep).toBeGreaterThan(event.currentStep);
-    expect(event.currentStep).toBe(1); // Should remain at base step since prevented
+    // Check that speedchange events are also logged in the central event log
+    const speedChangeCount = await apiHelpers.countEventInLog(
+      page,
+      'touchspin.on.speedchange',
+      'touchspin'
+    );
+    expect(speedChangeCount).toBe(speedChangeEvents.length);
+
+    speedChangeEvents.forEach((event) => {
+      expect(event).toHaveProperty('currentLevel');
+      expect(event).toHaveProperty('newLevel');
+      expect(event).toHaveProperty('currentStep');
+      expect(event).toHaveProperty('newStep');
+      expect(event).toHaveProperty('direction');
+      expect(event.newLevel).toBeGreaterThan(event.currentLevel);
+      expect(event.newStep).toBeGreaterThan(event.currentStep);
+      expect(event.currentStep).toBe(1); // Should remain at base step since prevented
+    });
 
     // Verify prevention worked by checking current step size
     const currentStep = await page.evaluate(() => {

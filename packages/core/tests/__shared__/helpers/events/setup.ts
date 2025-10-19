@@ -63,6 +63,7 @@ export async function setupLogging(page: Page): Promise<void> {
       'touchspin.on.stopspin',
       'touchspin.on.stopupspin',
       'touchspin.on.stopdownspin',
+      'touchspin.on.speedchange',
     ] as const;
 
     console.log(`[setupLogging] Registering ${tsEvents.length} TouchSpin event listeners`);
