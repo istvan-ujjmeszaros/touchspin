@@ -1173,8 +1173,8 @@ export class TouchSpinCore {
           if (Number.isFinite(modifiedStep) && modifiedStep >= this.settings.step!) {
             step = Math.min(modifiedStep, this.settings.maxboostedstep || Number.MAX_SAFE_INTEGER);
           } else {
-            // Invalid modification, keep the original boosted step (which is stepCandidate)
-            step = stepCandidate;
+            // Invalid modification, revert to the already-clamped step
+            step = this._currentStepSize;
           }
         }
       }
