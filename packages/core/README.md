@@ -15,11 +15,25 @@ import { TouchSpin } from '@touchspin/core';
 import Bootstrap5Renderer from '@touchspin/renderer-bootstrap5';
 import '@touchspin/renderer-bootstrap5/css';
 
-TouchSpin(document.querySelector('#quantity'), {
+const input = document.querySelector('#quantity');
+TouchSpin(input, {
   renderer: Bootstrap5Renderer,
   min: 0,
   max: 100,
   step: 1,
+  cancelable: true  // Enable cancelable change events
+});
+
+// Listen to events
+input.addEventListener('change:start', (event) => {
+  // Can prevent the change from happening
+  if (shouldPreventChange()) {
+    event.preventDefault();
+  }
+});
+
+input.addEventListener('speedchange', (event) => {
+  console.log('Spin speed changed to:', event.detail.speed);
 });
 ```
 

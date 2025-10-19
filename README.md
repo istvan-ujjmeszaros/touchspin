@@ -70,7 +70,21 @@ import { mount } from '@touchspin/standalone/bootstrap5';
 const api = mount('#quantity', {
   min: 0,
   max: 100,
-  step: 1
+  step: 1,
+  cancelable: true  // Enable cancelable change events
+});
+
+// Listen to events
+const input = document.querySelector('#quantity');
+input.addEventListener('change:start', (event) => {
+  // Prevent change if needed
+  if (someCondition) {
+    event.preventDefault();
+  }
+});
+
+input.addEventListener('speedchange', (event) => {
+  console.log('Speed changed to:', event.detail.speed);
 });
 ```
 
@@ -103,6 +117,13 @@ TouchSpin(input, {
   min: 0,
   max: 100,
   step: 1,
+  cancelable: true  // Enable cancelable change events
+});
+
+// Listen to events
+input.addEventListener('change:start', (event) => {
+  // Can prevent the change
+  event.preventDefault();
 });
 ```
 
