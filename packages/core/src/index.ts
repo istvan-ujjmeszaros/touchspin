@@ -714,10 +714,6 @@ export class TouchSpinCore {
       return;
     }
 
-    // Emit cancelable event - allows users to prevent spinning
-    if (this.emit('startupspin', undefined, true)) {
-      return; // Event was prevented, don't start spinning
-    }
     this._startSpin('up');
   }
 
@@ -730,10 +726,6 @@ export class TouchSpinCore {
       return;
     }
 
-    // Emit cancelable event - allows users to prevent spinning
-    if (this.emit('startdownspin', undefined, true)) {
-      return; // Event was prevented, don't start spinning
-    }
     this._startSpin('down');
   }
 
@@ -1061,10 +1053,23 @@ export class TouchSpinCore {
       this.direction = dir;
       this.spincount = 0;
       this._currentStepSize = this.settings.step || 1; // Reset step size when restarting spin
-      // Match jQuery plugin event order: startspin then direction-specific
+      // Match jQuery plugin event order: startspin then direction-specific (cancelable)
       this.emit('startspin');
-      if (dir === 'up') this.emit('startupspin');
-      else this.emit('startdownspin');
+      if (dir === 'up') {
+        if (this.emit('startupspin', undefined, true)) {
+          // Prevented, abort spinning
+          this.spinning = false;
+          this.direction = false;
+          return;
+        }
+      } else {
+        if (this.emit('startdownspin', undefined, true)) {
+          // Prevented, abort spinning
+          this.spinning = false;
+          this.direction = false;
+          return;
+        }
+      }
     }
 
     // Perform an immediate single step after emitting start events (parity with jQuery plugin UX)

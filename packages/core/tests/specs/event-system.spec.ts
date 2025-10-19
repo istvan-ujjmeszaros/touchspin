@@ -32,6 +32,7 @@
  * [x] allows preventing startdownspin event to cancel downward spinning
  * [x] startupspin event is emitted as cancelable
  * [x] startdownspin event is emitted as cancelable
+ * [x] startupspin event is emitted only once during keyboard hold
  * [x] speedchange event is emitted when step size increases
  * [x] speedchange event is cancelable to prevent speed increase
  * [x] speedchange event allows modifying the new step size
@@ -1533,6 +1534,48 @@ test.describe('Core event system and emission', () => {
     expect(deltas.length).toBeGreaterThan(0);
     deltas.forEach((delta) => expect(delta).toBeCloseTo(detail.currentStep ?? 1, 6));
     expect(deltas.every((delta) => Math.abs(delta - 1) < 1e-6)).toBe(true);
+  });
+
+  /**
+   * Scenario: startupspin event is emitted only once during keyboard hold
+   * Given the fixture page is loaded with TouchSpin initialized
+   * When I hold the ArrowUp key to start spinning
+   * Then startupspin event is emitted exactly once, after startspin
+   */
+  test('startupspin event is emitted only once during keyboard hold', async ({ page }) => {
+    await initializeTouchspin(page, 'test-input', {
+      min: 0,
+      max: 100,
+      step: 1,
+      initval: 50,
+    });
+
+    await apiHelpers.clearEventLog(page);
+
+    // Hold up arrow key to start spinning
+    await apiHelpers.holdUpArrowKeyOnInput(page, 'test-input', 1000);
+
+    // Get the event log
+    const log = await apiHelpers.getEventLog(page);
+
+    // Count occurrences of each event
+    const startSpinCount = log.filter((entry) => entry.event === 'touchspin.on.startspin').length;
+    const startUpSpinCount = log.filter(
+      (entry) => entry.event === 'touchspin.on.startupspin'
+    ).length;
+    const stopUpSpinCount = log.filter((entry) => entry.event === 'touchspin.on.stopupspin').length;
+    const stopSpinCount = log.filter((entry) => entry.event === 'touchspin.on.stopspin').length;
+
+    // Each event should occur exactly once
+    expect(startSpinCount).toBe(1);
+    expect(startUpSpinCount).toBe(1);
+    expect(stopUpSpinCount).toBe(1);
+    expect(stopSpinCount).toBe(1);
+
+    // Check the order: startspin should come before startupspin
+    const startSpinIndex = log.findIndex((entry) => entry.event === 'touchspin.on.startspin');
+    const startUpSpinIndex = log.findIndex((entry) => entry.event === 'touchspin.on.startupspin');
+    expect(startSpinIndex).toBeLessThan(startUpSpinIndex);
   });
 
   /**
