@@ -10,8 +10,15 @@
 "@touchspin/renderer-vanilla": patch
 ---
 
-Fix release assets script to include all packages and provide proper naming
+Add cancelable events and speed change events, fix release assets
 
+### Features
+- Add cancelable change events that can be prevented by calling `event.preventDefault()`
+- Add speed change events that fire when the spin speed changes (normal/fast)
+- Add `cancelable` option to enable/disable cancelable events (default: false)
+
+### Bug Fixes
+- Fix release assets script to include all packages and provide proper naming
 - Previously only jQuery adapter assets were included in releases
 - Now includes standalone ESM bundles, web component UMD bundles, and CSS stylesheets
 - Renamed assets with consistent, unique naming scheme for better CDN compatibility
