@@ -27,6 +27,7 @@ reports/
 
 # Build outputs
 dist/
+release-artifacts/
 
 # Single-root devdist build artifacts (ignore all except external framework assets)
 devdist/
