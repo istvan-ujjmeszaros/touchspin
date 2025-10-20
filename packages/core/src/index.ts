@@ -461,10 +461,25 @@ export class TouchSpinCore {
       // Convert input type to text to support formatting
       this.input.setAttribute('type', 'text');
 
-      // Remove number-specific native attributes since they only work on number inputs
-      this.input.removeAttribute('min');
-      this.input.removeAttribute('max');
-      this.input.removeAttribute('step');
+      // Hint preferred virtual keyboard if not already specified
+      const step = this.settings.step ?? 1;
+      const decimalsSetting = this.settings.decimals ?? 0;
+      const hasDecimals = decimalsSetting > 0 || step % 1 !== 0;
+      const minSetting = this.settings.min ?? null;
+      const allowNegative =
+        minSetting === null || (typeof minSetting === 'number' && minSetting < 0);
+      if (!this.input.hasAttribute('inputmode')) {
+        const inputMode = hasDecimals || allowNegative ? 'decimal' : 'numeric';
+        this.input.setAttribute('inputmode', inputMode);
+      }
+
+      // Remove native number attributes only if TouchSpin added them
+      ['min', 'max', 'step'].forEach((attr) => {
+        const originalValue = this._originalAttributes?.attributes.get(attr) ?? null;
+        if (originalValue === null) {
+          this.input.removeAttribute(attr);
+        }
+      });
     }
   }
 
@@ -485,6 +500,7 @@ export class TouchSpinCore {
       'min',
       'max',
       'step',
+      'inputmode',
     ];
 
     this._originalAttributes = {

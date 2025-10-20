@@ -77,6 +77,7 @@ test.describe('Core edge-case coverage', () => {
           hasMin: input.hasAttribute('min'),
           hasMax: input.hasAttribute('max'),
           hasStep: input.hasAttribute('step'),
+          inputmode: input.getAttribute('inputmode'),
         };
 
         instance.destroy();
@@ -86,6 +87,7 @@ test.describe('Core edge-case coverage', () => {
           min: input.getAttribute('min'),
           max: input.getAttribute('max'),
           step: input.getAttribute('step'),
+          inputmode: input.getAttribute('inputmode'),
         };
 
         return { afterInit, restored };
@@ -94,14 +96,16 @@ test.describe('Core edge-case coverage', () => {
     );
 
     expect(result.afterInit.type).toBe('text');
-    expect(result.afterInit.hasMin).toBe(false);
-    expect(result.afterInit.hasMax).toBe(false);
-    expect(result.afterInit.hasStep).toBe(false);
+    expect(result.afterInit.hasMin).toBe(true);
+    expect(result.afterInit.hasMax).toBe(true);
+    expect(result.afterInit.hasStep).toBe(true);
+    expect(result.afterInit.inputmode).toBe('numeric');
 
     expect(result.restored.type).toBe('number');
     expect(result.restored.min).toBe('0');
     expect(result.restored.max).toBe('100');
     expect(result.restored.step).toBe('5');
+    expect(result.restored.inputmode).toBeNull();
   });
 
   /**
