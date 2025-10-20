@@ -2,10 +2,6 @@ import type { Page } from '@playwright/test';
 import type { TouchSpinCoreOptions } from '@touchspin/core';
 import { installDomHelpers } from '@touchspin/core/test-helpers';
 
-interface TouchSpinInstanceHandle {
-  destroy: () => Promise<void>;
-}
-
 // Extend window interface for TouchSpin global
 declare global {
   interface Window {
@@ -26,7 +22,7 @@ export async function initializeTouchspin(
   page: Page,
   testId: string,
   options: Partial<TouchSpinCoreOptions> = {}
-): Promise<TouchSpinInstanceHandle> {
+): Promise<void> {
   await installDomHelpers(page);
 
   // Serialize callback functions as strings
@@ -79,29 +75,6 @@ export async function initializeTouchspin(
 
   // Wait for initialization to complete
   await page.waitForSelector(`[data-testid="${testId}"][data-touchspin-injected]`);
-
-  const destroy = async (): Promise<void> => {
-    await page.evaluate(
-      ({ testId: destroyTestId }) => {
-        const input = document.querySelector(
-          `[data-testid="${destroyTestId}"]`
-        ) as HTMLInputElement | null;
-        if (!input) {
-          throw new Error(`Input with testId "${destroyTestId}" not found for destroy()`);
-        }
-
-        const spinner = window.TouchSpinCore!.getTouchSpin(input);
-        if (!spinner) {
-          throw new Error(`TouchSpin instance not found for "${destroyTestId}"`);
-        }
-
-        spinner.destroy();
-      },
-      { testId }
-    );
-  };
-
-  return { destroy };
 }
 
 /**

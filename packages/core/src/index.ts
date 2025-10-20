@@ -333,9 +333,6 @@ export class TouchSpinCore {
     // Capture original attributes before TouchSpin modifies anything
     this._captureOriginalAttributes();
 
-    // Enforce text input with inputmode for better mobile UX
-    this._enforceTextInputMode();
-
     // Set initial value if specified and input is empty
     const initVal = this.settings.initval ?? '';
     if (initVal !== '' && this.input.value === '') {
@@ -488,8 +485,6 @@ export class TouchSpinCore {
       'min',
       'max',
       'step',
-      'inputmode',
-      'pattern',
     ];
 
     this._originalAttributes = {
@@ -501,46 +496,6 @@ export class TouchSpinCore {
     attributesToTrack.forEach((attr) => {
       this._originalAttributes?.attributes.set(attr, this.input.getAttribute(attr));
     });
-  }
-
-  /**
-   * Enforce text input type with inputmode for better mobile UX.
-   * Converts type="number" to type="text" with appropriate inputmode and pattern.
-   * Preserves existing type="text" with inputmode.
-   * @private
-   */
-  _enforceTextInputMode(): void {
-    const input = this.input;
-    const currentType = input.type;
-    const currentInputMode = input.getAttribute('inputmode');
-
-    // If already text with inputmode, set pattern if not already set
-    if (currentType === 'text' && currentInputMode) {
-      if (!input.getAttribute('pattern')) {
-        const isDecimal = currentInputMode === 'decimal';
-        const pattern = isDecimal ? '[-]?[0-9]*([.,][0-9]*)?' : '[-]?[0-9]*';
-        input.setAttribute('pattern', pattern);
-      }
-      return;
-    }
-
-    // Convert number inputs to text with inputmode
-    if (currentType === 'number') {
-      input.type = 'text';
-
-      // Determine inputmode based on decimals/step
-      const hasDecimals = (this.settings.decimals ?? 0) > 0 || (this.settings.step ?? 1) % 1 !== 0;
-      const inputMode = hasDecimals ? 'decimal' : 'numeric';
-      input.setAttribute('inputmode', inputMode);
-
-      // Set pattern based on decimal support
-      if (!input.getAttribute('pattern')) {
-        const pattern = hasDecimals
-          ? '[-]?[0-9]*([.,][0-9]*)?' // Allow decimal separator and minus sign
-          : '[-]?[0-9]*'; // Integers (with optional minus)
-        input.setAttribute('pattern', pattern);
-      }
-    }
   }
 
   /**
@@ -559,12 +514,12 @@ export class TouchSpinCore {
       this.input.value = rawValue;
     }
 
-    // Restore original type first
+    // Restore original type
     if (this._originalAttributes.type) {
       this.input.setAttribute('type', this._originalAttributes.type);
     }
 
-    // Restore all original attributes (after type, so they are preserved)
+    // Restore all original attributes
     this._originalAttributes.attributes.forEach((originalValue, attrName) => {
       if (originalValue === null) {
         // Attribute didn't exist originally, remove it
