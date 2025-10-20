@@ -533,14 +533,6 @@ export class TouchSpinCore {
       const inputMode = hasDecimals ? 'decimal' : 'numeric';
       input.setAttribute('inputmode', inputMode);
 
-      // Remove native number attributes only if they weren't present originally
-      ['min', 'max', 'step'].forEach((attr) => {
-        const originalValue = this._originalAttributes?.attributes.get(attr) ?? null;
-        if (originalValue === null) {
-          input.removeAttribute(attr);
-        }
-      });
-
       // Set pattern based on decimal support
       if (!input.getAttribute('pattern')) {
         const pattern = hasDecimals
