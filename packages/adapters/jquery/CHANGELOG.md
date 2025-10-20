@@ -1,5 +1,15 @@
 # @touchspin/jquery
 
+## 5.0.1-alpha.9
+
+### Patch Changes
+
+- **Features:**
+  - Added backward compatibility support for `$.fn.touchspin` (lowercase) in addition to `$.fn.TouchSpin` (uppercase)
+  - Both method names now work identically for initializing TouchSpin on jQuery elements
+- Updated dependencies [0791283]
+  - @touchspin/standalone@5.0.1-alpha.8
+
 ## 5.0.1-alpha.8
 
 ### Patch Changes
