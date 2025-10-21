@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-bootstrap5",
-  "version": "5.0.1-alpha.6",
+  "version": "5.0.1-alpha.7",
   "type": "module",
   "description": "Bootstrap 5 renderer for TouchSpin",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap5/tests"
   },
   "dependencies": {
-    "@touchspin/core": "5.0.1-alpha.4"
+    "@touchspin/core": "5.0.1-alpha.5"
   },
   "peerDependencies": {
     "@popperjs/core": ">=2.11.8",
