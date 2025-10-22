@@ -1,5 +1,11 @@
 # @touchspin/core
 
+## 5.0.1-alpha.5
+
+### Patch Changes
+
+- 7dbe5cb: Ensure callback-driven type conversions also add an appropriate `inputmode` hint so decorated text inputs keep numeric keyboards while preserving author-provided attributes.
+
 ## 5.0.1-alpha.4
 
 ### Patch Changes

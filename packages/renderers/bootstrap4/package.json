@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-bootstrap4",
-  "version": "5.0.1-alpha.6",
+  "version": "5.0.1-alpha.7",
   "type": "module",
   "sideEffects": [
     "**/*.css",
@@ -43,7 +43,7 @@
     "coverage": "PW_COVERAGE=1 TS_BUILD_TARGET=dev playwright test --config=../../../playwright-coverage.config.ts --project=chromium-coverage packages/renderers/bootstrap4/tests"
   },
   "dependencies": {
-    "@touchspin/core": "5.0.1-alpha.4"
+    "@touchspin/core": "5.0.1-alpha.5"
   },
   "peerDependencies": {
     "bootstrap": ">=4.6.0 <5",

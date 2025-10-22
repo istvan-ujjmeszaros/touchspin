@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/renderer-vanilla",
-  "version": "5.0.1-alpha.7",
+  "version": "5.0.1-alpha.8",
   "description": "Vanilla CSS-based renderer for TouchSpin components without framework dependencies",
   "type": "module",
   "sideEffects": [
@@ -69,7 +69,7 @@
   "author": "TouchSpin Contributors",
   "license": "MIT",
   "dependencies": {
-    "@touchspin/core": "5.0.1-alpha.4"
+    "@touchspin/core": "5.0.1-alpha.5"
   },
   "engines": {
     "node": ">=18.17.0"
