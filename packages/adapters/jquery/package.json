@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/jquery",
-  "version": "5.0.1-alpha.9",
+  "version": "5.0.1",
   "type": "module",
   "description": "jQuery adapter for TouchSpin using standalone adapter",
   "license": "MIT",
@@ -60,7 +60,7 @@
     "test:ui": "cd ../../.. && playwright test packages/adapters/jquery/tests/ --ui"
   },
   "dependencies": {
-    "@touchspin/standalone": "5.0.1-alpha.8"
+    "@touchspin/standalone": "5.0.1"
   },
   "publishConfig": {
     "access": "public",
