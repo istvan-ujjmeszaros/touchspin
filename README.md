@@ -40,7 +40,7 @@ All packages declare `"type": "module"`, target Node 22 (the configuration used 
 
 ## Framework Adapters (Separate Repositories)
 
-**React** and **Angular** adapters are now maintained in separate repositories with native framework tooling:
+Framework-specific adapters are maintained in separate repositories with native tooling:
 
 - **[@touchspin/react](https://github.com/istvan-ujjmeszaros/touchspin-react)** (v5.0.1-alpha.0)
   - Repository: https://github.com/istvan-ujjmeszaros/touchspin-react
@@ -52,7 +52,17 @@ All packages declare `"type": "module"`, target Node 22 (the configuration used 
   - Installation: `npm install @touchspin/angular@alpha @touchspin/core@alpha`
   - ControlValueAccessor integration with Angular forms
 
-These adapters are independently versioned starting at v5.0.1-alpha.0 to match core compatibility.
+- **[@touchspin/vue](https://github.com/istvan-ujjmeszaros/touchspin-vue)** (v5.1.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-vue
+  - Installation: `npm install @touchspin/vue @touchspin/core`
+  - Per-renderer subpath imports with v-model support
+
+- **[@touchspin/svelte](https://github.com/istvan-ujjmeszaros/touchspin-svelte)** (v5.0.0)
+  - Repository: https://github.com/istvan-ujjmeszaros/touchspin-svelte
+  - Installation: `npm install @touchspin/svelte @touchspin/core`
+  - Svelte 5 Runes support with bind:value directive
+
+These adapters are independently versioned to match core compatibility. React and Angular are currently in alpha while Vue and Svelte are stable.
 
 ## Quick Install
 
