@@ -1,6 +1,6 @@
 {
   "name": "@touchspin/standalone",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "type": "module",
   "description": "Standalone TouchSpin adapter (core + renderer bundles with mount API)",
   "license": "MIT",
