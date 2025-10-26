@@ -1342,7 +1342,7 @@ __metadata:
   resolution: "@touchspin/jquery@workspace:packages/adapters/jquery"
   dependencies:
     "@playwright/test": "npm:^1.54.2"
-    "@touchspin/core": "workspace:*"
+    "@touchspin/core": "npm:5.0.1"
     "@touchspin/standalone": "npm:5.0.1"
     "@types/jquery": "npm:^3.5.30"
     "@types/node": "npm:^22.7.4"
