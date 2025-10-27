@@ -2,22 +2,28 @@
   "name": "bootstrap-touchspin",
   "private": true,
   "version": "5.1.0",
-  "title": "Bootstrap Touchspin",
-  "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5. jQuery plugin with IIFE/UMD builds for backward compatibility.",
+  "title": "TouchSpin Monorepo",
+  "description": "A mobile and touch friendly input spinner component with multiple framework renderers. Monorepo for TouchSpin packages.",
   "keywords": [
     "input",
-    "bootstrap",
     "number",
     "range",
     "spinbutton",
-    "spinner"
+    "spinner",
+    "bootstrap",
+    "tailwind",
+    "vanilla",
+    "angular",
+    "react",
+    "vue",
+    "monorepo"
   ],
   "author": {
     "name": "István Ujj-Mészáros",
     "url": "https://github.com/istvan-ujjmeszaros"
   },
-  "main": "dist/jquery.bootstrap-touchspin-bs5.js",
-  "browser": "dist/jquery.bootstrap-touchspin-bs5.js",
+  "main": "dist/jquery.touchspin-vanilla.umd.js",
+  "browser": "dist/jquery.touchspin-vanilla.umd.js",
   "style": "dist/jquery.bootstrap-touchspin.css",
   "files": [
     "dist/",
@@ -30,9 +36,8 @@
     "type": "git",
     "url": "https://github.com/istvan-ujjmeszaros/touchspin.git"
   },
-  "homepage": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
-  "demo": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
-  "docs": "https://www.virtuosoft.eu/code/bootstrap-touchspin/",
+  "homepage": "https://github.com/istvan-ujjmeszaros/touchspin",
+  "docs": "https://github.com/istvan-ujjmeszaros/touchspin",
   "download": "https://github.com/istvan-ujjmeszaros/touchspin/archive/main.zip",
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
