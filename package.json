@@ -1,5 +1,6 @@
 {
   "name": "bootstrap-touchspin",
+  "private": true,
   "version": "5.1.0",
   "title": "Bootstrap Touchspin",
   "description": "A mobile and touch friendly input spinner component for Bootstrap 3, 4 & 5. jQuery plugin with IIFE/UMD builds for backward compatibility.",
