@@ -57,6 +57,20 @@ Documentation
 - Strengthen examples for every renderer and the web component (already scaffolded)
 - Keep README and scripts aligned with real workflows (`dev`, `build`, `test:dev`)
 
+## Release branch workflow
+When preparing a publishable release (e.g. renderer + adapters):
+1. `git checkout main && git pull` — ensure you start from the latest main.
+2. `git checkout -b release/<package>-<version>` — create a dedicated release branch.
+3. Do **all** release prep on that branch:
+   - land feature commits/docs/tests;
+   - run `yarn changeset add`, then `yarn changeset version`;
+   - run the relevant build/test commands (`yarn workspace <pkg> build`, `yarn workspace <pkg> test`);
+   - refresh local consumers/examples so they reference the new artifacts.
+4. Commit with conventional messages (feature commit(s) + `chore(release): version packages`).
+5. `git push -u origin release/<package>-<version>` and open a PR from that branch.
+6. Merge the PR, then let the GitHub Actions Release workflow publish (do **not** run `yarn changeset publish` locally unless explicitly asked).
+7. After publish, sync `main` locally and remove the release branch.
+
 Developer Experience
 - `/examples` hub lists all examples recursively (works today)
 - Maintain per‑package example pages that open quickly for faster iteration

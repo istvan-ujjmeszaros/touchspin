@@ -87,7 +87,7 @@
     "@touchspin/renderer-bootstrap3": "5.0.1",
     "@touchspin/renderer-bootstrap4": "5.0.1",
     "@touchspin/renderer-bootstrap5": "5.0.1",
-    "@touchspin/renderer-tailwind": "5.0.1",
+    "@touchspin/renderer-tailwind": "5.1.0",
     "@touchspin/renderer-vanilla": "5.0.1"
   },
   "engines": {

@@ -9,6 +9,9 @@
  * [x] applies Tailwind utility classes to buttons
  * [x] creates responsive-friendly structure
  * [x] maintains utility class customization
+ * [x] allows overriding input utility classes
+ * [x] allows overriding wrapper utility classes
+ * [x] supports addon utility overrides
  */
 
 import { expect, test } from '@playwright/test';
@@ -156,5 +159,75 @@ test.describe('Tailwind specific behavior', () => {
 
     await expect(postfix).toHaveClass(/bg-gray-100/);
     await expect(postfix).toHaveClass(/text-gray-700/);
+  });
+
+  /**
+   * Scenario: replaces default input utility classes when custom classes are provided
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with custom input utility classes
+   * Then the input keeps structural hooks while only using the provided utilities
+   */
+  test('allows overriding input utility classes', async ({ page }) => {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
+      input_classes:
+        'flex-1 px-5 py-3 bg-blue-50 text-blue-900 font-semibold rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 placeholder:text-blue-400',
+    });
+
+    const { input } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+    await expect(input).toHaveAttribute('class', /ts-input/);
+    await expect(input).toHaveAttribute('class', /bg-blue-50/);
+    await expect(input).toHaveAttribute('class', /placeholder:text-blue-400/);
+    await expect(input).not.toHaveAttribute('class', /bg-transparent/);
+    await expect(input).not.toHaveAttribute('class', /placeholder-gray-500/);
+  });
+
+  /**
+   * Scenario: replaces default wrapper utility classes when custom classes are provided
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with custom wrapper utility classes
+   * Then the wrapper uses the provided utilities without the default Tailwind baseline
+   */
+  test('allows overriding wrapper utility classes', async ({ page }) => {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
+      wrapper_classes:
+        'flex items-stretch rounded-2xl border border-blue-600 bg-white shadow-[0_8px_24px_rgba(30,64,175,0.18)] focus-within:border-blue-700 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.35)] transition-shadow duration-200',
+    });
+
+    const { wrapper } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+    await expect(wrapper).toHaveAttribute('class', /ts-wrapper/);
+    await expect(wrapper).toHaveAttribute('class', /rounded-2xl/);
+    await expect(wrapper).toHaveAttribute('class', /border-blue-600/);
+    await expect(wrapper).not.toHaveAttribute('class', /shadow-sm/);
+    await expect(wrapper).not.toHaveAttribute('class', /border-gray-300/);
+    await expect(wrapper).not.toHaveAttribute('class', /focus-within:ring-2/);
+  });
+
+  /**
+   * Scenario: supports overriding addon utility classes
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with addon override classes
+   * Then the addon override utilities replace the defaults while structural hooks remain
+   */
+  test('supports addon utility overrides', async ({ page }) => {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
+      prefix: '$',
+      prefix_classes_override:
+        'inline-flex items-center px-4 py-1 bg-blue-900 text-white rounded-l-lg',
+      postfix: 'USD',
+      postfix_classes_override:
+        'inline-flex items-center px-4 py-1 bg-blue-900 text-white rounded-r-lg uppercase tracking-wide',
+    });
+
+    const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+    await expect(prefix).toHaveAttribute('class', /ts-addon/);
+    await expect(prefix).toHaveAttribute('class', /bg-blue-900/);
+    await expect(prefix).not.toHaveAttribute('class', /bg-gray-50/);
+
+    await expect(postfix).toHaveAttribute('class', /ts-addon/);
+    await expect(postfix).toHaveAttribute('class', /tracking-wide/);
+    await expect(postfix).not.toHaveAttribute('class', /bg-gray-50/);
   });
 });

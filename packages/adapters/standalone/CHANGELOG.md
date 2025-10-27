@@ -14,6 +14,9 @@
 
   This change ensures consistent UMD filename conventions across all adapters and makes the build process explicit rather than relying on implicit "magic" behavior.
 
+- Updated dependencies
+  - @touchspin/renderer-tailwind@5.1.0
+
 ## 5.0.1
 
 ### Patch Changes

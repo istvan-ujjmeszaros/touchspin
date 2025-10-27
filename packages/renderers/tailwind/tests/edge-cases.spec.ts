@@ -635,10 +635,10 @@ test('handles updateButtonClass for down button type', async ({ page }) => {
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
-  // Verify down button has RTL border classes
+  // Verify down button retains structural classes while applying custom utilities
   const downClasses = await elements.downButton.getAttribute('class');
-  expect(downClasses).toContain('border-r');
-  expect(downClasses).toContain('rtl:border-l');
+  expect(downClasses).toContain('tailwind-btn');
+  expect(downClasses).toContain('ts-btn--down');
   expect(downClasses).toContain('bg-custom-down');
 
   // Verify functionality still works
@@ -669,9 +669,10 @@ test('handles updateVerticalButtonClass with type=down', async ({ page }) => {
 
   const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
 
-  // Verify down button has correct border classes
+  // Verify down button retains structural classes while applying custom utilities
   const downClasses = await elements.downButton.getAttribute('class');
-  expect(downClasses).toContain('border-b-0');
+  expect(downClasses).toContain('tailwind-btn');
+  expect(downClasses).toContain('ts-btn--vertical-down');
   expect(downClasses).toContain('bg-custom-v-down');
 
   // Verify functionality still works
