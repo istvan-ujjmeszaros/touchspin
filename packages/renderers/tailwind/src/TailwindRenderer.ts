@@ -2,13 +2,24 @@
  * Tailwind CSS Renderer - New Architecture
  * Using Tailwind utility classes only; no external CSS dependency.
  */
+import type { TouchSpinCoreOptions } from '@touchspin/core';
 import { AbstractRendererSimple } from '@touchspin/core/renderer';
+
+/**
+ * TailwindRenderer-specific options that extend core options
+ */
+interface TailwindRendererOptions extends TouchSpinCoreOptions {
+  input_classes?: string;
+}
 
 class TailwindRenderer extends AbstractRendererSimple {
   private prefixEl: HTMLElement | null = null;
   private postfixEl: HTMLElement | null = null;
   private initialFlexContainer: HTMLElement | null = null;
   declare wrapper: HTMLElement | null;
+
+  // Type the settings for TailwindRenderer-specific options
+  declare settings: TailwindRendererOptions;
 
   init(): void {
     // Initialize internal element references
@@ -58,6 +69,9 @@ class TailwindRenderer extends AbstractRendererSimple {
     );
     this.core.observeSetting('prefix_extraclass', (_newValue) => this.updatePrefixClasses());
     this.core.observeSetting('postfix_extraclass', (_newValue) => this.updatePostfixClasses());
+    this.core.observeSetting('input_classes' as keyof TouchSpinCoreOptions, (_newValue) =>
+      this.updateInputClasses()
+    );
     this.core.observeSetting('verticalbuttons', (newValue) =>
       this.handleVerticalButtonsChange(newValue)
     );
@@ -127,16 +141,27 @@ class TailwindRenderer extends AbstractRendererSimple {
 
     // Apply input styling
     this.input.className = this.input.className.replace('form-control', '');
-    this.input.classList.add(
-      'flex-1',
-      'px-3',
-      'py-2',
-      'border-0',
-      'bg-transparent',
-      'focus:outline-none',
-      'text-gray-900',
-      'placeholder-gray-500'
-    );
+
+    // Check if custom input classes are provided
+    const inputClasses = (this.settings as any).input_classes;
+    if (inputClasses && inputClasses.trim()) {
+      // Use custom classes - split and apply each class
+      const customClasses = inputClasses.split(' ').filter((cls: string) => cls.trim());
+      this.input.classList.add('ts-input', ...customClasses);
+    } else {
+      // Use default classes
+      this.input.classList.add(
+        'ts-input',
+        'flex-1',
+        'px-3',
+        'py-2',
+        'border-0',
+        'bg-transparent',
+        'focus:outline-none',
+        'text-gray-900',
+        'placeholder-gray-500'
+      );
+    }
 
     // Apply size classes
     this._applySizeClasses(wrapper as HTMLElement);
@@ -411,6 +436,32 @@ class TailwindRenderer extends AbstractRendererSimple {
     if (postfixEl) {
       postfixEl.className =
         `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}`.trim();
+    }
+  }
+
+  updateInputClasses(): void {
+    // Remove existing TouchSpin classes
+    this.input.className = this.input.className.replace(/ts-input/g, '').trim();
+
+    // Check if custom input classes are provided
+    const inputClasses = (this.settings as any).input_classes;
+    if (inputClasses && inputClasses.trim()) {
+      // Use custom classes - split and apply each class
+      const customClasses = inputClasses.split(' ').filter((cls: string) => cls.trim());
+      this.input.classList.add('ts-input', ...customClasses);
+    } else {
+      // Use default classes
+      this.input.classList.add(
+        'ts-input',
+        'flex-1',
+        'px-3',
+        'py-2',
+        'border-0',
+        'bg-transparent',
+        'focus:outline-none',
+        'text-gray-900',
+        'placeholder-gray-500'
+      );
     }
   }
 
