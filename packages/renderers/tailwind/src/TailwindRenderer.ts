@@ -406,15 +406,6 @@ class TailwindRenderer extends AbstractRendererSimple {
       `ts-btn--${type}`,
     ];
 
-    const custom =
-      override ?? (type === 'up' ? this.settings.buttonup_class : this.settings.buttondown_class);
-    const customTokens =
-      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
-
-    if (customTokens.length > 0) {
-      return [...base, ...customTokens].join(' ');
-    }
-
     const defaultStyles = [
       'px-3',
       'py-2',
@@ -432,7 +423,12 @@ class TailwindRenderer extends AbstractRendererSimple {
         ? ['border-y-0', 'border-l-0', 'border-r', 'rtl:border-l', 'rtl:border-r-0']
         : ['border-y-0', 'border-r-0', 'border-l', 'rtl:border-r', 'rtl:border-l-0'];
 
-    return [...base, ...defaultStyles, ...borderAdjust].join(' ');
+    const custom =
+      override ?? (type === 'up' ? this.settings.buttonup_class : this.settings.buttondown_class);
+    const customTokens =
+      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
+
+    return [...base, ...defaultStyles, ...borderAdjust, ...customTokens].join(' ');
   }
 
   private getVerticalButtonClassString(
@@ -451,15 +447,6 @@ class TailwindRenderer extends AbstractRendererSimple {
       `ts-btn--vertical-${type}`,
     ];
 
-    const custom =
-      override ?? (type === 'up' ? this.settings.verticalupclass : this.settings.verticaldownclass);
-    const customTokens =
-      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
-
-    if (customTokens.length > 0) {
-      return [...base, ...customTokens].join(' ');
-    }
-
     const defaultStyles = [
       'px-2',
       'py-1',
@@ -477,7 +464,12 @@ class TailwindRenderer extends AbstractRendererSimple {
         ? ['border-t-0', 'border-r-0', 'rtl:border-r', 'rtl:border-l-0']
         : ['border-t-0', 'border-r-0', 'border-b-0', 'rtl:border-r', 'rtl:border-l-0'];
 
-    return [...base, ...defaultStyles, ...borderAdjust].join(' ');
+    const custom =
+      override ?? (type === 'up' ? this.settings.verticalupclass : this.settings.verticaldownclass);
+    const customTokens =
+      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
+
+    return [...base, ...defaultStyles, ...borderAdjust, ...customTokens].join(' ');
   }
 
   _detectInputSize(): string {
