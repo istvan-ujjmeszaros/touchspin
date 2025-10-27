@@ -1,5 +1,11 @@
 # @touchspin/renderer-tailwind
 
+## 5.1.0
+
+### Minor Changes
+
+- Add support for overriding wrapper utility classes alongside the existing input override and align Tailwind markup with the vanilla renderer so shared CSS variables/styles apply cleanly.
+
 ## 5.0.1
 
 ### Patch Changes
