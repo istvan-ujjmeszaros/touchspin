@@ -5,6 +5,7 @@
 ### Minor Changes
 
 - Add support for overriding wrapper utility classes alongside the existing input override and align Tailwind markup with the vanilla renderer so shared CSS variables/styles apply cleanly.
+  - `prefix_extraclass`/`postfix_extraclass` remain additive; new `prefix_classes_override` and `postfix_classes_override` settings fully replace the defaults when needed.
 
 ## 5.0.1
 

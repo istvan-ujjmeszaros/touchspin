@@ -37,6 +37,8 @@ const WRAPPER_BASE_CLASSES = [
 interface TailwindRendererOptions extends TouchSpinCoreOptions {
   input_classes?: string;
   wrapper_classes?: string;
+  prefix_classes_override?: string;
+  postfix_classes_override?: string;
 }
 
 class TailwindRenderer extends AbstractRendererSimple {
@@ -103,6 +105,12 @@ class TailwindRenderer extends AbstractRendererSimple {
     );
     this.core.observeSetting('wrapper_classes' as keyof TouchSpinCoreOptions, (_newValue) =>
       this.updateWrapperClasses()
+    );
+    this.core.observeSetting('prefix_classes_override' as keyof TouchSpinCoreOptions, () =>
+      this.updatePrefixClasses()
+    );
+    this.core.observeSetting('postfix_classes_override' as keyof TouchSpinCoreOptions, () =>
+      this.updatePostfixClasses()
     );
     this.core.observeSetting('verticalbuttons', (newValue) =>
       this.handleVerticalButtonsChange(newValue)
@@ -361,18 +369,26 @@ class TailwindRenderer extends AbstractRendererSimple {
       base.push('ts-postfix');
     }
 
-    const custom =
+    const overrideSetting =
       override ??
-      (kind === 'prefix' ? this.settings.prefix_extraclass : this.settings.postfix_extraclass);
+      (kind === 'prefix'
+        ? (this.settings as TailwindRendererOptions).prefix_classes_override
+        : (this.settings as TailwindRendererOptions).postfix_classes_override);
+
+    if (overrideSetting && overrideSetting.trim()) {
+      const overrideTokens = overrideSetting.split(/\s+/).filter(Boolean);
+      if (overrideTokens.length > 0) {
+        return [...base, ...overrideTokens].join(' ');
+      }
+    }
+
+    const custom =
+      kind === 'prefix' ? this.settings.prefix_extraclass : this.settings.postfix_extraclass;
     const customTokens =
       typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
 
-    if (customTokens.length > 0) {
-      return [...base, ...customTokens].join(' ');
-    }
-
     const defaults = ['px-3', 'py-2', 'bg-gray-50', 'text-gray-600', 'border-0'];
-    return [...base, ...defaults].join(' ');
+    return [...base, ...defaults, ...customTokens].join(' ');
   }
 
   private getHorizontalButtonClassString(

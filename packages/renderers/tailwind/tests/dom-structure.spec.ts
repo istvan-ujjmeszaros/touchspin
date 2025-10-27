@@ -11,6 +11,7 @@
  * [x] maintains utility class customization
  * [x] allows overriding input utility classes
  * [x] allows overriding wrapper utility classes
+ * [x] supports addon utility overrides
  */
 
 import { expect, test } from '@playwright/test';
@@ -201,5 +202,32 @@ test.describe('Tailwind specific behavior', () => {
     await expect(wrapper).not.toHaveAttribute('class', /shadow-sm/);
     await expect(wrapper).not.toHaveAttribute('class', /border-gray-300/);
     await expect(wrapper).not.toHaveAttribute('class', /focus-within:ring-2/);
+  });
+
+  /**
+   * Scenario: supports overriding addon utility classes
+   * Given the fixture page is loaded with DOM helpers
+   * When TouchSpin initializes with addon override classes
+   * Then the addon override utilities replace the defaults while structural hooks remain
+   */
+  test('supports addon utility overrides', async ({ page }) => {
+    await initializeTouchspinFromGlobals(page, 'test-input', {
+      prefix: '$',
+      prefix_classes_override:
+        'inline-flex items-center px-4 py-1 bg-blue-900 text-white rounded-l-lg',
+      postfix: 'USD',
+      postfix_classes_override:
+        'inline-flex items-center px-4 py-1 bg-blue-900 text-white rounded-r-lg uppercase tracking-wide',
+    });
+
+    const { prefix, postfix } = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+    await expect(prefix).toHaveAttribute('class', /ts-addon/);
+    await expect(prefix).toHaveAttribute('class', /bg-blue-900/);
+    await expect(prefix).not.toHaveAttribute('class', /bg-gray-50/);
+
+    await expect(postfix).toHaveAttribute('class', /ts-addon/);
+    await expect(postfix).toHaveAttribute('class', /tracking-wide/);
+    await expect(postfix).not.toHaveAttribute('class', /bg-gray-50/);
   });
 });
