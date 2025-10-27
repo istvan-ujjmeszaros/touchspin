@@ -5,11 +5,38 @@
 import type { TouchSpinCoreOptions } from '@touchspin/core';
 import { AbstractRendererSimple } from '@touchspin/core/renderer';
 
+const INPUT_BASE_CLASSES = [
+  'flex-1',
+  'px-3',
+  'py-2',
+  'border-0',
+  'bg-transparent',
+  'focus:outline-none',
+  'text-gray-900',
+  'placeholder-gray-500',
+];
+
+const WRAPPER_BASE_CLASSES = [
+  'flex',
+  'rounded-md',
+  'shadow-sm',
+  'border',
+  'border-gray-300',
+  'focus-within:ring-2',
+  'focus-within:ring-blue-500',
+  'focus-within:border-blue-500',
+  'has-[:disabled]:opacity-60',
+  'has-[:disabled]:bg-gray-50',
+  'has-[:read-only]:bg-gray-50',
+  'overflow-hidden',
+];
+
 /**
  * TailwindRenderer-specific options that extend core options
  */
 interface TailwindRendererOptions extends TouchSpinCoreOptions {
   input_classes?: string;
+  wrapper_classes?: string;
 }
 
 class TailwindRenderer extends AbstractRendererSimple {
@@ -17,6 +44,8 @@ class TailwindRenderer extends AbstractRendererSimple {
   private postfixEl: HTMLElement | null = null;
   private initialFlexContainer: HTMLElement | null = null;
   declare wrapper: HTMLElement | null;
+  private customInputClasses: string[] = [];
+  private customWrapperClasses: string[] = [];
 
   // Type the settings for TailwindRenderer-specific options
   declare settings: TailwindRendererOptions;
@@ -72,6 +101,9 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.core.observeSetting('input_classes' as keyof TouchSpinCoreOptions, (_newValue) =>
       this.updateInputClasses()
     );
+    this.core.observeSetting('wrapper_classes' as keyof TouchSpinCoreOptions, (_newValue) =>
+      this.updateWrapperClasses()
+    );
     this.core.observeSetting('verticalbuttons', (newValue) =>
       this.handleVerticalButtonsChange(newValue)
     );
@@ -96,24 +128,24 @@ class TailwindRenderer extends AbstractRendererSimple {
 
   buildBasicInputGroup(): HTMLElement {
     const _inputSize = this._detectInputSize();
-    const isVertical = this.settings.verticalbuttons;
+    const isVertical = Boolean(this.settings.verticalbuttons);
 
     let html;
     if (isVertical) {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50 overflow-hidden">
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 rounded-l-md tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+        <div>
+          <span class="${this.getAddonClassString('prefix')}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+          <span class="${this.getAddonClassString('postfix')}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
           ${this.buildVerticalButtons()}
         </div>
       `;
     } else {
       html = `
-        <div class="flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50 overflow-hidden">
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-          <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
-          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
+        <div>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getHorizontalButtonClassString('down')}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
+          <span class="${this.getAddonClassString('prefix')}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+          <span class="${this.getAddonClassString('postfix')}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+          <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getHorizontalButtonClassString('up')}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
         </div>
       `;
     }
@@ -139,29 +171,9 @@ class TailwindRenderer extends AbstractRendererSimple {
       if (postfixEl) wrapper.insertBefore(this.input, postfixEl);
     }
 
-    // Apply input styling
-    this.input.className = this.input.className.replace('form-control', '');
-
-    // Check if custom input classes are provided
-    const inputClasses = (this.settings as any).input_classes;
-    if (inputClasses && inputClasses.trim()) {
-      // Use custom classes - split and apply each class
-      const customClasses = inputClasses.split(' ').filter((cls: string) => cls.trim());
-      this.input.classList.add('ts-input', ...customClasses);
-    } else {
-      // Use default classes
-      this.input.classList.add(
-        'ts-input',
-        'flex-1',
-        'px-3',
-        'py-2',
-        'border-0',
-        'bg-transparent',
-        'focus:outline-none',
-        'text-gray-900',
-        'placeholder-gray-500'
-      );
-    }
+    // Apply wrapper/input styling
+    this.applyWrapperClasses(wrapper as HTMLElement, isVertical);
+    this.applyInputClasses();
 
     // Apply size classes
     this._applySizeClasses(wrapper as HTMLElement);
@@ -197,22 +209,22 @@ class TailwindRenderer extends AbstractRendererSimple {
     // Ensure input is in container before any insertBefore operations
     this.ensureInputInContainer(existingContainer);
 
-    const isVertical = this.settings.verticalbuttons;
+    const isVertical = Boolean(this.settings.verticalbuttons);
 
     // Create elements HTML
     let elementsHtml;
     if (isVertical) {
       elementsHtml = `
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+        <span class="${this.getAddonClassString('prefix')}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
         ${this.buildVerticalButtons()}
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+        <span class="${this.getAddonClassString('postfix')}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
       `;
     } else {
       elementsHtml = `
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0 border-gray-300 tailwind-btn ${this.settings.buttondown_class || ''}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn ${this.settings.buttonup_class || ''}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
-        <span class="inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
+        <span class="${this.getAddonClassString('prefix')}" data-touchspin-injected="prefix"${this.getPrefixTestId()}>${this.settings.prefix || ''}</span>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getHorizontalButtonClassString('down')}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.buttondown_txt}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getHorizontalButtonClassString('up')}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.buttonup_txt}</button>
+        <span class="${this.getAddonClassString('postfix')}" data-touchspin-injected="postfix"${this.getPostfixTestId()}>${this.settings.postfix || ''}</span>
       `;
     }
 
@@ -249,18 +261,9 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.prefixEl = prefixEl;
     this.postfixEl = postfixEl;
 
-    // Apply input styling
-    this.input.className = this.input.className.replace('form-control', '');
-    this.input.classList.add(
-      'flex-1',
-      'px-3',
-      'py-2',
-      'border-0',
-      'bg-transparent',
-      'focus:outline-none',
-      'text-gray-900',
-      'placeholder-gray-500'
-    );
+    // Apply wrapper/input styling without clobbering existing advanced classes
+    this.applyWrapperClasses(existingContainer, isVertical, true);
+    this.applyInputClasses();
 
     // Apply size classes
     this._applySizeClasses(existingContainer);
@@ -269,6 +272,196 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.hideEmptyPrefixPostfix(existingContainer);
 
     return existingContainer;
+  }
+
+  private applyInputClasses(): void {
+    const input = this.input;
+    if (!input) return;
+
+    input.classList.remove('form-control');
+
+    if (this.customInputClasses.length) {
+      input.classList.remove(...this.customInputClasses);
+    }
+
+    input.classList.remove('ts-input');
+    input.classList.remove(...INPUT_BASE_CLASSES);
+
+    input.classList.add('ts-input');
+
+    const inputClasses = (this.settings as TailwindRendererOptions).input_classes;
+    if (inputClasses && inputClasses.trim()) {
+      this.customInputClasses = inputClasses.split(/\s+/).filter(Boolean);
+      if (this.customInputClasses.length) {
+        input.classList.add(...this.customInputClasses);
+      }
+    } else {
+      this.customInputClasses = [];
+      input.classList.add(...INPUT_BASE_CLASSES);
+    }
+  }
+
+  private applyWrapperClasses(
+    wrapper: HTMLElement | null,
+    isVertical: boolean,
+    merge = false
+  ): void {
+    if (!wrapper) return;
+
+    if (this.customWrapperClasses.length) {
+      wrapper.classList.remove(...this.customWrapperClasses);
+      this.customWrapperClasses = [];
+    }
+
+    if (merge) {
+      wrapper.classList.add('ts-wrapper');
+      if (isVertical) {
+        wrapper.classList.add('ts-wrapper--vertical');
+      } else {
+        wrapper.classList.remove('ts-wrapper--vertical');
+      }
+
+      const wrapperClasses = (this.settings as TailwindRendererOptions).wrapper_classes;
+      if (wrapperClasses && wrapperClasses.trim()) {
+        this.customWrapperClasses = wrapperClasses.split(/\s+/).filter(Boolean);
+        if (this.customWrapperClasses.length) {
+          wrapper.classList.add(...this.customWrapperClasses);
+        }
+      }
+      return;
+    }
+
+    wrapper.classList.remove('ts-wrapper', 'ts-wrapper--vertical');
+    wrapper.classList.remove(...WRAPPER_BASE_CLASSES);
+
+    wrapper.classList.add('ts-wrapper');
+    if (isVertical) {
+      wrapper.classList.add('ts-wrapper--vertical');
+    }
+
+    const wrapperClasses = (this.settings as TailwindRendererOptions).wrapper_classes;
+    if (wrapperClasses && wrapperClasses.trim()) {
+      this.customWrapperClasses = wrapperClasses.split(/\s+/).filter(Boolean);
+      if (this.customWrapperClasses.length) {
+        wrapper.classList.add(...this.customWrapperClasses);
+      }
+    } else {
+      wrapper.classList.add(...WRAPPER_BASE_CLASSES);
+    }
+  }
+
+  private getAddonClassString(
+    kind: 'prefix' | 'postfix',
+    override?: string | null | undefined
+  ): string {
+    const base = ['inline-flex', 'items-center', 'tailwind-addon', 'ts-addon'];
+    if (kind === 'prefix') {
+      base.push('ts-prefix');
+    } else {
+      base.push('ts-postfix');
+    }
+
+    const custom =
+      override ??
+      (kind === 'prefix' ? this.settings.prefix_extraclass : this.settings.postfix_extraclass);
+    const customTokens =
+      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
+
+    if (customTokens.length > 0) {
+      return [...base, ...customTokens].join(' ');
+    }
+
+    const defaults = ['px-3', 'py-2', 'bg-gray-50', 'text-gray-600', 'border-0'];
+    return [...base, ...defaults].join(' ');
+  }
+
+  private getHorizontalButtonClassString(
+    type: 'up' | 'down',
+    override?: string | null | undefined
+  ): string {
+    const base = [
+      'inline-flex',
+      'items-center',
+      'justify-center',
+      'disabled:opacity-50',
+      'disabled:cursor-not-allowed',
+      'tailwind-btn',
+      'ts-btn',
+      `ts-btn--${type}`,
+    ];
+
+    const custom =
+      override ?? (type === 'up' ? this.settings.buttonup_class : this.settings.buttondown_class);
+    const customTokens =
+      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
+
+    if (customTokens.length > 0) {
+      return [...base, ...customTokens].join(' ');
+    }
+
+    const defaultStyles = [
+      'px-3',
+      'py-2',
+      'bg-gray-100',
+      'hover:bg-gray-200',
+      'active:bg-gray-300',
+      'text-gray-700',
+      'font-medium',
+      'border',
+      'border-gray-300',
+      'disabled:hover:bg-gray-100',
+    ];
+    const borderAdjust =
+      type === 'down'
+        ? ['border-y-0', 'border-l-0', 'border-r', 'rtl:border-l', 'rtl:border-r-0']
+        : ['border-y-0', 'border-r-0', 'border-l', 'rtl:border-r', 'rtl:border-l-0'];
+
+    return [...base, ...defaultStyles, ...borderAdjust].join(' ');
+  }
+
+  private getVerticalButtonClassString(
+    type: 'up' | 'down',
+    override?: string | null | undefined
+  ): string {
+    const base = [
+      'inline-flex',
+      'items-center',
+      'justify-center',
+      'disabled:opacity-50',
+      'disabled:cursor-not-allowed',
+      'tailwind-btn',
+      'ts-btn',
+      'ts-btn--vertical',
+      `ts-btn--vertical-${type}`,
+    ];
+
+    const custom =
+      override ?? (type === 'up' ? this.settings.verticalupclass : this.settings.verticaldownclass);
+    const customTokens =
+      typeof custom === 'string' ? custom.trim().split(/\s+/).filter(Boolean) : [];
+
+    if (customTokens.length > 0) {
+      return [...base, ...customTokens].join(' ');
+    }
+
+    const defaultStyles = [
+      'px-2',
+      'py-1',
+      'text-xs',
+      'bg-gray-100',
+      'hover:bg-gray-200',
+      'text-gray-700',
+      'font-medium',
+      'border',
+      'border-gray-300',
+      'disabled:hover:bg-gray-100',
+    ];
+    const borderAdjust =
+      type === 'up'
+        ? ['border-t-0', 'border-r-0', 'rtl:border-r', 'rtl:border-l-0']
+        : ['border-t-0', 'border-r-0', 'border-b-0', 'rtl:border-r', 'rtl:border-l-0'];
+
+    return [...base, ...defaultStyles, ...borderAdjust].join(' ');
   }
 
   _detectInputSize(): string {
@@ -328,8 +521,7 @@ class TailwindRenderer extends AbstractRendererSimple {
         prefixEl.textContent = value;
         prefixEl.style.display = '';
         // Update classes in case prefix_extraclass changed
-        prefixEl.className =
-          `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}`.trim();
+        prefixEl.className = this.getAddonClassString('prefix');
       }
     } else if (prefixEl) {
       // Hide element if value is empty but keep it in DOM
@@ -346,8 +538,7 @@ class TailwindRenderer extends AbstractRendererSimple {
         postfixEl.textContent = value;
         postfixEl.style.display = '';
         // Update classes in case postfix_extraclass changed
-        postfixEl.className =
-          `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}`.trim();
+        postfixEl.className = this.getAddonClassString('postfix');
       }
     } else if (postfixEl) {
       // Hide element if value is empty but keep it in DOM
@@ -359,21 +550,15 @@ class TailwindRenderer extends AbstractRendererSimple {
     if (!this.wrapper) return;
     const button = this.wrapper.querySelector<HTMLElement>(`[data-touchspin-injected="${type}"]`);
     if (button) {
-      // Remove old custom classes and add new ones
-      const borderClass =
-        type === 'down'
-          ? 'border-y-0 border-r border-l-0 rtl:border-l rtl:border-r-0'
-          : 'border-y-0 border-l border-r-0 rtl:border-r rtl:border-l-0';
-      const baseClasses = `inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-100 text-gray-700 font-medium ${borderClass} border-gray-300 tailwind-btn`;
-      button.className = `${baseClasses} ${className || ''}`;
+      button.className = this.getHorizontalButtonClassString(type, className);
     }
   }
 
   buildVerticalButtons(): string {
     return `
       <div class="flex flex-col" data-touchspin-injected="vertical-wrapper">
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticalupclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup}</button>
-        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="inline-flex items-center justify-center px-2 py-1 text-xs ${this.settings.verticaldownclass || 'bg-gray-100 hover:bg-gray-200 text-gray-700'} font-medium border border-t-0 border-r-0 border-b-0 rtl:border-r rtl:border-l-0 border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getVerticalButtonClassString('up')}" data-touchspin-injected="up"${this.getUpButtonTestId()} type="button" aria-label="Increase value">${this.settings.verticalup}</button>
+        <button tabindex="${this.settings.focusablebuttons ? '0' : '-1'}" class="${this.getVerticalButtonClassString('down')}" data-touchspin-injected="down"${this.getDownButtonTestId()} type="button" aria-label="Decrease value">${this.settings.verticaldown}</button>
       </div>
     `;
   }
@@ -388,14 +573,7 @@ class TailwindRenderer extends AbstractRendererSimple {
         `[data-touchspin-injected="${type}"]`
       );
       if (button) {
-        // Update the vertical-specific class while preserving base classes
-        const baseClasses =
-          'inline-flex items-center justify-center px-2 py-1 text-xs font-medium border border-gray-300 tailwind-btn disabled:opacity-50 disabled:cursor-not-allowed';
-        const borderClasses =
-          type === 'up'
-            ? 'border-t-0 border-r-0 rtl:border-r rtl:border-l-0'
-            : 'border-t-0 border-r-0 border-b-0 rtl:border-r rtl:border-l-0';
-        button.className = `${baseClasses} ${borderClasses} ${className || 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`;
+        button.className = this.getVerticalButtonClassString(type, className);
       }
     }
   }
@@ -426,43 +604,26 @@ class TailwindRenderer extends AbstractRendererSimple {
   updatePrefixClasses(): void {
     const prefixEl = this.prefixEl;
     if (prefixEl) {
-      prefixEl.className =
-        `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.prefix_extraclass || ''}`.trim();
+      prefixEl.className = this.getAddonClassString('prefix');
     }
   }
 
   updatePostfixClasses(): void {
     const postfixEl = this.postfixEl;
     if (postfixEl) {
-      postfixEl.className =
-        `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0 tailwind-addon ${this.settings.postfix_extraclass || ''}`.trim();
+      postfixEl.className = this.getAddonClassString('postfix');
     }
   }
 
   updateInputClasses(): void {
-    // Remove existing TouchSpin classes
-    this.input.className = this.input.className.replace(/ts-input/g, '').trim();
+    this.applyInputClasses();
+  }
 
-    // Check if custom input classes are provided
-    const inputClasses = (this.settings as any).input_classes;
-    if (inputClasses && inputClasses.trim()) {
-      // Use custom classes - split and apply each class
-      const customClasses = inputClasses.split(' ').filter((cls: string) => cls.trim());
-      this.input.classList.add('ts-input', ...customClasses);
-    } else {
-      // Use default classes
-      this.input.classList.add(
-        'ts-input',
-        'flex-1',
-        'px-3',
-        'py-2',
-        'border-0',
-        'bg-transparent',
-        'focus:outline-none',
-        'text-gray-900',
-        'placeholder-gray-500'
-      );
-    }
+  updateWrapperClasses(): void {
+    if (!this.wrapper) return;
+    const isVertical = Boolean(this.settings.verticalbuttons);
+    const merge = this.wrapperType === 'wrapper-advanced';
+    this.applyWrapperClasses(this.wrapper, isVertical, merge);
   }
 
   handleVerticalButtonsChange(_newValue: boolean): void {
@@ -477,6 +638,8 @@ class TailwindRenderer extends AbstractRendererSimple {
     this.wrapper = null;
     this.prefixEl = null;
     this.postfixEl = null;
+    this.customInputClasses = [];
+    this.customWrapperClasses = [];
     this.buildAndAttachDOM();
     this.finalizeWrapperAttributes();
   }

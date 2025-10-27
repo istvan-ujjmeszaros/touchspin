@@ -52,3 +52,22 @@ TouchSpin(document.querySelector('#quantity'), {
 - Optional peer: `tailwindcss@>=3.0.0` for design token alignment (not required at runtime)
 - Engines: Node 18.17+
 - npm tarballs include the CSS and license
+
+## Customizing utility classes
+
+The renderer adds sensible Tailwind defaults for the wrapper and input, but you can override them with renderer-specific options:
+
+```ts
+TouchSpin(inputEl, {
+  renderer: TailwindRenderer,
+  // Replace the default input utility classes (ts-input is always preserved)
+  input_classes: 'flex-1 px-4 py-2 text-slate-900 placeholder-slate-500 focus:outline-none',
+  // Replace the default wrapper utility classes (ts-wrapper is always preserved)
+  wrapper_classes:
+    'flex items-stretch rounded-2xl border border-blue-500 bg-white shadow-[0_18px_36px_rgba(15,23,42,0.12)] focus-within:border-blue-700 focus-within:shadow-[0_0_0_4px_rgba(59,130,246,0.35)] overflow-hidden',
+});
+```
+
+The renderer automatically removes the built-in utility classes when you supply your own, so you can take full control without worrying about conflicting styles. The `.ts-wrapper`, `.ts-wrapper--vertical`, and `.ts-input` classes remain available so you can still layer CSS variables on top (for example, when matching the vanilla theme).
+
+When you override the utility classes you become responsible for padding, borders, and focus/hover states—only the structural `ts-*` hooks stay in place.

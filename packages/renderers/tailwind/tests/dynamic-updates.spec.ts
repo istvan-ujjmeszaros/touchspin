@@ -7,6 +7,7 @@
  * CHECKLIST — Scenarios in this spec
  * [x] updates button text with maintained utility classes
  * [x] updates utility classes dynamically
+ * [x] dynamically replaces wrapper and input utility classes
  * [x] handles responsive utility class changes
  * [x] updates color utility classes
  * [x] handles sizing utility updates
@@ -94,6 +95,43 @@ test('updates utility classes dynamically', async ({ page }) => {
   // Verify functionality still works
   await apiHelpers.clickUpButton(page, 'test-input');
   await apiHelpers.expectValueToBe(page, 'test-input', '51');
+});
+
+/**
+ * Scenario: replaces wrapper and input utility classes dynamically
+ * Given the fixture page is loaded with initialized TouchSpin
+ * When wrapper and input utility classes are updated via API
+ * Then custom utilities replace the baseline Tailwind defaults
+ */
+test('dynamically replaces wrapper and input utility classes', async ({ page }) => {
+  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
+  await ensureTailwindGlobals(page);
+  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {});
+
+  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
+
+  // Sanity check: defaults start with baseline utility classes
+  const initialWrapperClasses = (await elements.wrapper.getAttribute('class')) ?? '';
+  expect(initialWrapperClasses).toMatch(/shadow-sm/);
+  const initialInputClasses = (await elements.input.getAttribute('class')) ?? '';
+  expect(initialInputClasses).toMatch(/bg-transparent/);
+
+  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
+    wrapper_classes:
+      'flex items-stretch rounded-xl border border-blue-600 bg-white focus-within:border-blue-700 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.35)] transition-shadow duration-200',
+    input_classes:
+      'flex-1 px-4 py-3 bg-blue-50 text-blue-900 font-semibold rounded-md focus:outline-none focus:ring-4 focus:ring-blue-300 placeholder:text-blue-400',
+  });
+
+  await expect(elements.wrapper).toHaveAttribute('class', /rounded-xl/);
+  await expect(elements.wrapper).toHaveAttribute('class', /border-blue-600/);
+  await expect(elements.wrapper).not.toHaveAttribute('class', /shadow-sm/);
+  await expect(elements.wrapper).not.toHaveAttribute('class', /border-gray-300/);
+
+  await expect(elements.input).toHaveAttribute('class', /bg-blue-50/);
+  await expect(elements.input).toHaveAttribute('class', /placeholder:text-blue-400/);
+  await expect(elements.input).not.toHaveAttribute('class', /bg-transparent/);
+  await expect(elements.input).not.toHaveAttribute('class', /placeholder-gray-500/);
 });
 
 /**
