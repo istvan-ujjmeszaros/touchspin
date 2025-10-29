@@ -1,5 +1,12 @@
 # @touchspin/standalone
 
+## 5.0.3
+
+### Patch Changes
+
+- Updated dependencies [b14853b]
+  - @touchspin/renderer-tailwind@5.2.0
+
 ## 5.0.2
 
 ### Patch Changes

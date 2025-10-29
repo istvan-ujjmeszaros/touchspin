@@ -1343,7 +1343,7 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.54.2"
     "@touchspin/core": "npm:5.0.1"
-    "@touchspin/standalone": "npm:5.0.2"
+    "@touchspin/standalone": "npm:5.0.3"
     "@types/jquery": "npm:^3.5.30"
     "@types/node": "npm:^22.7.4"
     jquery: "npm:^3.7.1"
@@ -1420,7 +1420,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/renderer-tailwind@npm:5.1.0, @touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
+"@touchspin/renderer-tailwind@npm:5.2.0, @touchspin/renderer-tailwind@workspace:packages/renderers/tailwind":
   version: 0.0.0-use.local
   resolution: "@touchspin/renderer-tailwind@workspace:packages/renderers/tailwind"
   dependencies:
@@ -1452,7 +1452,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@touchspin/standalone@npm:5.0.2, @touchspin/standalone@workspace:packages/adapters/standalone":
+"@touchspin/standalone@npm:5.0.3, @touchspin/standalone@workspace:packages/adapters/standalone":
   version: 0.0.0-use.local
   resolution: "@touchspin/standalone@workspace:packages/adapters/standalone"
   dependencies:
@@ -1461,7 +1461,7 @@ __metadata:
     "@touchspin/renderer-bootstrap3": "npm:5.0.1"
     "@touchspin/renderer-bootstrap4": "npm:5.0.1"
     "@touchspin/renderer-bootstrap5": "npm:5.0.1"
-    "@touchspin/renderer-tailwind": "npm:5.1.0"
+    "@touchspin/renderer-tailwind": "npm:5.2.0"
     "@touchspin/renderer-vanilla": "npm:5.0.1"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"
@@ -1478,7 +1478,7 @@ __metadata:
     "@touchspin/renderer-bootstrap3": "npm:5.0.1"
     "@touchspin/renderer-bootstrap4": "npm:5.0.1"
     "@touchspin/renderer-bootstrap5": "npm:5.0.1"
-    "@touchspin/renderer-tailwind": "npm:5.1.0"
+    "@touchspin/renderer-tailwind": "npm:5.2.0"
     "@touchspin/renderer-vanilla": "npm:5.0.1"
     "@types/node": "npm:^22.7.4"
     tsup: "npm:^8.1.0"

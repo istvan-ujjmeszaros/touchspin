@@ -17,22 +17,11 @@
 import { expect, test } from '@playwright/test';
 import * as apiHelpers from '@touchspin/core/test-helpers';
 import { initializeTouchspinFromGlobals, installDomHelpers } from '@touchspin/core/test-helpers';
-import { universalRendererSuite } from '@touchspin/core/test-helpers/renderers';
 import { ensureTailwindGlobals, tailwindRendererUrl } from './helpers/tailwind-globals';
 
 // Tailwind Renderer URL for tests
 const TAILWIND_RENDERER_URL = tailwindRendererUrl;
 const TAILWIND_FIXTURE = '/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html';
-
-// TODO: Re-enable universal renderer suite after fixing prefix_extraclass/postfix_extraclass support
-// The suite contains a test that uses prefix_extraclass/postfix_extraclass which are NOT
-// supported in the REPLACE semantics version of TailwindRenderer. Need to either:
-// 1. Add skipTests parameter to suite functions, or
-// 2. Reimplement the relevant tests without those settings
-//
-// universalRendererSuite('Tailwind', TAILWIND_RENDERER_URL, TAILWIND_FIXTURE, {
-//   setupGlobals: ensureTailwindGlobals,
-// });
 
 // Tailwind-specific tests (utility-first CSS framework behavior)
 test.describe('Tailwind specific behavior', () => {
