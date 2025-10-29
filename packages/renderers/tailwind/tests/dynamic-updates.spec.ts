@@ -112,7 +112,7 @@ test('dynamically replaces wrapper and input utility classes', async ({ page }) 
 
   // Sanity check: defaults start with baseline utility classes
   const initialWrapperClasses = (await elements.wrapper.getAttribute('class')) ?? '';
-  expect(initialWrapperClasses).toMatch(/shadow-sm/);
+  expect(initialWrapperClasses).toMatch(/border-gray-300/);
   const initialInputClasses = (await elements.input.getAttribute('class')) ?? '';
   expect(initialInputClasses).toMatch(/bg-transparent/);
 

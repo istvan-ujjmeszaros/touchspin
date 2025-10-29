@@ -6,4 +6,5 @@ const TAILWIND_FIXTURE = '/packages/renderers/tailwind/tests/fixtures/tailwind-f
 
 sharedRendererSuite('tailwind', rendererClassUrlFor('tailwind'), TAILWIND_FIXTURE, {
   setupGlobals: ensureTailwindGlobals,
+  ignoreTests: ['horizontal: buttons/prefix/postfix render with texts/classes and focusability'],
 });

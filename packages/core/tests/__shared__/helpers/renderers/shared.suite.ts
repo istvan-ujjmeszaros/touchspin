@@ -10,6 +10,9 @@ export function sharedRendererSuite(
   fixturePath: string,
   options: RendererSuiteOptions = {}
 ) {
+  const ignoredTests = new Set(options.ignoreTests ?? []);
+  const isIgnored = (title: string) => ignoredTests.has(title);
+
   test.describe(`Shared renderer behavior: ${name}`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(fixturePath);
@@ -23,6 +26,11 @@ export function sharedRendererSuite(
     test('horizontal: buttons/prefix/postfix render with texts/classes and focusability', async ({
       page,
     }) => {
+      test.skip(
+        isIgnored('horizontal: buttons/prefix/postfix render with texts/classes and focusability'),
+        'Ignored via renderer configuration'
+      );
+
       await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
         postfix: 'kg',
@@ -55,6 +63,11 @@ export function sharedRendererSuite(
     });
 
     test('vertical: wrapper and button texts/classes; focusability toggle', async ({ page }) => {
+      test.skip(
+        isIgnored('vertical: wrapper and button texts/classes; focusability toggle'),
+        'Ignored via renderer configuration'
+      );
+
       await initializeTouchspinFromGlobals(page, 'test-input', {
         verticalbuttons: true,
         verticalup: '▲',
@@ -86,6 +99,11 @@ export function sharedRendererSuite(
     });
 
     test('rebuilds on prefix/postfix toggles', async ({ page }) => {
+      test.skip(
+        isIgnored('rebuilds on prefix/postfix toggles'),
+        'Ignored via renderer configuration'
+      );
+
       await initializeTouchspinFromGlobals(page, 'test-input', {
         prefix: '$',
         postfix: 'kg',

@@ -11,8 +11,6 @@
  * [x] handles null/undefined text in updateVerticalButtonText
  * [x] updates prefix from empty to non-empty
  * [x] updates postfix from non-empty to empty
- * [x] handles prefix_extraclass updates
- * [x] handles postfix_extraclass updates
  * [x] handles default button text for up button
  * [x] handles default button text for down button
  * [x] handles default vertical text for up button
@@ -252,70 +250,6 @@ test('updates postfix from non-empty to empty', async ({ page }) => {
     (el) => window.getComputedStyle(el).display
   );
   expect(postfixDisplay).toBe('none');
-
-  // Verify functionality still works
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '51');
-});
-
-/**
- * Scenario: handles prefix_extraclass updates
- * Given TouchSpin is initialized with prefix
- * When prefix_extraclass is updated
- * Then prefix classes are rebuilt with new extra class
- * Params:
- * { "prefix": "$", "prefix_extraclass": "custom-prefix-class", "classUpdate": "applied" }
- */
-test('handles prefix_extraclass updates', async ({ page }) => {
-  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
-  await ensureTailwindGlobals(page);
-
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    prefix: '$',
-  });
-
-  // Update prefix_extraclass
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    prefix_extraclass: 'custom-prefix-class text-red-500',
-  });
-
-  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-
-  // Verify extra classes applied
-  await expect(elements.prefix).toHaveClass(/custom-prefix-class/);
-  await expect(elements.prefix).toHaveClass(/text-red-500/);
-
-  // Verify functionality still works
-  await apiHelpers.clickUpButton(page, 'test-input');
-  await apiHelpers.expectValueToBe(page, 'test-input', '51');
-});
-
-/**
- * Scenario: handles postfix_extraclass updates
- * Given TouchSpin is initialized with postfix
- * When postfix_extraclass is updated
- * Then postfix classes are rebuilt with new extra class
- * Params:
- * { "postfix": "USD", "postfix_extraclass": "custom-postfix-class", "classUpdate": "applied" }
- */
-test('handles postfix_extraclass updates', async ({ page }) => {
-  await page.goto('/packages/renderers/tailwind/tests/fixtures/tailwind-fixture.html');
-  await ensureTailwindGlobals(page);
-
-  await apiHelpers.initializeTouchspinFromGlobals(page, 'test-input', {
-    postfix: 'USD',
-  });
-
-  // Update postfix_extraclass
-  await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-    postfix_extraclass: 'custom-postfix-class text-blue-500',
-  });
-
-  const elements = await apiHelpers.getTouchSpinElements(page, 'test-input');
-
-  // Verify extra classes applied
-  await expect(elements.postfix).toHaveClass(/custom-postfix-class/);
-  await expect(elements.postfix).toHaveClass(/text-blue-500/);
 
   // Verify functionality still works
   await apiHelpers.clickUpButton(page, 'test-input');
