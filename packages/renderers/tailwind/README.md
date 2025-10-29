@@ -55,7 +55,11 @@ TouchSpin(document.querySelector('#quantity'), {
 
 ## Customizing utility classes
 
-The renderer adds sensible Tailwind defaults for the wrapper and input, but you can override them with renderer-specific options:
+TailwindRenderer uses **replace semantics** for all styling knobs: when you supply a class string the defaults disappear (structural markers such as `ts-wrapper`, `ts-input`, `ts-addon`, and `tailwind-btn` are always preserved). This keeps Tailwind’s “what you set is what you get” behavior intact.
+
+### Wrapper / input overrides
+
+Override the container and input utilities with the renderer-specific options:
 
 ```ts
 TouchSpin(inputEl, {
@@ -68,19 +72,11 @@ TouchSpin(inputEl, {
 });
 ```
 
-The renderer automatically removes the built-in utility classes when you supply your own, so you can take full control without worrying about conflicting styles. The `.ts-wrapper`, `.ts-wrapper--vertical`, and `.ts-input` classes remain available so you can still layer CSS variables on top (for example, when matching the vanilla theme).
+When you override the utility classes you become responsible for paddings, borders, and focus/hover states—only the structural markers remain so CSS variables or scoped styles can still target the component.
 
-When you override the utility classes you become responsible for padding, borders, and focus/hover states—only the structural `ts-*` hooks stay in place.
+### Addon overrides (prefix / postfix)
 
-### Default classes used by the renderer
-
-Unless you override them, the renderer adds the following utility sets:
-
-- Wrapper defaults: `flex rounded-md shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50 overflow-hidden`
-- Input defaults: `flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500`
-- Addon defaults (prefix/postfix): `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0`
-
-Use the `prefix_extraclass`/`postfix_extraclass` settings to append utilities to those defaults. If you want to replace them entirely, use the renderer-specific overrides:
+Use the Tailwind-specific override options to replace addon styling. The renderer still injects `ts-addon ts-prefix` / `ts-addon ts-postfix` for hooks:
 
 ```ts
 TouchSpin(inputEl, {
@@ -92,3 +88,29 @@ TouchSpin(inputEl, {
     'inline-flex items-center px-4 py-1 bg-blue-900 text-white rounded-r-lg uppercase tracking-wide',
 });
 ```
+
+> **Note:** The legacy `prefix_extraclass` / `postfix_extraclass` settings have been removed because they conflicted with replace semantics. Use the override options instead.
+
+### Button overrides
+
+`buttonup_class`, `buttondown_class`, `verticalupclass`, and `verticaldownclass` also use replace semantics. The renderer prepends the `tailwind-btn` + `ts-btn*` markers so tests and custom CSS can still target them:
+
+```ts
+TouchSpin(inputEl, {
+  renderer: TailwindRenderer,
+  buttonup_class:
+    'px-4 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold transition-colors',
+  buttondown_class:
+    'px-4 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold transition-colors',
+});
+```
+
+### Default classes
+
+Unless overridden, TailwindRenderer ships with the following utility sets:
+
+- Wrapper: `flex rounded-md border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 has-[:disabled]:opacity-60 has-[:disabled]:bg-gray-50 has-[:read-only]:bg-gray-50 overflow-hidden`
+- Input: `flex-1 px-3 py-2 border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500`
+- Prefix/postfix addons: `inline-flex items-center px-3 py-2 bg-gray-50 text-gray-600 border-0`
+- Horizontal buttons: `tailwind-btn ts-btn ts-btn--up|down` + `inline-flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 disabled:opacity-50 disabled:cursor-not-allowed`
+- Vertical buttons: `tailwind-btn ts-btn ts-btn--vertical ts-btn--vertical-up|down` + `inline-flex items-center justify-center w-full px-3 py-1 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-medium border-0 disabled:opacity-50 disabled:cursor-not-allowed`

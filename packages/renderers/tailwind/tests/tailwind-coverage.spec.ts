@@ -6,7 +6,6 @@
 /*
  * CHECKLIST — Scenarios in this spec
  * [x] updates vertical button classes via observer
- * [x] updates prefix/postfix extra classes via observer
  * [x] builds advanced input group with existing container
  * [x] places input before postfix when prefix is empty
  * [x] handles small input size detection and styling
@@ -80,52 +79,6 @@ test.describe('Tailwind renderer coverage improvements', () => {
     expect(classes.down).toContain('tailwind-btn');
     expect(classes.up).not.toContain('initial-up-class');
     expect(classes.down).not.toContain('initial-down-class');
-  });
-
-  /**
-   * Scenario: updates prefix/postfix extra classes via observer
-   * Given prefix and postfix with initial extra classes
-   * When I change prefix_extraclass and postfix_extraclass via API
-   * Then the respective elements reflect the new classes while keeping their text
-   */
-  test('updates prefix/postfix extra classes via observer', async ({ page }) => {
-    await initializeTouchSpinOnCleanFixture(page, 'test-input', {
-      prefix: '$',
-      postfix: 'USD',
-      prefix_extraclass: 'prefix-initial',
-      postfix_extraclass: 'postfix-initial',
-    });
-
-    const getAddonState = async () =>
-      page.evaluate(() => {
-        const prefix = document.querySelector('[data-touchspin-injected="prefix"]');
-        const postfix = document.querySelector('[data-touchspin-injected="postfix"]');
-        return {
-          prefixClass: prefix instanceof HTMLElement ? prefix.className : null,
-          postfixClass: postfix instanceof HTMLElement ? postfix.className : null,
-          prefixText: prefix?.textContent ?? null,
-          postfixText: postfix?.textContent ?? null,
-        };
-      });
-
-    let addonState = await getAddonState();
-    expect(addonState.prefixClass).toContain('prefix-initial');
-    expect(addonState.postfixClass).toContain('postfix-initial');
-    expect(addonState.prefixText).toBe('$');
-    expect(addonState.postfixText).toBe('USD');
-
-    await apiHelpers.updateSettingsViaAPI(page, 'test-input', {
-      prefix_extraclass: 'prefix-updated',
-      postfix_extraclass: 'postfix-updated',
-    });
-
-    addonState = await getAddonState();
-    expect(addonState.prefixClass).toContain('prefix-updated');
-    expect(addonState.postfixClass).toContain('postfix-updated');
-    expect(addonState.prefixClass).not.toContain('prefix-initial');
-    expect(addonState.postfixClass).not.toContain('postfix-initial');
-    expect(addonState.prefixText).toBe('$');
-    expect(addonState.postfixText).toBe('USD');
   });
 
   /**

@@ -12,6 +12,7 @@ import { waitForPageReady } from '../test-utilities/wait';
  */
 export interface RendererSuiteOptions {
   setupGlobals?: (page: Page) => Promise<void>;
+  ignoreTests?: readonly string[];
 }
 
 export function universalRendererSuite(
